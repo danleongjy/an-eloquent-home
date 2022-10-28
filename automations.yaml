@@ -515,27 +515,26 @@
       controller_device: cea5083fc6a1972a0b57048ffa03cfd8
       helper_last_controller_event: input_text.zz_dining_room_lights_controller_2_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.wind_down
-            before: input_datetime.lights_auto_control_end
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id:
-              - light.dining_room_lights
-              - light.dining_room_pendant_light_entity
-            data:
-              brightness_pct: 5
-        default:
+      - if:
+        - condition: time
+          after: input_datetime.wind_down
+          before: input_datetime.lights_auto_control_end
+        then:
         - service: light.turn_on
           target:
             entity_id:
             - light.dining_room_lights
             - light.dining_room_pendant_light_entity
           data:
-            brightness_pct: 98
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+        else:
+        - service: light.turn_on
+          target:
+            entity_id:
+            - light.dining_room_lights
+            - light.dining_room_pendant_light_entity
+          data:
+            brightness_pct: 100
       action_button_up_long:
       - service: light.turn_on
         target:
@@ -575,20 +574,19 @@
       controller_device: 867b78e6f7808ffcceb260be52b0c174
       helper_last_controller_event: input_text.zz_playroom_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            before: input_datetime.lights_auto_control_end
-            after: input_datetime.wind_down
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id:
-              - light.playroom_lights
-              - light.yard_light_entity
-            data:
-              brightness_pct: 5
-        default:
+      - if:
+        - condition: time
+          before: input_datetime.lights_auto_control_end
+          after: input_datetime.wind_down
+        then:
+        - service: light.turn_on
+          target:
+            entity_id:
+            - light.playroom_lights
+            - light.yard_light_entity
+          data:
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+        else:
         - service: light.turn_on
           target:
             entity_id:
@@ -685,7 +683,7 @@
           entity_id:
           - light.playroom_lights
         data:
-          brightness_pct: 5
+          brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
       else:
       - service: light.turn_on
         target:
@@ -747,7 +745,7 @@
         sequence:
         - service: light.turn_on
           data:
-            brightness_pct: 5
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
           target:
             entity_id: light.hallway_bulb_1_entity
       - conditions:
@@ -876,18 +874,17 @@
       controller_device: 8fd4f8715be89cc0f383c887c3fac892
       helper_last_controller_event: input_text.zz_powder_room_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.wind_down
-            before: input_datetime.lights_auto_control_end
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id: light.powder_room_pendant_light_entity
-            data:
-              brightness_pct: 5
-        default:
+      - if:
+        - condition: time
+          after: input_datetime.wind_down
+          before: input_datetime.lights_auto_control_end
+        then:
+        - service: light.turn_on
+          target:
+            entity_id: light.powder_room_pendant_light_entity
+          data:
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+        else:
         - service: light.turn_on
           target:
             entity_id: light.powder_room_pendant_light_entity
@@ -1084,7 +1081,8 @@
             target:
               entity_id: light.junior_bathroom_lights
             data:
-              brightness_pct: 5
+              brightness_pct: '{{ states(''input_number.night_light_brightness'')
+                }}'
         default:
         - service: light.turn_on
           target:
@@ -1861,7 +1859,7 @@
         target:
           entity_id: light.junior_bathroom_lights
         data:
-          brightness_pct: 5
+          brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
       else:
       - condition: state
         entity_id: light.junior_bathroom_lights
@@ -2530,13 +2528,32 @@
       controller_device: c5d9eb9905ea6ac1a19d209a6dd0965c
       helper_last_controller_event: input_text.zz_living_room_lights_controller_last_event
       action_button_up_short:
-      - service: light.turn_on
-        data:
-          brightness_pct: 100
-        target:
-          entity_id:
-          - light.living_room_lights
-          - light.living_room_pendant_light_entity
+      - if:
+        - condition: time
+          after: input_datetime.wind_down
+          before: input_datetime.lights_auto_control_end
+          weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sat
+          - sun
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+          target:
+            entity_id: light.living_room_pendant_light_entity
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id:
+            - light.living_room_lights
+            - light.living_room_pendant_light_entity
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -2672,11 +2689,30 @@
       controller_device: d6563b3c30e24806da5ef8823f3fcd03
       helper_last_controller_event: input_text.zz_study_room_lights_controller_last_event
       action_button_up_short:
-      - service: light.turn_on
-        data:
-          brightness_pct: 100
-        target:
-          entity_id: light.study_room_lights
+      - if:
+        - condition: time
+          after: input_datetime.wind_down
+          before: input_datetime.lights_auto_control_end
+          weekday:
+          - mon
+          - tue
+          - wed
+          - fri
+          - thu
+          - sat
+          - sun
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+          target:
+            entity_id: light.study_room_lights
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.study_room_lights
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -2817,11 +2853,30 @@
       controller_device: 2d7882ce6b51a89dbc5b012417d00c40
       helper_last_controller_event: input_text.zz_parents_room_lights_controller_last_event
       action_button_up_short:
-      - service: light.turn_on
-        data:
-          brightness_pct: 100
-        target:
-          entity_id: light.parents_room_lights
+      - if:
+        - condition: time
+          after: input_datetime.wind_down
+          before: input_datetime.lights_auto_control_end
+          weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sat
+          - sun
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+          target:
+            entity_id: light.parents_room_lights
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.parents_room_lights
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -2858,18 +2913,17 @@
       controller_device: 75fe391df20feec2911c6bf08707c353
       helper_last_controller_event: input_text.zz_master_bathroom_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.wind_down
-            before: input_datetime.lights_auto_control_end
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: 5
-            target:
-              entity_id: light.master_bathroom_lights
-        default:
+      - if:
+        - condition: time
+          after: input_datetime.wind_down
+          before: input_datetime.lights_auto_control_end
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+          target:
+            entity_id: light.master_bathroom_lights
+        else:
         - service: light.turn_on
           data:
             brightness_pct: 100
@@ -2955,7 +3009,8 @@
           sequence:
           - service: light.turn_on
             data:
-              brightness_pct: 5
+              brightness_pct: '{{ states(''input_number.night_light_brightness'')
+                }}'
             target:
               entity_id: light.kitchen_lights
         default:
@@ -3042,7 +3097,7 @@
       then:
       - service: light.turn_on
         data:
-          brightness_pct: 5
+          brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
         target:
           entity_id: light.kitchen_lights
       else:
@@ -3109,7 +3164,7 @@
         then:
         - service: light.turn_on
           data:
-            brightness_pct: 1
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
           target:
             entity_id: light.master_bathroom_light_entity
         else:
@@ -3187,7 +3242,7 @@
         then:
         - service: light.turn_on
           data:
-            brightness_pct: 1
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
           target:
             entity_id: light.master_bathroom_pendant_light_entity
         else:
@@ -3536,7 +3591,7 @@
         then:
         - service: light.turn_on
           data:
-            brightness_pct: 5
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
           target:
             entity_id: light.elenas_room_lights
         else:
@@ -3688,7 +3743,7 @@
       then:
       - service: light.turn_on
         data:
-          brightness_pct: 5
+          brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
         target:
           entity_id: light.yard_light_entity
       else:
@@ -3756,7 +3811,7 @@
       then:
       - service: light.turn_on
         data:
-          brightness_pct: 3
+          brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
         target:
           entity_id: light.study_room_bulb_4_entity
       else:
@@ -3940,10 +3995,41 @@
         target:
           entity_id: light.elis_room_lights
       action_button_center_short:
-      - service: light.toggle
-        data: {}
-        target:
+      - if:
+        - condition: state
           entity_id: light.elis_room_lights
+          state: 'on'
+        then:
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id: light.elis_room_lights
+        else:
+        - if:
+          - condition: time
+            after: input_datetime.wind_down
+            before: input_datetime.lights_auto_control_end
+            weekday:
+            - mon
+            - tue
+            - wed
+            - thu
+            - fri
+            - sat
+            - sun
+          then:
+          - service: light.turn_on
+            data:
+              brightness_pct: '{{ states(''input_number.night_light_brightness'')
+                }}'
+            target:
+              entity_id: light.elis_room_lights
+          else:
+          - service: light.turn_on
+            data:
+              brightness_pct: 100
+            target:
+              entity_id: light.elis_room_lights
       button_left_long_loop: true
       button_left_long_max_loop_repeats: 50
       button_right_long_loop: true

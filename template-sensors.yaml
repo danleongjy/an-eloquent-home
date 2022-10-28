@@ -304,7 +304,7 @@
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.elenas_bedtime')[:2] | int * 60 + states('input_datetime.elenas_bedtime')[3:5] | int) 
         %}
-          5
+          {{ states('input_number.night_light_brightness') }}
         {% else %}
           0
         {% endif %}
@@ -347,7 +347,7 @@
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.sleep_hours_start')[:2] | int * 60 + states('input_datetime.sleep_hours_start')[3:5] | int) 
         %}
-          5
+          {{ states('input_number.night_light_brightness') }}
         {% else %}
           0
         {% endif %}
@@ -398,7 +398,7 @@
            or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.lights_auto_control_end')[:2] | int * 60 + states('input_datetime.lights_auto_control_end')[3:5] | int) 
         %}
-          5
+          {{ states('input_number.night_light_brightness') }}
         {% else %}
           0
         {% endif %}
@@ -455,7 +455,7 @@
            or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.lights_auto_control_end')[:2] | int * 60 + states('input_datetime.lights_auto_control_end')[3:5] | int) 
         %}
-          5
+          {{ states('input_number.night_light_brightness') }}
         {% else %}
           0
         {% endif %}
@@ -496,7 +496,7 @@
         %}
           100
         {% else %}
-          0
+          {{ states('input_number.night_light_brightness') }}
         {% endif %}
       fan_speed: >
         {% if is_state('binary_sensor.hallway_doors','off')
@@ -543,7 +543,7 @@
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.lights_auto_control_end')[:2] | int * 60 + states('input_datetime.lights_auto_control_end')[3:5] | int) 
         %}
-          5
+          {{ states('input_number.night_light_brightness') }}
         {% else %}
           0
         {% endif %}
