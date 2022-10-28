@@ -1,0 +1,70 @@
+- platform: rest
+  resource: https://api.data.gov.sg/v1/environment/rainfall
+  name: Local Rainfall
+  value_template: >
+    {% set ns = namespace(max_rain = 0) %}
+    {% set readings = value_json['items'][0]['readings'] %}
+    {# max of Geylang East Central, Towner Road, Poole Road and Nicoll Highway #}
+    {% for reading in readings %}
+      {% if reading['station_id'] in ['S215','S123','S78','S119'] %}
+        {% if reading['value'] > ns.max_rain %}
+          {% set ns.max_rain = reading['value'] %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    {{ ns.max_rain | round(1) }}
+  unit_of_measurement: mm
+  scan_interval: 600
+
+- platform: rest
+  resource: https://api.data.gov.sg/v1/environment/air-temperature
+  name: Local Outdoor Temperature
+  value_template: >
+    {% set ns = namespace(totaltemp = 0) %}
+    {% set readings = value_json['items'][0]['readings'] %}
+    {% for reading in readings %}
+      {% set ns.totaltemp = ns.totaltemp + reading['value'] %}
+    {% endfor %}
+    {% if readings | length > 0 %}
+      {{ (ns.totaltemp | float(0) / readings | length) | round(1) }}
+    {% else %}
+      unavailable
+    {% endif %}
+  unit_of_measurement: °C
+  device_class: temperature
+  scan_interval: 600
+  
+- platform: rest
+  resource: https://api.data.gov.sg/v1/environment/relative-humidity
+  name: Local Outdoor Humidity
+  value_template: >
+    {% set ns = namespace(totalhum = 0) %}
+    {% set readings = value_json['items'][0]['readings'] %}
+    {% for reading in readings %}
+      {% set ns.totalhum = ns.totalhum + reading['value'] %}
+    {% endfor %}
+    {% if readings | length > 0 %}
+      {{ (ns.totalhum | float(0) / readings | length) | round(1) }}
+    {% else %}
+      unavailable
+    {% endif %}
+  unit_of_measurement: '%'
+  device_class: humidity
+  scan_interval: 600
+
+- platform: rest
+  resource: https://api.data.gov.sg/v1/environment/2-hour-weather-forecast
+  name: Local Two Hour Forecast
+  value_template: >
+    {% set forecasts = value_json['items'][0]['forecasts'] %}
+    {% for forecast in forecasts %}
+      {% if forecast['area'] == 'Geylang' %}
+        {% set geylang_forecast = forecast['forecast'] %}
+        {% if geylang_forecast.split('(') | length > 1 %}
+          {{geylang_forecast.split('(')[0][:-1]}}
+        {% else %}
+          {{ geylang_forecast}}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  scan_interval: 600

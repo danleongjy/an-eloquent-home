@@ -1,0 +1,4125 @@
+- id: '1642993601811'
+  alias: Dining Room AC Set State
+  description: Set the Dining Room AC power and temperature
+  trigger:
+  - platform: state
+    entity_id: climate.dining_room_ac
+    id: cooling
+    to: cool
+  - platform: state
+    entity_id: climate.dining_room_ac
+    id: power_off
+    from: cool
+  - platform: state
+    entity_id: climate.dining_room_ac
+    id: temperature_changed
+    attribute: temperature
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: cooling
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Dining Room AC
+          target_ac_temp: '{{ state_attr("climate.dining_room_ac", "temperature")
+            }}'
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Dining Room AC
+          target_ac_power: false
+    - conditions:
+      - condition: trigger
+        id: temperature_changed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: climate.dining_room_ac
+          attribute: temperature
+          below: '24'
+        then:
+        - service: climate.set_temperature
+          data:
+            temperature: 27
+          target:
+            entity_id: climate.dining_room_ac
+        - service: climate.turn_off
+          data: {}
+          target:
+            entity_id: climate.dining_room_ac
+        - service: script.ac_set_state
+          data:
+            target_ac: Dining Room AC
+            target_ac_power: false
+        else:
+        - service: climate.turn_on
+          data: {}
+          target:
+            entity_id: climate.dining_room_ac
+        - service: script.ac_set_state
+          data:
+            target_ac: Dining Room AC
+            target_ac_temp: '{{ state_attr("climate.dining_room_ac", "temperature")
+              }}'
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1642995603670'
+  alias: Eli's Room AC Set State
+  description: Set Eli's Room AC power and temperature
+  trigger:
+  - platform: state
+    entity_id: climate.elis_room_ac
+    id: cooling
+    to: cool
+  - platform: state
+    entity_id: climate.elis_room_ac
+    id: power_off
+    from: cool
+  - platform: state
+    entity_id: climate.elis_room_ac
+    id: temperature_changed
+    attribute: temperature
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: cooling
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Eli's Room AC
+          target_ac_temp: '{{ state_attr("climate.elis_room_ac", "temperature") }}'
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Eli's Room AC
+          target_ac_power: false
+    - conditions:
+      - condition: trigger
+        id: temperature_changed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: climate.elis_room_ac
+          attribute: temperature
+          below: '24'
+        then:
+        - service: climate.set_temperature
+          data:
+            temperature: 27
+          target:
+            entity_id: climate.elis_room_ac
+        - service: climate.turn_off
+          target:
+            entity_id: climate.elis_room_ac
+          data: {}
+        - service: script.ac_set_state
+          data:
+            target_ac: Eli's Room AC
+            target_ac_power: false
+        else:
+        - service: climate.turn_on
+          target:
+            entity_id: climate.elis_room_ac
+          data: {}
+        - service: script.ac_set_state
+          data:
+            target_ac: Eli's Room AC
+            target_ac_temp: '{{ state_attr("climate.elis_room_ac", "temperature")
+              }}'
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1642996756359'
+  alias: Elena's Room AC Set State
+  description: Set Elena's Room AC power and temperature
+  trigger:
+  - platform: state
+    entity_id: climate.elenas_room_ac
+    id: cooling
+    to: cool
+  - platform: state
+    entity_id: climate.elenas_room_ac
+    id: power_off
+    from: cool
+  - platform: state
+    entity_id: climate.elenas_room_ac
+    id: temperature_changed
+    attribute: temperature
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: cooling
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Elena's Room AC
+          target_ac_temp: '{{ state_attr("climate.elenas_room_ac", "temperature")
+            }}'
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Elena's Room AC
+          target_ac_power: false
+    - conditions:
+      - condition: trigger
+        id: temperature_changed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: climate.elenas_room_ac
+          attribute: temperature
+          below: '24'
+        then:
+        - service: climate.set_temperature
+          target:
+            entity_id: climate.elenas_room_ac
+          data:
+            temperature: 27
+        - service: climate.turn_off
+          target:
+            entity_id: climate.elenas_room_ac
+          data: {}
+        - service: script.ac_set_state
+          data:
+            target_ac: Elena's Room AC
+            target_ac_power: false
+        else:
+        - service: climate.turn_on
+          target:
+            entity_id: climate.elenas_room_ac
+          data: {}
+        - service: script.ac_set_state
+          data:
+            target_ac: Elena's Room AC
+            target_ac_temp: '{{ state_attr("climate.elenas_room_ac", "temperature")
+              }}'
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1642997460354'
+  alias: Dining Room Fan Set State
+  description: Set Dining Room Fan power and speed
+  trigger:
+  - platform: state
+    entity_id: fan.dining_room_fan
+    id: power_off
+    from: 'on'
+    to: 'off'
+  - platform: state
+    entity_id: fan.dining_room_fan
+    id: power_on
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: fan.dining_room_fan
+    id: speed
+    attribute: percentage
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: speed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: fan.dining_room_fan
+          attribute: percentage
+          below: '10'
+        then:
+        - service: fan.set_percentage
+          data:
+            percentage: '{{ state_attr("binary_sensor.recommended_scene_in_dining_room",
+              "fan_speed") | int }}'
+          target:
+            entity_id: fan.dining_room_fan
+        - service: fan.turn_off
+          data: {}
+          target:
+            entity_id: fan.dining_room_fan
+        - service: script.fan_set_state
+          data:
+            target_fan: Dining Room Fan
+            target_fan_power: false
+        else:
+        - service: script.fan_set_state
+          data:
+            target_fan: Dining Room Fan
+            target_fan_speed: '{{ state_attr("fan.dining_room_fan", "percentage")
+              | int }}'
+    - conditions:
+      - condition: trigger
+        id: power_on
+      sequence:
+      - service: fan.set_percentage
+        data:
+          percentage: '{{ state_attr("binary_sensor.recommended_scene_in_dining_room",
+            "fan_speed") | int }}'
+        target:
+          entity_id: fan.dining_room_fan
+      - service: script.fan_set_state
+        data:
+          target_fan: Dining Room Fan
+          target_fan_speed: '{{ state_attr("fan.dining_room_fan", "percentage") |
+            int }}'
+          target_fan_power: true
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.dining_room_fan_power
+      - service: script.fan_set_state
+        data:
+          target_fan: Dining Room Fan
+          target_fan_power: false
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1642998485292'
+  alias: Eli's Room Fan Set State
+  description: Set Eli's Room Fan power and speed
+  trigger:
+  - platform: state
+    entity_id: fan.elis_room_fan
+    id: power_off
+    from: 'on'
+    to: 'off'
+  - platform: state
+    entity_id: fan.elis_room_fan
+    id: power_on
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: fan.elis_room_fan
+    attribute: percentage
+    id: speed
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: speed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: fan.elis_room_fan
+          attribute: percentage
+          below: '10'
+        then:
+        - service: fan.set_percentage
+          data:
+            percentage: '{{ state_attr("binary_sensor.recommended_scene_in_elis_room",
+              "fan_speed") | int }}'
+          target:
+            entity_id: fan.elis_room_fan
+        - service: fan.turn_off
+          data: {}
+          target:
+            entity_id: fan.elis_room_fan
+        - service: script.fan_set_state
+          data:
+            target_fan: Eli's Room Fan
+            target_fan_power: false
+        else:
+        - service: script.fan_set_state
+          data:
+            target_fan: Eli's Room Fan
+            target_fan_speed: '{{ state_attr("fan.elis_room_fan", "percentage") |
+              int }}'
+    - conditions:
+      - condition: trigger
+        id: power_on
+      sequence:
+      - service: fan.set_percentage
+        data:
+          percentage: '{{ state_attr("binary_sensor.recommended_scene_in_elis_room",
+            "fan_speed") | int }}'
+        target:
+          entity_id: fan.elis_room_fan
+      - service: script.fan_set_state
+        data:
+          target_fan: Eli's Room Fan
+          target_fan_speed: '{{ state_attr("fan.elis_room_fan", "percentage") | int
+            }}'
+          target_fan_power: true
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.elis_room_fan_power
+      - service: script.fan_set_state
+        data:
+          target_fan: Eli's Room Fan
+          target_fan_power: false
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1643000778073'
+  alias: Elena's Room Fan Set State
+  description: Set Elena's Room Fan power and speed
+  trigger:
+  - platform: state
+    entity_id: fan.elenas_room_fan
+    id: power_off
+    from: 'on'
+    to: 'off'
+  - platform: state
+    entity_id: fan.elenas_room_fan
+    id: power_on
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: fan.elenas_room_fan
+    id: speed
+    attribute: percentage
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: speed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: fan.elenas_room_fan
+          attribute: percentage
+          below: '10'
+        then:
+        - service: fan.set_percentage
+          data:
+            percentage: '{{ state_attr("binary_sensor.recommended_scene_in_elenas_room",
+              "fan_speed") | int }}'
+          target:
+            entity_id: fan.elenas_room_fan
+        - service: fan.turn_off
+          data: {}
+          target:
+            entity_id: fan.elenas_room_fan
+        - service: script.fan_set_state
+          data:
+            target_fan: Elena's Room Fan
+            target_fan_power: false
+        else:
+        - service: script.fan_set_state
+          data:
+            target_fan: Elena's Room Fan
+            target_fan_speed: '{{ state_attr("fan.elenas_room_fan", "percentage")
+              | int }}'
+    - conditions:
+      - condition: trigger
+        id: power_on
+      sequence:
+      - service: fan.set_percentage
+        data:
+          percentage: '{{ state_attr("binary_sensor.recommended_scene_in_elenas_room",
+            "fan_speed") | int }}'
+        target:
+          entity_id: fan.elenas_room_fan
+      - service: script.fan_set_state
+        data:
+          target_fan: Elena's Room Fan
+          target_fan_speed: '{{ state_attr("fan.elenas_room_fan", "percentage") |
+            int }}'
+          target_fan_power: true
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.elenas_room_fan_power
+      - service: script.fan_set_state
+        data:
+          target_fan: Elena's Room Fan
+          target_fan_power: false
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1643640720985'
+  alias: Dining Room Lights Controller 1
+  description: Control the Dining Room Lights
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 0df2cd0b0fa9112188778c56db622911
+      helper_last_controller_event: input_text.zz_dining_room_lights_controller_1_last_event
+      action_button_up_short:
+      - service: script.set_recommended_scene_in_dining_room
+        data: {}
+      - service: script.set_recommended_scene_in_living_room
+        data: {}
+      action_button_up_long:
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.dining_room_lights
+          - light.dining_room_pendant_light_entity
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+      action_button_down_short:
+      - service: script.turn_off_living_room
+        data: {}
+      - service: script.turn_off_dining_room
+        data: {}
+      action_button_down_long:
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.dining_room_lights
+          - light.dining_room_pendant_light_entity
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+      button_up_long_loop: true
+      button_up_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_down_long_max_loop_repeats: 50
+      action_button_down_double:
+      - service: script.turn_off_all
+        data: {}
+      button_down_double_press: true
+      helper_double_press_delay: 500
+- id: '1643641285314'
+  alias: Dining Room Lights Controller 2
+  description: Control the Dining Room Lights
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: cea5083fc6a1972a0b57048ffa03cfd8
+      helper_last_controller_event: input_text.zz_dining_room_lights_controller_2_last_event
+      action_button_up_short:
+      - choose:
+        - conditions:
+          - condition: time
+            after: input_datetime.wind_down
+            before: input_datetime.lights_auto_control_end
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id:
+              - light.dining_room_lights
+              - light.dining_room_pendant_light_entity
+            data:
+              brightness_pct: 5
+        default:
+        - service: light.turn_on
+          target:
+            entity_id:
+            - light.dining_room_lights
+            - light.dining_room_pendant_light_entity
+          data:
+            brightness_pct: 98
+      action_button_up_long:
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.dining_room_lights
+          - light.dining_room_pendant_light_entity
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+      action_button_down_short:
+      - service: light.turn_off
+        target:
+          entity_id:
+          - light.dining_room_lights
+          - light.dining_room_pendant_light_entity
+        data: {}
+      action_button_down_long:
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.dining_room_lights
+          - light.dining_room_pendant_light_entity
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+      button_up_long_max_loop_repeats: 50
+      button_down_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_up_long_loop: true
+- id: '1643641631013'
+  alias: Playroom Lights Controller
+  description: Control the Playroom Lights
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 867b78e6f7808ffcceb260be52b0c174
+      helper_last_controller_event: input_text.zz_playroom_lights_controller_last_event
+      action_button_up_short:
+      - choose:
+        - conditions:
+          - condition: time
+            before: input_datetime.lights_auto_control_end
+            after: input_datetime.wind_down
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id:
+              - light.playroom_lights
+              - light.yard_light_entity
+            data:
+              brightness_pct: 5
+        default:
+        - service: light.turn_on
+          target:
+            entity_id:
+            - light.playroom_lights
+            - light.yard_light_entity
+          data:
+            brightness_pct: 100
+      action_button_up_long:
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.playroom_lights
+          - light.yard_light_entity
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+      action_button_down_short:
+      - service: light.turn_off
+        target:
+          entity_id:
+          - light.playroom_lights
+          - light.yard_light_entity
+        data: {}
+      action_button_down_long:
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.playroom_lights
+          - light.yard_light_entity
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+      button_up_long_max_loop_repeats: 50
+      button_down_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_up_long_loop: true
+- id: '1643642352545'
+  alias: Playroom Motion
+  description: Control the Playroom Lights with Motion
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.playroom_motion
+    id: motion
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.playroom_motion
+    id: no_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: motion
+    then:
+    - condition: or
+      conditions:
+      - condition: numeric_state
+        entity_id: sensor.yard_lux
+        below: input_number.minimum_lux
+      - condition: state
+        entity_id: light.dining_room_lights
+        state: 'on'
+      - condition: state
+        entity_id: light.dining_room_pendant_light_entity
+        state: 'on'
+    - condition: state
+      entity_id: light.playroom_lights
+      state: 'off'
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 2
+    - if:
+      - condition: time
+        before: input_datetime.lights_auto_control_end
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
+        after: input_datetime.wind_down
+      then:
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.playroom_lights
+        data:
+          brightness_pct: 5
+      else:
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.playroom_lights
+        data:
+          brightness_pct: 100
+    else:
+    - service: light.turn_off
+      target:
+        entity_id:
+        - light.playroom_lights
+      data: {}
+  mode: single
+- id: '1643642651826'
+  alias: Hallway Motion
+  description: Control the Hallway Lights with motion
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.hallway_motion
+    id: motion
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.hallway_motion
+    id: no_motion
+    from: 'on'
+    to: 'off'
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: motion
+    - condition: or
+      conditions:
+      - condition: numeric_state
+        entity_id: sensor.hallway_lux
+        below: input_number.minimum_lux
+      - condition: state
+        entity_id: light.dining_room_lights
+        state: 'on'
+      - condition: state
+        entity_id: light.dining_room_pendant_light_entity
+        state: 'on'
+    then:
+    - choose:
+      - conditions:
+        - condition: time
+          after: input_datetime.elenas_wind_down
+          before: input_datetime.sleep_hours_start
+          weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - sat
+          - fri
+          - sun
+        sequence:
+        - service: light.turn_on
+          data:
+            brightness_pct: 5
+          target:
+            entity_id: light.hallway_bulb_1_entity
+      - conditions:
+        - condition: time
+          after: input_datetime.lights_auto_control_end
+          before: input_datetime.elenas_wind_down
+          weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sat
+          - sun
+        sequence:
+        - service: light.turn_on
+          data:
+            brightness_pct: 98
+          target:
+            entity_id: light.hallway_lights
+      default: []
+    else:
+    - service: light.turn_off
+      target:
+        entity_id: light.hallway_lights
+      data: {}
+  mode: single
+- id: '1643643181661'
+  alias: Dining Room AC Controller
+  description: Control the Dining Room AC
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 6e3bab771f635d9d237ea94a56bbf115
+      helper_last_controller_event: input_text.zz_dining_room_ac_controller_last_event
+      action_button_up_short:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.dining_room_ac
+      action_button_up_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.dining_room_ac
+        data:
+          temperature: "{% if state_attr('climate.dining_room_ac', 'temperature')
+            < 27 %}\n  {{ state_attr('climate.dining_room_ac', 'temperature') + 1
+            }}\n{% else %}\n  27\n{% endif %}\n"
+      action_button_down_short:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: climate.dining_room_ac
+      action_button_down_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.dining_room_ac
+        data:
+          temperature: "{% if state_attr('climate.dining_room_ac', 'temperature')
+            > 24 %}\n  {{ state_attr('climate.dining_room_ac', 'temperature') - 1
+            }}\n{% else %}\n  24\n{% endif %}\n"
+- id: '1643643631965'
+  alias: Dining Room Fan Controller
+  description: Control the Dining Room Fan
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 2c65aa31e07cc74bcef34dfa0d22d784
+      helper_last_controller_event: input_text.zz_dining_room_fan_controller_last_event
+      action_button_up_short:
+      - service: fan.turn_on
+        target:
+          entity_id: fan.dining_room_fan
+        data: {}
+      action_button_down_short:
+      - service: fan.turn_off
+        target:
+          entity_id: fan.dining_room_fan
+        data: {}
+      action_button_down_long:
+      - choose:
+        - conditions:
+          - condition: numeric_state
+            entity_id: fan.dining_room_fan
+            attribute: percentage
+            below: '20'
+          sequence:
+          - service: fan.turn_off
+            data: {}
+            target:
+              entity_id: fan.dining_room_fan
+        default:
+        - service: fan.decrease_speed
+          data: {}
+          target:
+            entity_id: fan.dining_room_fan
+      action_button_up_long:
+      - service: fan.increase_speed
+        target:
+          entity_id: fan.dining_room_fan
+        data: {}
+      action_button_up_double:
+      - service: fan.set_direction
+        data:
+          direction: reverse
+        target:
+          entity_id: fan.dining_room_fan
+      action_button_down_double:
+      - service: fan.set_direction
+        data:
+          direction: forward
+        target:
+          entity_id: fan.dining_room_fan
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
+- id: '1643644178195'
+  alias: Powder Room Lights Controller
+  description: Control the Powder Room Lights
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 8fd4f8715be89cc0f383c887c3fac892
+      helper_last_controller_event: input_text.zz_powder_room_lights_controller_last_event
+      action_button_up_short:
+      - choose:
+        - conditions:
+          - condition: time
+            after: input_datetime.wind_down
+            before: input_datetime.lights_auto_control_end
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.powder_room_pendant_light_entity
+            data:
+              brightness_pct: 5
+        default:
+        - service: light.turn_on
+          target:
+            entity_id: light.powder_room_pendant_light_entity
+          data:
+            brightness_pct: 100
+      action_button_up_long:
+      - service: light.turn_on
+        target:
+          entity_id: light.powder_room_pendant_light_entity
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+      action_button_down_short:
+      - service: light.turn_off
+        target:
+          entity_id: light.powder_room_pendant_light_entity
+        data: {}
+      action_button_down_long:
+      - service: light.turn_on
+        target:
+          entity_id: light.powder_room_pendant_light_entity
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+      button_up_long_loop: true
+      button_up_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_down_long_max_loop_repeats: 50
+- id: '1643644997118'
+  alias: Eli's Room Fan Controller
+  description: Control Eli's Room Fan
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: f70176647fea31ee95539e565e16e9be
+      helper_last_controller_event: input_text.zz_eli_s_room_fan_controller_last_event
+      action_button_up_short:
+      - service: fan.turn_on
+        target:
+          entity_id: fan.elis_room_fan
+        data: {}
+      action_button_up_long:
+      - service: fan.increase_speed
+        target:
+          entity_id: fan.elis_room_fan
+        data: {}
+      action_button_down_short:
+      - service: fan.turn_off
+        target:
+          entity_id: fan.elis_room_fan
+        data: {}
+      action_button_down_long:
+      - choose:
+        - conditions:
+          - condition: numeric_state
+            entity_id: fan.elis_room_fan
+            attribute: percentage
+            below: '20'
+          sequence:
+          - service: fan.turn_off
+            data: {}
+            target:
+              entity_id: fan.elis_room_fan
+        default:
+        - service: fan.decrease_speed
+          data: {}
+          target:
+            entity_id: fan.elis_room_fan
+      action_button_up_double:
+      - service: fan.set_direction
+        data:
+          direction: reverse
+        target:
+          entity_id: fan.elis_room_fan
+      action_button_down_double:
+      - service: fan.set_direction
+        data:
+          direction: forward
+        target:
+          entity_id: fan.elis_room_fan
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
+- id: '1643645339926'
+  alias: Eli's Room AC Controller
+  description: Control Eli's Room AC
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 729379c869fac5a454929998eba2f3d2
+      action_button_up_short:
+      - service: climate.turn_on
+        target:
+          entity_id: climate.elis_room_ac
+        data: {}
+      action_button_up_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.elis_room_ac
+        data:
+          temperature: "{% if state_attr('climate.elis_room_ac', 'temperature') <
+            27 %}\n  {{ state_attr('climate.elis_room_ac', 'temperature') + 1 }}\n{%
+            else %}\n  27\n{% endif %}\n"
+      action_button_down_short:
+      - service: climate.turn_off
+        target:
+          entity_id: climate.elis_room_ac
+        data: {}
+      action_button_down_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.elis_room_ac
+        data:
+          temperature: "{% if state_attr('climate.elis_room_ac', 'temperature') >
+            24 %}\n  {{ state_attr('climate.elis_room_ac', 'temperature') - 1 }}\n{%
+            else %}\n  24\n{% endif %}\n"
+      helper_last_controller_event: input_text.zz_eli_s_room_ac_controller_last_event
+      action_button_up_double:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.elis_room_ac_auto_control
+      action_button_down_double:
+      - service: automation.turn_off
+        data: {}
+        target:
+          entity_id: automation.elis_room_ac_auto_control
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
+- id: '1643645804516'
+  alias: Elena's Room Fan Controller
+  description: Control Elena's Room Fan
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: ea611248af61d7f5dc06e3a824288132
+      helper_last_controller_event: input_text.zz_elena_s_room_fan_controller_last_event
+      action_button_up_short:
+      - service: fan.turn_on
+        target:
+          entity_id: fan.elenas_room_fan
+        data: {}
+      action_button_up_long:
+      - service: fan.increase_speed
+        target:
+          entity_id: fan.elenas_room_fan
+        data: {}
+      action_button_down_short:
+      - service: fan.turn_off
+        target:
+          entity_id: fan.elenas_room_fan
+        data: {}
+      action_button_down_long:
+      - service: fan.decrease_speed
+        data: {}
+        target:
+          entity_id: fan.elenas_room_fan
+      action_button_up_double:
+      - service: fan.set_direction
+        data:
+          direction: reverse
+        target:
+          entity_id: fan.elenas_room_fan
+      action_button_down_double:
+      - service: fan.set_direction
+        data:
+          direction: forward
+        target:
+          entity_id: fan.elenas_room_fan
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
+- id: '1643646541355'
+  alias: Junior Bathroom Lights Controller
+  description: Control the Junior Bathroom Lights
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: f084f2e55c0800941585a50dd83e5f47
+      helper_last_controller_event: input_text.zz_junior_bathroom_lights_controller_last_event
+      action_button_up_short:
+      - choose:
+        - conditions:
+          - condition: time
+            after: input_datetime.elenas_bedtime
+            before: input_datetime.lights_auto_control_end
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.junior_bathroom_lights
+            data:
+              brightness_pct: 5
+        default:
+        - service: light.turn_on
+          target:
+            entity_id: light.junior_bathroom_lights
+          data:
+            brightness_pct: 100
+      action_button_up_long:
+      - service: light.turn_on
+        target:
+          entity_id: light.junior_bathroom_lights
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+      action_button_down_short:
+      - service: light.turn_off
+        target:
+          entity_id: light.junior_bathroom_lights
+        data: {}
+      action_button_down_long:
+      - service: light.turn_on
+        target:
+          entity_id: light.junior_bathroom_lights
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+      button_up_long_loop: true
+      button_up_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_down_long_max_loop_repeats: 50
+- id: '1643710058122'
+  alias: Elena's Room AC Auto Control
+  description: Automatically turn of or off Elena's Room AC to keep Elena's Room Temperature
+    within +0.7 and +0 degC of the AC target temperature
+  trigger:
+  - platform: state
+    entity_id: sensor.elenas_room_temperature
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.elenas_room_temperature
+        value_template: '{{ float(state.state) - state_attr(''climate.elenas_room_ac'',
+          ''temperature'') | int }}'
+        above: '0.7'
+      - condition: state
+        entity_id: climate.elenas_room_ac
+        state: 'off'
+      sequence:
+      - service: climate.turn_on
+        target:
+          entity_id: climate.elenas_room_ac
+        data: {}
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.elenas_room_temperature
+        below: '0'
+        value_template: '{{ float(state.state) - state_attr(''climate.elenas_room_ac'',
+          ''temperature'') | int }}'
+      - condition: state
+        entity_id: climate.elenas_room_ac
+        state: cool
+      sequence:
+      - service: climate.turn_off
+        target:
+          entity_id: climate.elenas_room_ac
+        data: {}
+    default: []
+  mode: single
+- id: '1643710293194'
+  alias: Eli's Room AC Auto Control
+  description: Automatically turn of or off Eli's Room AC to keep Eli's Room Temperature
+    within +1.2 and +0.2 degC of the AC target temperature
+  trigger:
+  - platform: state
+    entity_id: sensor.elis_room_temperature
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.elis_room_temperature
+        above: '1.2'
+        value_template: '{{ float(state.state) - state_attr("climate.elis_room_ac",
+          "temperature") | int }}'
+      - condition: state
+        entity_id: climate.elis_room_ac
+        state: 'off'
+      sequence:
+      - service: climate.turn_on
+        target:
+          entity_id: climate.elis_room_ac
+        data: {}
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.elis_room_temperature
+        below: '0.2'
+        value_template: '{{ float(state.state) - state_attr("climate.elis_room_ac",
+          "temperature") | int }}'
+      - condition: state
+        entity_id: climate.elis_room_ac
+        state: cool
+      sequence:
+      - service: climate.turn_off
+        target:
+          entity_id: climate.elis_room_ac
+        data: {}
+    default: []
+  mode: single
+- id: '1643721003621'
+  alias: AC Auto Control at Night
+  description: Turn on AC Auto Control at night in rooms where fans are on
+  trigger:
+  - platform: time
+    id: start
+    at: input_datetime.ac_auto_control_start
+  - platform: time
+    at: input_datetime.ac_auto_control_end
+    id: end
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: end
+      sequence:
+      - service: automation.turn_off
+        target:
+          entity_id:
+          - automation.elenas_room_ac_auto_control
+          - automation.elis_room_ac_auto_control
+        data: {}
+      - service: climate.turn_off
+        target:
+          entity_id:
+          - climate.elenas_room_ac
+          - climate.elis_room_ac
+        data: {}
+    - conditions:
+      - condition: trigger
+        id: start
+      sequence:
+      - choose:
+        - conditions:
+          - condition: or
+            conditions:
+            - condition: state
+              entity_id: fan.elenas_room_fan
+              state: 'on'
+            - condition: state
+              entity_id: climate.elenas_room_ac
+              state: cool
+          sequence:
+          - service: automation.turn_on
+            target:
+              entity_id: automation.elenas_room_ac_auto_control
+            data: {}
+        default: []
+      - choose:
+        - conditions:
+          - condition: or
+            conditions:
+            - condition: state
+              entity_id: fan.elis_room_fan
+              state: 'on'
+            - condition: state
+              entity_id: climate.elis_room_ac
+              state: cool
+          sequence:
+          - service: automation.turn_on
+            target:
+              entity_id: automation.elis_room_ac_auto_control
+            data: {}
+        default: []
+    default: []
+    enabled: false
+  - if:
+    - condition: trigger
+      id: start
+    then:
+    - if:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: fan.elenas_room_fan
+          state: 'on'
+        - condition: state
+          entity_id: climate.elenas_room_ac
+          state: cool
+      then:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.elenas_room_ac_auto_control
+    - if:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: fan.elis_room_fan
+          state: 'on'
+        - condition: state
+          entity_id: climate.elis_room_ac
+          state: cool
+      then:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.elis_room_ac_auto_control
+    - if:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: fan.parents_room_fan
+          state: 'on'
+        - condition: state
+          entity_id: climate.parents_room_ac
+          state: cool
+      then:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.parents_room_ac_auto_control
+    else:
+    - service: automation.turn_off
+      data: {}
+      target:
+        entity_id:
+        - automation.elenas_room_ac_auto_control
+        - automation.elis_room_ac_auto_control
+        - automation.parents_room_ac_auto_control
+    - service: climate.turn_off
+      data: {}
+      target:
+        entity_id:
+        - climate.elenas_room_ac
+        - climate.elis_room_ac
+        - climate.parents_room_ac
+  mode: single
+- id: '1643973685368'
+  alias: Notify When Vacuum Undocked
+  description: Send a persistent notification if the vacuum is undocked and idle and
+    dismiss it when it stops being idle
+  trigger:
+  - platform: state
+    entity_id: vacuum.pikachu
+    id: idle
+    to: idle
+  - platform: state
+    entity_id: vacuum.pikachu
+    id: not_idle
+    from: idle
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: idle
+    then:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: Vacuum not docked properly
+        title: Please manually dock vacuum
+        data:
+          persistent: true
+          tag: vacuum_undocked
+    - service: notify.mobile_app_grace
+      data:
+        message: Vacuum not docked properly
+        title: Please manually dock vacuum
+        data:
+          tag: vacuum_undocked
+    else:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: clear_notification
+        data:
+          tag: vacuum_undocked
+    - service: notify.mobile_app_grace
+      data:
+        message: clear_notification
+        data:
+          tag: vacuum_undocked
+  mode: single
+- id: '1643979293415'
+  alias: Notify When AC On With Doors Open
+  description: Send a persistent notification when AC is on with doors open, and clear
+    notification when no AC is on with doors open
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.ac_on_with_doors_open
+    id: notify
+    from: 'off'
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  - platform: state
+    entity_id: binary_sensor.ac_on_with_doors_open
+    id: clear
+    from: 'on'
+    to: 'off'
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: notify
+    then:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: AC on with doors and windows open
+        title: Please close the doors and windows
+        data:
+          persistent: true
+          tag: doors_open
+    - service: notify.mobile_app_grace
+      data:
+        message: AC on with doors and windows open
+        title: Please close the doors and windows
+        data:
+          tag: doors_open
+    else:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: clear_notification
+        data:
+          tag: doors_open
+    - service: notify.mobile_app_grace
+      data:
+        message: clear_notification
+        data:
+          tag: doors_open
+  mode: single
+- id: '1643979577174'
+  alias: Notify When Wash Completed
+  description: Send a persistent notification when washer is finished, and clear notification
+    when washer is unloaded
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.washer_load_clean
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: input_boolean.washer_load_clean
+      state: 'on'
+    then:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        title: Please unload laundry
+        message: Wash completed at {{ (now() | string)[11:16] }}
+        data:
+          persistent: true
+          tag: washer_load_clean
+    - service: notify.mobile_app_grace
+      data:
+        title: Please unload laundry
+        message: Wash completed at {{ (now() | string)[11:16] }}
+        data:
+          tag: washer_load_clean
+    else:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: clear_notification
+        data:
+          tag: washer_load_clean
+    - service: notify.mobile_app_grace
+      data:
+        message: clear_notification
+        data:
+          tag: washer_load_clean
+  mode: single
+- id: '1644145378905'
+  alias: Powder Room Motion
+  description: Control the Powder Room Lights with motion
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.powder_room_motion
+    id: motion
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.powder_room_motion
+    id: no_motion
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: motion
+    then:
+    - if:
+      - condition: time
+        before: input_datetime.lights_auto_control_end
+        after: input_datetime.elenas_wind_down
+      then:
+      - condition: state
+        entity_id: light.powder_room_pendant_light_entity
+        state: 'off'
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+      - service: light.turn_on
+        target:
+          entity_id: light.powder_room_pendant_light_entity
+        data:
+          brightness_pct: 5
+      else:
+      - condition: state
+        entity_id: light.powder_room_pendant_light_entity
+        state: 'off'
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+      - service: light.turn_on
+        target:
+          entity_id: light.powder_room_pendant_light_entity
+        data:
+          brightness_pct: 100
+    else:
+    - service: light.turn_off
+      target:
+        entity_id: light.powder_room_pendant_light_entity
+      data: {}
+  mode: single
+- id: '1648699866610'
+  alias: Notify When Vacuum Running with Bathroom Doors Open
+  description: Send a persistent notification if the vacuum is cleaning when bathroom
+    doors are open, pause the vacuum after 1min if doors are still open, and dismiss
+    the notification when vacuum stops cleaning or bathroom doors are closed
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.vacuum_running_with_bathroom_doors_open
+    id: error_state
+    to: 'on'
+  - platform: state
+    entity_id: binary_sensor.vacuum_running_with_bathroom_doors_open
+    id: error_cleared
+    to: 'off'
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: error_cleared
+    then:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: clear_notification
+        data:
+          tag: vacuum_running_with_bathroom_doors_open
+    - service: notify.mobile_app_grace
+      data:
+        message: clear_notification
+        data:
+          tag: vacuum_running_with_bathroom_doors_open
+    else:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: Otherwise, vacuum will pause at {{ ((now() + timedelta(minutes =
+          1)).time() | string)[:5] }}.
+        title: Please close bathroom doors
+        data:
+          persistent: true
+          tag: vacuum_running_with_bathroom_doors_open
+    - service: notify.mobile_app_grace
+      data:
+        message: Otherwise, vacuum will pause at {{ ((now() + timedelta(minutes =
+          1)).time() | string)[:5] }}.
+        title: Please close bathroom doors
+        data:
+          tag: vacuum_running_with_bathroom_doors_open
+    - delay:
+        hours: 0
+        minutes: 1
+        seconds: 0
+        milliseconds: 0
+    - condition: state
+      entity_id: binary_sensor.vacuum_running_with_bathroom_doors_open
+      state: 'on'
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 0
+    - service: vacuum.pause
+      data: {}
+      target:
+        entity_id: vacuum.pikachu
+  mode: parallel
+- id: '1648712039256'
+  alias: Water Heating
+  description: Track the heating status of the water in the heater
+  trigger:
+  - platform: time_pattern
+    minutes: /1
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: switch.water_heater
+      state: 'on'
+    then:
+    - if:
+      - condition: numeric_state
+        entity_id: input_number.water_heating
+        above: '100'
+        value_template: '{{ state.state | float + 100 / states(''input_number.hot_water_preheat'')
+          | float }}'
+      then:
+      - service: input_number.set_value
+        data:
+          value: 100
+        target:
+          entity_id: input_number.water_heating
+      else:
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.water_heating
+          value: '{{ states(''input_number.water_heating'') | int + 100 / states(''input_number.hot_water_preheat'')
+            | int }}'
+    else:
+    - if:
+      - condition: numeric_state
+        entity_id: input_number.water_heating
+        value_template: '{{ state.state | float - 100 / 120 }}'
+        below: '0'
+      then:
+      - service: input_number.set_value
+        data:
+          value: 0
+        target:
+          entity_id: input_number.water_heating
+      else:
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.water_heating
+          value: '{{ states(''input_number.water_heating'') | float - 100 / 120 }}'
+  mode: single
+- id: '1648784734226'
+  alias: Notify When Dishwasher Cooldown Completed
+  description: Send a persistent notification when dishwasher load is clean, and clear
+    notification when dishwasher is unloaded
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.dishwasher_load_clean
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: input_boolean.dishwasher_load_clean
+      state: 'on'
+    then:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: Dishwasher cooled down at {{ (now().time()| string)[:5] }}.
+        title: Please open dishwasher
+        data:
+          persistent: true
+          tag: dishwasher_load_clean
+    - service: notify.mobile_app_grace
+      data:
+        title: Please open dishwasher
+        message: Dishwasher cooled down at {{ (now().time()| string)[:5] }}.
+        data:
+          tag: dishwasher_load_clean
+    else:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: clear_notification
+        data:
+          tag: dishwasher_load_clean
+    - service: notify.mobile_app_grace
+      data:
+        message: clear_notification
+        data:
+          tag: dishwasher_load_clean
+  mode: single
+- id: '1648798677481'
+  alias: Coming Home
+  description: Set light, fan and AC levels in the Dining Room when coming home
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.main_door
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.all_off
+    state: 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  action:
+  - service: script.set_recommended_scene_in_dining_room
+    data: {}
+  - service: script.set_recommended_scene_in_living_room
+    data: {}
+  mode: single
+- id: '1653105007378'
+  alias: Notify When Raining With Windows Open
+  description: Send a persistent notification if it is raining heavily with windows
+    open, and dismiss it if the windows are closed or it is not raining heavily anymore
+  trigger:
+  - platform: state
+    entity_id: sensor.raining_with_windows_open
+    to:
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: sensor.raining_with_windows_open
+      state: alert
+    then:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        title: Please close windows
+        message: Windows open in heavy rain
+        data:
+          persistent: true
+          tag: windows_open_raining
+    - service: notify.mobile_app_grace
+      data:
+        message: Windows open in heavy rain
+        title: Please close windows
+        data:
+          tag: windows_open_raining
+    else:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: clear_notification
+        data:
+          tag: windows_open_raining
+    - service: notify.mobile_app_grace
+      data:
+        message: clear_notification
+        data:
+          tag: windows_open_raining
+  mode: single
+- id: '1653280933582'
+  alias: Dishwasher Set State
+  description: Set the state of the dishwasher based on its power consumption
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.dishwasher_watts
+    above: '4'
+    id: washing
+  - platform: numeric_state
+    entity_id: sensor.dishwasher_watts
+    above: '0'
+    below: '5'
+    id: idle
+  - platform: state
+    entity_id:
+    - sensor.dishwasher_watts
+    to: '0'
+    id: 'off'
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: washing
+      sequence:
+      - service: input_select.select_option
+        data:
+          option: Washing
+        target:
+          entity_id: input_select.dishwasher_status
+    - conditions:
+      - condition: trigger
+        id: idle
+      sequence:
+      - if:
+        - condition: state
+          entity_id: input_select.dishwasher_status
+          state: Washing
+        then:
+        - service: input_select.select_option
+          data:
+            option: Cooling
+          target:
+            entity_id: input_select.dishwasher_status
+        else:
+        - service: input_select.select_option
+          data:
+            option: Standby
+          target:
+            entity_id: input_select.dishwasher_status
+    default:
+    - service: input_select.select_option
+      data:
+        option: 'Off'
+      target:
+        entity_id: input_select.dishwasher_status
+  mode: queued
+- id: '1654959141053'
+  alias: Water Heater Motion
+  description: Turn on water heater if motion detected in Junior Shower
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.junior_shower_motion
+    id: motion
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.junior_shower_motion
+    id: no_motion
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: motion
+    then:
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.water_heater
+    else:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.water_heater
+  mode: single
+- id: '1654959587265'
+  alias: Junior Bathroom Motion
+  description: Control the Junior Bathroom lights with motion
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.junior_bathroom_motion
+    - binary_sensor.junior_shower_motion
+    id: motion
+    to: 'on'
+  - platform: state
+    id: no_motion
+    not_to: 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    entity_id:
+    - binary_sensor.junior_bathroom_motion
+    - binary_sensor.junior_shower_motion
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: motion
+    then:
+    - if:
+      - condition: time
+        after: input_datetime.elenas_bedtime
+        before: input_datetime.lights_auto_control_end
+      then:
+      - condition: state
+        entity_id: light.junior_bathroom_lights
+        state: 'off'
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+      - service: light.turn_on
+        target:
+          entity_id: light.junior_bathroom_lights
+        data:
+          brightness_pct: 5
+      else:
+      - condition: state
+        entity_id: light.junior_bathroom_lights
+        state: 'off'
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+      - service: light.turn_on
+        target:
+          entity_id: light.junior_bathroom_lights
+        data:
+          brightness_pct: 100
+    else:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.junior_bathroom_motion
+        state:
+        - 'off'
+        - unavailable
+        - unknown
+        for:
+          hours: 0
+          minutes: 5
+          seconds: 0
+      - condition: state
+        entity_id: binary_sensor.junior_shower_motion
+        state:
+        - 'off'
+        - unavailable
+        - unknown
+        for:
+          hours: 0
+          minutes: 5
+          seconds: 0
+      - condition: state
+        entity_id: binary_sensor.junior_bathroom_door
+        state:
+        - 'on'
+        - unavailable
+        - unknown
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.junior_bathroom_lights
+  mode: single
+- id: '1659241397680'
+  alias: Living Room Fan Set State
+  description: Set Living Room Fan power and speed
+  trigger:
+  - platform: state
+    entity_id:
+    - fan.living_room_fan
+    id: power_off
+    from: 'on'
+    to: 'off'
+  - platform: state
+    entity_id:
+    - fan.living_room_fan
+    id: power_on
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id:
+    - fan.living_room_fan
+    id: speed
+    attribute: percentage
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: speed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: fan.living_room_fan
+          attribute: percentage
+          below: '10'
+        then:
+        - service: fan.set_percentage
+          data:
+            percentage: '{{ state_attr("binary_sensor.recommended_scene_in_living_room",
+              "fan_speed") | int }}'
+          target:
+            entity_id: fan.living_room_fan
+        - service: fan.turn_off
+          data: {}
+          target:
+            entity_id: fan.living_room_fan
+        - service: script.fan_set_state
+          data:
+            target_fan: Living Room Fan
+            target_fan_power: false
+        else:
+        - service: script.fan_set_state
+          data:
+            target_fan: Living Room Fan
+            target_fan_speed: '{{ state_attr("fan.living_room_fan", "percentage")
+              | int }}'
+    - conditions:
+      - condition: trigger
+        id: power_on
+      sequence:
+      - service: fan.set_percentage
+        data:
+          percentage: '{{ state_attr("binary_sensor.recommended_scene_in_living_room",
+            "fan_speed") | int }}'
+        target:
+          entity_id: fan.living_room_fan
+      - service: script.fan_set_state
+        data:
+          target_fan: Living Room Fan
+          target_fan_speed: '{{ state_attr("fan.living_room_fan", "percentage") |
+            int }}'
+          target_fan_power: true
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.living_room_fan_power
+      - service: script.fan_set_state
+        data:
+          target_fan: Living Room Fan
+          target_fan_power: false
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1659241792895'
+  alias: Study Room Fan Set State
+  description: Set Study Room Fan power and speed
+  trigger:
+  - platform: state
+    entity_id:
+    - fan.study_room_fan
+    id: power_off
+    from: 'on'
+    to: 'off'
+  - platform: state
+    entity_id:
+    - fan.study_room_fan
+    id: power_on
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id:
+    - fan.study_room_fan
+    id: speed
+    attribute: percentage
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: speed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: fan.study_room_fan
+          attribute: percentage
+          below: '10'
+        then:
+        - service: fan.set_percentage
+          data:
+            percentage: '{{ state_attr("binary_sensor.recommended_scene_in_study_room",
+              "fan_speed") | int }}'
+          target:
+            entity_id: fan.study_room_fan
+        - service: fan.turn_off
+          data: {}
+          target:
+            entity_id: fan.study_room_fan
+        - service: script.fan_set_state
+          data:
+            target_fan: Study Room Fan
+            target_fan_power: false
+        else:
+        - service: script.fan_set_state
+          data:
+            target_fan: Study Room Fan
+            target_fan_speed: '{{ state_attr("fan.study_room_fan", "percentage") |
+              int }}'
+    - conditions:
+      - condition: trigger
+        id: power_on
+      sequence:
+      - service: fan.set_percentage
+        data:
+          percentage: '{{ state_attr("binary_sensor.recommended_scene_in_study_room",
+            "fan_speed") | int }}'
+        target:
+          entity_id: fan.study_room_fan
+      - service: script.fan_set_state
+        data:
+          target_fan: Study Room Fan
+          target_fan_speed: '{{ state_attr("fan.study_room_fan", "percentage") | int
+            }}'
+          target_fan_power: true
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.study_room_fan_power
+      - service: script.fan_set_state
+        data:
+          target_fan: Study Room Fan
+          target_fan_power: false
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1659242228486'
+  alias: Parents' Room Fan Set State
+  description: Set Parents' Room Fan power and speed
+  trigger:
+  - platform: state
+    entity_id:
+    - fan.parents_room_fan
+    id: power_off
+    from: 'on'
+    to: 'off'
+  - platform: state
+    entity_id:
+    - fan.parents_room_fan
+    id: power_on
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id:
+    - fan.parents_room_fan
+    id: speed
+    attribute: percentage
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: speed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: fan.parents_room_fan
+          attribute: percentage
+          below: '10'
+        then:
+        - service: fan.set_percentage
+          data:
+            percentage: '{{ state_attr("binary_sensor.recommended_scene_in_parents_room",
+              "fan_speed") | int }}'
+          target:
+            entity_id: fan.parents_room_fan
+        - service: fan.turn_off
+          data: {}
+          target:
+            entity_id: fan.parents_room_fan
+        - service: script.fan_set_state
+          data:
+            target_fan: Parents' Room Fan
+            target_fan_power: false
+        else:
+        - service: script.fan_set_state
+          data:
+            target_fan: Parents' Room Fan
+            target_fan_speed: '{{ state_attr("fan.parents_room_fan", "percentage")
+              | int }}'
+    - conditions:
+      - condition: trigger
+        id: power_on
+      sequence:
+      - service: fan.set_percentage
+        data:
+          percentage: '{{ state_attr("binary_sensor.recommended_scene_in_parents_room",
+            "fan_speed") | int }}'
+        target:
+          entity_id: fan.parents_room_fan
+      - service: script.fan_set_state
+        data:
+          target_fan: Parents' Room Fan
+          target_fan_speed: '{{ state_attr("fan.parents_room_fan", "percentage") |
+            int }}'
+          target_fan_power: true
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.parents_room_fan_power
+      - service: script.fan_set_state
+        data:
+          target_fan: Parents' Room Fan
+          target_fan_power: false
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1659246959168'
+  alias: Living Room AC Set State
+  description: Set the Living Room AC power and temperature
+  trigger:
+  - platform: state
+    entity_id:
+    - climate.living_room_ac
+    id: cooling
+    to: cool
+  - platform: state
+    entity_id:
+    - climate.living_room_ac
+    id: power_off
+    from: cool
+  - platform: state
+    entity_id:
+    - climate.living_room_ac
+    id: temperature_changed
+    attribute: temperature
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: cooling
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Living Room AC
+          target_ac_temp: '{{ state_attr("climate.living_room_ac", "temperature")
+            }}'
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Living Room AC
+          target_ac_power: false
+    - conditions:
+      - condition: trigger
+        id: temperature_changed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: climate.living_room_ac
+          attribute: temperature
+          below: '24'
+        then:
+        - service: climate.set_temperature
+          data:
+            temperature: 27
+          target:
+            entity_id: climate.living_room_ac
+        - service: climate.turn_off
+          data: {}
+          target:
+            entity_id: climate.living_room_ac
+        - service: script.ac_set_state
+          data:
+            target_ac: Living Room AC
+            target_ac_power: false
+        else:
+        - service: climate.turn_on
+          data: {}
+          target:
+            entity_id: climate.living_room_ac
+        - service: script.ac_set_state
+          data:
+            target_ac: Living Room AC
+            target_ac_temp: '{{ state_attr("climate.living_room_ac", "temperature")
+              }}'
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1659247242286'
+  alias: Study Room AC Set State
+  description: Set the Study Room AC power and temperature
+  trigger:
+  - platform: state
+    entity_id:
+    - climate.study_room_ac
+    id: cooling
+    to: cool
+  - platform: state
+    entity_id:
+    - climate.study_room_ac
+    id: power_off
+    from: cool
+  - platform: state
+    entity_id:
+    - climate.study_room_ac
+    id: temperature_changed
+    attribute: temperature
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: cooling
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Study Room AC
+          target_ac_temp: '{{ state_attr("climate.study_room_ac", "temperature") }}'
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Study Room AC
+          target_ac_power: false
+    - conditions:
+      - condition: trigger
+        id: temperature_changed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: climate.study_room_ac
+          attribute: temperature
+          below: '24'
+        then:
+        - service: climate.set_temperature
+          data:
+            temperature: 27
+          target:
+            entity_id: climate.study_room_ac
+        - service: climate.turn_off
+          data: {}
+          target:
+            entity_id: climate.study_room_ac
+        - service: script.ac_set_state
+          data:
+            target_ac: Study Room AC
+            target_ac_power: false
+        else:
+        - service: climate.turn_on
+          data: {}
+          target:
+            entity_id: climate.study_room_ac
+        - service: script.ac_set_state
+          data:
+            target_ac: Study Room AC
+            target_ac_temp: '{{ state_attr("climate.study_room_ac", "temperature")
+              }}'
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1659247612519'
+  alias: Parents' Room AC Set State
+  description: Set the Parents' Room AC power and temperature
+  trigger:
+  - platform: state
+    entity_id:
+    - climate.parents_room_ac
+    id: cooling
+    to: cool
+  - platform: state
+    entity_id:
+    - climate.parents_room_ac
+    id: power_off
+    from: cool
+  - platform: state
+    entity_id:
+    - climate.parents_room_ac
+    id: temperature_changed
+    attribute: temperature
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: cooling
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Parents' Room AC
+          target_ac_temp: '{{ state_attr("climate.parents_room_ac", "temperature")
+            }}'
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: script.ac_set_state
+        data:
+          target_ac: Parents' Room AC
+          target_ac_power: false
+    - conditions:
+      - condition: trigger
+        id: temperature_changed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: climate.parents_room_ac
+          attribute: temperature
+          below: '24'
+        then:
+        - service: climate.set_temperature
+          data:
+            temperature: 27
+          target:
+            entity_id: climate.parents_room_ac
+        - service: climate.turn_off
+          data: {}
+          target:
+            entity_id: climate.parents_room_ac
+        - service: script.ac_set_state
+          data:
+            target_ac: Parents' Room AC
+            target_ac_power: false
+        else:
+        - service: climate.turn_on
+          data: {}
+          target:
+            entity_id: climate.parents_room_ac
+        - service: script.ac_set_state
+          data:
+            target_ac: Parents' Room AC
+            target_ac_temp: '{{ state_attr("climate.parents_room_ac", "temperature")
+              }}'
+    default: []
+  mode: single
+  max_exceeded: silent
+- id: '1659247907240'
+  alias: Parents' Room AC Auto Control
+  description: Automatically turn of or off Parents' Room AC to keep Parents' Room
+    Temperature within +1.2 and +0.2 degC of the AC target temperature
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.parents_room_temperature
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.parents_room_temperature
+        above: '1.2'
+        value_template: '{{ float(state.state) - state_attr("climate.parents_room_ac",
+          "temperature") | int }}'
+      - condition: state
+        entity_id: climate.parents_room_ac
+        state: 'off'
+      sequence:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.parents_room_ac
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.parents_room_temperature
+        below: '0.2'
+        value_template: '{{ float(state.state) - state_attr("climate.parents_room_ac",
+          "temperature") | int }}'
+      - condition: state
+        entity_id: climate.parents_room_ac
+        state: cool
+      sequence:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: climate.parents_room_ac
+    default: []
+  mode: single
+- id: '1659250104695'
+  alias: Living Room AC Controller
+  description: Control the Living Room AC
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 4bce962ebfba9e2195a00baa98aeec85
+      helper_last_controller_event: input_text.zz_living_room_ac_controller_last_event
+      action_button_up_short:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.living_room_ac
+      action_button_up_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.living_room_ac
+        data:
+          temperature: "{% if state_attr('climate.living_room_ac', 'temperature')
+            < 27 %}\n  {{ state_attr('climate.living_room_ac', 'temperature') + 1
+            }}\n{% else %}\n  27\n{% endif %}\n"
+      action_button_down_short:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: climate.living_room_ac
+      action_button_down_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.living_room_ac
+        data:
+          temperature: "{% if state_attr('climate.living_room_ac', 'temperature')
+            > 24 %}\n  {{ state_attr('climate.living_room_ac', 'temperature') - 1
+            }}\n{% else %}\n  24\n{% endif %}\n"
+- id: '1659250198010'
+  alias: Living Room Fan Controller
+  description: Control the Living Room Fan
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 8d71b8333a86c8df2acbb7522620127c
+      helper_last_controller_event: input_text.zz_living_room_fan_controller_last_event
+      action_button_up_short:
+      - service: fan.turn_on
+        data: {}
+        target:
+          entity_id: fan.living_room_fan
+      action_button_down_short:
+      - service: fan.turn_off
+        data: {}
+        target:
+          entity_id: fan.living_room_fan
+      action_button_down_long:
+      - choose:
+        - conditions:
+          - condition: numeric_state
+            entity_id: fan.living_room_fan
+            attribute: percentage
+            below: '20'
+          sequence:
+          - service: fan.turn_off
+            data: {}
+            target:
+              entity_id: fan.living_room_fan
+        default:
+        - service: fan.decrease_speed
+          data: {}
+          target:
+            entity_id: fan.living_room_fan
+      action_button_up_long:
+      - service: fan.increase_speed
+        data: {}
+        target:
+          entity_id: fan.living_room_fan
+      action_button_up_double:
+      - service: fan.set_direction
+        data:
+          direction: reverse
+        target:
+          entity_id: fan.living_room_fan
+      action_button_down_double:
+      - service: fan.set_direction
+        data:
+          direction: forward
+        target:
+          entity_id: fan.living_room_fan
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
+- id: '1659250302488'
+  alias: Living Room Lights Controller
+  description: Control the Living Room Lights
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: c5d9eb9905ea6ac1a19d209a6dd0965c
+      helper_last_controller_event: input_text.zz_living_room_lights_controller_last_event
+      action_button_up_short:
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        target:
+          entity_id:
+          - light.living_room_lights
+          - light.living_room_pendant_light_entity
+      action_button_up_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id:
+          - light.living_room_lights
+          - light.living_room_pendant_light_entity
+      action_button_down_short:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+          - light.living_room_lights
+          - light.living_room_pendant_light_entity
+      action_button_down_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+        target:
+          entity_id:
+          - light.living_room_lights
+          - light.living_room_pendant_light_entity
+      button_up_long_loop: true
+      button_up_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_down_long_max_loop_repeats: 50
+      action_button_down_double: []
+      button_down_double_press: true
+      helper_double_press_delay: 1000
+- id: '1659251600711'
+  alias: Study Room AC Controller
+  description: Control the Study Room AC
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 0cc8a08d95a93a8b8053d4fa4abd5233
+      helper_last_controller_event: input_text.zz_study_room_ac_controller_last_event
+      action_button_up_short:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.study_room_ac
+      action_button_up_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.study_room_ac
+        data:
+          temperature: "{% if state_attr('climate.study_room_ac', 'temperature') <
+            27 %}\n  {{ state_attr('climate.study_room_ac', 'temperature') + 1 }}\n{%
+            else %}\n  27\n{% endif %}\n"
+      action_button_down_short:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: climate.study_room_ac
+      action_button_down_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.study_room_ac
+        data:
+          temperature: "{% if state_attr('climate.study_room_ac', 'temperature') >
+            24 %}\n  {{ state_attr('climate.study_room_ac', 'temperature') - 1 }}\n{%
+            else %}\n  24\n{% endif %}\n"
+      action_button_up_release: []
+      action_button_down_release: []
+- id: '1659251701760'
+  alias: Study Room Fan Controller
+  description: Control the Study Room Fan
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 93ebf518c9fb9021ea174404b4fef28b
+      helper_last_controller_event: input_text.zz_study_room_fan_controller_last_event
+      action_button_up_short:
+      - service: fan.turn_on
+        data: {}
+        target:
+          entity_id: fan.study_room_fan
+      action_button_down_short:
+      - service: fan.turn_off
+        data: {}
+        target:
+          entity_id: fan.study_room_fan
+      action_button_down_long:
+      - choose:
+        - conditions:
+          - condition: numeric_state
+            entity_id: fan.study_room_fan
+            attribute: percentage
+            below: '20'
+          sequence:
+          - service: fan.turn_off
+            data: {}
+            target:
+              entity_id: fan.study_room_fan
+        default:
+        - service: fan.decrease_speed
+          data: {}
+          target:
+            entity_id: fan.study_room_fan
+      action_button_up_long:
+      - service: fan.increase_speed
+        data: {}
+        target:
+          entity_id: fan.study_room_fan
+      action_button_up_double:
+      - service: fan.set_direction
+        data:
+          direction: reverse
+        target:
+          entity_id: fan.study_room_fan
+      action_button_down_double:
+      - service: fan.set_direction
+        data:
+          direction: forward
+        target:
+          entity_id: fan.study_room_fan
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
+- id: '1659251781155'
+  alias: Study Room Lights Controller
+  description: Control the Study Room Lights
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: d6563b3c30e24806da5ef8823f3fcd03
+      helper_last_controller_event: input_text.zz_study_room_lights_controller_last_event
+      action_button_up_short:
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        target:
+          entity_id: light.study_room_lights
+      action_button_up_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id: light.study_room_lights
+      action_button_down_short:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.study_room_lights
+      action_button_down_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+        target:
+          entity_id: light.study_room_lights
+      button_up_long_loop: true
+      button_up_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_down_long_max_loop_repeats: 50
+      action_button_down_double: []
+      button_down_double_press: true
+      helper_double_press_delay: 1000
+- id: '1659255925964'
+  alias: Parents' Room AC Controller
+  description: Control the Parents' Room AC
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 11472f5eb794fb176a43d64968632bd2
+      helper_last_controller_event: input_text.zz_parents_room_ac_controller_last_event
+      action_button_up_short:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.parents_room_ac
+      action_button_up_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.parents_room_ac
+        data:
+          temperature: "{% if state_attr('climate.parents_room_ac', 'temperature')
+            < 27 %}\n  {{ state_attr('climate.parents_room_ac', 'temperature') + 1
+            }}\n{% else %}\n  27\n{% endif %}\n"
+      action_button_down_short:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: climate.parents_room_ac
+      action_button_down_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.parents_room_ac
+        data:
+          temperature: "{% if state_attr('climate.parents_room_ac', 'temperature')
+            > 24 %}\n  {{ state_attr('climate.parents_room_ac', 'temperature') - 1
+            }}\n{% else %}\n  24\n{% endif %}\n"
+      action_button_up_double:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.parents_room_ac_auto_control
+      action_button_down_double:
+      - service: automation.turn_off
+        data: {}
+        target:
+          entity_id: automation.parents_room_ac_auto_control
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
+- id: '1659255996501'
+  alias: Parents' Room Fan Controller
+  description: Control the Parents' Room Fan
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: dd5c0569a797b382b5f99e3db5c5ded2
+      helper_last_controller_event: input_text.zz_parents_room_fan_controller_last_event
+      action_button_up_short:
+      - service: fan.turn_on
+        data: {}
+        target:
+          entity_id: fan.parents_room_fan
+      action_button_down_short:
+      - service: fan.turn_off
+        data: {}
+        target:
+          entity_id: fan.parents_room_fan
+      action_button_down_long:
+      - choose:
+        - conditions:
+          - condition: numeric_state
+            entity_id: fan.parents_room_fan
+            attribute: percentage
+            below: '20'
+          sequence:
+          - service: fan.turn_off
+            data: {}
+            target:
+              entity_id: fan.parents_room_fan
+        default:
+        - service: fan.decrease_speed
+          data: {}
+          target:
+            entity_id: fan.parents_room_fan
+      action_button_up_long:
+      - service: fan.increase_speed
+        data: {}
+        target:
+          entity_id: fan.parents_room_fan
+      action_button_up_double:
+      - service: fan.set_direction
+        data:
+          direction: reverse
+        target:
+          entity_id: fan.parents_room_fan
+      action_button_down_double:
+      - service: fan.set_direction
+        data:
+          direction: forward
+        target:
+          entity_id: fan.parents_room_fan
+      helper_double_press_delay: 700
+      button_up_double_press: true
+      button_down_double_press: true
+- id: '1659256072000'
+  alias: Parents' Room Lights Controller
+  description: Control the Parents' Room Lights
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 2d7882ce6b51a89dbc5b012417d00c40
+      helper_last_controller_event: input_text.zz_parents_room_lights_controller_last_event
+      action_button_up_short:
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        target:
+          entity_id: light.parents_room_lights
+      action_button_up_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id: light.parents_room_lights
+      action_button_down_short:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.parents_room_lights
+      action_button_down_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+        target:
+          entity_id: light.parents_room_lights
+      button_up_long_loop: true
+      button_up_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_down_long_max_loop_repeats: 50
+      action_button_down_double: []
+      button_down_double_press: true
+      helper_double_press_delay: 1000
+- id: '1659256178839'
+  alias: Master Bathroom Lights Controller
+  description: Control the Master Bathroom Lights
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 75fe391df20feec2911c6bf08707c353
+      helper_last_controller_event: input_text.zz_master_bathroom_lights_controller_last_event
+      action_button_up_short:
+      - choose:
+        - conditions:
+          - condition: time
+            after: input_datetime.wind_down
+            before: input_datetime.lights_auto_control_end
+          sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: 5
+            target:
+              entity_id: light.master_bathroom_lights
+        default:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.master_bathroom_lights
+      action_button_up_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id: light.master_bathroom_lights
+      action_button_down_short:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.master_bathroom_lights
+      action_button_down_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+        target:
+          entity_id: light.master_bathroom_lights
+      button_up_long_loop: true
+      button_up_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_down_long_max_loop_repeats: 50
+- id: '1659256881015'
+  alias: Kitchen Blinds Controller
+  description: Control the Kitchen Blinds
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 43f2d52bfecdf388c86e9f919d45e359
+      helper_last_controller_event: input_text.zz_kitchen_blinds_controller_last_event
+      action_button_up_short:
+      - if:
+        - condition: state
+          entity_id: cover.kitchen_blinds
+          state: closing
+        then:
+        - service: cover.stop_cover
+          data: {}
+          target:
+            entity_id: cover.kitchen_blinds
+        else:
+        - service: cover.open_cover
+          data: {}
+          target:
+            entity_id: cover.kitchen_blinds
+      action_button_down_short:
+      - if:
+        - condition: state
+          entity_id: cover.kitchen_blinds
+          state: opening
+        then:
+        - service: cover.stop_cover
+          data: {}
+          target:
+            entity_id: cover.kitchen_blinds
+        else:
+        - service: cover.close_cover
+          data: {}
+          target:
+            entity_id: cover.kitchen_blinds
+- id: '1659256970314'
+  alias: Kitchen Lights Controller
+  description: Control the Kitchen Lights
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 13c989b42cc6640ec074b9c74df4101c
+      helper_last_controller_event: input_text.zz_kitchen_lights_controller_last_event
+      action_button_up_short:
+      - choose:
+        - conditions:
+          - condition: time
+            before: input_datetime.lights_auto_control_end
+            after: input_datetime.wind_down
+          sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: 5
+            target:
+              entity_id: light.kitchen_lights
+        default:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.kitchen_lights
+      action_button_up_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id: light.kitchen_lights
+      action_button_down_short:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.kitchen_lights
+      action_button_down_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+        target:
+          entity_id: light.kitchen_lights
+      button_up_long_max_loop_repeats: 50
+      button_down_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_up_long_loop: true
+- id: '1659364469656'
+  alias: Kitchen Motion
+  description: Control the Kitchen Lights with Motion
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_motion
+    id: motion
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_motion
+    id: no_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: motion
+    then:
+    - condition: or
+      conditions:
+      - condition: numeric_state
+        entity_id: sensor.kitchen_lux
+        below: input_number.minimum_lux
+      - condition: state
+        entity_id: light.living_room_lights
+        state: 'on'
+      - condition: state
+        entity_id: light.living_room_pendant_light_entity
+        state: 'on'
+    - condition: state
+      entity_id: light.kitchen_lights
+      state: 'off'
+    - if:
+      - condition: time
+        before: input_datetime.lights_auto_control_end
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
+        after: input_datetime.wind_down
+      then:
+      - service: light.turn_on
+        data:
+          brightness_pct: 5
+        target:
+          entity_id: light.kitchen_lights
+      else:
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        target:
+          entity_id: light.kitchen_lights
+    else:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.kitchen_lights
+  mode: single
+- id: '1659366431475'
+  alias: Master Bathroom Light Motion
+  description: Control the Master Bathroom Light with motion
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bathroom_motion
+    from: 'off'
+    to: 'on'
+    id: motion
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bathroom_motion
+    from: 'on'
+    to: 'off'
+    id: no_motion
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bathroom_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 15
+      seconds: 0
+    id: no_motion_long
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: motion
+      sequence:
+      - if:
+        - condition: time
+          after: input_datetime.wind_down
+          before: input_datetime.lights_auto_control_end
+          weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sat
+          - sun
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: 1
+          target:
+            entity_id: light.master_bathroom_light_entity
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.master_bathroom_light_entity
+    - conditions:
+      - condition: trigger
+        id: no_motion
+      sequence:
+      - condition: state
+        entity_id: binary_sensor.master_bathroom_door
+        state: 'on'
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.master_bathroom_light_entity
+    default:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.master_bathroom_light_entity
+  mode: single
+- id: '1659402429592'
+  alias: Master Bathroom Pendant Light Motion
+  description: Control the Master Bathroom Pendant Light with motion
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.master_shower_motion
+    from: 'off'
+    to: 'on'
+    id: motion
+  - platform: state
+    entity_id:
+    - binary_sensor.master_shower_motion
+    from: 'on'
+    to: 'off'
+    id: no_motion
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  - platform: state
+    entity_id:
+    - binary_sensor.master_shower_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+    id: no_motion_long
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: motion
+      sequence:
+      - if:
+        - condition: time
+          after: input_datetime.wind_down
+          before: input_datetime.lights_auto_control_end
+          weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sat
+          - sun
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: 1
+          target:
+            entity_id: light.master_bathroom_pendant_light_entity
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.master_bathroom_pendant_light_entity
+    - conditions:
+      - condition: trigger
+        id: no_motion
+      sequence:
+      - condition: state
+        entity_id: binary_sensor.master_bathroom_door
+        state: 'on'
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.master_bathroom_pendant_light_entity
+    default:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.master_bathroom_pendant_light_entity
+  mode: single
+- id: '1659743502956'
+  alias: Elena's Room AC Controller
+  description: Control Elena's Room AC
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 4992a43f1eecbf448ac02a3c2601ab36
+      action_button_up_short:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.elenas_room_ac
+      action_button_up_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.elenas_room_ac
+        data:
+          temperature: "{% if state_attr('climate.elenas_room_ac', 'temperature')
+            < 27 %}\n  {{ state_attr('climate.elenas_room_ac', 'temperature') + 1
+            }}\n{% else %}\n  27\n{% endif %}\n"
+      action_button_down_short:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: climate.elenas_room_ac
+      action_button_down_long:
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.elenas_room_ac
+        data:
+          temperature: "{% if state_attr('climate.elenas_room_ac', 'temperature')
+            > 24 %}\n  {{ state_attr('climate.elenas_room_ac', 'temperature') - 1
+            }}\n{% else %}\n  24\n{% endif %}\n"
+      helper_last_controller_event: input_text.zz_elena_s_room_ac_controller_last_event
+      action_button_up_double:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.elenas_room_ac_auto_control
+      action_button_down_double:
+      - service: automation.turn_off
+        data: {}
+        target:
+          entity_id: automation.elenas_room_ac_auto_control
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
+- id: '1659777667257'
+  alias: Kitchen Blinds Auto Control
+  description: Close the Kitchen Blinds if raining, in the mornings or AC is on
+  trigger:
+  - platform: template
+    value_template: "{{ (states('sensor.local_rainfall') | int > 1) or ('Thunder'
+      in\n   states('sensor.local_two_hour_forecast')) }}"
+  - platform: state
+    entity_id:
+    - climate.living_room_ac
+  - platform: time
+    at: 06:00:00
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    above: '65'
+  - platform: state
+    entity_id:
+    - switch.stove_main_power
+  condition: []
+  action:
+  - if:
+    - condition: or
+      conditions:
+      - condition: template
+        value_template: "{{ (states('sensor.local_rainfall') | int > 1) or ('Thunder'
+          in\n   states('sensor.local_two_hour_forecast')) }}"
+      - condition: state
+        entity_id: climate.living_room_ac
+        state: cool
+      - condition: time
+        after: 05:59:57
+        before: 06:00:01
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
+    - condition: state
+      entity_id: switch.stove_main_power
+      state: 'off'
+    then:
+    - service: cover.close_cover
+      data: {}
+      target:
+        entity_id: cover.kitchen_blinds
+    else:
+    - condition: and
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: sun.sun
+          attribute: rising
+          state: false
+        - condition: numeric_state
+          entity_id: sun.sun
+          above: '65'
+          attribute: elevation
+        - condition: state
+          entity_id: switch.stove_main_power
+          state: 'on'
+      - condition: not
+        conditions:
+        - condition: template
+          value_template: "{{ (states('sensor.local_rainfall') | int > 1) or ('Thunder'
+            in\n   states('sensor.local_two_hour_forecast')) }}"
+    - service: cover.open_cover
+      data: {}
+      target:
+        entity_id: cover.kitchen_blinds
+  mode: single
+- id: '1660034693952'
+  alias: Master Bathroom Blind Auto Control
+  description: Control the Master Bathroom Blind based on whether there is motion
+    in the Master Shower and whether doors are open at Parents Room and Master Bathroom
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.master_shower_motion
+    to: 'on'
+    from: 'off'
+    id: motion
+  - platform: state
+    entity_id:
+    - binary_sensor.master_shower_motion
+    - binary_sensor.master_bathroom_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    id: no_motion
+  - platform: time
+    at: input_datetime.sleep_hours_start
+    id: sleep_hours_start
+  - platform: state
+    entity_id:
+    - binary_sensor.parents_room_door
+    - binary_sensor.master_bathroom_door
+    from: 'off'
+    to: 'on'
+    id: door_open
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: motion
+      sequence:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.parents_room_door
+          state: 'on'
+        - condition: state
+          entity_id: binary_sensor.master_bathroom_door
+          state: 'off'
+      - service: cover.close_cover
+        data: {}
+        target:
+          entity_id: cover.master_bathroom_blind
+    - conditions:
+      - condition: trigger
+        id: no_motion
+      sequence:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.master_bathroom_motion
+          state: 'off'
+          for:
+            hours: 0
+            minutes: 10
+            seconds: 0
+        - condition: state
+          state: 'off'
+          entity_id: binary_sensor.master_shower_motion
+          for:
+            hours: 0
+            minutes: 10
+            seconds: 0
+        - condition: time
+          after: input_datetime.lights_auto_control_end
+          before: input_datetime.sleep_hours_start
+          weekday:
+          - sun
+          - fri
+          - sat
+          - thu
+          - wed
+          - tue
+          - mon
+        - condition: state
+          entity_id: climate.parents_room_ac
+          state: 'off'
+        - condition: state
+          entity_id: fan.parents_room_fan
+          state: 'off'
+      - service: cover.open_cover
+        data: {}
+        target:
+          entity_id: cover.master_bathroom_blind
+    - conditions:
+      - condition: trigger
+        id: sleep_hours_start
+      sequence:
+      - service: cover.close_cover
+        data: {}
+        target:
+          entity_id: cover.master_bathroom_blind
+    - conditions:
+      - condition: trigger
+        id: door_open
+      sequence:
+      - condition: and
+        conditions:
+        - condition: time
+          after: input_datetime.lights_auto_control_end
+          weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+          - sat
+          - sun
+          before: input_datetime.sleep_hours_start
+        - condition: state
+          entity_id: binary_sensor.master_shower_motion
+          state: 'off'
+          for:
+            hours: 0
+            minutes: 10
+            seconds: 0
+        - condition: state
+          entity_id: climate.parents_room_ac
+          state: 'off'
+        - condition: state
+          entity_id: fan.parents_room_fan
+          state: 'off'
+      - service: cover.open_cover
+        data: {}
+        target:
+          entity_id: cover.master_bathroom_blind
+    default: []
+  mode: restart
+- id: '1660480730988'
+  alias: Master Bathroom Blind Controller
+  description: Control the Master Bathroom Blind
+  use_blueprint:
+    path: EPMatt/ikea_e1766.yaml
+    input:
+      integration: ZHA
+      controller_device: 92725db1f0698cbe535382e777d98b52
+      helper_last_controller_event: input_text.zz_master_bathroom_blind_controller_last_event
+      action_button_up_short:
+      - if:
+        - condition: state
+          entity_id: cover.master_bathroom_blind
+          state: closing
+        then:
+        - service: cover.stop_cover
+          data: {}
+          target:
+            entity_id: cover.master_bathroom_blind
+        else:
+        - service: cover.open_cover
+          data: {}
+          target:
+            entity_id: cover.master_bathroom_blind
+      action_button_down_short:
+      - if:
+        - condition: state
+          entity_id: cover.master_bathroom_blind
+          state: opening
+        then:
+        - service: cover.stop_cover
+          data: {}
+          target:
+            entity_id: cover.master_bathroom_blind
+        else:
+        - service: cover.close_cover
+          data: {}
+          target:
+            entity_id: cover.master_bathroom_blind
+- id: '1661152935817'
+  alias: Elena's Room Lights Controller
+  description: Control Elena's Room Lights
+  use_blueprint:
+    path: EPMatt/ikea_e2001_e2002.yaml
+    input:
+      integration: ZHA
+      controller_device: bcfa3b3429c3ad745cc8299a3d74e3d3
+      helper_last_controller_event: input_text.zz_elena_s_room_lights_controller_last_event
+      action_button_up_short:
+      - if:
+        - condition: time
+          after: input_datetime.elenas_wind_down
+          before: input_datetime.lights_auto_control_end
+          weekday:
+          - sun
+          - sat
+          - fri
+          - thu
+          - wed
+          - tue
+          - mon
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: 5
+          target:
+            entity_id: light.elenas_room_lights
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.elenas_room_lights
+      action_button_up_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id: light.elenas_room_lights
+      action_button_down_short:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.elenas_room_lights
+      action_button_down_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+        target:
+          entity_id: light.elenas_room_lights
+      button_up_long_loop: true
+      button_up_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_down_long_max_loop_repeats: 50
+      action_button_left_short:
+      - if:
+        - condition: state
+          entity_id: light.elenas_room_lights
+          state: 'on'
+        then:
+        - service: light.turn_on
+          data:
+            color_temp: "{% if state_attr('light.elenas_room_lights', 'color_temp')
+              - 20 < state_attr('light.elenas_room_lights', 'min_mireds') %}\n  {{
+              state_attr('light.elenas_room_lights', 'min_mireds') }}\n{% else %}\n
+              \ {{ state_attr('light.elenas_room_lights', 'color_temp') - 20 }}\n{%
+              endif %}\n"
+          target:
+            entity_id: light.elenas_room_lights
+      action_button_left_long:
+      - if:
+        - condition: state
+          entity_id: light.elenas_room_lights
+          state: 'on'
+        then:
+        - service: light.turn_on
+          data:
+            color_temp: "{% if state_attr('light.elenas_room_lights', 'color_temp')
+              - 20 < state_attr('light.elenas_room_lights', 'min_mireds') %}\n  {{
+              state_attr('light.elenas_room_lights', 'min_mireds') }}\n{% else %}\n
+              \ {{ state_attr('light.elenas_room_lights', 'color_temp') - 20 }}\n{%
+              endif %}\n"
+          target:
+            entity_id: light.elenas_room_lights
+      action_button_right_short:
+      - if:
+        - condition: state
+          entity_id: light.elenas_room_lights
+          state: 'on'
+        then:
+        - service: light.turn_on
+          data:
+            color_temp: "{% if state_attr('light.elenas_room_lights', 'color_temp')
+              + 20 > state_attr('light.elenas_room_lights', 'max_mireds') %}\n  {{
+              state_attr('light.elenas_room_lights', 'max_mireds') }}\n{% else %}\n
+              \ {{ state_attr('light.elenas_room_lights', 'color_temp') + 20 }}\n{%
+              endif %}\n"
+          target:
+            entity_id: light.elenas_room_lights
+      action_button_right_long:
+      - if:
+        - condition: state
+          entity_id: light.elenas_room_lights
+          state: 'on'
+        then:
+        - service: light.turn_on
+          data:
+            color_temp: "{% if state_attr('light.elenas_room_lights', 'color_temp')
+              + 20 > state_attr('light.elenas_room_lights', 'max_mireds') %}\n  {{
+              state_attr('light.elenas_room_lights', 'max_mireds') }}\n{% else %}\n
+              \ {{ state_attr('light.elenas_room_lights', 'color_temp') + 20 }}\n{%
+              endif %}\n"
+          target:
+            entity_id: light.elenas_room_lights
+      button_left_long_loop: true
+      button_left_long_max_loop_repeats: 50
+      button_right_long_loop: true
+      button_right_long_max_loop_repeats: 50
+- id: '1661593367231'
+  alias: Yard Motion
+  description: Control the Yard Light with Motion
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.yard_motion
+    id: motion
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.yard_motion
+    id: no_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: motion
+    then:
+    - condition: or
+      conditions:
+      - condition: numeric_state
+        entity_id: sensor.yard_lux
+        below: input_number.minimum_lux
+      - condition: state
+        entity_id: light.playroom_lights
+        state: 'on'
+    - condition: state
+      entity_id: light.yard_light_entity
+      state: 'off'
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 2
+    - if:
+      - condition: time
+        before: input_datetime.lights_auto_control_end
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
+        after: input_datetime.wind_down
+      then:
+      - service: light.turn_on
+        data:
+          brightness_pct: 5
+        target:
+          entity_id: light.yard_light_entity
+      else:
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        target:
+          entity_id: light.yard_light_entity
+    else:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.yard_light_entity
+  mode: single
+- id: '1661595814388'
+  alias: Study Walkway Motion
+  description: Control the Study Walkway Light with Motion
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.study_walkway_motion
+    to: 'on'
+    id: motion
+  - platform: state
+    entity_id:
+    - binary_sensor.study_walkway_motion
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    id: no_motion
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: motion
+    then:
+    - condition: state
+      entity_id: light.study_room_lights
+      state: 'off'
+    - condition: or
+      conditions:
+      - condition: numeric_state
+        entity_id: sensor.study_walkway_lux
+        below: input_number.minimum_lux
+      - condition: state
+        entity_id: light.living_room_lights
+        state: 'on'
+      - condition: state
+        entity_id: light.living_room_pendant_light_entity
+        state: 'on'
+    - if:
+      - condition: time
+        after: input_datetime.wind_down
+        before: input_datetime.lights_auto_control_end
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
+      then:
+      - service: light.turn_on
+        data:
+          brightness_pct: 3
+        target:
+          entity_id: light.study_room_bulb_4_entity
+      else:
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+        target:
+          entity_id: light.study_room_bulb_4_entity
+    else:
+    - condition: state
+      entity_id:
+      - light.study_room_bulb_1_entity
+      - light.study_room_bulb_2_entity
+      - light.study_room_bulb_3_entity
+      state: 'off'
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.study_room_bulb_4_entity
+  mode: single
+- id: '1661601576517'
+  alias: Washer Load Clean
+  description: Indicate when the washer load is clean and needs unloading
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.washer_wash_completed
+    to: 'on'
+    id: finished
+    from: 'off'
+  - platform: state
+    entity_id:
+    - binary_sensor.washer_door
+    from: 'off'
+    to: 'on'
+    id: opened
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: finished
+    then:
+    - service: input_boolean.turn_on
+      data: {}
+      target:
+        entity_id: input_boolean.washer_load_clean
+    - service: input_datetime.set_datetime
+      data:
+        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+      target:
+        entity_id: input_datetime.washer_last_wash_complete
+    else:
+    - service: input_boolean.turn_off
+      data: {}
+      target:
+        entity_id: input_boolean.washer_load_clean
+  mode: single
+- id: '1661612907662'
+  alias: Dishwasher Load Clean
+  description: Indicate when the dishwasher load is clean and needs unloading
+  trigger:
+  - platform: state
+    entity_id:
+    - input_select.dishwasher_status
+    id: finished
+    from: Cooling
+    to: 'Off'
+  - platform: state
+    entity_id:
+    - binary_sensor.dishwasher_door
+    from: 'off'
+    to: 'on'
+    id: opened
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: finished
+    then:
+    - service: input_boolean.turn_on
+      data: {}
+      target:
+        entity_id: input_boolean.dishwasher_load_clean
+    else:
+    - service: input_boolean.turn_off
+      data: {}
+      target:
+        entity_id: input_boolean.dishwasher_load_clean
+  mode: single
+- id: '1662778610362'
+  alias: Eli's Room Lights Controller
+  description: Control Eli's Room Lights
+  use_blueprint:
+    path: EPMatt/ikea_e1524_e1810.yaml
+    input:
+      integration: ZHA
+      controller_device: 4f9d115057150510080b9cde7008bb35
+      helper_last_controller_event: input_text.zz_eli_s_room_lights_controller_last_event
+      action_button_left_short:
+      - if:
+        - condition: state
+          entity_id: light.elis_room_lights
+          state: 'on'
+        then:
+        - service: light.turn_on
+          data:
+            color_temp: "{% if state_attr('light.elis_room_lights', 'color_temp')
+              - 20 > state_attr('light.elis_room_lights', 'min_mireds') %}\n  {{ state_attr('light.elis_room_lights',
+              'color_temp') - 20}}\n{% else %}\n  {{ state_attr('light.elis_room_lights',
+              'min_mireds') }}\n{% endif %}\n"
+          target:
+            entity_id: light.elis_room_lights
+      action_button_left_long:
+      - if:
+        - condition: state
+          entity_id: light.elis_room_lights
+          state: 'on'
+        then:
+        - service: light.turn_on
+          data:
+            color_temp: "{% if state_attr('light.elis_room_lights', 'color_temp')
+              - 20 > state_attr('light.elis_room_lights', 'min_mireds') %}\n  {{ state_attr('light.elis_room_lights',
+              'color_temp') - 20 }}\n{% else %}\n  {{ state_attr('light.elis_room_lights',
+              'min_mireds') }}\n{% endif %}\n"
+          target:
+            entity_id: light.elis_room_lights
+      action_button_right_short:
+      - if:
+        - condition: state
+          entity_id: light.elis_room_lights
+          state: 'on'
+        then:
+        - service: light.turn_on
+          data:
+            color_temp: "{% if state_attr('light.elis_room_lights', 'color_temp')
+              + 20 < state_attr('light.elis_room_lights', 'max_mireds') %}\n  {{ state_attr('light.elis_room_lights',
+              'color_temp') + 20}}\n{% else %}\n  {{ state_attr('light.elis_room_lights',
+              'max_mireds') }}\n{% endif %}\n"
+          target:
+            entity_id: light.elis_room_lights
+      action_button_right_long:
+      - if:
+        - condition: state
+          entity_id: light.elis_room_lights
+          state: 'on'
+        then:
+        - service: light.turn_on
+          data:
+            color_temp: "{% if state_attr('light.elis_room_lights', 'color_temp')
+              + 20 < state_attr('light.elis_room_lights', 'max_mireds') %}\n  {{ state_attr('light.elis_room_lights',
+              'color_temp') + 20 }}\n{% else %}\n  {{ state_attr('light.elis_room_lights',
+              'max_mireds') }}\n{% endif %}\n"
+          target:
+            entity_id: light.elis_room_lights
+      action_button_up_short:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id: light.elis_room_lights
+      action_button_up_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id: light.elis_room_lights
+      action_button_down_short:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+        target:
+          entity_id: light.elis_room_lights
+      action_button_down_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+        target:
+          entity_id: light.elis_room_lights
+      action_button_center_short:
+      - service: light.toggle
+        data: {}
+        target:
+          entity_id: light.elis_room_lights
+      button_left_long_loop: true
+      button_left_long_max_loop_repeats: 50
+      button_right_long_loop: true
+      button_right_long_max_loop_repeats: 50
+      button_up_long_loop: true
+      button_up_long_max_loop_repeats: 50
+      button_down_long_loop: true
+      button_down_long_max_loop_repeats: 50
+- id: '1664539716957'
+  alias: Stove Set State
+  description: Set the state of the stove according to input_helpers
+  trigger:
+  - platform: state
+    entity_id:
+    - select.stove_current_burner_power
+    id: select
+  - platform: state
+    entity_id:
+    - input_number.stove_current_burner_power_slider
+    id: slider
+  - platform: state
+    entity_id:
+    - input_boolean.stove_select_left_burner
+    id: left_burner
+  - platform: state
+    entity_id:
+    - input_boolean.stove_select_right_burner
+    id: right_burner
+  - platform: state
+    entity_id:
+    - select.stove_current_burner
+    id: burner
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: select
+      sequence:
+      - service: input_number.set_value
+        data:
+          value: '{{ states(''select.stove_current_burner_power'') }}'
+        target:
+          entity_id: input_number.stove_current_burner_power_slider
+    - conditions:
+      - condition: trigger
+        id: slider
+      sequence:
+      - service: select.select_option
+        data:
+          option: '{{ states(''input_number.stove_current_burner_power_slider'') |
+            int(0) }}'
+        target:
+          entity_id: select.stove_current_burner_power
+    - conditions:
+      - condition: trigger
+        id: left_burner
+      sequence:
+      - if:
+        - condition: state
+          entity_id: input_boolean.stove_select_left_burner
+          state: 'on'
+        then:
+        - service: input_boolean.turn_off
+          data: {}
+          target:
+            entity_id: input_boolean.stove_select_right_burner
+        - service: select.select_option
+          data:
+            option: left
+          target:
+            entity_id: select.stove_current_burner
+        else:
+        - service: input_boolean.turn_on
+          data: {}
+          target:
+            entity_id: input_boolean.stove_select_right_burner
+        - service: select.select_option
+          data:
+            option: right
+          target:
+            entity_id: select.stove_current_burner
+    - conditions:
+      - condition: trigger
+        id: right_burner
+      sequence:
+      - if:
+        - condition: state
+          entity_id: input_boolean.stove_select_right_burner
+          state: 'on'
+        then:
+        - service: input_boolean.turn_off
+          data: {}
+          target:
+            entity_id: input_boolean.stove_select_left_burner
+        - service: select.select_option
+          data:
+            option: right
+          target:
+            entity_id: select.stove_current_burner
+        else:
+        - service: input_boolean.turn_on
+          data: {}
+          target:
+            entity_id: input_boolean.stove_select_left_burner
+        - service: select.select_option
+          data:
+            option: left
+          target:
+            entity_id: select.stove_current_burner
+    - conditions:
+      - condition: trigger
+        id: burner
+      sequence:
+      - if:
+        - condition: state
+          entity_id: select.stove_current_burner
+          state: left
+        then:
+        - service: input_boolean.turn_off
+          data: {}
+          target:
+            entity_id: input_boolean.stove_select_right_burner
+        - service: input_boolean.turn_on
+          data: {}
+          target:
+            entity_id: input_boolean.stove_select_left_burner
+        else:
+        - service: input_boolean.turn_on
+          data: {}
+          target:
+            entity_id: input_boolean.stove_select_right_burner
+        - service: input_boolean.turn_off
+          data: {}
+          target:
+            entity_id: input_boolean.stove_select_left_burner
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 10
+  mode: single
+  max_exceeded: silent
+- id: '1664612965128'
+  alias: Dishwasher Last Use
+  description: Track the start and end times of the last run of the dishwasher
+  trigger:
+  - platform: state
+    entity_id:
+    - input_select.dishwasher_status
+    to: Washing
+    from:
+    - Standby
+    - 'Off'
+    id: washing_start
+  - platform: state
+    entity_id:
+    - input_select.dishwasher_status
+    from: Cooling
+    to: 'Off'
+    id: washing_end
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: washing_start
+    then:
+    - service: input_datetime.set_datetime
+      data:
+        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+      target:
+        entity_id: input_datetime.dishwasher_last_run_start
+    else:
+    - service: input_datetime.set_datetime
+      data:
+        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+      target:
+        entity_id: input_datetime.dishwasher_last_run_end
+  mode: single

@@ -1,0 +1,43 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+http:
+  ssl_certificate: /ssl/fullchain.pem
+  ssl_key: /ssl/privkey.pem
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+# MariaDB
+recorder:
+  db_url: !secret mariadb_url
+  purge_keep_days: 14
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+switch: !include switches.yaml
+fan: !include fans.yaml
+climate: !include aircons.yaml
+light: !include lightgroups.yaml
+template: !include template-sensors.yaml
+sensor: !include sensors.yaml
+cover: !include covers.yaml
+
+google_assistant: !include google_assistant.yaml
+
+zha:
+  zigpy_config:
+    network:
+      channel: 25             # What channel the radio should try to use.
+      channels: [15, 20, 25]  # Channel mask
+    ota:
+      ikea_provider: false
+
+logger:
+  default: warn
+  logs: !include logger.yaml

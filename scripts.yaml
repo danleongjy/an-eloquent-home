@@ -1,0 +1,980 @@
+ac_set_state:
+  alias: AC Set State
+  fields:
+    target_ac:
+      name: Target AC
+      description: The AC for which to set the state
+      selector:
+        select:
+          options:
+          - Parents' Room AC
+          - Study Room AC
+          - Living Room AC
+          - Dining Room AC
+          - Eli's Room AC
+          - Elena's Room AC
+      required: true
+      default: Dining Room AC
+    target_ac_power:
+      name: Target AC Power
+      description: Whether the AC is on or off
+      selector:
+        boolean:
+      required: true
+      default: true
+    target_ac_temp:
+      name: Target AC Temperature
+      description: The temperature of the AC
+      selector:
+        number:
+          min: 24
+          max: 27
+          step: 1
+          unit_of_measurement: deg C
+          mode: slider
+      required: true
+      default: 27
+  sequence:
+  - service: remote.send_command
+    target:
+      entity_id: "{% set universal_remote = \n  { \"Elena's Room AC\": \"remote.elenas_room_universal_remote\",\n
+        \   \"Eli's Room AC\": \"remote.elis_room_universal_remote\",\n    \"Dining
+        Room AC\": \"remote.dining_room_universal_remote\",\n    \"Living Room AC\":
+        \"remote.living_room_universal_remote\",\n    \"Study Room AC\": \"remote.study_room_universal_remote\",\n
+        \   \"Parents' Room AC\": \"remote.parents_room_universal_remote\"\n  } %}\n{{
+        universal_remote[target_ac] }}\n"
+    data:
+      device: '{{ target_ac }}'
+      command: "{% if target_ac_power == false %}\n  Off\n{% else %}\n  {{ target_ac_temp
+        | int }}\n{% endif %}\n"
+  mode: parallel
+  icon: mdi:snowflake
+  max: 10
+fan_set_state:
+  alias: Fan Set State
+  fields:
+    target_fan:
+      name: Target Fan
+      description: The fan for which to set the state
+      selector:
+        select:
+          options:
+          - Parents' Room Fan
+          - Study Room Fan
+          - Living Room Fan
+          - Dining Room Fan
+          - Elena's Room Fan
+          - Eli's Room Fan
+      required: true
+      default: Dining Room Fan
+    target_fan_power:
+      name: Target Fan Power
+      description: Whether the fan is on or off
+      selector:
+        boolean:
+      required: true
+      default: true
+    target_fan_speed:
+      name: Target Fan Speed
+      description: The speed of the fan
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 16
+          mode: slider
+      required: false
+      default: 33
+  sequence:
+  - service: remote.send_command
+    target:
+      entity_id: "{% set universal_remote = \n  { \"Elena's Room Fan\": \"remote.elis_room_universal_remote\",\n
+        \   \"Eli's Room Fan\": \"remote.elis_room_universal_remote\",\n    \"Dining
+        Room Fan\": \"remote.elis_room_universal_remote\",\n    \"Living Room Fan\":
+        \"remote.study_room_universal_remote\",\n    \"Study Room Fan\": \"remote.study_room_universal_remote\",\n
+        \   \"Parents' Room Fan\": \"remote.study_room_universal_remote\",\n  } %}\n{{
+        universal_remote[target_fan] }}\n"
+    data:
+      device: '{{ target_fan }}
+
+        '
+      command: "{% if target_fan_power == false %}\n  Off\n{% elif ((target_fan_speed
+        | int) / 100 * 6) | round(0) | int == 0 %}\n  Off\n{% else %}\n  {{ ((target_fan_speed
+        | int) / 100 * 6) | round(0) | int }}\n{% endif %}"
+  mode: queued
+  icon: mdi:speedometer
+  max: 10
+  max_exceeded: silent
+fan_set_direction:
+  alias: Fan Set Direction
+  fields:
+    target_fan:
+      name: Target Fan
+      description: The fan for which to set direction
+      selector:
+        select:
+          options:
+          - Parents' Room Fan
+          - Study Room Fan
+          - Living Room Fan
+          - Dining Room Fan
+          - Elena's Room Fan
+          - Eli's Room Fan
+      required: true
+      default: Dining Room Fan
+    direction:
+      name: Direction
+      description: The fan spin direction
+      selector:
+        select:
+          options:
+          - forward
+          - reverse
+      required: true
+      default: forward
+  sequence:
+  - if:
+    - condition: template
+      value_template: "{% set fan_direction = \n  { \"Elena's Room Fan\": \"input_select.elenas_room_fan_direction\",\n
+        \   \"Eli's Room Fan\": \"input_select.elis_room_fan_direction\",\n    \"Dining
+        Room Fan\": \"input_select.dining_room_fan_direction\",\n    \"Living Room
+        Fan\": \"input_select.living_room_fan_direction\",\n    \"Study Room Fan\":
+        \"input_select.study_room_fan_direction\",\n    \"Parents' Room Fan\": \"input_select.parents_room_fan_direction\"\n
+        \ } %}\n{{ states(fan_direction[target_fan]) != direction }}\n"
+    then:
+    - if:
+      - condition: template
+        value_template: "{% set fan = \n   { \"Elena's Room Fan\": \"fan.elenas_room_fan\",\n
+          \    \"Eli's Room Fan\": \"fan.elis_room_fan\",\n     \"Dining Room Fan\":
+          \"fan.dining_room_fan\",\n     \"Living Room Fan\": \"fan.living_room_fan\",\n
+          \    \"Study Room Fan\": \"fan.study_room_fan\",\n     \"Parents' Room Fan\":
+          \"fan.parents_room_fan\"\n   } %}\n{{ states(fan[target_fan]) == 'off' }}\n"
+      then:
+      - service: fan.turn_on
+        target:
+          entity_id: "{% set fan = \n  { \"Elena's Room Fan\": \"fan.elenas_room_fan\",\n
+            \   \"Eli's Room Fan\": \"fan.elis_room_fan\",\n    \"Dining Room Fan\":
+            \"fan.dining_room_fan\",\n    \"Living Room Fan\": \"fan.living_room_fan\",\n
+            \   \"Study Room Fan\": \"fan.study_room_fan\",\n    \"Parents' Room Fan\":
+            \"fan.parents_room_fan\"\n  } %}\n{{ fan[target_fan] }}\n"
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 3
+          milliseconds: 0
+    - service: remote.send_command
+      target:
+        entity_id: "{% set universal_remote = \n  { \"Elena's Room Fan\": \"remote.elis_room_universal_remote\",\n
+          \   \"Eli's Room Fan\": \"remote.elis_room_universal_remote\",\n    \"Dining
+          Room Fan\": \"remote.elis_room_universal_remote\",\n    \"Living Room Fan\":
+          \"remote.study_room_universal_remote\",\n    \"Study Room Fan\": \"remote.study_room_universal_remote\",\n
+          \   \"Parents' Room Fan\": \"remote.study_room_universal_remote\"\n  } %}\n{{
+          universal_remote[target_fan] }}\n"
+      data:
+        device: '{{ target_fan }}'
+        command: Reverse
+  - service: input_select.select_option
+    target:
+      entity_id: "{% set fan_direction = \n  { \"Elena's Room Fan\": \"input_select.elenas_room_fan_direction\",\n
+        \   \"Eli's Room Fan\": \"input_select.elis_room_fan_direction\",\n    \"Dining
+        Room Fan\": \"input_select.dining_room_fan_direction\",\n    \"Living Room
+        Fan\": \"input_select.living_room_fan_direction\",\n    \"Study Room Fan\":
+        \"input_select.study_room_fan_direction\",\n    \"Parents' Room Fan\": \"input_select.parents_room_fan_direction\"\n
+        \ } %}\n{{ fan_direction[target_fan] }}\n"
+    data:
+      option: '{{ direction }}'
+  mode: queued
+  icon: mdi:rotate-3d-variant
+  max: 10
+turn_off_elis_room:
+  sequence:
+  - service: automation.turn_off
+    target:
+      entity_id: automation.elis_room_ac_auto_control
+    data: {}
+  - service: light.turn_off
+    target:
+      entity_id: light.elis_room_lights
+    data: {}
+  - service: fan.turn_off
+    target:
+      entity_id: fan.elis_room_fan
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 200
+  - service: climate.turn_off
+    target:
+      entity_id: climate.elis_room_ac
+    data: {}
+  mode: single
+  alias: Turn Off Eli's Room
+  icon: mdi:power
+turn_off_elenas_room:
+  sequence:
+  - service: automation.turn_off
+    target:
+      entity_id: automation.elenas_room_ac_auto_control
+    data: {}
+  - service: light.turn_off
+    target:
+      entity_id: light.elenas_room_lights
+    data: {}
+  - service: fan.turn_off
+    data: {}
+    target:
+      entity_id: fan.elenas_room_fan
+  - service: climate.turn_off
+    target:
+      entity_id: climate.elenas_room_ac
+    data: {}
+  mode: single
+  alias: Turn Off Elena's Room
+  icon: mdi:power
+turn_off_dining_room:
+  sequence:
+  - service: light.turn_off
+    target:
+      entity_id:
+      - light.dining_room_lights
+      - light.dining_room_pendant_light_entity
+    data: {}
+  - service: fan.turn_off
+    target:
+      entity_id: fan.dining_room_fan
+    data: {}
+  - service: climate.turn_off
+    data: {}
+    target:
+      entity_id: climate.dining_room_ac
+  mode: single
+  alias: Turn Off Dining Room
+  icon: mdi:power
+turn_off_playroom:
+  sequence:
+  - service: light.turn_off
+    target:
+      entity_id:
+      - light.playroom_lights
+      - light.yard_light_entity
+    data: {}
+  mode: single
+  alias: Turn Off Playroom
+  icon: mdi:power
+turn_off_junior_bathroom:
+  sequence:
+  - service: light.turn_off
+    target:
+      entity_id: light.junior_bathroom_lights
+  mode: single
+  alias: Turn Off Junior Bathroom
+  icon: mdi:power
+turn_off_powder_room:
+  sequence:
+  - service: light.turn_off
+    target:
+      entity_id: light.powder_room_pendant_light_entity
+  mode: single
+  alias: Turn Off Powder Room
+  icon: mdi:power
+turn_off_hallway:
+  sequence:
+  - service: light.turn_off
+    target:
+      entity_id: light.hallway_lights
+  mode: single
+  alias: Turn Off Hallway
+  icon: mdi:power
+turn_off_all:
+  sequence:
+  - service: script.turn_off_playroom
+    data: {}
+  - service: script.turn_off_kitchen
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 300
+  - service: script.turn_off_elenas_room
+    data: {}
+  - service: script.turn_off_master_bathroom
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 300
+  - service: script.turn_off_elis_room
+    data: {}
+  - service: script.turn_off_parents_room
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 300
+  - service: script.turn_off_hallway
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 100
+  - service: script.turn_off_junior_bathroom
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 100
+  - service: script.turn_off_study_room
+    data: {}
+  - service: script.turn_off_powder_room
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 300
+  - service: script.turn_off_dining_room
+    data: {}
+  - service: script.turn_off_living_room
+    data: {}
+  mode: single
+  alias: Turn Off All
+  icon: mdi:home-export-outline
+set_recommended_scene_in_elenas_room:
+  sequence:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: binary_sensor.recommended_scene_in_elenas_room
+        attribute: lights_level
+        above: '0'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.elenas_room_lights
+        data:
+          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_elenas_room'',
+            ''lights_level'') }}
+
+            '
+    default:
+    - service: light.turn_off
+      target:
+        entity_id: light.elenas_room_lights
+      data: {}
+  - service: fan.turn_on
+    target:
+      entity_id: fan.elenas_room_fan
+    data:
+      percentage: '{{ state_attr(''binary_sensor.recommended_scene_in_elenas_room'',
+
+        ''fan_speed'') }}
+
+        '
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.recommended_scene_in_elenas_room
+        state: cool
+        attribute: ac_state
+      sequence:
+      - service: climate.turn_on
+        target:
+          entity_id: climate.elenas_room_ac
+        data: {}
+    default:
+    - service: climate.turn_off
+      target:
+        entity_id: climate.elenas_room_ac
+      data: {}
+  mode: single
+  alias: Set Recommended Scene in Elena's Room
+  icon: mdi:magic-staff
+set_recommended_scene_in_elis_room:
+  sequence:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: binary_sensor.recommended_scene_in_elis_room
+        attribute: lights_level
+        above: '0'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.elis_room_lights
+        data:
+          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_elis_room'',
+            ''lights_level'') }}
+
+            '
+    default:
+    - service: light.turn_off
+      target:
+        entity_id: light.elis_room_lights
+  - service: fan.turn_on
+    target:
+      entity_id: fan.elis_room_fan
+    data:
+      percentage: '{{ state_attr(''binary_sensor.recommended_scene_in_elis_room'',
+        ''fan_speed'') }}
+
+        '
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.recommended_scene_in_elis_room
+        state: cool
+        attribute: ac_state
+      sequence:
+      - service: climate.turn_on
+        target:
+          entity_id: climate.elis_room_ac
+    default:
+    - service: climate.turn_off
+      target:
+        entity_id: climate.elis_room_ac
+  mode: single
+  alias: Set Recommended Scene in Eli's Room
+  icon: mdi:magic-staff
+set_recommended_scene_in_dining_room:
+  alias: Set Recommended Scene in Dining Room
+  sequence:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: binary_sensor.recommended_scene_in_dining_room
+        attribute: lights_level
+        above: '0'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.dining_room_lights
+        data:
+          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_dining_room'',
+            ''lights_level'') }}
+
+            '
+    default:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id:
+        - light.dining_room_lights
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: binary_sensor.recommended_scene_in_dining_room
+        attribute: pendant_light_level
+        above: '0'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.dining_room_pendant_light_entity
+        data:
+          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_dining_room'',
+            ''pendant_light_level'') }}
+
+            '
+    default:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.dining_room_pendant_light_entity
+  - service: fan.turn_on
+    target:
+      entity_id: fan.dining_room_fan
+    data:
+      percentage: '{{ state_attr(''binary_sensor.recommended_scene_in_dining_room'',
+
+        ''fan_speed'') }}
+
+        '
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.recommended_scene_in_dining_room
+        attribute: ac_state
+        state: cool
+      sequence:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.dining_room_ac
+    default:
+    - service: climate.turn_off
+      data: {}
+      target:
+        entity_id: climate.dining_room_ac
+  mode: single
+  icon: mdi:magic-staff
+kitchen_blinds_up:
+  alias: Kitchen Blinds Up
+  sequence:
+  - service: remote.send_command
+    data:
+      device: Kitchen Blinds
+      command: Up
+    target:
+      entity_id: remote.study_room_universal_remote
+  mode: single
+  icon: mdi:blinds-open
+kitchen_blinds_down:
+  alias: Kitchen Blinds Down
+  sequence:
+  - service: remote.send_command
+    data:
+      device: Kitchen Blinds
+      command: Down
+    target:
+      entity_id: remote.study_room_universal_remote
+  mode: single
+  icon: mdi:blinds
+kitchen_blinds_stop:
+  alias: Kitchen Blinds Stop
+  sequence:
+  - service: remote.send_command
+    data:
+      device: Kitchen Blinds
+      command: Stop
+    target:
+      entity_id: remote.study_room_universal_remote
+  mode: single
+  icon: mdi:blinds
+set_recommended_scene_in_living_room:
+  alias: Set Recommended Scene in Living Room
+  sequence:
+  - if:
+    - condition: numeric_state
+      entity_id: binary_sensor.recommended_scene_in_living_room
+      attribute: lights_level
+      above: '0'
+    then:
+    - service: light.turn_on
+      target:
+        entity_id: light.living_room_lights
+      data:
+        brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_living_room'',
+          ''lights_level'') }}
+
+          '
+    else:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.living_room_lights
+  - if:
+    - condition: numeric_state
+      entity_id: binary_sensor.recommended_scene_in_living_room
+      attribute: pendant_light_level
+      above: '0'
+    then:
+    - service: light.turn_on
+      target:
+        entity_id: light.living_room_pendant_light_entity
+      data:
+        brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_living_room'',
+          ''pendant_light_level'') }}
+
+          '
+    else:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.living_room_pendant_light_entity
+  - service: fan.turn_on
+    target:
+      entity_id: fan.living_room_fan
+    data:
+      percentage: '{{ state_attr(''binary_sensor.recommended_scene_in_living_room'',
+
+        ''fan_speed'') }}
+
+        '
+  - if:
+    - condition: state
+      entity_id: binary_sensor.recommended_scene_in_living_room
+      attribute: ac_state
+      state: cool
+    then:
+    - service: climate.turn_on
+      data: {}
+      target:
+        entity_id: climate.living_room_ac
+    else:
+    - service: climate.turn_off
+      data: {}
+      target:
+        entity_id: climate.living_room_ac
+  mode: single
+  icon: mdi:magic-staff
+turn_off_living_room:
+  alias: Turn Off Living Room
+  sequence:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.living_room_lights
+      - light.living_room_pendant_light_entity
+  - service: fan.turn_off
+    data: {}
+    target:
+      entity_id: fan.living_room_fan
+  - service: climate.turn_off
+    data: {}
+    target:
+      entity_id: climate.living_room_ac
+  mode: single
+  icon: mdi:power
+turn_off_study_room:
+  alias: Turn Off Study Room
+  sequence:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.study_room_lights
+  - service: fan.turn_off
+    data: {}
+    target:
+      entity_id:
+      - fan.study_room_fan
+  - service: climate.turn_off
+    data: {}
+    target:
+      entity_id: climate.study_room_ac
+  mode: single
+  icon: mdi:power
+turn_off_kitchen:
+  alias: Turn Off Kitchen
+  sequence:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.kitchen_lights
+  mode: single
+  icon: mdi:power
+turn_off_parents_room:
+  alias: Turn Off Parents' Room
+  sequence:
+  - service: automation.turn_off
+    data: {}
+    target:
+      entity_id: automation.parents_room_ac_auto_control
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.parents_room_lights
+  - service: fan.turn_off
+    data: {}
+    target:
+      entity_id: fan.parents_room_fan
+  - service: climate.turn_off
+    data: {}
+    target:
+      entity_id: climate.parents_room_ac
+  mode: single
+  icon: mdi:power
+turn_off_master_bathroom:
+  alias: Turn Off Master Bathroom
+  sequence:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.master_bathroom_lights
+  mode: single
+  icon: mdi:power
+set_recommended_scene_in_study_room:
+  alias: Set Recommended Scene in Study Room
+  sequence:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: binary_sensor.recommended_scene_in_study_room
+        attribute: lights_level
+        above: '0'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.study_room_lights
+        data:
+          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_study_room'',
+            ''lights_level'') }}
+
+            '
+    default:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.study_room_lights
+  - service: fan.turn_on
+    target:
+      entity_id: fan.study_room_fan
+    data:
+      percentage: '{{ state_attr(''binary_sensor.recommended_scene_in_study_room'',
+
+        ''fan_speed'') }}
+
+        '
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.recommended_scene_in_study_room
+        attribute: ac_state
+        state: cool
+      sequence:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.study_room_ac
+    default:
+    - service: climate.turn_off
+      data: {}
+      target:
+        entity_id: climate.study_room_ac
+  mode: single
+  icon: mdi:magic-staff
+set_recommended_scene_in_parents_room:
+  alias: Set Recommended Scene in Parents' Room
+  sequence:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: binary_sensor.recommended_scene_in_parents_room
+        attribute: lights_level
+        above: '0'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.parents_room_lights
+        data:
+          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_parents_room'',
+            ''lights_level'') }}
+
+            '
+    default:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.parents_room_lights
+  - service: fan.turn_on
+    target:
+      entity_id: fan.parents_room_fan
+    data:
+      percentage: '{{ state_attr(''binary_sensor.recommended_scene_in_parents_room'',
+        ''fan_speed'') }}
+
+        '
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.recommended_scene_in_parents_room
+        state: cool
+        attribute: ac_state
+      sequence:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.parents_room_ac
+    default:
+    - service: climate.turn_off
+      data: {}
+      target:
+        entity_id: climate.parents_room_ac
+  mode: single
+  icon: mdi:magic-staff
+stove_programme_cook_rice_on_left_burner:
+  alias: Stove Programme - Cook Rice on Left Burner
+  sequence:
+  - if:
+    - condition: state
+      entity_id: switch.stove_main_power
+      state: 'on'
+    then:
+    - service: select.select_option
+      data:
+        option: left
+      target:
+        entity_id: select.stove_current_burner
+    - service: select.select_option
+      data:
+        option: '1'
+      target:
+        entity_id: select.stove_current_burner_power
+    - service: number.set_value
+      data:
+        value: '16'
+      target:
+        entity_id: number.stove_current_burner_timer
+    else:
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.kitchen_speaker
+        message: Please turn on the stove first
+  mode: single
+  icon: mdi:stove
+stove_programme_boil_water_on_left_burner:
+  alias: Stove Programme - Boil Water on Left Burner
+  sequence:
+  - if:
+    - condition: state
+      entity_id: switch.stove_main_power
+      state: 'on'
+    then:
+    - service: select.select_option
+      data:
+        option: left
+      target:
+        entity_id: select.stove_current_burner
+    - service: select.select_option
+      data:
+        option: '7'
+      target:
+        entity_id: select.stove_current_burner_power
+    - service: number.set_value
+      data:
+        value: '5'
+      target:
+        entity_id: number.stove_current_burner_timer
+    else:
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.kitchen_speaker
+        message: Please turn on the stove first
+  mode: single
+  icon: mdi:stove
+stove_programme_current_status:
+  alias: Stove Programme - Current Status
+  sequence:
+  - if:
+    - condition: state
+      entity_id: switch.stove_main_power
+      state: 'on'
+    then:
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.kitchen_speaker
+        message: "{% if states('select.stove_current_burner_power') == '0' %}   \n
+          \ The {{ states('select.stove_current_burner') }} burner is off \n{% else
+          %}\n  The {{ states('select.stove_current_burner') }} burner is on level
+          {{ states('select.stove_current_burner_power') }}\n  {% if states('number.stove_current_burner_timer')
+          | int(0) > 0 %}\n    with {{ states('number.stove_current_burner_timer')
+          }} minutes remaining   \n  {% endif %} \n{% endif %}"
+    - if:
+      - condition: state
+        entity_id: select.stove_current_burner
+        state: left
+      then:
+      - service: select.select_option
+        data:
+          option: right
+        target:
+          entity_id: select.stove_current_burner
+      else:
+      - service: select.select_option
+        data:
+          option: left
+        target:
+          entity_id: select.stove_current_burner
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 6
+        milliseconds: 0
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.kitchen_speaker
+        message: "{% if states('select.stove_current_burner_power') == '0' %}   \n
+          \ The {{ states('select.stove_current_burner') }} burner is off \n{% else
+          %}\n  The {{ states('select.stove_current_burner') }} burner is on level
+          {{ states('select.stove_current_burner_power') }}\n  {% if states('number.stove_current_burner_timer')
+          | int(0) > 0 %}\n    with {{ states('number.stove_current_burner_timer')
+          }} minutes remaining   \n  {% endif %} \n{% endif %}"
+    - if:
+      - condition: state
+        entity_id: select.stove_current_burner
+        state: left
+      then:
+      - service: select.select_option
+        data:
+          option: right
+        target:
+          entity_id: select.stove_current_burner
+      else:
+      - service: select.select_option
+        data:
+          option: left
+        target:
+          entity_id: select.stove_current_burner
+    else:
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.kitchen_speaker
+        message: The stove is off
+  mode: single
+  icon: mdi:stove
+stove_programme_boil_water_on_right_burner:
+  alias: Stove Programme - Boil Water on Right Burner
+  sequence:
+  - if:
+    - condition: state
+      entity_id: switch.stove_main_power
+      state: 'on'
+    then:
+    - service: select.select_option
+      data:
+        option: right
+      target:
+        entity_id: select.stove_current_burner
+    - service: select.select_option
+      data:
+        option: '7'
+      target:
+        entity_id: select.stove_current_burner_power
+    - service: number.set_value
+      data:
+        value: '5'
+      target:
+        entity_id: number.stove_current_burner_timer
+    else:
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.kitchen_speaker
+        message: Please turn on the stove first
+  mode: single
+  icon: mdi:stove
+stove_programme_cook_rice_on_right_burner:
+  alias: Stove Programme - Cook Rice on Right Burner
+  sequence:
+  - if:
+    - condition: state
+      entity_id: switch.stove_main_power
+      state: 'on'
+    then:
+    - service: select.select_option
+      data:
+        option: right
+      target:
+        entity_id: select.stove_current_burner
+    - service: select.select_option
+      data:
+        option: '1'
+      target:
+        entity_id: select.stove_current_burner_power
+    - service: number.set_value
+      data:
+        value: '16'
+      target:
+        entity_id: number.stove_current_burner_timer
+    else:
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.kitchen_speaker
+        message: Please turn on the stove first
+  mode: single
+  icon: mdi:stove

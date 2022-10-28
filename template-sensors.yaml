@@ -1,0 +1,766 @@
+- binary_sensor:
+  - name: All Off
+    unique_id: binary_sensor.all_off
+    device_class: power
+    state: >
+      {{ is_state('light.elenas_room_lights', 'off') and
+         is_state('fan.elenas_room_fan', 'off') and
+         is_state('climate.elenas_room_ac', 'off') and
+         is_state('light.elis_room_lights', 'off') and
+         is_state('fan.elis_room_fan', 'off') and
+         is_state('climate.elis_room_ac', 'off') and
+         is_state('light.junior_bathroom_lights', 'off') and
+         is_state('light.powder_room_pendant_light_entity', 'off') and
+         is_state('light.hallway_lights', 'off') and
+         is_state('light.dining_room_lights', 'off') and
+         is_state('light.dining_room_pendant_light_entity', 'off') and
+         is_state('fan.dining_room_fan', 'off') and
+         is_state('climate.dining_room_ac', 'off') and
+         is_state('light.playroom_lights', 'off') and
+         is_state('light.yard_light_entity', 'off') and
+         is_state('light.living_room_lights', 'off') and
+         is_state('light.living_room_pendant_light_entity', 'off') and
+         is_state('fan.living_room_fan', 'off') and
+         is_state('climate.living_room_ac', 'off') and
+         is_state('light.kitchen_lights', 'off') and
+         is_state('light.study_room_lights', 'off') and
+         is_state('fan.study_room_fan', 'off') and
+         is_state('climate.study_room_ac', 'off') and
+         is_state('light.parents_room_lights', 'off') and
+         is_state('fan.parents_room_fan', 'off') and
+         is_state('climate.parents_room_ac', 'off') and
+         is_state('light.master_bathroom_lights', 'off')
+      }}
+    attributes:
+      elenas_room_lights: "{{ states('light.elenas_room_lights') }}"
+      elenas_room_fan: "{{ states('fan.elenas_room_fan') }}"
+      elenas_room_ac: "{{ states('climate.elenas_room_ac') }}"
+      elis_room_lights: "{{ states('light.elis_room_lights') }}"
+      elis_room_fan: "{{ states('fan.elis_room_fan') }}"
+      elis_room_ac: "{{ states('climate.elis_room_ac') }}"
+      junior_bathroom_lights: "{{ states('light.junior_bathroom_lights') }}"
+      powder_room_pendant_light: "{{ states('light.powder_room_pendant_light_entity') }}"
+      hallway_lights: "{{ states('light.hallway_lights') }}"
+      dining_room_lights: "{{ states('light.dining_room_lights') }}"
+      dining_room_pendant_light: "{{ states('light.dining_room_pendant_light_entity') }}"
+      dining_room_fan: "{{ states('fan.dining_room_fan') }}"
+      dining_room_ac: "{{ states('climate.dining_room_ac') }}"
+      playroom_lights: "{{ states('light.playroom_lights') }}"
+      yard_light: "{{ states('light.yard_light_entity') }}"
+      living_room_lights: "{{ states('light.living_room_lights') }}"
+      living_room_pendant_lignt: "{{ states('light.living_room_pendant_light_entity') }}"
+      living_room_fan: "{{ states('fan.living_room_fan') }}"
+      living_room_ac: "{{ states('climate.living_room_ac') }}"
+      kitchen_lights: "{{ states('light.kitchen_lights') }}"
+      study_room_lights: "{{ states('light.study_room_lights') }}"
+      study_room_fan: "{{ states('fan.study_room_fan') }}"
+      study_room_ac: "{{ states('climate.study_room_ac') }}"
+      parents_room_lights: "{{ states('light.parents_room_lights') }}"
+      parents_room_fan: "{{ states('fan.parents_room_fan') }}"
+      parents_room_ac: "{{ states('climate.parents_room_ac') }}"
+      master_bathroom_lights: "{{ states('light.master_bathroom_lights') }}"
+
+  - name: Yard Window
+    unique_id: binary_sensor.yard_window
+    device_class: window
+    state: >
+      {{ is_state('binary_sensor.yard_window_1', 'on') or 
+         is_state('binary_sensor.yard_window_2','on') }}
+    attributes:
+      total_panes_open: "{{ is_state('binary_sensor.yard_window_1','on') + is_state('binary_sensor.yard_window_2','on') }}/2"
+      total_panes: 2
+      yard_window_1: "{{ states('binary_sensor.yard_window_1') }}"
+      yard_window_2: "{{ states('binary_sensor.yard_window_2') }}"
+
+  - name: Kitchen Window
+    unique_id: binary_sensor.kitchen_window
+    device_class: window
+    state: >
+      {{ not is_state('cover.kitchen_blinds', 'closed') }}
+    attributes:
+      kitchen_blinds: "{{ states('cover.kitchen_blinds') }}"
+
+  - name: Kitchen Motion
+    unique_id: binary_sensor.kitchen_motion
+    device_class: motion
+    state: >
+      {{ is_state('binary_sensor.kitchen_sink_motion', 'on') or
+         is_state('binary_sensor.kitchen_stove_motion', 'on') }}
+    attributes:
+      kitchen_sink_motion: "{{ states('binary_sensor.kitchen_sink_motion') }}"
+      kitchen_stove_motion: "{{ states('binary_sensor.kitchen_stove_motion') }}"
+
+  - name: Hallway Doors
+    unique_id: binary_sensor.hallway_doors
+    device_class: door
+    state: >
+      {{ is_state('binary_sensor.powder_room_door', 'on') or
+        is_state('binary_sensor.junior_bathroom_door', 'on') or
+        is_state('binary_sensor.elis_room_door', 'on') or
+        is_state('binary_sensor.elenas_room_door', 'on')
+      }}
+    attributes:
+      powder_room_door: "{{ states('binary_sensor.powder_room_door') }}"
+      junior_bathroom_door: "{{ states('binary_sensor.junior_bathroom_door') }}"
+      elis_room_door: "{{ states('binary_sensor.elis_room_door') }}"
+      elenas_room_door: "{{ states('binary_sensor.elenas_room_door') }}"
+      total_doors_open: "{{ is_state('binary_sensor.powder_room_door', 'on') + is_state('binary_sensor.junior_bathroom_door', 'on') + is_state('binary_sensor.elenas_room_door', 'on') + is_state('binary_sensor.elis_room_door', 'on') }}/4"
+      total_doors: "4"
+
+  - name: Parents' Room Doors
+    unique_id: binary_sensor.parents_room_doors
+    device_class: door
+    state: >
+      {{ is_state('binary_sensor.parents_room_door', 'on') or
+        is_state('binary_sensor.master_bathroom_door', 'on')
+      }}
+    attributes:
+      parents_room_door: "{{ states('binary_sensor.parents_room_door') }}"
+      master_bathroom_door: "{{ states('binary_sensor.master_bathroom_door') }}"
+      total_doors_open: "{{ is_state('binary_sensor.parents_room_door', 'on') + is_state('binary_sensor.master_bathroom_door', 'on') }}/2"
+      total_doors: "2"
+
+  - name: AC On With Door Open at Dining Room
+    unique_id: binary_sensor.ac_on_with_door_open_at_dining_room
+    state: "{{ is_state('binary_sensor.main_door','on') and is_state('climate.dining_room_ac','cool') }}"
+    attributes:
+      yard_door: "{{ states('binary_sensor.main_door') }}"
+      dining_room_ac: " {{ states('climate.dining_room_ac') }}"
+
+  - name: AC On With Window Open at Yard
+    unique_id: binary_sensor.ac_on_with_window_open_at_yard
+    state: "{{ is_state('binary_sensor.yard_window','on') and is_state('climate.dining_room_ac','cool') }}"
+    attributes:
+      yard_window: "{{ states('binary_sensor.yard_window') }}"
+      dining_room_ac: " {{ states('climate.dining_room_ac') }}"
+
+  - name: AC On With Door Open at Powder Room
+    unique_id: binary_sensor.ac_on_with_door_open_at_powder_room
+    state: "{{ is_state('binary_sensor.powder_room_door','on') and is_state('climate.dining_room_ac','cool') }}"
+    attributes:
+      powder_room_door: "{{ states('binary_sensor.powder_room_door') }}"
+      dining_room_ac: " {{ states('climate.dining_room_ac') }}"
+
+  - name: AC On With Door Open at Junior Bathroom
+    unique_id: binary_sensor.ac_on_with_door_open_at_junior_bathroom
+    state: "{{ is_state('binary_sensor.junior_bathroom_door','on') and is_state('climate.dining_room_ac','cool') }}"
+    attributes:
+      junior_bathroom_door: "{{ states('binary_sensor.junior_bathroom_door') }}"
+      dining_room_ac: " {{ states('climate.dining_room_ac') }}"
+
+  - name: AC On With Door Open at Elena's Room
+    unique_id: binary_sensor.ac_on_with_door_open_at_elenas_room
+    state: >
+      {{ is_state('binary_sensor.elenas_room_door', 'on') 
+        and ((is_state('climate.elenas_room_ac', 'cool') and is_state('climate.dining_room_ac','off'))
+              or (is_state('climate.elenas_room_ac','off') and is_state('climate.dining_room_ac','cool')))
+      }}
+    attributes:
+      elenas_room_door: "{{ states('binary_sensor.elenas_room_door') }}"
+      elenas_room_ac: "{{ states('climate.elenas_room_ac') }}"
+      dining_room_ac: "{{ states('climate.dining_room_ac') }}"
+
+  - name: AC On With Door Open at Eli's Room
+    unique_id: binary_sensor.ac_on_with_door_open_at_elis_room
+    state: >
+      {{ is_state('binary_sensor.elis_room_door', 'on') 
+        and ((is_state('climate.elis_room_ac', 'cool') and is_state('climate.dining_room_ac','off'))
+              or (is_state('climate.elis_room_ac','off') and is_state('climate.dining_room_ac','cool')))
+      }}
+    attributes:
+      elis_room_door: "{{ states('binary_sensor.elis_room_door') }}"
+      elis_room_ac: "{{ states('climate.elis_room_ac') }}"
+      dining_room_ac: "{{ states('climate.dining_room_ac') }}"
+
+  - name: AC On With Doors Open at Hallway
+    unique_id: binary_sensor.ac_on_with_doors_open_at_hallway
+    state: >
+      {{ is_state('binary_sensor.ac_on_with_door_open_at_elenas_room', 'on')
+        or is_state('binary_sensor.ac_on_with_door_open_at_elis_room', 'on')
+        or is_state('binary_sensor.ac_on_with_door_open_at_powder_room', 'on')
+        or is_state('binary_sensor.ac_on_with_door_open_at_junior_bathroom', 'on')
+      }}
+    attributes:
+      elenas_room_door: "{{ states('binary_sensor.elenas_room_door') }}"
+      elis_room_door: "{{ states('binary_sensor.elis_room_door') }}"
+      powder_room_door: "{{ states('binary_sensor.powder_room_door') }}"
+      junior_bathroom_door: "{{ states('binary_sensor.junior_bathroom_door') }}"
+      elenas_room_ac: "{{ states('climate.elenas_room_ac') }}"
+      elis_room_ac: "{{ states('climate.elis_room_ac') }}"
+      dining_room_ac: "{{ states('climate.dining_room_ac') }}"
+
+  - name: AC On With Door Open at Study Room
+    unique_id: binary_sensor.ac_on_with_door_open_at_study_room
+    state: >
+      {{ is_state('binary_sensor.parents_room_door', 'on') 
+         and ((is_state('climate.parents_room_ac', 'cool') and is_state('climate.study_room_ac','off'))
+              or (is_state('climate.parents_room_ac','off') and is_state('climate.study_room_ac','cool')))
+      }}
+    attributes:
+      parents_room_door: "{{ states('binary_sensor.parents_room_door') }}"
+      parents_room_ac: "{{ states('climate.parents_room_ac') }}"
+      study_room_ac: "{{ states('climate.study_room_ac') }}"
+
+  - name: AC On With Door Open at Master Bathroom
+    unique_id: binary_sensor.ac_on_with_door_open_at_master_bathroom
+    state: "{{ is_state('binary_sensor.master_bathroom_door','on') and is_state('climate.parents_room_ac','cool') }}"
+    attributes:
+      powder_room_door: "{{ states('binary_sensor.master_bathroom_door') }}"
+      parents_room_ac: " {{ states('climate.parents_room_ac') }}"
+
+  - name: AC On With Doors Open at Parents' Room
+    unique_id: binary_sensor.ac_on_with_doors_open_at_parents_room
+    state: >
+      {{ is_state('binary_sensor.ac_on_with_door_open_at_study_room', 'on')
+        or is_state('binary_sensor.ac_on_with_door_open_at_master_bathroom', 'on')
+      }}
+    attributes:
+      parents_room_door: "{{ states('binary_sensor.parents_room_door') }}"
+      master_bathroom_door: "{{ states('binary_sensor.master_bathroom_door') }}"
+      parents_room_ac: "{{ states('climate.parents_room_ac') }}"
+      study_room_ac: "{{ states('climate.study_room_ac') }}"
+
+  - name: AC On With Window Open at Kitchen
+    unique_id: binary_sensor.ac_on_with_window_open_at_kitchen
+    state: "{{ not is_state('cover.kitchen_blinds','closed') and is_state('climate.living_room_ac','cool') }}"
+    attributes:
+      kitchen_window: "{{ states('cover.kitchen_blinds') }}"
+      living_room_ac: " {{ states('climate.living_room_ac') }}"
+
+  - name: AC On With Doors Open
+    unique_id: binary_sensor.ac_on_with_doors_open
+    state: >
+      {{ is_state('binary_sensor.ac_on_with_door_open_at_elenas_room', 'on') 
+         or is_state('binary_sensor.ac_on_with_door_open_at_elis_room', 'on') 
+         or is_state('binary_sensor.ac_on_with_door_open_at_powder_room', 'on')
+         or is_state('binary_sensor.ac_on_with_door_open_at_junior_bathroom', 'on')
+         or is_state('binary_sensor.ac_on_with_door_open_at_dining_room', 'on')
+         or is_state('binary_sensor.ac_on_with_window_open_at_yard', 'on') 
+         or is_state('binary_sensor.ac_on_with_doors_open_at_parents_room', 'on') 
+         or is_state('binary_sensor.ac_on_with_door_open_at_master_bathroom', 'on') 
+         or is_state('binary_sensor.ac_on_with_window_open_at_kitchen', 'on') }}
+    attributes:
+      elenas_room_door: "{{ states('binary_sensor.elenas_room_door') }}"
+      elis_room_door: "{{ states('binary_sensor.elis_room_door') }}"
+      powder_room_door: "{{ states('binary_sensor.powder_room_door') }}"
+      junior_bathroom_door: "{{ states('binary_sensor.junior_bathroom_door') }}"
+      main_door: "{{ states('binary_sensor.main_door') }}"
+      yard_window: "{{ states('binary_sensor.yard_window') }}"
+      parents_room_door: "{{ states('binary_sensor.parents_room_door') }}"
+      master_bathroom_door: "{{ states('binary_sensor.master_bathroom_door') }}"
+      kitchen_window: "{{ states('cover.kitchen_blinds') }}"
+      elenas_room_ac: "{{ states('climate.elenas_room_ac') }}"
+      elis_room_ac: "{{ states('climate.elis_room_ac') }}"
+      dining_room_ac: "{{ states('climate.dining_room_ac') }}"
+      living_room_ac: "{{ states('climate.living_room_ac') }}"
+      study_room_ac: "{{ states('climate.study_room_ac') }}"
+      parents_room_ac: "{{ states('climate.parents_room_ac') }}"
+
+  - name: Vacuum Running with Bathroom Doors Open
+    unique_id: binary_sensor.vacuum_running_with_bathroom_doors_open
+    state: >
+      {% if is_state('vacuum.pikachu', 'cleaning')
+         and (is_state('binary_sensor.powder_room_door', 'on') or 
+              is_state('binary_sensor.junior_bathroom_door', 'on') or
+              is_state('binary_sensor.master_bathroom_door', 'on')) %}
+        on
+      {% else %}
+        off
+      {% endif %}
+    attributes:
+      vacuum: "{{ states('vacuum.pikachu') }}"
+      junior_bathroom_door: "{{ states('binary_sensor.junior_bathroom_door') }}"
+      powder_room_door: "{{ states('binary_sensor.powder_room_door') }}"
+      master_bathroom_door: "{{ states('binary_sensor.master_bathroom_door') }}"
+      
+  - name: Dishwasher
+    unique_id: binary_sensor.dishwasher
+    state: "{{ states('sensor.dishwasher_watts') | int(0) > 0 }}"
+    attributes:
+      dishwasher_status: "{{ states('input_select.dishwasher_status') }}"
+    availability: "{{ states('switch.dishwasher') }}"
+
+  - name: Recommended Scene in Elena's Room
+    unique_id: binary_sensor.recommended_scene_in_elenas_room
+    state: >
+      {% if ((is_state('light.elenas_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_elenas_room', 'lights_level') == 0)
+             or (is_state('light.elenas_room_lights', 'on') and (state_attr('light.elenas_room_lights', 'brightness') / 255) | round(0) == state_attr('binary_sensor.recommended_scene_in_elenas_room', 'lights_level') / 100))
+         and (is_state('fan.elenas_room_fan','on') and state_attr('fan.elenas_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_elenas_room', 'fan_speed'))
+         and (states('climate.elenas_room_ac') == state_attr('binary_sensor.recommended_scene_in_elenas_room', 'ac_state')) %}
+        on
+      {% else %}
+        off
+      {% endif %}
+    attributes:
+      lights_level: >
+        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.elenas_wind_down')[:2] | int * 60 + states('input_datetime.elenas_wind_down')[3:5] | int) 
+        %}
+          100
+        {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+                 states('input_datetime.elenas_wind_down')[:2] | int * 60 + states('input_datetime.elenas_wind_down')[3:5] | int) 
+           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.elenas_bedtime')[:2] | int * 60 + states('input_datetime.elenas_bedtime')[3:5] | int) 
+        %}
+          5
+        {% else %}
+          0
+        {% endif %}
+      fan_speed: >
+        {% if (is_state('binary_sensor.elenas_room_door','off'))
+           or (is_state('binary_sensor.elenas_room_door','on') and is_state('climate.dining_room_ac','cool')) %}
+          16
+        {% else %}
+          66
+        {% endif %}
+      ac_state: >
+        {% if (is_state('binary_sensor.elenas_room_door','off'))
+           or (is_state('binary_sensor.elenas_room_door','on') and is_state('climate.dining_room_ac','cool')) %}
+          cool
+        {% else %}
+          off
+        {% endif %}
+
+  - name: Recommended Scene in Eli's Room
+    unique_id: binary_sensor.recommended_scene_in_elis_room
+    state: >
+      {% if ((is_state('light.elis_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_elis_room', 'lights_level') == 0)
+             or (is_state('light.elis_room_lights', 'on') and (state_attr('light.elis_room_lights', 'brightness') / 255) | round(0) == state_attr('binary_sensor.recommended_scene_in_elis_room', 'lights_level') / 100))
+         and (is_state('fan.elis_room_fan','on') and state_attr('fan.elis_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_elis_room', 'fan_speed'))
+         and (states('climate.elis_room_ac') == state_attr('binary_sensor.recommended_scene_in_elis_room', 'ac_state')) %}
+        on
+      {% else %}
+        off
+      {% endif %}
+    attributes:
+      lights_level: >
+        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+        %}
+          100
+        {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+                 states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.sleep_hours_start')[:2] | int * 60 + states('input_datetime.sleep_hours_start')[3:5] | int) 
+        %}
+          5
+        {% else %}
+          0
+        {% endif %}
+      fan_speed: >
+        {% if (is_state('binary_sensor.elis_room_door','off'))
+           or (is_state('binary_sensor.elis_room_door','on') and is_state('climate.dining_room_ac','cool')) %}
+          16
+        {% else %}
+          66
+        {% endif %}
+      ac_state: >
+        {% if (is_state('binary_sensor.elis_room_door','off'))
+           or (is_state('binary_sensor.elis_room_door','on') and is_state('climate.dining_room_ac','cool')) %}
+          cool
+        {% else %}
+          off
+        {% endif %}
+
+  - name: Recommended Scene in Dining Room
+    unique_id: binary_sensor.recommended_scene_in_dining_room
+    state: >
+      {{ ((is_state('light.dining_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_dining_room', 'lights_level') == 0)
+          or (is_state('light.dining_room_lights', 'on') and (state_attr('light.dining_room_lights', 'brightness') / 255) | round(0) == state_attr('binary_sensor.recommended_scene_in_dining_room', 'lights_level') / 100))
+         and ((is_state('light.dining_room_pendant_light_entity', 'off') and state_attr('binary_sensor.recommended_scene_in_dining_room', 'pendant_light_level') == 0)
+             or (is_state('light.dining_room_pendant_light_entity', 'on') and (state_attr('light.dining_room_pendant_light_entity', 'brightness') / 255) | round(0) == state_attr('binary_sensor.recommended_scene_in_dining_room', 'pendant_light_level') / 100))
+         and (is_state('fan.dining_room_fan','on') and state_attr('fan.dining_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_dining_room', 'fan_speed'))
+         and (states('climate.dining_room_ac') == state_attr('binary_sensor.recommended_scene_in_dining_room', 'ac_state')) }}
+    attributes:
+      lights_level: >
+        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+        %}
+          100
+        {% else %}
+          0
+        {% endif %}
+      pendant_light_level: >
+        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+        %}
+          100
+        {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+                 states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+           or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.lights_auto_control_end')[:2] | int * 60 + states('input_datetime.lights_auto_control_end')[3:5] | int) 
+        %}
+          5
+        {% else %}
+          0
+        {% endif %}
+      fan_speed: >
+        {% if is_state('binary_sensor.hallway_doors','off')
+           and is_state('binary_sensor.yard_window','off')
+           and is_state('cover.kitchen_blinds','closed')
+           and is_state('binary_sensor.parents_room_door','off')
+           and is_state('binary_sensor.main_door', 'off') %}
+          33
+        {% else %}
+          66
+        {% endif %}
+      ac_state: >
+        {% if is_state('binary_sensor.hallway_doors','off')
+           and is_state('binary_sensor.yard_window','off')
+           and is_state('cover.kitchen_blinds','closed')
+           and is_state('binary_sensor.parents_room_door','off')
+           and is_state('binary_sensor.main_door', 'off') %}
+          cool
+        {% else %}
+          off
+        {% endif %}
+
+  - name: Recommended Scene in Living Room
+    unique_id: binary_sensor.recommended_scene_in_living_room
+    state: >
+      {{ ((is_state('light.living_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_living_room', 'lights_level') == 0)
+           or (is_state('light.living_room_lights', 'on') and (state_attr('light.living_room_lights', 'brightness') / 255) | round(0) == state_attr('binary_sensor.recommended_scene_in_living_room', 'lights_level') / 100))
+         and ((is_state('light.living_room_pendant_light_entity', 'off') and state_attr('binary_sensor.recommended_scene_in_living_room', 'pendant_light_level') == 0)
+             or (is_state('light.living_room_pendant_light_entity', 'on') and (state_attr('light.living_room_pendant_light_entity', 'brightness') / 255) | round(0) == state_attr('binary_sensor.recommended_scene_in_living_room', 'pendant_light_level') / 100))
+         and (is_state('fan.living_room_fan','on') and state_attr('fan.living_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_living_room', 'fan_speed'))
+         and (states('climate.living_room_ac') == state_attr('binary_sensor.recommended_scene_in_living_room', 'ac_state')) }}
+    attributes:
+      lights_level: >
+        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+        %}
+          100
+        {% else %}
+          0
+        {% endif %}
+      pendant_light_level: >
+        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+        %}
+          100
+        {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+                 states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+           or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.lights_auto_control_end')[:2] | int * 60 + states('input_datetime.lights_auto_control_end')[3:5] | int) 
+        %}
+          5
+        {% else %}
+          0
+        {% endif %}
+      fan_speed: >
+        {% if is_state('binary_sensor.hallway_doors','off')
+           and is_state('binary_sensor.yard_window','off')
+           and is_state('cover.kitchen_blinds','closed')
+           and is_state('binary_sensor.parents_room_door','off')
+           and is_state('binary_sensor.main_door', 'off') %}
+          50
+        {% else %}
+          100
+        {% endif %}
+      ac_state: >
+        {% if is_state('binary_sensor.hallway_doors','off')
+           and is_state('binary_sensor.yard_window','off')
+           and is_state('cover.kitchen_blinds','closed')
+           and is_state('binary_sensor.parents_room_door','off')
+           and is_state('binary_sensor.main_door', 'off') %}
+          cool
+        {% else %}
+          off
+        {% endif %}
+
+  - name: Recommended Scene in Study Room
+    unique_id: binary_sensor.recommended_scene_in_study_room
+    state: >
+      {{ ((is_state('light.study_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_study_room', 'lights_level') == 0)
+          or (is_state('light.study_room_lights', 'on') and (state_attr('light.study_room_lights', 'brightness') / 255) | round(0) == state_attr('binary_sensor.recommended_scene_in_study_room', 'lights_level') / 100))
+      and (is_state('fan.study_room_fan','on') and state_attr('fan.study_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_study_room', 'fan_speed'))
+      and (states('climate.study_room_ac') == state_attr('binary_sensor.recommended_scene_in_study_room', 'ac_state')) }}
+    attributes:
+      lights_level: >
+        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+        %}
+          100
+        {% else %}
+          0
+        {% endif %}
+      fan_speed: >
+        {% if is_state('binary_sensor.hallway_doors','off')
+           and is_state('binary_sensor.yard_window','off')
+           and is_state('cover.kitchen_blinds','closed')
+           and is_state('binary_sensor.parents_room_door','off')
+           and is_state('binary_sensor.main_door', 'off') %}
+          50
+        {% else %}
+          100
+        {% endif %}
+      ac_state: >
+        {% if is_state('binary_sensor.hallway_doors','off')
+           and is_state('binary_sensor.yard_window','off')
+           and is_state('cover.kitchen_blinds','closed')
+           and is_state('binary_sensor.parents_room_door','off')
+           and is_state('binary_sensor.main_door', 'off') %}
+          cool
+        {% else %}
+          off
+        {% endif %}
+
+  - name: Recommended Scene in Parents' Room
+    unique_id: binary_sensor.recommended_scene_in_parents_room
+    state: >
+      {% if ((is_state('light.parents_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_parents_room', 'lights_level') == 0)
+             or (is_state('light.parents_room_lights', 'on') and (state_attr('light.parents_room_lights', 'brightness') / 255) | round(0) == state_attr('binary_sensor.recommended_scene_in_parents_room', 'lights_level') / 100))
+         and (is_state('fan.parents_room_fan','on') and state_attr('fan.parents_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_parents_room', 'fan_speed'))
+         and (states('climate.parents_room_ac') == state_attr('binary_sensor.recommended_scene_in_parents_room', 'ac_state')) %}
+        on
+      {% else %}
+        off
+      {% endif %}
+    attributes:
+      lights_level: >
+        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+        %}
+          100
+        {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+                 states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.lights_auto_control_end')[:2] | int * 60 + states('input_datetime.lights_auto_control_end')[3:5] | int) 
+        %}
+          5
+        {% else %}
+          0
+        {% endif %}
+      fan_speed: >
+        {% if (is_state('binary_sensor.parents_room_doors','off'))
+           or (is_state('binary_sensor.parents_room_doors','on') and is_state('climate.dining_room_ac','cool')) %}
+          16
+        {% else %}
+          66
+        {% endif %}
+      ac_state: >
+        {% if (is_state('binary_sensor.parents_room_doors','off'))
+           or (is_state('binary_sensor.parents_room_doors','on') and is_state('climate.dining_room_ac','cool')) %}
+          cool
+        {% else %}
+          off
+        {% endif %}
+
+  - name: Washer Tub Dirty
+    unique_id: binary_sensor.washer_tub_dirty
+    state: "{{ states('sensor.washer_tub_clean_counter') | int(0) > 30 }}"
+
+- sensor:
+  - name: Washer Status
+    unique_id: sensor.washer_status
+    state: >
+      {% if is_state('sensor.washer','off') %}
+        Off
+      {% else %}
+        {{ state_attr('sensor.washer', 'run_state') }}
+      {% endif %}
+    attributes:
+      washer_power: "{{ states('sensor.washer') }}"
+      washer_run_state: "{{ state_attr('sensor.washer', 'run_state') }}"
+      washer_remaining_time: "{{ state_attr('sensor.washer', 'remain_time')[:-3] }}"
+      washer_reserve_time: "{{ state_attr('sensor.washer', 'reserve_time')[:-3] }}"
+
+  - name: Washer Countdown
+    unique_id: sensor.washer_countdown
+    state: >
+      {% if states('sensor.washer_status') == 'Delay Set' %}
+        {{ states('sensor.washer_countdown_time')[:-3] }}
+      {% elif states('sensor.washer_status') in ['Washing', 'Rinsing', 'Spinning'] %}
+        {{ states('sensor.washer_remaining_time')[:-3] }}
+      {% else %}
+        -
+      {% endif %}
+
+  - name: Elena's Room AC Status
+    unique_id: sensor.elenas_room_ac_status
+    state: >
+      {% if is_state('automation.elenas_room_ac_auto_control', 'on') %}
+        auto
+      {% else %}
+        {{ states('climate.elenas_room_ac') }}
+      {% endif %}
+    attributes:
+      ac_state: "{{ states('climate.elenas_room_ac') }}"
+      ac_auto_control: "{{ states('automation.elenas_room_ac_auto_control') }}"
+
+  - name: Eli's Room AC Status
+    unique_id: sensor.elis_room_ac_status
+    state: >
+      {% if is_state('automation.elis_room_ac_auto_control', 'on') %}
+        auto
+      {% else %}
+        {{ states('climate.elis_room_ac') }}
+      {% endif %}
+    attributes:
+      ac_state: "{{ states('climate.elis_room_ac') }}"
+      ac_auto_control: "{{ states('automation.elis_room_ac_auto_control') }}"
+
+  - name: Parents' Room AC Status
+    unique_id: sensor.parents_room_ac_status
+    state: >
+      {% if is_state('automation.parents_room_ac_auto_control', 'on') %}
+        auto
+      {% else %}
+        {{ states('climate.parents_room_ac') }}
+      {% endif %}
+    attributes:
+      ac_state: "{{ states('climate.parents_room_ac') }}"
+      ac_auto_control: "{{ states('automation.parents_room_ac_auto_control') }}"
+
+  - name: Raining With Yard Windows Open
+    unique_id: sensor.raining_with_yard_windows_open
+    state: >
+      {% if is_state('binary_sensor.yard_window', 'on') %}
+        {% if states('sensor.local_rainfall') | float(0) > 1 
+           or 'Thunder' in states('sensor.local_two_hour_forecast') %}
+          alert
+        {% elif states('sensor.local_rainfall') | float(0) > 0 
+           or 'Shower' in states('sensor.local_two_hour_forecast')
+           or 'Rain' in states('sensor.local_two_hour_forecast') %}
+          warning
+        {% else %}
+          clear
+        {% endif %}
+      {% else %}
+        clear
+      {% endif %}
+    attributes:
+      yard_window: "{{ states('binary_sensor.yard_window') }}"
+      local_rainfall: "{{ states('sensor.local_rainfall') }}"
+      local_two_hour_forecast: "{{ states('sensor.local_two_hour_forecast') }}"
+
+  - name: Raining With Kitchen Window Open
+    unique_id: sensor.raining_with_kitchen_window_open
+    state: >
+      {% if is_state('binary_sensor.kitchen_window', 'on') %}
+        {% if states('sensor.local_rainfall') | float(0) > 1 
+           or 'Thunder' in states('sensor.local_two_hour_forecast') %}
+          alert
+        {% elif states('sensor.local_rainfall') | float(0) > 0 
+           or 'Shower' in states('sensor.local_two_hour_forecast')
+           or 'Rain' in states('sensor.local_two_hour_forecast') %}
+          warning
+        {% else %}
+          clear
+        {% endif %}
+      {% else %}
+        clear
+      {% endif %}
+    attributes:
+      yard_window: "{{ states('binary_sensor.kitchen_window') }}"
+      local_rainfall: "{{ states('sensor.local_rainfall') }}"
+      local_two_hour_forecast: "{{ states('sensor.local_two_hour_forecast') }}"
+
+  - name: Raining With Windows Open
+    unique_id: sensor.raining_with_windows_open
+    state: >
+      {% if is_state('binary_sensor.yard_window', 'on') 
+         or is_state('binary_sensor.kitchen_window', 'on') %}
+        {% if states('sensor.local_rainfall') | float(0) > 1 
+           or 'Thunder' in states('sensor.local_two_hour_forecast') %}
+          alert
+        {% elif states('sensor.local_rainfall') | float(0) > 0 
+           or 'Shower' in states('sensor.local_two_hour_forecast')
+           or 'Rain' in states('sensor.local_two_hour_forecast') %}
+          warning
+        {% else %}
+          clear
+        {% endif %}
+      {% else %}
+        clear
+      {% endif %}
+    attributes:
+      yard_window: "{{ states('binary_sensor.yard_window') }}"
+      local_rainfall: "{{ states('sensor.local_rainfall') }}"
+      local_two_hour_forecast: "{{ states('sensor.local_two_hour_forecast') }}"
+
+  - name: Vacuum Clean Time
+    unique_id: sensor.vacuum_clean_time
+    state: >
+      {% set cleaning_time =
+         (as_timestamp(state_attr('vacuum.pikachu', 'clean_stop')) -
+         as_timestamp(state_attr('vacuum.pikachu', 'clean_start'))) // 60
+      %} 
+      {{ (cleaning_time // 60) | int(0) }}:{{ (cleaning_time -
+         (cleaning_time // 60) * 60) | int(0) }}
+
+- trigger:
+  - platform: time_pattern
+    minutes: '/1'
+  sensor:
+    - name: Washer Last Wash Completed
+      unique_id: sensor.washer_last_wash_completed
+      state: >
+        {% if states('sensor.washer_status') == 'Off' %}
+          {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
+          {% set relative_age = relative_time(states('input_datetime.washer_last_wash_complete') | as_datetime).split() %}
+          {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% else %}
+          In use
+        {% endif %}
+
+    - name: Vacuum Last Use
+      unique_id: sensor.vacuum_last_use
+      state: >
+        {% if states('vacuum.pikachu') in ['docked', 'idle'] %}
+          {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
+          {% set relative_age = relative_time(state_attr('vacuum.pikachu', 'clean_stop') | as_datetime).split() %}
+          {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% else %}
+          In use
+        {% endif %}
+
+    - name: Dishwasher Last Run Started
+      unique_id: sensor.dishwasher_last_run_started
+      state: >
+        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
+        {% set relative_age = relative_time(states('input_datetime.dishwasher_last_run_start') | as_datetime).split() %}
+        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+
+    - name: Dishwasher Last Run Ended
+      unique_id: sensor.dishwasher_last_run_ended
+      state: >
+        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
+        {% set relative_age = relative_time(states('input_datetime.dishwasher_last_run_end') | as_datetime).split() %}
+        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+
+    - name: Dishwasher Last Run Duration
+      unique_id: sensor.dishwasher_last_run_duration
+      state: >
+        {% if states('input_datetime.dishwasher_last_run_end') | as_datetime > states('input_datetime.dishwasher_last_run_start') | as_datetime %}
+          {{ ((states('input_datetime.dishwasher_last_run_end') | as_datetime - states('input_datetime.dishwasher_last_run_start') | as_datetime) | string)[:-3] }}
+        {% else %}
+          Running
+        {% endif %}
+
+    - name: Stove Last Use
+      unique_id: sensor.stove_last_use
+      state: >
+        {% if states('switch.stove_main_power') == 'off' %}
+          {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
+          {% set relative_age = relative_time(states.switch.stove_main_power.last_changed).split() %}
+          {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% else %}
+          In use
+        {% endif %}
