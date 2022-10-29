@@ -256,13 +256,14 @@
       study_room_ac: "{{ states('climate.study_room_ac') }}"
       parents_room_ac: "{{ states('climate.parents_room_ac') }}"
 
-  - name: Vacuum Running with Bathroom Doors Open
-    unique_id: binary_sensor.vacuum_running_with_bathroom_doors_open
+  - name: Vacuum Running with Doors Open
+    unique_id: binary_sensor.vacuum_running_with_doors_open
     state: >
       {% if is_state('vacuum.pikachu', 'cleaning')
          and (is_state('binary_sensor.powder_room_door', 'on') or 
               is_state('binary_sensor.junior_bathroom_door', 'on') or
-              is_state('binary_sensor.master_bathroom_door', 'on')) %}
+              is_state('binary_sensor.master_bathroom_door', 'on') or
+              is_state('binary_sensor.main_door', 'on')) %}
         on
       {% else %}
         off
@@ -272,6 +273,7 @@
       junior_bathroom_door: "{{ states('binary_sensor.junior_bathroom_door') }}"
       powder_room_door: "{{ states('binary_sensor.powder_room_door') }}"
       master_bathroom_door: "{{ states('binary_sensor.master_bathroom_door') }}"
+      main_door: "{{ states('binary_sensor.main_door') }}"
       
   - name: Dishwasher
     unique_id: binary_sensor.dishwasher

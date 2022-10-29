@@ -1514,17 +1514,19 @@
       data: {}
   mode: single
 - id: '1648699866610'
-  alias: Notify When Vacuum Running with Bathroom Doors Open
+  alias: Notify When Vacuum Running with Doors Open
   description: Send a persistent notification if the vacuum is cleaning when bathroom
-    doors are open, pause the vacuum after 1min if doors are still open, and dismiss
-    the notification when vacuum stops cleaning or bathroom doors are closed
+    or main doors are open, pause the vacuum after 1min if doors are still open, and
+    dismiss the notification when vacuum stops cleaning or bathroom doors are closed
   trigger:
   - platform: state
-    entity_id: binary_sensor.vacuum_running_with_bathroom_doors_open
+    entity_id:
+    - binary_sensor.vacuum_running_with_doors_open
     id: error_state
     to: 'on'
   - platform: state
-    entity_id: binary_sensor.vacuum_running_with_bathroom_doors_open
+    entity_id:
+    - binary_sensor.vacuum_running_with_doors_open
     id: error_cleared
     to: 'off'
   condition: []
@@ -1548,7 +1550,7 @@
       data:
         message: Otherwise, vacuum will pause at {{ ((now() + timedelta(minutes =
           1)).time() | string)[:5] }}.
-        title: Please close bathroom doors
+        title: Please close bathroom/main doors
         data:
           persistent: true
           tag: vacuum_running_with_bathroom_doors_open
@@ -1556,7 +1558,7 @@
       data:
         message: Otherwise, vacuum will pause at {{ ((now() + timedelta(minutes =
           1)).time() | string)[:5] }}.
-        title: Please close bathroom doors
+        title: Please close bathroom/main doors
         data:
           tag: vacuum_running_with_bathroom_doors_open
     - delay:
@@ -1565,7 +1567,7 @@
         seconds: 0
         milliseconds: 0
     - condition: state
-      entity_id: binary_sensor.vacuum_running_with_bathroom_doors_open
+      entity_id: binary_sensor.vacuum_running_with_doors_open
       state: 'on'
       for:
         hours: 0
