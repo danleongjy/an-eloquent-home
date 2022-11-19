@@ -1082,7 +1082,7 @@
                           "cards": [
                             {
                               "type": "grid",
-                              "columns": 4,
+                              "columns": 5,
                               "square": true,
                               "cards": [
                                 {
@@ -1099,6 +1099,17 @@
                                 {
                                   "type": "custom:button-card",
                                   "entity": "sensor.elenas_room_humidity",
+                                  "template": "square_cell",
+                                  "show_state": true
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "binary_sensor.elenas_room_motion",
+                                  "template": "square_cell"
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "sensor.elenas_room_lux",
                                   "template": "square_cell",
                                   "show_state": true
                                 }
@@ -1402,7 +1413,7 @@
                           "cards": [
                             {
                               "type": "grid",
-                              "columns": 4,
+                              "columns": 5,
                               "square": true,
                               "cards": [
                                 {
@@ -1419,6 +1430,17 @@
                                 {
                                   "type": "custom:button-card",
                                   "entity": "sensor.elis_room_humidity",
+                                  "template": "square_cell",
+                                  "show_state": true
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "binary_sensor.elis_room_motion",
+                                  "template": "square_cell"
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "sensor.elis_room_lux",
                                   "template": "square_cell",
                                   "show_state": true
                                 }
@@ -1779,11 +1801,102 @@
                                 {
                                   "entity": "binary_sensor.vacuum_running_with_doors_open",
                                   "state": "on"
+                                },
+                                {
+                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                                  "state": "on"
                                 }
                               ],
                               "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Please close bathroom doors. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
+                                "type": "conditional",
+                                "conditions": [
+                                  {
+                                    "entity": "binary_sensor.junior_bathroom_door",
+                                    "state": "on"
+                                  }
+                                ],
+                                "card": {
+                                  "type": "markdown",
+                                  "content": "<ha-alert alert-type=\"error\">Please close junior bathroom door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
+                                }
+                              }
+                            },
+                            {
+                              "type": "conditional",
+                              "conditions": [
+                                {
+                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
+                                  "state": "on"
+                                },
+                                {
+                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                                  "state": "on"
+                                }
+                              ],
+                              "card": {
+                                "type": "conditional",
+                                "conditions": [
+                                  {
+                                    "entity": "binary_sensor.powder_room_door",
+                                    "state": "on"
+                                  }
+                                ],
+                                "card": {
+                                  "type": "markdown",
+                                  "content": "<ha-alert alert-type=\"error\">Please close powder room door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
+                                }
+                              }
+                            },
+                            {
+                              "type": "conditional",
+                              "conditions": [
+                                {
+                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
+                                  "state": "on"
+                                },
+                                {
+                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                                  "state": "off"
+                                }
+                              ],
+                              "card": {
+                                "type": "conditional",
+                                "conditions": [
+                                  {
+                                    "entity": "binary_sensor.junior_bathroom_door",
+                                    "state": "on"
+                                  }
+                                ],
+                                "card": {
+                                  "type": "markdown",
+                                  "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with junior bathroom door open.</ha-alert>"
+                                }
+                              }
+                            },
+                            {
+                              "type": "conditional",
+                              "conditions": [
+                                {
+                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
+                                  "state": "on"
+                                },
+                                {
+                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                                  "state": "off"
+                                }
+                              ],
+                              "card": {
+                                "type": "conditional",
+                                "conditions": [
+                                  {
+                                    "entity": "binary_sensor.powder_room_door",
+                                    "state": "on"
+                                  }
+                                ],
+                                "card": {
+                                  "type": "markdown",
+                                  "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with powder room door open.</ha-alert>"
+                                }
                               }
                             }
                           ]
@@ -1795,7 +1908,7 @@
                   "styles": {
                     "card": [
                       {
-                        "background-color": "[[[\n  if ((states['binary_sensor.ac_on_with_doors_open_at_hallway'].state == 'on')\n     || (states['binary_sensor.vacuum_running_with_doors_open'].state == 'on'))\n    return '#9e110d';\n  else\n    return 'var(--secondary-background-color)';\n]]]\n"
+                        "background-color": "[[[\n  if ((states['binary_sensor.ac_on_with_doors_open_at_hallway'].state == 'on')\n     || ((states['binary_sensor.vacuum_running_with_doors_open'].state == 'on')\n          && ((states['binary_sensor.junior_bathroom_door'].state == 'on')\n           || (states['binary_sensor.powder_room_door'].state == 'on'))))\n    return '#9e110d';\n  else\n    return 'var(--secondary-background-color)';\n]]]\n"
                       }
                     ]
                   }
@@ -2223,7 +2336,7 @@
                           "cards": [
                             {
                               "type": "grid",
-                              "columns": 4,
+                              "columns": 5,
                               "square": true,
                               "cards": [
                                 {
@@ -2240,6 +2353,17 @@
                                 {
                                   "type": "custom:button-card",
                                   "entity": "sensor.dining_room_humidity",
+                                  "template": "square_cell",
+                                  "show_state": true
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "binary_sensor.dining_room_motion",
+                                  "template": "square_cell"
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "sensor.dining_room_lux",
                                   "template": "square_cell",
                                   "show_state": true
                                 }
@@ -2612,6 +2736,17 @@
                                 {
                                   "type": "custom:button-card",
                                   "entity": "sensor.dining_room_humidity",
+                                  "template": "square_cell",
+                                  "show_state": true
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "binary_sensor.living_room_motion",
+                                  "template": "square_cell"
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "sensor.living_room_lux",
                                   "template": "square_cell",
                                   "show_state": true
                                 }
@@ -3032,17 +3167,12 @@
                           "cards": [
                             {
                               "type": "grid",
-                              "columns": 4,
+                              "columns": 5,
                               "square": true,
                               "cards": [
                                 {
                                   "type": "custom:button-card",
                                   "entity": "binary_sensor.parents_room_door",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.study_walkway_motion",
                                   "template": "square_cell"
                                 },
                                 {
@@ -3054,6 +3184,17 @@
                                 {
                                   "type": "custom:button-card",
                                   "entity": "sensor.study_room_humidity",
+                                  "template": "square_cell",
+                                  "show_state": true
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "binary_sensor.study_walkway_motion",
+                                  "template": "square_cell"
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "sensor.study_walkway_lux",
                                   "template": "square_cell",
                                   "show_state": true
                                 }
@@ -3354,6 +3495,17 @@
                                 {
                                   "type": "custom:button-card",
                                   "entity": "sensor.parents_room_humidity",
+                                  "template": "square_cell",
+                                  "show_state": true
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "binary_sensor.parents_room_motion",
+                                  "template": "square_cell"
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "sensor.parents_room_lux",
                                   "template": "square_cell",
                                   "show_state": true
                                 }
@@ -4148,6 +4300,17 @@
                   }
                 }
               ]
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_number.motion_timeout"
+                },
+                {
+                  "entity": "input_boolean.vacation_mode"
+                }
+              ]
             }
           ]
         },
@@ -4166,7 +4329,7 @@
           "cards": [
             {
               "square": true,
-              "columns": 10,
+              "columns": 11,
               "type": "grid",
               "cards": [
                 {
@@ -4198,6 +4361,10 @@
                   "type": "custom:button-card",
                   "entity": "sensor.washer_door_lqi",
                   "template": "zigbee_endpoint"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
                 },
                 {
                   "type": "custom:button-card",
@@ -4264,6 +4431,10 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
                   "icon": "mdi:bed",
                   "template": "square_cell"
                 },
@@ -4310,6 +4481,11 @@
                 {
                   "type": "custom:button-card",
                   "entity": "sensor.elenas_room_temperature_humidity_lqi",
+                  "template": "zigbee_endpoint"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.elenas_room_motion_lqi",
                   "template": "zigbee_endpoint"
                 },
                 {
@@ -4364,6 +4540,11 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "sensor.elis_room_motion_lqi",
+                  "template": "zigbee_endpoint"
+                },
+                {
+                  "type": "custom:button-card",
                   "icon": "mdi:swap-horizontal-circle-outline",
                   "template": "square_cell"
                 },
@@ -4401,6 +4582,10 @@
                   "type": "custom:button-card",
                   "entity": "sensor.hallway_motion_lqi",
                   "template": "zigbee_endpoint"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
                 },
                 {
                   "type": "custom:button-card",
@@ -4459,6 +4644,10 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
                   "icon": "mdi:toilet",
                   "template": "square_cell"
                 },
@@ -4481,6 +4670,10 @@
                   "type": "custom:button-card",
                   "entity": "sensor.powder_room_motion_lqi",
                   "template": "zigbee_endpoint"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
                 },
                 {
                   "type": "custom:button-card",
@@ -4554,6 +4747,11 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "sensor.dining_room_motion_lqi",
+                  "template": "zigbee_endpoint"
+                },
+                {
+                  "type": "custom:button-card",
                   "icon": "mdi:sofa",
                   "template": "square_cell"
                 },
@@ -4600,6 +4798,11 @@
                 {
                   "type": "custom:button-card",
                   "entity": "sensor.living_room_lights_controller_lqi",
+                  "template": "zigbee_endpoint"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.living_room_motion_lqi",
                   "template": "zigbee_endpoint"
                 },
                 {
@@ -4654,6 +4857,10 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
                   "icon": "mdi:bed",
                   "template": "square_cell"
                 },
@@ -4704,6 +4911,11 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "sensor.parents_room_motion_lqi",
+                  "template": "zigbee_endpoint"
+                },
+                {
+                  "type": "custom:button-card",
                   "icon": "mdi:bathtub",
                   "template": "square_cell"
                 },
@@ -4746,6 +4958,10 @@
                   "type": "custom:button-card",
                   "entity": "sensor.master_shower_motion_lqi",
                   "template": "zigbee_endpoint"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
                 },
                 {
                   "type": "custom:button-card",
@@ -4800,6 +5016,10 @@
                   "type": "custom:button-card",
                   "entity": "sensor.dishwasher_door_lqi",
                   "template": "zigbee_endpoint"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
                 }
               ]
             }

@@ -295,16 +295,15 @@
       {% endif %}
     attributes:
       lights_level: >
-        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
-               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+        {% if (states('sensor.elenas_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
-               states('input_datetime.elenas_wind_down')[:2] | int * 60 + states('input_datetime.elenas_wind_down')[3:5] | int) 
+                states('input_datetime.elenas_wind_down')[:2] | int * 60 + states('input_datetime.elenas_wind_down')[3:5] | int) 
         %}
           100
         {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
                  states('input_datetime.elenas_wind_down')[:2] | int * 60 + states('input_datetime.elenas_wind_down')[3:5] | int) 
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
-               states('input_datetime.elenas_bedtime')[:2] | int * 60 + states('input_datetime.elenas_bedtime')[3:5] | int) 
+                states('input_datetime.elenas_bedtime')[:2] | int * 60 + states('input_datetime.elenas_bedtime')[3:5] | int) 
         %}
           {{ states('input_number.night_light_brightness') }}
         {% else %}
@@ -338,8 +337,7 @@
       {% endif %}
     attributes:
       lights_level: >
-        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
-               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+        {% if (states('sensor.elis_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
         %}
@@ -379,8 +377,7 @@
          and (states('climate.dining_room_ac') == state_attr('binary_sensor.recommended_scene_in_dining_room', 'ac_state')) }}
     attributes:
       lights_level: >
-        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
-               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+        {% if (states('sensor.dining_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
         %}
@@ -389,8 +386,7 @@
           0
         {% endif %}
       pendant_light_level: >
-        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
-               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+        {% if (states('sensor.dining_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
         %}
@@ -436,8 +432,7 @@
          and (states('climate.living_room_ac') == state_attr('binary_sensor.recommended_scene_in_living_room', 'ac_state')) }}
     attributes:
       lights_level: >
-        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
-               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+        {% if (states('sensor.living_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
         %}
@@ -446,8 +441,7 @@
           0
         {% endif %}
       pendant_light_level: >
-        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
-               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+        {% if (states('sensor.living_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
         %}
@@ -491,8 +485,7 @@
       and (states('climate.study_room_ac') == state_attr('binary_sensor.recommended_scene_in_study_room', 'ac_state')) }}
     attributes:
       lights_level: >
-        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
-               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+        {% if (states('sensor.study_walkway_lux') | int(0) < states('input_number.minimum_lux') | int(0)) 
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
         %}
@@ -534,15 +527,14 @@
       {% endif %}
     attributes:
       lights_level: >
-        {% if ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
-               states('input_datetime.lights_auto_control_start')[:2] | int * 60 + states('input_datetime.lights_auto_control_start')[3:5] | int) 
+        {% if (states('sensor.parents_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
            and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
         %}
           100
         {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
                  states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
-           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+           or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
                states('input_datetime.lights_auto_control_end')[:2] | int * 60 + states('input_datetime.lights_auto_control_end')[3:5] | int) 
         %}
           {{ states('input_number.night_light_brightness') }}

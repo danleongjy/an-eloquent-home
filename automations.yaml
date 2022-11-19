@@ -1683,10 +1683,20 @@
       minutes: 5
       seconds: 0
   action:
-  - service: script.set_recommended_scene_in_dining_room
-    data: {}
-  - service: script.set_recommended_scene_in_living_room
-    data: {}
+  - if:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'off'
+    then:
+    - service: script.set_recommended_scene_in_dining_room
+      data: {}
+    - service: script.set_recommended_scene_in_living_room
+      data: {}
+    else:
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.study_room_speaker
+        message: Vacation mode active. Only manual controls will respond.
   mode: single
 - id: '1653105007378'
   alias: Notify When Raining With Windows Open
@@ -1728,6 +1738,7 @@
         data:
           tag: windows_open_raining
   mode: single
+  max_exceeded: silent
 - id: '1653280933582'
   alias: Dishwasher Set State
   description: Set the state of the dishwasher based on its power consumption
@@ -4210,4 +4221,311 @@
         datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
       target:
         entity_id: input_datetime.dishwasher_last_run_end
+  mode: single
+- id: '1667350498199'
+  alias: Vacation Mode
+  description: Set automated controls and devices for vacation mode
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.vacation_mode
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: input_boolean.vacation_mode
+      state: 'on'
+    then:
+    - service: cover.open_cover
+      data: {}
+      target:
+        entity_id: cover.master_bathroom_blind
+    - service: cover.close_cover
+      data: {}
+      target:
+        entity_id: cover.kitchen_blinds
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id:
+        - switch.stove_main_power
+        - switch.water_heater
+    - service: script.turn_off_all
+      data: {}
+    - service: automation.turn_off
+      data: {}
+      target:
+        entity_id:
+        - automation.ac_auto_control_at_night
+        - automation.elenas_room_ac_auto_control
+        - automation.elis_room_ac_auto_control
+        - automation.hallway_motion
+        - automation.junior_bathroom_motion_2
+        - automation.kitchen_blinds_auto_control
+        - automation.kitchen_motion
+        - automation.master_bathroom_blind_auto_control
+        - automation.master_bathroom_light_motion
+        - automation.master_bathroom_pendant_light_motion
+        - automation.parents_room_ac_auto_control
+        - automation.playroom_motion
+        - automation.powder_room_motion
+        - automation.study_walkway_motion
+        - automation.water_heater_motion
+        - automation.yard_motion
+        - automation.elena_s_room_motion
+        - automation.eli_s_room_motion
+        - automation.dining_room_motion
+        - automation.living_room_motion
+        - automation.parents_room_motion
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.study_room_speaker
+        message: Vacation mode active. Only manual controls will respond.
+    else:
+    - service: automation.turn_on
+      data: {}
+      target:
+        entity_id:
+        - automation.ac_auto_control_at_night
+        - automation.hallway_motion
+        - automation.junior_bathroom_motion_2
+        - automation.kitchen_blinds_auto_control
+        - automation.kitchen_motion
+        - automation.master_bathroom_blind_auto_control
+        - automation.master_bathroom_light_motion
+        - automation.master_bathroom_pendant_light_motion
+        - automation.playroom_motion
+        - automation.powder_room_motion
+        - automation.study_walkway_motion
+        - automation.water_heater_motion
+        - automation.yard_motion
+        - automation.elena_s_room_motion
+        - automation.eli_s_room_motion
+        - automation.dining_room_motion
+        - automation.living_room_motion
+        - automation.parents_room_motion
+    - service: automation.trigger
+      data:
+        skip_condition: false
+      target:
+        entity_id:
+        - automation.kitchen_blinds_auto_control
+    - service: tts.google_translate_say
+      data:
+        entity_id: media_player.study_room_speaker
+        message: Welcome home. Automated control enabled.
+  mode: single
+- id: '1668857202337'
+  alias: Parents' Room Motion
+  description: Set up the Parents' Room Lights, Fan and AC according to motion
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.parents_room_motion
+    from: 'off'
+    to: 'on'
+    id: setup
+  - platform: state
+    entity_id:
+    - binary_sensor.parents_room_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: '{{ states(''input_number.motion_timeout'') | int(30) }}'
+      seconds: 0
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: setup
+    then:
+    - condition: state
+      entity_id:
+      - light.parents_room_lights
+      - fan.parents_room_fan
+      - climate.parents_room_ac
+      state: 'off'
+    - service: script.set_recommended_scene_in_parents_room
+      data: {}
+    else:
+    - condition: time
+      after: input_datetime.lights_auto_control_end
+      before: input_datetime.sleep_hours_start
+      enabled: true
+    - service: script.turn_off_parents_room
+      data: {}
+      enabled: true
+  mode: single
+- id: '1668861685616'
+  alias: Living Room Motion
+  description: Set up the Living Room Lights, Fan and AC according to motion
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_motion
+    from: 'off'
+    to: 'on'
+    id: setup
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: '{{ states(''input_number.motion_timeout'') | int(30) }}'
+      seconds: 0
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: setup
+    then:
+    - condition: state
+      entity_id:
+      - light.living_room_lights
+      - fan.living_room_fan
+      - climate.living_room_ac
+      state: 'off'
+    - condition: time
+      after: input_datetime.lights_auto_control_end
+      before: input_datetime.sleep_hours_start
+    - service: script.set_recommended_scene_in_living_room
+      data: {}
+    else:
+    - service: script.turn_off_living_room
+      data: {}
+      enabled: true
+  mode: single
+- id: '1668861754600'
+  alias: Dining Room Motion
+  description: Set up the Dining Room Lights, Fan and AC according to motion
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.dining_room_motion
+    from: 'off'
+    to: 'on'
+    id: setup
+  - platform: state
+    entity_id:
+    - binary_sensor.dining_room_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: '{{ states(''input_number.motion_timeout'') | int(30) }}'
+      seconds: 0
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: setup
+    then:
+    - condition: state
+      entity_id:
+      - fan.dining_room_fan
+      - climate.dining_room_ac
+      - light.dining_room_lights
+      state: 'off'
+    - condition: time
+      after: input_datetime.lights_auto_control_end
+      before: input_datetime.sleep_hours_start
+    - service: script.set_recommended_scene_in_dining_room
+      data: {}
+    else:
+    - service: script.turn_off_dining_room
+      data: {}
+      enabled: true
+  mode: single
+- id: '1668861834630'
+  alias: Eli's Room Motion
+  description: Set up Eli's Room Lights, Fan and AC according to motion
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.elis_room_motion
+    from: 'off'
+    to: 'on'
+    id: setup
+  - platform: state
+    entity_id:
+    - binary_sensor.elis_room_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: '{{ states(''input_number.motion_timeout'') | int(30) }}'
+      seconds: 0
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: setup
+    - condition: state
+      entity_id: light.elis_room_lights
+      state: 'off'
+    - condition: state
+      entity_id: fan.elis_room_fan
+      state: 'off'
+    - condition: state
+      entity_id: climate.elis_room_ac
+      state: 'off'
+    then:
+    - service: script.set_recommended_scene_in_elis_room
+      data: {}
+    else:
+    - condition: time
+      after: input_datetime.lights_auto_control_end
+      before: input_datetime.sleep_hours_start
+      enabled: false
+    - service: script.turn_off_elis_room
+      data: {}
+      enabled: false
+  mode: single
+- id: '1668861895526'
+  alias: Elena's Room Motion
+  description: Set up Elena's Room Lights, Fan and AC according to motion
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.elenas_room_motion
+    from: 'off'
+    to: 'on'
+    id: setup
+  - platform: state
+    entity_id:
+    - binary_sensor.elenas_room_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: '{{ states(''input_number.motion_timeout'') | int(30) }}'
+      seconds: 0
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: setup
+    - condition: state
+      entity_id: light.elenas_room_lights
+      state: 'off'
+    - condition: state
+      entity_id: fan.elenas_room_fan
+      state: 'off'
+    - condition: state
+      entity_id: climate.elenas_room_ac
+      state: 'off'
+    then:
+    - service: script.set_recommended_scene_in_elenas_room
+      data: {}
+    else:
+    - condition: time
+      after: input_datetime.lights_auto_control_end
+      before: input_datetime.sleep_hours_start
+      enabled: false
+    - service: script.turn_off_elenas_room
+      data: {}
+      enabled: false
   mode: single
