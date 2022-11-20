@@ -397,6 +397,11 @@ set_recommended_scene_in_elenas_room:
       target:
         entity_id: climate.elenas_room_ac
       data: {}
+  - service: automation.turn_{{ state_attr('binary_sensor.recommended_scene_in_elenas_room',
+      'ac_auto_control') }}
+    data: {}
+    target:
+      entity_id: automation.elenas_room_ac_auto_control
   mode: single
   alias: Set Recommended Scene in Elena's Room
   icon: mdi:magic-staff
@@ -421,6 +426,7 @@ set_recommended_scene_in_elis_room:
     - service: light.turn_off
       target:
         entity_id: light.elis_room_lights
+      data: {}
   - service: fan.turn_on
     target:
       entity_id: fan.elis_room_fan
@@ -439,10 +445,17 @@ set_recommended_scene_in_elis_room:
       - service: climate.turn_on
         target:
           entity_id: climate.elis_room_ac
+        data: {}
     default:
     - service: climate.turn_off
       target:
         entity_id: climate.elis_room_ac
+      data: {}
+  - service: automation.turn_{{ state_attr('binary_sensor.recommended_scene_in_elis_room',
+      'ac_auto_control') }}
+    data: {}
+    target:
+      entity_id: automation.elis_room_ac_auto_control
   mode: single
   alias: Set Recommended Scene in Eli's Room
   icon: mdi:magic-staff
@@ -790,6 +803,11 @@ set_recommended_scene_in_parents_room:
       data: {}
       target:
         entity_id: climate.parents_room_ac
+  - service: automation.turn_{{ state_attr('binary_sensor.recommended_scene_in_parents_room',
+      'ac_auto_control') }}
+    data: {}
+    target:
+      entity_id: automation.parents_room_ac_auto_control
   mode: single
   icon: mdi:magic-staff
 stove_programme_cook_rice_on_left_burner:

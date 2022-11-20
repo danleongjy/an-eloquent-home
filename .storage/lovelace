@@ -652,7 +652,7 @@
                                   "type": "custom:button-card",
                                   "entity": "sensor.local_two_hour_forecast",
                                   "template": "square_cell",
-                                  "icon": "[[[\n  if (entity.state.includes('Fair'))\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-sunny\";\n    else\n      return \"mdi:weather-night\";\n  else if (entity.state == 'Partly Cloudy')\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-partly-cloudy\";\n    else\n      return \"mdi:weather-night-partly-cloudy\";\n  else if (entity.state == 'Cloudy')\n    return \"mdi:weather-cloudy\";\n  else if (entity.state.includes('Thunder'))\n    return \"mdi:weather-lightning-rainy\";\n  else if (entity.state.includes('Shower'))\n    return \"mdi:weather-pouring\";\n  else if (entity.state.includes('Rain'))\n    return \"mdi:weather-rainy\";\n  else\n    return \"mdi:weather-cloudy-alert\"\n]]]\n"
+                                  "icon": "[[[\n  if (entity.state.includes('Fair'))\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-sunny\";\n    else\n      return \"mdi:weather-night\";\n  else if (entity.state == 'Partly Cloudy')\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-partly-cloudy\";\n    else\n      return \"mdi:weather-night-partly-cloudy\";\n  else if (entity.state == 'Cloudy')\n    return \"mdi:weather-cloudy\";\n  else if (entity.state.includes('Thunder'))\n    return \"mdi:weather-lightning-rainy\";\n  else if (entity.state.includes('Shower'))\n    return \"mdi:weather-pouring\";\n  else if (entity.state.includes('Rain'))\n    return \"mdi:weather-rainy\";\n  else if (entity.state.includes('Wind'))\n    return \"mdi:weather-windy\";\n  else\n    return \"mdi:weather-cloudy-alert\"\n]]]\n"
                                 },
                                 {
                                   "type": "custom:button-card",
@@ -3440,8 +3440,59 @@
                   }
                 },
                 {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
+                  "type": "custom:state-switch",
+                  "entity": "media_player.study_room_speaker",
+                  "default": "in_use",
+                  "states": {
+                    "unavailable": {
+                      "type": "custom:button-card",
+                      "icon": "mdi:speaker-off",
+                      "template": "square_cell"
+                    },
+                    "unknown": {
+                      "type": "custom:button-card",
+                      "icon": "mdi:speaker-off",
+                      "template": "square_cell"
+                    },
+                    "off": {
+                      "type": "custom:button-card",
+                      "entity": "media_player.study_room_speaker",
+                      "template": "turn_on"
+                    },
+                    "in_use": {
+                      "type": "custom:slider-button-card",
+                      "entity": "media_player.study_room_speaker",
+                      "slider": {
+                        "direction": "bottom-top",
+                        "background": "solid",
+                        "use_state_color": false,
+                        "use_percentage_bg_opacity": false,
+                        "show_track": false,
+                        "toggle_on_click": false,
+                        "force_square": true
+                      },
+                      "show_name": false,
+                      "show_state": false,
+                      "compact": true,
+                      "icon": {
+                        "show": true,
+                        "use_state_color": true,
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "media_player.media_play_pause",
+                          "service_data": {
+                            "entity_id": "media_player.study_room_speaker"
+                          }
+                        },
+                        "icon": ""
+                      },
+                      "action_button": {
+                        "mode": "toggle",
+                        "icon": "mdi:power",
+                        "show": false
+                      }
+                    }
+                  }
                 },
                 {
                   "type": "custom:button-card",
@@ -4239,8 +4290,59 @@
                   }
                 },
                 {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
+                  "type": "custom:state-switch",
+                  "entity": "media_player.kitchen_speaker",
+                  "default": "in_use",
+                  "states": {
+                    "unavailable": {
+                      "type": "custom:button-card",
+                      "icon": "mdi:speaker-off",
+                      "template": "square_cell"
+                    },
+                    "unknown": {
+                      "type": "custom:button-card",
+                      "icon": "mdi:speaker-off",
+                      "template": "square_cell"
+                    },
+                    "off": {
+                      "type": "custom:button-card",
+                      "entity": "media_player.kitchen_speaker",
+                      "template": "turn_on"
+                    },
+                    "in_use": {
+                      "type": "custom:slider-button-card",
+                      "entity": "media_player.kitchen_speaker",
+                      "slider": {
+                        "direction": "bottom-top",
+                        "background": "solid",
+                        "use_state_color": false,
+                        "use_percentage_bg_opacity": false,
+                        "show_track": false,
+                        "toggle_on_click": false,
+                        "force_square": true
+                      },
+                      "show_name": false,
+                      "show_state": false,
+                      "compact": true,
+                      "icon": {
+                        "show": true,
+                        "use_state_color": true,
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "media_player.media_play_pause",
+                          "service_data": {
+                            "entity_id": "media_player.kitchen_speaker"
+                          }
+                        },
+                        "icon": ""
+                      },
+                      "action_button": {
+                        "mode": "toggle",
+                        "icon": "mdi:power",
+                        "show": false
+                      }
+                    }
+                  }
                 }
               ],
               "columns": 6,
@@ -5047,6 +5149,9 @@
                 },
                 {
                   "entity": "input_datetime.sleep_hours_start"
+                },
+                {
+                  "entity": "input_datetime.sleep_hours_end"
                 }
               ]
             }
@@ -5063,12 +5168,6 @@
             {
               "type": "entities",
               "entities": [
-                {
-                  "entity": "input_datetime.lights_auto_control_start"
-                },
-                {
-                  "entity": "input_datetime.lights_auto_control_end"
-                },
                 {
                   "entity": "input_number.minimum_lux"
                 },

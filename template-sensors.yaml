@@ -323,6 +323,16 @@
         {% else %}
           off
         {% endif %}
+      ac_auto_control: >
+        {% if  ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+                 states('input_datetime.elenas_bedtime')[:2] | int * 60 + states('input_datetime.elenas_bedtime')[3:5] | int) 
+           or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.sleep_hours_end')[:2] | int * 60 + states('input_datetime.sleep_hours_end')[3:5] | int)
+        %}
+          on
+        {% else %}
+          off
+        {% endif %}
 
   - name: Recommended Scene in Eli's Room
     unique_id: binary_sensor.recommended_scene_in_elis_room
@@ -365,6 +375,16 @@
         {% else %}
           off
         {% endif %}
+      ac_auto_control: >
+        {% if  ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+                 states('input_datetime.sleep_hours_start')[:2] | int * 60 + states('input_datetime.sleep_hours_start')[3:5] | int) 
+           or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.sleep_hours_end')[:2] | int * 60 + states('input_datetime.sleep_hours_end')[3:5] | int)
+        %}
+          on
+        {% else %}
+          off
+        {% endif %}
 
   - name: Recommended Scene in Dining Room
     unique_id: binary_sensor.recommended_scene_in_dining_room
@@ -394,7 +414,7 @@
         {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
                  states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
            or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
-               states('input_datetime.lights_auto_control_end')[:2] | int * 60 + states('input_datetime.lights_auto_control_end')[3:5] | int) 
+               states('input_datetime.sleep_hours_end')[:2] | int * 60 + states('input_datetime.sleep_hours_end')[3:5] | int) 
         %}
           {{ states('input_number.night_light_brightness') }}
         {% else %}
@@ -449,7 +469,7 @@
         {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
                  states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
            or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
-               states('input_datetime.lights_auto_control_end')[:2] | int * 60 + states('input_datetime.lights_auto_control_end')[3:5] | int) 
+               states('input_datetime.sleep_hours_end')[:2] | int * 60 + states('input_datetime.sleep_hours_end')[3:5] | int) 
         %}
           {{ states('input_number.night_light_brightness') }}
         {% else %}
@@ -490,8 +510,14 @@
                states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
         %}
           100
-        {% else %}
+        {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+                 states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+           or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.sleep_hours_end')[:2] | int * 60 + states('input_datetime.sleep_hours_end')[3:5] | int) 
+        %}
           {{ states('input_number.night_light_brightness') }}
+        {% else %}
+          0
         {% endif %}
       fan_speed: >
         {% if is_state('binary_sensor.hallway_doors','off')
@@ -535,7 +561,7 @@
         {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
                  states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
            or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
-               states('input_datetime.lights_auto_control_end')[:2] | int * 60 + states('input_datetime.lights_auto_control_end')[3:5] | int) 
+               states('input_datetime.sleep_hours_end')[:2] | int * 60 + states('input_datetime.sleep_hours_end')[3:5] | int) 
         %}
           {{ states('input_number.night_light_brightness') }}
         {% else %}
@@ -552,6 +578,16 @@
         {% if (is_state('binary_sensor.parents_room_doors','off'))
            or (is_state('binary_sensor.parents_room_doors','on') and is_state('climate.dining_room_ac','cool')) %}
           cool
+        {% else %}
+          off
+        {% endif %}
+      ac_auto_control: >
+        {% if  ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
+                 states('input_datetime.sleep_hours_start')[:2] | int * 60 + states('input_datetime.sleep_hours_start')[3:5] | int) 
+           or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
+               states('input_datetime.sleep_hours_end')[:2] | int * 60 + states('input_datetime.sleep_hours_end')[3:5] | int)
+        %}
+          on
         {% else %}
           off
         {% endif %}
