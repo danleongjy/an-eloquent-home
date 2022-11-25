@@ -4386,7 +4386,7 @@
         hours: 0
         minutes: 1
         seconds: 0
-      state: ''
+      state: 'on'
     - service: script.turn_off_parents_room
       data: {}
       enabled: true
@@ -4416,17 +4416,33 @@
     - condition: trigger
       id: setup
     then:
-    - condition: state
-      entity_id:
-      - light.living_room_lights
-      - fan.living_room_fan
-      - climate.living_room_ac
-      state: 'off'
     - condition: time
       after: input_datetime.sleep_hours_end
-      before: input_datetime.sleep_hours_start
-    - service: script.set_recommended_scene_in_living_room
-      data: {}
+      before: input_datetime.elenas_wind_down
+    - if:
+      - condition: numeric_state
+        entity_id: binary_sensor.recommended_scene_in_living_room
+        attribute: lights_level
+        above: 0
+      then:
+      - service: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_living_room'',
+            ''lights_level'') }}'
+        target:
+          entity_id: light.living_room_lights
+    - if:
+      - condition: numeric_state
+        entity_id: binary_sensor.recommended_scene_in_living_room
+        attribute: pendant_light_level
+        above: 0
+      then:
+      - service: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_living_room'',
+            ''pendant_light_level'') }}'
+        target:
+          entity_id: light.living_room_pendant_light_entity
     else:
     - service: script.turn_off_living_room
       data: {}
@@ -4457,17 +4473,33 @@
     - condition: trigger
       id: setup
     then:
-    - condition: state
-      entity_id:
-      - fan.dining_room_fan
-      - climate.dining_room_ac
-      - light.dining_room_lights
-      state: 'off'
     - condition: time
       after: input_datetime.sleep_hours_end
-      before: input_datetime.sleep_hours_start
-    - service: script.set_recommended_scene_in_dining_room
-      data: {}
+      before: input_datetime.elenas_wind_down
+    - if:
+      - condition: numeric_state
+        entity_id: binary_sensor.recommended_scene_in_dining_room
+        attribute: lights_level
+        above: 0
+      then:
+      - service: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_dining_room'',
+            ''lights_level'') }}'
+        target:
+          entity_id: light.dining_room_lights
+    - if:
+      - condition: numeric_state
+        entity_id: binary_sensor.recommended_scene_in_dining_room
+        attribute: pendant_light_level
+        above: 0
+      then:
+      - service: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_dining_room'',
+            ''pendant_light_level'') }}'
+        target:
+          entity_id: light.dining_room_pendant_light_entity
     else:
     - service: script.turn_off_dining_room
       data: {}
@@ -4501,7 +4533,7 @@
     - condition: state
       entity_id:
       - light.elis_room_lights
-      - fan.elenas_room_fan
+      - fan.elis_room_fan
       - climate.elis_room_ac
       state: 'off'
     - service: script.set_recommended_scene_in_elis_room
