@@ -610,10 +610,116 @@
               }
             ]
           }
+        },
+        "sensor_diag": {
+          "template": "square_cell",
+          "color_type": "card",
+          "show_icon": false
+        },
+        "sensor_binary": {
+          "template": "sensor_diag",
+          "state": [
+            {
+              "value": "on",
+              "color": "#b4fab4"
+            },
+            {
+              "value": "off",
+              "color": "#9e110d"
+            },
+            {
+              "operator": "default",
+              "color": "grey"
+            }
+          ]
+        },
+        "sensor_motion": {
+          "template": "sensor_binary",
+          "label": "[[[ return parseInt((Date.now() - Date.parse(entity.last_updated)) / 60000) ]]]",
+          "show_label": true
+        },
+        "sensor_temperature": {
+          "template": "sensor_diag",
+          "label": "[[[ return parseInt(entity.state) ]]]",
+          "show_label": true,
+          "state": [
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.temperature_threshold_cold'].state) ]]]",
+              "color": "#b4fab4"
+            },
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.temperature_threshold_warm'].state) ]]]",
+              "color": "#f2900f"
+            },
+            {
+              "operator": ">",
+              "value": "[[[ return parseInt(states['input_number.temperature_threshold_warm'].state) ]]]",
+              "color": "#9e110d"
+            },
+            {
+              "operator": "default",
+              "color": "grey"
+            }
+          ]
+        },
+        "sensor_humidity": {
+          "template": "sensor_diag",
+          "label": "[[[ return parseInt(entity.state) ]]]",
+          "show_label": true,
+          "state": [
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.humidity_threshold_low'].state) ]]]",
+              "color": "#b4fab4"
+            },
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.humidity_threshold_high'].state) ]]]",
+              "color": "#f2900f"
+            },
+            {
+              "operator": ">",
+              "value": "[[[ return parseInt(states['input_number.humidity_threshold_high'].state) ]]]",
+              "color": "#9e110d"
+            },
+            {
+              "operator": "default",
+              "color": "grey"
+            }
+          ]
+        },
+        "sensor_lux": {
+          "template": "sensor_diag",
+          "label": "[[[ return parseInt(entity.state) ]]]",
+          "show_label": true,
+          "state": [
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.minimum_lux'].state) ]]]",
+              "color": "#9e110d"
+            },
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.minimum_lux'].state) + 100 ]]]",
+              "color": "#f2900f"
+            },
+            {
+              "operator": ">",
+              "value": "[[[ return parseInt(states['input_number.minimum_lux'].state) + 100 ]]]",
+              "color": "#b4fab4"
+            },
+            {
+              "operator": "default",
+              "color": "grey"
+            }
+          ]
         }
       },
       "views": [
         {
+          "theme": "no_border",
           "title": "Home",
           "icon": "mdi:home-assistant",
           "badges": [],
@@ -4351,12 +4457,480 @@
           ]
         },
         {
+          "theme": "no_border",
+          "title": "Sensors",
+          "path": "sensors",
+          "icon": "mdi:radar",
+          "visible": [
+            {
+              "user": "ad2bcce775894550affb6dfef93a2a36"
+            }
+          ],
+          "badges": [],
+          "cards": [
+            {
+              "square": true,
+              "columns": 7,
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:door-open",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:window-open",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:thermometer",
+                  "label": "°C",
+                  "show_label": true,
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:water-percent",
+                  "label": "%",
+                  "show_label": true,
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:motion-sensor",
+                  "label": "min",
+                  "show_label": true,
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:brightness-5",
+                  "label": "lux",
+                  "show_label": true,
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:teddy-bear",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.yard_window",
+                  "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
+                  "show_label": true,
+                  "template": "sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.playroom_motion_sensors",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.yard_lux",
+                  "template": "sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:bed",
+                  "label": "Elena",
+                  "show_label": true,
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.elenas_room_door",
+                  "template": "sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.elenas_room_temperature",
+                  "template": "sensor_temperature"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.elenas_room_humidity",
+                  "template": "sensor_humidity"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.elenas_room_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.elenas_room_lux",
+                  "template": "sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:bed",
+                  "label": "Eli",
+                  "show_label": true,
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.elis_room_door",
+                  "template": "sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.elis_room_temperature",
+                  "template": "sensor_temperature"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.elis_room_humidity",
+                  "template": "sensor_humidity"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.elis_room_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.elis_room_lux",
+                  "template": "sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:swap-horizontal-circle-outline",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.hallway_doors",
+                  "label": "[[[ \n  if (entity.attributes.total_doors_open == \"0/4\")\n    return ''\n  else\n    return entity.attributes.total_doors_open\n]]]\n",
+                  "show_label": true,
+                  "template": "sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.hallway_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.hallway_lux",
+                  "template": "sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:toilet",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.powder_room_door",
+                  "template": "sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.powder_room_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:shower-head",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.junior_bathroom_door",
+                  "template": "sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.junior_bathroom_motion_sensors",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:pasta",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.main_door",
+                  "template": "sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.dining_room_temperature",
+                  "template": "sensor_temperature"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.dining_room_humidity",
+                  "template": "sensor_humidity"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.dining_room_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.dining_room_lux",
+                  "template": "sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:sofa",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.living_room_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.living_room_lux",
+                  "template": "sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:bookshelf",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.parents_room_door",
+                  "template": "sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.study_room_temperature",
+                  "template": "sensor_temperature"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.study_room_humidity",
+                  "template": "sensor_humidity"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.study_walkway_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.study_walkway_lux",
+                  "template": "sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:bed",
+                  "label": "D&G",
+                  "show_label": true,
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.parents_room_doors",
+                  "label": "[[[ \n  if (entity.attributes.total_doors_open == '0/2')\n    return ''\n  else\n    return entity.attributes.total_doors_open\n]]]\n",
+                  "show_label": true,
+                  "template": "sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.parents_room_temperature",
+                  "template": "sensor_temperature"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.parents_room_humidity",
+                  "template": "sensor_humidity"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.parents_room_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.parents_room_lux",
+                  "template": "sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:bathtub",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.master_bathroom_door",
+                  "template": "sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.master_bathroom_motion_sensors",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:pot-steam",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.kitchen_window",
+                  "template": "sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "binary_sensor.kitchen_motion_sensors",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.kitchen_lux",
+                  "template": "sensor_lux"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "theme": "no_border",
           "title": "Settings",
           "path": "settings",
           "icon": "mdi:cogs",
           "badges": [],
           "cards": [
             {
+              "square": true,
+              "columns": 4,
               "type": "grid",
               "cards": [
                 {
@@ -4400,6 +4974,17 @@
                   "hold_action": {
                     "action": "none"
                   }
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/diagnostics"
+                  },
+                  "name": "Diagnostic Thresholds",
+                  "icon": "mdi:arrow-expand-vertical"
                 }
               ]
             },
@@ -4417,7 +5002,7 @@
           ]
         },
         {
-          "theme": "Backend-selected",
+          "theme": "no_border",
           "title": "Zigbee Diagnostics",
           "path": "zigbee-diagnostics",
           "icon": "mdi:zigbee",
@@ -5205,6 +5790,44 @@
                 },
                 {
                   "entity": "input_number.hot_water_availability"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Diagnostic Thresholds",
+          "path": "diagnostics",
+          "icon": "mdi:arrow-expand-vertical",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_number.temperature_threshold_cold",
+                  "name": "Temperature - Cold"
+                },
+                {
+                  "entity": "input_number.temperature_threshold_warm",
+                  "name": "Temperature - Warm"
+                },
+                {
+                  "entity": "input_number.humidity_threshold_low",
+                  "name": "Humidity - Low"
+                },
+                {
+                  "entity": "input_number.humidity_threshold_high",
+                  "name": "Humidity - High"
+                },
+                {
+                  "entity": "input_number.zigbee_lqi_threshold_poor",
+                  "name": "Zigbee LQI - Low"
+                },
+                {
+                  "entity": "input_number.zigbee_lqi_threshold_moderate",
+                  "name": "Zigbee LQI - High"
                 }
               ]
             }
