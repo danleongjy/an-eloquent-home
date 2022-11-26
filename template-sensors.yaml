@@ -10,12 +10,14 @@
          is_state('fan.elis_room_fan', 'off') and
          is_state('climate.elis_room_ac', 'off') and
          is_state('light.junior_bathroom_lights', 'off') and
+         is_state('switch.water_heater', 'off') and
          is_state('light.powder_room_pendant_light_entity', 'off') and
          is_state('light.hallway_lights', 'off') and
          is_state('light.dining_room_lights', 'off') and
          is_state('light.dining_room_pendant_light_entity', 'off') and
          is_state('fan.dining_room_fan', 'off') and
          is_state('climate.dining_room_ac', 'off') and
+         is_state('switch.misc_switch', 'off') and
          is_state('light.playroom_lights', 'off') and
          is_state('light.yard_light_entity', 'off') and
          is_state('light.living_room_lights', 'off') and
@@ -23,6 +25,7 @@
          is_state('fan.living_room_fan', 'off') and
          is_state('climate.living_room_ac', 'off') and
          is_state('light.kitchen_lights', 'off') and
+         is_state('switch.gas_water_heater', 'off') and
          is_state('light.study_room_lights', 'off') and
          is_state('fan.study_room_fan', 'off') and
          is_state('climate.study_room_ac', 'off') and
@@ -39,12 +42,14 @@
       elis_room_fan: "{{ states('fan.elis_room_fan') }}"
       elis_room_ac: "{{ states('climate.elis_room_ac') }}"
       junior_bathroom_lights: "{{ states('light.junior_bathroom_lights') }}"
+      water_heater: "{{ states('switch.water_heater') }}"
       powder_room_pendant_light: "{{ states('light.powder_room_pendant_light_entity') }}"
       hallway_lights: "{{ states('light.hallway_lights') }}"
       dining_room_lights: "{{ states('light.dining_room_lights') }}"
       dining_room_pendant_light: "{{ states('light.dining_room_pendant_light_entity') }}"
       dining_room_fan: "{{ states('fan.dining_room_fan') }}"
       dining_room_ac: "{{ states('climate.dining_room_ac') }}"
+      misc_switch: "{{ states('switch.misc_switch') }}"
       playroom_lights: "{{ states('light.playroom_lights') }}"
       yard_light: "{{ states('light.yard_light_entity') }}"
       living_room_lights: "{{ states('light.living_room_lights') }}"
@@ -52,6 +57,7 @@
       living_room_fan: "{{ states('fan.living_room_fan') }}"
       living_room_ac: "{{ states('climate.living_room_ac') }}"
       kitchen_lights: "{{ states('light.kitchen_lights') }}"
+      gas_water_heater: "{{ states('gas_water_heater') }}"
       study_room_lights: "{{ states('light.study_room_lights') }}"
       study_room_fan: "{{ states('fan.study_room_fan') }}"
       study_room_ac: "{{ states('climate.study_room_ac') }}"
@@ -282,6 +288,11 @@
       dishwasher_status: "{{ states('input_select.dishwasher_status') }}"
     availability: "{{ states('switch.dishwasher') }}"
 
+  - name: Gas Water Heater Operating
+    unique_id: binary_sensor.gas_water_heater_operating
+    state: "{{ states('sensor.gas_water_heater_watts') | int(0) > 3 }}"
+    availability: "{{ states('switch.gas_water_heater') }}"
+
   - name: Recommended Scene in Elena's Room
     unique_id: binary_sensor.recommended_scene_in_elenas_room
     state: >
@@ -295,15 +306,14 @@
       {% endif %}
     attributes:
       lights_level: >
-        {% if (states('sensor.elenas_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
-           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
-                states('input_datetime.elenas_wind_down')[:2] | int * 60 + states('input_datetime.elenas_wind_down')[3:5] | int) 
+        {% if ((states('sensor.elenas_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
+           and (now().time() <= strptime(states('input_datetime.elenas_wind_down'), '%H:%M:%S').time())
+           and not (now().time() > strptime(states('input_datetime.elenas_bedtime'), '%H:%M:%S').time()
+                    or now().time() <= strptime(states('input_datetime.sleep_hours_end'), '%H:%M:%S').time())) 
         %}
           100
-        {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
-                 states('input_datetime.elenas_wind_down')[:2] | int * 60 + states('input_datetime.elenas_wind_down')[3:5] | int) 
-           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
-                states('input_datetime.elenas_bedtime')[:2] | int * 60 + states('input_datetime.elenas_bedtime')[3:5] | int) 
+        {% elif (now().time() > strptime(states('input_datetime.elenas_wind_down'), '%H:%M:%S').time()
+           and now().time() <= strptime(states('input_datetime.elenas_bedtime'), '%H:%M:%S').time())
         %}
           {{ states('input_number.night_light_brightness') }}
         {% else %}
@@ -347,15 +357,14 @@
       {% endif %}
     attributes:
       lights_level: >
-        {% if (states('sensor.elis_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
-           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
-               states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+        {% if ((states('sensor.elis_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
+           and (now().time() <= strptime(states('input_datetime.wind_down'), '%H:%M:%S').time())
+           and not (now().time() > strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time()
+                    or now().time() <= strptime(states('input_datetime.sleep_hours_end'), '%H:%M:%S').time())) 
         %}
           100
-        {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
-                 states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
-           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
-               states('input_datetime.sleep_hours_start')[:2] | int * 60 + states('input_datetime.sleep_hours_start')[3:5] | int) 
+        {% elif (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
+           and now().time() <= strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time())
         %}
           {{ states('input_number.night_light_brightness') }}
         {% else %}
@@ -553,15 +562,14 @@
       {% endif %}
     attributes:
       lights_level: >
-        {% if (states('sensor.parents_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
-           and ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
-               states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
+        {% if ((states('sensor.parents_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
+           and (now().time() <= strptime(states('input_datetime.wind_down'), '%H:%M:%S').time())
+           and not (now().time() > strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time()
+                    or now().time() <= strptime(states('input_datetime.sleep_hours_end'), '%H:%M:%S').time())) 
         %}
           100
-        {% elif ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int >=
-                 states('input_datetime.wind_down')[:2] | int * 60 + states('input_datetime.wind_down')[3:5] | int) 
-           or ((now().time() | string)[:2] | int * 60 + (now().time() | string)[3:5] | int <
-               states('input_datetime.sleep_hours_end')[:2] | int * 60 + states('input_datetime.sleep_hours_end')[3:5] | int) 
+        {% elif (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
+           and now().time() <= strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time())
         %}
           {{ states('input_number.night_light_brightness') }}
         {% else %}

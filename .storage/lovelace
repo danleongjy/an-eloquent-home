@@ -2101,6 +2101,38 @@
                                   "type": "custom:button-card",
                                   "entity": "binary_sensor.powder_room_motion",
                                   "template": "square_cell"
+                                },
+                                {
+                                  "type": "custom:state-switch",
+                                  "entity": "switch.water_heater",
+                                  "default": "disabled",
+                                  "states": {
+                                    "disabled": {
+                                      "type": "custom:button-card",
+                                      "icon": "mdi:water-boiler-off",
+                                      "template": "square_cell"
+                                    },
+                                    "off": {
+                                      "type": "custom:button-card",
+                                      "entity": "switch.water_heater",
+                                      "template": "square_cell",
+                                      "label": "[[[ \n  if (parseInt(states['input_number.water_heating'].state) > 0)\n    return Math.round(states['input_number.water_heating'].state, 0) + \"%\" \n  else\n    return ''\n]]]\n",
+                                      "show_label": true,
+                                      "hold_action": {
+                                        "action": "more-info"
+                                      }
+                                    },
+                                    "on": {
+                                      "type": "custom:button-card",
+                                      "entity": "switch.water_heater",
+                                      "template": "square_cell",
+                                      "label": "[[[ \n  if (parseInt(states['input_number.water_heating'].state) < 100)\n    return Math.round(states['input_number.water_heating'].state, 0) + \"%\" \n  else\n    return ''\n]]]\n",
+                                      "show_label": true,
+                                      "hold_action": {
+                                        "action": "more-info"
+                                      }
+                                    }
+                                  }
                                 }
                               ]
                             },
@@ -2264,38 +2296,6 @@
                                   "template": "square_cell",
                                   "label": "Shower",
                                   "show_label": true
-                                },
-                                {
-                                  "type": "custom:state-switch",
-                                  "entity": "switch.water_heater",
-                                  "default": "disabled",
-                                  "states": {
-                                    "disabled": {
-                                      "type": "custom:button-card",
-                                      "icon": "mdi:water-boiler-off",
-                                      "template": "square_cell"
-                                    },
-                                    "off": {
-                                      "type": "custom:button-card",
-                                      "entity": "switch.water_heater",
-                                      "template": "square_cell",
-                                      "label": "[[[ \n  if (parseInt(states['input_number.water_heating'].state) > 0)\n    return Math.round(states['input_number.water_heating'].state, 0) + \"%\" \n  else\n    return ''\n]]]\n",
-                                      "show_label": true,
-                                      "hold_action": {
-                                        "action": "more-info"
-                                      }
-                                    },
-                                    "on": {
-                                      "type": "custom:button-card",
-                                      "entity": "switch.water_heater",
-                                      "template": "square_cell",
-                                      "label": "[[[ \n  if (parseInt(states['input_number.water_heating'].state) < 100)\n    return Math.round(states['input_number.water_heating'].state, 0) + \"%\" \n  else\n    return ''\n]]]\n",
-                                      "show_label": true,
-                                      "hold_action": {
-                                        "action": "more-info"
-                                      }
-                                    }
-                                  }
                                 }
                               ]
                             },
@@ -2803,8 +2803,57 @@
                   }
                 },
                 {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
+                  "type": "custom:state-switch",
+                  "entity": "switch.misc_switch",
+                  "default": "disabled",
+                  "states": {
+                    "disabled": {
+                      "type": "custom:button-card",
+                      "icon": "mdi:light-switch-off",
+                      "template": "square_cell"
+                    },
+                    "off": {
+                      "type": "custom:button-card",
+                      "entity": "switch.misc_switch",
+                      "template": "square_cell",
+                      "hold_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    "on": {
+                      "type": "custom:slider-button-card",
+                      "entity": "switch.misc_switch",
+                      "slider": {
+                        "direction": "bottom-top",
+                        "background": "solid",
+                        "use_state_color": true,
+                        "use_percentage_bg_opacity": false,
+                        "show_track": false,
+                        "toggle_on_click": false,
+                        "force_square": true
+                      },
+                      "show_name": false,
+                      "show_state": false,
+                      "compact": true,
+                      "icon": {
+                        "show": true,
+                        "use_state_color": true,
+                        "tap_action": {
+                          "action": "more-info"
+                        },
+                        "icon": ""
+                      },
+                      "action_button": {
+                        "mode": "toggle",
+                        "icon": "mdi:power",
+                        "show": false
+                      }
+                    },
+                    "show_spinner": true,
+                    "tap_action": {
+                      "action": "toggle"
+                    }
+                  }
                 },
                 {
                   "type": "custom:button-card",
@@ -4191,6 +4240,11 @@
                                   "entity": "sensor.kitchen_lux",
                                   "template": "square_cell",
                                   "show_state": true
+                                },
+                                {
+                                  "type": "custom:button-card",
+                                  "entity": "switch.gas_water_heater",
+                                  "template": "square_cell"
                                 }
                               ]
                             },
@@ -4460,10 +4514,16 @@
           "theme": "no_border",
           "title": "Sensors",
           "path": "sensors",
-          "icon": "mdi:radar",
+          "icon": "mdi:home-search",
           "visible": [
             {
               "user": "ad2bcce775894550affb6dfef93a2a36"
+            },
+            {
+              "user": "2651cb9042dd41acb0b54327457a9a14"
+            },
+            {
+              "user": "991e26502d6844dea64362276571d6c1"
             }
           ],
           "badges": [],
@@ -4916,86 +4976,6 @@
                   "type": "custom:button-card",
                   "entity": "sensor.kitchen_lux",
                   "template": "sensor_lux"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "theme": "no_border",
-          "title": "Settings",
-          "path": "settings",
-          "icon": "mdi:cogs",
-          "badges": [],
-          "cards": [
-            {
-              "square": true,
-              "columns": 4,
-              "type": "grid",
-              "cards": [
-                {
-                  "show_name": true,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/settings-sleep"
-                  },
-                  "name": "Sleep",
-                  "icon": "mdi:bed-clock",
-                  "hold_action": {
-                    "action": "none"
-                  }
-                },
-                {
-                  "show_name": true,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/settings-lighting"
-                  },
-                  "name": "Lighting",
-                  "icon": "mdi:home-lightbulb-outline",
-                  "hold_action": {
-                    "action": "none"
-                  }
-                },
-                {
-                  "show_name": true,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/settings-heating-and-cooling"
-                  },
-                  "name": "Heating & Cooling",
-                  "icon": "mdi:home-thermometer-outline",
-                  "hold_action": {
-                    "action": "none"
-                  }
-                },
-                {
-                  "show_name": true,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/diagnostics"
-                  },
-                  "name": "Diagnostic Thresholds",
-                  "icon": "mdi:arrow-expand-vertical"
-                }
-              ]
-            },
-            {
-              "type": "entities",
-              "entities": [
-                {
-                  "entity": "input_number.motion_timeout"
-                },
-                {
-                  "entity": "input_boolean.away_mode"
                 }
               ]
             }
@@ -5707,6 +5687,91 @@
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "theme": "no_border",
+          "title": "Settings",
+          "path": "settings",
+          "icon": "mdi:cogs",
+          "badges": [],
+          "cards": [
+            {
+              "square": true,
+              "columns": 4,
+              "type": "grid",
+              "cards": [
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/settings-sleep"
+                  },
+                  "name": "Sleep",
+                  "icon": "mdi:bed-clock",
+                  "hold_action": {
+                    "action": "none"
+                  }
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/settings-lighting"
+                  },
+                  "name": "Lighting",
+                  "icon": "mdi:home-lightbulb-outline",
+                  "hold_action": {
+                    "action": "none"
+                  }
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/settings-heating-and-cooling"
+                  },
+                  "name": "Heating & Cooling",
+                  "icon": "mdi:home-thermometer-outline",
+                  "hold_action": {
+                    "action": "none"
+                  }
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/diagnostics"
+                  },
+                  "name": "Diagnostic Thresholds",
+                  "icon": "mdi:arrow-expand-vertical"
+                }
+              ]
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_number.motion_timeout"
+                },
+                {
+                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                  "name": "Warn if Vacuum May Get Wet",
+                  "icon": "mdi:water"
+                },
+                {
+                  "entity": "input_boolean.away_mode"
                 }
               ]
             }

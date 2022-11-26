@@ -3360,6 +3360,7 @@
   - platform: state
     entity_id:
     - climate.living_room_ac
+    to: cool
   - platform: time
     at: 06:00:00
   - platform: numeric_state
@@ -3369,6 +3370,9 @@
   - platform: state
     entity_id:
     - switch.stove_main_power
+  - platform: state
+    entity_id:
+    - binary_sensor.gas_water_heater_operating
   condition: []
   action:
   - if:
@@ -3391,9 +3395,25 @@
         - fri
         - sat
         - sun
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: sun.sun
+          attribute: rising
+          state: 'true'
+        - condition: numeric_state
+          entity_id: sun.sun
+          attribute: elevation
+          below: 65
+        enabled: true
     - condition: state
       entity_id: switch.stove_main_power
       state: 'off'
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.gas_water_heater_operating
+        state: 'on'
     then:
     - service: cover.close_cover
       data: {}
@@ -3414,6 +3434,9 @@
           attribute: elevation
         - condition: state
           entity_id: switch.stove_main_power
+          state: 'on'
+        - condition: state
+          entity_id: binary_sensor.gas_water_heater_operating
           state: 'on'
       - condition: not
         conditions:
@@ -4594,4 +4617,45 @@
     - service: script.turn_off_elenas_room
       data: {}
       enabled: true
+  mode: single
+- id: '1669449788230'
+  alias: Gas Water Heater Motion
+  description: Turn on gas water heater when there is motion in kitchen or master
+    bathroom
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_motion_sensors
+    to: 'on'
+    id: motion
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_motion_sensors
+    - binary_sensor.master_bathroom_motion_sensors
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: no_motion
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bathroom_motion_sensors
+    to: 'on'
+    id: motion
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: motion
+    then:
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.gas_water_heater
+    else:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.gas_water_heater
   mode: single
