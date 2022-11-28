@@ -97,6 +97,23 @@
         data:
           target_ac: Eli's Room AC
           target_ac_temp: '{{ state_attr("climate.elis_room_ac", "temperature") }}'
+        enabled: false
+      - repeat:
+          while:
+          - condition: state
+            entity_id: binary_sensor.elis_room_ac_vent
+            state: 'off'
+          sequence:
+          - service: script.ac_set_state
+            data:
+              target_ac: Eli's Room AC
+              target_ac_temp: '{{ state_attr("climate.elis_room_ac", "temperature")
+                }}'
+          - delay:
+              hours: 0
+              minutes: 1
+              seconds: 0
+              milliseconds: 0
     - conditions:
       - condition: trigger
         id: power_off
@@ -105,6 +122,22 @@
         data:
           target_ac: Eli's Room AC
           target_ac_power: false
+        enabled: false
+      - repeat:
+          while:
+          - condition: state
+            entity_id: binary_sensor.elis_room_ac_vent
+            state: 'on'
+          sequence:
+          - service: script.ac_set_state
+            data:
+              target_ac: Eli's Room AC
+              target_ac_power: false
+          - delay:
+              hours: 0
+              minutes: 1
+              seconds: 0
+              milliseconds: 0
     - conditions:
       - condition: trigger
         id: temperature_changed
@@ -169,6 +202,23 @@
           target_ac: Elena's Room AC
           target_ac_temp: '{{ state_attr("climate.elenas_room_ac", "temperature")
             }}'
+        enabled: false
+      - repeat:
+          while:
+          - condition: state
+            entity_id: binary_sensor.elenas_room_ac_vent
+            state: 'off'
+          sequence:
+          - service: script.ac_set_state
+            data:
+              target_ac: Elena's Room AC
+              target_ac_temp: '{{ state_attr("climate.elenas_room_ac", "temperature")
+                }}'
+          - delay:
+              hours: 0
+              minutes: 1
+              seconds: 0
+              milliseconds: 0
     - conditions:
       - condition: trigger
         id: power_off
@@ -177,6 +227,22 @@
         data:
           target_ac: Elena's Room AC
           target_ac_power: false
+        enabled: false
+      - repeat:
+          while:
+          - condition: state
+            entity_id: binary_sensor.elenas_room_ac_vent
+            state: 'on'
+          sequence:
+          - service: script.ac_set_state
+            data:
+              target_ac: Elena's Room AC
+              target_ac_power: false
+          - delay:
+              hours: 0
+              minutes: 1
+              seconds: 0
+              milliseconds: 0
     - conditions:
       - condition: trigger
         id: temperature_changed
@@ -4702,4 +4768,45 @@
       data: {}
       target:
         entity_id: switch.gas_water_heater
+  mode: single
+- id: '1669620569638'
+  alias: Kitchen Blinds Set Known Position
+  description: Set the Kitchen Blind to open or closed based on contact sensors
+  trigger:
+  - platform: state
+    entity_id:
+    - cover.kitchen_blinds
+    from:
+    - closing
+    - opening
+  condition: []
+  action:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.kitchen_blinds_opened
+        state: 'off'
+      sequence:
+      - service: cover_rf_time_based.set_known_position
+        data:
+          entity_id: cover.kitchen_blinds
+          position: 100
+          position_type: current
+          confident: true
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.kitchen_blinds_closed
+        state: 'off'
+      sequence:
+      - service: cover_rf_time_based.set_known_position
+        data:
+          entity_id: cover.kitchen_blinds
+          position: 0
+          position_type: current
+          confident: true
   mode: single
