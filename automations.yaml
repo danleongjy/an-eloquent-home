@@ -1685,12 +1685,12 @@
     to: 'on'
   condition:
   - condition: state
-    entity_id: binary_sensor.all_off
     state: 'on'
     for:
       hours: 0
-      minutes: 5
+      minutes: 3
       seconds: 0
+    entity_id: input_boolean.away_mode
   action:
   - service: input_boolean.turn_off
     data: {}
@@ -3372,7 +3372,10 @@
     - switch.stove_main_power
   - platform: state
     entity_id:
-    - binary_sensor.gas_water_heater_operating
+    - binary_sensor.gas_water_heater
+  - platform: template
+    value_template: "{{ (states('sensor.local_rainfall') | int <= 1) and ('Thunder'
+      not in\n   states('sensor.local_two_hour_forecast')) }}"
   condition: []
   action:
   - if:
@@ -3400,7 +3403,7 @@
         - condition: state
           entity_id: sun.sun
           attribute: rising
-          state: 'true'
+          state: true
         - condition: numeric_state
           entity_id: sun.sun
           attribute: elevation
@@ -3412,7 +3415,7 @@
     - condition: not
       conditions:
       - condition: state
-        entity_id: binary_sensor.gas_water_heater_operating
+        entity_id: binary_sensor.gas_water_heater
         state: 'on'
     then:
     - service: cover.close_cover
@@ -3436,7 +3439,7 @@
           entity_id: switch.stove_main_power
           state: 'on'
         - condition: state
-          entity_id: binary_sensor.gas_water_heater_operating
+          entity_id: binary_sensor.gas_water_heater
           state: 'on'
       - condition: not
         conditions:
@@ -3920,15 +3923,18 @@
     - condition: trigger
       id: finished
     then:
-    - service: input_boolean.turn_on
-      data: {}
-      target:
-        entity_id: input_boolean.washer_load_clean
     - service: input_datetime.set_datetime
       data:
         datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
       target:
         entity_id: input_datetime.washer_last_wash_complete
+    - condition: state
+      entity_id: binary_sensor.washer_door
+      state: 'off'
+    - service: input_boolean.turn_on
+      data: {}
+      target:
+        entity_id: input_boolean.washer_load_clean
     else:
     - service: input_boolean.turn_off
       data: {}
@@ -4447,6 +4453,12 @@
         entity_id: binary_sensor.recommended_scene_in_living_room
         attribute: lights_level
         above: 0
+      - condition: state
+        entity_id: light.living_room_lights
+        state: 'off'
+      - condition: state
+        entity_id: light.living_room_pendant_light_entity
+        state: 'off'
       then:
       - service: light.turn_on
         data:
@@ -4459,6 +4471,12 @@
         entity_id: binary_sensor.recommended_scene_in_living_room
         attribute: pendant_light_level
         above: 0
+      - condition: state
+        entity_id: light.living_room_lights
+        state: 'off'
+      - condition: state
+        entity_id: light.living_room_pendant_light_entity
+        state: 'off'
       then:
       - service: light.turn_on
         data:
@@ -4504,6 +4522,12 @@
         entity_id: binary_sensor.recommended_scene_in_dining_room
         attribute: lights_level
         above: 0
+      - condition: state
+        entity_id: light.dining_room_lights
+        state: 'off'
+      - condition: state
+        entity_id: light.dining_room_pendant_light_entity
+        state: 'off'
       then:
       - service: light.turn_on
         data:
@@ -4516,6 +4540,12 @@
         entity_id: binary_sensor.recommended_scene_in_dining_room
         attribute: pendant_light_level
         above: 0
+      - condition: state
+        entity_id: light.dining_room_lights
+        state: 'off'
+      - condition: state
+        entity_id: light.dining_room_pendant_light_entity
+        state: 'off'
       then:
       - service: light.turn_on
         data:
@@ -4654,6 +4684,20 @@
       target:
         entity_id: switch.gas_water_heater
     else:
+    - condition: state
+      entity_id: binary_sensor.kitchen_motion_sensors
+      state: 'off'
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
+    - condition: state
+      entity_id: binary_sensor.master_bathroom_motion_sensors
+      state: 'off'
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
     - service: switch.turn_off
       data: {}
       target:

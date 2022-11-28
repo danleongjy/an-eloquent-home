@@ -25,7 +25,6 @@
          is_state('fan.living_room_fan', 'off') and
          is_state('climate.living_room_ac', 'off') and
          is_state('light.kitchen_lights', 'off') and
-         is_state('switch.gas_water_heater', 'off') and
          is_state('light.study_room_lights', 'off') and
          is_state('fan.study_room_fan', 'off') and
          is_state('climate.study_room_ac', 'off') and
@@ -57,7 +56,6 @@
       living_room_fan: "{{ states('fan.living_room_fan') }}"
       living_room_ac: "{{ states('climate.living_room_ac') }}"
       kitchen_lights: "{{ states('light.kitchen_lights') }}"
-      gas_water_heater: "{{ states('gas_water_heater') }}"
       study_room_lights: "{{ states('light.study_room_lights') }}"
       study_room_fan: "{{ states('fan.study_room_fan') }}"
       study_room_ac: "{{ states('climate.study_room_ac') }}"
@@ -288,8 +286,8 @@
       dishwasher_status: "{{ states('input_select.dishwasher_status') }}"
     availability: "{{ states('switch.dishwasher') }}"
 
-  - name: Gas Water Heater Operating
-    unique_id: binary_sensor.gas_water_heater_operating
+  - name: Gas Water Heater
+    unique_id: binary_sensor.gas_water_heater
     state: "{{ states('sensor.gas_water_heater_watts') | int(0) > 3 }}"
     availability: "{{ states('switch.gas_water_heater') }}"
 
