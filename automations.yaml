@@ -86,6 +86,12 @@
     entity_id: climate.elis_room_ac
     id: temperature_changed
     attribute: temperature
+  - platform: template
+    value_template: '{{ states(''switch.elis_room_ac_switch'') != states(''binary_sensor.elis_room_ac_vent'')
+      }}'
+    for:
+      minutes: '{{ states(''input_number.ac_resync_delay'') | int(10) }}'
+    id: desynced
   condition: []
   action:
   - choose:
@@ -97,23 +103,7 @@
         data:
           target_ac: Eli's Room AC
           target_ac_temp: '{{ state_attr("climate.elis_room_ac", "temperature") }}'
-        enabled: false
-      - repeat:
-          while:
-          - condition: state
-            entity_id: binary_sensor.elis_room_ac_vent
-            state: 'off'
-          sequence:
-          - service: script.ac_set_state
-            data:
-              target_ac: Eli's Room AC
-              target_ac_temp: '{{ state_attr("climate.elis_room_ac", "temperature")
-                }}'
-          - delay:
-              hours: 0
-              minutes: 1
-              seconds: 0
-              milliseconds: 0
+        enabled: true
     - conditions:
       - condition: trigger
         id: power_off
@@ -122,22 +112,7 @@
         data:
           target_ac: Eli's Room AC
           target_ac_power: false
-        enabled: false
-      - repeat:
-          while:
-          - condition: state
-            entity_id: binary_sensor.elis_room_ac_vent
-            state: 'on'
-          sequence:
-          - service: script.ac_set_state
-            data:
-              target_ac: Eli's Room AC
-              target_ac_power: false
-          - delay:
-              hours: 0
-              minutes: 1
-              seconds: 0
-              milliseconds: 0
+        enabled: true
     - conditions:
       - condition: trigger
         id: temperature_changed
@@ -171,6 +146,21 @@
             target_ac: Eli's Room AC
             target_ac_temp: '{{ state_attr("climate.elis_room_ac", "temperature")
               }}'
+    - conditions:
+      - condition: trigger
+        id: desynced
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.elis_room_ac_vent
+          state:
+          - unavailable
+          - unknown
+      sequence:
+      - service: climate.turn_{{ states('binary_sensor.elis_room_ac_vent') }}
+        data: {}
+        target:
+          entity_id: climate.elis_room_ac
     default: []
   mode: single
   max_exceeded: silent
@@ -190,6 +180,12 @@
     entity_id: climate.elenas_room_ac
     id: temperature_changed
     attribute: temperature
+  - platform: template
+    value_template: '{{ states(''switch.elenas_room_ac_switch'') != states(''binary_sensor.elenas_room_ac_vent'')
+      }}'
+    for:
+      minutes: '{{ states(''input_number.ac_resync_delay'') | int(10) }}'
+    id: desynced
   condition: []
   action:
   - choose:
@@ -202,23 +198,7 @@
           target_ac: Elena's Room AC
           target_ac_temp: '{{ state_attr("climate.elenas_room_ac", "temperature")
             }}'
-        enabled: false
-      - repeat:
-          while:
-          - condition: state
-            entity_id: binary_sensor.elenas_room_ac_vent
-            state: 'off'
-          sequence:
-          - service: script.ac_set_state
-            data:
-              target_ac: Elena's Room AC
-              target_ac_temp: '{{ state_attr("climate.elenas_room_ac", "temperature")
-                }}'
-          - delay:
-              hours: 0
-              minutes: 1
-              seconds: 0
-              milliseconds: 0
+        enabled: true
     - conditions:
       - condition: trigger
         id: power_off
@@ -227,22 +207,7 @@
         data:
           target_ac: Elena's Room AC
           target_ac_power: false
-        enabled: false
-      - repeat:
-          while:
-          - condition: state
-            entity_id: binary_sensor.elenas_room_ac_vent
-            state: 'on'
-          sequence:
-          - service: script.ac_set_state
-            data:
-              target_ac: Elena's Room AC
-              target_ac_power: false
-          - delay:
-              hours: 0
-              minutes: 1
-              seconds: 0
-              milliseconds: 0
+        enabled: true
     - conditions:
       - condition: trigger
         id: temperature_changed
@@ -276,6 +241,21 @@
             target_ac: Elena's Room AC
             target_ac_temp: '{{ state_attr("climate.elenas_room_ac", "temperature")
               }}'
+    - conditions:
+      - condition: trigger
+        id: desynced
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.elenas_room_ac_vent
+          state:
+          - unavailable
+          - unknown
+      sequence:
+      - service: climate.turn_{{ states('binary_sensor.elenas_room_ac_vent') }}
+        data: {}
+        target:
+          entity_id: climate.elenas_room_ac
     default: []
   mode: single
   max_exceeded: silent
@@ -4514,17 +4494,16 @@
     - condition: time
       after: input_datetime.sleep_hours_end
       before: input_datetime.elenas_wind_down
+    - condition: state
+      entity_id:
+      - light.living_room_lights
+      - light.living_room_pendant_light_entity
+      state: 'off'
     - if:
       - condition: numeric_state
         entity_id: binary_sensor.recommended_scene_in_living_room
         attribute: lights_level
         above: 0
-      - condition: state
-        entity_id: light.living_room_lights
-        state: 'off'
-      - condition: state
-        entity_id: light.living_room_pendant_light_entity
-        state: 'off'
       then:
       - service: light.turn_on
         data:
@@ -4537,12 +4516,6 @@
         entity_id: binary_sensor.recommended_scene_in_living_room
         attribute: pendant_light_level
         above: 0
-      - condition: state
-        entity_id: light.living_room_lights
-        state: 'off'
-      - condition: state
-        entity_id: light.living_room_pendant_light_entity
-        state: 'off'
       then:
       - service: light.turn_on
         data:
@@ -4583,17 +4556,16 @@
     - condition: time
       after: input_datetime.sleep_hours_end
       before: input_datetime.elenas_wind_down
+    - condition: state
+      entity_id:
+      - light.dining_room_lights
+      - light.dining_room_pendant_light_entity
+      state: 'off'
     - if:
       - condition: numeric_state
         entity_id: binary_sensor.recommended_scene_in_dining_room
         attribute: lights_level
         above: 0
-      - condition: state
-        entity_id: light.dining_room_lights
-        state: 'off'
-      - condition: state
-        entity_id: light.dining_room_pendant_light_entity
-        state: 'off'
       then:
       - service: light.turn_on
         data:
@@ -4606,12 +4578,6 @@
         entity_id: binary_sensor.recommended_scene_in_dining_room
         attribute: pendant_light_level
         above: 0
-      - condition: state
-        entity_id: light.dining_room_lights
-        state: 'off'
-      - condition: state
-        entity_id: light.dining_room_pendant_light_entity
-        state: 'off'
       then:
       - service: light.turn_on
         data:
@@ -4779,7 +4745,19 @@
     from:
     - closing
     - opening
-  condition: []
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id:
+      - binary_sensor.kitchen_blinds_closed
+      - binary_sensor.kitchen_blinds_opened
+      state:
+      - unavailable
+      - unknown
+  - condition: template
+    value_template: '{{ states(''binary_sensor.kitchen_blinds_closed'') != states(''binary_sensor.kitchen_blinds_opened'')
+      }}'
   action:
   - delay:
       hours: 0
