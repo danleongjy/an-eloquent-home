@@ -259,88 +259,6 @@
     default: []
   mode: single
   max_exceeded: silent
-- id: '1642997460354'
-  alias: Dining Room Fan Set State
-  description: Set Dining Room Fan power and speed
-  trigger:
-  - platform: state
-    entity_id: fan.dining_room_fan
-    id: power_off
-    from: 'on'
-    to: 'off'
-  - platform: state
-    entity_id: fan.dining_room_fan
-    id: power_on
-    from: 'off'
-    to: 'on'
-  - platform: state
-    entity_id: fan.dining_room_fan
-    id: speed
-    attribute: percentage
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: speed
-      sequence:
-      - if:
-        - condition: numeric_state
-          entity_id: fan.dining_room_fan
-          attribute: percentage
-          below: '10'
-        then:
-        - service: fan.set_percentage
-          data:
-            percentage: '{{ state_attr("binary_sensor.recommended_scene_in_dining_room",
-              "fan_speed") | int }}'
-          target:
-            entity_id: fan.dining_room_fan
-        - service: fan.turn_off
-          data: {}
-          target:
-            entity_id: fan.dining_room_fan
-        - service: script.fan_set_state
-          data:
-            target_fan: Dining Room Fan
-            target_fan_power: false
-        else:
-        - service: script.fan_set_state
-          data:
-            target_fan: Dining Room Fan
-            target_fan_speed: '{{ state_attr("fan.dining_room_fan", "percentage")
-              | int }}'
-    - conditions:
-      - condition: trigger
-        id: power_on
-      sequence:
-      - service: fan.set_percentage
-        data:
-          percentage: '{{ state_attr("binary_sensor.recommended_scene_in_dining_room",
-            "fan_speed") | int }}'
-        target:
-          entity_id: fan.dining_room_fan
-      - service: script.fan_set_state
-        data:
-          target_fan: Dining Room Fan
-          target_fan_speed: '{{ state_attr("fan.dining_room_fan", "percentage") |
-            int }}'
-          target_fan_power: true
-    - conditions:
-      - condition: trigger
-        id: power_off
-      sequence:
-      - service: input_boolean.turn_off
-        data: {}
-        target:
-          entity_id: input_boolean.dining_room_fan_power
-      - service: script.fan_set_state
-        data:
-          target_fan: Dining Room Fan
-          target_fan_power: false
-    default: []
-  mode: single
-  max_exceeded: silent
 - id: '1642998485292'
   alias: Eli's Room Fan Set State
   description: Set Eli's Room Fan power and speed
@@ -4473,18 +4391,16 @@
   - platform: state
     entity_id:
     - binary_sensor.living_room_motion
-    from: 'off'
-    to: 'on'
-    id: setup
-  - platform: state
-    entity_id:
-    - binary_sensor.living_room_motion
     from: 'on'
     to: 'off'
     for:
       hours: 0
       minutes: '{{ states(''input_number.motion_timeout'') | int(30) }}'
       seconds: 0
+  - platform: template
+    value_template: '{{ states(''sensor.living_room_lux'') | float(0) < states(''input_number.minimum_lux'')
+      | float(0) and is_state(''binary_sensor.living_room_motion'', ''on'') }}'
+    id: setup
   condition: []
   action:
   - if:
@@ -4535,18 +4451,16 @@
   - platform: state
     entity_id:
     - binary_sensor.dining_room_motion
-    from: 'off'
-    to: 'on'
-    id: setup
-  - platform: state
-    entity_id:
-    - binary_sensor.dining_room_motion
     from: 'on'
     to: 'off'
     for:
       hours: 0
       minutes: '{{ states(''input_number.motion_timeout'') | int(30) }}'
       seconds: 0
+  - platform: template
+    value_template: '{{ states(''sensor.dining_room_lux'') | float(0) < states(''input_number.minimum_lux'')
+      | float(0) and is_state(''binary_sensor.dining_room_motion'', ''on'') }}'
+    id: setup
   condition: []
   action:
   - if:
