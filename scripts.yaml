@@ -241,10 +241,15 @@ turn_off_dining_room:
     data: {}
     target:
       entity_id: switch.misc_switch
-  - service: fan.turn_off
-    target:
+  - if:
+    - condition: state
       entity_id: fan.dining_room_fan
-    data: {}
+      state: 'on'
+    then:
+    - service: fan.turn_off
+      data: {}
+      target:
+        entity_id: fan.dining_room_fan
   - service: climate.turn_off
     data: {}
     target:

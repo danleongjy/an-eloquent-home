@@ -4702,3 +4702,42 @@
           position_type: current
           confident: true
   mode: single
+- id: '1670833166536'
+  alias: Vacuum Last Use
+  description: Track the start and end times of the last run of the vacuum
+  trigger:
+  - platform: state
+    entity_id:
+    - vacuum.pikachu
+    to: cleaning
+    id: start
+    from:
+    - docked
+    - idle
+  - platform: state
+    entity_id:
+    - vacuum.pikachu
+    from:
+    - cleaning
+    to:
+    - docked
+    - idle
+    id: stop
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: start
+    then:
+    - service: input_datetime.set_datetime
+      data:
+        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+      target:
+        entity_id: input_datetime.vacuum_last_run_start
+    else:
+    - service: input_datetime.set_datetime
+      data:
+        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+      target:
+        entity_id: input_datetime.vacuum_last_run_end
+  mode: single

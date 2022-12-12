@@ -734,12 +734,20 @@
   - name: Vacuum Clean Time
     unique_id: sensor.vacuum_clean_time
     state: >
-      {% set cleaning_time =
-         (as_timestamp(state_attr('vacuum.pikachu', 'clean_stop')) -
-         as_timestamp(state_attr('vacuum.pikachu', 'clean_start'))) // 60
-      %} 
-      {{ (cleaning_time // 60) | int(0) }}:{{ (cleaning_time -
-         (cleaning_time // 60) * 60) | int(0) }}
+      {% if states('input_datetime.vacuum_last_run_end') | as_datetime > states('input_datetime.vacuum_last_run_start') | as_datetime %}
+        {{ ((states('input_datetime.vacuum_last_run_end') | as_datetime - states('input_datetime.vacuum_last_run_start') | as_datetime) | string)[:-3] }}
+      {% else %}
+        Running
+      {% endif %}
+
+  - name: Dishwasher Last Run Duration
+    unique_id: sensor.dishwasher_last_run_duration
+    state: >
+      {% if states('input_datetime.dishwasher_last_run_end') | as_datetime > states('input_datetime.dishwasher_last_run_start') | as_datetime %}
+        {{ ((states('input_datetime.dishwasher_last_run_end') | as_datetime - states('input_datetime.dishwasher_last_run_start') | as_datetime) | string)[:-3] }}
+      {% else %}
+        Running
+      {% endif %}
 
 - trigger:
   - platform: time_pattern
@@ -761,7 +769,7 @@
       state: >
         {% if states('vacuum.pikachu') in ['docked', 'idle'] %}
           {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
-          {% set relative_age = relative_time(state_attr('vacuum.pikachu', 'clean_stop') | as_datetime).split() %}
+          {% set relative_age = relative_time(states('input_datetime.vacuum_last_run_end') | as_datetime).split() %}
           {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
         {% else %}
           In use
@@ -780,15 +788,6 @@
         {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
         {% set relative_age = relative_time(states('input_datetime.dishwasher_last_run_end') | as_datetime).split() %}
         {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
-
-    - name: Dishwasher Last Run Duration
-      unique_id: sensor.dishwasher_last_run_duration
-      state: >
-        {% if states('input_datetime.dishwasher_last_run_end') | as_datetime > states('input_datetime.dishwasher_last_run_start') | as_datetime %}
-          {{ ((states('input_datetime.dishwasher_last_run_end') | as_datetime - states('input_datetime.dishwasher_last_run_start') | as_datetime) | string)[:-3] }}
-        {% else %}
-          Running
-        {% endif %}
 
     - name: Stove Last Use
       unique_id: sensor.stove_last_use
