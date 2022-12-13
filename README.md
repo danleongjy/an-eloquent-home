@@ -7,7 +7,8 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M92p Tiny](https://www.lenovo.com/hk/en/desktops-and-all-in-ones/thinkcentre/m-series-tiny/2941/p/11TC1TMM92P2941)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) unknown running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [9.3](https://github.com/home-assistant/operating-system/releases/tag/9.3) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Core 2022.11.4](https://www.home-assistant.io/latest-release-notes/)
 * 4 cores, 4GB RAM, 32GB storage
 
 ## Entities
