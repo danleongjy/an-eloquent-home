@@ -4741,3 +4741,17 @@
       target:
         entity_id: input_datetime.vacuum_last_run_end
   mode: single
+- id: '1670838907474'
+  alias: Housekeeping
+  description: Daily housekeeping tasks executed at 2am, including generating Watchman
+    report and README.md
+  trigger:
+  - platform: time
+    at: 02:00:00
+  condition: []
+  action:
+  - service: watchman.report
+    data: {}
+  - service: readme.generate
+    data: {}
+  mode: single

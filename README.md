@@ -7,14 +7,14 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M92p Tiny](https://www.lenovo.com/hk/en/desktops-and-all-in-ones/thinkcentre/m-series-tiny/2941/p/11TC1TMM92P2941)
-* [Home Assistant Operating System](https://github.com/home-assistant/operating-system/releases/download/9.3/haos_ova-9.3.qcow2.xz) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) unknown running in a [Proxmox VM](https://www.proxmox.com/)
 * 4 cores, 4GB RAM, 32GB storage
 
 ## Entities
 
 Domain | Number
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 75
+[`automation`](https://www.home-assistant.io/components/automation) | 76
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 86
 [`button`](https://www.home-assistant.io/components/button) | 109
 [`camera`](https://www.home-assistant.io/components/camera) | 1
@@ -41,17 +41,19 @@ Domain | Number
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1055
+Total | 1056
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/asuswrt/icon.png" height="24"/>](https://brands.home-assistant.io/_/asuswrt/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/asuswrt/icon.png" height="24"/>](https://brands.home-assistant.io/_/asuswrt/icon.png#gh-light-mode-only) [AsusWRT](https://home-assistant.io/integrations/asuswrt)
 - [<img src="https://brands.home-assistant.io/_/broadlink/icon.png" height="24"/>](https://brands.home-assistant.io/_/broadlink/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/broadlink/icon.png" height="24"/>](https://brands.home-assistant.io/_/broadlink/icon.png#gh-light-mode-only) [Broadlink](https://home-assistant.io/integrations/broadlink)
+- [<img src="https://brands.home-assistant.io/_/generic_thermostat/icon.png" height="24"/>](https://brands.home-assistant.io/_/generic_thermostat/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/generic_thermostat/icon.png" height="24"/>](https://brands.home-assistant.io/_/generic_thermostat/icon.png#gh-light-mode-only) [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
 - [<img src="https://brands.home-assistant.io/_/google_assistant/icon.png" height="24"/>](https://brands.home-assistant.io/_/google_assistant/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/google_assistant/icon.png" height="24"/>](https://brands.home-assistant.io/_/google_assistant/icon.png#gh-light-mode-only) [Google Assistant](https://home-assistant.io/integrations/google_assistant)
 - [<img src="https://brands.home-assistant.io/_/cast/icon.png" height="24"/>](https://brands.home-assistant.io/_/cast/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/cast/icon.png" height="24"/>](https://brands.home-assistant.io/_/cast/icon.png#gh-light-mode-only) [Google Cast](https://home-assistant.io/integrations/cast)
 - [<img src="https://brands.home-assistant.io/_/mobile_app/icon.png" height="24"/>](https://brands.home-assistant.io/_/mobile_app/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/mobile_app/icon.png" height="24"/>](https://brands.home-assistant.io/_/mobile_app/icon.png#gh-light-mode-only) [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [<img src="https://brands.home-assistant.io/_/mqtt/icon.png" height="24"/>](https://brands.home-assistant.io/_/mqtt/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/mqtt/icon.png" height="24"/>](https://brands.home-assistant.io/_/mqtt/icon.png#gh-light-mode-only) [MQTT](https://home-assistant.io/integrations/mqtt)
 - [<img src="https://brands.home-assistant.io/_/neato/icon.png" height="24"/>](https://brands.home-assistant.io/_/neato/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/neato/icon.png" height="24"/>](https://brands.home-assistant.io/_/neato/icon.png#gh-light-mode-only) [Neato](https://home-assistant.io/integrations/neato)
 - [<img src="https://brands.home-assistant.io/_/tasmota/icon.png" height="24"/>](https://brands.home-assistant.io/_/tasmota/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/tasmota/icon.png" height="24"/>](https://brands.home-assistant.io/_/tasmota/icon.png#gh-light-mode-only) [Tasmota](https://home-assistant.io/integrations/tasmota)
+- [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://brands.home-assistant.io/_/template/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://brands.home-assistant.io/_/template/icon.png#gh-light-mode-only) [Template](https://home-assistant.io/integrations/template)
 - [<img src="https://brands.home-assistant.io/_/zha/icon.png" height="24"/>](https://brands.home-assistant.io/_/zha/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/zha/icon.png" height="24"/>](https://brands.home-assistant.io/_/zha/icon.png#gh-light-mode-only) [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
 ## Extensions:
 
