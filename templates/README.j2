@@ -3,17 +3,18 @@
 Hello!  This repo contains the configuration for our [Home Assistant](https://www.home-assistant.io/) setup.  What started as a curiosity to while away the time during Covid lockdowns in 2020 is now the primary way in which we interact with and control our home.  We follow a few principles in our setup:
 1. __Automation first__: Things should just adjust themselves in response to changes in the environment, without needing user intervention
 2. __Maximum flexibility__: Devices, user interfaces and even the automation logic are as modular as possible, so it is easy to modify one part without affecting the whole
-3. __Maximum redundancy__: The only things built into our walls are data and power cables.  All smart devices can be moved or removed easily, and a non-smart fallback option is always available.
+3. __Maximum redundancy__: Aside from automated control, devices can be controlled by app, ZigBee remote controls or voice assistant.  The only things built into our walls are data and power cables.  All smart devices can be moved or removed easily.  All devices can function locally regardless of cloud connectivity.  A non-smart fallback option is always available.
+4. __Subtle helpfulness__: Other than reporting the current state, the platform recommends states based on context.  UI allows users to interpret the state of the whole system at a glance, including relationships between different devices.
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M92p Tiny](https://www.lenovo.com/hk/en/desktops-and-all-in-ones/thinkcentre/m-series-tiny/2941/p/11TC1TMM92P2941)
 * [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [{{ states.update.home_assistant_operating_system_update.attributes.installed_version }}]({{ states.update.home_assistant_operating_system_update.attributes.release_url }}) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core {{ states.update.home_assistant_core_update.attributes.installed_version }}]({{ states.update.home_assistant_core_update.attributes.release_url }})
+* [Home Assistant Core {{ states.update.home_assistant_core_update.attributes.installed_version }}](https://github.com/home-assistant/core/releases/tag/{{ states.update.home_assistant_core_update.attributes.installed_version }})
 * 4 cores, 4GB RAM, 32GB storage
 
 ## Entities
 
-Domain | Number
+Domain | Quantity
 -- | --
 {%- set data = namespace(domains=[]) %}
 {%- for state in states %}
@@ -31,51 +32,77 @@ Total | {{states | count}}
     {
         "key": "asuswrt",
         "name": "AsusWRT",
+        "pic": "asuswrt",
     },
     {
         "key": "broadlink",
         "name": "Broadlink",
+        "pic": "broadlink",
     },
     {
         "key": "generic_thermostat",
         "name": "Generic Thermostat",
+        "pic": "generic_thermostat",
     },
     {
         "key": "google_assistant",
         "name": "Google Assistant",
+        "pic": "google_assistant",
     },
     {
         "key": "cast",
         "name": "Google Cast",
+        "pic": "cast",
     },
     {
         "key": "mobile_app",
         "name": "Home Assistant Companion",
+        "pic": "mobile_app",
     },
     {
         "key": "mqtt",
         "name": "MQTT",
+        "pic": "mqtt",
     },
     {
         "key": "neato",
         "name": "Neato",
+        "pic": "neato",
+    },
+    {
+        "key": "sensor.rest",
+        "name": "RESTful Sensor",
+        "pic": "rest",
     },
     {
         "key": "tasmota",
         "name": "Tasmota",
+        "pic": "tasmota",
     },
     {
         "key": "template",
-        "name": "Template",
+        "name": "Template Binary Sensors & Sensors",
+        "pic": "template",
+    },
+    {
+        "key": "fan.template",
+        "name": "Template Fan",
+        "pic": "template",
+    },
+    {
+        "key": "switch.template",
+        "name": "Template Switch",
+        "pic": "template"
     },
     {
         "key": "zha",
         "name": "ZigBee Home Automation",
+        "pic": "zha",
     }
 ]
 %}
 {% for integration in core_integrations -%}
-- [<img src="https://brands.home-assistant.io/_/{{integration.key}}/icon.png" height="24"/>](https://brands.home-assistant.io/_/{{integration.key}}/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/{{integration.key}}/icon.png" height="24"/>](https://brands.home-assistant.io/_/{{integration.key}}/icon.png#gh-light-mode-only) [{{integration.name}}](https://home-assistant.io/integrations/{{integration.key}})
+- [<img src="https://brands.home-assistant.io/_/{{integration.pic}}/icon.png" height="24"/>](https://home-assistant.io/integrations/{{integration.key}}) [{{integration.name}}](https://home-assistant.io/integrations/{{integration.key}})
 {% endfor -%}
 
 ## Extensions:

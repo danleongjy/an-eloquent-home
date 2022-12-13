@@ -3,17 +3,18 @@
 Hello!  This repo contains the configuration for our [Home Assistant](https://www.home-assistant.io/) setup.  What started as a curiosity to while away the time during Covid lockdowns in 2020 is now the primary way in which we interact with and control our home.  We follow a few principles in our setup:
 1. __Automation first__: Things should just adjust themselves in response to changes in the environment, without needing user intervention
 2. __Maximum flexibility__: Devices, user interfaces and even the automation logic are as modular as possible, so it is easy to modify one part without affecting the whole
-3. __Maximum redundancy__: The only things built into our walls are data and power cables.  All smart devices can be moved or removed easily, and a non-smart fallback option is always available.
+3. __Maximum redundancy__: Aside from automated control, devices can be controlled by app, ZigBee remote controls or voice assistant.  The only things built into our walls are data and power cables.  All smart devices can be moved or removed easily.  All devices can function locally regardless of cloud connectivity.  A non-smart fallback option is always available.
+4. __Subtle helpfulness__: Other than reporting the current state, the platform recommends states based on context.  UI allows users to interpret the state of the whole system at a glance, including relationships between different devices.
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M92p Tiny](https://www.lenovo.com/hk/en/desktops-and-all-in-ones/thinkcentre/m-series-tiny/2941/p/11TC1TMM92P2941)
 * [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [9.3](https://github.com/home-assistant/operating-system/releases/tag/9.3) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core 2022.11.4](https://www.home-assistant.io/latest-release-notes/)
+* [Home Assistant Core 2022.11.4](https://github.com/home-assistant/core/releases/tag/2022.11.4)
 * 4 cores, 4GB RAM, 32GB storage
 
 ## Entities
 
-Domain | Number
+Domain | Quantity
 -- | --
 [`automation`](https://www.home-assistant.io/components/automation) | 76
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 86
@@ -45,17 +46,20 @@ Domain | Number
 Total | 1056
 
 ## Core Integrations
-- [<img src="https://brands.home-assistant.io/_/asuswrt/icon.png" height="24"/>](https://brands.home-assistant.io/_/asuswrt/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/asuswrt/icon.png" height="24"/>](https://brands.home-assistant.io/_/asuswrt/icon.png#gh-light-mode-only) [AsusWRT](https://home-assistant.io/integrations/asuswrt)
-- [<img src="https://brands.home-assistant.io/_/broadlink/icon.png" height="24"/>](https://brands.home-assistant.io/_/broadlink/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/broadlink/icon.png" height="24"/>](https://brands.home-assistant.io/_/broadlink/icon.png#gh-light-mode-only) [Broadlink](https://home-assistant.io/integrations/broadlink)
-- [<img src="https://brands.home-assistant.io/_/generic_thermostat/icon.png" height="24"/>](https://brands.home-assistant.io/_/generic_thermostat/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/generic_thermostat/icon.png" height="24"/>](https://brands.home-assistant.io/_/generic_thermostat/icon.png#gh-light-mode-only) [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
-- [<img src="https://brands.home-assistant.io/_/google_assistant/icon.png" height="24"/>](https://brands.home-assistant.io/_/google_assistant/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/google_assistant/icon.png" height="24"/>](https://brands.home-assistant.io/_/google_assistant/icon.png#gh-light-mode-only) [Google Assistant](https://home-assistant.io/integrations/google_assistant)
-- [<img src="https://brands.home-assistant.io/_/cast/icon.png" height="24"/>](https://brands.home-assistant.io/_/cast/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/cast/icon.png" height="24"/>](https://brands.home-assistant.io/_/cast/icon.png#gh-light-mode-only) [Google Cast](https://home-assistant.io/integrations/cast)
-- [<img src="https://brands.home-assistant.io/_/mobile_app/icon.png" height="24"/>](https://brands.home-assistant.io/_/mobile_app/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/mobile_app/icon.png" height="24"/>](https://brands.home-assistant.io/_/mobile_app/icon.png#gh-light-mode-only) [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
-- [<img src="https://brands.home-assistant.io/_/mqtt/icon.png" height="24"/>](https://brands.home-assistant.io/_/mqtt/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/mqtt/icon.png" height="24"/>](https://brands.home-assistant.io/_/mqtt/icon.png#gh-light-mode-only) [MQTT](https://home-assistant.io/integrations/mqtt)
-- [<img src="https://brands.home-assistant.io/_/neato/icon.png" height="24"/>](https://brands.home-assistant.io/_/neato/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/neato/icon.png" height="24"/>](https://brands.home-assistant.io/_/neato/icon.png#gh-light-mode-only) [Neato](https://home-assistant.io/integrations/neato)
-- [<img src="https://brands.home-assistant.io/_/tasmota/icon.png" height="24"/>](https://brands.home-assistant.io/_/tasmota/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/tasmota/icon.png" height="24"/>](https://brands.home-assistant.io/_/tasmota/icon.png#gh-light-mode-only) [Tasmota](https://home-assistant.io/integrations/tasmota)
-- [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://brands.home-assistant.io/_/template/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://brands.home-assistant.io/_/template/icon.png#gh-light-mode-only) [Template](https://home-assistant.io/integrations/template)
-- [<img src="https://brands.home-assistant.io/_/zha/icon.png" height="24"/>](https://brands.home-assistant.io/_/zha/dark_icon.png#gh-dark-mode-only)[<img src="https://brands.home-assistant.io/_/zha/icon.png" height="24"/>](https://brands.home-assistant.io/_/zha/icon.png#gh-light-mode-only) [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
+- [<img src="https://brands.home-assistant.io/_/asuswrt/icon.png" height="24"/>](https://home-assistant.io/integrations/asuswrt) [AsusWRT](https://home-assistant.io/integrations/asuswrt)
+- [<img src="https://brands.home-assistant.io/_/broadlink/icon.png" height="24"/>](https://home-assistant.io/integrations/broadlink) [Broadlink](https://home-assistant.io/integrations/broadlink)
+- [<img src="https://brands.home-assistant.io/_/generic_thermostat/icon.png" height="24"/>](https://home-assistant.io/integrations/generic_thermostat) [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
+- [<img src="https://brands.home-assistant.io/_/google_assistant/icon.png" height="24"/>](https://home-assistant.io/integrations/google_assistant) [Google Assistant](https://home-assistant.io/integrations/google_assistant)
+- [<img src="https://brands.home-assistant.io/_/cast/icon.png" height="24"/>](https://home-assistant.io/integrations/cast) [Google Cast](https://home-assistant.io/integrations/cast)
+- [<img src="https://brands.home-assistant.io/_/mobile_app/icon.png" height="24"/>](https://home-assistant.io/integrations/mobile_app) [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
+- [<img src="https://brands.home-assistant.io/_/mqtt/icon.png" height="24"/>](https://home-assistant.io/integrations/mqtt) [MQTT](https://home-assistant.io/integrations/mqtt)
+- [<img src="https://brands.home-assistant.io/_/neato/icon.png" height="24"/>](https://home-assistant.io/integrations/neato) [Neato](https://home-assistant.io/integrations/neato)
+- [<img src="https://brands.home-assistant.io/_/rest/icon.png" height="24"/>](https://home-assistant.io/integrations/sensor.rest) [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
+- [<img src="https://brands.home-assistant.io/_/tasmota/icon.png" height="24"/>](https://home-assistant.io/integrations/tasmota) [Tasmota](https://home-assistant.io/integrations/tasmota)
+- [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/template) [Template Binary Sensors & Sensors](https://home-assistant.io/integrations/template)
+- [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/fan.template) [Template Fan](https://home-assistant.io/integrations/fan.template)
+- [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/switch.template) [Template Switch](https://home-assistant.io/integrations/switch.template)
+- [<img src="https://brands.home-assistant.io/_/zha/icon.png" height="24"/>](https://home-assistant.io/integrations/zha) [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
 ## Extensions:
 
 ### Add-ons
