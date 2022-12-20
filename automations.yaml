@@ -1466,7 +1466,7 @@
         target:
           entity_id: light.powder_room_pendant_light_entity
         data:
-          brightness_pct: 5
+          brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
       else:
       - condition: state
         entity_id: light.powder_room_pendant_light_entity
@@ -4370,6 +4370,13 @@
       - fan.parents_room_fan
       - climate.parents_room_ac
       state: 'off'
+    - condition: state
+      entity_id: binary_sensor.parents_room_door
+      state: 'on'
+      for:
+        hours: 0
+        minutes: 1
+        seconds: 0
     - service: script.set_recommended_scene_in_parents_room
       data: {}
     else:
@@ -4535,6 +4542,13 @@
       - fan.elis_room_fan
       - climate.elis_room_ac
       state: 'off'
+    - condition: state
+      entity_id: binary_sensor.elis_room_door
+      state: 'on'
+      for:
+        hours: 0
+        minutes: 1
+        seconds: 0
     - service: script.set_recommended_scene_in_elis_room
       data: {}
     else:
@@ -4580,6 +4594,13 @@
       - fan.elenas_room_fan
       - climate.elenas_room_ac
       state: 'off'
+    - condition: state
+      entity_id: binary_sensor.elenas_room_door
+      for:
+        hours: 0
+        minutes: 1
+        seconds: 0
+      state: 'on'
     - service: script.set_recommended_scene_in_elenas_room
       data: {}
     else:
@@ -4717,8 +4738,9 @@
   - platform: state
     entity_id:
     - vacuum.pikachu
-    from:
-    - cleaning
+    not_from:
+    - unknown
+    - unavailable
     to:
     - docked
     - idle
