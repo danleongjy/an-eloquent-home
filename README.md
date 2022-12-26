@@ -7,7 +7,7 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 4. __Subtle helpfulness__: Other than reporting the current state, the platform recommends states based on context.  UI allows users to interpret the state of the whole system at a glance, including relationships between different devices.
 
 ## Hub
-* Refurbished [Lenovo Thinkcentre M92p Tiny](https://www.lenovo.com/hk/en/desktops-and-all-in-ones/thinkcentre/m-series-tiny/2941/p/11TC1TMM92P2941)
+* Refurbished [Lenovo Thinkcentre M93p Tiny](https://support.lenovo.com/sg/en/solutions/pd027573-detailed-specifications-for-thinkcentre-m93-m93p-tiny-form-factor)
 * [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [9.3](https://github.com/home-assistant/operating-system/releases/tag/9.4) running in a [Proxmox VM](https://www.proxmox.com/)
 * [Home Assistant Core 2022.11.4](https://github.com/home-assistant/core/releases/tag/2022.11.4)
 * 4 cores, 4GB RAM, 32GB storage
