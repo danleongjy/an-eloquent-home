@@ -332,35 +332,171 @@
                       ]
                     },
                     {
-                      "type": "horizontal-stack",
-                      "cards": [
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.vacuum_last_use",
-                          "template": "square_cell",
-                          "show_state": true
+                      "type": "custom:state-switch",
+                      "entity": "{% if states('vacuum.pikachu') in ['cleaning', 'paused', 'returning'] %} cleaning {% elif states('vacuum.pikachu') in ['docked', 'idle'] %} not_cleaning {% else %} error {% endif %}",
+                      "default": "error",
+                      "states": {
+                        "cleaning": {
+                          "type": "grid",
+                          "columns": 4,
+                          "cards": [
+                            {
+                              "type": "custom:button-card",
+                              "entity": "sensor.vacuum_last_run_started",
+                              "template": "square_cell",
+                              "show_state": true
+                            },
+                            {
+                              "type": "custom:state-switch",
+                              "entity": "vacuum.pikachu",
+                              "default": "cleaning",
+                              "states": {
+                                "paused": [
+                                  {
+                                    "type": "custom:button-card",
+                                    "icon": "mdi:play",
+                                    "template": "square_cell",
+                                    "tap_action": {
+                                      "action": "call-service",
+                                      "service": "vacuum.start",
+                                      "service_data": {
+                                        "entity_id": "vacuum.pikachu"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "cleaning": [
+                                  {
+                                    "type": "custom:button-card",
+                                    "icon": "mdi:pause",
+                                    "template": "square_cell",
+                                    "tap_action": {
+                                      "action": "call-service",
+                                      "service": "vacuum.pikachu",
+                                      "service_data": {
+                                        "entity_id": "vacuum.pikachu"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "type": "custom:button-card",
+                              "icon": "mdi:stop",
+                              "template": "square_cell",
+                              "tap_action": {
+                                "action": "call-service",
+                                "service": "vacuum.stop",
+                                "service_data": {
+                                  "entity_id": "vacuum.pikachu"
+                                }
+                              }
+                            },
+                            {
+                              "type": "custom:button-card",
+                              "icon": "mdi:home-import-outline",
+                              "template": "square_cell",
+                              "tap_action": {
+                                "action": "call-service",
+                                "service": "vacuum.return_to_base",
+                                "service_data": {
+                                  "entity_id": "vacuum.pikachu"
+                                }
+                              }
+                            }
+                          ]
                         },
-                        {
-                          "type": "custom:button-card",
-                          "icon": "mdi:tape-measure",
-                          "template": "square_cell",
-                          "label": "[[[ return Math.round(states['vacuum.pikachu'].attributes.clean_area) + 'sqm' ]]]",
-                          "show_label": true
+                        "not_cleaning": {
+                          "type": "grid",
+                          "columns": 5,
+                          "cards": [
+                            {
+                              "type": "custom:button-card",
+                              "entity": "sensor.vacuum_last_run_ended",
+                              "template": "square_cell",
+                              "show_state": true,
+                              "styles": {
+                                "state": [
+                                  {
+                                    "font-size": "14px"
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "type": "custom:button-card",
+                              "entity": "sensor.vacuum_clean_time",
+                              "template": "square_cell",
+                              "show_state": true,
+                              "styles": {
+                                "state": [
+                                  {
+                                    "font-size": "14px"
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "type": "custom:button-card",
+                              "icon": "mdi:tape-measure",
+                              "template": "square_cell",
+                              "label": "[[[ return Math.round(states['vacuum.pikachu'].attributes.clean_area) + 'sqm' ]]]",
+                              "show_label": true,
+                              "styles": {
+                                "label": [
+                                  {
+                                    "font-size": "14px"
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "type": "custom:button-card",
+                              "entity": "camera.pikachu_cleaning_map",
+                              "template": "square_cell"
+                            },
+                            {
+                              "type": "custom:button-card",
+                              "icon": "mdi:play",
+                              "template": "square_cell",
+                              "tap_action": {
+                                "action": "call-service",
+                                "service": "vacuum.start",
+                                "service_data": {
+                                  "entity_id": "vacuum.pikachu"
+                                }
+                              }
+                            }
+                          ]
                         },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.vacuum_clean_time",
-                          "template": "square_cell",
-                          "show_state": true
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "camera.pikachu_cleaning_map",
-                          "template": "square_cell",
-                          "label": "Map",
-                          "show_label": true
+                        "error": {
+                          "type": "grid",
+                          "columns": 4,
+                          "cards": [
+                            {
+                              "type": "custom:button-card",
+                              "color_type": "blank-card"
+                            },
+                            {
+                              "type": "custom:button-card",
+                              "entity": "sensor.vacuum_last_run_started",
+                              "template": "square_cell",
+                              "show_state": true
+                            },
+                            {
+                              "type": "custom:button-card",
+                              "entity": "sensor.vacuum_clean_time",
+                              "template": "square_cell",
+                              "show_state": true
+                            },
+                            {
+                              "type": "custom:button-card",
+                              "color_type": "blank-card"
+                            }
+                          ]
                         }
-                      ]
+                      }
                     },
                     {
                       "type": "entities",
@@ -3214,7 +3350,7 @@
                     "cleaning": {
                       "type": "custom:button-card",
                       "entity": "vacuum.pikachu",
-                      "template": "square_cell",
+                      "template": "vacuum_more_info",
                       "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
                       "show_label": true,
                       "color": "rgb(253,216,53)",
@@ -3232,7 +3368,7 @@
                     "returning": {
                       "type": "custom:button-card",
                       "entity": "vacuum.pikachu",
-                      "template": "square_cell",
+                      "template": "vacuum_more_info",
                       "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
                       "show_label": true,
                       "color": "rgb(253,216,53)",
@@ -3250,7 +3386,7 @@
                     "paused": {
                       "type": "custom:button-card",
                       "entity": "vacuum.pikachu",
-                      "template": "square_cell",
+                      "template": "vacuum_more_info",
                       "label": "Paused",
                       "show_label": true,
                       "color": "rgb(68,115,158)",
