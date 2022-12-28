@@ -14,7 +14,10 @@
           "styles": {
             "card": [
               {
-                "border-radius": "33%"
+                "border-color": "grey"
+              },
+              {
+                "border-width": "2px"
               }
             ]
           }
@@ -303,7 +306,7 @@
           }
         },
         "vacuum_more_info": {
-          "template": "square_cell",
+          "template": "top_row",
           "hold_action": {
             "action": "fire-dom-event",
             "browser_mod": {
@@ -742,7 +745,10 @@
           "styles": {
             "card": [
               {
-                "box-shadow": "0px 0px 2px 1px grey"
+                "border-color": "grey"
+              },
+              {
+                "border-width": "0.5px"
               }
             ]
           }
@@ -957,16 +963,310 @@
                   "color_type": "blank-card"
                 },
                 {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
+                  "type": "custom:state-switch",
+                  "entity": "switch.misc_switch",
+                  "default": "disabled",
+                  "states": {
+                    "disabled": {
+                      "type": "custom:button-card",
+                      "icon": "mdi:light-switch-off",
+                      "template": "top_row"
+                    },
+                    "off": {
+                      "type": "custom:button-card",
+                      "entity": "switch.misc_switch",
+                      "template": "top_row",
+                      "hold_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    "on": {
+                      "type": "custom:slider-button-card",
+                      "entity": "switch.misc_switch",
+                      "slider": {
+                        "direction": "bottom-top",
+                        "background": "solid",
+                        "use_state_color": true,
+                        "use_percentage_bg_opacity": false,
+                        "show_track": false,
+                        "toggle_on_click": false,
+                        "force_square": true
+                      },
+                      "show_name": false,
+                      "show_state": false,
+                      "compact": true,
+                      "icon": {
+                        "show": true,
+                        "use_state_color": true,
+                        "tap_action": {
+                          "action": "more-info"
+                        },
+                        "icon": ""
+                      },
+                      "action_button": {
+                        "mode": "toggle",
+                        "icon": "mdi:power",
+                        "show": false
+                      }
+                    },
+                    "show_spinner": true,
+                    "tap_action": {
+                      "action": "toggle"
+                    }
+                  }
                 },
                 {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
+                  "type": "custom:state-switch",
+                  "entity": "media_player.all_speakers",
+                  "default": "in_use",
+                  "states": {
+                    "unavailable": {
+                      "type": "custom:button-card",
+                      "icon": "mdi:music-off",
+                      "template": "top_row"
+                    },
+                    "unknown": {
+                      "type": "custom:button-card",
+                      "icon": "mdi:music-off",
+                      "template": "top_row"
+                    },
+                    "off": {
+                      "type": "custom:button-card",
+                      "entity": "media_player.all_speakers",
+                      "template": "top_row"
+                    },
+                    "in_use": {
+                      "type": "custom:state-switch",
+                      "entity": "{% if states('media_player.study_room_speaker') in ['playing','buffering','idle','paused'] and states('media_player.kitchen_speaker') not in ['playing','buffering','idle','paused'] %} study_room_speaker {% elif states('media_player.kitchen_speaker') in ['playing','buffering','idle','paused'] and states('media_player.study_room_speaker') not in ['playing','buffering','idle','paused'] %} kitchen_speaker {% else %} both {% endif %}",
+                      "default": "both",
+                      "states": {
+                        "study_room_speaker": {
+                          "type": "custom:slider-button-card",
+                          "entity": "media_player.study_room_speaker",
+                          "slider": {
+                            "direction": "bottom-top",
+                            "background": "solid",
+                            "use_state_color": false,
+                            "use_percentage_bg_opacity": false,
+                            "show_track": false,
+                            "toggle_on_click": false,
+                            "force_square": true
+                          },
+                          "show_name": false,
+                          "show_state": false,
+                          "compact": true,
+                          "icon": {
+                            "show": true,
+                            "use_state_color": true,
+                            "tap_action": {
+                              "action": "call-service",
+                              "service": "media_player.media_play_pause",
+                              "service_data": {
+                                "entity_id": "media_player.study_room_speaker"
+                              }
+                            },
+                            "icon": ""
+                          },
+                          "action_button": {
+                            "mode": "toggle",
+                            "icon": "mdi:power",
+                            "show": false
+                          }
+                        },
+                        "kitchen_speaker": {
+                          "type": "custom:slider-button-card",
+                          "entity": "media_player.kitchen_speaker",
+                          "slider": {
+                            "direction": "bottom-top",
+                            "background": "solid",
+                            "use_state_color": false,
+                            "use_percentage_bg_opacity": false,
+                            "show_track": false,
+                            "toggle_on_click": false,
+                            "force_square": true
+                          },
+                          "show_name": false,
+                          "show_state": false,
+                          "compact": true,
+                          "icon": {
+                            "show": true,
+                            "use_state_color": true,
+                            "tap_action": {
+                              "action": "call-service",
+                              "service": "media_player.media_play_pause",
+                              "service_data": {
+                                "entity_id": "media_player.kitchen_speaker"
+                              }
+                            },
+                            "icon": ""
+                          },
+                          "action_button": {
+                            "mode": "toggle",
+                            "icon": "mdi:power",
+                            "show": false
+                          }
+                        },
+                        "both": {
+                          "type": "custom:slider-button-card",
+                          "entity": "media_player.all_speakers",
+                          "slider": {
+                            "direction": "bottom-top",
+                            "background": "solid",
+                            "use_state_color": false,
+                            "use_percentage_bg_opacity": false,
+                            "show_track": false,
+                            "toggle_on_click": false,
+                            "force_square": true
+                          },
+                          "show_name": false,
+                          "show_state": false,
+                          "compact": true,
+                          "icon": {
+                            "show": true,
+                            "use_state_color": true,
+                            "tap_action": {
+                              "action": "call-service",
+                              "service": "media_player.media_play_pause",
+                              "service_data": {
+                                "entity_id": "media_player.all_speakers"
+                              }
+                            },
+                            "icon": ""
+                          },
+                          "action_button": {
+                            "mode": "toggle",
+                            "icon": "mdi:power",
+                            "show": false
+                          }
+                        }
+                      }
+                    }
+                  }
                 },
                 {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
+                  "type": "custom:state-switch",
+                  "entity": "vacuum.pikachu",
+                  "default": "disabled",
+                  "states": {
+                    "disabled": {
+                      "type": "custom:button-card",
+                      "entity": "vacuum.pikachu",
+                      "template": "vacuum_more_info",
+                      "icon": "mdi:robot-vacuum-variant-alert",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "#9e110d"
+                          }
+                        ],
+                        "icon": [
+                          {
+                            "animation": "blink 2s ease infinite"
+                          }
+                        ]
+                      }
+                    },
+                    "docked": {
+                      "type": "custom:button-card",
+                      "entity": "vacuum.pikachu",
+                      "template": "vacuum_more_info",
+                      "label": "[[[ \n  if (parseInt(states['vacuum.pikachu'].attributes.battery_level) <= 95)\n    return states['vacuum.pikachu'].attributes.battery_level + '%';\n  else\n    return ''\n]]]\n",
+                      "show_label": true,
+                      "color": "rgb(68,115,158)",
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "vacuum.start",
+                        "service_data": {
+                          "entity_id": "vacuum.pikachu"
+                        }
+                      }
+                    },
+                    "cleaning": {
+                      "type": "custom:button-card",
+                      "entity": "vacuum.pikachu",
+                      "template": "vacuum_more_info",
+                      "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
+                      "show_label": true,
+                      "color": "rgb(253,216,53)",
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "vacuum.pause",
+                        "service_data": {
+                          "entity_id": "vacuum.pikachu"
+                        }
+                      },
+                      "hold_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    "returning": {
+                      "type": "custom:button-card",
+                      "entity": "vacuum.pikachu",
+                      "template": "vacuum_more_info",
+                      "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
+                      "show_label": true,
+                      "color": "rgb(253,216,53)",
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "vacuum.pause",
+                        "service_data": {
+                          "entity_id": "vacuum.pikachu"
+                        }
+                      },
+                      "hold_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    "paused": {
+                      "type": "custom:button-card",
+                      "entity": "vacuum.pikachu",
+                      "template": "vacuum_more_info",
+                      "color": "rgb(68,115,158)",
+                      "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
+                      "show_label": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "vacuum.start",
+                        "service_data": {
+                          "entity_id": "vacuum.pikachu"
+                        }
+                      },
+                      "hold_action": {
+                        "action": "more-info"
+                      },
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "#f2900f"
+                          }
+                        ],
+                        "label": [
+                          {
+                            "animation": "blink 2s ease infinite"
+                          }
+                        ]
+                      }
+                    },
+                    "idle": {
+                      "type": "custom:button-card",
+                      "entity": "vacuum.pikachu",
+                      "template": "vacuum_more_info",
+                      "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
+                      "show_label": true,
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "#9e110d"
+                          }
+                        ],
+                        "label": [
+                          {
+                            "animation": "blink 2s ease infinite"
+                          }
+                        ]
+                      }
+                    }
+                  }
                 },
                 {
                   "type": "custom:button-card",
@@ -2939,57 +3239,8 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "switch.misc_switch",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "icon": "mdi:light-switch-off",
-                      "template": "square_cell"
-                    },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "switch.misc_switch",
-                      "template": "square_cell",
-                      "hold_action": {
-                        "action": "more-info"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "switch.misc_switch",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": true,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false
-                      }
-                    },
-                    "show_spinner": true,
-                    "tap_action": {
-                      "action": "toggle"
-                    }
-                  }
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
                 },
                 {
                   "type": "custom:button-card",
@@ -3309,130 +3560,8 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "vacuum.pikachu",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "vacuum.pikachu",
-                      "template": "vacuum_more_info",
-                      "label": "Error",
-                      "show_label": true,
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "#9e110d"
-                          }
-                        ],
-                        "label": [
-                          {
-                            "animation": "blink 2s ease infinite"
-                          }
-                        ]
-                      }
-                    },
-                    "docked": {
-                      "type": "custom:button-card",
-                      "entity": "vacuum.pikachu",
-                      "template": "vacuum_more_info",
-                      "label": "[[[ \n  if (parseInt(states['vacuum.pikachu'].attributes.battery_level) <= 95)\n    return states['vacuum.pikachu'].attributes.battery_level + '%';\n  else\n    return ''\n]]]\n",
-                      "show_label": true,
-                      "color": "rgb(68,115,158)",
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "vacuum.start",
-                        "service_data": {
-                          "entity_id": "vacuum.pikachu"
-                        }
-                      }
-                    },
-                    "cleaning": {
-                      "type": "custom:button-card",
-                      "entity": "vacuum.pikachu",
-                      "template": "vacuum_more_info",
-                      "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
-                      "show_label": true,
-                      "color": "rgb(253,216,53)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "vacuum.pause",
-                        "service_data": {
-                          "entity_id": "vacuum.pikachu"
-                        }
-                      },
-                      "hold_action": {
-                        "action": "more-info"
-                      }
-                    },
-                    "returning": {
-                      "type": "custom:button-card",
-                      "entity": "vacuum.pikachu",
-                      "template": "vacuum_more_info",
-                      "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
-                      "show_label": true,
-                      "color": "rgb(253,216,53)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "vacuum.pause",
-                        "service_data": {
-                          "entity_id": "vacuum.pikachu"
-                        }
-                      },
-                      "hold_action": {
-                        "action": "more-info"
-                      }
-                    },
-                    "paused": {
-                      "type": "custom:button-card",
-                      "entity": "vacuum.pikachu",
-                      "template": "vacuum_more_info",
-                      "label": "Paused",
-                      "show_label": true,
-                      "color": "rgb(68,115,158)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "vacuum.start",
-                        "service_data": {
-                          "entity_id": "vacuum.pikachu"
-                        }
-                      },
-                      "hold_action": {
-                        "action": "more-info"
-                      },
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "#f2900f"
-                          }
-                        ],
-                        "label": [
-                          {
-                            "animation": "blink 2s ease infinite"
-                          }
-                        ]
-                      }
-                    },
-                    "idle": {
-                      "type": "custom:button-card",
-                      "entity": "vacuum.pikachu",
-                      "template": "vacuum_more_info",
-                      "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
-                      "show_label": true,
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "#9e110d"
-                          }
-                        ],
-                        "label": [
-                          {
-                            "animation": "blink 2s ease infinite"
-                          }
-                        ]
-                      }
-                    }
-                  }
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
                 },
                 {
                   "type": "custom:button-card",
@@ -3731,59 +3860,8 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "media_player.study_room_speaker",
-                  "default": "in_use",
-                  "states": {
-                    "unavailable": {
-                      "type": "custom:button-card",
-                      "icon": "mdi:music-off",
-                      "template": "square_cell"
-                    },
-                    "unknown": {
-                      "type": "custom:button-card",
-                      "icon": "mdi:music-off",
-                      "template": "square_cell"
-                    },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "media_player.study_room_speaker",
-                      "template": "turn_on"
-                    },
-                    "in_use": {
-                      "type": "custom:slider-button-card",
-                      "entity": "media_player.study_room_speaker",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "media_player.media_play_pause",
-                          "service_data": {
-                            "entity_id": "media_player.study_room_speaker"
-                          }
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false
-                      }
-                    }
-                  }
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
                 },
                 {
                   "type": "custom:button-card",
@@ -4289,6 +4367,18 @@
                   }
                 },
                 {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
                   "type": "custom:slider-button-card",
                   "slider": {
                     "direction": "top-bottom",
@@ -4321,18 +4411,6 @@
                     }
                   },
                   "entity": "cover.master_bathroom_blind"
-                },
-                {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
                 },
                 {
                   "type": "custom:button-card",
@@ -4488,69 +4566,8 @@
                   }
                 },
                 {
-                  "type": "custom:slider-button-card",
-                  "entity": "cover.kitchen_blinds",
-                  "slider": {
-                    "direction": "top-bottom",
-                    "background": "solid",
-                    "use_state_color": false,
-                    "use_percentage_bg_opacity": false,
-                    "toggle_on_click": false,
-                    "show_track": false,
-                    "force_square": true,
-                    "invert": true
-                  },
-                  "show_name": false,
-                  "show_state": false,
-                  "compact": true,
-                  "icon": {
-                    "show": true,
-                    "use_state_color": true,
-                    "tap_action": {
-                      "action": "more-info"
-                    },
-                    "icon": ""
-                  },
-                  "action_button": {
-                    "mode": "toggle",
-                    "icon": "mdi:power",
-                    "show": false,
-                    "show_spinner": true,
-                    "tap_action": {
-                      "action": "toggle"
-                    }
-                  }
-                },
-                {
-                  "type": "custom:state-switch",
-                  "entity": "binary_sensor.dishwasher",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "icon": "mdi:dishwasher-off",
-                      "template": "square_cell"
-                    },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.dishwasher",
-                      "template": "dishwasher_more_info",
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "[[[\n  if (states['input_boolean.dishwasher_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--secondary-background-color)';\n]]]\n"
-                          }
-                        ]
-                      }
-                    },
-                    "on": {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.dishwasher",
-                      "template": "dishwasher_more_info",
-                      "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
-                      "show_label": true
-                    }
-                  }
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
                 },
                 {
                   "type": "custom:state-switch",
@@ -4587,56 +4604,66 @@
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "media_player.kitchen_speaker",
-                  "default": "in_use",
+                  "entity": "binary_sensor.dishwasher",
+                  "default": "disabled",
                   "states": {
-                    "unavailable": {
+                    "disabled": {
                       "type": "custom:button-card",
-                      "icon": "mdi:music-off",
-                      "template": "square_cell"
-                    },
-                    "unknown": {
-                      "type": "custom:button-card",
-                      "icon": "mdi:music-off",
+                      "icon": "mdi:dishwasher-off",
                       "template": "square_cell"
                     },
                     "off": {
                       "type": "custom:button-card",
-                      "entity": "media_player.kitchen_speaker",
-                      "template": "turn_on"
-                    },
-                    "in_use": {
-                      "type": "custom:slider-button-card",
-                      "entity": "media_player.kitchen_speaker",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "media_player.media_play_pause",
-                          "service_data": {
-                            "entity_id": "media_player.kitchen_speaker"
+                      "entity": "binary_sensor.dishwasher",
+                      "template": "dishwasher_more_info",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "[[[\n  if (states['input_boolean.dishwasher_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--secondary-background-color)';\n]]]\n"
                           }
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false
+                        ]
                       }
+                    },
+                    "on": {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.dishwasher",
+                      "template": "dishwasher_more_info",
+                      "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
+                      "show_label": true
+                    }
+                  }
+                },
+                {
+                  "type": "custom:slider-button-card",
+                  "entity": "cover.kitchen_blinds",
+                  "slider": {
+                    "direction": "top-bottom",
+                    "background": "solid",
+                    "use_state_color": false,
+                    "use_percentage_bg_opacity": false,
+                    "toggle_on_click": false,
+                    "show_track": false,
+                    "force_square": true,
+                    "invert": true
+                  },
+                  "show_name": false,
+                  "show_state": false,
+                  "compact": true,
+                  "icon": {
+                    "show": true,
+                    "use_state_color": true,
+                    "tap_action": {
+                      "action": "more-info"
+                    },
+                    "icon": ""
+                  },
+                  "action_button": {
+                    "mode": "toggle",
+                    "icon": "mdi:power",
+                    "show": false,
+                    "show_spinner": true,
+                    "tap_action": {
+                      "action": "toggle"
                     }
                   }
                 }
