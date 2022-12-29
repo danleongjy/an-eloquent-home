@@ -2954,10 +2954,10 @@
   alias: Kitchen Blinds Controller
   description: Control the Kitchen Blinds
   use_blueprint:
-    path: EPMatt/ikea_e1743.yaml
+    path: EPMatt/ikea_e1766.yaml
     input:
       integration: ZHA
-      controller_device: 43f2d52bfecdf388c86e9f919d45e359
+      controller_device: 63ca2b52933039d3f01175d8c06dd220
       helper_last_controller_event: input_text.zz_kitchen_blinds_controller_last_event
       action_button_up_short:
       - if:
@@ -4856,3 +4856,114 @@
               entity_id: '{{ repeat.item }}'
           - delay: 1.5
   mode: single
+- id: '1672314137246'
+  alias: Dining Room Blinds Controller
+  description: Control the Dining Room Blinds
+  use_blueprint:
+    path: EPMatt/ikea_e1766.yaml
+    input:
+      integration: ZHA
+      controller_device: 68f01f6ac156c53b78eb226a0e60ea51
+      helper_last_controller_event: input_text.zz_dining_room_blinds_controller_last_event
+      action_button_up_short:
+      - if:
+        - condition: state
+          entity_id: cover.dining_room_blinds
+          state: closing
+        then:
+        - service: cover.stop_cover
+          data: {}
+          target:
+            entity_id: cover.dining_room_blinds
+        else:
+        - service: cover.open_cover
+          data: {}
+          target:
+            entity_id: cover.dining_room_blinds
+      action_button_down_short:
+      - if:
+        - condition: state
+          entity_id: cover.dining_room_blinds
+          state: opening
+        then:
+        - service: cover.stop_cover
+          data: {}
+          target:
+            entity_id: cover.dining_room_blinds
+        else:
+        - service: cover.close_cover
+          data: {}
+          target:
+            entity_id: cover.dining_room_blinds
+- id: '1672314269486'
+  alias: Living Room Blinds Controller
+  description: Control the Living Room Blinds
+  use_blueprint:
+    path: EPMatt/ikea_e1766.yaml
+    input:
+      integration: ZHA
+      controller_device: 0981862e96a5579d41b0f56bff674bc1
+      helper_last_controller_event: input_text.zz_living_room_blinds_controller_last_event
+      action_button_up_short:
+      - if:
+        - condition: state
+          entity_id: cover.living_room_blinds
+          state: closing
+        then:
+        - service: cover.stop_cover
+          data: {}
+          target:
+            entity_id: cover.living_room_blinds
+        else:
+        - service: cover.open_cover
+          data: {}
+          target:
+            entity_id: cover.living_room_blinds
+      action_button_down_short:
+      - if:
+        - condition: state
+          entity_id: cover.living_room_blinds
+          state: opening
+        then:
+        - service: cover.stop_cover
+          data: {}
+          target:
+            entity_id: cover.living_room_blinds
+        else:
+        - service: cover.close_cover
+          data: {}
+          target:
+            entity_id: cover.living_room_blinds
+- id: '1672315815168'
+  alias: Study Table Controller
+  description: Control the Study Room with a dimmer switch
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 43f2d52bfecdf388c86e9f919d45e359
+      helper_last_controller_event: input_text.zz_study_table_controller_last_event
+      action_button_up_short:
+      - service: light.turn_on
+        data:
+          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_study_room'',''lights_level'')
+            }}'
+        target:
+          entity_id: light.study_room_lights
+      action_button_up_long:
+      - service: ''
+        data: {}
+      action_button_up_double:
+      - service: script.set_recommended_scene_in_study_room
+        data: {}
+      action_button_down_short:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.study_room_lights
+      action_button_down_double:
+      - service: script.turn_off_study_room
+        data: {}
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 300

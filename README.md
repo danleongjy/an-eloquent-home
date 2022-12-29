@@ -16,9 +16,9 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 77
+[`automation`](https://www.home-assistant.io/components/automation) | 79
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 86
-[`button`](https://www.home-assistant.io/components/button) | 117
+[`button`](https://www.home-assistant.io/components/button) | 120
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`cover`](https://www.home-assistant.io/components/cover) | 8
@@ -28,7 +28,7 @@ Domain | Quantity
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 12
 [`input_number`](https://www.home-assistant.io/components/input_number) | 24
 [`input_select`](https://www.home-assistant.io/components/input_select) | 6
-[`input_text`](https://www.home-assistant.io/components/input_text) | 26
+[`input_text`](https://www.home-assistant.io/components/input_text) | 29
 [`light`](https://www.home-assistant.io/components/light) | 56
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
 [`number`](https://www.home-assistant.io/components/number) | 164
@@ -36,14 +36,14 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 6
 [`script`](https://www.home-assistant.io/components/script) | 30
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`sensor`](https://www.home-assistant.io/components/sensor) | 329
+[`sensor`](https://www.home-assistant.io/components/sensor) | 339
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 21
 [`update`](https://www.home-assistant.io/components/update) | 10
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1078
+Total | 1096
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/asuswrt/icon.png" height="24"/>](https://home-assistant.io/integrations/asuswrt) [AsusWRT](https://home-assistant.io/integrations/asuswrt)
@@ -57,6 +57,7 @@ Total | 1078
 - [<img src="https://brands.home-assistant.io/_/rest/icon.png" height="24"/>](https://home-assistant.io/integrations/sensor.rest) [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [<img src="https://brands.home-assistant.io/_/tasmota/icon.png" height="24"/>](https://home-assistant.io/integrations/tasmota) [Tasmota](https://home-assistant.io/integrations/tasmota)
 - [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/template) [Template Binary Sensors & Sensors](https://home-assistant.io/integrations/template)
+- [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/cover.template) [Template Cover](https://home-assistant.io/integrations/cover.template)
 - [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/fan.template) [Template Fan](https://home-assistant.io/integrations/fan.template)
 - [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/switch.template) [Template Switch](https://home-assistant.io/integrations/switch.template)
 - [<img src="https://brands.home-assistant.io/_/zha/icon.png" height="24"/>](https://home-assistant.io/integrations/zha) [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
