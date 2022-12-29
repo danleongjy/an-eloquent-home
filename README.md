@@ -16,12 +16,12 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 76
+[`automation`](https://www.home-assistant.io/components/automation) | 77
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 86
-[`button`](https://www.home-assistant.io/components/button) | 113
+[`button`](https://www.home-assistant.io/components/button) | 117
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`climate`](https://www.home-assistant.io/components/climate) | 6
-[`cover`](https://www.home-assistant.io/components/cover) | 2
+[`cover`](https://www.home-assistant.io/components/cover) | 8
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 18
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 16
@@ -36,14 +36,14 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 6
 [`script`](https://www.home-assistant.io/components/script) | 30
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`sensor`](https://www.home-assistant.io/components/sensor) | 325
+[`sensor`](https://www.home-assistant.io/components/sensor) | 329
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 21
 [`update`](https://www.home-assistant.io/components/update) | 10
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1063
+Total | 1078
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/asuswrt/icon.png" height="24"/>](https://home-assistant.io/integrations/asuswrt) [AsusWRT](https://home-assistant.io/integrations/asuswrt)

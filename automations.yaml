@@ -3340,6 +3340,11 @@
   - platform: template
     value_template: "{{ (states('sensor.local_rainfall') | int <= 1) and ('Thunder'
       not in\n   states('sensor.local_two_hour_forecast')) }}"
+  - platform: state
+    entity_id:
+    - sun.sun
+    attribute: rising
+    to: false
   condition: []
   action:
   - if:
@@ -4255,8 +4260,8 @@
         entity_id: input_datetime.dishwasher_last_run_end
   mode: single
 - id: '1667350498199'
-  alias: Vacation Mode
-  description: Set automated controls and devices for vacation mode
+  alias: Away Mode
+  description: Set automated controls and devices for away mode
   trigger:
   - platform: state
     entity_id:
@@ -4309,6 +4314,17 @@
         - automation.dining_room_motion
         - automation.living_room_motion
         - automation.parents_room_motion
+    - repeat:
+        for_each:
+        - cover.living_room_left_blind
+        - cover.living_room_right_blind
+        - cover.dining_room_left_blind
+        - cover.dining_room_right_blind
+        sequence:
+        - service: cover.close_cover
+          target:
+            entity_id: '{{ repeat.item }}'
+        - delay: 1.5
     else:
     - service: automation.turn_on
       data: {}
@@ -4338,6 +4354,11 @@
       target:
         entity_id:
         - automation.kitchen_blinds_auto_control
+    - service: automation.trigger
+      data:
+        skip_condition: false
+      target:
+        entity_id: automation.south_facing_blinds_auto_control
   mode: single
 - id: '1668857202337'
   alias: Parents' Room Motion
@@ -4776,4 +4797,62 @@
     data: {}
   - service: readme.generate
     data: {}
+  mode: single
+- id: '1672302011128'
+  alias: South-Facing Blinds Auto Control
+  description: Open or close the south-facing blinds based on sun position
+  trigger:
+  - platform: time
+    at: 06:00:00
+  - platform: state
+    entity_id:
+    - sun.sun
+    attribute: rising
+    to: false
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    above: 65
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: time
+        after: 05:59:00
+        before: 06:01:00
+      sequence:
+      - repeat:
+          for_each:
+          - cover.living_room_left_blind
+          - cover.living_room_right_blind
+          - cover.dining_room_left_blind
+          - cover.dining_room_right_blind
+          sequence:
+          - service: cover.close_cover
+            target:
+              entity_id: '{{ repeat.item }}'
+          - delay: 1.5
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: sun.sun
+          attribute: rising
+          state: false
+        - condition: numeric_state
+          entity_id: sun.sun
+          attribute: elevation
+          above: 65.1
+      sequence:
+      - repeat:
+          for_each:
+          - cover.living_room_left_blind
+          - cover.living_room_right_blind
+          - cover.dining_room_left_blind
+          - cover.dining_room_right_blind
+          sequence:
+          - service: cover.open_cover
+            target:
+              entity_id: '{{ repeat.item }}'
+          - delay: 1.5
   mode: single

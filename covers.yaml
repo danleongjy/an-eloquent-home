@@ -7,3 +7,70 @@
       close_script_entity_id: script.kitchen_blinds_down
       stop_script_entity_id: script.kitchen_blinds_stop
       open_script_entity_id: script.kitchen_blinds_up
+
+- platform: template
+  covers:
+    dining_room_blinds:
+      friendly_name: Dining Room Blinds
+      unique_id: cover.dining_room_blinds
+      device_class: blind
+      position_template: "{{ (state_attr('cover.dining_room_left_blind','current_position') + state_attr('cover.dining_room_right_blind','current_position')) / 2 }}"
+      availability_template: "{{ states('cover.dining_room_left_blind') not in ['unavailable', 'unknown'] and states('cover.dining_room_right_blind') not in ['unavailable', 'unknown'] }}"
+      open_cover:
+        service: cover.open_cover
+        target:
+          entity_id:
+            - cover.dining_room_left_blind
+            - cover.dining_room_right_blind
+      close_cover:
+        service: cover.close_cover
+        target:
+          entity_id:
+            - cover.dining_room_left_blind
+            - cover.dining_room_right_blind
+      stop_cover:
+        service: cover.stop_cover
+        target:
+          entity_id:
+            - cover.dining_room_left_blind
+            - cover.dining_room_right_blind
+      set_cover_position:
+        service: cover.set_cover_position
+        data:
+          position: "{{ position }}"
+        target:
+          entity_id:
+            - cover.dining_room_left_blind
+            - cover.dining_room_right_blind
+    living_room_blinds:
+      friendly_name: Living Room Blinds
+      unique_id: cover.living_room_blinds
+      device_class: blind
+      position_template: "{{ (state_attr('cover.living_room_left_blind','current_position') + state_attr('cover.living_room_right_blind','current_position')) / 2 }}"
+      availability_template: "{{ states('cover.living_room_left_blind') not in ['unavailable', 'unknown'] and states('cover.living_room_right_blind') not in ['unavailable', 'unknown'] }}"
+      open_cover:
+        service: cover.open_cover
+        target:
+          entity_id:
+            - cover.living_room_left_blind
+            - cover.living_room_right_blind
+      close_cover:
+        service: cover.close_cover
+        target:
+          entity_id:
+            - cover.living_room_left_blind
+            - cover.living_room_right_blind
+      stop_cover:
+        service: cover.stop_cover
+        target:
+          entity_id:
+            - cover.living_room_left_blind
+            - cover.living_room_right_blind
+      set_cover_position:
+        service: cover.set_cover_position
+        data:
+          position: "{{ position }}"
+        target:
+          entity_id:
+            - cover.living_room_left_blind
+            - cover.living_room_right_blind
