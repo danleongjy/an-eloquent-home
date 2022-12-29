@@ -2,17 +2,13 @@
 from __future__ import annotations
 
 import logging
-from pycountry import countries as py_countries, languages as py_languages
 import re
 from typing import Any
 
+from pycountry import countries as py_countries, languages as py_languages
 import voluptuous as vol
 
-from .wideq.core_async import ClientAsync
-from .wideq.core_exceptions import AuthenticationError, InvalidCredentialError
-
 from homeassistant import config_entries
-from homeassistant.core import callback
 from homeassistant.const import (
     CONF_BASE,
     CONF_PASSWORD,
@@ -21,21 +17,32 @@ from homeassistant.const import (
     CONF_USERNAME,
     __version__,
 )
+from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers.selector import (
+    SelectOptionDict,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+    TextSelector,
+    TextSelectorConfig,
+    TextSelectorType,
+)
 
+from . import LGEAuthentication, is_valid_ha_version
 from .const import (
-    DOMAIN,
     CONF_LANGUAGE,
-    CONF_OAUTH_URL,
     CONF_USE_API_V2,
     CONF_USE_HA_SESSION,
+    CONF_USE_REDIRECT,
+    DOMAIN,
     __min_ha_version__,
 )
-from . import LGEAuthentication, is_valid_ha_version
+from .wideq.core_async import ClientAsync
+from .wideq.core_exceptions import AuthenticationError, InvalidCredentialError
 
 CONF_LOGIN = "login_url"
 CONF_URL = "callback_url"
-CONF_USE_REDIRECT = "use_redirect"
 
 RESULT_SUCCESS = 0
 RESULT_FAIL = 1
@@ -67,7 +74,6 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._region: str | None = None
         self._language: str | None = None
         self._token: str | None = None
-        self._oauth_url: str | None = None
         self._use_ha_session = False
 
         self._user_lang: str | None = None
@@ -91,14 +97,28 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         return None
 
+    def _get_hass_region_lang(self):
+        """Get the hass configured region and languange."""
+        if self._region and self._user_lang:
+            return
+        # This works starting from HA 2022.12
+        ha_conf = self.hass.config
+        if not self._region and hasattr(ha_conf, "country"):
+            country = ha_conf.country
+            if country and country in COUNTRIES:
+                self._region = country
+        if not self._user_lang and hasattr(ha_conf, "language"):
+            language = ha_conf.language
+            if language and language[0:2] in LANGUAGES:
+                self._user_lang = language[0:2]
+
     async def async_step_import(
         self, import_config: dict[str, Any] | None = None
     ) -> FlowResult:
         """Import a config entry."""
         self._is_import = True
         self._region = import_config.get(CONF_REGION)
-        language: str | None = import_config.get(CONF_LANGUAGE)
-        if language:
+        if language := import_config.get(CONF_LANGUAGE):
             self._user_lang = language[0:2]
         return await self.async_step_user()
 
@@ -111,7 +131,8 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_abort(
                 reason="unsupported_version",
                 description_placeholders={
-                    "req_ver": __min_ha_version__, "run_ver": __version__
+                    "req_ver": __min_ha_version__,
+                    "run_ver": __version__,
                 },
             )
 
@@ -124,10 +145,11 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             if not self._region:
                 self._region = entry.data.get(CONF_REGION)
             if not self._user_lang:
-                language: str | None = entry.data.get(CONF_LANGUAGE)
-                self._user_lang = language[0:2]
+                if language := entry.data.get(CONF_LANGUAGE):
+                    self._user_lang = language[0:2]
 
         if not user_input:
+            self._get_hass_region_lang()
             return self._show_form()
 
         username = user_input.get(CONF_USERNAME)
@@ -154,7 +176,6 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 return await self._manage_error(result, True)
             auth_info = client.oauth_info
             self._token = auth_info["refresh_token"]
-            self._oauth_url = auth_info["oauth_url"]
             return self._save_config_entry()
 
         lge_auth = LGEAuthentication(
@@ -182,8 +203,6 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             return self._show_form(errors="invalid_url", step_id="url")
 
         self._token = oauth_info["refresh_token"]
-        self._oauth_url = oauth_info["oauth_url"]
-
         _, result = await self._check_connection()
         if result != RESULT_SUCCESS:
             return await self._manage_error(result)
@@ -199,21 +218,19 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
         try:
             if username and password:
-                client = await lge_auth.create_client_from_login(
-                    username, password
-                )
+                client = await lge_auth.create_client_from_login(username, password)
             else:
-                client = await lge_auth.create_client_from_token(
-                    self._token, self._oauth_url
-                )
+                client = await lge_auth.create_client_from_token(self._token)
         except (AuthenticationError, InvalidCredentialError) as exc:
-            msg = "Invalid ThinQ credential error. Please use the LG App on your" \
-                  " mobile device to verify if there are Term of Service to accept." \
-                  " Account based on social network are not supported and in most" \
-                  " case do not work with this integration."
+            msg = (
+                "Invalid ThinQ credential error. Please use the LG App on your"
+                " mobile device to verify if there are Term of Service to accept."
+                " Account based on social network are not supported and in most"
+                " case do not work with this integration."
+            )
             _LOGGER.exception(msg, exc_info=exc)
             return None, RESULT_CRED_FAIL
-        except Exception as exc:
+        except Exception as exc:  # pylint: disable=broad-except
             _LOGGER.exception("Error connecting to ThinQ", exc_info=exc)
             return None, RESULT_FAIL
 
@@ -249,7 +266,6 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_REGION: self._region,
             CONF_LANGUAGE: self._language,
             CONF_TOKEN: self._token,
-            CONF_OAUTH_URL: self._oauth_url,
             CONF_USE_API_V2: True,
         }
         if self._use_ha_session:
@@ -259,7 +275,8 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if entries := self._async_current_entries():
             entry = entries[0]
             self.hass.config_entries.async_update_entry(
-                entry=entry, data=data,
+                entry=entry,
+                data=data,
             )
             self.hass.async_create_task(
                 self.hass.config_entries.async_reload(entry.entry_id)
@@ -274,8 +291,12 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if step_id == "url":
             return vol.Schema(
                 {
-                    vol.Required(CONF_LOGIN, default=self._login_url): str,
-                    vol.Required(CONF_URL): str,
+                    vol.Required(CONF_LOGIN, default=self._login_url): TextSelector(
+                        config=TextSelectorConfig(type=TextSelectorType.URL)
+                    ),
+                    vol.Required(CONF_URL): TextSelector(
+                        config=TextSelectorConfig(type=TextSelectorType.URL)
+                    ),
                 }
             )
 
@@ -283,16 +304,18 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             {
                 vol.Optional(CONF_USERNAME, default=""): str,
                 vol.Optional(CONF_PASSWORD, default=""): str,
-                vol.Required(CONF_REGION, default=self._region or ""): vol.In(COUNTRIES),
-                vol.Required(CONF_LANGUAGE, default=self._user_lang or ""): vol.In(LANGUAGES),
+                vol.Required(CONF_REGION, default=self._region or ""): SelectSelector(
+                    _dict_to_select(COUNTRIES)
+                ),
+                vol.Required(
+                    CONF_LANGUAGE, default=self._user_lang or ""
+                ): SelectSelector(_dict_to_select(LANGUAGES)),
                 vol.Required(CONF_USE_REDIRECT, default=False): bool,
             }
         )
         if self.show_advanced_options:
             schema = schema.extend(
-                {
-                    vol.Required(CONF_USE_HA_SESSION, default=False): bool
-                }
+                {vol.Required(CONF_USE_HA_SESSION, default=False): bool}
             )
 
         return schema
@@ -309,3 +332,11 @@ class SmartThinQFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=schema,
             errors={CONF_BASE: base_err} if base_err else None,
         )
+
+
+def _dict_to_select(opt_dict: dict) -> SelectSelectorConfig:
+    """Covert a dict to a SelectSelectorConfig."""
+    return SelectSelectorConfig(
+        options=[SelectOptionDict(value=str(k), label=v) for k, v in opt_dict.items()],
+        mode=SelectSelectorMode.DROPDOWN,
+    )
