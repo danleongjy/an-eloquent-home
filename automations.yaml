@@ -1318,7 +1318,6 @@
         message: Vacuum not docked properly
         title: Please manually dock vacuum
         data:
-          persistent: true
           tag: vacuum_undocked
     - service: notify.mobile_app_grace
       data:
@@ -1368,7 +1367,6 @@
         message: AC on with doors and windows open
         title: Please close the doors and windows
         data:
-          persistent: true
           tag: doors_open
     - service: notify.mobile_app_grace
       data:
@@ -1408,7 +1406,6 @@
         title: Please unload laundry
         message: Wash completed at {{ (now() | string)[11:16] }}
         data:
-          persistent: true
           tag: washer_load_clean
     - service: notify.mobile_app_grace
       data:
@@ -1525,7 +1522,6 @@
           1)).time() | string)[:5] }}.
         title: Please close bathroom/main doors
         data:
-          persistent: true
           tag: vacuum_running_with_bathroom_doors_open
     - service: notify.mobile_app_grace
       data:
@@ -1620,7 +1616,6 @@
         message: Dishwasher cooled down at {{ (now().time()| string)[:5] }}.
         title: Please open dishwasher
         data:
-          persistent: true
           tag: dishwasher_load_clean
     - service: notify.mobile_app_grace
       data:
@@ -1685,7 +1680,6 @@
         title: Please close windows
         message: Windows open in heavy rain
         data:
-          persistent: true
           tag: windows_open_raining
     - service: notify.mobile_app_grace
       data:
@@ -3327,10 +3321,12 @@
     to: cool
   - platform: time
     at: 06:00:00
+    enabled: false
   - platform: numeric_state
     entity_id: sun.sun
     attribute: elevation
     above: '65'
+    enabled: false
   - platform: state
     entity_id:
     - switch.stove_main_power
@@ -3345,6 +3341,15 @@
     - sun.sun
     attribute: rising
     to: false
+    enabled: false
+  - platform: numeric_state
+    entity_id: sensor.kitchen_lux
+    above: input_number.maximum_lux
+  - platform: numeric_state
+    entity_id: sensor.kitchen_lux
+    value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
+      + 300) }}'
+    below: 0
   condition: []
   action:
   - if:
@@ -3367,6 +3372,7 @@
         - fri
         - sat
         - sun
+        enabled: false
       - condition: and
         conditions:
         - condition: state
@@ -3377,7 +3383,11 @@
           entity_id: sun.sun
           attribute: elevation
           below: 65
-        enabled: true
+        enabled: false
+      - condition: numeric_state
+        entity_id:
+        - sensor.kitchen_lux
+        above: input_number.maximum_lux
     - condition: state
       entity_id: switch.stove_main_power
       state: 'off'
@@ -3400,16 +3410,23 @@
           entity_id: sun.sun
           attribute: rising
           state: false
+          enabled: false
         - condition: numeric_state
           entity_id: sun.sun
           above: '65'
           attribute: elevation
+          enabled: false
         - condition: state
           entity_id: switch.stove_main_power
           state: 'on'
         - condition: state
           entity_id: binary_sensor.gas_water_heater
           state: 'on'
+        - condition: numeric_state
+          entity_id: sensor.kitchen_lux
+          value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
+            + 300) }}'
+          below: 0
       - condition: not
         conditions:
         - condition: template
@@ -4802,8 +4819,6 @@
   alias: South-Facing Blinds Auto Control
   description: Open or close the south-facing blinds based on sun position
   trigger:
-  - platform: time
-    at: 06:00:00
   - platform: state
     entity_id:
     - sun.sun
@@ -4813,13 +4828,30 @@
     entity_id: sun.sun
     attribute: elevation
     above: 65
+  - platform: numeric_state
+    entity_id:
+    - sensor.dining_room_lux
+    - sensor.living_room_lux
+    above: input_number.maximum_lux
+  - platform: numeric_state
+    entity_id:
+    - sensor.dining_room_lux
+    - sensor.living_room_lux
+    value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
+      + 300) }}'
+    below: 0
   condition: []
   action:
   - choose:
     - conditions:
-      - condition: time
-        after: 05:59:00
-        before: 06:01:00
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.dining_room_lux
+          above: input_number.maximum_lux
+        - condition: numeric_state
+          entity_id: sensor.living_room_lux
+          above: input_number.maximum_lux
       sequence:
       - repeat:
           for_each:
@@ -4843,6 +4875,16 @@
           entity_id: sun.sun
           attribute: elevation
           above: 65.1
+        - condition: numeric_state
+          entity_id: sensor.dining_room_lux
+          value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
+            + 300) }}'
+          below: -1000
+        - condition: numeric_state
+          entity_id: sensor.living_room_lux
+          value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
+            + 300) }}'
+          below: -1000
       sequence:
       - repeat:
           for_each:

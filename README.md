@@ -26,7 +26,7 @@ Domain | Quantity
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 16
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 12
-[`input_number`](https://www.home-assistant.io/components/input_number) | 24
+[`input_number`](https://www.home-assistant.io/components/input_number) | 25
 [`input_select`](https://www.home-assistant.io/components/input_select) | 6
 [`input_text`](https://www.home-assistant.io/components/input_text) | 29
 [`light`](https://www.home-assistant.io/components/light) | 56
@@ -43,7 +43,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1096
+Total | 1097
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/asuswrt/icon.png" height="24"/>](https://home-assistant.io/integrations/asuswrt) [AsusWRT](https://home-assistant.io/integrations/asuswrt)

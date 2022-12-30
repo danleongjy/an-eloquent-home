@@ -1473,6 +1473,10 @@
                   }
                 },
                 {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
                   "type": "custom:state-switch",
                   "entity": "sensor.washer_status",
                   "default": "disabled",
@@ -1576,10 +1580,6 @@
                       }
                     }
                   }
-                },
-                {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
                 },
                 {
                   "type": "custom:button-card",
@@ -4365,22 +4365,22 @@
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "light.master_bathroom_lights",
+                  "entity": "light.master_bathroom_light_entity",
                   "default": "disabled",
                   "states": {
                     "disabled": {
                       "type": "custom:button-card",
-                      "icon": "mdi:lightbulb-group-off",
+                      "icon": "mdi:lightbulb-off",
                       "template": "square_cell"
                     },
                     "off": {
                       "type": "custom:button-card",
-                      "entity": "light.master_bathroom_lights",
+                      "entity": "light.master_bathroom_light_entity",
                       "template": "turn_on"
                     },
                     "on": {
                       "type": "custom:slider-button-card",
-                      "entity": "light.master_bathroom_lights",
+                      "entity": "light.master_bathroom_light_entity",
                       "slider": {
                         "direction": "bottom-top",
                         "background": "solid",
@@ -4414,8 +4414,54 @@
                   }
                 },
                 {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
+                  "type": "custom:state-switch",
+                  "entity": "light.master_bathroom_pendant_light_entity",
+                  "default": "disabled",
+                  "states": {
+                    "disabled": {
+                      "type": "custom:button-card",
+                      "icon": "mdi:lightbulb-off",
+                      "template": "square_cell"
+                    },
+                    "off": {
+                      "type": "custom:button-card",
+                      "entity": "light.master_bathroom_pendant_light_entity",
+                      "template": "turn_on"
+                    },
+                    "on": {
+                      "type": "custom:slider-button-card",
+                      "entity": "light.master_bathroom_pendant_light_entity",
+                      "slider": {
+                        "direction": "bottom-top",
+                        "background": "solid",
+                        "use_state_color": false,
+                        "use_percentage_bg_opacity": false,
+                        "show_track": false,
+                        "toggle_on_click": false,
+                        "force_square": true
+                      },
+                      "show_name": false,
+                      "show_state": false,
+                      "compact": true,
+                      "icon": {
+                        "show": true,
+                        "use_state_color": true,
+                        "tap_action": {
+                          "action": "more-info"
+                        },
+                        "icon": ""
+                      },
+                      "action_button": {
+                        "mode": "toggle",
+                        "icon": "mdi:power",
+                        "show": false
+                      }
+                    },
+                    "show_spinner": true,
+                    "tap_action": {
+                      "action": "toggle"
+                    }
+                  }
                 },
                 {
                   "type": "custom:button-card",
@@ -4975,19 +5021,19 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "icon": "mdi:motion-sensor",
+                  "label": "min",
+                  "show_label": true,
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
                   "icon": "mdi:door-open",
                   "template": "square_cell"
                 },
                 {
                   "type": "custom:button-card",
                   "icon": "mdi:window-open",
-                  "template": "square_cell"
-                },
-                {
-                  "type": "custom:button-card",
-                  "icon": "mdi:motion-sensor",
-                  "label": "min",
-                  "show_label": true,
                   "template": "square_cell"
                 },
                 {
@@ -5018,6 +5064,11 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "binary_sensor.playroom_motion_sensors",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
                   "color_type": "blank-card"
                 },
                 {
@@ -5026,11 +5077,6 @@
                   "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
                   "show_label": true,
                   "template": "sensor_binary"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "binary_sensor.playroom_motion_sensors",
-                  "template": "sensor_motion"
                 },
                 {
                   "type": "custom:button-card",
@@ -5054,17 +5100,17 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "binary_sensor.elenas_room_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
                   "entity": "binary_sensor.elenas_room_door",
                   "template": "sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "binary_sensor.elenas_room_motion",
-                  "template": "sensor_motion"
                 },
                 {
                   "type": "custom:button-card",
@@ -5090,17 +5136,17 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "binary_sensor.elis_room_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
                   "entity": "binary_sensor.elis_room_door",
                   "template": "sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "binary_sensor.elis_room_motion",
-                  "template": "sensor_motion"
                 },
                 {
                   "type": "custom:button-card",
@@ -5124,6 +5170,11 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "binary_sensor.hallway_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
                   "entity": "binary_sensor.hallway_doors",
                   "label": "[[[ \n  if (entity.attributes.total_doors_open == \"0/4\")\n    return ''\n  else\n    return entity.attributes.total_doors_open\n]]]\n",
                   "show_label": true,
@@ -5132,11 +5183,6 @@
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "binary_sensor.hallway_motion",
-                  "template": "sensor_motion"
                 },
                 {
                   "type": "custom:button-card",
@@ -5158,17 +5204,17 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "binary_sensor.powder_room_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
                   "entity": "binary_sensor.powder_room_door",
                   "template": "sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "binary_sensor.powder_room_motion",
-                  "template": "sensor_motion"
                 },
                 {
                   "type": "custom:button-card",
@@ -5189,17 +5235,17 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "binary_sensor.junior_bathroom_motion_sensors",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
                   "entity": "binary_sensor.junior_bathroom_door",
                   "template": "sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "binary_sensor.junior_bathroom_motion_sensors",
-                  "template": "sensor_motion"
                 },
                 {
                   "type": "custom:button-card",
@@ -5220,17 +5266,17 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "binary_sensor.dining_room_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
                   "entity": "binary_sensor.main_door",
                   "template": "sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "binary_sensor.dining_room_motion",
-                  "template": "sensor_motion"
                 },
                 {
                   "type": "custom:button-card",
@@ -5254,16 +5300,16 @@
                 },
                 {
                   "type": "custom:button-card",
-                  "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
                   "entity": "binary_sensor.living_room_motion",
                   "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
+                },
+                {
+                  "type": "custom:button-card",
+                  "color_type": "blank-card"
                 },
                 {
                   "type": "custom:button-card",
@@ -5285,17 +5331,17 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "binary_sensor.study_walkway_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
                   "entity": "binary_sensor.parents_room_door",
                   "template": "sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "binary_sensor.study_walkway_motion",
-                  "template": "sensor_motion"
                 },
                 {
                   "type": "custom:button-card",
@@ -5321,6 +5367,11 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "binary_sensor.parents_room_motion",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
                   "entity": "binary_sensor.parents_room_doors",
                   "label": "[[[ \n  if (entity.attributes.total_doors_open == '0/2')\n    return ''\n  else\n    return entity.attributes.total_doors_open\n]]]\n",
                   "show_label": true,
@@ -5329,11 +5380,6 @@
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "binary_sensor.parents_room_motion",
-                  "template": "sensor_motion"
                 },
                 {
                   "type": "custom:button-card",
@@ -5357,17 +5403,17 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "binary_sensor.master_bathroom_motion_sensors",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
                   "entity": "binary_sensor.master_bathroom_door",
                   "template": "sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "binary_sensor.master_bathroom_motion_sensors",
-                  "template": "sensor_motion"
                 },
                 {
                   "type": "custom:button-card",
@@ -5388,17 +5434,17 @@
                 },
                 {
                   "type": "custom:button-card",
+                  "entity": "binary_sensor.kitchen_motion_sensors",
+                  "template": "sensor_motion"
+                },
+                {
+                  "type": "custom:button-card",
                   "color_type": "blank-card"
                 },
                 {
                   "type": "custom:button-card",
                   "entity": "binary_sensor.kitchen_window",
                   "template": "sensor_binary"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "binary_sensor.kitchen_motion_sensors",
-                  "template": "sensor_motion"
                 },
                 {
                   "type": "custom:button-card",
@@ -6280,6 +6326,9 @@
               "entities": [
                 {
                   "entity": "input_number.minimum_lux"
+                },
+                {
+                  "entity": "input_number.maximum_lux"
                 },
                 {
                   "entity": "input_number.night_light_brightness",
