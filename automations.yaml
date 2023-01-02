@@ -2983,6 +2983,19 @@
           data: {}
           target:
             entity_id: cover.kitchen_blinds
+      action_button_up_double:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.kitchen_blinds_auto_control
+      action_button_down_double:
+      - service: automation.turn_off
+        data: {}
+        target:
+          entity_id: automation.kitchen_blinds_auto_control
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 500
 - id: '1659256970314'
   alias: Kitchen Lights Controller
   description: Control the Kitchen Lights
@@ -3319,17 +3332,21 @@
     entity_id:
     - climate.living_room_ac
     to: cool
-  - platform: time
-    at: 06:00:00
-    enabled: false
   - platform: numeric_state
     entity_id: sun.sun
     attribute: elevation
     above: '65'
-    enabled: false
+    enabled: true
   - platform: state
     entity_id:
     - switch.stove_main_power
+    - switch.rice_cooker
+    not_from:
+    - unavailable
+    - unknown
+    not_to:
+    - unavailable
+    - unknown
   - platform: state
     entity_id:
     - binary_sensor.gas_water_heater
@@ -3343,7 +3360,7 @@
     - sun.sun
     attribute: rising
     to: false
-    enabled: false
+    enabled: true
   - platform: state
     entity_id:
     - sensor.kitchen_lux
@@ -3358,35 +3375,14 @@
       - condition: state
         entity_id: climate.living_room_ac
         state: cool
-      - condition: time
-        after: 05:59:57
-        before: 06:00:01
-        weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-        - sat
-        - sun
-        enabled: false
-      - condition: and
-        conditions:
-        - condition: state
-          entity_id: sun.sun
-          attribute: rising
-          state: true
-        - condition: numeric_state
-          entity_id: sun.sun
-          attribute: elevation
-          below: 65
-        enabled: false
       - condition: numeric_state
         entity_id:
         - sensor.kitchen_lux
         above: input_number.maximum_lux
     - condition: state
-      entity_id: switch.stove_main_power
+      entity_id:
+      - switch.stove_main_power
+      - switch.rice_cooker
       state: 'off'
     - condition: not
       conditions:
@@ -3407,12 +3403,12 @@
           entity_id: sun.sun
           attribute: rising
           state: false
-          enabled: false
+          enabled: true
         - condition: numeric_state
           entity_id: sun.sun
           above: '65'
           attribute: elevation
-          enabled: false
+          enabled: true
         - condition: state
           entity_id: switch.stove_main_power
           state: 'on'
@@ -3422,8 +3418,11 @@
         - condition: numeric_state
           entity_id: sensor.kitchen_lux
           value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
-            + 300) }}'
+            | int + 300) }}'
           below: 0
+        - condition: state
+          entity_id: switch.rice_cooker
+          state: 'on'
       - condition: not
         conditions:
         - condition: template
@@ -4301,6 +4300,7 @@
         entity_id:
         - switch.stove_main_power
         - switch.water_heater
+        - switch.rice_cooker
     - service: script.turn_off_all
       data: {}
     - service: automation.turn_off
@@ -4707,7 +4707,7 @@
   mode: single
 - id: '1669620569638'
   alias: Kitchen Blinds Set Known Position
-  description: Set the Kitchen Blind to open or closed based on contact sensors
+  description: Set the Kitchen Blind to open or closed based on contact sensor
   trigger:
   - platform: state
     entity_id:
@@ -4719,15 +4719,11 @@
   - condition: not
     conditions:
     - condition: state
-      entity_id:
-      - binary_sensor.kitchen_blinds_closed
-      - binary_sensor.kitchen_blinds_opened
+      entity_id: binary_sensor.kitchen_blinds_closed
       state:
       - unavailable
       - unknown
-  - condition: template
-    value_template: '{{ states(''binary_sensor.kitchen_blinds_closed'') != states(''binary_sensor.kitchen_blinds_opened'')
-      }}'
+    enabled: true
   action:
   - delay:
       hours: 0
@@ -4737,24 +4733,30 @@
   - choose:
     - conditions:
       - condition: state
-        entity_id: binary_sensor.kitchen_blinds_opened
-        state: 'off'
-      sequence:
-      - service: cover_rf_time_based.set_known_position
-        data:
-          entity_id: cover.kitchen_blinds
-          position: 100
-          position_type: current
-          confident: true
-    - conditions:
-      - condition: state
         entity_id: binary_sensor.kitchen_blinds_closed
         state: 'off'
+      - condition: state
+        entity_id: cover.kitchen_blinds
+        state: open
       sequence:
       - service: cover_rf_time_based.set_known_position
         data:
           entity_id: cover.kitchen_blinds
           position: 0
+          position_type: current
+          confident: true
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.kitchen_blinds_closed
+        state: 'on'
+      - condition: state
+        entity_id: cover.kitchen_blinds
+        state: closed
+      sequence:
+      - service: cover_rf_time_based.set_known_position
+        data:
+          entity_id: cover.kitchen_blinds
+          position: 100
           position_type: current
           confident: true
   mode: single
@@ -4835,7 +4837,7 @@
     - sensor.dining_room_lux
     - sensor.living_room_lux
     value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
-      + 300) }}'
+      | int + 300) }}'
     below: 0
   condition: []
   action:
@@ -4875,13 +4877,13 @@
         - condition: numeric_state
           entity_id: sensor.dining_room_lux
           value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
-            + 300) }}'
-          below: -1000
+            | int + 300) }}'
+          below: 0
         - condition: numeric_state
           entity_id: sensor.living_room_lux
           value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
-            + 300) }}'
-          below: -1000
+            | int + 300) }}'
+          below: 0
       sequence:
       - repeat:
           for_each:
@@ -4934,6 +4936,19 @@
           data: {}
           target:
             entity_id: cover.dining_room_blinds
+      action_button_up_double:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.south_facing_blinds_auto_control
+      action_button_down_double:
+      - service: automation.turn_off
+        data: {}
+        target:
+          entity_id: automation.south_facing_blinds_auto_control
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 500
 - id: '1672314269486'
   alias: Living Room Blinds Controller
   description: Control the Living Room Blinds
@@ -4973,6 +4988,19 @@
           data: {}
           target:
             entity_id: cover.living_room_blinds
+      action_button_up_double:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.south_facing_blinds_auto_control
+      action_button_down_double:
+      - service: automation.turn_off
+        data: {}
+        target:
+          entity_id: automation.south_facing_blinds_auto_control
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 500
 - id: '1672315815168'
   alias: Study Table Controller
   description: Control the Study Room with a dimmer switch

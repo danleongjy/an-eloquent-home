@@ -46,7 +46,6 @@ Domain | Quantity
 Total | 1073
 
 ## Core Integrations
-- [<img src="https://brands.home-assistant.io/_/asuswrt/icon.png" height="24"/>](https://home-assistant.io/integrations/asuswrt) [AsusWRT](https://home-assistant.io/integrations/asuswrt)
 - [<img src="https://brands.home-assistant.io/_/broadlink/icon.png" height="24"/>](https://home-assistant.io/integrations/broadlink) [Broadlink](https://home-assistant.io/integrations/broadlink)
 - [<img src="https://brands.home-assistant.io/_/generic_thermostat/icon.png" height="24"/>](https://home-assistant.io/integrations/generic_thermostat) [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
 - [<img src="https://brands.home-assistant.io/_/google_assistant/icon.png" height="24"/>](https://home-assistant.io/integrations/google_assistant) [Google Assistant](https://home-assistant.io/integrations/google_assistant)

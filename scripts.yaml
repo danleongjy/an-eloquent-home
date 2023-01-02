@@ -241,10 +241,6 @@ turn_off_dining_room:
       - light.dining_room_lights
       - light.dining_room_pendant_light_entity
     data: {}
-  - service: switch.turn_off
-    data: {}
-    target:
-      entity_id: switch.misc_switch
   - if:
     - condition: state
       entity_id: fan.dining_room_fan
@@ -491,20 +487,12 @@ set_recommended_scene_in_dining_room:
             ''lights_level'') }}
 
             '
-      - service: switch.turn_on
-        data: {}
-        target:
-          entity_id: switch.misc_switch
     default:
     - service: light.turn_off
       data: {}
       target:
         entity_id:
         - light.dining_room_lights
-    - service: switch.turn_off
-      data: {}
-      target:
-        entity_id: switch.misc_switch
   - choose:
     - conditions:
       - condition: numeric_state
