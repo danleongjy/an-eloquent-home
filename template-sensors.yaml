@@ -288,6 +288,13 @@
       dishwasher_status: "{{ states('input_select.dishwasher_status') }}"
     availability: "{{ states('switch.dishwasher') }}"
 
+  - name: Rice Cooker
+    unique_id: binary_sensor.rice_cooker
+    state: "{{ states('sensor.rice_cooker_watts') | int(0) > 0 }}"
+    attributes:
+      dishwasher_status: "{{ states('input_select.rice_cooker_status') }}"
+    availability: "{{ states('switch.rice_cooker') not in ['unavailable','unknown'] }}"
+
   - name: Gas Water Heater
     unique_id: binary_sensor.gas_water_heater
     state: "{{ states('sensor.gas_water_heater_watts') | int(0) > 3 }}"
@@ -751,6 +758,15 @@
         Running
       {% endif %}
 
+  - name: Rice Cooker Last Run Duration
+    unique_id: sensor.rice_cooker_last_run_duration
+    state: >
+      {% if states('input_datetime.rice_cooker_last_run_end') | as_datetime > states('input_datetime.rice_cooker_last_run_start') | as_datetime %}
+        {{ ((states('input_datetime.rice_cooker_last_run_end') | as_datetime - states('input_datetime.rice_cooker_last_run_start') | as_datetime) | string)[:-3] }}
+      {% else %}
+        Running
+      {% endif %}
+
 - trigger:
   - platform: time_pattern
     minutes: '/1'
@@ -792,6 +808,20 @@
       state: >
         {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
         {% set relative_age = relative_time(states('input_datetime.dishwasher_last_run_end') | as_datetime).split() %}
+        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+
+    - name: Rice Cooker Last Run Started
+      unique_id: sensor.rice_cooker_last_run_started
+      state: >
+        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
+        {% set relative_age = relative_time(states('input_datetime.rice_cooker_last_run_start') | as_datetime).split() %}
+        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+
+    - name: Rice Cooker Last Run Ended
+      unique_id: sensor.rice_cooker_last_run_ended
+      state: >
+        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
+        {% set relative_age = relative_time(states('input_datetime.rice_cooker_last_run_end') | as_datetime).split() %}
         {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
 
     - name: Stove Last Use

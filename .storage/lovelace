@@ -142,6 +142,120 @@
             }
           }
         },
+        "rice_cooker_more_info": {
+          "template": "square_cell",
+          "hold_action": {
+            "action": "fire-dom-event",
+            "browser_mod": {
+              "service": "browser_mod.popup",
+              "data": {
+                "title": "Rice Cooker",
+                "dismissable": true,
+                "content": {
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "binary_sensor.rice_cooker",
+                          "state": "off"
+                        }
+                      ],
+                      "card": {
+                        "type": "horizontal-stack",
+                        "cards": [
+                          {
+                            "type": "custom:button-card",
+                            "entity": "input_select.rice_cooker_status",
+                            "template": "square_cell",
+                            "show_state": true
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "entity": "sensor.rice_cooker_last_run_ended",
+                            "template": "square_cell",
+                            "show_state": true
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "entity": "sensor.rice_cooker_last_run_duration",
+                            "template": "square_cell",
+                            "show_state": true
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "entity": "binary_sensor.rice_cooker_lid",
+                            "template": "square_cell",
+                            "show_state": true
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "binary_sensor.rice_cooker",
+                          "state": "on"
+                        }
+                      ],
+                      "card": {
+                        "type": "vertical-stack",
+                        "cards": [
+                          {
+                            "type": "horizontal-stack",
+                            "cards": [
+                              {
+                                "type": "custom:button-card",
+                                "entity": "input_select.rice_cooker_status",
+                                "template": "square_cell",
+                                "show_state": true
+                              },
+                              {
+                                "type": "custom:button-card",
+                                "entity": "sensor.rice_cooker_last_run_started",
+                                "template": "square_cell",
+                                "show_state": true
+                              },
+                              {
+                                "type": "custom:button-card",
+                                "entity": "sensor.rice_cooker_watts",
+                                "template": "square_cell",
+                                "show_state": true
+                              }
+                            ]
+                          },
+                          {
+                            "type": "history-graph",
+                            "hours_to_show": 1,
+                            "entities": [
+                              "sensor.rice_cooker_watts"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "input_boolean.dishwasher_load_clean",
+                          "state": "on"
+                        }
+                      ],
+                      "card": {
+                        "type": "markdown",
+                        "content": "<ha-alert alert-type=\"success\">Dishwasher cooled down.  Please open dishwasher.</ha-alert>"
+                      }
+                    }
+                  ]
+                },
+                "style": "--popup-border-radius: 6px\n"
+              }
+            }
+          }
+        },
         "stove_more_info": {
           "template": "square_cell",
           "hold_action": {
@@ -4610,8 +4724,35 @@
                   }
                 },
                 {
-                  "type": "custom:button-card",
-                  "color_type": "blank-card"
+                  "type": "custom:state-switch",
+                  "entity": "binary_sensor.rice_cooker",
+                  "default": "disabled",
+                  "states": {
+                    "disabled": {
+                      "type": "custom:button-card",
+                      "icon": "mdi:fire-off",
+                      "template": "square_cell"
+                    },
+                    "off": {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.rice_cooker",
+                      "template": "rice_cooker_more_info",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "[[[\n  if (states['input_select.rice_cooker_status'].state == 'Warming')\n    return '#b4fab4';\n  else\n    return 'var(--secondary-background-color)';\n]]]\n"
+                          }
+                        ]
+                      }
+                    },
+                    "on": {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.rice_cooker",
+                      "template": "rice_cooker_more_info",
+                      "label": "[[[\n  if (states['input_select.rice_cooker_status'].state == 'Cooking')\n    return 'Cook'\n  else if (states['input_select.dishwasher_status'].state == 'Warming')\n    return 'Warm'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
+                      "show_label": true
+                    }
+                  }
                 },
                 {
                   "type": "custom:state-switch",

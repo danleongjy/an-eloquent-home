@@ -4328,6 +4328,7 @@
         - automation.dining_room_motion
         - automation.living_room_motion
         - automation.parents_room_motion
+        - automation.south_facing_blinds_auto_control
     - repeat:
         for_each:
         - cover.living_room_left_blind
@@ -4362,6 +4363,7 @@
         - automation.dining_room_motion
         - automation.living_room_motion
         - automation.parents_room_motion
+        - automation.south_facing_blinds_auto_control
     - service: automation.trigger
       data:
         skip_condition: false
@@ -4813,6 +4815,13 @@
     data: {}
   - service: readme.generate
     data: {}
+  - service: automation.turn_on
+    data: {}
+    target:
+      entity_id:
+      - automation.south_facing_blinds_auto_control
+      - automation.kitchen_blinds_auto_control
+      - automation.notify_when_vacuum_running_with_doors_open
   mode: single
 - id: '1672302011128'
   alias: South-Facing Blinds Auto Control
@@ -5119,3 +5128,127 @@
     default: []
   mode: single
   max_exceeded: silent
+- id: '1672722028985'
+  alias: Rice Cooker Auto Control
+  description: Turn on or off the rice cooker based on lid state and idle time
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.rice_cooker_lid
+    to: 'off'
+    id: lid_closed
+  - platform: template
+    value_template: '{{ is_state(''switch.rice_cooker'',''on'') and states(''sensor.rice_cooker_watts'')
+      | float(0) < 1 }}'
+    for:
+      minutes: 5
+    id: idle
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: lid_closed
+    then:
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.rice_cooker
+    else:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.rice_cooker
+  mode: single
+- id: '1672734021271'
+  alias: Rice Cooker Set State
+  description: Set the state of the rice cooker based on power consumption
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.rice_cooker_watts
+    above: 4
+    id: cooking
+  - platform: numeric_state
+    entity_id: sensor.rice_cooker_watts
+    above: 0
+    below: 5
+    id: idle
+  - platform: state
+    entity_id:
+    - sensor.rice_cooker_watts
+    to: '0'
+    id: 'off'
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: cooking
+      sequence:
+      - service: input_select.select_option
+        data:
+          option: Cooking
+        target:
+          entity_id: input_select.rice_cooker_status
+    - conditions:
+      - condition: trigger
+        id: idle
+      sequence:
+      - if:
+        - condition: state
+          entity_id: input_select.rice_cooker_status
+          state: Cooking
+        then:
+        - service: input_select.select_option
+          data:
+            option: Warming
+          target:
+            entity_id: input_select.rice_cooker_status
+        else:
+        - service: input_select.select_option
+          data:
+            option: Standby
+          target:
+            entity_id: input_select.rice_cooker_status
+    default:
+    - service: input_select.select_option
+      data:
+        option: 'Off'
+      target:
+        entity_id: input_select.rice_cooker_status
+  mode: single
+- id: '1672735031886'
+  alias: Rice Cooker Last Use
+  description: Track the start and end times of the last run of the rice cooker
+  trigger:
+  - platform: state
+    entity_id:
+    - input_select.rice_cooker_status
+    from:
+    - 'off'
+    - standby
+    to: cooking
+    id: cooking_start
+  - platform: state
+    entity_id:
+    - input_select.rice_cooker_status
+    from: cooking
+    to: keeping warm
+    id: cooking_end
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: cooking_start
+    then:
+    - service: input_datetime.set_datetime
+      data:
+        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+      target:
+        entity_id: input_datetime.rice_cooker_last_run_start
+    else:
+    - service: input_datetime.set_datetime
+      data:
+        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+      target:
+        entity_id: input_datetime.rice_cooker_last_run_end
+  mode: single

@@ -16,8 +16,8 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 80
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 85
+[`automation`](https://www.home-assistant.io/components/automation) | 83
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 86
 [`button`](https://www.home-assistant.io/components/button) | 120
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`climate`](https://www.home-assistant.io/components/climate) | 6
@@ -25,9 +25,9 @@ Domain | Quantity
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 2
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 17
-[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 12
+[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 14
 [`input_number`](https://www.home-assistant.io/components/input_number) | 26
-[`input_select`](https://www.home-assistant.io/components/input_select) | 7
+[`input_select`](https://www.home-assistant.io/components/input_select) | 8
 [`input_text`](https://www.home-assistant.io/components/input_text) | 29
 [`light`](https://www.home-assistant.io/components/light) | 56
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
@@ -36,14 +36,14 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 6
 [`script`](https://www.home-assistant.io/components/script) | 30
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`sensor`](https://www.home-assistant.io/components/sensor) | 328
+[`sensor`](https://www.home-assistant.io/components/sensor) | 331
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 21
 [`update`](https://www.home-assistant.io/components/update) | 10
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1073
+Total | 1083
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/broadlink/icon.png" height="24"/>](https://home-assistant.io/integrations/broadlink) [Broadlink](https://home-assistant.io/integrations/broadlink)
