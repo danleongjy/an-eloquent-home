@@ -5049,91 +5049,6 @@
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 300
-- id: '1672410458423'
-  alias: Dining Room Fan Set State
-  description: Set Dining Room Fan power and speed
-  trigger:
-  - platform: state
-    entity_id:
-    - fan.dining_room_fan
-    id: power_off
-    from: 'on'
-    to: 'off'
-  - platform: state
-    entity_id:
-    - fan.dining_room_fan
-    id: power_on
-    from: 'off'
-    to: 'on'
-  - platform: state
-    entity_id:
-    - fan.dining_room_fan
-    id: speed
-    attribute: percentage
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: speed
-      sequence:
-      - if:
-        - condition: numeric_state
-          entity_id: fan.dining_room_fan
-          attribute: percentage
-          below: '10'
-        then:
-        - service: fan.set_percentage
-          data:
-            percentage: '{{ state_attr("binary_sensor.recommended_scene_in_dining_room",
-              "fan_speed") | int }}'
-          target:
-            entity_id: fan.dining_room_fan
-        - service: fan.turn_off
-          data: {}
-          target:
-            entity_id: fan.dining_room_fan
-        - service: script.fan_set_state
-          data:
-            target_fan: Dining Room Fan
-            target_fan_power: false
-        else:
-        - service: script.fan_set_state
-          data:
-            target_fan: Dining Room Fan
-            target_fan_speed: '{{ state_attr("fan.dining_room_fan", "percentage")
-              | int }}'
-    - conditions:
-      - condition: trigger
-        id: power_on
-      sequence:
-      - service: fan.set_percentage
-        data:
-          percentage: '{{ state_attr("binary_sensor.recommended_scene_in_dining_room",
-            "fan_speed") | int }}'
-        target:
-          entity_id: fan.dining_room_fan
-      - service: script.fan_set_state
-        data:
-          target_fan: Dining Room Fan
-          target_fan_speed: '{{ state_attr("fan.dining_room_fan", "percentage") |
-            int }}'
-          target_fan_power: true
-    - conditions:
-      - condition: trigger
-        id: power_off
-      sequence:
-      - service: input_boolean.turn_off
-        data: {}
-        target:
-          entity_id: input_boolean.dining_room_fan_power
-      - service: script.fan_set_state
-        data:
-          target_fan: Dining Room Fan
-          target_fan_power: false
-    default: []
-  mode: single
-  max_exceeded: silent
 - id: '1672722028985'
   alias: Rice Cooker Auto Control
   description: Turn on or off the rice cooker based on lid state and idle time
@@ -5170,19 +5085,33 @@
   description: Set the state of the rice cooker based on power consumption
   trigger:
   - platform: numeric_state
-    entity_id: sensor.rice_cooker_watts
-    above: 2
+    entity_id: sensor.rice_cooker_watts_recent_max
+    above: 200
     id: cooking
   - platform: numeric_state
-    entity_id: sensor.rice_cooker_watts
-    above: 0
-    below: 3
-    id: idle
+    entity_id: sensor.rice_cooker_watts_recent_max
+    above: 60
+    below: 201
+    id: warming
   - platform: state
     entity_id:
     - sensor.rice_cooker_watts
-    to: '0'
-    id: 'off'
+    to: '1'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    id: standby
+  - platform: state
+    entity_id:
+    - switch.rice_cooker
+    not_from:
+    - unavailable
+    - unknown
+    not_to:
+    - unavailable
+    - unknown
+    id: power
   condition: []
   action:
   - choose:
@@ -5197,30 +5126,43 @@
           entity_id: input_select.rice_cooker_status
     - conditions:
       - condition: trigger
-        id: idle
+        id: warming
+      sequence:
+      - service: input_select.select_option
+        data:
+          option: Warming
+        target:
+          entity_id: input_select.rice_cooker_status
+    - conditions:
+      - condition: trigger
+        id: standby
+      sequence:
+      - service: input_select.select_option
+        data:
+          option: Standby
+        target:
+          entity_id: input_select.rice_cooker_status
+    - conditions:
+      - condition: trigger
+        id: power
       sequence:
       - if:
         - condition: state
-          entity_id: input_select.rice_cooker_status
-          state: Cooking
+          entity_id: switch.rice_cooker
+          state: 'on'
         then:
-        - service: input_select.select_option
-          data:
-            option: Warming
-          target:
-            entity_id: input_select.rice_cooker_status
-        else:
         - service: input_select.select_option
           data:
             option: Standby
           target:
             entity_id: input_select.rice_cooker_status
-    default:
-    - service: input_select.select_option
-      data:
-        option: 'Off'
-      target:
-        entity_id: input_select.rice_cooker_status
+        else:
+        - service: input_select.select_option
+          data:
+            option: 'Off'
+          target:
+            entity_id: input_select.rice_cooker_status
+    default: []
   mode: single
 - id: '1672735031886'
   alias: Rice Cooker Last Use
