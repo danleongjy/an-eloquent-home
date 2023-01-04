@@ -277,6 +277,9 @@
     entity_id: fan.elis_room_fan
     attribute: percentage
     id: speed
+    not_from:
+    - unavailable
+    - unknown
   condition: []
   action:
   - choose:
@@ -359,6 +362,9 @@
     entity_id: fan.elenas_room_fan
     id: speed
     attribute: percentage
+    not_from:
+    - unavailable
+    - unknown
   condition: []
   action:
   - choose:
@@ -5139,7 +5145,7 @@
     id: lid_closed
   - platform: template
     value_template: '{{ is_state(''switch.rice_cooker'',''on'') and states(''sensor.rice_cooker_watts'')
-      | float(0) < 1 }}'
+      | float(0) <= 1 }}'
     for:
       minutes: 5
     id: idle
@@ -5165,12 +5171,12 @@
   trigger:
   - platform: numeric_state
     entity_id: sensor.rice_cooker_watts
-    above: 4
+    above: 2
     id: cooking
   - platform: numeric_state
     entity_id: sensor.rice_cooker_watts
     above: 0
-    below: 5
+    below: 3
     id: idle
   - platform: state
     entity_id:
@@ -5224,15 +5230,15 @@
     entity_id:
     - input_select.rice_cooker_status
     from:
-    - 'off'
-    - standby
-    to: cooking
+    - 'Off'
+    - Standby
+    to: Cooking
     id: cooking_start
   - platform: state
     entity_id:
     - input_select.rice_cooker_status
-    from: cooking
-    to: keeping warm
+    from: Cooking
+    to: Warming
     id: cooking_end
   condition: []
   action:

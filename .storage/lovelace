@@ -3150,7 +3150,7 @@
                     },
                     "on": {
                       "type": "custom:state-switch",
-                      "entity": "input_select.dining_room_fan_direction",
+                      "entity": "sensor.dining_room_fan_direction",
                       "default": "forward",
                       "states": {
                         "forward": {
@@ -3173,9 +3173,9 @@
                             "use_state_color": true,
                             "tap_action": {
                               "action": "call-service",
-                              "service": "script.fan_set_direction",
+                              "service": "fan.set_direction",
                               "service_data": {
-                                "target_fan": "Dining Room Fan",
+                                "entity_id": "fan.dining_room_fan",
                                 "direction": "reverse"
                               }
                             },
@@ -3211,9 +3211,9 @@
                             "use_state_color": true,
                             "tap_action": {
                               "action": "call-service",
-                              "service": "script.fan_set_direction",
+                              "service": "fan.set_direction",
                               "service_data": {
-                                "target_fan": "Dining Room Fan",
+                                "entity_id": "fan.dining_room_fan",
                                 "direction": "forward"
                               }
                             },
@@ -4736,7 +4736,14 @@
                     "off": {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.rice_cooker",
+                      "template": "rice_cooker_more_info"
+                    },
+                    "on": {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.rice_cooker",
                       "template": "rice_cooker_more_info",
+                      "label": "[[[\n  if (states['input_select.rice_cooker_status'].state == 'Cooking')\n    return 'Cook'\n  else if (states['input_select.rice_cooker_status'].state == 'Warming')\n    return 'Warm'\n  else if (states['input_select.rice_cooker_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
+                      "show_label": true,
                       "styles": {
                         "card": [
                           {
@@ -4744,13 +4751,6 @@
                           }
                         ]
                       }
-                    },
-                    "on": {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.rice_cooker",
-                      "template": "rice_cooker_more_info",
-                      "label": "[[[\n  if (states['input_select.rice_cooker_status'].state == 'Cooking')\n    return 'Cook'\n  else if (states['input_select.dishwasher_status'].state == 'Warming')\n    return 'Warm'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
-                      "show_label": true
                     }
                   }
                 },
