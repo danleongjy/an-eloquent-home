@@ -421,15 +421,19 @@
          and (states('climate.dining_room_ac') == state_attr('binary_sensor.recommended_scene_in_dining_room', 'ac_state')) }}
     attributes:
       lights_level: >
-        {% if (states('sensor.dining_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
-           and (now().time() <= strptime(states('input_datetime.wind_down'), '%H:%M:%S').time())
-           and not (now().time() > strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time()
-                    or now().time() <= strptime(states('input_datetime.sleep_hours_end'), '%H:%M:%S').time()) 
-           and not state_attr('sun.sun', 'rising') == true 
-        %}
-          100
+        {% if state_attr('sun.sun', 'rising') == true %}
+          {% if states('sensor.dining_room_lux') | int(1000) < states('input_number.minimum_lux') | int(0) %}
+            {{ states('input_number.morning_light_brightness') }}
+          {% else %}
+            0
+          {% endif %}
         {% else %}
-          0
+          {% if states('sensor.dining_room_lux') | int(1000) > states('input_number.minimum_lux') | int(0) 
+             or now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time() %}
+            0
+          {% else %}
+            100
+          {% endif %}
         {% endif %}
       pendant_light_level: >
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
@@ -481,15 +485,19 @@
          and (states('climate.living_room_ac') == state_attr('binary_sensor.recommended_scene_in_living_room', 'ac_state')) }}
     attributes:
       lights_level: >
-        {% if (states('sensor.living_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
-           and (now().time() <= strptime(states('input_datetime.wind_down'), '%H:%M:%S').time())
-           and not (now().time() > strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time()
-                    or now().time() <= strptime(states('input_datetime.sleep_hours_end'), '%H:%M:%S').time())
-           and not state_attr('sun.sun', 'rising') == true 
-        %}
-          100
+        {% if state_attr('sun.sun', 'rising') == true %}
+          {% if states('sensor.living_room_lux') | int(1000) < states('input_number.minimum_lux') | int(0) %}
+            {{ states('input_number.morning_light_brightness') }}
+          {% else %}
+            0
+          {% endif %}
         {% else %}
-          0
+          {% if states('sensor.living_room_lux') | int(1000) > states('input_number.minimum_lux') | int(0) 
+             or now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time() %}
+            0
+          {% else %}
+            100
+          {% endif %}
         {% endif %}
       pendant_light_level: >
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()

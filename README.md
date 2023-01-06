@@ -16,7 +16,7 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 85
+[`automation`](https://www.home-assistant.io/components/automation) | 86
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 86
 [`button`](https://www.home-assistant.io/components/button) | 120
 [`camera`](https://www.home-assistant.io/components/camera) | 1
@@ -24,10 +24,10 @@ Domain | Quantity
 [`cover`](https://www.home-assistant.io/components/cover) | 8
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 2
 [`fan`](https://www.home-assistant.io/components/fan) | 6
-[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 16
+[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 17
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 14
-[`input_number`](https://www.home-assistant.io/components/input_number) | 26
-[`input_select`](https://www.home-assistant.io/components/input_select) | 7
+[`input_number`](https://www.home-assistant.io/components/input_number) | 27
+[`input_select`](https://www.home-assistant.io/components/input_select) | 8
 [`input_text`](https://www.home-assistant.io/components/input_text) | 29
 [`light`](https://www.home-assistant.io/components/light) | 56
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
@@ -43,7 +43,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1098
+Total | 1102
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/broadlink/icon.png" height="24"/>](https://home-assistant.io/integrations/broadlink) [Broadlink](https://home-assistant.io/integrations/broadlink)
@@ -53,6 +53,7 @@ Total | 1098
 - [<img src="https://brands.home-assistant.io/_/mobile_app/icon.png" height="24"/>](https://home-assistant.io/integrations/mobile_app) [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [<img src="https://brands.home-assistant.io/_/mqtt/icon.png" height="24"/>](https://home-assistant.io/integrations/mqtt) [MQTT](https://home-assistant.io/integrations/mqtt)
 - [<img src="https://brands.home-assistant.io/_/neato/icon.png" height="24"/>](https://home-assistant.io/integrations/neato) [Neato](https://home-assistant.io/integrations/neato)
+- [<img src="https://brands.home-assistant.io/_/statistics/icon.png" height="24"/>](https://home-assistant.io/integrations/statistics) [Statistics Sensor](https://home-assistant.io/integrations/statistics)
 - [<img src="https://brands.home-assistant.io/_/rest/icon.png" height="24"/>](https://home-assistant.io/integrations/sensor.rest) [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [<img src="https://brands.home-assistant.io/_/tasmota/icon.png" height="24"/>](https://home-assistant.io/integrations/tasmota) [Tasmota](https://home-assistant.io/integrations/tasmota)
 - [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/template) [Template Binary Sensors & Sensors](https://home-assistant.io/integrations/template)
