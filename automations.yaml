@@ -4335,6 +4335,8 @@
         - automation.living_room_motion
         - automation.parents_room_motion
         - automation.south_facing_blinds_auto_control
+        - automation.lights_for_elena_s_wind_down
+        - automation.lights_for_wind_down
     - repeat:
         for_each:
         - cover.living_room_left_blind
@@ -4370,6 +4372,8 @@
         - automation.living_room_motion
         - automation.parents_room_motion
         - automation.south_facing_blinds_auto_control
+        - automation.lights_for_elena_s_wind_down
+        - automation.lights_for_wind_down
     - service: automation.trigger
       data:
         skip_condition: false
@@ -5091,7 +5095,7 @@
   - platform: numeric_state
     entity_id: sensor.rice_cooker_watts_recent_max
     above: 60
-    below: 201
+    below: 140
     id: warming
   - platform: state
     entity_id:
@@ -5200,3 +5204,414 @@
       target:
         entity_id: input_datetime.rice_cooker_last_run_end
   mode: single
+- id: '1672879233289'
+  alias: Lights Auto Turn Off
+  description: Turn off the lights when lux is sufficient
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.elenas_room_lux
+    id: elenas_room
+    above: 0
+    value_template: '{{ state.state | int(0) - (states(''input_number.minimum_lux'')
+      | int + 300) }}'
+  - platform: numeric_state
+    entity_id: sensor.elis_room_lux
+    id: elis_room
+    above: 0
+    value_template: '{{ state.state | int(0) - (states(''input_number.minimum_lux'')
+      | int + 300) }}'
+  - platform: numeric_state
+    entity_id: sensor.yard_lux
+    id: yard
+    above: 0
+    value_template: '{{ state.state | int(0) - (states(''input_number.minimum_lux'')
+      | int + 300) }}'
+  - platform: numeric_state
+    entity_id: sensor.dining_room_lux
+    id: dining_room
+    above: 0
+    value_template: '{{ state.state | int(0) - (states(''input_number.minimum_lux'')
+      | int + 300) }}'
+  - platform: numeric_state
+    entity_id: sensor.living_room_lux
+    id: living_room
+    above: 0
+    value_template: '{{ state.state | int(0) - (states(''input_number.minimum_lux'')
+      | int + 300) }}'
+  - platform: numeric_state
+    entity_id: sensor.kitchen_lux
+    id: kitchen
+    above: 0
+    value_template: '{{ state.state | int(0) - (states(''input_number.minimum_lux'')
+      | int + 300) }}'
+  - platform: numeric_state
+    entity_id: sensor.study_walkway_lux
+    id: study_room
+    above: 0
+    value_template: '{{ state.state | int(0) - (states(''input_number.minimum_lux'')
+      | int + 300) }}'
+  - platform: numeric_state
+    entity_id: sensor.parents_room_lux
+    id: parents_room
+    above: 0
+    value_template: '{{ state.state | int(0) - (states(''input_number.minimum_lux'')
+      | int + 300) }}'
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - elenas_room
+        - elis_room
+        - study_room
+        - parents_room
+        - kitchen
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.{{ trigger.id }}_lights
+    - conditions:
+      - condition: trigger
+        id: yard
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+          - light.yard_light_entity
+          - light.playroom_lights
+    - conditions:
+      - condition: trigger
+        id: dining_room
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+          - light.dining_room_lights
+          - light.dining_room_pendant_light_entity
+    - conditions:
+      - condition: trigger
+        id: living_room
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+          - light.living_room_lights
+          - light.living_room_pendant_light_entity
+  mode: single
+- id: '1672881185286'
+  alias: Lights for Elena's Wind Down
+  description: Set light brightness for Elena's wind down
+  trigger:
+  - platform: time
+    at: input_datetime.elenas_wind_down
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: light.elenas_room_lights
+      state: 'on'
+    then:
+    - repeat:
+        for_each:
+        - light.elenas_room_bulb_1_entity
+        - light.elenas_room_bulb_2_entity
+        - light.elenas_room_bulb_3_entity
+        sequence:
+        - service: light.turn_on
+          target:
+            entity_id: '{{ repeat.item }}'
+          data:
+            transition: 10
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+        - delay: 2
+  mode: single
+- id: '1672898689403'
+  alias: Lights for Wind Down
+  description: Set house lights for wind down
+  trigger:
+  - platform: time
+    at: input_datetime.wind_down
+  condition: []
+  action:
+  - parallel:
+    - if:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: light.yard_light_entity
+          state: 'on'
+        - condition: state
+          entity_id: light.playroom_lights
+          state: 'on'
+      then:
+      - repeat:
+          for_each:
+          - light.yard_light_entity
+          - light.playroom_bulb_1_entity
+          - light.playroom_bulb_2_entity
+          - light.playroom_bulb_3_entity
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: '{{ repeat.item }}'
+            data:
+              transition: 10
+              brightness_pct: '{{ states(''input_number.night_light_brightness'')
+                }}'
+          - delay: 2
+    - if:
+      - condition: state
+        entity_id: light.kitchen_lights
+        state: 'on'
+      then:
+      - repeat:
+          for_each:
+          - light.kitchen_ceiling_light_entity
+          - light.kitchen_bulb_1_entity
+          - light.kitchen_bulb_2_entity
+          - light.kitchen_bulb_3_entity
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: '{{ repeat.item }}'
+            data:
+              transition: 10
+              brightness_pct: '{{ states(''input_number.night_light_brightness'')
+                }}'
+          - delay: 2
+    - if:
+      - condition: state
+        entity_id: light.study_room_lights
+        state: 'on'
+      then:
+      - repeat:
+          for_each:
+          - light.study_room_bulb_1_entity
+          - light.study_room_bulb_2_entity
+          - light.study_room_bulb_3_entity
+          - light.study_room_bulb_4_entity
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: '{{ repeat.item }}'
+            data:
+              transition: 10
+              brightness_pct: '{{ states(''input_number.night_light_brightness'')
+                }}'
+          - delay: 2
+  - if:
+    - condition: state
+      entity_id: light.living_room_lights
+      state: 'on'
+    then:
+    - repeat:
+        for_each:
+        - light.living_room_bulb_1_entity
+        - light.living_room_bulb_2_entity
+        - light.living_room_bulb_3_entity
+        - light.living_room_bulb_4_entity
+        - light.living_room_bulb_5_entity
+        sequence:
+        - service: light.turn_off
+          target:
+            entity_id: '{{ repeat.item }}'
+          data:
+            transition: 10
+        - delay: 2
+  - if:
+    - condition: state
+      entity_id: light.living_room_pendant_light_entity
+      state: 'on'
+    then:
+    - service: light.turn_on
+      data:
+        brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+        transition: 10
+      target:
+        entity_id: light.living_room_pendant_light_entity
+  - if:
+    - condition: state
+      entity_id: light.dining_room_lights
+      state: 'on'
+    then:
+    - repeat:
+        for_each:
+        - light.dining_room_bulb_1_entity
+        - light.dining_room_bulb_2_entity
+        - light.dining_room_bulb_3_entity
+        - light.dining_room_bulb_4_entity
+        sequence:
+        - service: light.turn_on
+          target:
+            entity_id: '{{ repeat.item }}'
+          data:
+            transition: 10
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+        - delay: 2
+  - if:
+    - condition: state
+      entity_id: light.dining_room_pendant_light_entity
+      state: 'on'
+    then:
+    - service: light.turn_on
+      data:
+        transition: 10
+        brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+      target:
+        entity_id: light.dining_room_pendant_light_entity
+  - if:
+    - condition: state
+      entity_id: light.hallway_lights
+      state: 'on'
+    then:
+    - repeat:
+        for_each:
+        - light.hallway_bulb_1_entity
+        - light.hallway_bulb_2_entity
+        sequence:
+        - service: light.turn_on
+          target:
+            entity_id: '{{ repeat.item }}'
+          data:
+            transition: 10
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+        - delay: 2
+  - parallel:
+    - if:
+      - condition: state
+        entity_id: light.powder_room_pendant_light_entity
+        state: 'on'
+      then:
+      - service: light.turn_on
+        data:
+          transition: 10
+          brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+        target:
+          entity_id: light.powder_room_pendant_light_entity
+    - if:
+      - condition: state
+        entity_id: light.junior_bathroom_lights
+        state: 'on'
+      then:
+      - repeat:
+          for_each:
+          - light.junior_bathroom_ceiling_light_entity
+          - light.junior_bathroom_pendant_light_entity
+          sequence:
+          - service: light.turn_on
+            target:
+              entity_id: '{{ repeat.item }}'
+            data:
+              transition: 10
+              brightness_pct: '{{ states(''input_number.night_light_brightness'')
+                }}'
+          - delay: 2
+  - if:
+    - condition: state
+      entity_id: light.elis_room_lights
+      state: 'on'
+    then:
+    - repeat:
+        for_each:
+        - light.elis_room_bulb_1_entity
+        - light.elis_room_bulb_2_entity
+        - light.elis_room_bulb_3_entity
+        sequence:
+        - service: light.turn_on
+          target:
+            entity_id: '{{ repeat.item }}'
+          data:
+            transition: 10
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+        - delay: 2
+  mode: single
+- id: '1672996704962'
+  alias: Dining Room Fan Set State
+  description: Set Dining Room Fan power and speed
+  trigger:
+  - platform: state
+    entity_id:
+    - fan.dining_room_fan
+    id: power_off
+    from: 'on'
+    to: 'off'
+  - platform: state
+    entity_id:
+    - fan.dining_room_fan
+    id: power_on
+    from: 'off'
+    to: 'on'
+  - platform: state
+    entity_id:
+    - fan.dining_room_fan
+    id: speed
+    attribute: percentage
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: speed
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: fan.dining_room_fan
+          attribute: percentage
+          below: '10'
+        then:
+        - service: fan.set_percentage
+          data:
+            percentage: '{{ state_attr("binary_sensor.recommended_scene_in_dining_room",
+              "fan_speed") | int }}'
+          target:
+            entity_id: fan.dining_room_fan
+        - service: fan.turn_off
+          data: {}
+          target:
+            entity_id: fan.dining_room_fan
+        - service: script.fan_set_state
+          data:
+            target_fan: Dining Room Fan
+            target_fan_power: false
+        else:
+        - service: script.fan_set_state
+          data:
+            target_fan: Dining Room Fan
+            target_fan_speed: '{{ state_attr("fan.dining_room_fan", "percentage")
+              | int }}'
+    - conditions:
+      - condition: trigger
+        id: power_on
+      sequence:
+      - service: fan.set_percentage
+        data:
+          percentage: '{{ state_attr("binary_sensor.recommended_scene_in_dining_room",
+            "fan_speed") | int }}'
+        target:
+          entity_id: fan.dining_room_fan
+      - service: script.fan_set_state
+        data:
+          target_fan: Dining Room Fan
+          target_fan_speed: '{{ state_attr("fan.dining_room_fan", "percentage") |
+            int }}'
+          target_fan_power: true
+    - conditions:
+      - condition: trigger
+        id: power_off
+      sequence:
+      - service: input_boolean.turn_off
+        data: {}
+        target:
+          entity_id: input_boolean.dining_room_fan_power
+      - service: script.fan_set_state
+        data:
+          target_fan: Dining Room Fan
+          target_fan_power: false
+    default: []
+  mode: single
+  max_exceeded: silent

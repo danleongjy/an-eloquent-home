@@ -60,6 +60,36 @@
           direction: "{{ direction }}"
       speed_count: 6
 
+    dining_room_fan:
+      friendly_name: "Dining Room Fan"
+      unique_id: fan.dining_room_fan
+      value_template: "{{ states('input_boolean.dining_room_fan_power') }}"
+      percentage_template: "{{ states('input_number.dining_room_fan_speed') | int }}"
+      direction_template: "{{ states('input_select.dining_room_fan_direction') }}"
+      turn_on:
+        service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.dining_room_fan_power
+      turn_off:
+        service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.dining_room_fan_power
+      set_percentage:
+        - service: input_boolean.turn_{{ 'on' if percentage > 0 else 'off' }}
+          target:
+            entity_id: input_boolean.dining_room_fan_power
+        - service: input_number.set_value
+          target:
+            entity_id: input_number.dining_room_fan_speed
+          data:
+            value: "{{ percentage }}"
+      set_direction:
+        service: script.fan_set_direction
+        data:
+          target_fan: Dining Room Fan
+          direction: "{{ direction }}"
+      speed_count: 6
+
     living_room_fan:
       friendly_name: "Living Room Fan"
       unique_id: fan.living_room_fan
