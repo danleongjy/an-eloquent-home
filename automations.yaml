@@ -617,9 +617,7 @@
     from: 'on'
     to: 'off'
     for:
-      hours: 0
-      minutes: 1
-      seconds: 0
+      minutes: '{{ states(''input_number.motion_timeout'') }}'
   condition: []
   action:
   - if:
@@ -664,12 +662,22 @@
         data:
           brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
       else:
-      - service: light.turn_on
-        target:
-          entity_id:
-          - light.playroom_lights
-        data:
-          brightness_pct: 100
+      - if:
+        - condition: sun
+          before: sunrise
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: '{{ states(''input_number.morning_light_brightness'')
+              }}'
+          target:
+            entity_id: light.playroom_lights
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.playroom_lights
     else:
     - service: light.turn_off
       target:
@@ -740,11 +748,22 @@
           - sat
           - sun
         sequence:
-        - service: light.turn_on
-          data:
-            brightness_pct: 98
-          target:
-            entity_id: light.hallway_lights
+        - if:
+          - condition: sun
+            before: sunrise
+          then:
+          - service: light.turn_on
+            data:
+              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
+                }}'
+            target:
+              entity_id: light.hallway_lights
+          else:
+          - service: light.turn_on
+            data:
+              brightness_pct: 100
+            target:
+              entity_id: light.hallway_lights
       default: []
     else:
     - service: light.turn_off
@@ -1478,11 +1497,22 @@
           hours: 0
           minutes: 0
           seconds: 2
-      - service: light.turn_on
-        target:
-          entity_id: light.powder_room_pendant_light_entity
-        data:
-          brightness_pct: 100
+      - if:
+        - condition: sun
+          before: sunrise
+        then:
+        - service: light.turn_on
+          target:
+            entity_id: light.powder_room_pendant_light_entity
+          data:
+            brightness_pct: '{{ states(''input_number.morning_light_brightness'')
+              }}'
+        else:
+        - service: light.turn_on
+          target:
+            entity_id: light.powder_room_pendant_light_entity
+          data:
+            brightness_pct: 100
     else:
     - service: light.turn_off
       target:
@@ -1848,11 +1878,22 @@
           hours: 0
           minutes: 0
           seconds: 2
-      - service: light.turn_on
-        target:
-          entity_id: light.junior_bathroom_lights
-        data:
-          brightness_pct: 100
+      - if:
+        - condition: sun
+          before: sunrise
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: '{{ states(''input_number.morning_light_brightness'')
+              }}'
+          target:
+            entity_id: light.junior_bathroom_lights
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.junior_bathroom_lights
     else:
     - condition: and
       conditions:
@@ -3112,11 +3153,22 @@
         target:
           entity_id: light.kitchen_lights
       else:
-      - service: light.turn_on
-        data:
-          brightness_pct: 100
-        target:
-          entity_id: light.kitchen_lights
+      - if:
+        - condition: sun
+          before: sunrise
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: '{{ states(''input_number.morning_light_brightness'')
+              }}'
+          target:
+            entity_id: light.kitchen_lights
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.kitchen_lights
     else:
     - service: light.turn_off
       data: {}
@@ -3179,11 +3231,22 @@
           target:
             entity_id: light.master_bathroom_light_entity
         else:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id: light.master_bathroom_light_entity
+        - if:
+          - condition: sun
+            before: sunrise
+          then:
+          - service: light.turn_on
+            data:
+              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
+                }}'
+            target:
+              entity_id: light.master_bathroom_light_entity
+          else:
+          - service: light.turn_on
+            data:
+              brightness_pct: 100
+            target:
+              entity_id: light.master_bathroom_light_entity
     - conditions:
       - condition: trigger
         id: no_motion
@@ -3257,11 +3320,22 @@
           target:
             entity_id: light.master_bathroom_pendant_light_entity
         else:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id: light.master_bathroom_pendant_light_entity
+        - if:
+          - condition: sun
+            before: sunrise
+          then:
+          - service: light.turn_on
+            data:
+              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
+                }}'
+            target:
+              entity_id: light.master_bathroom_pendant_light_entity
+          else:
+          - service: light.turn_on
+            data:
+              brightness_pct: 100
+            target:
+              entity_id: light.master_bathroom_pendant_light_entity
     - conditions:
       - condition: trigger
         id: no_motion
@@ -3396,6 +3470,10 @@
         entity_id: binary_sensor.gas_water_heater
         state: 'on'
     then:
+    - condition: template
+      value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed >
+        timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+        | int(0)) }}'
     - service: cover.close_cover
       data: {}
       target:
@@ -3434,6 +3512,10 @@
         - condition: template
           value_template: "{{ (states('sensor.local_rainfall') | int > 1) or ('Thunder'
             in\n   states('sensor.local_two_hour_forecast')) }}"
+    - condition: template
+      value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed >
+        timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+        | int(0)) }}'
     - service: cover.open_cover
       data: {}
       target:
@@ -3804,11 +3886,22 @@
         target:
           entity_id: light.yard_light_entity
       else:
-      - service: light.turn_on
-        data:
-          brightness_pct: 100
-        target:
-          entity_id: light.yard_light_entity
+      - if:
+        - condition: sun
+          before: sunrise
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: '{{ states(''input_number.morning_light_brightness'')
+              }}'
+          target:
+            entity_id: light.yard_light_entity
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.yard_light_entity
     else:
     - service: light.turn_off
       data: {}
@@ -4787,9 +4880,9 @@
   - platform: state
     entity_id:
     - vacuum.pikachu
-    not_from:
-    - unknown
-    - unavailable
+    from:
+    - cleaning
+    - error
     to:
     - docked
     - idle
@@ -4870,6 +4963,11 @@
         - condition: numeric_state
           entity_id: sensor.living_room_lux
           above: input_number.maximum_lux
+      - condition: template
+        value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
+          ''cover.living_room_blinds'']) | map(attribute = ''last_changed'') | list
+          | sort)[-1] > timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+          | int(0)) }}'
       sequence:
       - repeat:
           for_each:
@@ -4903,6 +5001,11 @@
           value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
             | int + 300) }}'
           below: 0
+      - condition: template
+        value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
+          ''cover.living_room_blinds'']) | map(attribute = ''last_changed'') | list
+          | sort)[-1] > timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+          | int(0)) }}'
       sequence:
       - repeat:
           for_each:
@@ -5446,12 +5549,9 @@
         - light.dining_room_bulb_3_entity
         - light.dining_room_bulb_4_entity
         sequence:
-        - service: light.turn_on
+        - service: light.turn_off
           target:
             entity_id: '{{ repeat.item }}'
-          data:
-            transition: 10
-            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
         - delay: 2
   - if:
     - condition: state

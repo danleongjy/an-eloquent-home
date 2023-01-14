@@ -422,8 +422,10 @@
     attributes:
       lights_level: >
         {% if state_attr('sun.sun', 'rising') == true %}
-          {% if states('sensor.dining_room_lux') | int(1000) < states('input_number.minimum_lux') | int(0) %}
-            {{ states('input_number.morning_light_brightness') }}
+          {% if is_state('sun.sun', 'below_horizon') %}
+            0
+          {% elif states('sensor.dining_room_lux') | int(1000) < states('input_number.minimum_lux') | int(0) %}
+            100
           {% else %}
             0
           {% endif %}
@@ -486,8 +488,10 @@
     attributes:
       lights_level: >
         {% if state_attr('sun.sun', 'rising') == true %}
-          {% if states('sensor.living_room_lux') | int(1000) < states('input_number.minimum_lux') | int(0) %}
-            {{ states('input_number.morning_light_brightness') }}
+          {% if is_state('sun.sun', 'below_horizon') %}
+            0
+          {% elif states('sensor.dining_room_lux') | int(1000) < states('input_number.minimum_lux') | int(0) %}
+            100
           {% else %}
             0
           {% endif %}

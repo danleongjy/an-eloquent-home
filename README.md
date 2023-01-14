@@ -26,7 +26,7 @@ Domain | Quantity
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 17
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 14
-[`input_number`](https://www.home-assistant.io/components/input_number) | 27
+[`input_number`](https://www.home-assistant.io/components/input_number) | 28
 [`input_select`](https://www.home-assistant.io/components/input_select) | 8
 [`input_text`](https://www.home-assistant.io/components/input_text) | 29
 [`light`](https://www.home-assistant.io/components/light) | 56
@@ -43,9 +43,10 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1102
+Total | 1103
 
 ## Core Integrations
+- [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
 - [<img src="https://brands.home-assistant.io/_/broadlink/icon.png" height="24"/>](https://home-assistant.io/integrations/broadlink) [Broadlink](https://home-assistant.io/integrations/broadlink)
 - [<img src="https://brands.home-assistant.io/_/generic_thermostat/icon.png" height="24"/>](https://home-assistant.io/integrations/generic_thermostat) [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
 - [<img src="https://brands.home-assistant.io/_/google_assistant/icon.png" height="24"/>](https://home-assistant.io/integrations/google_assistant) [Google Assistant](https://home-assistant.io/integrations/google_assistant)
@@ -53,8 +54,8 @@ Total | 1102
 - [<img src="https://brands.home-assistant.io/_/mobile_app/icon.png" height="24"/>](https://home-assistant.io/integrations/mobile_app) [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [<img src="https://brands.home-assistant.io/_/mqtt/icon.png" height="24"/>](https://home-assistant.io/integrations/mqtt) [MQTT](https://home-assistant.io/integrations/mqtt)
 - [<img src="https://brands.home-assistant.io/_/neato/icon.png" height="24"/>](https://home-assistant.io/integrations/neato) [Neato](https://home-assistant.io/integrations/neato)
-- [<img src="https://brands.home-assistant.io/_/statistics/icon.png" height="24"/>](https://home-assistant.io/integrations/statistics) [Statistics Sensor](https://home-assistant.io/integrations/statistics)
 - [<img src="https://brands.home-assistant.io/_/rest/icon.png" height="24"/>](https://home-assistant.io/integrations/sensor.rest) [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
+- [<img src="https://brands.home-assistant.io/_/statistics/icon.png" height="24"/>](https://home-assistant.io/integrations/statistics) [Statistics Sensor](https://home-assistant.io/integrations/statistics)
 - [<img src="https://brands.home-assistant.io/_/tasmota/icon.png" height="24"/>](https://home-assistant.io/integrations/tasmota) [Tasmota](https://home-assistant.io/integrations/tasmota)
 - [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/template) [Template Binary Sensors & Sensors](https://home-assistant.io/integrations/template)
 - [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/cover.template) [Template Cover](https://home-assistant.io/integrations/cover.template)
