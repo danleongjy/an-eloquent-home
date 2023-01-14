@@ -808,6 +808,11 @@
         Running
       {% endif %}
 
+  - name: DNS Query Block Rate per Hour
+    unique_id: sensor.dns_query_block_rate_per_hour
+    state: "{{ ((states('sensor.dns_queries_blocked_per_hour') | int(0) / states('sensor.dns_queries_per_hour') | int(1)) * 100) | round(2) }}"
+    unit_of_measurement: '%'
+
 - trigger:
   - platform: time_pattern
     minutes: '/1'
