@@ -16,7 +16,7 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 86
+[`automation`](https://www.home-assistant.io/components/automation) | 85
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 86
 [`button`](https://www.home-assistant.io/components/button) | 120
 [`camera`](https://www.home-assistant.io/components/camera) | 1
@@ -36,14 +36,14 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 6
 [`script`](https://www.home-assistant.io/components/script) | 30
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`sensor`](https://www.home-assistant.io/components/sensor) | 343
+[`sensor`](https://www.home-assistant.io/components/sensor) | 346
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 27
 [`update`](https://www.home-assistant.io/components/update) | 10
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1106
+Total | 1108
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)

@@ -880,3 +880,58 @@
         {% else %}
           In use
         {% endif %}
+
+- trigger:
+  - platform: state
+    entity_id: sensor.adguard_home_dns_queries
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: DNS Queries within 5min
+      unique_id: sensor.dns_queries_within_5min
+      state: "{{ trigger.to_state.state | int(0) - trigger.from_state.state | int(0) }}"
+      attributes:
+        timestamp: "{{ now() }}"
+        from_state: "{{ trigger.from_state.state }}"
+        to_state: "{{ trigger.to_state.state }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.adguard_home_dns_queries_blocked
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: DNS Queries Blocked by Filters within 5min
+      unique_id: sensor.dns_queries_blocked_by_filters_within_5min
+      state: "{{ trigger.to_state.state | int(0) - trigger.from_state.state | int(0) }}"
+      attributes:
+        timestamp: "{{ now() }}"
+        from_state: "{{ trigger.from_state.state }}"
+        to_state: "{{ trigger.to_state.state }}"
+
+- trigger:
+  - platform: state
+    entity_id:
+      - sensor.dns_queries_within_5min
+      - sensor.dns_queries_blocked_by_filters_within_5min
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+    for:
+      seconds: 1
+  sensor:
+    - name: DNS Query Filter Block Rate within 5min
+      unique_id: sensor.dns_query_filter_block_rate_within_5min
+      state: "{{ ((states('sensor.dns_queries_blocked_by_filters_within_5min') | int(0) / states('sensor.dns_queries_within_5min') | int(1)) * 100) | round(2) if states('sensor.dns_queries_within_5min') | int(1) > 0 else 0 }}"
+      unit_of_measurement: '%'
