@@ -890,14 +890,26 @@
     not_to:
       - unknown
       - unavailable
+    id: state_changed
+  - platform: time_pattern
+    minutes: "/1"
+    id: stale_check
   sensor:
     - name: DNS Queries within 5min
       unique_id: sensor.dns_queries_within_5min
-      state: "{{ trigger.to_state.state | int(0) - trigger.from_state.state | int(0) }}"
+      state: >
+        {% if trigger.id == 'stale_check' %}
+          {% if now() - states.sensor.adguard_home_dns_queries.last_changed > timedelta(minutes = 5) %}
+            0
+          {% else %}
+            {{ states('sensor.dns_queries_within_5min') }}
+          {% endif %}
+        {% else %}
+          {{ trigger.to_state.state | int(0) - trigger.from_state.state | int(0) }}
+        {% endif %}
+      unit_of_measurement: queries
       attributes:
         timestamp: "{{ now() }}"
-        from_state: "{{ trigger.from_state.state }}"
-        to_state: "{{ trigger.to_state.state }}"
 
 - trigger:
   - platform: state
@@ -908,14 +920,26 @@
     not_to:
       - unknown
       - unavailable
+    id: state_changed
+  - platform: time_pattern
+    minutes: "/1"
+    id: stale_check
   sensor:
     - name: DNS Queries Blocked by Filters within 5min
       unique_id: sensor.dns_queries_blocked_by_filters_within_5min
-      state: "{{ trigger.to_state.state | int(0) - trigger.from_state.state | int(0) }}"
+      state: >
+        {% if trigger.id == 'stale_check' %}
+          {% if now() - states.sensor.adguard_home_dns_queries_blocked.last_changed > timedelta(minutes = 5) %}
+            0
+          {% else %}
+            {{ states('sensor.dns_queries_blocked_by_filters_within_5min') }}
+          {% endif %}
+        {% else %}
+          {{ trigger.to_state.state | int(0) - trigger.from_state.state | int(0) }}
+        {% endif %}
+      unit_of_measurement: queries
       attributes:
         timestamp: "{{ now() }}"
-        from_state: "{{ trigger.from_state.state }}"
-        to_state: "{{ trigger.to_state.state }}"
 
 - trigger:
   - platform: state
@@ -929,6 +953,7 @@
       - unknown
       - unavailable
     for:
+      minutes: 1
       seconds: 1
   sensor:
     - name: DNS Query Filter Block Rate within 5min
