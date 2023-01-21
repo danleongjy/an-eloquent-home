@@ -1571,9 +1571,10 @@
   mode: single
 - id: '1648699866610'
   alias: Notify When Vacuum Running with Doors Open
-  description: Send a persistent notification if the vacuum is cleaning when bathroom
-    or main doors are open, pause the vacuum after 1min if doors are still open, and
-    dismiss the notification when vacuum stops cleaning or bathroom doors are closed
+  description: Send a notification if the vacuum is cleaning when bathroom or main
+    doors are open, pause the vacuum after 1min if doors are still open, and dismiss
+    the notification when vacuum stops cleaning or bathroom doors are closed. If all
+    doors are closed again while vacuum is paused, resume cleaning.
   trigger:
   - platform: state
     entity_id:
@@ -1585,53 +1586,83 @@
     - binary_sensor.vacuum_running_with_doors_open
     id: error_cleared
     to: 'off'
+  - platform: state
+    entity_id:
+    - binary_sensor.junior_bathroom_door
+    - binary_sensor.powder_room_door
+    - binary_sensor.master_bathroom_door
+    from: 'on'
+    to: 'off'
+    id: door_closed
   condition: []
   action:
-  - if:
-    - condition: trigger
-      id: error_cleared
-    then:
-    - service: notify.mobile_app_pixel_4a
-      data:
-        message: clear_notification
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: error_cleared
+      sequence:
+      - service: notify.mobile_app_pixel_4a
         data:
-          tag: vacuum_running_with_bathroom_doors_open
-    - service: notify.mobile_app_grace
-      data:
-        message: clear_notification
+          message: clear_notification
+          data:
+            tag: vacuum_running_with_bathroom_doors_open
+      - service: notify.mobile_app_grace
         data:
-          tag: vacuum_running_with_bathroom_doors_open
-    else:
-    - service: notify.mobile_app_pixel_4a
-      data:
-        message: Otherwise, vacuum will pause at {{ ((now() + timedelta(minutes =
-          1)).time() | string)[:5] }}.
-        title: Please close bathroom/main doors
+          message: clear_notification
+          data:
+            tag: vacuum_running_with_bathroom_doors_open
+    - conditions:
+      - condition: trigger
+        id: error_cleared
+      sequence:
+      - service: notify.mobile_app_pixel_4a
         data:
-          tag: vacuum_running_with_bathroom_doors_open
-    - service: notify.mobile_app_grace
-      data:
-        message: Otherwise, vacuum will pause at {{ ((now() + timedelta(minutes =
-          1)).time() | string)[:5] }}.
-        title: Please close bathroom/main doors
+          message: Otherwise, vacuum will pause at {{ ((now() + timedelta(minutes
+            = 1)).time() | string)[:5] }}.
+          title: Please close bathroom/main doors
+          data:
+            tag: vacuum_running_with_bathroom_doors_open
+      - service: notify.mobile_app_grace
         data:
-          tag: vacuum_running_with_bathroom_doors_open
-    - delay:
-        hours: 0
-        minutes: 1
-        seconds: 0
-        milliseconds: 0
-    - condition: state
-      entity_id: binary_sensor.vacuum_running_with_doors_open
-      state: 'on'
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 0
-    - service: vacuum.pause
-      data: {}
-      target:
+          message: Otherwise, vacuum will pause at {{ ((now() + timedelta(minutes
+            = 1)).time() | string)[:5] }}.
+          title: Please close bathroom/main doors
+          data:
+            tag: vacuum_running_with_bathroom_doors_open
+      - delay:
+          hours: 0
+          minutes: 1
+          seconds: 0
+          milliseconds: 0
+      - condition: state
+        entity_id: binary_sensor.vacuum_running_with_doors_open
+        state: 'on'
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 0
+      - service: vacuum.pause
+        data: {}
+        target:
+          entity_id: vacuum.pikachu
+    - conditions:
+      - condition: trigger
+        id: door_closed
+      sequence:
+      - condition: state
+        entity_id:
+        - binary_sensor.junior_bathroom_door
+        - binary_sensor.powder_room_door
+        - binary_sensor.main_door
+        - binary_sensor.master_bathroom_door
+        state: 'off'
+      - condition: state
         entity_id: vacuum.pikachu
+        state: paused
+      - service: vacuum.start
+        data: {}
+        target:
+          entity_id: vacuum.pikachu
   mode: parallel
 - id: '1648712039256'
   alias: Water Heating
