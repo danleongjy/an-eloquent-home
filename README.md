@@ -1,4 +1,5 @@
 # An Eloquent Home
+[Hub](#hub) | [Entities](#entities) | [Core Integrations](#core-integrations) | Extensions(#extensions) | [Dashboards](#dashboards)
 
 Hello!  This repo contains the configuration for our [Home Assistant](https://www.home-assistant.io/) setup.  What started as a curiosity to while away the time during Covid lockdowns in 2020 is now the primary way in which we interact with and control our home.  We follow a few principles in our setup:
 1. __Automation first__: Things should just adjust themselves in response to changes in the environment, without needing user intervention
@@ -8,7 +9,7 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://support.lenovo.com/sg/en/solutions/pd027573-detailed-specifications-for-thinkcentre-m93-m93p-tiny-form-factor)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [9.4](https://github.com/home-assistant/operating-system/releases/tag/9.4) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [9.4](https://github.com/home-assistant/operating-system/releases/tag/9.5) running in a [Proxmox VM](https://www.proxmox.com/)
 * [Home Assistant Core 2022.12.8](https://github.com/home-assistant/core/releases/tag/2022.12.8)
 * 4 cores, 4GB RAM, 32GB storage
 
@@ -62,7 +63,7 @@ Total | 1153
 - [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/fan.template) [Template Fan](https://home-assistant.io/integrations/fan.template)
 - [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/switch.template) [Template Switch](https://home-assistant.io/integrations/switch.template)
 - [<img src="https://brands.home-assistant.io/_/zha/icon.png" height="24"/>](https://home-assistant.io/integrations/zha) [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
-## Extensions:
+## Extensions
 
 ### Add-ons
 - Duck DNS
@@ -87,6 +88,28 @@ Total | 1153
 - [Button Card](https://github.com/custom-cards/button-card)
 - [Slider Button Card](https://github.com/rohankapoorcom/slider-button-card)
 - [State Switch](https://github.com/thomasloven/lovelace-state-switch)
+
+## Dashboards
+In addition to providing direct control and visual feedback on the state of each controllable device in our house, our dashboards are also designed to be _infographics_ that provide insights into the usage trends of multiple devices of the same type, across different rooms and throughout the whole house.  They are maps in the spirit of the Tube maps - providing a stripped-down view of the components with just enough information to appreciate how the parts relate to the whole.  The design principles are:
+1. __Only useful information, no more and no less__: Only the most pertinent information about the state of each device is provided.  If it is off, only the option to turn it on is available.  Options to set levels (brightness, temperature, speed etc.) and special controls (automated control, timers, modes etc.) are made available only when the device is on.
+2. __Consistency and interpretability__: Devices are grouped together in 2-dimensional grids by type and location to facilitate identification and interpretation.  Symbology (icons, representation of current state) is uniform across all devices of the same type.  Interactions with the controls are standardised: one tap to turn on, two taps or drag to bottom to turn off, hold for more information and options.
+3. __Intuitiveness and playfulness__: The order of rooms in the grids roughly corresponds to the real arrangement of the rooms in space, facilitating the identification of trends across space and time.  With minimal text and the evocative use of multi-dimensional symbology (icon, colour, proportional fill, border etc.), the user is invited to interact with the controls to discover and learn how the controls adapt to different circumstances, in the spirit of experimentation and puzzle-solving.
+
+### Main Dashboard
+Devices are generally grouped by room (rows) and type (columns).  A device that is off is represented by a simple button.  Tapping the button turns on the device and reveals a slider to adjust the device's setting (brightness, speed, temperature etc.).  Tapping the icon in the slider activates additional options (eg. reversing direction for fans, turning on auto control for ACs).  Holding brings up more information.  Tapping on the room icons sets the recommended scene in the room across all devices.  Double-tapping on the room icons turns off all devices in the room.
+![Main Dashboard - Away](www/dashboard_screenshots/ha-dashboard-away.jpg) | ![Main Dashboard - Evening](www/dashboard_screenshots/ha-dashboard-evening.jpg) | ![Main Dashboard - Wind Down](www/dashboard_screenshots/ha-dashboard-winddown.jpg) | ![Main Dashboard - Sleep](www/dashboard_screenshots/ha-dashboard-sleep.jpg)
+-- | -- | -- | --
+Away mode: all devices off and external blinds closed | A typical evening: lights and fans on | Winding down: all lights dimmed except in bedrooms for story time | Sleep: all lights off, fans set to low and ACs automatically responding to room temperatures
+
+### Sensors Dashboard
+Sensors are grouped by room (rows) and type (columns).  Sensor states are reflected by colour codes, allowing the data in the grid to be interpreted spatially like a chloropleth map.  Key details are summarised by numerical labels.
+![Sensor Dashboard](www/dashboard_screenshots/ha-dashboard-sensors.jpg) | ![Sensor Dashboard Legend](www/dashboard_screenshots/ha-dashboard-sensors-legend.jpg)
+-- | --
+Infographic of sensor readouts across all rooms | Legend for interpreting the sensor readouts
+
+### Zigbee Dashboard
+With more than 100 Zigbee devices in our network, the default ZHA network map is unreadable.  This grid provides information on the Link Quality Index (LQI) for each Zigbee device, with green indicating a high LQI and red a low LQI.  Devices are grouped into rooms (columns) and arranged with routers first (devices with grey outlines), followed by battery-powered blinds, remote controls and sensors.  The Zigbee coordinator is in the living room, so LQIs in the living room and immediately adjacent rooms tend to be higher, while LQIs in rooms towards the edges of the house tend to be lower due to interference.  This view allows for quick identification of which devices have fallen off the network and may need to be repaired.
+![Zigbee Dashboard](www/dashboard_screenshots/ha-dashboard-zigbee.png)
 
 ***
 
