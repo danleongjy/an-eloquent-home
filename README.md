@@ -17,7 +17,7 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 86
+[`automation`](https://www.home-assistant.io/components/automation) | 90
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 87
 [`button`](https://www.home-assistant.io/components/button) | 120
 [`camera`](https://www.home-assistant.io/components/camera) | 1
@@ -25,8 +25,8 @@ Domain | Quantity
 [`cover`](https://www.home-assistant.io/components/cover) | 8
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 4
 [`fan`](https://www.home-assistant.io/components/fan) | 6
-[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 17
-[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 14
+[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 20
+[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
 [`input_number`](https://www.home-assistant.io/components/input_number) | 28
 [`input_select`](https://www.home-assistant.io/components/input_select) | 8
 [`input_text`](https://www.home-assistant.io/components/input_text) | 29
@@ -44,7 +44,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1154
+Total | 1164
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)

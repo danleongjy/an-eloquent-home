@@ -1664,55 +1664,6 @@
         target:
           entity_id: vacuum.pikachu
   mode: parallel
-- id: '1648712039256'
-  alias: Water Heating
-  description: Track the heating status of the water in the heater
-  trigger:
-  - platform: time_pattern
-    minutes: /1
-  condition: []
-  action:
-  - if:
-    - condition: state
-      entity_id: switch.water_heater
-      state: 'on'
-    then:
-    - if:
-      - condition: numeric_state
-        entity_id: input_number.water_heating
-        above: '100'
-        value_template: '{{ state.state | float + 100 / states(''input_number.hot_water_preheat'')
-          | float }}'
-      then:
-      - service: input_number.set_value
-        data:
-          value: 100
-        target:
-          entity_id: input_number.water_heating
-      else:
-      - service: input_number.set_value
-        data_template:
-          entity_id: input_number.water_heating
-          value: '{{ states(''input_number.water_heating'') | int + 100 / states(''input_number.hot_water_preheat'')
-            | int }}'
-    else:
-    - if:
-      - condition: numeric_state
-        entity_id: input_number.water_heating
-        value_template: '{{ state.state | float - 100 / 120 }}'
-        below: '0'
-      then:
-      - service: input_number.set_value
-        data:
-          value: 0
-        target:
-          entity_id: input_number.water_heating
-      else:
-      - service: input_number.set_value
-        data_template:
-          entity_id: input_number.water_heating
-          value: '{{ states(''input_number.water_heating'') | float - 100 / 120 }}'
-  mode: single
 - id: '1648784734226'
   alias: Notify When Dishwasher Cooldown Completed
   description: Send a persistent notification when dishwasher load is clean, and clear
@@ -5240,39 +5191,6 @@
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 500
-- id: '1672315815168'
-  alias: Study Table Controller
-  description: Control the Study Room with a dimmer switch
-  use_blueprint:
-    path: EPMatt/ikea_e1743.yaml
-    input:
-      integration: ZHA
-      controller_device: 43f2d52bfecdf388c86e9f919d45e359
-      helper_last_controller_event: input_text.zz_study_table_controller_last_event
-      action_button_up_short:
-      - service: light.turn_on
-        data:
-          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_study_room'',''lights_level'')
-            }}'
-        target:
-          entity_id: light.study_room_lights
-      action_button_up_long:
-      - service: ''
-        data: {}
-      action_button_up_double:
-      - service: script.set_recommended_scene_in_study_room
-        data: {}
-      action_button_down_short:
-      - service: light.turn_off
-        data: {}
-        target:
-          entity_id: light.study_room_lights
-      action_button_down_double:
-      - service: script.turn_off_study_room
-        data: {}
-      button_up_double_press: true
-      button_down_double_press: true
-      helper_double_press_delay: 300
 - id: '1672722028985'
   alias: Rice Cooker Auto Control
   description: Turn on or off the rice cooker based on lid state and idle time
