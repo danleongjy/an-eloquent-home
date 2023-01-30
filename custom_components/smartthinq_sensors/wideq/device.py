@@ -6,8 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
-from datetime import datetime, timedelta
-from enum import Enum
+from datetime import datetime
 import json
 import logging
 from numbers import Number
@@ -16,16 +15,7 @@ from typing import Any
 import aiohttp
 
 from . import core_exceptions as core_exc
-from .const import (
-    BIT_OFF,
-    BIT_ON,
-    STATE_OPTIONITEM_NONE,
-    STATE_OPTIONITEM_OFF,
-    STATE_OPTIONITEM_ON,
-    STATE_OPTIONITEM_UNKNOWN,
-    UNIT_TEMP_CELSIUS,
-    UNIT_TEMP_FAHRENHEIT,
-)
+from .const import BIT_OFF, BIT_ON, StateOptions
 from .core_async import ClientAsync
 from .device_info import DeviceInfo, PlatformType
 from .model_info import ModelInfo
@@ -34,17 +24,18 @@ LABEL_BIT_OFF = "@CP_OFF_EN_W"
 LABEL_BIT_ON = "@CP_ON_EN_W"
 
 LOCAL_LANG_PACK = {
-    BIT_OFF: STATE_OPTIONITEM_OFF,
-    BIT_ON: STATE_OPTIONITEM_ON,
-    LABEL_BIT_OFF: STATE_OPTIONITEM_OFF,
-    LABEL_BIT_ON: STATE_OPTIONITEM_ON,
-    "CLOSE": STATE_OPTIONITEM_OFF,
-    "OPEN": STATE_OPTIONITEM_ON,
-    "UNLOCK": STATE_OPTIONITEM_OFF,
-    "LOCK": STATE_OPTIONITEM_ON,
-    "INITIAL_BIT_OFF": STATE_OPTIONITEM_OFF,
-    "INITIAL_BIT_ON": STATE_OPTIONITEM_ON,
-    "IGNORE": STATE_OPTIONITEM_NONE,
+    BIT_OFF: StateOptions.OFF,
+    BIT_ON: StateOptions.ON,
+    LABEL_BIT_OFF: StateOptions.OFF,
+    LABEL_BIT_ON: StateOptions.ON,
+    "CLOSE": StateOptions.OFF,
+    "OPEN": StateOptions.ON,
+    "UNLOCK": StateOptions.OFF,
+    "LOCK": StateOptions.ON,
+    "INITIAL_BIT_OFF": StateOptions.OFF,
+    "INITIAL_BIT_ON": StateOptions.ON,
+    "IGNORE": StateOptions.NONE,
+    "NONE": StateOptions.NONE,
     "NOT_USE": "Not Used",
 }
 
@@ -57,11 +48,6 @@ SLEEP_BETWEEN_RETRIES = 2  # seconds
 MONITOR_RESTART_SECONDS = 0  # 0 to disable
 
 _LOGGER = logging.getLogger(__name__)
-
-
-class UnitTempModes(Enum):
-    Celsius = UNIT_TEMP_CELSIUS
-    Fahrenheit = UNIT_TEMP_FAHRENHEIT
 
 
 class Monitor:
@@ -79,18 +65,12 @@ class Monitor:
     _last_client_refresh = datetime.min
     _not_logged_count = 0
 
-    def __init__(
-        self,
-        client,
-        device_id: str,
-        platform_type=PlatformType.THINQ1,
-        device_name: str = None,
-    ) -> None:
+    def __init__(self, client: ClientAsync, device_info: DeviceInfo) -> None:
         """Initialize monitor class."""
         self._client: ClientAsync = client
-        self._device_id = device_id
-        self._platform_type = platform_type
-        self._device_descr = device_name or f"ID[{device_id}]"
+        self._device_id = device_info.device_id
+        self._platform_type = device_info.platform_type
+        self._device_descr = device_info.name
         self._work_id: str | None = None
         self._monitor_start_time: datetime | None = None
         self._disconnected = True
@@ -383,40 +363,50 @@ class Device:
     def __init__(
         self,
         client: ClientAsync,
-        device: DeviceInfo,
-        status=None,
-        available_features=None,
+        device_info: DeviceInfo,
+        status: DeviceStatus | None = None,
     ):
-        """
-        Create a wrapper for a `DeviceInfo` object associated with a
-        `Client`.
-        """
+        """Create a wrapper for a `DeviceInfo` object associated with a Client."""
 
         self._client = client
-        self._device_info = device
+        self._device_info = device_info
         self._status = status
         self._model_data = None
         self._model_info: ModelInfo | None = None
         self._model_lang_pack = None
         self._product_lang_pack = None
-        self._should_poll = device.platform_type == PlatformType.THINQ1
-        self._mon = Monitor(client, device.id, device.platform_type, device.name)
+        self._should_poll = device_info.platform_type == PlatformType.THINQ1
+        self._mon = Monitor(client, device_info)
         self._control_set = 0
         self._last_additional_poll: datetime | None = None
-        self._available_features = available_features or {}
+        self._available_features = {}
+
+        # attributes for properties
+        self._attr_unique_id = self._device_info.device_id
+        self._attr_name = self._device_info.name
 
         # for logging unknown states received
         self._unknown_states = []
 
     @property
-    def client(self):
+    def client(self) -> ClientAsync:
         """Return client instance associated to this device."""
         return self._client
 
     @property
-    def device_info(self):
+    def device_info(self) -> DeviceInfo:
         """Return 'device_info' for this device."""
         return self._device_info
+
+    @property
+    def unique_id(self) -> str:
+        """Return unique id for this device."""
+        return self._attr_unique_id
+
+    @property
+    def name(self) -> str:
+        """Return name for this device."""
+        return self._attr_name
 
     @property
     def model_info(self) -> ModelInfo | None:
@@ -429,7 +419,7 @@ class Device:
         return self._available_features
 
     @property
-    def status(self):
+    def status(self) -> DeviceStatus | None:
         """Return status object associated to the device."""
         if not self._model_info:
             return None
@@ -500,7 +490,7 @@ class Device:
 
         if self._should_poll:
             await self._client.session.set_device_controls(
-                self._device_info.id,
+                self._device_info.device_id,
                 ctrl_key,
                 command,
                 {key: value} if key and value else value,
@@ -509,8 +499,8 @@ class Device:
             self._control_set = 2
             return
 
-        await self._client.session.set_device_v2_controls(
-            self._device_info.id,
+        await self._client.session.device_v2_controls(
+            self._device_info.device_id,
             ctrl_key,
             command,
             key,
@@ -534,7 +524,7 @@ class Device:
             _LOGGER.log(
                 log_level,
                 "Setting new state for device %s: %s",
-                self._device_info.id,
+                self._device_info.device_id,
                 str(full_key),
             )
             await self._set_control(full_key, ctrl_path=ctrl_path)
@@ -542,7 +532,7 @@ class Device:
             _LOGGER.log(
                 log_level,
                 "Setting new state for device %s:  %s - %s - %s - %s",
-                self._device_info.id,
+                self._device_info.device_id,
                 ctrl_key,
                 command,
                 key,
@@ -552,14 +542,40 @@ class Device:
                 ctrl_key, command, key=key, value=value, data=data, ctrl_path=ctrl_path
             )
 
+    async def _get_config_v2(
+        self, ctrl_key, command, *, key=None, value=None, ctrl_path=None
+    ):
+        """
+        Look up a device's V2 configuration for a given value.
+        """
+        if self._should_poll or self.client.emulation:
+            return None
+
+        payload = await self._client.session.device_v2_controls(
+            self._device_info.device_id,
+            ctrl_key,
+            command,
+            key,
+            value,
+            ctrl_path=ctrl_path,
+        )
+
+        result = payload.get("result")
+        if not result or "data" not in result:
+            return None
+        return result["data"]
+
     async def _get_config(self, key):
         """
         Look up a device's configuration for a given value.
         The response is parsed as base64-encoded JSON.
         """
         if not self._should_poll:
-            return
-        data = await self._client.session.get_device_config(self._device_info.id, key)
+            return None
+
+        data = await self._client.session.get_device_config(
+            self._device_info.device_id, key
+        )
         if self._control_set == 0:
             self._control_set = 1
         return json.loads(base64.b64decode(data).decode("utf8"))
@@ -567,9 +583,10 @@ class Device:
     async def _get_control(self, key):
         """Look up a device's control value."""
         if not self._should_poll:
-            return
+            return None
+
         data = await self._client.session.get_device_config(
-            self._device_info.id,
+            self._device_info.device_id,
             key,
             "Control",
         )
@@ -580,9 +597,33 @@ class Device:
         _, value = data[1:-1].split(":")
         return value
 
+    async def _delete_permission(self):
+        """Remove permission acquired in set command."""
+        if not self._should_poll:
+            return
+        if self._control_set <= 0:
+            return
+        if self._control_set == 1:
+            await self._client.session.delete_permission(self._device_info.device_id)
+        self._control_set -= 1
+
     async def _pre_update_v2(self):
         """
         Call additional methods before data update for v2 API.
+        Override in specific device to call requested methods.
+        """
+        return
+
+    async def _get_device_info(self):
+        """
+        Call additional method to get device information for V1 API.
+        Override in specific device to call requested methods.
+        """
+        return
+
+    async def _get_device_info_v2(self):
+        """
+        Call additional method to get device information for V2 API.
         Override in specific device to call requested methods.
         """
         return
@@ -600,48 +641,39 @@ class Device:
             try:
                 await self._pre_update_v2()
             except Exception as exc:  # pylint: disable=broad-except
-                _LOGGER.debug("Error %s calling pre_update function", exc)
+                _LOGGER.debug("Error calling pre_update function: %s", exc)
 
         return await self._mon.refresh(query_device)
 
-    async def _delete_permission(self):
-        """Remove permission acquired in set command."""
-        if not self._should_poll:
-            return
-        if self._control_set <= 0:
-            return
-        if self._control_set == 1:
-            await self._client.session.delete_permission(self._device_info.id)
-        self._control_set -= 1
-
-    async def _get_device_info(self):
-        """
-        Call additional method to get device information for V1 API.
-        Override in specific device to call requested methods.
-        """
-        return
-
     async def _additional_poll(self, poll_interval: int):
         """Perform dedicated additional device poll with a slower rate."""
-        if not self._should_poll:
-            return
         if poll_interval <= 0:
             return
         call_time = datetime.utcnow()
         if self._last_additional_poll is None:
-            self._last_additional_poll = call_time - timedelta(
-                seconds=max(poll_interval - 10, 1)
-            )
-        difference = (call_time - self._last_additional_poll).total_seconds()
-        if difference >= poll_interval:
-            self._last_additional_poll = call_time
-            await self._get_device_info()
+            difference = poll_interval
+        else:
+            difference = (call_time - self._last_additional_poll).total_seconds()
+        if difference < poll_interval:
+            return
+        self._last_additional_poll = call_time
+        if self._should_poll:
+            try:
+                await self._get_device_info()
+            except Exception as exc:  # pylint: disable=broad-except
+                _LOGGER.debug("Error calling additional poll V1 methods: %s", exc)
+        else:
+            try:
+                await self._get_device_info_v2()
+            except Exception as exc:  # pylint: disable=broad-except
+                _LOGGER.debug("Error calling additional poll V2 methods: %s", exc)
 
-    async def device_poll(
+    async def _device_poll(
         self,
         snapshot_key="",
         *,
-        thinq1_additional_poll=0,
+        additional_poll_interval_v1=0,
+        additional_poll_interval_v2=0,
         thinq2_query_device=False,
     ):
         """
@@ -651,7 +683,9 @@ class Device:
         Return either a `Status` object or `None` if the status is not yet available.
 
         :param snapshot_key: the key used to extract the thinq2 snapshot from payload.
-        :param thinq1_additional_poll: run an additional poll command for thinq1 devices
+        :param additional_poll_interval_v1: run an additional poll command for V1 devices
+            at specified rate (0 means disabled).
+        :param additional_poll_interval_v2: run an additional poll command for V2 devices
             at specified rate (0 means disabled).
         :param thinq2_query_device: if True query thinq2 devices with dedicated command
             instead using dashboard.
@@ -667,6 +701,9 @@ class Device:
             snapshot = await self._get_device_snapshot(thinq2_query_device)
             if not snapshot:
                 return None
+            # do additional poll
+            if additional_poll_interval_v2 > 0:
+                await self._additional_poll(additional_poll_interval_v2)
             return self._model_info.decode_snapshot(snapshot, snapshot_key)
 
         # ThinQ V1 - Monitor data must be polled """
@@ -676,16 +713,17 @@ class Device:
 
         res = self._model_info.decode_monitor(data)
         # do additional poll
-        if res and thinq1_additional_poll > 0:
-            try:
-                await self._additional_poll(thinq1_additional_poll)
-            except Exception as exc:  # pylint: disable=broad-except
-                _LOGGER.debug("Error %s calling additional poll methods", exc)
+        if res and additional_poll_interval_v1 > 0:
+            await self._additional_poll(additional_poll_interval_v1)
 
         # remove control permission if previously set
         await self._delete_permission()
 
         return res
+
+    async def poll(self) -> DeviceStatus | None:
+        """Poll the device's current state."""
+        return None
 
     def _get_feature_title(self, feature_name, item_key):
         """Override this function to manage feature title per device type."""
@@ -693,12 +731,10 @@ class Device:
 
     def feature_title(self, feature_name, item_key=None, status=None, allow_none=False):
         """Return title associated to a specific feature."""
-        title = self._available_features.get(feature_name)
-        if title is None:
+        if (title := self._available_features.get(feature_name)) is None:
             if status is None and not allow_none:
                 return None
-            title = self._get_feature_title(feature_name, item_key)
-            if not title:
+            if not (title := self._get_feature_title(feature_name, item_key)):
                 return None
             self._available_features[feature_name] = title
         return title
@@ -706,7 +742,7 @@ class Device:
     def get_enum_text(self, enum_name):
         """Get the text associated to an enum value from language pack."""
         if not enum_name:
-            return STATE_OPTIONITEM_NONE
+            return StateOptions.NONE
 
         text_value = LOCAL_LANG_PACK.get(enum_name)
         if not text_value and self._model_lang_pack:
@@ -730,10 +766,10 @@ class Device:
 class DeviceStatus:
     """A higher-level interface to a specific device status."""
 
-    def __init__(self, device, data):
+    def __init__(self, device: Device, data: dict | None = None) -> None:
         """Initialize devicestatus object."""
-        self._device: Device = device
-        self._data = {} if data is None else data
+        self._device = device
+        self._data = data or {}
         self._device_features: dict[str, Any] = {}
         self._features_updated = False
 
@@ -755,7 +791,7 @@ class DeviceStatus:
             return None
         try:
             return int(value)
-        except ValueError:
+        except (TypeError, ValueError):
             return None
 
     @staticmethod
@@ -780,6 +816,8 @@ class DeviceStatus:
         max_time_status: str | list,
         filter_types: list | None = None,
         support_key: str | None = None,
+        *,
+        use_time_inverted=False,
     ):
         """Get filter status filtering by type if required."""
         if filter_types and support_key:
@@ -808,11 +846,20 @@ class DeviceStatus:
         )
         if use_time is None:
             return None
-        if max_time < use_time:
-            return None
+        # for models that return use_time directly in the payload,
+        # the value actually represent remaining time
+        if use_time_inverted:
+            try:
+                use_time = max(max_time - use_time, 0)
+            except ValueError:
+                return None
 
         try:
-            return int((use_time / max_time) * 100)
+            return [
+                int(((max_time - min(use_time, max_time)) / max_time) * 100),
+                use_time,
+                max_time,
+            ]
         except ValueError:
             return None
 
@@ -832,18 +879,18 @@ class DeviceStatus:
         return False
 
     @property
-    def is_info_v2(self):
+    def is_info_v2(self) -> bool:
         """Return type of associated model info."""
         return self._device.model_info.is_info_v2
 
-    def _get_state_key(self, key_name):
-        """Return the key name based on model info."""
+    def _get_state_key(self, key_name: str | list[str]) -> str:
+        """Return the key name based on model info type."""
         if isinstance(key_name, list):
             return key_name[1 if self.is_info_v2 else 0]
         return key_name
 
-    def _get_data_key(self, keys):
-        """Return the raw data for a specific key."""
+    def _get_data_key(self, keys: str | list[str]) -> str:
+        """Return the key inside status data if match one of provided keys."""
         if not self._data:
             return ""
         if isinstance(keys, list):
@@ -868,9 +915,9 @@ class DeviceStatus:
                 status_type,
             )
 
-        return STATE_OPTIONITEM_UNKNOWN
+        return StateOptions.UNKNOWN
 
-    def update_status(self, key, value):
+    def update_status(self, key, value) -> bool:
         """Update the status key to a specific value."""
         if key in self._data:
             self._data[key] = value
@@ -878,7 +925,7 @@ class DeviceStatus:
             return True
         return False
 
-    def update_status_feat(self, key, value, upd_features=False):
+    def update_status_feat(self, key, value, upd_features=False) -> bool:
         """Update device status and features."""
         if not self.update_status(key, value):
             return False
@@ -886,14 +933,19 @@ class DeviceStatus:
             self._update_features()
         return True
 
-    def key_exist(self, keys):
-        """Chek if a secific key exists inside the status."""
+    def get_model_info_key(self, keys: str | list[str]) -> str | None:
+        """Return a key if one of provided keys exists in associated model info."""
         if isinstance(keys, list):
             for key in keys:
                 if self._device.model_info.value_exist(key):
-                    return True
-            return False
-        return self._device.model_info.value_exist(keys)
+                    return key
+        elif self._device.model_info.value_exist(keys):
+            return keys
+        return None
+
+    def key_exist(self, keys: str | list[str]) -> bool:
+        """Check if one of provided keys exists in associated model info."""
+        return bool(self.get_model_info_key(keys))
 
     def lookup_enum(self, key, data_is_num=False):
         """Lookup value for a specific key of type enum."""
@@ -905,6 +957,16 @@ class DeviceStatus:
             value = str(int(value))
 
         return self._device.model_info.enum_name(curr_key, value)
+
+    def lookup_enum_bool(self, key):
+        """Lookup value for a specific key of type enum checking for bool type."""
+        value = self.lookup_enum(key, True)
+        if value and isinstance(value, str):
+            if value.endswith("_ON_W"):
+                return BIT_ON
+            if value.endswith("_OFF_W"):
+                return BIT_OFF
+        return value
 
     def lookup_range(self, key):
         """Lookup value for a specific key of type range."""
@@ -949,10 +1011,10 @@ class DeviceStatus:
         enum_val = self.lookup_bit_enum(key)
         if enum_val is None:
             return None
-        bit_val = LOCAL_LANG_PACK.get(enum_val, STATE_OPTIONITEM_OFF)
-        if bit_val == STATE_OPTIONITEM_ON:
-            return STATE_OPTIONITEM_ON
-        return STATE_OPTIONITEM_OFF
+        bit_val = LOCAL_LANG_PACK.get(enum_val, StateOptions.OFF)
+        if bit_val == StateOptions.ON:
+            return StateOptions.ON
+        return StateOptions.OFF
 
     def _update_feature(
         self, key, status, get_text=True, item_key=None, *, allow_none=False
@@ -962,9 +1024,9 @@ class DeviceStatus:
             return None
 
         if status is None and not allow_none:
-            status = STATE_OPTIONITEM_NONE
+            status = StateOptions.NONE
 
-        if status == STATE_OPTIONITEM_NONE:
+        if status == StateOptions.NONE:
             get_text = False
 
         if status is None or not get_text:
