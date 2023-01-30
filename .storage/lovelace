@@ -6461,13 +6461,13 @@
                   "type": "button",
                   "tap_action": {
                     "action": "navigate",
-                    "navigation_path": "/lovelace/settings-heating-and-cooling"
+                    "navigation_path": "/lovelace/settings-cooling"
                   },
-                  "name": "Heating & Cooling",
                   "icon": "mdi:home-thermometer-outline",
                   "hold_action": {
                     "action": "none"
-                  }
+                  },
+                  "name": "Cooling"
                 },
                 {
                   "show_name": true,
@@ -6571,23 +6571,60 @@
         },
         {
           "theme": "Backend-selected",
-          "title": "Settings - Heating & Cooling",
-          "path": "settings-heating-and-cooling",
+          "title": "Settings - Cooling",
+          "path": "settings-cooling",
           "icon": "mdi:home-thermometer-outline",
           "subview": true,
           "badges": [],
           "cards": [
             {
-              "type": "entities",
-              "entities": [
+              "type": "vertical-stack",
+              "cards": [
                 {
-                  "entity": "input_datetime.ac_auto_control_start"
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_datetime.ac_auto_control_start",
+                      "name": "Auto Control Start"
+                    },
+                    {
+                      "entity": "input_datetime.ac_auto_control_end",
+                      "name": "Auto Control End"
+                    },
+                    {
+                      "entity": "input_number.ac_resync_delay",
+                      "name": "Resync Delay"
+                    }
+                  ],
+                  "title": "Air Conditioning"
                 },
                 {
-                  "entity": "input_datetime.ac_auto_control_end"
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_number.fans_lucci_speed_when_ac_on",
+                      "name": "Speed when AC is On"
+                    },
+                    {
+                      "entity": "input_number.fans_lucci_speed_when_ac_off",
+                      "name": "Speed when AC is Off"
+                    }
+                  ],
+                  "title": "Lucci Fans"
                 },
                 {
-                  "entity": "input_number.ac_resync_delay"
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_number.fans_po_eco_speed_when_ac_on",
+                      "name": "Speed when AC is On"
+                    },
+                    {
+                      "entity": "input_number.fans_po_eco_speed_when_ac_off",
+                      "name": "Speed when AC is Off"
+                    }
+                  ],
+                  "title": "Po Eco Fans"
                 }
               ]
             }
