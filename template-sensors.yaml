@@ -808,6 +808,18 @@
         Running
       {% endif %}
 
+  - name: Proxmox Disk Used Percentage
+    unique_id: sensor.proxmox_disk_used_percentage
+    state: "{{ 100 - states('sensor.node_proxmox_192_168_18_41_8006_disk_free_percentage') | float(0) }}"
+    unit_of_measurement: "%"
+    availability: "{{ states('sensor.node_proxmox_192_168_18_41_8006_disk_free_percentage') not in ['unavailable','unknown'] }}"
+
+  - name: Proxmox RAM Used Percentage
+    unique_id: sensor.proxmox_ram_used_percentage
+    state: "{{ 100 - states('sensor.node_proxmox_192_168_18_41_8006_memory_free_percentage') | float(0) }}"
+    unit_of_measurement: "%"
+    availability: "{{ states('sensor.node_proxmox_192_168_18_41_8006_memory_free_percentage') not in ['unavailable','unknown'] }}"
+
 - trigger:
   - platform: time_pattern
     minutes: '/1'
@@ -875,6 +887,27 @@
         {% else %}
           In use
         {% endif %}
+
+    - name: Proxmox Last Boot
+      unique_id: sensor.proxmox_last_boot
+      state: >
+        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h', 'day': 'd', 'days': 'd', 'month': 'mo', 'months': 'mo', 'year': 'y', 'years': 'y'} %}
+        {% set relative_age = relative_time(states('sensor.node_proxmox_192_168_18_41_8006_uptime') | as_datetime).split() %}
+        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+
+    - name: Home Assistant Last Boot
+      unique_id: sensor.home_assistant_last_boot
+      state: >
+        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h', 'day': 'd', 'days': 'd', 'month': 'mo', 'months': 'mo', 'year': 'y', 'years': 'y'} %}
+        {% set relative_age = relative_time(states('sensor.proxmox_eloquent_house_101_uptime') | as_datetime).split() %}
+        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+
+    - name: pfSense Last Boot
+      unique_id: sensor.pfsense_last_boot
+      state: >
+        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h', 'day': 'd', 'days': 'd', 'month': 'mo', 'months': 'mo', 'year': 'y', 'years': 'y'} %}
+        {% set relative_age = relative_time(states('sensor.proxmox_pfsense_100_uptime') | as_datetime).split() %}
+        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
 
 - trigger:
   - platform: state
