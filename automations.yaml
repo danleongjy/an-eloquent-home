@@ -5841,3 +5841,111 @@
             brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
         - delay: 2
   mode: single
+- id: '1675045598043'
+  alias: Junior Bathroom Occupancy
+  description: Track occupancy in the Junior Bathroom based on Wasp in a Box logic
+  use_blueprint:
+    path: AlexanderBabel/occupancy.yaml
+    input:
+      door_sensor: binary_sensor.junior_bathroom_door
+      motion_sensor: binary_sensor.junior_bathroom_motion_sensors
+      occupancy_helper: input_boolean.junior_bathroom_occupancy
+      last_motion_helper: input_datetime.junior_bathroom_last_motion_detected
+- id: '1675045768564'
+  alias: Powder Room Occupancy
+  description: Track occupancy in the Powder Room based on Wasp in a Box logic
+  use_blueprint:
+    path: AlexanderBabel/occupancy.yaml
+    input:
+      door_sensor: binary_sensor.powder_room_door
+      motion_sensor: binary_sensor.powder_room_motion
+      occupancy_helper: input_boolean.powder_room_occupancy
+      last_motion_helper: input_datetime.powder_room_last_motion_detected
+- id: '1675045803046'
+  alias: Master Bathroom Occupancy
+  description: Track occupancy in the Master Bathroom based on Wasp in a Box logic
+  use_blueprint:
+    path: AlexanderBabel/occupancy.yaml
+    input:
+      door_sensor: binary_sensor.master_bathroom_door
+      motion_sensor: binary_sensor.master_bathroom_motion_sensors
+      occupancy_helper: input_boolean.master_bathroom_occupancy
+      last_motion_helper: input_datetime.master_bathroom_last_motion_detected
+- id: '1675047268231'
+  alias: Study Table Controller
+  description: Control the house devices for working at home
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 43f2d52bfecdf388c86e9f919d45e359
+      helper_last_controller_event: input_text.zz_study_table_controller_last_event
+      action_button_up_short:
+      - service: script.set_recommended_scene_in_study_room
+        data: {}
+      action_button_up_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id: light.study_room_lights
+      action_button_down_short:
+      - service: script.turn_off_study_room
+        data: {}
+      action_button_down_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: -"{{ states('input_number.light_brightness_change_step')
+            }}"
+        target:
+          entity_id: light.study_room_lights
+      action_button_down_double:
+      - service: script.turn_off_junior_bathroom
+        data: {}
+      - service: script.turn_off_powder_room
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 300
+      - service: script.turn_off_elenas_room
+        data: {}
+      - service: script.turn_off_elis_room
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 300
+      - service: script.turn_off_playroom
+        data: {}
+      - service: script.turn_off_hallway
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 300
+      - service: script.turn_off_kitchen
+        data: {}
+      - service: script.turn_off_master_bathroom
+        data: {}
+      - service: script.turn_off_parents_room
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 300
+      - service: script.turn_off_dining_room
+        data: {}
+      - service: script.turn_off_living_room
+        data: {}
+      button_up_long_loop: true
+      button_up_long_max_loop_repeats: 20
+      button_down_long_loop: true
+      button_down_long_max_loop_repeats: 20
+      button_down_double_press: true
+      helper_double_press_delay: 500

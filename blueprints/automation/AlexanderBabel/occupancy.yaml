@@ -1,0 +1,127 @@
+blueprint:
+  name: Occupancy
+  description: 'This blueprint is based on the Wasp in a box princible. It is inspired
+    by the AppDaemon app that does the same thing.
+
+    You can find more information about this blueprint on the Home Assistant Community:
+    https://community.home-assistant.io/t/occupancy-blueprint/477772'
+  domain: automation
+  source_url: https://gist.github.com/AlexanderBabel/487f054b289b61f90afdc837d23cb85e
+  input:
+    door_sensor:
+      name: Door Sensor or Sensor Group
+      selector:
+        entity:
+          domain: binary_sensor
+          multiple: false
+    motion_sensor:
+      name: Motion Sensor or Sensor Group
+      selector:
+        entity:
+          domain: binary_sensor
+          multiple: false
+    turn_off_delay:
+      name: Motion Sensor turn off delay
+      description: Time after the sensor no longer detects motion to set the occupancy
+        to clear. (Default = 5s)
+      default: 5
+      selector:
+        number:
+          mode: box
+          min: 0.0
+          max: 3600.0
+          unit_of_measurement: seconds
+          step: 1.0
+    occupancy_helper:
+      name: Occupancy Helper (Type input_boolean)
+      description: This helper saves the occupancy state and can be used as a trigger
+        of e.g. your light automation.
+      selector:
+        entity:
+          domain: input_boolean
+          multiple: false
+    last_motion_helper:
+      name: Last Motion Helper (Type date and time)
+      description: This helper saves when the last movement was detected by the motion
+        sensor or motion sensor group. This is necessary to prevent a false occupancy
+        when you directly close the door behind you.
+      selector:
+        entity:
+          domain: input_datetime
+          multiple: false
+variables:
+  door_sensor: !input door_sensor
+  last_motion_helper: !input last_motion_helper
+trigger:
+- platform: state
+  entity_id: !input motion_sensor
+  from: 'off'
+  to: 'on'
+  id: motion
+- platform: state
+  entity_id: !input door_sensor
+  id: door_opened
+  from: 'off'
+  to: 'on'
+- platform: state
+  entity_id: !input motion_sensor
+  from: 'on'
+  to: 'off'
+  for: !input turn_off_delay
+  id: clear
+condition: []
+action:
+- choose:
+  - conditions:
+    - condition: trigger
+      id: motion
+    sequence:
+    - service: input_datetime.set_datetime
+      data:
+        timestamp: '{{ as_timestamp(now()) }}'
+      target:
+        entity_id: !input last_motion_helper
+    - if:
+      - condition: state
+        entity_id: !input occupancy_helper
+        state: 'off'
+      then:
+      - service: input_boolean.turn_on
+        data: {}
+        target:
+          entity_id: !input occupancy_helper
+  - conditions:
+    - condition: state
+      entity_id: !input occupancy_helper
+      state: 'on'
+    - condition: or
+      conditions:
+      - condition: and
+        conditions:
+        - condition: trigger
+          id: clear
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: !input door_sensor
+            state: 'on'
+          - condition: template
+            value_template: '{{ is_state(door_sensor, ''off'') and as_local(as_datetime(states(last_motion_helper)))
+              < states[door_sensor].last_changed }}'
+            alias: True, when the door is closed and the last move was before that
+          alias: Check if door is open or closed and no motion was detected afterwards
+      - condition: and
+        conditions:
+        - condition: trigger
+          id: door_opened
+        - condition: state
+          entity_id: !input motion_sensor
+          state: 'off'
+    sequence:
+    - service: input_boolean.turn_off
+      data: {}
+      target:
+        entity_id: !input occupancy_helper
+  default: []
+mode: queued
+max: 10
