@@ -311,6 +311,10 @@
       {% else %}
         off
       {% endif %}
+    availability: >
+      {{ states('light.elenas_room_lights') in ['on','off'] and 
+         states('fan.elenas_room_fan') in ['on','off'] and 
+         states('climate.elenas_room_ac') in ['off','cool'] }}
     attributes:
       lights_level: >
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
@@ -333,9 +337,9 @@
       fan_speed: >
         {% if (is_state('binary_sensor.elenas_room_door','off'))
            or (is_state('binary_sensor.elenas_room_door','on') and is_state('climate.dining_room_ac','cool')) %}
-          {{ (states('input_number.fans_po_eco_speed_when_ac_on') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_po_eco_speed_when_ac_on') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% else %}
-          {{ (states('input_number.fans_po_eco_speed_when_ac_off') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_po_eco_speed_when_ac_off') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% endif %}
       ac_state: >
         {% if (is_state('binary_sensor.elenas_room_door','off'))
@@ -366,6 +370,10 @@
       {% else %}
         off
       {% endif %}
+    availability: >
+      {{ states('light.elis_room_lights') in ['on','off'] and 
+         states('fan.elis_room_fan') in ['on','off'] and 
+         states('climate.elis_room_ac') in ['off','cool'] }}
     attributes:
       lights_level: >
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
@@ -388,9 +396,9 @@
       fan_speed: >
         {% if (is_state('binary_sensor.elis_room_door','off'))
            or (is_state('binary_sensor.elis_room_door','on') and is_state('climate.dining_room_ac','cool')) %}
-          {{ (states('input_number.fans_po_eco_speed_when_ac_on') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_po_eco_speed_when_ac_on') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% else %}
-          {{ (states('input_number.fans_po_eco_speed_when_ac_off') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_po_eco_speed_when_ac_off') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% endif %}
       ac_state: >
         {% if (is_state('binary_sensor.elis_room_door','off'))
@@ -419,6 +427,11 @@
              or (is_state('light.dining_room_pendant_light_entity', 'on') and (state_attr('light.dining_room_pendant_light_entity', 'brightness') / 255) | round(0) == (state_attr('binary_sensor.recommended_scene_in_dining_room', 'pendant_light_level') | int(0)) / 100))
          and (is_state('fan.dining_room_fan','on') and state_attr('fan.dining_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_dining_room', 'fan_speed'))
          and (states('climate.dining_room_ac') == state_attr('binary_sensor.recommended_scene_in_dining_room', 'ac_state')) }}
+    availability: >
+      {{ states('light.dining_room_lights') in ['on','off'] and 
+         states('light.dining_room_pendant_light_entity') in ['on','off'] and 
+         states('fan.dining_room_fan') in ['on','off'] and 
+         states('climate.dining_room_ac') in ['off','cool'] }}
     attributes:
       lights_level: >
         {% if state_attr('sun.sun', 'rising') == true %}
@@ -461,9 +474,9 @@
            and is_state('cover.kitchen_blinds','closed')
            and is_state('binary_sensor.parents_room_door','off')
            and is_state('binary_sensor.main_door', 'off') %}
-          {{ (states('input_number.fans_po_eco_speed_when_ac_on') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_po_eco_speed_when_ac_on') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% else %}
-          {{ (states('input_number.fans_po_eco_speed_when_ac_off') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_po_eco_speed_when_ac_off') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% endif %}
       ac_state: >
         {% if is_state('binary_sensor.hallway_doors','off')
@@ -485,6 +498,11 @@
              or (is_state('light.living_room_pendant_light_entity', 'on') and (state_attr('light.living_room_pendant_light_entity', 'brightness') / 255) | round(0) == (state_attr('binary_sensor.recommended_scene_in_living_room', 'pendant_light_level') | int(0)) / 100))
          and (is_state('fan.living_room_fan','on') and state_attr('fan.living_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_living_room', 'fan_speed'))
          and (states('climate.living_room_ac') == state_attr('binary_sensor.recommended_scene_in_living_room', 'ac_state')) }}
+    availability: >
+      {{ states('light.living_room_lights') in ['on','off'] and 
+         states('light.living_room_pendant_light_entity') in ['on','off'] and 
+         states('fan.living_room_fan') in ['on','off'] and 
+         states('climate.living_room_ac') in ['off','cool'] }}
     attributes:
       lights_level: >
         {% if state_attr('sun.sun', 'rising') == true %}
@@ -527,9 +545,9 @@
            and is_state('cover.kitchen_blinds','closed')
            and is_state('binary_sensor.parents_room_door','off')
            and is_state('binary_sensor.main_door', 'off') %}
-          {{ (states('input_number.fans_lucci_speed_when_ac_on') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_lucci_speed_when_ac_on') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% else %}
-          {{ (states('input_number.fans_lucci_speed_when_ac_off') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_lucci_speed_when_ac_off') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% endif %}
       ac_state: >
         {% if is_state('binary_sensor.hallway_doors','off')
@@ -549,6 +567,10 @@
           or (is_state('light.study_room_lights', 'on') and (state_attr('light.study_room_lights', 'brightness') / 255) | round(0) == (state_attr('binary_sensor.recommended_scene_in_study_room', 'lights_level') | int(0)) / 100))
       and (is_state('fan.study_room_fan','on') and state_attr('fan.study_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_study_room', 'fan_speed'))
       and (states('climate.study_room_ac') == state_attr('binary_sensor.recommended_scene_in_study_room', 'ac_state')) }}
+    availability: >
+      {{ states('light.study_room_lights') in ['on','off'] and 
+         states('fan.study_room_fan') in ['on','off'] and 
+         states('climate.study_room_ac') in ['off','cool'] }}
     attributes:
       lights_level: >
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
@@ -574,9 +596,9 @@
            and is_state('cover.kitchen_blinds','closed')
            and is_state('binary_sensor.parents_room_door','off')
            and is_state('binary_sensor.main_door', 'off') %}
-          {{ (states('input_number.fans_lucci_speed_when_ac_on') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_lucci_speed_when_ac_on') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% else %}
-          {{ (states('input_number.fans_lucci_speed_when_ac_off') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_lucci_speed_when_ac_off') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% endif %}
       ac_state: >
         {% if is_state('binary_sensor.hallway_doors','off')
@@ -600,6 +622,10 @@
       {% else %}
         off
       {% endif %}
+    availability: >
+      {{ states('light.parents_room_lights') in ['on','off'] and 
+         states('fan.parents_room_fan') in ['on','off'] and 
+         states('climate.parents_room_ac') in ['off','cool'] }}
     attributes:
       lights_level: >
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
@@ -622,9 +648,9 @@
       fan_speed: >
         {% if (is_state('binary_sensor.parents_room_doors','off'))
            or (is_state('binary_sensor.parents_room_doors','on') and is_state('climate.dining_room_ac','cool')) %}
-          {{ (states('input_number.fans_po_eco_speed_when_ac_on') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_po_eco_speed_when_ac_on') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% else %}
-          {{ (states('input_number.fans_po_eco_speed_when_ac_off') | int(0) / 6) | round(2) * 100 }}
+          {{ ((states('input_number.fans_po_eco_speed_when_ac_off') | int(0) / 6) | round(2) * 100) | int(0) }}
         {% endif %}
       ac_state: >
         {% if (is_state('binary_sensor.parents_room_doors','off'))
@@ -932,8 +958,10 @@
           {% else %}
             {{ states('sensor.dns_queries_within_5min') }}
           {% endif %}
-        {% else %}
+        {% elif trigger.to_state.state | int(0) - trigger.from_state.state | int(0) > 0 %}
           {{ trigger.to_state.state | int(0) - trigger.from_state.state | int(0) }}
+        {% else %}
+          0
         {% endif %}
       unit_of_measurement: queries
       attributes:
@@ -962,8 +990,10 @@
           {% else %}
             {{ states('sensor.dns_queries_blocked_by_filters_within_5min') }}
           {% endif %}
-        {% else %}
+        {% elif trigger.to_state.state | int(0) - trigger.from_state.state | int(0) > 0%}
           {{ trigger.to_state.state | int(0) - trigger.from_state.state | int(0) }}
+        {% else %}
+          0
         {% endif %}
       unit_of_measurement: queries
       attributes:
