@@ -30,7 +30,7 @@ Domain | Quantity
 [`input_number`](https://www.home-assistant.io/components/input_number) | 29
 [`input_select`](https://www.home-assistant.io/components/input_select) | 8
 [`input_text`](https://www.home-assistant.io/components/input_text) | 29
-[`light`](https://www.home-assistant.io/components/light) | 56
+[`light`](https://www.home-assistant.io/components/light) | 52
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
 [`number`](https://www.home-assistant.io/components/number) | 164
 [`person`](https://www.home-assistant.io/components/person) | 3
@@ -44,7 +44,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1199
+Total | 1195
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
