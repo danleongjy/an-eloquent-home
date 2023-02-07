@@ -303,14 +303,30 @@
   - name: Recommended Scene in Elena's Room
     unique_id: binary_sensor.recommended_scene_in_elenas_room
     state: >
-      {% if ((is_state('light.elenas_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_elenas_room', 'lights_level') == 0)
-             or (is_state('light.elenas_room_lights', 'on') and (state_attr('light.elenas_room_lights', 'brightness') / 255) | round(0) == state_attr('binary_sensor.recommended_scene_in_elenas_room', 'lights_level') / 100))
-         and (is_state('fan.elenas_room_fan','on') and state_attr('fan.elenas_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_elenas_room', 'fan_speed'))
-         and (states('climate.elenas_room_ac') == state_attr('binary_sensor.recommended_scene_in_elenas_room', 'ac_state')) %}
-        on
-      {% else %}
-        off
+      {% set elenas_room = namespace(lights = false, fan = false, ac = false) %}
+      {% if is_state('light.elenas_room_lights', 'off') %}
+        {% if state_attr('binary_sensor.recommended_scene_in_elenas_room','lights_level') == 0 %}
+          {% set elenas_room.lights = true %}
+        {% endif %}
+      {% elif is_state('light.elenas_room_lights', 'on') %}
+        {% if state_attr('light.elenas_room_lights','brightness') != None %}
+          {% if (state_attr('light.elenas_room_lights','brightness') / 255) | round(2) == (state_attr('binary_sensor.recommended_scene_in_elenas_room','lights_level') / 100) | round(2) %}
+            {% set elenas_room.lights = true %}
+          {% endif %}
+        {% endif %}
       {% endif %}
+
+      {% if is_state('fan.elenas_room_fan','on') %}
+        {% if state_attr('fan.elenas_room_fan','percentage') == state_attr('binary_sensor.recommended_scene_in_elenas_room','fan_speed') %}
+          {% set elenas_room.fan = true %}
+        {% endif %}
+      {% endif %}
+
+      {% if states('climate.elenas_room_ac') == state_attr('binary_sensor.recommended_scene_in_elenas_room','ac_state') %}
+        {% set elenas_room.ac = true %}
+      {% endif %}
+
+      {{ elenas_room.lights == true and elenas_room.fan == true and elenas_room.ac == true }}
     availability: >
       {{ states('light.elenas_room_lights') in ['on','off'] and 
          states('fan.elenas_room_fan') in ['on','off'] and 
@@ -362,14 +378,30 @@
   - name: Recommended Scene in Eli's Room
     unique_id: binary_sensor.recommended_scene_in_elis_room
     state: >
-      {% if ((is_state('light.elis_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_elis_room', 'lights_level') == 0)
-             or (is_state('light.elis_room_lights', 'on') and (state_attr('light.elis_room_lights', 'brightness') / 255) | round(0) == state_attr('binary_sensor.recommended_scene_in_elis_room', 'lights_level') / 100))
-         and (is_state('fan.elis_room_fan','on') and state_attr('fan.elis_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_elis_room', 'fan_speed'))
-         and (states('climate.elis_room_ac') == state_attr('binary_sensor.recommended_scene_in_elis_room', 'ac_state')) %}
-        on
-      {% else %}
-        off
+      {% set elis_room = namespace(lights = false, fan = false, ac = false) %}
+      {% if is_state('light.elis_room_lights', 'off') %}
+        {% if state_attr('binary_sensor.recommended_scene_in_elis_room','lights_level') == 0 %}
+          {% set elis_room.lights = true %}
+        {% endif %}
+      {% elif is_state('light.elis_room_lights', 'on') %}
+        {% if state_attr('light.elis_room_lights','brightness') != None %}
+          {% if (state_attr('light.elis_room_lights','brightness') / 255) | round(2) == (state_attr('binary_sensor.recommended_scene_in_elis_room','lights_level') / 100) | round(2) %}
+            {% set elis_room.lights = true %}
+          {% endif %}
+        {% endif %}
       {% endif %}
+
+      {% if is_state('fan.elis_room_fan','on') %}
+        {% if state_attr('fan.elis_room_fan','percentage') == state_attr('binary_sensor.recommended_scene_in_elis_room','fan_speed') %}
+          {% set elis_room.fan = true %}
+        {% endif %}
+      {% endif %}
+
+      {% if states('climate.elis_room_ac') == state_attr('binary_sensor.recommended_scene_in_elis_room','ac_state') %}
+        {% set elis_room.ac = true %}
+      {% endif %}
+
+      {{ elis_room.lights == true and elis_room.fan == true and elis_room.ac == true }}
     availability: >
       {{ states('light.elis_room_lights') in ['on','off'] and 
          states('fan.elis_room_fan') in ['on','off'] and 
@@ -421,12 +453,42 @@
   - name: Recommended Scene in Dining Room
     unique_id: binary_sensor.recommended_scene_in_dining_room
     state: >
-      {{ ((is_state('light.dining_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_dining_room', 'lights_level') == 0)
-          or (is_state('light.dining_room_lights', 'on') and (state_attr('light.dining_room_lights', 'brightness') / 255) | round(0) == (state_attr('binary_sensor.recommended_scene_in_dining_room', 'lights_level') | int(0)) / 100))
-         and ((is_state('light.dining_room_pendant_light_entity', 'off') and state_attr('binary_sensor.recommended_scene_in_dining_room', 'pendant_light_level') == 0)
-             or (is_state('light.dining_room_pendant_light_entity', 'on') and (state_attr('light.dining_room_pendant_light_entity', 'brightness') / 255) | round(0) == (state_attr('binary_sensor.recommended_scene_in_dining_room', 'pendant_light_level') | int(0)) / 100))
-         and (is_state('fan.dining_room_fan','on') and state_attr('fan.dining_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_dining_room', 'fan_speed'))
-         and (states('climate.dining_room_ac') == state_attr('binary_sensor.recommended_scene_in_dining_room', 'ac_state')) }}
+      {% set dining_room = namespace(lights = false, pendant_light = false, fan = false, ac = false) %}
+      {% if is_state('light.dining_room_lights', 'off') %}
+        {% if state_attr('binary_sensor.recommended_scene_in_dining_room','lights_level') == 0 %}
+          {% set dining_room.lights = true %}
+        {% endif %}
+      {% elif is_state('light.dining_room_lights', 'on') %}
+        {% if state_attr('light.dining_room_lights','brightness') != None %}
+          {% if (state_attr('light.dining_room_lights','brightness') / 255) | round(2) == (state_attr('binary_sensor.recommended_scene_in_dining_room','lights_level') / 100) | round(2) %}
+            {% set dining_room.lights = true %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if is_state('light.dining_room_pendant_light_entity', 'off') %}
+        {% if state_attr('binary_sensor.recommended_scene_in_dining_room','pendant_light_level') == 0 %}
+          {% set dining_room.pendant_light = true %}
+        {% endif %}
+      {% elif is_state('light.dining_room_pendant_light_entity', 'on') %}
+        {% if state_attr('light.dining_room_pendant_light_entity','brightness') != None %}
+          {% if (state_attr('light.dining_room_pendant_light_entity','brightness') / 255) | round(2) == (state_attr('binary_sensor.recommended_scene_in_dining_room','pendant_light_level') / 100) | round(2) %}
+            {% set dining_room.pendant_light = true %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if is_state('fan.dining_room_fan','on') %}
+        {% if state_attr('fan.dining_room_fan','percentage') == state_attr('binary_sensor.recommended_scene_in_dining_room','fan_speed') %}
+          {% set dining_room.fan = true %}
+        {% endif %}
+      {% endif %}
+
+      {% if states('climate.dining_room_ac') == state_attr('binary_sensor.recommended_scene_in_dining_room','ac_state') %}
+        {% set dining_room.ac = true %}
+      {% endif %}
+
+      {{ dining_room.lights == true and dining_room.pendant_light == true and dining_room.fan == true and dining_room.ac == true }}
     availability: >
       {{ states('light.dining_room_lights') in ['on','off'] and 
          states('light.dining_room_pendant_light_entity') in ['on','off'] and 
@@ -492,12 +554,42 @@
   - name: Recommended Scene in Living Room
     unique_id: binary_sensor.recommended_scene_in_living_room
     state: >
-      {{ ((is_state('light.living_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_living_room', 'lights_level') == 0)
-           or (is_state('light.living_room_lights', 'on') and (state_attr('light.living_room_lights', 'brightness') / 255) | round(0) == (state_attr('binary_sensor.recommended_scene_in_living_room', 'lights_level') | int(0)) / 100))
-         and ((is_state('light.living_room_pendant_light_entity', 'off') and state_attr('binary_sensor.recommended_scene_in_living_room', 'pendant_light_level') == 0)
-             or (is_state('light.living_room_pendant_light_entity', 'on') and (state_attr('light.living_room_pendant_light_entity', 'brightness') / 255) | round(0) == (state_attr('binary_sensor.recommended_scene_in_living_room', 'pendant_light_level') | int(0)) / 100))
-         and (is_state('fan.living_room_fan','on') and state_attr('fan.living_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_living_room', 'fan_speed'))
-         and (states('climate.living_room_ac') == state_attr('binary_sensor.recommended_scene_in_living_room', 'ac_state')) }}
+      {% set living_room = namespace(lights = false, pendant_light = false, fan = false, ac = false) %}
+      {% if is_state('light.living_room_lights', 'off') %}
+        {% if state_attr('binary_sensor.recommended_scene_in_living_room','lights_level') == 0 %}
+          {% set living_room.lights = true %}
+        {% endif %}
+      {% elif is_state('light.living_room_lights', 'on') %}
+        {% if state_attr('light.living_room_lights','brightness') != None %}
+          {% if (state_attr('light.living_room_lights','brightness') / 255) | round(2) == (state_attr('binary_sensor.recommended_scene_in_living_room','lights_level') / 100) | round(2) %}
+            {% set living_room.lights = true %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if is_state('light.living_room_pendant_light_entity', 'off') %}
+        {% if state_attr('binary_sensor.recommended_scene_in_living_room','pendant_light_level') == 0 %}
+          {% set living_room.pendant_light = true %}
+        {% endif %}
+      {% elif is_state('light.living_room_pendant_light_entity', 'on') %}
+        {% if state_attr('light.living_room_pendant_light_entity','brightness') != None %}
+          {% if (state_attr('light.living_room_pendant_light_entity','brightness') / 255) | round(2) == (state_attr('binary_sensor.recommended_scene_in_living_room','pendant_light_level') / 100) | round(2) %}
+            {% set living_room.pendant_light = true %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if is_state('fan.living_room_fan','on') %}
+        {% if state_attr('fan.living_room_fan','percentage') == state_attr('binary_sensor.recommended_scene_in_living_room','fan_speed') %}
+          {% set living_room.fan = true %}
+        {% endif %}
+      {% endif %}
+
+      {% if states('climate.living_room_ac') == state_attr('binary_sensor.recommended_scene_in_living_room','ac_state') %}
+        {% set living_room.ac = true %}
+      {% endif %}
+
+      {{ living_room.lights == true and living_room.pendant_light == true and living_room.fan == true and living_room.ac == true }}
     availability: >
       {{ states('light.living_room_lights') in ['on','off'] and 
          states('light.living_room_pendant_light_entity') in ['on','off'] and 
@@ -563,10 +655,30 @@
   - name: Recommended Scene in Study Room
     unique_id: binary_sensor.recommended_scene_in_study_room
     state: >
-      {{ ((is_state('light.study_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_study_room', 'lights_level') == 0)
-          or (is_state('light.study_room_lights', 'on') and (state_attr('light.study_room_lights', 'brightness') / 255) | round(0) == (state_attr('binary_sensor.recommended_scene_in_study_room', 'lights_level') | int(0)) / 100))
-      and (is_state('fan.study_room_fan','on') and state_attr('fan.study_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_study_room', 'fan_speed'))
-      and (states('climate.study_room_ac') == state_attr('binary_sensor.recommended_scene_in_study_room', 'ac_state')) }}
+      {% set study_room = namespace(lights = false, fan = false, ac = false) %}
+      {% if is_state('light.study_room_lights', 'off') %}
+        {% if state_attr('binary_sensor.recommended_scene_in_study_room','lights_level') == 0 %}
+          {% set study_room.lights = true %}
+        {% endif %}
+      {% elif is_state('light.study_room_lights', 'on') %}
+        {% if state_attr('light.study_room_lights','brightness') != None %}
+          {% if (state_attr('light.study_room_lights','brightness') / 255) | round(2) == (state_attr('binary_sensor.recommended_scene_in_study_room','lights_level') / 100) | round(2) %}
+            {% set study_room.lights = true %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if is_state('fan.study_room_fan','on') %}
+        {% if state_attr('fan.study_room_fan','percentage') == state_attr('binary_sensor.recommended_scene_in_study_room','fan_speed') %}
+          {% set study_room.fan = true %}
+        {% endif %}
+      {% endif %}
+
+      {% if states('climate.study_room_ac') == state_attr('binary_sensor.recommended_scene_in_study_room','ac_state') %}
+        {% set study_room.ac = true %}
+      {% endif %}
+
+      {{ study_room.lights == true and study_room.fan == true and study_room.ac == true }}
     availability: >
       {{ states('light.study_room_lights') in ['on','off'] and 
          states('fan.study_room_fan') in ['on','off'] and 
@@ -614,14 +726,30 @@
   - name: Recommended Scene in Parents' Room
     unique_id: binary_sensor.recommended_scene_in_parents_room
     state: >
-      {% if ((is_state('light.parents_room_lights', 'off') and state_attr('binary_sensor.recommended_scene_in_parents_room', 'lights_level') == 0)
-             or (is_state('light.parents_room_lights', 'on') and (state_attr('light.parents_room_lights', 'brightness') / 255) | round(0) == state_attr('binary_sensor.recommended_scene_in_parents_room', 'lights_level') | int(0) / 100))
-         and (is_state('fan.parents_room_fan','on') and state_attr('fan.parents_room_fan', 'percentage') == state_attr('binary_sensor.recommended_scene_in_parents_room', 'fan_speed'))
-         and (states('climate.parents_room_ac') == state_attr('binary_sensor.recommended_scene_in_parents_room', 'ac_state')) %}
-        on
-      {% else %}
-        off
+      {% set parents_room = namespace(lights = false, fan = false, ac = false) %}
+      {% if is_state('light.parents_room_lights', 'off') %}
+        {% if state_attr('binary_sensor.recommended_scene_in_parents_room','lights_level') == 0 %}
+          {% set parents_room.lights = true %}
+        {% endif %}
+      {% elif is_state('light.parents_room_lights', 'on') %}
+        {% if state_attr('light.parents_room_lights','brightness') != None %}
+          {% if (state_attr('light.parents_room_lights','brightness') / 255) | round(2) == (state_attr('binary_sensor.recommended_scene_in_parents_room','lights_level') / 100) | round(2) %}
+            {% set parents_room.lights = true %}
+          {% endif %}
+        {% endif %}
       {% endif %}
+
+      {% if is_state('fan.parents_room_fan','on') %}
+        {% if state_attr('fan.parents_room_fan','percentage') == state_attr('binary_sensor.recommended_scene_in_parents_room','fan_speed') %}
+          {% set parents_room.fan = true %}
+        {% endif %}
+      {% endif %}
+
+      {% if states('climate.parents_room_ac') == state_attr('binary_sensor.recommended_scene_in_parents_room','ac_state') %}
+        {% set parents_room.ac = true %}
+      {% endif %}
+
+      {{ parents_room.lights == true and parents_room.fan == true and parents_room.ac == true }}
     availability: >
       {{ states('light.parents_room_lights') in ['on','off'] and 
          states('fan.parents_room_fan') in ['on','off'] and 

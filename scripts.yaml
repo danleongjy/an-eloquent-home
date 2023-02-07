@@ -1032,3 +1032,108 @@ stove_programme_cook_rice_on_right_burner:
         message: Please turn on the stove first
   mode: single
   icon: mdi:stove
+elis_school_day_alarm:
+  alias: Eli's School Day Alarm
+  sequence:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.elis_room_lights
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - service: light.turn_on
+    data:
+      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
+        }}\n{% else %}\n  100\n{% endif %}\n"
+    target:
+      entity_id: light.elis_room_bulb_2_entity
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
+  - repeat:
+      while:
+      - condition: state
+        entity_id: binary_sensor.elis_room_door
+        state: 'off'
+      sequence:
+      - service: light.toggle
+        data:
+          brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
+            }}\n{% else %}\n  100\n{% endif %}\n"
+        target:
+          entity_id:
+          - light.elis_room_bulb_1_entity
+          - light.elis_room_bulb_2_entity
+          - light.elis_room_bulb_3_entity
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+  - service: light.turn_on
+    data:
+      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
+        }}\n{% else %}\n  100\n{% endif %}\n"
+    target:
+      entity_id: light.elis_room_lights
+  mode: single
+  icon: mdi:alarm
+parents_room_school_day_alarm:
+  alias: Parents' Room School Day Alarm
+  sequence:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.parents_room_lights
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - service: light.turn_on
+    data:
+      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
+        }}\n{% else %}\n  100\n{% endif %}\n"
+    target:
+      entity_id:
+      - light.parents_room_bulb_1_entity
+      - light.parents_room_bulb_3_entity
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
+  - repeat:
+      while:
+      - condition: state
+        state: 'off'
+        entity_id: binary_sensor.parents_room_doors
+      sequence:
+      - service: light.toggle
+        data:
+          brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
+            }}\n{% else %}\n  100\n{% endif %}\n"
+        target:
+          entity_id:
+          - light.parents_room_bulb_1_entity
+          - light.parents_room_bulb_2_entity
+          - light.parents_room_bulb_3_entity
+          - light.parents_room_bulb_4_entity
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 2
+          milliseconds: 0
+  - service: light.turn_on
+    data:
+      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
+        }}\n{% else %}\n  100\n{% endif %}\n"
+    target:
+      entity_id: light.parents_room_lights
+  mode: single
+  icon: mdi:alarm

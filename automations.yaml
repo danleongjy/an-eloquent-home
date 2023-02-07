@@ -4552,6 +4552,8 @@
         - automation.lights_for_wind_down
         - automation.lights_for_elena_s_bedtime
         - automation.lights_for_sleep_hours_start
+        - automation.elis_school_day_alarm
+        - automation.parents_room_school_day_alarm
     - repeat:
         for_each:
         - cover.living_room_left_blind
@@ -4590,6 +4592,8 @@
         - automation.lights_for_wind_down
         - automation.lights_for_elena_s_bedtime
         - automation.lights_for_sleep_hours_start
+        - automation.elis_school_day_alarm
+        - automation.parents_room_school_day_alarm
     - service: automation.trigger
       data:
         skip_condition: false
@@ -5869,3 +5873,58 @@
       button_down_long_max_loop_repeats: 20
       button_down_double_press: true
       helper_double_press_delay: 500
+- id: '1675597759060'
+  alias: Eli's School Day Alarm
+  description: Wake up Eli on school days
+  trigger:
+  - platform: time
+    at: input_datetime.elis_school_day_alarm
+  condition:
+  - condition: time
+    after: 00:01:00
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - service: script.elis_school_day_alarm
+    data: {}
+  mode: single
+- id: '1675606538755'
+  alias: Parents' Room School Day Alarm
+  description: Wake up parents on school days
+  trigger:
+  - platform: time
+    at: input_datetime.elenas_school_day_alarm
+    id: Elena
+  - platform: time
+    at: input_datetime.elis_school_day_alarm
+    id: Eli
+  condition:
+  - condition: time
+    after: 00:01:00
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  action:
+  - if:
+    - condition: trigger
+      id: Eli
+    then:
+    - condition: state
+      entity_id: binary_sensor.pixel_4a_is_charging
+      state: 'off'
+    - service: script.parents_room_school_day_alarm
+      data: {}
+    else:
+    - condition: state
+      entity_id: binary_sensor.pixel_4a_is_charging
+      state: 'on'
+    - service: script.parents_room_school_day_alarm
+      data: {}
+  mode: single
