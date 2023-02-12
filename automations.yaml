@@ -5798,6 +5798,11 @@
     - wed
     - thu
     - fri
+  - condition: state
+    entity_id:
+    - calendar.public_holidays
+    - calendar.school_holidays
+    state: 'off'
   action:
   - service: script.elis_school_day_alarm
     data: {}
@@ -5821,6 +5826,9 @@
     - wed
     - thu
     - fri
+  - condition: state
+    entity_id: calendar.public_holidays
+    state: 'off'
   action:
   - if:
     - condition: trigger
@@ -5829,12 +5837,38 @@
     - condition: state
       entity_id: binary_sensor.pixel_4a_is_charging
       state: 'off'
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: calendar.school_holidays
+        state: 'off'
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: calendar.school_holidays
+          state: 'on'
+        - condition: template
+          value_template: '{{ ''Eli'' not in state_attr(''calendar.school_holidays'',''description'')
+            }}'
     - service: script.parents_room_school_day_alarm
       data: {}
     else:
     - condition: state
       entity_id: binary_sensor.pixel_4a_is_charging
       state: 'on'
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: calendar.school_holidays
+        state: 'off'
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: calendar.school_holidays
+          state: 'on'
+        - condition: template
+          value_template: '{{ ''Elena'' not in state_attr(''calendar.school_holidays'',''description'')
+            }}'
     - service: script.parents_room_school_day_alarm
       data: {}
   mode: single
