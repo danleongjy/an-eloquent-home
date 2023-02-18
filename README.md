@@ -17,18 +17,18 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 91
+[`automation`](https://www.home-assistant.io/components/automation) | 93
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 92
 [`button`](https://www.home-assistant.io/components/button) | 122
 [`calendar`](https://www.home-assistant.io/components/calendar) | 2
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`cover`](https://www.home-assistant.io/components/cover) | 8
-[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 4
+[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 5
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 20
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 19
-[`input_number`](https://www.home-assistant.io/components/input_number) | 29
+[`input_number`](https://www.home-assistant.io/components/input_number) | 30
 [`input_select`](https://www.home-assistant.io/components/input_select) | 8
 [`input_text`](https://www.home-assistant.io/components/input_text) | 29
 [`light`](https://www.home-assistant.io/components/light) | 52
@@ -45,7 +45,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1204
+Total | 1208
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
