@@ -1,75 +1,3 @@
-- id: '1642993601811'
-  alias: Dining Room AC Set State
-  description: Set the Dining Room AC power and temperature
-  trigger:
-  - platform: state
-    entity_id: climate.dining_room_ac
-    id: cooling
-    to: cool
-  - platform: state
-    entity_id: climate.dining_room_ac
-    id: power_off
-    from: cool
-  - platform: state
-    entity_id: climate.dining_room_ac
-    id: temperature_changed
-    attribute: temperature
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: cooling
-      sequence:
-      - service: script.ac_set_state
-        data:
-          target_ac: Dining Room AC
-          target_ac_temp: '{{ state_attr("climate.dining_room_ac", "temperature")
-            }}'
-    - conditions:
-      - condition: trigger
-        id: power_off
-      sequence:
-      - service: script.ac_set_state
-        data:
-          target_ac: Dining Room AC
-          target_ac_power: false
-    - conditions:
-      - condition: trigger
-        id: temperature_changed
-      sequence:
-      - if:
-        - condition: numeric_state
-          entity_id: climate.dining_room_ac
-          attribute: temperature
-          below: '24'
-        then:
-        - service: climate.set_temperature
-          data:
-            temperature: 27
-          target:
-            entity_id: climate.dining_room_ac
-        - service: climate.turn_off
-          data: {}
-          target:
-            entity_id: climate.dining_room_ac
-        - service: script.ac_set_state
-          data:
-            target_ac: Dining Room AC
-            target_ac_power: false
-        else:
-        - service: climate.turn_on
-          data: {}
-          target:
-            entity_id: climate.dining_room_ac
-        - service: script.ac_set_state
-          data:
-            target_ac: Dining Room AC
-            target_ac_temp: '{{ state_attr("climate.dining_room_ac", "temperature")
-              }}'
-    default: []
-  mode: single
-  max_exceeded: silent
 - id: '1642995603670'
   alias: Eli's Room AC Set State
   description: Set Eli's Room AC power and temperature
@@ -2183,230 +2111,6 @@
         data:
           target_fan: Parents' Room Fan
           target_fan_power: false
-    default: []
-  mode: single
-  max_exceeded: silent
-- id: '1659246959168'
-  alias: Living Room AC Set State
-  description: Set the Living Room AC power and temperature
-  trigger:
-  - platform: state
-    entity_id:
-    - climate.living_room_ac
-    id: cooling
-    to: cool
-  - platform: state
-    entity_id:
-    - climate.living_room_ac
-    id: power_off
-    from: cool
-  - platform: state
-    entity_id:
-    - climate.living_room_ac
-    id: temperature_changed
-    attribute: temperature
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: cooling
-      sequence:
-      - service: script.ac_set_state
-        data:
-          target_ac: Living Room AC
-          target_ac_temp: '{{ state_attr("climate.living_room_ac", "temperature")
-            }}'
-    - conditions:
-      - condition: trigger
-        id: power_off
-      sequence:
-      - service: script.ac_set_state
-        data:
-          target_ac: Living Room AC
-          target_ac_power: false
-    - conditions:
-      - condition: trigger
-        id: temperature_changed
-      sequence:
-      - if:
-        - condition: numeric_state
-          entity_id: climate.living_room_ac
-          attribute: temperature
-          below: '24'
-        then:
-        - service: climate.set_temperature
-          data:
-            temperature: 27
-          target:
-            entity_id: climate.living_room_ac
-        - service: climate.turn_off
-          data: {}
-          target:
-            entity_id: climate.living_room_ac
-        - service: script.ac_set_state
-          data:
-            target_ac: Living Room AC
-            target_ac_power: false
-        else:
-        - service: climate.turn_on
-          data: {}
-          target:
-            entity_id: climate.living_room_ac
-        - service: script.ac_set_state
-          data:
-            target_ac: Living Room AC
-            target_ac_temp: '{{ state_attr("climate.living_room_ac", "temperature")
-              }}'
-    default: []
-  mode: single
-  max_exceeded: silent
-- id: '1659247242286'
-  alias: Study Room AC Set State
-  description: Set the Study Room AC power and temperature
-  trigger:
-  - platform: state
-    entity_id:
-    - climate.study_room_ac
-    id: cooling
-    to: cool
-  - platform: state
-    entity_id:
-    - climate.study_room_ac
-    id: power_off
-    from: cool
-  - platform: state
-    entity_id:
-    - climate.study_room_ac
-    id: temperature_changed
-    attribute: temperature
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: cooling
-      sequence:
-      - service: script.ac_set_state
-        data:
-          target_ac: Study Room AC
-          target_ac_temp: '{{ state_attr("climate.study_room_ac", "temperature") }}'
-    - conditions:
-      - condition: trigger
-        id: power_off
-      sequence:
-      - service: script.ac_set_state
-        data:
-          target_ac: Study Room AC
-          target_ac_power: false
-    - conditions:
-      - condition: trigger
-        id: temperature_changed
-      sequence:
-      - if:
-        - condition: numeric_state
-          entity_id: climate.study_room_ac
-          attribute: temperature
-          below: '24'
-        then:
-        - service: climate.set_temperature
-          data:
-            temperature: 27
-          target:
-            entity_id: climate.study_room_ac
-        - service: climate.turn_off
-          data: {}
-          target:
-            entity_id: climate.study_room_ac
-        - service: script.ac_set_state
-          data:
-            target_ac: Study Room AC
-            target_ac_power: false
-        else:
-        - service: climate.turn_on
-          data: {}
-          target:
-            entity_id: climate.study_room_ac
-        - service: script.ac_set_state
-          data:
-            target_ac: Study Room AC
-            target_ac_temp: '{{ state_attr("climate.study_room_ac", "temperature")
-              }}'
-    default: []
-  mode: single
-  max_exceeded: silent
-- id: '1659247612519'
-  alias: Parents' Room AC Set State
-  description: Set the Parents' Room AC power and temperature
-  trigger:
-  - platform: state
-    entity_id:
-    - climate.parents_room_ac
-    id: cooling
-    to: cool
-  - platform: state
-    entity_id:
-    - climate.parents_room_ac
-    id: power_off
-    from: cool
-  - platform: state
-    entity_id:
-    - climate.parents_room_ac
-    id: temperature_changed
-    attribute: temperature
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: cooling
-      sequence:
-      - service: script.ac_set_state
-        data:
-          target_ac: Parents' Room AC
-          target_ac_temp: '{{ state_attr("climate.parents_room_ac", "temperature")
-            }}'
-    - conditions:
-      - condition: trigger
-        id: power_off
-      sequence:
-      - service: script.ac_set_state
-        data:
-          target_ac: Parents' Room AC
-          target_ac_power: false
-    - conditions:
-      - condition: trigger
-        id: temperature_changed
-      sequence:
-      - if:
-        - condition: numeric_state
-          entity_id: climate.parents_room_ac
-          attribute: temperature
-          below: '24'
-        then:
-        - service: climate.set_temperature
-          data:
-            temperature: 27
-          target:
-            entity_id: climate.parents_room_ac
-        - service: climate.turn_off
-          data: {}
-          target:
-            entity_id: climate.parents_room_ac
-        - service: script.ac_set_state
-          data:
-            target_ac: Parents' Room AC
-            target_ac_power: false
-        else:
-        - service: climate.turn_on
-          data: {}
-          target:
-            entity_id: climate.parents_room_ac
-        - service: script.ac_set_state
-          data:
-            target_ac: Parents' Room AC
-            target_ac_temp: '{{ state_attr("climate.parents_room_ac", "temperature")
-              }}'
     default: []
   mode: single
   max_exceeded: silent
@@ -6026,3 +5730,31 @@
         ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(''calendar.elenas_school_holidays'',''message'')
         }}.'
   mode: parallel
+- id: '1676817770291'
+  alias: Parents' Room AC Set State
+  description: Set the Parents' Room AC power and temperature
+  use_blueprint:
+    path: danleongjy/ac_set_state.yaml
+    input:
+      ac: climate.parents_room_ac
+- id: '1676817926482'
+  alias: Study Room AC Set State
+  description: Set the Study Room AC power and temperature
+  use_blueprint:
+    path: danleongjy/ac_set_state.yaml
+    input:
+      ac: climate.study_room_ac
+- id: '1676817996854'
+  alias: Living Room AC Set State
+  description: Set the Living Room AC power and temperature
+  use_blueprint:
+    path: danleongjy/ac_set_state.yaml
+    input:
+      ac: climate.living_room_ac
+- id: '1676818033871'
+  alias: Dining Room AC Set State
+  description: Set the Dining Room AC power and temperature
+  use_blueprint:
+    path: danleongjy/ac_set_state.yaml
+    input:
+      ac: climate.dining_room_ac
