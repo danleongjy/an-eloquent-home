@@ -1,0 +1,105 @@
+blueprint:
+  name: Fan Set State
+  description: Depending on state changes in the Template Fan entities, pass the state parameters to the Fan Set State script to sync the actual state of the physical fans by sending the corresponding RF commands.
+  domain: automation
+  input:
+    fan:
+      name: Fan
+      description: Fan for which to set the state
+      selector:
+        entity:
+          domain: fan
+    recommended_scene_sensor:
+      name: Recommended Scene Sensor
+      description: Recommended scene in the room containing the fan, which contains a fan_speed attribute
+      selector:
+        entity:
+          include_entities:
+            - binary_sensor.recommended_scene_in_dining_room
+            - binary_sensor.recommended_scene_in_elenas_room
+            - binary_sensor.recommended_scene_in_elis_room
+            - binary_sensor.recommended_scene_in_living_room
+            - binary_sensor.recommended_scene_in_parents_room
+            - binary_sensor.recommended_scene_in_study_room
+trigger:
+  - platform: state
+    entity_id: !input fan
+    id: power_off
+    from: "on"
+    to: "off"
+  - platform: state
+    entity_id: !input fan
+    id: power_on
+    from: "off"
+    to: "on"
+  - platform: state
+    entity_id: !input fan
+    id: speed
+    attribute: percentage
+action:
+  - variables:
+      target_fan: !input fan
+      target_recommended_scene_sensor: !input recommended_scene_sensor
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: speed
+        sequence:
+          - if:
+              - condition: numeric_state
+                entity_id: !input fan
+                attribute: percentage
+                below: "10"
+            then:
+              - service: fan.set_percentage
+                data:
+                  percentage: >-
+                    {{
+                    state_attr(target_recommended_scene_sensor,
+                    "fan_speed") | int }}
+                target:
+                  entity_id: !input fan
+              - service: fan.turn_off
+                data: {}
+                target:
+                  entity_id: !input fan
+              - service: script.fan_set_state
+                data:
+                  target_fan: "{{ state_attr(target_fan,'friendly_name') }}"
+                  target_fan_power: false
+            else:
+              - service: script.fan_set_state
+                data:
+                  target_fan: "{{ state_attr(target_fan,'friendly_name') }}"
+                  target_fan_speed: "{{ state_attr(target_fan, 'percentage') | int }}"
+      - conditions:
+          - condition: trigger
+            id: power_on
+        sequence:
+          - service: fan.set_percentage
+            data:
+              percentage: >-
+                {{ state_attr(target_recommended_scene_sensor,
+                "fan_speed") | int }}
+            target:
+              entity_id: !input fan
+          - service: script.fan_set_state
+            data:
+              target_fan: "{{ state_attr(target_fan,'friendly_name') }}"
+              target_fan_speed: "{{ state_attr(target_fan, 'percentage') | int }}"
+              target_fan_power: true
+      - conditions:
+          - condition: trigger
+            id: power_off
+        sequence:
+          - service: input_boolean.turn_off
+            data: {}
+            target:
+              entity_id: "input_boolean.{{ target_fan.split('.')[1] }}_power"
+          - service: script.fan_set_state
+            data:
+              target_fan: "{{ state_attr(target_fan,'friendly_name') }}"
+              target_fan_power: false
+    default: []
+mode: single
+max_exceeded: silent
