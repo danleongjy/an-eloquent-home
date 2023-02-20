@@ -901,86 +901,6 @@
       button_up_long_max_loop_repeats: 50
       button_down_long_loop: true
       button_down_long_max_loop_repeats: 50
-- id: '1643710058122'
-  alias: Elena's Room AC Auto Control
-  description: Automatically turn of or off Elena's Room AC to keep Elena's Room Temperature
-    within +0.7 and +0 degC of the AC target temperature
-  trigger:
-  - platform: state
-    entity_id: sensor.elenas_room_temperature
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.elenas_room_temperature
-        value_template: '{{ float(state.state) - state_attr(''climate.elenas_room_ac'',
-          ''temperature'') | int }}'
-        above: '0.7'
-      - condition: state
-        entity_id: climate.elenas_room_ac
-        state: 'off'
-      sequence:
-      - service: climate.turn_on
-        target:
-          entity_id: climate.elenas_room_ac
-        data: {}
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.elenas_room_temperature
-        below: '0'
-        value_template: '{{ float(state.state) - state_attr(''climate.elenas_room_ac'',
-          ''temperature'') | int }}'
-      - condition: state
-        entity_id: climate.elenas_room_ac
-        state: cool
-      sequence:
-      - service: climate.turn_off
-        target:
-          entity_id: climate.elenas_room_ac
-        data: {}
-    default: []
-  mode: single
-- id: '1643710293194'
-  alias: Eli's Room AC Auto Control
-  description: Automatically turn of or off Eli's Room AC to keep Eli's Room Temperature
-    within +1.2 and +0.2 degC of the AC target temperature
-  trigger:
-  - platform: state
-    entity_id: sensor.elis_room_temperature
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.elis_room_temperature
-        above: '1.2'
-        value_template: '{{ float(state.state) - state_attr("climate.elis_room_ac",
-          "temperature") | int }}'
-      - condition: state
-        entity_id: climate.elis_room_ac
-        state: 'off'
-      sequence:
-      - service: climate.turn_on
-        target:
-          entity_id: climate.elis_room_ac
-        data: {}
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.elis_room_temperature
-        below: '0.2'
-        value_template: '{{ float(state.state) - state_attr("climate.elis_room_ac",
-          "temperature") | int }}'
-      - condition: state
-        entity_id: climate.elis_room_ac
-        state: cool
-      sequence:
-      - service: climate.turn_off
-        target:
-          entity_id: climate.elis_room_ac
-        data: {}
-    default: []
-  mode: single
 - id: '1643721003621'
   alias: AC Auto Control at Night
   description: Turn on AC Auto Control at night in rooms where fans are on
@@ -5585,3 +5505,23 @@
     path: danleongjy/ac_set_state.yaml
     input:
       ac: climate.elis_room_ac
+- id: '1676873827127'
+  alias: Elena's Room AC Auto Control
+  description: Automatically turn on or off Elena's Room AC to keep Elena's Room Temperature
+    within +0.7 and +0 degC of the AC target temperature
+  use_blueprint:
+    path: danleongjy/ac_auto_control.yaml
+    input:
+      ac: climate.elenas_room_ac
+      temp_sensor: sensor.elenas_room_temperature
+- id: '1676873914630'
+  alias: Eli's Room AC Auto Control
+  description: Automatically turn on or off Eli's Room AC to keep Eli's Room Temperature
+    within +1.2 and +0.2 degC of the AC target temperature
+  use_blueprint:
+    path: danleongjy/ac_auto_control.yaml
+    input:
+      ac: climate.elis_room_ac
+      temp_sensor: sensor.elis_room_temperature
+      min_temp_offset: 0.2
+      max_temp_offset: 1.2

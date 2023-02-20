@@ -1,0 +1,79 @@
+blueprint:
+  name: AC Auto Control
+  description: Depending on the room temperature, automatically turn on or off the AC to maintain the temperature in a preset range.
+  domain: automation
+  input:
+    ac:
+      name: Air Conditioner
+      description: Air conditioner unit for auto control
+      selector:
+        entity:
+          domain: climate
+    temp_sensor:
+      name: Room Temperature Sensor
+      description: The temperature sensor in the room for AC auto control
+      selector:
+        entity:
+          domain: sensor
+          device_class: temperature
+    min_temp_offset:
+      name: Minimum Temperature Offset
+      description: Minimum difference between room temperature and AC setpoint temperature.  If the difference is less than this value, the AC will turn off.
+      selector:
+        number:
+          min: -2
+          max: 2
+          step: 0.1
+          unit_of_measurement: °C
+          mode: slider
+      default: 0
+    max_temp_offset:
+      name: Maximum Temperature Offset
+      description: Maximum difference between room temperature and AC setpoint temperature.  If the difference is more than this value, the AC will turn on.
+      selector:
+        number:
+          min: -2
+          max: 2
+          step: 0.1
+          unit_of_measurement: °C
+          mode: slider
+      default: 0.7
+trigger:
+  - platform: state
+    entity_id: !input temp_sensor
+action:
+  - variables:
+      target_ac: !input ac
+  - choose:
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input temp_sensor
+            value_template: >-
+              {{ float(state.state) - state_attr(target_ac,
+              'temperature') | int }}
+            above: !input max_temp_offset
+          - condition: state
+            entity_id: !input ac
+            state: "off"
+        sequence:
+          - service: climate.turn_on
+            target:
+              entity_id: !input ac
+            data: {}
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input temp_sensor
+            below: !input min_temp_offset
+            value_template: >-
+              {{ float(state.state) - state_attr(target_ac,
+              'temperature') | int }}
+          - condition: state
+            entity_id: !input ac
+            state: cool
+        sequence:
+          - service: climate.turn_off
+            target:
+              entity_id: !input ac
+            data: {}
+    default: []
+mode: single
