@@ -1,6 +1,6 @@
 blueprint:
   name: AC Set State
-  description: Set AC power and temperature
+  description: Depending on state changes in the Generic Thermostat climate entities, pass the state parameters to the AC Set State script to sync the actual state of the physical AC units by sending the corresponding RF commands.
   domain: automation
   input:
     ac:
@@ -11,24 +11,14 @@ blueprint:
           domain: climate
     default_temp:
       name: Default Temperature
-      description: Default temperature of the air conditioner when turned on. Must be higher than the Minimum Temperature.
+      description: Default temperature of the air conditioner when turned on.
       selector:
         number:
-          min: 16
-          max: 30
+          min: 24
+          max: 27
           unit_of_measurement: °C
           mode: slider
       default: 27
-    min_temp:
-      name: Minimum Temperature
-      description: Minimum temperature of the air conditioner. If the AC's target temperature is set below this, it will be turned off.
-      selector:
-        number:
-          min: 16
-          max: 30
-          unit_of_measurement: °C
-          mode: slider
-      default: 24
 trigger:
   - platform: state
     entity_id: !input ac
@@ -67,10 +57,8 @@ action:
             id: temperature_changed
         sequence:
           - if:
-              - condition: numeric_state
-                entity_id: !input ac
-                attribute: temperature
-                below: !input min_temp
+              - condition: template
+                value_template: "{{ state_attr(target_ac, 'temperature') | float(24) < (state_attr(target_ac, 'min_temp') | float(23) + 1) }}"
             then:
               - service: climate.set_temperature
                 data:
