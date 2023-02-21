@@ -2402,136 +2402,12 @@
                                   "show_state": true
                                 }
                               ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.ac_on_with_doors_open_at_hallway",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">AC on with doors open</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "conditional",
-                                "conditions": [
-                                  {
-                                    "entity": "binary_sensor.junior_bathroom_door",
-                                    "state": "on"
-                                  }
-                                ],
-                                "card": {
-                                  "type": "markdown",
-                                  "content": "<ha-alert alert-type=\"error\">Please close junior bathroom door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
-                                }
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "conditional",
-                                "conditions": [
-                                  {
-                                    "entity": "binary_sensor.powder_room_door",
-                                    "state": "on"
-                                  }
-                                ],
-                                "card": {
-                                  "type": "markdown",
-                                  "content": "<ha-alert alert-type=\"error\">Please close powder room door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
-                                }
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "off"
-                                }
-                              ],
-                              "card": {
-                                "type": "conditional",
-                                "conditions": [
-                                  {
-                                    "entity": "binary_sensor.junior_bathroom_door",
-                                    "state": "on"
-                                  }
-                                ],
-                                "card": {
-                                  "type": "markdown",
-                                  "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with junior bathroom door open.</ha-alert>"
-                                }
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "off"
-                                }
-                              ],
-                              "card": {
-                                "type": "conditional",
-                                "conditions": [
-                                  {
-                                    "entity": "binary_sensor.powder_room_door",
-                                    "state": "on"
-                                  }
-                                ],
-                                "card": {
-                                  "type": "markdown",
-                                  "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with powder room door open.</ha-alert>"
-                                }
-                              }
                             }
                           ]
                         },
                         "style": "--popup-border-radius: 6px\n"
                       }
                     }
-                  },
-                  "styles": {
-                    "card": [
-                      {
-                        "background-color": "[[[\n  if ((states['binary_sensor.ac_on_with_doors_open_at_hallway'].state == 'on')\n     || ((states['binary_sensor.vacuum_running_with_doors_open'].state == 'on')\n          && ((states['binary_sensor.junior_bathroom_door'].state == 'on')\n           || (states['binary_sensor.powder_room_door'].state == 'on'))))\n    return '#9e110d';\n  else\n    return 'var(--secondary-background-color)';\n]]]\n"
-                      }
-                    ]
                   }
                 },
                 {
@@ -6594,12 +6470,25 @@
                 },
                 {
                   "entity": "input_datetime.sleep_hours_end"
-                },
+                }
+              ]
+            },
+            {
+              "type": "entities",
+              "entities": [
                 {
                   "entity": "input_datetime.elis_school_day_alarm"
                 },
                 {
+                  "entity": "input_boolean.elis_school_day_alarm_enabled",
+                  "name": "Alarm Enabled"
+                },
+                {
                   "entity": "input_datetime.elenas_school_day_alarm"
+                },
+                {
+                  "entity": "input_boolean.elenas_school_day_alarm_enabled",
+                  "name": "Alarm Enabled"
                 }
               ]
             }
