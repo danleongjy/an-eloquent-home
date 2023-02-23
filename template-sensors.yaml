@@ -439,7 +439,7 @@
           {% endif %}
         {% else %}
           {% if states('sensor.dining_room_lux') | int(1000) > states('input_number.minimum_lux') | int(0) 
-             or now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time() %}
+             or (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time() and states('input_boolean.wind_down_lights') == 'on') %}
             0
           {% else %}
             100
@@ -449,16 +449,16 @@
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
            and now().time() <= strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time())
         %}
-          {{ states('input_number.night_light_brightness') }}
+          {% if states('input_boolean.wind_down_lights') == 'on' %}
+            {{ states('input_number.night_light_brightness') }}
+          {% else %}
+            100
+          {% endif %}
         {% elif (now().time() > strptime(states('input_datetime.sleep_hours_end'), '%H:%M:%S').time()
            and states('sun.sun') == 'below_horizon' and state_attr('sun.sun', 'rising') == true)
         %}
           {{ states('input_number.morning_light_brightness') }}
-        {% elif (states('sensor.dining_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
-           and (now().time() <= strptime(states('input_datetime.wind_down'), '%H:%M:%S').time())
-           and not (now().time() > strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time()
-                    or now().time() <= strptime(states('input_datetime.sleep_hours_end'), '%H:%M:%S').time()) 
-        %}
+        {% elif states('sensor.dining_room_lux') | int(0) < states('input_number.minimum_lux') | int(0) %}
           100
         {% else %}
           0
@@ -533,14 +533,14 @@
         {% if state_attr('sun.sun', 'rising') == true %}
           {% if is_state('sun.sun', 'below_horizon') %}
             0
-          {% elif states('sensor.dining_room_lux') | int(1000) < states('input_number.minimum_lux') | int(0) %}
+          {% elif states('sensor.living_room_lux') | int(1000) < states('input_number.minimum_lux') | int(0) %}
             100
           {% else %}
             0
           {% endif %}
         {% else %}
           {% if states('sensor.living_room_lux') | int(1000) > states('input_number.minimum_lux') | int(0) 
-             or now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time() %}
+             or (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time() and states('input_boolean.wind_down_lights') == 'on') %}
             0
           {% else %}
             100
@@ -550,16 +550,16 @@
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
            and now().time() <= strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time())
         %}
-          {{ states('input_number.night_light_brightness') }}
+          {% if states('input_boolean.wind_down_lights') == 'on' %}
+            {{ states('input_number.night_light_brightness') }}
+          {% else %}
+            100
+          {% endif %}
         {% elif (now().time() > strptime(states('input_datetime.sleep_hours_end'), '%H:%M:%S').time()
            and states('sun.sun') == 'below_horizon' and state_attr('sun.sun', 'rising') == true)
         %}
           {{ states('input_number.morning_light_brightness') }}
-        {% elif (states('sensor.living_room_lux') | int(0) < states('input_number.minimum_lux') | int(0))
-           and (now().time() <= strptime(states('input_datetime.wind_down'), '%H:%M:%S').time())
-           and not (now().time() > strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time()
-                    or now().time() <= strptime(states('input_datetime.sleep_hours_end'), '%H:%M:%S').time()) 
-        %}
+        {% elif states('sensor.living_room_lux') | int(0) < states('input_number.minimum_lux') | int(0) %}
           100
         {% else %}
           0
@@ -621,16 +621,16 @@
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
            and now().time() <= strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time())
         %}
-          {{ states('input_number.night_light_brightness') }}
+          {% if states('input_boolean.wind_down_lights') == 'on' %}
+            {{ states('input_number.night_light_brightness') }}
+          {% else %}
+            100
+          {% endif %}
         {% elif (now().time() > strptime(states('input_datetime.sleep_hours_end'), '%H:%M:%S').time()
            and states('sun.sun') == 'below_horizon' and state_attr('sun.sun', 'rising') == true)
         %}
           {{ states('input_number.morning_light_brightness') }}
-        {% elif (states('sensor.study_walkway_lux') | int(0) < states('input_number.minimum_lux') | int(0))
-           and (now().time() <= strptime(states('input_datetime.wind_down'), '%H:%M:%S').time())
-           and not (now().time() > strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time()
-                    or now().time() <= strptime(states('input_datetime.sleep_hours_end'), '%H:%M:%S').time()) 
-        %}
+        {% elif states('sensor.study_walkway_lux') | int(0) < states('input_number.minimum_lux') | int(0) %}
           100
         {% else %}
           0

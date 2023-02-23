@@ -17,7 +17,7 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 95
+[`automation`](https://www.home-assistant.io/components/automation) | 92
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 91
 [`button`](https://www.home-assistant.io/components/button) | 122
 [`calendar`](https://www.home-assistant.io/components/calendar) | 3
@@ -26,7 +26,7 @@ Domain | Quantity
 [`cover`](https://www.home-assistant.io/components/cover) | 8
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 7
 [`fan`](https://www.home-assistant.io/components/fan) | 6
-[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 22
+[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 23
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 19
 [`input_number`](https://www.home-assistant.io/components/input_number) | 30
 [`input_select`](https://www.home-assistant.io/components/input_select) | 8
@@ -45,7 +45,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1214
+Total | 1212
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
