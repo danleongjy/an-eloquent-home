@@ -733,61 +733,6 @@
     id: end
   condition: []
   action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: end
-      sequence:
-      - service: automation.turn_off
-        target:
-          entity_id:
-          - automation.elenas_room_ac_auto_control
-          - automation.elis_room_ac_auto_control
-        data: {}
-      - service: climate.turn_off
-        target:
-          entity_id:
-          - climate.elenas_room_ac
-          - climate.elis_room_ac
-        data: {}
-    - conditions:
-      - condition: trigger
-        id: start
-      sequence:
-      - choose:
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: fan.elenas_room_fan
-              state: 'on'
-            - condition: state
-              entity_id: climate.elenas_room_ac
-              state: cool
-          sequence:
-          - service: automation.turn_on
-            target:
-              entity_id: automation.elenas_room_ac_auto_control
-            data: {}
-        default: []
-      - choose:
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: fan.elis_room_fan
-              state: 'on'
-            - condition: state
-              entity_id: climate.elis_room_ac
-              state: cool
-          sequence:
-          - service: automation.turn_on
-            target:
-              entity_id: automation.elis_room_ac_auto_control
-            data: {}
-        default: []
-    default: []
-    enabled: false
   - if:
     - condition: trigger
       id: start
@@ -1071,6 +1016,7 @@
     - binary_sensor.junior_bathroom_door
     - binary_sensor.powder_room_door
     - binary_sensor.master_bathroom_door
+    - binary_sensor.main_door
     from: 'on'
     to: 'off'
     id: door_closed
@@ -2369,8 +2315,10 @@
   description: Close the Kitchen Blinds if raining, in the mornings or AC is on
   trigger:
   - platform: template
-    value_template: "{{ (states('sensor.local_rainfall') | int > 1) or ('Thunder'
-      in\n   states('sensor.local_two_hour_forecast')) }}"
+    value_template: "{{ (states('sensor.local_rainfall') | int > 1)\n   or ('Thunder'
+      in states('sensor.local_two_hour_forecast'))\n   or ('Rain' in states('sensor.local_two_hour_forecast'))\n
+      \  or ('Shower' in states('sensor.local_two_hour_forecast'))\n   or ('Wind'
+      in states('sensor.local_two_hour_forecast')) }}"
   - platform: state
     entity_id:
     - climate.living_room_ac
@@ -2413,8 +2361,10 @@
     - condition: or
       conditions:
       - condition: template
-        value_template: "{{ (states('sensor.local_rainfall') | int > 1) or ('Thunder'
-          in\n   states('sensor.local_two_hour_forecast')) }}"
+        value_template: "{{ (states('sensor.local_rainfall') | int > 1)\n   or ('Thunder'
+          in states('sensor.local_two_hour_forecast'))\n   or ('Rain' in states('sensor.local_two_hour_forecast'))\n
+          \  or ('Shower' in states('sensor.local_two_hour_forecast'))\n   or ('Wind'
+          in states('sensor.local_two_hour_forecast')) }}"
       - condition: state
         entity_id: climate.living_room_ac
         state: cool
@@ -2422,15 +2372,13 @@
         entity_id:
         - sensor.kitchen_lux
         above: input_number.maximum_lux
-    - condition: state
-      entity_id:
-      - switch.stove_main_power
-      - switch.rice_cooker
-      state: 'off'
     - condition: not
       conditions:
       - condition: state
-        entity_id: binary_sensor.gas_water_heater
+        entity_id:
+        - switch.stove_main_power
+        - switch.rice_cooker
+        - binary_sensor.gas_water_heater
         state: 'on'
     then:
     - condition: template
@@ -2473,8 +2421,10 @@
       - condition: not
         conditions:
         - condition: template
-          value_template: "{{ (states('sensor.local_rainfall') | int > 1) or ('Thunder'
-            in\n   states('sensor.local_two_hour_forecast')) }}"
+          value_template: "{{ (states('sensor.local_rainfall') | int > 1)\n   or ('Thunder'
+            in states('sensor.local_two_hour_forecast'))\n   or ('Rain' in states('sensor.local_two_hour_forecast'))\n
+            \  or ('Shower' in states('sensor.local_two_hour_forecast'))\n   or ('Wind'
+            in states('sensor.local_two_hour_forecast')) }}"
     - condition: template
       value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed >
         timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
@@ -2844,16 +2794,10 @@
         seconds: 2
     - if:
       - condition: time
-        before: input_datetime.sleep_hours_end
-        weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-        - sat
-        - sun
         after: input_datetime.wind_down
+      - condition: state
+        entity_id: input_boolean.wind_down_lights
+        state: 'on'
       then:
       - service: light.turn_on
         data:
@@ -2925,14 +2869,6 @@
       - condition: time
         after: input_datetime.wind_down
         before: input_datetime.sleep_hours_end
-        weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-        - sat
-        - sun
       then:
       - service: light.turn_on
         data:
@@ -2940,11 +2876,22 @@
         target:
           entity_id: light.study_room_bulb_4_entity
       else:
-      - service: light.turn_on
-        data:
-          brightness_pct: 100
-        target:
-          entity_id: light.study_room_bulb_4_entity
+      - if:
+        - condition: sun
+          before: sunrise
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: '{{ states(''input_number.morning_light_brightness'')
+              }}'
+          target:
+            entity_id: light.study_room_bulb_4_entity
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.study_room_bulb_4_entity
     else:
     - condition: state
       entity_id:
@@ -3579,6 +3526,9 @@
         target:
           entity_id: light.living_room_pendant_light_entity
     else:
+    - condition: state
+      entity_id: input_boolean.wind_down_lights
+      state: 'off'
     - service: script.turn_off_living_room
       data: {}
       enabled: true
@@ -3639,6 +3589,9 @@
         target:
           entity_id: light.dining_room_pendant_light_entity
     else:
+    - condition: state
+      entity_id: input_boolean.wind_down_lights
+      state: 'off'
     - service: script.turn_off_dining_room
       data: {}
       enabled: true
@@ -4352,6 +4305,9 @@
   - condition: template
     value_template: '{{ now() > today_at(states(''input_datetime.wind_down'')) - timedelta(minutes
       = 1) }}'
+  - condition: state
+    entity_id: input_boolean.wind_down_lights
+    state: 'on'
   action:
   - parallel:
     - if:
@@ -4803,7 +4759,7 @@
         %d %b %Y') }} to {{ end_date.strftime('%a %d %b %Y') }}\n{% endif %}"
       message: '{% set preamble = {''calendar.elenas_school_holidays'': ''Elena has
         no school'', ''calendar.elis_school_holidays'': ''Eli has no school'', ''calendar.public_holidays'':
-        ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(''calendar.elenas_school_holidays'',''message'')
+        ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(trigger.id,''message'')
         }}.'
   mode: parallel
 - id: '1676870988942'
