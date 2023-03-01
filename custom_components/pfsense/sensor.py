@@ -580,6 +580,13 @@ class PfSenseGatewaySensor(PfSenseSensor):
         if gateway is None or property not in gateway.keys():
             return False
 
+        if property in ["stddev", "delay", "loss"]:
+            value = gateway[property]
+            if isinstance(value, str):
+                value = re.sub("[^0-9\.]*", "", value)
+                if len(value) < 1:
+                    return False
+
         return super().available
 
     @property
@@ -613,7 +620,13 @@ class PfSenseGatewaySensor(PfSenseSensor):
             value = gateway[property]
             # cleanse "ms", etc from values
             if property in ["stddev", "delay", "loss"]:
-                value = re.sub("[^0-9\.]*", "", value)
+                if isinstance(value, str):
+                    value = re.sub("[^0-9\.]*", "", value)
+                    if len(value) > 0:
+                        value = float(value)
+
+            if isinstance(value, str) and len(value) < 1:
+                return STATE_UNKNOWN
 
             return value
         except KeyError:
