@@ -3336,7 +3336,8 @@
     - service: script.turn_off_all
       data: {}
     - service: automation.turn_off
-      data: {}
+      data:
+        stop_actions: true
       target:
         entity_id:
         - automation.ac_auto_control_at_night
@@ -3359,13 +3360,16 @@
         - automation.eli_s_room_motion
         - automation.dining_room_motion
         - automation.living_room_motion
-        - automation.parents_room_motion
         - automation.south_facing_blinds_auto_control
         - automation.lights_for_wind_down
         - automation.lights_for_elena_s_bedtime
         - automation.lights_for_sleep_hours_start
         - automation.elis_school_day_alarm
         - automation.parents_room_school_day_alarm
+        - automation.parents_room_motion_ac
+        - automation.parents_room_motion_fan
+        - automation.parents_room_motion_lights
+        - automation.parents_room_motion_timeout
     - repeat:
         for_each:
         - cover.living_room_left_blind
@@ -3399,13 +3403,16 @@
         - automation.eli_s_room_motion
         - automation.dining_room_motion
         - automation.living_room_motion
-        - automation.parents_room_motion
         - automation.south_facing_blinds_auto_control
         - automation.lights_for_wind_down
         - automation.lights_for_elena_s_bedtime
         - automation.lights_for_sleep_hours_start
         - automation.elis_school_day_alarm
         - automation.parents_room_school_day_alarm
+        - automation.parents_room_motion_ac
+        - automation.parents_room_motion_fan
+        - automation.parents_room_motion_lights
+        - automation.parents_room_motion_timeout
     - service: automation.trigger
       data:
         skip_condition: false
@@ -4865,3 +4872,218 @@
     input:
       fan: fan.elis_room_fan
       recommended_scene_sensor: binary_sensor.recommended_scene_in_elis_room
+- id: '1677804713353'
+  alias: Parents' Room Motion Lights
+  description: Set the Parents' Room Lights when motion is detected and doors are
+    open depending on time and lux
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.parents_room_motion
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.parents_room_doors
+    state: 'on'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  action:
+  - choose:
+    - conditions:
+      - condition: time
+        before: input_datetime.sleep_hours_end
+        after: input_datetime.sleep_hours_start
+        alias: If it is during sleep hours
+      sequence:
+      - condition: state
+        entity_id: light.parents_room_lights
+        state: 'on'
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.parents_room_lights
+    - conditions:
+      - condition: time
+        after: input_datetime.wind_down
+        alias: If it is after wind down
+      sequence:
+      - service: light.turn_on
+        data:
+          brightness_pct: '{{ states(''input_number.night_light_brightness'') | int(1)
+            }}'
+        target:
+          entity_id: light.parents_room_lights
+        alias: Turn on Parents' Room Lights at night brightness
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.parents_room_lux
+        above: input_number.comfortable_lux
+      sequence:
+      - condition: state
+        entity_id: light.parents_room_lights
+        state: 'on'
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.parents_room_lights
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.parents_room_lux
+        below: input_number.minimum_lux
+      sequence:
+      - if:
+        - condition: sun
+          before: sunrise
+        then:
+        - service: light.turn_on
+          data:
+            brightness_pct: '{{ states(''input_number.morning_light_brightness'')
+              | int(10) }}'
+          target:
+            entity_id: light.parents_room_lights
+          alias: Turn on Parents' Room Lights at morning brightness
+        else:
+        - service: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.parents_room_lights
+          alias: Turn on Parents' Room Lights at full brightness
+  mode: single
+- id: '1677805061762'
+  alias: Parents' Room Motion Fan
+  description: Turn on the Parents' Room Fan depending on whether the doors are open
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.parents_room_motion
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.parents_room_doors
+    state: 'on'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  action:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.parents_room_doors
+      state: 'on'
+    then:
+    - service: fan.turn_on
+      data:
+        percentage: '{{ (states(''input_number.fans_po_eco_speed_when_ac_off'') |
+          int(4) / 6 * 100) | round(0) }}'
+      target:
+        entity_id: fan.parents_room_fan
+    else:
+    - service: fan.turn_on
+      data:
+        percentage: '{{ (states(''input_number.fans_po_eco_speed_when_ac_on'') | int(1)
+          / 6 * 100) | round(0) }}'
+      target:
+        entity_id: fan.parents_room_fan
+  mode: single
+- id: '1677805936493'
+  alias: Parents' Room Motion AC
+  description: Set the Parents' Room AC upon motion depending on the time and whether
+    the doors are closed
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.parents_room_motion
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.parents_room_doors
+    state: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  action:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.parents_room_doors
+      state: 'off'
+    then:
+    - if:
+      - condition: template
+        value_template: '{{ state_attr(''climate.parents_room_ac'',''current_temperature'')
+          >= state_attr(''climate.parents_room_ac'',''temperature'') }}'
+        alias: If current temperature is at least equal to setpoint
+      then:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.parents_room_ac
+    - if:
+      - condition: time
+        after: input_datetime.ac_auto_control_start
+        before: input_datetime.ac_auto_control_end
+      then:
+      - if:
+        - condition: state
+          entity_id: automation.parents_room_ac_auto_control
+          state: 'off'
+        then:
+        - service: automation.turn_on
+          data: {}
+          target:
+            entity_id: automation.parents_room_ac_auto_control
+    else:
+    - if:
+      - condition: state
+        entity_id: climate.parents_room_ac
+        state: cool
+      then:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: climate.parents_room_ac
+    - if:
+      - condition: state
+        entity_id: automation.parents_room_ac_auto_control
+        state: 'on'
+      then:
+      - service: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          entity_id: automation.parents_room_ac_auto_control
+  mode: single
+- id: '1677806095647'
+  alias: Parents' Room Motion Timeout
+  description: Turn off Parents' Room Lights, Fan, AC and AC Auto Control after motion
+    timeout
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.parents_room_motion
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: '{{ states(''input_number.motion_timeout'') | int(15) }}'
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: binary_sensor.parents_room_doors
+    state: 'on'
+  action:
+  - service: homeassistant.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.parents_room_lights
+      - fan.parents_room_fan
+      - climate.parents_room_ac
+      - automation.parents_room_ac_auto_control
+  mode: single
