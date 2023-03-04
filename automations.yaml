@@ -4953,71 +4953,6 @@
             entity_id: light.parents_room_lights
           alias: Turn on Parents' Room Lights at full brightness
   mode: single
-- id: '1677805936493'
-  alias: Parents' Room Motion AC
-  description: Set the Parents' Room AC upon motion depending on the time and whether
-    the doors are closed
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.parents_room_motion
-    from: 'off'
-    to: 'on'
-  condition:
-  - condition: state
-    entity_id: binary_sensor.parents_room_doors
-    state: 'off'
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-  action:
-  - if:
-    - condition: state
-      entity_id: binary_sensor.parents_room_doors
-      state: 'off'
-    then:
-    - if:
-      - condition: template
-        value_template: '{{ state_attr(''climate.parents_room_ac'',''current_temperature'')
-          >= state_attr(''climate.parents_room_ac'',''temperature'') }}'
-        alias: If current temperature is at least equal to setpoint
-      then:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.parents_room_ac
-      else:
-      - service: climate.turn_off
-        data: {}
-        target:
-          entity_id: climate.parents_room_ac
-    - if:
-      - condition: time
-        after: input_datetime.ac_auto_control_start
-        before: input_datetime.ac_auto_control_end
-      then:
-      - service: automation.turn_on
-        data: {}
-        target:
-          entity_id: automation.parents_room_ac_auto_control
-      else:
-      - service: automation.turn_off
-        data:
-          stop_actions: true
-        target:
-          entity_id: automation.parents_room_ac_auto_control
-    else:
-    - service: climate.turn_off
-      data: {}
-      target:
-        entity_id: climate.parents_room_ac
-    - service: automation.turn_off
-      data:
-        stop_actions: true
-      target:
-        entity_id: automation.parents_room_ac_auto_control
-  mode: single
 - id: '1677851042764'
   alias: Parents' Room Motion Timeout
   description: Turn off the Parents' Room Lights, Fan, AC and AC Auto Control if no
@@ -5043,6 +4978,23 @@
       fan: fan.parents_room_fan
       fan_speed_door_closed: input_number.fans_po_eco_speed_when_ac_on
       fan_speed_door_open: input_number.fans_po_eco_speed_when_ac_off
+      entities_list:
+      - light.parents_room_lights
+      - fan.parents_room_fan
+      - climate.parents_room_ac
+      door: binary_sensor.parents_room_doors
+- id: '1677902645887'
+  alias: Parents' Room Motion AC
+  description: Control the Parents' Room AC when motion is detected depending on whether
+    the doors are open
+  use_blueprint:
+    path: danleongjy/motion_ac.yaml
+    input:
+      motion_sensor: binary_sensor.parents_room_motion
+      ac: climate.parents_room_ac
+      ac_auto_control: automation.parents_room_ac_auto_control
+      ac_auto_control_start: input_datetime.ac_auto_control_start
+      ac_auto_control_end: input_datetime.ac_auto_control_end
       entities_list:
       - light.parents_room_lights
       - fan.parents_room_fan

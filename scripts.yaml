@@ -788,55 +788,14 @@ set_recommended_scene_in_study_room:
 set_recommended_scene_in_parents_room:
   alias: Set Recommended Scene in Parents' Room
   sequence:
-  - choose:
-    - conditions:
-      - condition: numeric_state
-        entity_id: binary_sensor.recommended_scene_in_parents_room
-        attribute: lights_level
-        above: '0'
-      sequence:
-      - service: light.turn_on
-        target:
-          entity_id: light.parents_room_lights
-        data:
-          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_parents_room'',
-            ''lights_level'') }}
-
-            '
-    default:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.parents_room_lights
-  - service: fan.turn_on
-    target:
-      entity_id: fan.parents_room_fan
+  - service: automation.trigger
     data:
-      percentage: '{{ state_attr(''binary_sensor.recommended_scene_in_parents_room'',
-        ''fan_speed'') | int }}
-
-        '
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.recommended_scene_in_parents_room
-        state: cool
-        attribute: ac_state
-      sequence:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.parents_room_ac
-    default:
-    - service: climate.turn_off
-      data: {}
-      target:
-        entity_id: climate.parents_room_ac
-  - service: automation.turn_{{ state_attr('binary_sensor.recommended_scene_in_parents_room',
-      'ac_auto_control') }}
-    data: {}
+      skip_condition: true
     target:
-      entity_id: automation.parents_room_ac_auto_control
+      entity_id:
+      - automation.parents_room_motion_ac
+      - automation.parents_room_motion_fan
+      - automation.parents_room_motion_lights
   mode: single
   icon: mdi:magic-staff
 stove_programme_cook_rice_on_left_burner:

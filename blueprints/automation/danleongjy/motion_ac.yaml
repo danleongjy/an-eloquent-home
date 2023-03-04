@@ -1,0 +1,117 @@
+blueprint:
+  name: Motion AC
+  description: Control the AC when motion is detected, depending on whether the doors are closed.
+  domain: automation
+  input:
+    motion_sensor:
+      name: Motion Sensor
+      description: When motion is detected by this sensor, the AC may turn on.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: motion
+    ac:
+      name: AC
+      description: AC unit to control.
+      selector:
+        entity:
+          domain: climate
+    ac_auto_control:
+      name: AC Auto Control
+      description: Automation to automatically control the AC based on temperature.
+      selector:
+        entity:
+          domain: automation
+    ac_auto_control_start:
+      name: AC Auto Control Start
+      description: Time helper indicating when AC auto control should be turned on.
+      selector:
+        entity:
+          domain: input_datetime
+    ac_auto_control_end:
+      name: AC Auto Control End
+      description: Time helper indicating when AC auto control should be turned off.
+      selector:
+        entity:
+          domain: input_datetime
+    entities_list:
+      name: Entities to Track
+      description: A list of entities.  If the AC's state should not change even if motion is detected when any of these entities are on, specify them here.  Otherwise, leave blank.
+      selector:
+        entity:
+          multiple: true
+    door:
+      name: Doors to Track
+      description: A door sensor or binary sensor of a group of doors.  If the AC's state should not change even if motion is detected (useful in bedrooms when someone is sleeping), specify the sensor here.  Otherwise, leave blank.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: door
+trigger_variables:
+  entities: !input entities_list
+  door_sensor: !input door
+trigger:
+  - platform: state
+    entity_id: !input motion_sensor
+    from: "off"
+    to: "on"
+condition:
+  - condition: template
+    value_template: >
+      {% if door_sensor | length == 0 %}
+        {{ true }}
+      {% elif is_state(door_sensor, 'off') %}
+        {{ false }}
+      {% else %}
+        {{ true }}
+      {% endif %}
+  - condition: template
+    value_template: >
+      {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
+action:
+  - variables:
+      target_ac: !input ac
+  - if:
+      - condition: state
+        entity_id: !input door
+        state: "off"
+    then:
+      - if:
+          - condition: template
+            value_template: "{{ state_attr(target_ac,'current_temperature') >= state_attr(target_ac,'temperature') }}"
+        then:
+          - service: climate.turn_on
+            data: {}
+            target:
+              entity_id: !input ac
+        else:
+          - service: climate.turn_off
+            data: {}
+            target:
+              entity_id: climate.parents_room_ac
+      - if:
+          - condition: time
+            after: !input ac_auto_control_start
+            before: !input ac_auto_control_end
+        then:
+          - service: automation.turn_on
+            data: {}
+            target:
+              entity_id: !input ac_auto_control
+        else:
+          - service: automation.turn_off
+            data:
+              stop_actions: true
+            target:
+              entity_id: !input ac_auto_control
+    else:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: !input ac
+      - service: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          entity_id: !input ac_auto_control
+mode: single
