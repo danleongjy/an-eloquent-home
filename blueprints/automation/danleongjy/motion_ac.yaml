@@ -36,20 +36,21 @@ blueprint:
           domain: input_datetime
     entities_list:
       name: Entities to Track
-      description: A list of entities.  If the AC's state should not change even if motion is detected when any of these entities are on, specify them here.  Otherwise, leave blank.
+      description: A list of entities.  If the AC's state should not change when any of these entities are on even if motion is detected, specify them here.  Otherwise, leave blank.
       selector:
         entity:
           multiple: true
-    door:
+    doors_list:
       name: Doors to Track
-      description: A door sensor or binary sensor of a group of doors.  If the AC's state should not change even if motion is detected (useful in bedrooms when someone is sleeping), specify the sensor here.  Otherwise, leave blank.
+      description: A list of doors or door groups.  If the AC's state should not change when all the doors are closed even if motion is detected (useful in bedrooms when someone is sleeping), specify the doors here.  Otherwise, leave blank.
       selector:
         entity:
           domain: binary_sensor
           device_class: door
+          multiple: true
 trigger_variables:
   entities: !input entities_list
-  door_sensor: !input door
+  doors: !input doors_list
 trigger:
   - platform: state
     entity_id: !input motion_sensor
@@ -57,24 +58,17 @@ trigger:
     to: "on"
 condition:
   - condition: template
-    value_template: >
-      {% if door_sensor | length == 0 %}
-        {{ true }}
-      {% elif is_state(door_sensor, 'off') %}
-        {{ false }}
-      {% else %}
-        {{ true }}
-      {% endif %}
+    value_template: "{{ doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
   - condition: template
     value_template: >
       {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
 action:
   - variables:
       target_ac: !input ac
+      doors: !input doors_list
   - if:
-      - condition: state
-        entity_id: !input door
-        state: "off"
+      - condition: template
+        value_template: "{{ doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
     then:
       - if:
           - condition: template

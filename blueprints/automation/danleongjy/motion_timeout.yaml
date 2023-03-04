@@ -16,13 +16,14 @@ blueprint:
       selector:
         entity:
           domain: input_number
-    door:
-      name: Door to Track
-      description: A door sensor or template sensor of a group of doors.  If entities should not turn off even after timeout if all doors to this room are closed (useful to prevent devices from turning off upon timeout in bedrooms when someone is sleeping), specify the sensor here.  Otherwise, leave blank.
+    doors_list:
+      name: Doors to Track
+      description: A list of doors or door groups.  If the entities should not turn off when all the doors are closed even if motion is detected (useful in bedrooms when someone is sleeping), specify the doors here.  Otherwise, leave blank.
       selector:
         entity:
           domain: binary_sensor
           device_class: door
+          multiple: true
     entities_list:
       name: Entities
       description: List of entities to turn off on timeout.
@@ -42,16 +43,9 @@ trigger:
       seconds: 0
 action:
   - variables:
-      door_sensor: !input door
+      doors: !input doors_list
   - condition: template
-    value_template: >
-      {% if door_sensor | length == 0 %}
-        {{ true }}
-      {% elif is_state(door_sensor, 'off') %}
-        {{ false }}
-      {% else %}
-        {{ true }}
-      {% endif %}
+    value_template: "{{ doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
   - service: homeassistant.turn_off
     data: {}
     target:

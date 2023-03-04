@@ -68,13 +68,13 @@ blueprint:
           domain: input_number
     entities_list:
       name: Entities to Track
-      description: A list of entities.  If the lights' state should not change even if motion is detected when any of these entities are on, specify them here.  Otherwise, leave blank.
+      description: A list of entities.  If the lights' state should not change even when any of these entities are on if motion is detected, specify them here.  Otherwise, leave blank.
       selector:
         entity:
           multiple: true
     doors_list:
       name: Doors to Track
-      description: A list of doors or door groups.  If the lights' state should not change when the doors are closed even if motion is detected (useful in bedrooms when someone is sleeping), specify the doors here.  Otherwise, leave blank.
+      description: A list of doors or door groups.  If the lights' state should not change when all the doors are closed even if motion is detected (useful in bedrooms when someone is sleeping), specify the doors here.  Otherwise, leave blank.
       selector:
         entity:
           domain: binary_sensor
@@ -82,6 +82,7 @@ blueprint:
           multiple: true
 trigger_variables:
   doors: !input doors_list
+  entities: !input entities_list
 trigger:
   - platform: state
     entity_id: !input motion_sensor
@@ -89,7 +90,7 @@ trigger:
     to: "on"
 condition:
   - condition: template
-    value_template: "{{ 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
+    value_template: "{{ doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
   - condition: template
     value_template: >
       {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
@@ -110,6 +111,7 @@ action:
       - conditions:
           - condition: time
             after: !input dim_hours_start
+            before: !input blackout_hours_start
         sequence:
           - service: light.turn_on
             data:
