@@ -1,0 +1,59 @@
+blueprint:
+  name: Motion Timeout
+  description: Turn off a list of entities when no motion is detected for a certain amount of time.
+  domain: automation
+  input:
+    motion_sensor:
+      name: Motion Sensor
+      description: When no motion is detected by this sensor for the Number of Minutes below, the entities listed will be turned off.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: motion
+    number_of_minutes:
+      name: Number of Minutes
+      description: Number helper indicating the number of minutes for the motion timeout.
+      selector:
+        entity:
+          domain: input_number
+    door:
+      name: Door to Track
+      description: A door sensor or template sensor of a group of doors.  If entities should not turn off even after timeout if all doors to this room are closed (useful to prevent devices from turning off upon timeout in bedrooms when someone is sleeping), specify the sensor here.  Otherwise, leave blank.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: door
+    entities_list:
+      name: Entities
+      description: List of entities to turn off on timeout.
+      selector:
+        entity:
+          multiple: true
+trigger_variables:
+  minutes_input_number: !input number_of_minutes
+trigger:
+  - platform: state
+    entity_id: !input motion_sensor
+    from: "on"
+    to: "off"
+    for:
+      hours: 0
+      minutes: "{{ states(minutes_input_number) | int(15) }}"
+      seconds: 0
+action:
+  - variables:
+      door_sensor: !input door
+  - condition: template
+    value_template: >
+      {% if door_sensor | length == 0 %}
+        {{ true }}
+      {% elif is_state(door_sensor, 'off') %}
+        {{ false }}
+      {% else %}
+        {{ true }}
+      {% endif %}
+  - service: homeassistant.turn_off
+    data: {}
+    target:
+      entity_id: !input entities_list
+mode: single

@@ -1,0 +1,85 @@
+blueprint:
+  name: Motion Fan
+  description: Control the fan when motion is detected, depending on whether the doors are open.
+  domain: automation
+  input:
+    motion_sensor:
+      name: Motion Sensor
+      description: When motion is detected by this sensor, the fan will be turned on.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: motion
+    fan:
+      name: Fan
+      description: Fan to control.
+      selector:
+        entity:
+          domain: fan
+    fan_speed_door_closed:
+      name: Fan Speed when Doors are Closed
+      description: A number helper indicating the fan speed when the doors are closed for this room
+      selector:
+        entity:
+          domain: input_number
+    fan_speed_door_open:
+      name: Fan Speed when Doors are Open
+      description: A number helper indicating the fan speed when the doors are open for this room
+      selector:
+        entity:
+          domain: input_number
+    entities_list:
+      name: Entities to Track
+      description: A list of entities.  If the fan's state should not change even if motion is detected when any of these entities are on, specify them here.  Otherwise leave blank.
+      selector:
+        entity:
+          multiple: true
+    door:
+      name: Doors to Track
+      description: A door sensor or template sensor of a group of doors.  If the fan's state should not change even if motion is detected (useful in bedrooms when someone is sleeping), specify the sensor here.  Otherwise, leave blank.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: door
+trigger_variables:
+  entities: !input entities_list
+  door_sensor: !input door
+trigger:
+  - platform: state
+    entity_id: !input motion_sensor
+    from: "off"
+    to: "on"
+condition:
+  - condition: template
+    value_template: >
+      {% if door_sensor | length == 0 %}
+        {{ true }}
+      {% elif is_state(door_sensor, 'off') %}
+        {{ false }}
+      {% else %}
+        {{ true }}
+      {% endif %}
+  - condition: template
+    value_template: >
+      {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
+action:
+  - variables:
+      fan_speed_when_door_closed: !input fan_speed_door_closed
+      fan_speed_when_door_open: !input fan_speed_door_open
+  - if:
+      - condition: state
+        entity_id: !input door
+        state: "on"
+    then:
+      - service: fan.turn_on
+        data:
+          percentage: "{{ (states(fan_speed_when_door_open) | int(4) / 6 * 100) | round(0) }}"
+        target:
+          entity_id: !input fan
+    else:
+      - service: fan.turn_on
+        data:
+          percentage: "{{ (states(fan_speed_when_door_closed) | int(1) / 6 * 100) | round(0) }}"
+        target:
+          entity_id: !input fan
+mode: single
