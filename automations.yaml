@@ -4872,87 +4872,6 @@
     input:
       fan: fan.elis_room_fan
       recommended_scene_sensor: binary_sensor.recommended_scene_in_elis_room
-- id: '1677804713353'
-  alias: Parents' Room Motion Lights
-  description: Set the Parents' Room Lights when motion is detected and doors are
-    open depending on time and lux
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.parents_room_motion
-    from: 'off'
-    to: 'on'
-  condition:
-  - condition: state
-    entity_id: binary_sensor.parents_room_doors
-    state: 'on'
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-  action:
-  - choose:
-    - conditions:
-      - condition: time
-        before: input_datetime.sleep_hours_end
-        after: input_datetime.sleep_hours_start
-        alias: If it is during sleep hours
-      sequence:
-      - condition: state
-        entity_id: light.parents_room_lights
-        state: 'on'
-      - service: light.turn_off
-        data: {}
-        target:
-          entity_id: light.parents_room_lights
-    - conditions:
-      - condition: time
-        after: input_datetime.wind_down
-        alias: If it is after wind down
-      sequence:
-      - service: light.turn_on
-        data:
-          brightness_pct: '{{ states(''input_number.night_light_brightness'') | int(1)
-            }}'
-        target:
-          entity_id: light.parents_room_lights
-        alias: Turn on Parents' Room Lights at night brightness
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.parents_room_lux
-        above: input_number.comfortable_lux
-      sequence:
-      - condition: state
-        entity_id: light.parents_room_lights
-        state: 'on'
-      - service: light.turn_off
-        data: {}
-        target:
-          entity_id: light.parents_room_lights
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.parents_room_lux
-        below: input_number.minimum_lux
-      sequence:
-      - if:
-        - condition: sun
-          before: sunrise
-        then:
-        - service: light.turn_on
-          data:
-            brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-              | int(10) }}'
-          target:
-            entity_id: light.parents_room_lights
-          alias: Turn on Parents' Room Lights at morning brightness
-        else:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id: light.parents_room_lights
-          alias: Turn on Parents' Room Lights at full brightness
-  mode: single
 - id: '1677851042764'
   alias: Parents' Room Motion Timeout
   description: Turn off the Parents' Room Lights, Fan, AC and AC Auto Control if no
@@ -5000,3 +4919,28 @@
       - fan.parents_room_fan
       - climate.parents_room_ac
       door: binary_sensor.parents_room_doors
+- id: '1677905626060'
+  alias: Parents' Room Motion Lights
+  description: Set the Parents' Room Lights when motion is detected, at least one
+    door is open and no devices are on, depending on lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.parents_room_lights
+      motion_sensor: binary_sensor.parents_room_motion
+      lux_sensor: sensor.parents_room_lux
+      sufficient_lux: input_number.comfortable_lux
+      insufficient_lux: input_number.minimum_lux
+      blackout_hours_start: input_datetime.sleep_hours_start
+      blackout_hours_end: input_datetime.sleep_hours_end
+      dim_hours_start: input_datetime.wind_down
+      dim_light_brightness: input_number.night_light_brightness
+      morning_light_brightness: input_number.morning_light_brightness
+      entities_list:
+      - light.parents_room_lights
+      - fan.parents_room_fan
+      - climate.parents_room_ac
+      doors_list:
+      - binary_sensor.parents_room_door
+      - binary_sensor.master_bathroom_door

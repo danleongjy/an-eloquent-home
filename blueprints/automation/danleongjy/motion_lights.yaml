@@ -1,0 +1,148 @@
+blueprint:
+  name: Motion Lights
+  description: Control the lights when motion is detected, depending on lux level and time.
+  domain: automation
+  input:
+    lights_list:
+      name: Lights
+      description: A list of lights or light groups to control.
+      selector:
+        entity:
+          domain: light
+          multiple: true
+    motion_sensor:
+      name: Motion Sensor
+      description: When motion is detected by this sensor, the lights may turn on.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: motion
+    lux_sensor:
+      name: Lux Sensor
+      description: Lux sensor of ambient brightness in the room.
+      selector:
+        entity:
+          domain: sensor
+          device_class: illuminance
+    sufficient_lux:
+      name: Sufficient Lux Level
+      description: A number helper indicating the lux level above which it is sufficiently bright and lights need not be on.
+      selector:
+        entity:
+          domain: input_number
+    insufficient_lux:
+      name: Insufficient Lux Level
+      description: A number helper indicating the lux level below which it is too dark and lights need to be on.
+      selector:
+        entity:
+          domain: input_number
+    blackout_hours_start:
+      name: Blackout Hours Start
+      description: A time helper indicating when lights should be off.
+      selector:
+        entity:
+          domain: input_datetime
+    blackout_hours_end:
+      name: Blackout Hours End
+      description: A time helper indicating when lights no longer need to be off.
+      selector:
+        entity:
+          domain: input_datetime
+    dim_hours_start:
+      name: Dim Hours Start
+      description: A time helper indicating when lights should be dimmed.
+      selector:
+        entity:
+          domain: input_datetime
+    dim_light_brightness:
+      name: Dim Light Brightness
+      description: A number helper indicating what percentage of brightness the lights should have if they are turned on between Dim Hours Start and Blackout Hours End.
+      selector:
+        entity:
+          domain: input_number
+    morning_light_brightness:
+      name: Morning Light Brightness
+      description: A number helper indicating what percentage of brightness the lights should have if they are turned on after Blackout Hours End but before sunrise.
+      selector:
+        entity:
+          domain: input_number
+    entities_list:
+      name: Entities to Track
+      description: A list of entities.  If the lights' state should not change even if motion is detected when any of these entities are on, specify them here.  Otherwise, leave blank.
+      selector:
+        entity:
+          multiple: true
+    doors_list:
+      name: Doors to Track
+      description: A list of doors or door groups.  If the lights' state should not change when the doors are closed even if motion is detected (useful in bedrooms when someone is sleeping), specify the doors here.  Otherwise, leave blank.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: door
+          multiple: true
+trigger_variables:
+  doors: !input doors_list
+trigger:
+  - platform: state
+    entity_id: !input motion_sensor
+    from: "off"
+    to: "on"
+condition:
+  - condition: template
+    value_template: "{{ 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
+  - condition: template
+    value_template: >
+      {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
+action:
+  - variables:
+      night_brightness: !input dim_light_brightness
+      morning_brightness: !input morning_light_brightness
+  - choose:
+      - conditions:
+          - condition: time
+            after: !input blackout_hours_start
+            before: !input blackout_hours_end
+        sequence:
+          - service: light.turn_off
+            data: {}
+            target:
+              entity_id: !input lights_list
+      - conditions:
+          - condition: time
+            after: !input dim_hours_start
+        sequence:
+          - service: light.turn_on
+            data:
+              brightness_pct: "{{ states(dim_light_brightness) | int(1) }}"
+            target:
+              entity_id: !input lights_list
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input lux_sensor
+            above: !input sufficient_lux
+        sequence:
+          - service: light.turn_off
+            data: {}
+            target:
+              entity_id: !input lights_list
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input lux_sensor
+            below: !input insufficient_lux
+        sequence:
+          - if:
+              - condition: sun
+                before: sunrise
+            then:
+              - service: light.turn_on
+                data:
+                  brightness_pct: "{{ states(morning_brightness) | int(10) }}"
+                target:
+                  entity_id: !input lights_list
+            else:
+              - service: light.turn_on
+                data:
+                  brightness_pct: 100
+                target:
+                  entity_id: !input lights_list
+mode: single
