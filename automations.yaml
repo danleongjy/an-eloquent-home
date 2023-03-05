@@ -3346,7 +3346,6 @@
         - automation.hallway_motion
         - automation.junior_bathroom_motion_2
         - automation.kitchen_blinds_auto_control
-        - automation.kitchen_motion
         - automation.master_bathroom_blind_auto_control
         - automation.master_bathroom_light_motion
         - automation.master_bathroom_pendant_light_motion
@@ -3376,6 +3375,8 @@
         - automation.elis_room_motion_fan
         - automation.elis_room_motion_lights
         - automation.elis_room_motion_timeout
+        - automation.kitchen_motion_lights
+        - automation.kitchen_motion_timeout
     - repeat:
         for_each:
         - cover.living_room_left_blind
@@ -3396,7 +3397,6 @@
         - automation.hallway_motion
         - automation.junior_bathroom_motion_2
         - automation.kitchen_blinds_auto_control
-        - automation.kitchen_motion
         - automation.master_bathroom_blind_auto_control
         - automation.master_bathroom_light_motion
         - automation.master_bathroom_pendant_light_motion
@@ -3425,6 +3425,8 @@
         - automation.elis_room_motion_fan
         - automation.elis_room_motion_lights
         - automation.elis_room_motion_timeout
+        - automation.kitchen_motion_lights
+        - automation.kitchen_motion_timeout
     - service: automation.trigger
       data:
         skip_condition: false
@@ -5110,3 +5112,32 @@
       - fan.elis_room_fan
       - climate.elis_room_ac
       - automation.elis_room_ac_auto_control
+- id: '1677927683160'
+  alias: Kitchen Motion Lights
+  description: Set Kitchen Lights when motion is detected, depending on lux level
+    and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.kitchen_lights
+      motion_sensor: binary_sensor.kitchen_motion_sensors
+      lux_sensor: sensor.kitchen_lux
+      sufficient_lux: input_number.comfortable_lux
+      insufficient_lux: input_number.minimum_lux
+      blackout_hours_start: input_datetime.sleep_hours_end
+      blackout_hours_end: input_datetime.sleep_hours_end
+      dim_hours_start: input_datetime.wind_down
+      dim_light_brightness: input_number.night_light_brightness
+      morning_light_brightness: input_number.morning_light_brightness
+- id: '1677927981807'
+  alias: Kitchen Motion Timeout
+  description: Turn off Kitchen Lights when no motion is detected for a certain amount
+    of time.
+  use_blueprint:
+    path: danleongjy/motion_timeout.yaml
+    input:
+      motion_sensor: binary_sensor.kitchen_motion_sensors
+      number_of_minutes: input_number.motion_short_timeout
+      entities_list:
+      - light.kitchen_lights

@@ -72,6 +72,7 @@ blueprint:
       selector:
         entity:
           multiple: true
+      default: []
     doors_list:
       name: Doors to Track
       description: A list of doors or door groups.  If the lights' state should not change when all the doors are closed even if motion is detected (useful in bedrooms when someone is sleeping), specify the doors here.  Otherwise, leave blank.
@@ -80,6 +81,7 @@ blueprint:
           domain: binary_sensor
           device_class: door
           multiple: true
+      default: []
 trigger_variables:
   doors: !input doors_list
   entities: !input entities_list
@@ -98,8 +100,13 @@ action:
   - variables:
       night_brightness: !input dim_light_brightness
       morning_brightness: !input morning_light_brightness
+      dim_start: !input dim_hours_start
+      blackout_start: !input blackout_hours_start
+      blackout_end: !input blackout_hours_end
   - choose:
       - conditions:
+          - condition: template
+            value_template: "{{ blackout_start != blackout_end }}"
           - condition: time
             after: !input blackout_hours_start
             before: !input blackout_hours_end
@@ -109,13 +116,15 @@ action:
             target:
               entity_id: !input lights_list
       - conditions:
+          - condition: template
+            value_template: "{{ dim_start != blackout_start }}"
           - condition: time
             after: !input dim_hours_start
             before: !input blackout_hours_start
         sequence:
           - service: light.turn_on
             data:
-              brightness_pct: "{{ states(dim_light_brightness) | int(1) }}"
+              brightness_pct: "{{ states(night_brightness) | int(1) }}"
             target:
               entity_id: !input lights_list
       - conditions:
