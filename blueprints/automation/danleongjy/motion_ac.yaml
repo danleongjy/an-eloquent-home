@@ -70,7 +70,7 @@ action:
       doors: !input doors_list
   - if:
       - condition: template
-        value_template: "{{ doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
+        value_template: "{{ doors | length == 0 or not 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
     then:
       - if:
           - condition: template
