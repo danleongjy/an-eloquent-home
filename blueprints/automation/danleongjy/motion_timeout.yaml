@@ -16,6 +16,13 @@ blueprint:
       selector:
         entity:
           domain: input_number
+    entities_list:
+      name: Entities to Track
+      description: A list of entities.  If the lights' state should not change even when any of these entities are on if motion is detected, specify them here.  Otherwise, leave blank.
+      selector:
+        entity:
+          multiple: true
+      default: []
     doors_list:
       name: Doors to Track
       description: A list of doors or door groups.  If the entities should not turn off when all the doors are closed even if motion is detected (useful in bedrooms when someone is sleeping), specify the doors here.  Otherwise, leave blank.
@@ -25,14 +32,16 @@ blueprint:
           device_class: door
           multiple: true
       default: []
-    entities_list:
-      name: Entities
+    turnoff_entities_list:
+      name: Entities to Turn Off
       description: List of entities to turn off on timeout.
       selector:
         entity:
           multiple: true
 trigger_variables:
   minutes_input_number: !input number_of_minutes
+  doors: !input doors_list
+  entities: !input entities_list
 trigger:
   - platform: state
     entity_id: !input motion_sensor
@@ -42,13 +51,15 @@ trigger:
       hours: 0
       minutes: "{{ states(minutes_input_number) | int(15) }}"
       seconds: 0
-action:
-  - variables:
-      doors: !input doors_list
+condition:
   - condition: template
     value_template: "{{ doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
+  - condition: template
+    value_template: >
+      {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
+action:
   - service: homeassistant.turn_off
     data: {}
     target:
-      entity_id: !input entities_list
+      entity_id: !input turnoff_entities_list
 mode: single
