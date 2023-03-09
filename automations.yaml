@@ -3268,18 +3268,15 @@
         - automation.ac_auto_control_at_night
         - automation.elenas_room_ac_auto_control
         - automation.elis_room_ac_auto_control
+        - automation.parents_room_ac_auto_control
         - automation.hallway_motion
         - automation.junior_bathroom_motion_2
         - automation.kitchen_blinds_auto_control
         - automation.master_bathroom_blind_auto_control
         - automation.master_bathroom_light_motion
         - automation.master_bathroom_pendant_light_motion
-        - automation.parents_room_ac_auto_control
-        - automation.playroom_motion
         - automation.powder_room_motion
-        - automation.study_walkway_motion
         - automation.water_heater_motion
-        - automation.yard_motion
         - automation.dining_room_motion
         - automation.living_room_motion
         - automation.south_facing_blinds_auto_control
@@ -3302,6 +3299,12 @@
         - automation.elis_room_motion_timeout
         - automation.kitchen_motion_lights
         - automation.kitchen_motion_timeout
+        - automation.study_walkway_motion_light
+        - automation.study_walkway_motion_timeout
+        - automation.playroom_motion_lights
+        - automation.playroom_motion_timeout
+        - automation.yard_motion_light
+        - automation.yard_motion_timeout
     - repeat:
         for_each:
         - cover.living_room_left_blind
@@ -3319,17 +3322,17 @@
       target:
         entity_id:
         - automation.ac_auto_control_at_night
+        - automation.elenas_room_ac_auto_control
+        - automation.elis_room_ac_auto_control
+        - automation.parents_room_ac_auto_control
         - automation.hallway_motion
         - automation.junior_bathroom_motion_2
         - automation.kitchen_blinds_auto_control
         - automation.master_bathroom_blind_auto_control
         - automation.master_bathroom_light_motion
         - automation.master_bathroom_pendant_light_motion
-        - automation.playroom_motion
         - automation.powder_room_motion
-        - automation.study_walkway_motion
         - automation.water_heater_motion
-        - automation.yard_motion
         - automation.dining_room_motion
         - automation.living_room_motion
         - automation.south_facing_blinds_auto_control
@@ -3352,6 +3355,12 @@
         - automation.elis_room_motion_timeout
         - automation.kitchen_motion_lights
         - automation.kitchen_motion_timeout
+        - automation.study_walkway_motion_light
+        - automation.study_walkway_motion_timeout
+        - automation.playroom_motion_lights
+        - automation.playroom_motion_timeout
+        - automation.yard_motion_light
+        - automation.yard_motion_timeout
     - service: automation.trigger
       data:
         skip_condition: false
@@ -4945,3 +4954,61 @@
       - light.study_room_lights
       turnoff_entities_list:
       - light.study_room_bulb_4_entity
+- id: '1678322978006'
+  alias: Playroom Motion Lights
+  description: Control the Playroom Lights when motion is detected, depending on lux
+    level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.playroom_lights
+      motion_sensor: binary_sensor.playroom_motion
+      lux_sensor: sensor.yard_lux
+      sufficient_lux: input_number.comfortable_lux
+      insufficient_lux: input_number.minimum_lux
+      dim_hours_start: input_datetime.wind_down
+      blackout_hours_start: input_datetime.sleep_hours_end
+      blackout_hours_end: input_datetime.sleep_hours_end
+      dim_light_brightness: input_number.night_light_brightness
+      morning_light_brightness: input_number.morning_light_brightness
+- id: '1678323081528'
+  alias: Playroom Motion Timeout
+  description: Turn off Playroom Lights when no motion is detected for a certain amount
+    of time.
+  use_blueprint:
+    path: danleongjy/motion_timeout.yaml
+    input:
+      motion_sensor: binary_sensor.playroom_motion
+      number_of_minutes: input_number.motion_timeout
+      turnoff_entities_list:
+      - light.playroom_lights
+- id: '1678323204367'
+  alias: Yard Motion Light
+  description: Control the Yard Light when motion is detected, depending on lux level
+    and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.yard_light_entity
+      motion_sensor: binary_sensor.yard_motion
+      lux_sensor: sensor.yard_lux
+      sufficient_lux: input_number.comfortable_lux
+      insufficient_lux: input_number.minimum_lux
+      dim_hours_start: input_datetime.wind_down
+      blackout_hours_start: input_datetime.sleep_hours_end
+      blackout_hours_end: input_datetime.sleep_hours_end
+      dim_light_brightness: input_number.night_light_brightness
+      morning_light_brightness: input_number.morning_light_brightness
+- id: '1678323253914'
+  alias: Yard Motion Timeout
+  description: Turn off the Yard Light when no motion is detected for a certain amount
+    of time.
+  use_blueprint:
+    path: danleongjy/motion_timeout.yaml
+    input:
+      motion_sensor: binary_sensor.yard_motion
+      number_of_minutes: input_number.motion_short_timeout
+      turnoff_entities_list:
+      - light.yard_light_entity

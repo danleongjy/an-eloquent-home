@@ -68,7 +68,7 @@ blueprint:
           domain: input_number
     entities_list:
       name: Entities to Track
-      description: A list of entities.  If the lights' state should not change even when any of these entities are on if motion is detected, specify them here.  Otherwise, leave blank.
+      description: A list of entities.  If the lights' state should not change when any of these entities are on even if motion is detected, specify them here.  Otherwise, leave blank.
       selector:
         entity:
           multiple: true
@@ -117,7 +117,6 @@ action:
             before: !input blackout_hours_end
         sequence:
           - service: light.turn_off
-            data: {}
             target:
               entity_id: !input lights_list
       - conditions:
@@ -138,7 +137,6 @@ action:
             above: !input sufficient_lux
         sequence:
           - service: light.turn_off
-            data: {}
             target:
               entity_id: !input lights_list
       - conditions:
