@@ -96,6 +96,11 @@ condition:
   - condition: template
     value_template: >
       {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
+  - condition: state
+    entity_id: !input lights_list
+    state: "off"
+    for:
+      seconds: 2
 action:
   - variables:
       night_brightness: !input dim_light_brightness
