@@ -34,19 +34,32 @@ ac_set_state:
           mode: slider
       required: true
       default: 27
+  variables:
+    universal_remote:
+      Elena's Room AC: remote.elenas_room_universal_remote
+      Eli's Room AC: remote.elis_room_universal_remote
+      Dining Room AC: remote.dining_room_universal_remote
+      Living Room AC: remote.living_room_universal_remote
+      Study Room AC: remote.study_room_universal_remote
+      Parents' Room AC: remote.parents_room_universal_remote
   sequence:
-  - service: remote.send_command
-    target:
-      entity_id: "{% set universal_remote = \n  { \"Elena's Room AC\": \"remote.elenas_room_universal_remote\",\n
-        \   \"Eli's Room AC\": \"remote.elis_room_universal_remote\",\n    \"Dining
-        Room AC\": \"remote.dining_room_universal_remote\",\n    \"Living Room AC\":
-        \"remote.living_room_universal_remote\",\n    \"Study Room AC\": \"remote.study_room_universal_remote\",\n
-        \   \"Parents' Room AC\": \"remote.parents_room_universal_remote\"\n  } %}\n{{
-        universal_remote[target_ac] }}\n"
-    data:
-      device: '{{ target_ac }}'
-      command: "{% if target_ac_power == false %}\n  Off\n{% else %}\n  {{ target_ac_temp
-        | int }}\n{% endif %}\n"
+  - if:
+    - condition: template
+      value_template: '{{ target_ac_power == false }}'
+    then:
+    - service: remote.send_command
+      target:
+        entity_id: '{{ universal_remote[target_ac] }}'
+      data:
+        device: '{{ target_ac }}'
+        command: 'Off'
+    else:
+    - service: remote.send_command
+      target:
+        entity_id: '{{ universal_remote[target_ac] }}'
+      data:
+        device: '{{ target_ac }}'
+        command: '{{ target_ac_temp | int }}'
   mode: parallel
   icon: mdi:snowflake
   max: 10

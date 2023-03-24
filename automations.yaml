@@ -8,10 +8,20 @@
       controller_device: 0df2cd0b0fa9112188778c56db622911
       helper_last_controller_event: input_text.zz_dining_room_lights_controller_1_last_event
       action_button_up_short:
-      - service: script.set_recommended_scene_in_dining_room
-        data: {}
-      - service: script.set_recommended_scene_in_living_room
-        data: {}
+      - if:
+        - condition: state
+          entity_id: input_boolean.away_mode
+          state: 'on'
+        then:
+        - service: input_boolean.turn_off
+          data: {}
+          target:
+            entity_id: input_boolean.away_mode
+        else:
+        - service: script.set_recommended_scene_in_dining_room
+          data: {}
+        - service: script.set_recommended_scene_in_living_room
+          data: {}
       action_button_up_long:
       - service: light.turn_on
         target:
@@ -3322,9 +3332,6 @@
       target:
         entity_id:
         - automation.ac_auto_control_at_night
-        - automation.elenas_room_ac_auto_control
-        - automation.elis_room_ac_auto_control
-        - automation.parents_room_ac_auto_control
         - automation.hallway_motion
         - automation.junior_bathroom_motion_2
         - automation.kitchen_blinds_auto_control
@@ -3522,7 +3529,7 @@
   - delay:
       hours: 0
       minutes: 0
-      seconds: 2
+      seconds: 5
       milliseconds: 0
   - choose:
     - conditions:
@@ -4301,6 +4308,7 @@
       motion_sensor: binary_sensor.junior_bathroom_motion_sensors
       occupancy_helper: input_boolean.junior_bathroom_occupancy
       last_motion_helper: input_datetime.junior_bathroom_last_motion_detected
+      turn_off_delay: 90
 - id: '1675045768564'
   alias: Powder Room Occupancy
   description: Track occupancy in the Powder Room based on Wasp in a Box logic
@@ -4321,6 +4329,7 @@
       motion_sensor: binary_sensor.master_bathroom_motion_sensors
       occupancy_helper: input_boolean.master_bathroom_occupancy
       last_motion_helper: input_datetime.master_bathroom_last_motion_detected
+      turn_off_delay: 90
 - id: '1675047268231'
   alias: Study Table Controller
   description: Control the house devices for working at home
@@ -4951,7 +4960,9 @@
       motion_sensor: binary_sensor.study_walkway_motion
       number_of_minutes: input_number.motion_short_timeout
       entities_list:
-      - light.study_room_lights
+      - light.study_room_bulb_1_entity
+      - light.study_room_bulb_2_entity
+      - light.study_room_bulb_3_entity
       turnoff_entities_list:
       - light.study_room_bulb_4_entity
 - id: '1678322978006'
@@ -4968,7 +4979,7 @@
       sufficient_lux: input_number.comfortable_lux
       insufficient_lux: input_number.minimum_lux
       dim_hours_start: input_datetime.wind_down
-      blackout_hours_start: input_datetime.sleep_hours_end
+      blackout_hours_start: input_datetime.sleep_hours_start
       blackout_hours_end: input_datetime.sleep_hours_end
       dim_light_brightness: input_number.night_light_brightness
       morning_light_brightness: input_number.morning_light_brightness
