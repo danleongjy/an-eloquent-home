@@ -215,83 +215,6 @@
       button_down_long_max_loop_repeats: 50
       button_down_long_loop: true
       button_up_long_loop: true
-- id: '1643642352545'
-  alias: Playroom Motion
-  description: Control the Playroom Lights with Motion
-  trigger:
-  - platform: state
-    entity_id: binary_sensor.playroom_motion
-    id: motion
-    from: 'off'
-    to: 'on'
-  - platform: state
-    entity_id: binary_sensor.playroom_motion
-    id: no_motion
-    from: 'on'
-    to: 'off'
-    for:
-      minutes: '{{ states(''input_number.motion_timeout'') }}'
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: motion
-    then:
-    - condition: or
-      conditions:
-      - condition: numeric_state
-        entity_id: sensor.yard_lux
-        below: input_number.minimum_lux
-      - condition: state
-        entity_id: light.dining_room_lights
-        state: 'on'
-      - condition: state
-        entity_id: light.dining_room_pendant_light_entity
-        state: 'on'
-    - condition: state
-      entity_id: light.playroom_lights
-      state: 'off'
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 2
-    - if:
-      - condition: time
-        after: input_datetime.wind_down
-      - condition: state
-        entity_id: input_boolean.wind_down_lights
-        state: 'on'
-      then:
-      - service: light.turn_on
-        target:
-          entity_id:
-          - light.playroom_lights
-        data:
-          brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
-      else:
-      - if:
-        - condition: sun
-          before: sunrise
-        then:
-        - service: light.turn_on
-          data:
-            brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-              }}'
-          target:
-            entity_id: light.playroom_lights
-        else:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id: light.playroom_lights
-    else:
-    - service: light.turn_off
-      target:
-        entity_id:
-        - light.playroom_lights
-      data: {}
-  mode: single
 - id: '1643642651826'
   alias: Hallway Motion
   description: Control the Hallway Lights with motion
@@ -2686,159 +2609,6 @@
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 700
-- id: '1661593367231'
-  alias: Yard Motion
-  description: Control the Yard Light with Motion
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.yard_motion
-    id: motion
-    from: 'off'
-    to: 'on'
-  - platform: state
-    entity_id:
-    - binary_sensor.yard_motion
-    id: no_motion
-    from: 'on'
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: motion
-    then:
-    - condition: or
-      conditions:
-      - condition: numeric_state
-        entity_id: sensor.yard_lux
-        below: input_number.minimum_lux
-      - condition: state
-        entity_id: light.playroom_lights
-        state: 'on'
-    - condition: state
-      entity_id: light.yard_light_entity
-      state: 'off'
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 2
-    - if:
-      - condition: time
-        after: input_datetime.wind_down
-      - condition: state
-        entity_id: input_boolean.wind_down_lights
-        state: 'on'
-      then:
-      - service: light.turn_on
-        data:
-          brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
-        target:
-          entity_id: light.yard_light_entity
-      else:
-      - if:
-        - condition: sun
-          before: sunrise
-        then:
-        - service: light.turn_on
-          data:
-            brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-              }}'
-          target:
-            entity_id: light.yard_light_entity
-        else:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id: light.yard_light_entity
-    else:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.yard_light_entity
-  mode: single
-- id: '1661595814388'
-  alias: Study Walkway Motion
-  description: Control the Study Walkway Light with Motion
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.study_walkway_motion
-    to: 'on'
-    id: motion
-  - platform: state
-    entity_id:
-    - binary_sensor.study_walkway_motion
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-    id: no_motion
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: motion
-    then:
-    - condition: state
-      entity_id: light.study_room_lights
-      state: 'off'
-    - condition: or
-      conditions:
-      - condition: numeric_state
-        entity_id: sensor.study_walkway_lux
-        below: input_number.minimum_lux
-      - condition: state
-        entity_id: light.living_room_lights
-        state: 'on'
-      - condition: state
-        entity_id: light.living_room_pendant_light_entity
-        state: 'on'
-    - if:
-      - condition: time
-        after: input_datetime.wind_down
-        before: input_datetime.sleep_hours_end
-      then:
-      - service: light.turn_on
-        data:
-          brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
-        target:
-          entity_id: light.study_room_bulb_4_entity
-      else:
-      - if:
-        - condition: sun
-          before: sunrise
-        then:
-        - service: light.turn_on
-          data:
-            brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-              }}'
-          target:
-            entity_id: light.study_room_bulb_4_entity
-        else:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id: light.study_room_bulb_4_entity
-    else:
-    - condition: state
-      entity_id:
-      - light.study_room_bulb_1_entity
-      - light.study_room_bulb_2_entity
-      - light.study_room_bulb_3_entity
-      state: 'off'
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.study_room_bulb_4_entity
-  mode: single
 - id: '1661601576517'
   alias: Washer Load Clean
   description: Indicate when the washer load is clean and needs unloading
@@ -3287,8 +3057,6 @@
         - automation.master_bathroom_pendant_light_motion
         - automation.powder_room_motion
         - automation.water_heater_motion
-        - automation.dining_room_motion
-        - automation.living_room_motion
         - automation.south_facing_blinds_auto_control
         - automation.lights_for_wind_down
         - automation.lights_for_elena_s_bedtime
@@ -3315,6 +3083,14 @@
         - automation.playroom_motion_timeout
         - automation.yard_motion_light
         - automation.yard_motion_timeout
+        - automation.dining_room_motion_fan
+        - automation.dining_room_motion_lights
+        - automation.dining_room_motion_pendant_light
+        - automation.dining_room_motion_timeout
+        - automation.living_room_motion_fan
+        - automation.living_room_motion_lights
+        - automation.living_room_motion_pendant_light
+        - automation.living_room_motion_timeout
     - repeat:
         for_each:
         - cover.living_room_left_blind
@@ -3340,8 +3116,6 @@
         - automation.master_bathroom_pendant_light_motion
         - automation.powder_room_motion
         - automation.water_heater_motion
-        - automation.dining_room_motion
-        - automation.living_room_motion
         - automation.south_facing_blinds_auto_control
         - automation.lights_for_wind_down
         - automation.lights_for_elena_s_bedtime
@@ -3368,6 +3142,14 @@
         - automation.playroom_motion_timeout
         - automation.yard_motion_light
         - automation.yard_motion_timeout
+        - automation.dining_room_motion_fan
+        - automation.dining_room_motion_lights
+        - automation.dining_room_motion_pendant_light
+        - automation.dining_room_motion_timeout
+        - automation.living_room_motion_fan
+        - automation.living_room_motion_lights
+        - automation.living_room_motion_pendant_light
+        - automation.living_room_motion_timeout
     - service: automation.trigger
       data:
         skip_condition: false
@@ -5023,3 +4805,125 @@
       number_of_minutes: input_number.motion_short_timeout
       turnoff_entities_list:
       - light.yard_light_entity
+- id: '1679619343225'
+  alias: Living Room Motion Lights
+  description: Control the Living Room Lights when motion is detected, depending on
+    lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.living_room_lights
+      motion_sensor: binary_sensor.living_room_motion
+      lux_sensor: sensor.living_room_lux
+      sufficient_lux: input_number.comfortable_lux
+      insufficient_lux: input_number.minimum_lux
+      dim_hours_start: input_datetime.wind_down
+      blackout_hours_start: input_datetime.wind_down
+      blackout_hours_end: input_datetime.sleep_hours_end
+      dim_light_brightness: input_number.night_light_brightness
+      morning_light_brightness: input_number.morning_light_brightness
+- id: '1679619511575'
+  alias: Living Room Motion Pendant Light
+  description: Control the Living Room Pendant Light when motion is detected, depending
+    on lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.living_room_pendant_light_entity
+      motion_sensor: binary_sensor.living_room_motion
+      lux_sensor: sensor.living_room_lux
+      sufficient_lux: input_number.comfortable_lux
+      insufficient_lux: input_number.minimum_lux
+      dim_hours_start: input_datetime.wind_down
+      blackout_hours_start: input_datetime.sleep_hours_end
+      blackout_hours_end: input_datetime.sleep_hours_end
+      dim_light_brightness: input_number.night_light_brightness
+      morning_light_brightness: input_number.morning_light_brightness
+- id: '1679619704393'
+  alias: Living Room Motion Timeout
+  description: Turn off lights, fan and AC in the Living Room when no motion is detected
+    for the long timeout.
+  use_blueprint:
+    path: danleongjy/motion_timeout.yaml
+    input:
+      motion_sensor: binary_sensor.living_room_motion
+      number_of_minutes: input_number.motion_timeout
+      turnoff_entities_list:
+      - light.living_room_lights
+      - light.living_room_pendant_light_entity
+      - climate.living_room_ac
+      - fan.living_room_fan
+- id: '1679619826696'
+  alias: Dining Room Motion Lights
+  description: Control the Dining Room Lights when motion is detected, depending on
+    lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.dining_room_lights
+      motion_sensor: binary_sensor.dining_room_motion
+      lux_sensor: sensor.dining_room_lux
+      sufficient_lux: input_number.comfortable_lux
+      insufficient_lux: input_number.minimum_lux
+      dim_hours_start: input_datetime.wind_down
+      blackout_hours_start: input_datetime.wind_down
+      blackout_hours_end: input_datetime.sleep_hours_end
+      dim_light_brightness: input_number.night_light_brightness
+      morning_light_brightness: input_number.morning_light_brightness
+- id: '1679619906548'
+  alias: Dining Room Motion Pendant Light
+  description: Control the Dining Room Pendant Light when motion is detected, depending
+    on lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.dining_room_pendant_light_entity
+      motion_sensor: binary_sensor.dining_room_motion
+      lux_sensor: sensor.dining_room_lux
+      sufficient_lux: input_number.comfortable_lux
+      insufficient_lux: input_number.minimum_lux
+      dim_hours_start: input_datetime.wind_down
+      blackout_hours_start: input_datetime.sleep_hours_end
+      blackout_hours_end: input_datetime.sleep_hours_end
+      dim_light_brightness: input_number.night_light_brightness
+      morning_light_brightness: input_number.morning_light_brightness
+- id: '1679619971749'
+  alias: Dining Room Motion Timeout
+  description: Turn off lights, fan and AC in the Dining Room when no motion is detected
+    for the long timeout.
+  use_blueprint:
+    path: danleongjy/motion_timeout.yaml
+    input:
+      motion_sensor: binary_sensor.dining_room_motion
+      number_of_minutes: input_number.motion_timeout
+      turnoff_entities_list:
+      - light.dining_room_lights
+      - light.dining_room_pendant_light_entity
+      - climate.dining_room_ac
+      - fan.dining_room_fan
+- id: '1679620287237'
+  alias: Living Room Motion Fan
+  description: Control the Living Room Fan when motion is detected, depending on whether
+    the doors are open.
+  use_blueprint:
+    path: danleongjy/motion_fan.yaml
+    input:
+      motion_sensor: binary_sensor.living_room_motion
+      fan: fan.living_room_fan
+      fan_speed_door_closed: input_number.fans_lucci_speed_when_ac_on
+      fan_speed_door_open: input_number.fans_lucci_speed_when_ac_off
+- id: '1679620425571'
+  alias: Dining Room Motion Fan
+  description: Control the Dining Room Fan when motion is detected, depending on whether
+    the doors are open.
+  use_blueprint:
+    path: danleongjy/motion_fan.yaml
+    input:
+      motion_sensor: binary_sensor.dining_room_motion
+      fan: fan.dining_room_fan
+      fan_speed_door_closed: input_number.fans_po_eco_speed_when_ac_on
+      fan_speed_door_open: input_number.fans_po_eco_speed_when_ac_off
