@@ -325,31 +325,6 @@
                                 "name": "Timer (min)"
                               }
                             ]
-                          },
-                          {
-                            "type": "grid",
-                            "columns": 4,
-                            "square": true,
-                            "cards": [
-                              {
-                                "type": "custom:button-card",
-                                "color_type": "blank-card"
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "entity": "switch.stove_current_burner_boost",
-                                "template": "square_cell"
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "entity": "switch.stove_current_burner_keep_warm",
-                                "template": "square_cell"
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "color_type": "blank-card"
-                              }
-                            ]
                           }
                         ]
                       }
@@ -403,19 +378,6 @@
                       "card": {
                         "type": "markdown",
                         "content": "<ha-alert alert-type=\"error\">{{ states(\"select.stove_error_code\") }}</ha-alert>"
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "select.stove_error_code",
-                          "state": "6"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"warning\">Hot surface.</ha-alert>"
                       }
                     }
                   ]
@@ -6635,12 +6597,24 @@
               "type": "entities",
               "entities": [
                 {
-                  "entity": "input_number.motion_timeout"
+                  "entity": "input_number.motion_timeout_bedrooms",
+                  "name": "Bedrooms"
                 },
                 {
-                  "entity": "input_number.motion_short_timeout",
-                  "name": "Short Timeout"
+                  "entity": "input_number.motion_timeout_sitting_rooms",
+                  "name": "Sitting Rooms"
                 },
+                {
+                  "entity": "input_number.motion_timeout_walking_areas",
+                  "name": "Walking Areas"
+                }
+              ],
+              "title": "Motion Timeouts",
+              "show_header_toggle": false
+            },
+            {
+              "type": "entities",
+              "entities": [
                 {
                   "entity": "input_number.holiday_advance_reminder",
                   "name": "Holiday Reminders"

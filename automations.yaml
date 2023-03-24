@@ -3046,11 +3046,12 @@
       target:
         entity_id:
         - automation.ac_auto_control_at_night
+        - automation.motion_timeouts
         - automation.elenas_room_ac_auto_control
         - automation.elis_room_ac_auto_control
         - automation.parents_room_ac_auto_control
         - automation.hallway_motion
-        - automation.junior_bathroom_motion_2
+        - automation.junior_bathroom_motion
         - automation.kitchen_blinds_auto_control
         - automation.master_bathroom_blind_auto_control
         - automation.master_bathroom_light_motion
@@ -3066,31 +3067,23 @@
         - automation.parents_room_motion_ac
         - automation.parents_room_motion_fan
         - automation.parents_room_motion_lights
-        - automation.parents_room_motion_timeout
         - automation.elenas_room_motion_ac
         - automation.elenas_room_motion_fan
         - automation.elenas_room_motion_lights
-        - automation.elenas_room_motion_timeout
         - automation.elis_room_motion_ac
         - automation.elis_room_motion_fan
         - automation.elis_room_motion_lights
-        - automation.elis_room_motion_timeout
         - automation.kitchen_motion_lights
         - automation.kitchen_motion_timeout
         - automation.study_walkway_motion_light
-        - automation.study_walkway_motion_timeout
         - automation.playroom_motion_lights
-        - automation.playroom_motion_timeout
         - automation.yard_motion_light
-        - automation.yard_motion_timeout
         - automation.dining_room_motion_fan
         - automation.dining_room_motion_lights
         - automation.dining_room_motion_pendant_light
-        - automation.dining_room_motion_timeout
         - automation.living_room_motion_fan
         - automation.living_room_motion_lights
         - automation.living_room_motion_pendant_light
-        - automation.living_room_motion_timeout
     - repeat:
         for_each:
         - cover.living_room_left_blind
@@ -3108,8 +3101,9 @@
       target:
         entity_id:
         - automation.ac_auto_control_at_night
+        - automation.motion_timeouts
         - automation.hallway_motion
-        - automation.junior_bathroom_motion_2
+        - automation.junior_bathroom_motion
         - automation.kitchen_blinds_auto_control
         - automation.master_bathroom_blind_auto_control
         - automation.master_bathroom_light_motion
@@ -3125,42 +3119,30 @@
         - automation.parents_room_motion_ac
         - automation.parents_room_motion_fan
         - automation.parents_room_motion_lights
-        - automation.parents_room_motion_timeout
         - automation.elenas_room_motion_ac
         - automation.elenas_room_motion_fan
         - automation.elenas_room_motion_lights
-        - automation.elenas_room_motion_timeout
         - automation.elis_room_motion_ac
         - automation.elis_room_motion_fan
         - automation.elis_room_motion_lights
-        - automation.elis_room_motion_timeout
         - automation.kitchen_motion_lights
-        - automation.kitchen_motion_timeout
         - automation.study_walkway_motion_light
-        - automation.study_walkway_motion_timeout
         - automation.playroom_motion_lights
-        - automation.playroom_motion_timeout
         - automation.yard_motion_light
-        - automation.yard_motion_timeout
         - automation.dining_room_motion_fan
         - automation.dining_room_motion_lights
         - automation.dining_room_motion_pendant_light
-        - automation.dining_room_motion_timeout
         - automation.living_room_motion_fan
         - automation.living_room_motion_lights
         - automation.living_room_motion_pendant_light
-        - automation.living_room_motion_timeout
     - service: automation.trigger
       data:
         skip_condition: false
       target:
         entity_id:
         - automation.kitchen_blinds_auto_control
-    - service: automation.trigger
-      data:
-        skip_condition: false
-      target:
-        entity_id: automation.south_facing_blinds_auto_control
+        - automation.south_facing_blinds_auto_control
+        - automation.motion_timeouts
   mode: single
 - id: '1669620569638'
   alias: Kitchen Blinds Set Known Position
@@ -4337,7 +4319,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: binary_sensor.parents_room_motion
-      number_of_minutes: input_number.motion_timeout
+      number_of_minutes: input_number.motion_timeout_bedrooms
       doors_list:
       - binary_sensor.parents_room_door
       - binary_sensor.master_bathroom_door
@@ -4473,7 +4455,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: binary_sensor.elenas_room_motion
-      number_of_minutes: input_number.motion_timeout
+      number_of_minutes: input_number.motion_timeout_bedrooms
       doors_list:
       - binary_sensor.elenas_room_door
       turnoff_entities_list:
@@ -4547,7 +4529,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: binary_sensor.elis_room_motion
-      number_of_minutes: input_number.motion_timeout
+      number_of_minutes: input_number.motion_timeout_bedrooms
       doors_list:
       - binary_sensor.elis_room_door
       turnoff_entities_list:
@@ -4581,7 +4563,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: binary_sensor.kitchen_motion_sensors
-      number_of_minutes: input_number.motion_short_timeout
+      number_of_minutes: input_number.motion_timeout_walking_areas
       turnoff_entities_list:
       - light.kitchen_lights
 - id: '1678321703771'
@@ -4614,7 +4596,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: binary_sensor.study_walkway_motion
-      number_of_minutes: input_number.motion_short_timeout
+      number_of_minutes: input_number.motion_timeout_walking_areas
       entities_list:
       - light.study_room_bulb_1_entity
       - light.study_room_bulb_2_entity
@@ -4647,7 +4629,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: binary_sensor.playroom_motion
-      number_of_minutes: input_number.motion_timeout
+      number_of_minutes: input_number.motion_timeout_sitting_rooms
       turnoff_entities_list:
       - light.playroom_lights
 - id: '1678323204367'
@@ -4676,7 +4658,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: binary_sensor.yard_motion
-      number_of_minutes: input_number.motion_short_timeout
+      number_of_minutes: input_number.motion_timeout_walking_areas
       turnoff_entities_list:
       - light.yard_light_entity
 - id: '1679619343225'
@@ -4723,7 +4705,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: binary_sensor.living_room_motion
-      number_of_minutes: input_number.motion_timeout
+      number_of_minutes: input_number.motion_timeout_sitting_rooms
       turnoff_entities_list:
       - light.living_room_lights
       - light.living_room_pendant_light_entity
@@ -4773,7 +4755,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: binary_sensor.dining_room_motion
-      number_of_minutes: input_number.motion_timeout
+      number_of_minutes: input_number.motion_timeout_sitting_rooms
       turnoff_entities_list:
       - light.dining_room_lights
       - light.dining_room_pendant_light_entity
@@ -4801,3 +4783,86 @@
       fan: fan.dining_room_fan
       fan_speed_door_closed: input_number.fans_po_eco_speed_when_ac_on
       fan_speed_door_open: input_number.fans_po_eco_speed_when_ac_off
+- id: '1679668817982'
+  alias: Motion Timeouts
+  description: Set motion timeouts for different areas depending on time of day and
+    whether it is a holiday.
+  trigger:
+  - platform: time
+    at: input_datetime.sleep_hours_start
+  - platform: time
+    at: input_datetime.sleep_hours_end
+  - platform: time
+    at: '10:00:00'
+  - platform: time
+    at: '12:00:00'
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: time
+        after: input_datetime.sleep_hours_start
+        before: input_datetime.sleep_hours_end
+      sequence:
+      - service: input_number.set_value
+        data:
+          value: 2
+        target:
+          entity_id: input_number.motion_timeout_sitting_rooms
+      - service: input_number.set_value
+        data:
+          value: 15
+        target:
+          entity_id: input_number.motion_timeout_bedrooms
+      - service: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          entity_id:
+          - automation.dining_room_motion_fan
+          - automation.living_room_motion_fan
+    - conditions:
+      - condition: time
+        after: '10:00:00'
+        before: '12:00:00'
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      - condition: state
+        entity_id:
+        - calendar.elenas_school_holidays
+        - calendar.elis_school_holidays
+        - calendar.public_holidays
+        state: 'off'
+      sequence:
+      - service: input_number.set_value
+        data:
+          value: 2
+        target:
+          entity_id: input_number.motion_timeout_sitting_rooms
+      - service: input_number.set_value
+        data:
+          value: 2
+        target:
+          entity_id: input_number.motion_timeout_bedrooms
+    default:
+    - service: input_number.set_value
+      data:
+        value: 15
+      target:
+        entity_id: input_number.motion_timeout_bedrooms
+    - service: input_number.set_value
+      data:
+        value: 20
+      target:
+        entity_id: input_number.motion_timeout_sitting_rooms
+    - service: automation.turn_on
+      data: {}
+      target:
+        entity_id:
+        - automation.dining_room_motion_fan
+        - automation.living_room_motion_fan
+  mode: single
