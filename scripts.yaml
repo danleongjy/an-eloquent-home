@@ -399,72 +399,14 @@ set_recommended_scene_in_elis_room:
 set_recommended_scene_in_dining_room:
   alias: Set Recommended Scene in Dining Room
   sequence:
-  - choose:
-    - conditions:
-      - condition: numeric_state
-        entity_id: binary_sensor.recommended_scene_in_dining_room
-        attribute: lights_level
-        above: '0'
-      sequence:
-      - service: light.turn_on
-        target:
-          entity_id: light.dining_room_lights
-        data:
-          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_dining_room'',
-            ''lights_level'') }}
-
-            '
-    default:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id:
-        - light.dining_room_lights
-  - choose:
-    - conditions:
-      - condition: numeric_state
-        entity_id: binary_sensor.recommended_scene_in_dining_room
-        attribute: pendant_light_level
-        above: '0'
-      sequence:
-      - service: light.turn_on
-        target:
-          entity_id: light.dining_room_pendant_light_entity
-        data:
-          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_dining_room'',
-            ''pendant_light_level'') }}
-
-            '
-    default:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.dining_room_pendant_light_entity
-  - service: fan.turn_on
-    target:
-      entity_id: fan.dining_room_fan
+  - service: automation.trigger
     data:
-      percentage: '{{ state_attr(''binary_sensor.recommended_scene_in_dining_room'',
-
-        ''fan_speed'') | int }}
-
-        '
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.recommended_scene_in_dining_room
-        attribute: ac_state
-        state: cool
-      sequence:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.dining_room_ac
-    default:
-    - service: climate.turn_off
-      data: {}
-      target:
-        entity_id: climate.dining_room_ac
+      skip_condition: true
+    target:
+      entity_id:
+      - automation.dining_room_motion_fan
+      - automation.dining_room_motion_lights
+      - automation.dining_room_motion_pendant_light
   mode: single
   icon: mdi:magic-staff
 kitchen_blinds_up:
@@ -503,68 +445,14 @@ kitchen_blinds_stop:
 set_recommended_scene_in_living_room:
   alias: Set Recommended Scene in Living Room
   sequence:
-  - if:
-    - condition: numeric_state
-      entity_id: binary_sensor.recommended_scene_in_living_room
-      attribute: lights_level
-      above: '0'
-    then:
-    - service: light.turn_on
-      target:
-        entity_id: light.living_room_lights
-      data:
-        brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_living_room'',
-          ''lights_level'') }}
-
-          '
-    else:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.living_room_lights
-  - if:
-    - condition: numeric_state
-      entity_id: binary_sensor.recommended_scene_in_living_room
-      attribute: pendant_light_level
-      above: '0'
-    then:
-    - service: light.turn_on
-      target:
-        entity_id: light.living_room_pendant_light_entity
-      data:
-        brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_living_room'',
-          ''pendant_light_level'') }}
-
-          '
-    else:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.living_room_pendant_light_entity
-  - service: fan.turn_on
-    target:
-      entity_id: fan.living_room_fan
+  - service: automation.trigger
     data:
-      percentage: '{{ state_attr(''binary_sensor.recommended_scene_in_living_room'',
-
-        ''fan_speed'') | int }}
-
-        '
-  - if:
-    - condition: state
-      entity_id: binary_sensor.recommended_scene_in_living_room
-      attribute: ac_state
-      state: cool
-    then:
-    - service: climate.turn_on
-      data: {}
-      target:
-        entity_id: climate.living_room_ac
-    else:
-    - service: climate.turn_off
-      data: {}
-      target:
-        entity_id: climate.living_room_ac
+      skip_condition: true
+    target:
+      entity_id:
+      - automation.living_room_motion_fan
+      - automation.living_room_motion_lights
+      - automation.living_room_motion_pendant_light
   mode: single
   icon: mdi:magic-staff
 turn_off_living_room:
