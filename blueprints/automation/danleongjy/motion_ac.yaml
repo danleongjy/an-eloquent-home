@@ -25,16 +25,23 @@ blueprint:
       default: []
     doors_list:
       name: Doors to Track
-      description: A list of doors or door groups.  If the AC's state should not change when all the doors are closed even if motion is detected (useful in bedrooms when someone is sleeping), specify the doors here.  Otherwise, leave blank.
+      description: A list of doors or door groups.  The AC should only be on if all these doors are closed.  If blank, AC will disregard door status.
       selector:
         entity:
           domain: binary_sensor
           device_class: door
           multiple: true
       default: []
+    respect_closed_doors:
+      name: Respect Closed Doors
+      description: Set to true if the AC's state should not change when all the doors are closed even if motion is detected (useful in bedrooms when someone is sleeping).  Otherwise, set to false.
+      selector:
+        boolean:
+      default: true
 trigger_variables:
   entities: !input entities_list
   doors: !input doors_list
+  respect_doors: !input respect_closed_doors
 trigger:
   - platform: state
     entity_id: !input motion_sensor
@@ -42,10 +49,9 @@ trigger:
     to: "on"
 condition:
   - condition: template
-    value_template: "{{ doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
+    value_template: "{{ not respect_doors or doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
   - condition: template
-    value_template: >
-      {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
+    value_template: "{{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}"
 action:
   - variables:
       target_ac: !input ac
