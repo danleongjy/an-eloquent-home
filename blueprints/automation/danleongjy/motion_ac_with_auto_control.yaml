@@ -1,6 +1,6 @@
 blueprint:
-  name: Motion AC
-  description: Control the AC when motion is detected, depending on whether the doors are closed.
+  name: Motion AC with Auto Control
+  description: Control the AC when motion is detected, depending on whether the doors are closed.  Also enable or disable AC auto control based on time.
   domain: automation
   input:
     motion_sensor:
@@ -16,6 +16,24 @@ blueprint:
       selector:
         entity:
           domain: climate
+    ac_auto_control:
+      name: AC Auto Control
+      description: Automation to automatically control the AC based on temperature.
+      selector:
+        entity:
+          domain: automation
+    ac_auto_control_start:
+      name: AC Auto Control Start
+      description: Time helper indicating when AC auto control should be turned on.
+      selector:
+        entity:
+          domain: input_datetime
+    ac_auto_control_end:
+      name: AC Auto Control End
+      description: Time helper indicating when AC auto control should be turned off.
+      selector:
+        entity:
+          domain: input_datetime
     entities_list:
       name: Entities to Track
       description: A list of entities.  If the AC's state should not change when any of these entities are on even if motion is detected, specify them here.  Otherwise, leave blank.
@@ -67,9 +85,29 @@ action:
             data: {}
             target:
               entity_id: !input ac
+      - if:
+          - condition: time
+            after: !input ac_auto_control_start
+            before: !input ac_auto_control_end
+        then:
+          - service: automation.turn_on
+            data: {}
+            target:
+              entity_id: !input ac_auto_control
+        else:
+          - service: automation.turn_off
+            data:
+              stop_actions: true
+            target:
+              entity_id: !input ac_auto_control
     else:
       - service: climate.turn_off
         data: {}
         target:
           entity_id: !input ac
+      - service: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          entity_id: !input ac_auto_control
 mode: single

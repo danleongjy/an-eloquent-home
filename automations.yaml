@@ -4350,7 +4350,7 @@
   description: Control the Parents' Room AC when motion is detected depending on whether
     the doors are open
   use_blueprint:
-    path: danleongjy/motion_ac.yaml
+    path: danleongjy/motion_ac_with_auto_control.yaml
     input:
       motion_sensor: binary_sensor.parents_room_motion
       ac: climate.parents_room_ac
@@ -4394,7 +4394,7 @@
   description: Control Elena's Room AC when motion is detected depending on whether
     the doors are open
   use_blueprint:
-    path: danleongjy/motion_ac.yaml
+    path: danleongjy/motion_ac_with_auto_control.yaml
     input:
       motion_sensor: binary_sensor.elenas_room_motion
       ac: climate.elenas_room_ac
@@ -4468,7 +4468,7 @@
   description: Control Eli's Room AC when motion is detected depending on whether
     the doors are open
   use_blueprint:
-    path: danleongjy/motion_ac.yaml
+    path: danleongjy/motion_ac_with_auto_control.yaml
     input:
       motion_sensor: binary_sensor.elis_room_motion
       ac: climate.elis_room_ac
@@ -4679,6 +4679,7 @@
       blackout_hours_end: input_datetime.sleep_hours_end
       dim_light_brightness: input_number.night_light_brightness
       morning_light_brightness: input_number.morning_light_brightness
+      doors_list: []
 - id: '1679619511575'
   alias: Living Room Motion Pendant Light
   description: Control the Living Room Pendant Light when motion is detected, depending
@@ -4697,6 +4698,7 @@
       blackout_hours_end: input_datetime.sleep_hours_end
       dim_light_brightness: input_number.night_light_brightness
       morning_light_brightness: input_number.morning_light_brightness
+      doors_list: []
 - id: '1679619704393'
   alias: Living Room Motion Timeout
   description: Turn off lights, fan and AC in the Living Room when no motion is detected
@@ -4711,6 +4713,7 @@
       - light.living_room_pendant_light_entity
       - climate.living_room_ac
       - fan.living_room_fan
+      doors_list: []
 - id: '1679619826696'
   alias: Dining Room Motion Lights
   description: Control the Dining Room Lights when motion is detected, depending on
@@ -4729,6 +4732,8 @@
       blackout_hours_end: input_datetime.sleep_hours_end
       dim_light_brightness: input_number.night_light_brightness
       morning_light_brightness: input_number.morning_light_brightness
+      entities_list: []
+      doors_list: []
 - id: '1679619906548'
   alias: Dining Room Motion Pendant Light
   description: Control the Dining Room Pendant Light when motion is detected, depending
@@ -4747,6 +4752,8 @@
       blackout_hours_end: input_datetime.sleep_hours_end
       dim_light_brightness: input_number.night_light_brightness
       morning_light_brightness: input_number.morning_light_brightness
+      entities_list: []
+      doors_list: []
 - id: '1679619971749'
   alias: Dining Room Motion Timeout
   description: Turn off lights, fan and AC in the Dining Room when no motion is detected
@@ -4772,6 +4779,18 @@
       fan: fan.living_room_fan
       fan_speed_door_closed: input_number.fans_lucci_speed_when_ac_on
       fan_speed_door_open: input_number.fans_lucci_speed_when_ac_off
+      entities_list:
+      - light.living_room_lights
+      - light.living_room_pendant_light_entity
+      - fan.living_room_fan
+      - climate.living_room_ac
+      doors_list:
+      - binary_sensor.elenas_room_door
+      - binary_sensor.elis_room_door
+      - binary_sensor.junior_bathroom_door
+      - binary_sensor.parents_room_door
+      - binary_sensor.powder_room_door
+      - binary_sensor.main_door
 - id: '1679620425571'
   alias: Dining Room Motion Fan
   description: Control the Dining Room Fan when motion is detected, depending on whether
@@ -4783,13 +4802,25 @@
       fan: fan.dining_room_fan
       fan_speed_door_closed: input_number.fans_po_eco_speed_when_ac_on
       fan_speed_door_open: input_number.fans_po_eco_speed_when_ac_off
+      doors_list:
+      - binary_sensor.elenas_room_door
+      - binary_sensor.elis_room_door
+      - binary_sensor.junior_bathroom_door
+      - binary_sensor.powder_room_door
+      - binary_sensor.parents_room_door
+      - binary_sensor.main_door
+      entities_list:
+      - light.dining_room_lights
+      - light.dining_room_pendant_light_entity
+      - climate.dining_room_ac
+      - fan.dining_room_fan
 - id: '1679668817982'
   alias: Motion Timeouts
   description: Set motion timeouts for different areas depending on time of day and
     whether it is a holiday.
   trigger:
   - platform: time
-    at: input_datetime.sleep_hours_start
+    at: input_datetime.wind_down
   - platform: time
     at: input_datetime.sleep_hours_end
   - platform: time
@@ -4801,8 +4832,8 @@
   - choose:
     - conditions:
       - condition: time
-        after: input_datetime.sleep_hours_start
         before: input_datetime.sleep_hours_end
+        after: input_datetime.wind_down
       sequence:
       - service: input_number.set_value
         data:
@@ -4866,3 +4897,76 @@
         - automation.dining_room_motion_fan
         - automation.living_room_motion_fan
   mode: single
+- id: '1679732114538'
+  alias: Dishwasher Auto Control
+  description: Turn on or off the dishwasher based on door state and idle time
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.dishwasher_door
+    to: 'off'
+    id: door_closed
+  - platform: template
+    value_template: '{{ is_state(''switch.dishwasher'',''on'') and states(''sensor.dishwasher_watts'')
+      | float(0) <= 2 }}'
+    for:
+      minutes: 2
+    id: idle
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: door_closed
+    then:
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.dishwasher
+    else:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.dishwasher
+  mode: single
+- id: '1679819939741'
+  alias: Dining Room Motion AC
+  description: Control the Dining Room AC when motion is detected, depending on whether
+    the doors are closed.
+  use_blueprint:
+    path: danleongjy/motion_ac.yaml
+    input:
+      motion_sensor: binary_sensor.dining_room_motion
+      ac: climate.dining_room_ac
+      entities_list:
+      - light.dining_room_lights
+      - light.dining_room_pendant_light_entity
+      - fan.dining_room_fan
+      - climate.dining_room_ac
+      doors_list:
+      - binary_sensor.elenas_room_door
+      - binary_sensor.elis_room_door
+      - binary_sensor.junior_bathroom_door
+      - binary_sensor.powder_room_door
+      - binary_sensor.parents_room_door
+      - binary_sensor.main_door
+- id: '1679820093028'
+  alias: Living Room Motion AC
+  description: Control the Living Room AC when motion is detected, depending on whether
+    the doors are closed.
+  use_blueprint:
+    path: danleongjy/motion_ac.yaml
+    input:
+      motion_sensor: binary_sensor.living_room_motion
+      ac: climate.living_room_ac
+      entities_list:
+      - light.living_room_lights
+      - light.living_room_pendant_light_entity
+      - fan.living_room_fan
+      - climate.living_room_ac
+      doors_list:
+      - binary_sensor.elenas_room_door
+      - binary_sensor.elis_room_door
+      - binary_sensor.junior_bathroom_door
+      - binary_sensor.powder_room_door
+      - binary_sensor.parents_room_door
+      - binary_sensor.main_door
