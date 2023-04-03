@@ -584,8 +584,7 @@
                       "entities": [
                         {
                           "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                          "name": "Warn if vacuum may get wet",
-                          "icon": "mdi:water-alert"
+                          "name": "Warn if vacuum may get wet"
                         }
                       ]
                     },
@@ -6354,7 +6353,7 @@
           "cards": [
             {
               "square": true,
-              "columns": 3,
+              "columns": 4,
               "type": "grid",
               "cards": [
                 {
@@ -6405,9 +6404,23 @@
                   "type": "button",
                   "tap_action": {
                     "action": "navigate",
+                    "navigation_path": "/lovelace/motion"
+                  },
+                  "name": "Motion",
+                  "icon": "mdi:motion-sensor",
+                  "hold_action": {
+                    "action": "none"
+                  }
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "tap_action": {
+                    "action": "navigate",
                     "navigation_path": "/lovelace/automations"
                   },
-                  "name": "Automations",
+                  "name": "Automation",
                   "icon": "mdi:home-automation"
                 },
                 {
@@ -6591,31 +6604,12 @@
         },
         {
           "theme": "no_border",
-          "title": "Automations",
+          "title": "Automation",
           "path": "automations",
           "icon": "mdi:home-automation",
           "subview": true,
           "badges": [],
           "cards": [
-            {
-              "type": "entities",
-              "entities": [
-                {
-                  "entity": "input_number.motion_timeout_bedrooms",
-                  "name": "Bedrooms"
-                },
-                {
-                  "entity": "input_number.motion_timeout_sitting_rooms",
-                  "name": "Sitting Rooms"
-                },
-                {
-                  "entity": "input_number.motion_timeout_walking_areas",
-                  "name": "Walking Areas"
-                }
-              ],
-              "title": "Motion Timeouts",
-              "show_header_toggle": false
-            },
             {
               "type": "entities",
               "entities": [
@@ -6640,7 +6634,7 @@
                 {
                   "entity": "automation.notify_when_vacuum_running_with_doors_open",
                   "name": "Warn if Vacuum May Get Wet",
-                  "icon": "mdi:water"
+                  "icon": ""
                 }
               ]
             }
@@ -7057,6 +7051,342 @@
                   "title": "30-Day Stats"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "theme": "no_border",
+          "title": "Motion",
+          "path": "motion",
+          "icon": "mdi:motion-sensor",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "template": "square_cell",
+                      "icon": "mdi:bed",
+                      "name": "Elena",
+                      "show_name": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": [
+                            "automation.elenas_room_motion_ac",
+                            "automation.elenas_room_motion_fan",
+                            "automation.elenas_room_motion_lights",
+                            "automation.elenas_room_motion_timeout"
+                          ]
+                        }
+                      },
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": [
+                            "automation.elenas_room_motion_ac",
+                            "automation.elenas_room_motion_fan",
+                            "automation.elenas_room_motion_lights",
+                            "automation.elenas_room_motion_timeout"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.elenas_room_motion_lights",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "color_type": "blank-card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.elenas_room_motion_fan",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.elenas_room_motion_ac",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.elenas_room_motion_timeout",
+                      "template": "square_cell"
+                    }
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "template": "square_cell",
+                      "icon": "mdi:bed",
+                      "name": "Eli",
+                      "show_name": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": [
+                            "automation.elis_room_motion_ac",
+                            "automation.elis_room_motion_fan",
+                            "automation.elis_room_motion_lights",
+                            "automation.elis_room_motion_timeout"
+                          ]
+                        }
+                      },
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": [
+                            "automation.elis_room_motion_ac",
+                            "automation.elis_room_motion_fan",
+                            "automation.elis_room_motion_lights",
+                            "automation.elis_room_motion_timeout"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.elis_room_motion_lights",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "color_type": "blank-card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.elis_room_motion_fan",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.elis_room_motion_ac",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.elis_room_motion_timeout",
+                      "template": "square_cell"
+                    }
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "template": "square_cell",
+                      "icon": "mdi:pasta",
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": [
+                            "automation.dining_room_motion_ac",
+                            "automation.dining_room_motion_fan",
+                            "automation.dining_room_motion_lights",
+                            "automation.dining_room_motion_pendant_light",
+                            "automation.dining_room_motion_timeout"
+                          ]
+                        }
+                      },
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": [
+                            "automation.dining_room_motion_ac",
+                            "automation.dining_room_motion_fan",
+                            "automation.dining_room_motion_lights",
+                            "automation.dining_room_motion_pendant_light",
+                            "automation.dining_room_motion_timeout"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.dining_room_motion_lights",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.dining_room_motion_pendant_light",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.dining_room_motion_fan",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.dining_room_motion_ac",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.dining_room_motion_timeout",
+                      "template": "square_cell"
+                    }
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "template": "square_cell",
+                      "icon": "mdi:sofa",
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": [
+                            "automation.living_room_motion_ac",
+                            "automation.living_room_motion_fan",
+                            "automation.living_room_motion_lights",
+                            "automation.living_room_motion_pendant_light",
+                            "automation.living_room_motion_timeout"
+                          ]
+                        }
+                      },
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": [
+                            "automation.living_room_motion_ac",
+                            "automation.living_room_motion_fan",
+                            "automation.living_room_motion_lights",
+                            "automation.living_room_motion_pendant_light",
+                            "automation.living_room_motion_timeout"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.living_room_motion_lights",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.living_room_motion_pendant_light",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.living_room_motion_fan",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.living_room_motion_ac",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.living_room_motion_timeout",
+                      "template": "square_cell"
+                    }
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "template": "square_cell",
+                      "icon": "mdi:bed",
+                      "name": "D&G",
+                      "show_name": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": [
+                            "automation.parents_room_motion_ac",
+                            "automation.parents_room_motion_fan",
+                            "automation.parents_room_motion_lights",
+                            "automation.parents_room_motion_timeout"
+                          ]
+                        }
+                      },
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": [
+                            "automation.parents_room_motion_ac",
+                            "automation.parents_room_motion_fan",
+                            "automation.parents_room_motion_lights",
+                            "automation.parents_room_motion_timeout"
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.parents_room_motion_lights",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "color_type": "blank-card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.parents_room_motion_fan",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.parents_room_motion_ac",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.parents_room_motion_timeout",
+                      "template": "square_cell"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_number.motion_timeout_bedrooms",
+                  "name": "Bedrooms"
+                },
+                {
+                  "entity": "input_number.motion_timeout_sitting_rooms",
+                  "name": "Sitting Rooms"
+                },
+                {
+                  "entity": "input_number.motion_timeout_walking_areas",
+                  "name": "Walking Areas"
+                }
+              ],
+              "title": "Motion Timeouts",
+              "show_header_toggle": false
             }
           ]
         }
