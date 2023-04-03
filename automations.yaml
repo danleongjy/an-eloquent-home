@@ -4873,6 +4873,20 @@
           - automation.living_room_motion_fan
           - automation.living_room_motion_ac
           - automation.dining_room_motion_ac
+      - if:
+        - condition: state
+          entity_id:
+          - automation.dining_room_motion_timeout
+          - automation.living_room_motion_timeout
+          state: 'on'
+        then:
+        - service: automation.trigger
+          data:
+            skip_condition: true
+          target:
+            entity_id:
+            - automation.dining_room_motion_timeout
+            - automation.living_room_motion_timeout
     - conditions:
       - condition: time
         before: '12:00:00'
@@ -4900,6 +4914,14 @@
           value: 5
         target:
           entity_id: input_number.motion_timeout_bedrooms
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id:
+          - automation.dining_room_motion_ac
+          - automation.dining_room_motion_fan
+          - automation.living_room_motion_ac
+          - automation.living_room_motion_fan
     default:
     - service: input_number.set_value
       data:
