@@ -2213,6 +2213,10 @@
   - platform: state
     entity_id:
     - sensor.kitchen_lux
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_motion_sensors
+    to: 'on'
   condition: []
   action:
   - if:
@@ -3074,13 +3078,14 @@
         - automation.elis_room_motion_fan
         - automation.elis_room_motion_lights
         - automation.kitchen_motion_lights
-        - automation.kitchen_motion_timeout
         - automation.study_walkway_motion_light
         - automation.playroom_motion_lights
         - automation.yard_motion_light
+        - automation.dining_room_motion_ac
         - automation.dining_room_motion_fan
         - automation.dining_room_motion_lights
         - automation.dining_room_motion_pendant_light
+        - automation.living_room_motion_ac
         - automation.living_room_motion_fan
         - automation.living_room_motion_lights
         - automation.living_room_motion_pendant_light
@@ -3129,9 +3134,11 @@
         - automation.study_walkway_motion_light
         - automation.playroom_motion_lights
         - automation.yard_motion_light
+        - automation.dining_room_motion_ac
         - automation.dining_room_motion_fan
         - automation.dining_room_motion_lights
         - automation.dining_room_motion_pendant_light
+        - automation.living_room_motion_ac
         - automation.living_room_motion_fan
         - automation.living_room_motion_lights
         - automation.living_room_motion_pendant_light
@@ -4617,7 +4624,7 @@
       sufficient_lux: input_number.comfortable_lux
       insufficient_lux: input_number.minimum_lux
       dim_hours_start: input_datetime.wind_down
-      blackout_hours_start: input_datetime.sleep_hours_start
+      blackout_hours_start: input_datetime.sleep_hours_end
       blackout_hours_end: input_datetime.sleep_hours_end
       dim_light_brightness: input_number.night_light_brightness
       morning_light_brightness: input_number.morning_light_brightness
@@ -4822,20 +4829,26 @@
     whether it is a holiday.
   trigger:
   - platform: time
-    at: input_datetime.wind_down
+    at: input_datetime.sleep_hours_start
   - platform: time
     at: input_datetime.sleep_hours_end
   - platform: time
     at: '10:00:00'
   - platform: time
     at: '12:00:00'
+  - platform: state
+    entity_id:
+    - calendar.elenas_school_holidays
+    - calendar.elis_school_holidays
+    - calendar.public_holidays
+    to: 'on'
   condition: []
   action:
   - choose:
     - conditions:
       - condition: time
         before: input_datetime.sleep_hours_end
-        after: input_datetime.wind_down
+        after: input_datetime.sleep_hours_start
       sequence:
       - service: input_number.set_value
         data:
@@ -4854,9 +4867,10 @@
           entity_id:
           - automation.dining_room_motion_fan
           - automation.living_room_motion_fan
+          - automation.living_room_motion_ac
+          - automation.dining_room_motion_ac
     - conditions:
       - condition: time
-        after: '10:00:00'
         before: '12:00:00'
         weekday:
         - mon
@@ -4864,6 +4878,7 @@
         - wed
         - thu
         - fri
+        after: '10:00:00'
       - condition: state
         entity_id:
         - calendar.elenas_school_holidays
@@ -4878,7 +4893,7 @@
           entity_id: input_number.motion_timeout_sitting_rooms
       - service: input_number.set_value
         data:
-          value: 2
+          value: 5
         target:
           entity_id: input_number.motion_timeout_bedrooms
     default:
@@ -4898,6 +4913,8 @@
         entity_id:
         - automation.dining_room_motion_fan
         - automation.living_room_motion_fan
+        - automation.living_room_motion_ac
+        - automation.dining_room_motion_ac
   mode: single
 - id: '1679732114538'
   alias: Dishwasher Auto Control
