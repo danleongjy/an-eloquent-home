@@ -796,10 +796,6 @@
       ac_state: "{{ states('climate.parents_room_ac') }}"
       ac_auto_control: "{{ states('automation.parents_room_ac_auto_control') }}"
 
-  - name: Dining Room Fan Direction
-    unique_id: sensor.dining_room_fan_direction
-    state: "{{ state_attr('fan.dining_room_fan', 'direction') }}"
-
   - name: Raining With Yard Windows Open
     unique_id: sensor.raining_with_yard_windows_open
     state: >
@@ -893,18 +889,6 @@
       {% else %}
         Running
       {% endif %}
-
-  - name: Proxmox Disk Used Percentage
-    unique_id: sensor.proxmox_disk_used_percentage
-    state: "{{ 100 - states('sensor.node_proxmox_192_168_18_41_8006_disk_free_percentage') | float(0) }}"
-    unit_of_measurement: "%"
-    availability: "{{ states('sensor.node_proxmox_192_168_18_41_8006_disk_free_percentage') not in ['unavailable','unknown'] }}"
-
-  - name: Proxmox RAM Used Percentage
-    unique_id: sensor.proxmox_ram_used_percentage
-    state: "{{ 100 - states('sensor.node_proxmox_192_168_18_41_8006_memory_free_percentage') | float(0) }}"
-    unit_of_measurement: "%"
-    availability: "{{ states('sensor.node_proxmox_192_168_18_41_8006_memory_free_percentage') not in ['unavailable','unknown'] }}"
 
 - trigger:
   - platform: time_pattern
