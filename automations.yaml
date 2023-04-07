@@ -4298,14 +4298,6 @@
     input:
       fan: fan.living_room_fan
       recommended_scene_sensor: binary_sensor.recommended_scene_in_living_room
-- id: '1676891485025'
-  alias: Dining Room Fan Set State
-  description: Set the Dining Room Fan speed and power
-  use_blueprint:
-    path: danleongjy/fan_set_state.yaml
-    input:
-      fan: fan.dining_room_fan
-      recommended_scene_sensor: binary_sensor.recommended_scene_in_dining_room
 - id: '1676891528260'
   alias: Elena's Room Fan Set State
   description: Set Elena's Room Fan speed and power
@@ -4882,7 +4874,7 @@
         then:
         - service: automation.trigger
           data:
-            skip_condition: true
+            skip_condition: false
           target:
             entity_id:
             - automation.dining_room_motion_timeout
@@ -4922,6 +4914,36 @@
           - automation.dining_room_motion_fan
           - automation.living_room_motion_ac
           - automation.living_room_motion_fan
+      - if:
+        - condition: state
+          entity_id:
+          - automation.dining_room_motion_timeout
+          - automation.living_room_motion_timeout
+          state: 'on'
+        then:
+        - service: automation.trigger
+          data:
+            skip_condition: false
+          target:
+            entity_id:
+            - automation.dining_room_motion_timeout
+            - automation.living_room_motion_timeout
+      - if:
+        - condition: state
+          entity_id:
+          - automation.elis_room_motion_timeout
+          - automation.elenas_room_motion_timeout
+          - automation.parents_room_motion_timeout
+          state: 'on'
+        then:
+        - service: automation.trigger
+          data:
+            skip_condition: false
+          target:
+            entity_id:
+            - automation.elis_room_motion_timeout
+            - automation.elenas_room_motion_timeout
+            - automation.parents_room_motion_timeout
     default:
     - service: input_number.set_value
       data:

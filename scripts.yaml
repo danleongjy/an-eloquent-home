@@ -74,7 +74,6 @@ fan_set_state:
           options:
           - Parents' Room Fan
           - Study Room Fan
-          - Dining Room Fan
           - Living Room Fan
           - Elena's Room Fan
           - Eli's Room Fan
@@ -102,11 +101,10 @@ fan_set_state:
   - service: remote.send_command
     target:
       entity_id: "{% set universal_remote = \n  { \"Elena's Room Fan\": \"remote.elis_room_universal_remote\",\n
-        \   \"Eli's Room Fan\": \"remote.elis_room_universal_remote\",\n    \"Dining
-        Room Fan\": \"remote.study_room_universal_remote\",\n    \"Living Room Fan\":
-        \"remote.study_room_universal_remote\",\n    \"Study Room Fan\": \"remote.study_room_universal_remote\",\n
-        \   \"Parents' Room Fan\": \"remote.study_room_universal_remote\",\n  } %}\n{{
-        universal_remote[target_fan] }}\n"
+        \   \"Eli's Room Fan\": \"remote.elis_room_universal_remote\",\n    \"Living
+        Room Fan\": \"remote.study_room_universal_remote\",\n    \"Study Room Fan\":
+        \"remote.study_room_universal_remote\",\n    \"Parents' Room Fan\": \"remote.study_room_universal_remote\",\n
+        \ } %}\n{{ universal_remote[target_fan] }}\n"
     data:
       device: '{{ target_fan }}
 
@@ -129,7 +127,6 @@ fan_set_direction:
           options:
           - Parents' Room Fan
           - Study Room Fan
-          - Dining Room Fan
           - Living Room Fan
           - Elena's Room Fan
           - Eli's Room Fan
@@ -145,31 +142,40 @@ fan_set_direction:
           - reverse
       required: true
       default: forward
+  variables:
+    fan:
+      Elena's Room Fan:
+        entity_id: fan.elenas_room_fan
+        remote: remote.elis_room_universal_remote
+        direction: input_select.elenas_room_fan_direction
+      Eli's Room Fan:
+        entity_id: fan.elis_room_fan
+        remote: remote.elis_room_universal_remote
+        direction: input_select.elis_room_fan_direction
+      Living Room Fan:
+        entity_id: fan.living_room_fan
+        remote: remote.study_room_universal_remote
+        direction: input_select.living_room_fan_direction
+      Study Room Fan:
+        entity_id: fan.study_room_fan
+        remote: remote.study_room_universal_remote
+        direction: input_select.study_room_fan_direction
+      Parents' Room Fan:
+        entity_id: fan.parents_room_fan
+        remote: remote.study_room_universal_remote
+        direction: input_select.parents_room_fan_direction
   sequence:
   - if:
     - condition: template
-      value_template: "{% set fan_direction = \n  { \"Elena's Room Fan\": \"input_select.elenas_room_fan_direction\",\n
-        \   \"Eli's Room Fan\": \"input_select.elis_room_fan_direction\",\n    \"Dining
-        Room Fan\": \"input_select.dining_room_fan_direction\",\n    \"Living Room
-        Fan\": \"input_select.living_room_fan_direction\",\n    \"Study Room Fan\":
-        \"input_select.study_room_fan_direction\",\n    \"Parents' Room Fan\": \"input_select.parents_room_fan_direction\"\n
-        \ } %}\n{{ states(fan_direction[target_fan]) != direction }}\n"
+      value_template: '{{ states(fan[target_fan][''direction'']) != direction }}'
     then:
     - if:
       - condition: template
-        value_template: "{% set fan = \n   { \"Elena's Room Fan\": \"fan.elenas_room_fan\",\n
-          \    \"Eli's Room Fan\": \"fan.elis_room_fan\",\n     \"Dining Room Fan\":
-          \"fan.dining_room_fan\",\n     \"Living Room Fan\": \"fan.living_room_fan\",\n
-          \    \"Study Room Fan\": \"fan.study_room_fan\",\n     \"Parents' Room Fan\":
-          \"fan.parents_room_fan\"\n   } %}\n{{ states(fan[target_fan]) == 'off' }}\n"
+        value_template: '{{ states(fan[target_fan][''entity_id'']) == ''off'' }}'
       then:
       - service: fan.turn_on
         target:
-          entity_id: "{% set fan = \n  { \"Elena's Room Fan\": \"fan.elenas_room_fan\",\n
-            \   \"Eli's Room Fan\": \"fan.elis_room_fan\",\n    \"Dining Room Fan\":
-            \"fan.dining_room_fan\",\n    \"Living Room Fan\": \"fan.living_room_fan\",\n
-            \   \"Study Room Fan\": \"fan.study_room_fan\",\n    \"Parents' Room Fan\":
-            \"fan.parents_room_fan\"\n  } %}\n{{ fan[target_fan] }}\n"
+          entity_id: '{{ fan[target_fan][''entity_id''] }}'
       - delay:
           hours: 0
           minutes: 0
@@ -177,23 +183,13 @@ fan_set_direction:
           milliseconds: 0
     - service: remote.send_command
       target:
-        entity_id: "{% set universal_remote = \n  { \"Elena's Room Fan\": \"remote.elis_room_universal_remote\",\n
-          \   \"Eli's Room Fan\": \"remote.elis_room_universal_remote\",\n    \"Dining
-          Room Fan\": \"remote.study_room_universal_remote\",\n    \"Living Room Fan\":
-          \"remote.study_room_universal_remote\",\n    \"Study Room Fan\": \"remote.study_room_universal_remote\",\n
-          \   \"Parents' Room Fan\": \"remote.study_room_universal_remote\"\n  } %}\n{{
-          universal_remote[target_fan] }}\n"
+        entity_id: '{{ fan[target_fan][''remote''] }}'
       data:
         device: '{{ target_fan }}'
         command: Reverse
   - service: input_select.select_option
     target:
-      entity_id: "{% set fan_direction = \n  { \"Elena's Room Fan\": \"input_select.elenas_room_fan_direction\",\n
-        \   \"Eli's Room Fan\": \"input_select.elis_room_fan_direction\",\n    \"Dining
-        Room Fan\": \"input_select.dining_room_fan_direction\",\n    \"Living Room
-        Fan\": \"input_select.living_room_fan_direction\",\n    \"Study Room Fan\":
-        \"input_select.study_room_fan_direction\",\n    \"Parents' Room Fan\": \"input_select.parents_room_fan_direction\"\n
-        \ } %}\n{{ fan_direction[target_fan] }}\n"
+      entity_id: '{{ fan[target_fan][''direction''] }}'
     data:
       option: '{{ direction }}'
   mode: queued
