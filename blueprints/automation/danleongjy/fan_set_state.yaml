@@ -9,18 +9,12 @@ blueprint:
       selector:
         entity:
           domain: fan
-    recommended_scene_sensor:
-      name: Recommended Scene Sensor
-      description: Recommended scene in the room containing the fan, which contains a fan_speed attribute
+    motion_fan_automation:
+      name: Motion Fan Automation
+      description: Automation determining the fan's speed when turned on
       selector:
         entity:
-          include_entities:
-            - binary_sensor.recommended_scene_in_dining_room
-            - binary_sensor.recommended_scene_in_elenas_room
-            - binary_sensor.recommended_scene_in_elis_room
-            - binary_sensor.recommended_scene_in_living_room
-            - binary_sensor.recommended_scene_in_parents_room
-            - binary_sensor.recommended_scene_in_study_room
+          domain: automation
 trigger:
   - platform: state
     entity_id: !input fan
@@ -39,7 +33,6 @@ trigger:
 action:
   - variables:
       target_fan: !input fan
-      target_recommended_scene_sensor: !input recommended_scene_sensor
   - choose:
       - conditions:
           - condition: trigger
@@ -51,14 +44,6 @@ action:
                 attribute: percentage
                 below: "10"
             then:
-              - service: fan.set_percentage
-                data:
-                  percentage: >-
-                    {{
-                    state_attr(target_recommended_scene_sensor,
-                    "fan_speed") | int }}
-                target:
-                  entity_id: !input fan
               - service: fan.turn_off
                 data: {}
                 target:
@@ -76,13 +61,9 @@ action:
           - condition: trigger
             id: power_on
         sequence:
-          - service: fan.set_percentage
-            data:
-              percentage: >-
-                {{ state_attr(target_recommended_scene_sensor,
-                "fan_speed") | int }}
+          - service: automation.trigger
             target:
-              entity_id: !input fan
+              entity_id: !input motion_fan_automation
           - delay: 0.1
           - service: script.fan_set_state
             data:

@@ -75,13 +75,13 @@ action:
     then:
       - service: fan.turn_on
         data:
-          percentage: "{{ (states(fan_speed_when_door_open) | int(4) / 6 * 100) | round(0) }}"
+          percentage: "{{ (states(fan_speed_when_door_open) | int(4) / 6 * 100) | round(2) | int }}"
         target:
           entity_id: !input fan
     else:
       - service: fan.turn_on
         data:
-          percentage: "{{ (states(fan_speed_when_door_closed) | int(1) / 6 * 100) | round(0) }}"
+          percentage: "{{ (states(fan_speed_when_door_closed) | int(1) / 6 * 100) | round(2) | int }}"
         target:
           entity_id: !input fan
 mode: single
