@@ -2173,7 +2173,7 @@
   description: Close the Kitchen Blinds if raining, in the mornings or AC is on
   trigger:
   - platform: template
-    value_template: "{{ (states('sensor.local_rainfall') | int > 1)\n   or ('Thunder'
+    value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or ('Thunder'
       in states('sensor.local_two_hour_forecast'))\n   or ('Rain' in states('sensor.local_two_hour_forecast'))\n
       \  or ('Shower' in states('sensor.local_two_hour_forecast'))\n   or ('Wind'
       in states('sensor.local_two_hour_forecast')) }}"
@@ -2202,8 +2202,10 @@
     from: 'off'
     to: 'on'
   - platform: template
-    value_template: "{{ (states('sensor.local_rainfall') | int <= 1) and ('Thunder'
-      not in\n   states('sensor.local_two_hour_forecast')) }}"
+    value_template: "{{ not ((states('sensor.local_rainfall') | int(0) > 1)\n        or
+      ('Thunder' in states('sensor.local_two_hour_forecast'))\n        or ('Rain'
+      in states('sensor.local_two_hour_forecast'))\n        or ('Shower' in states('sensor.local_two_hour_forecast'))\n
+      \       or ('Wind' in states('sensor.local_two_hour_forecast'))) }}"
   - platform: state
     entity_id:
     - sun.sun
@@ -2223,10 +2225,10 @@
     - condition: or
       conditions:
       - condition: template
-        value_template: "{{ (states('sensor.local_rainfall') | int > 1)\n   or ('Thunder'
-          in states('sensor.local_two_hour_forecast'))\n   or ('Rain' in states('sensor.local_two_hour_forecast'))\n
-          \  or ('Shower' in states('sensor.local_two_hour_forecast'))\n   or ('Wind'
-          in states('sensor.local_two_hour_forecast')) }}"
+        value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or
+          ('Thunder' in states('sensor.local_two_hour_forecast'))\n   or ('Rain' in
+          states('sensor.local_two_hour_forecast'))\n   or ('Shower' in states('sensor.local_two_hour_forecast'))\n
+          \  or ('Wind' in states('sensor.local_two_hour_forecast')) }}"
       - condition: state
         entity_id: climate.living_room_ac
         state: cool
@@ -2282,10 +2284,10 @@
       - condition: not
         conditions:
         - condition: template
-          value_template: "{{ (states('sensor.local_rainfall') | int > 1)\n   or ('Thunder'
-            in states('sensor.local_two_hour_forecast'))\n   or ('Rain' in states('sensor.local_two_hour_forecast'))\n
-            \  or ('Shower' in states('sensor.local_two_hour_forecast'))\n   or ('Wind'
-            in states('sensor.local_two_hour_forecast')) }}"
+          value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or
+            ('Thunder' in states('sensor.local_two_hour_forecast'))\n   or ('Rain'
+            in states('sensor.local_two_hour_forecast'))\n   or ('Shower' in states('sensor.local_two_hour_forecast'))\n
+            \  or ('Wind' in states('sensor.local_two_hour_forecast')) }}"
     - condition: template
       value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed >
         timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')

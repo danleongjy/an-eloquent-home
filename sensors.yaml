@@ -56,17 +56,21 @@
   resource: https://api.data.gov.sg/v1/environment/2-hour-weather-forecast
   name: Local Two Hour Forecast
   value_template: >
-    {% set forecasts = value_json['items'][0]['forecasts'] %}
-    {% for forecast in forecasts %}
-      {% if forecast['area'] == 'Geylang' %}
-        {% set geylang_forecast = forecast['forecast'] %}
-        {% if geylang_forecast.split('(') | length > 1 %}
-          {{geylang_forecast.split('(')[0][:-1]}}
-        {% else %}
-          {{ geylang_forecast}}
+    {% if 'forecasts' in value_json['items'][0].keys() %}
+      {% set forecasts = value_json['items'][0]['forecasts'] %}
+      {% for forecast in forecasts %}
+        {% if forecast['area'] == 'Geylang' %}
+          {% set geylang_forecast = forecast['forecast'] %}
+          {% if geylang_forecast.split('(') | length > 1 %}
+            {{geylang_forecast.split('(')[0][:-1]}}
+          {% else %}
+            {{ geylang_forecast}}
+          {% endif %}
         {% endif %}
-      {% endif %}
-    {% endfor %}
+      {% endfor %}
+    {% else %}
+      unavailable
+    {% endif %}
   scan_interval: 600
 
 - platform: statistics
