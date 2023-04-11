@@ -2274,9 +2274,8 @@
           state: 'on'
         - condition: numeric_state
           entity_id: sensor.kitchen_lux
-          value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
-            | int + 300) }}'
-          below: 0
+          value_template: ''
+          below: input_number.minimum_lux
         - condition: state
           entity_id: switch.rice_cooker
           state: 'on'
@@ -2296,6 +2295,7 @@
       target:
         entity_id: cover.kitchen_blinds
   mode: single
+  max_exceeded: silent
 - id: '1660034693952'
   alias: Master Bathroom Blind Auto Control
   description: Control the Master Bathroom Blind based on whether there is motion
