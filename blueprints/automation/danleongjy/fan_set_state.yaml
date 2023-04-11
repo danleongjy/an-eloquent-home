@@ -53,6 +53,9 @@ action:
                   target_fan: "{{ state_attr(target_fan,'friendly_name') }}"
                   target_fan_power: false
             else:
+              - condition: state
+                entity_id: !input fan
+                state: "on"
               - service: script.fan_set_state
                 data:
                   target_fan: "{{ state_attr(target_fan,'friendly_name') }}"
