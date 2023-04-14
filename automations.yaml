@@ -2228,43 +2228,56 @@
     attribute: azimuth
   condition: []
   action:
-  - if:
-    - condition: or
-      conditions:
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: template
+          value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or
+            ('Thunder' in states('sensor.local_two_hour_forecast'))\n   or ('Rain'
+            in states('sensor.local_two_hour_forecast'))\n   or ('Shower' in states('sensor.local_two_hour_forecast'))\n
+            \  or ('Wind' in states('sensor.local_two_hour_forecast')) }}"
+        - condition: state
+          entity_id: climate.living_room_ac
+          state: cool
+        - condition: numeric_state
+          entity_id:
+          - sensor.kitchen_lux
+          above: input_number.maximum_lux
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id:
+          - switch.stove_main_power
+          - switch.rice_cooker
+          - binary_sensor.gas_water_heater
+          state: 'on'
+      sequence:
       - condition: template
-        value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or
-          ('Thunder' in states('sensor.local_two_hour_forecast'))\n   or ('Rain' in
-          states('sensor.local_two_hour_forecast'))\n   or ('Shower' in states('sensor.local_two_hour_forecast'))\n
-          \  or ('Wind' in states('sensor.local_two_hour_forecast')) }}"
-      - condition: state
-        entity_id: climate.living_room_ac
-        state: cool
-      - condition: numeric_state
-        entity_id:
-        - sensor.kitchen_lux
-        above: input_number.maximum_lux
+        value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed
+          > timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+          | int(0)) }}'
+      - service: cover.close_cover
+        data: {}
+        target:
+          entity_id: cover.kitchen_blinds
+    - conditions:
       - condition: template
         value_template: "{{ states('sun.sun') == 'above_horizon'\n   and state_attr('sun.sun',
           'elevation') <= 60\n   and state_attr('sun.sun', 'azimuth') >= 75\n   and
           state_attr('sun.sun', 'azimuth') <= 90 }}"
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id:
-        - switch.stove_main_power
-        - switch.rice_cooker
-        - binary_sensor.gas_water_heater
-        state: 'on'
-    then:
-    - condition: template
-      value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed >
-        timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
-        | int(0)) }}'
-    - service: cover.close_cover
-      data: {}
-      target:
-        entity_id: cover.kitchen_blinds
-    else:
+      sequence:
+      - condition: template
+        value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed
+          > timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+          | int(0)) }}'
+      - service: cover.set_cover_position
+        data:
+          position: '{{ ((60 - state_attr(''sun.sun'',''elevation'')) / 60 * 100)
+            | round(0) }}'
+        target:
+          entity_id: cover.kitchen_blinds
+    default:
     - condition: and
       conditions:
       - condition: or
