@@ -2208,17 +2208,24 @@
       \       or ('Wind' in states('sensor.local_two_hour_forecast'))) }}"
   - platform: state
     entity_id:
-    - sun.sun
-    attribute: rising
-    to: false
-    enabled: true
-  - platform: state
-    entity_id:
     - sensor.kitchen_lux
   - platform: state
     entity_id:
     - binary_sensor.kitchen_motion_sensors
     to: 'on'
+  - platform: state
+    entity_id:
+    - sun.sun
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    above: 60
+    below: 90
+  - platform: numeric_state
+    entity_id: sun.sun
+    above: 75
+    below: 90
+    attribute: azimuth
   condition: []
   action:
   - if:
@@ -2236,6 +2243,10 @@
         entity_id:
         - sensor.kitchen_lux
         above: input_number.maximum_lux
+      - condition: template
+        value_template: "{{ states('sun.sun') == 'above_horizon'\n   and state_attr('sun.sun',
+          'elevation') <= 60\n   and state_attr('sun.sun', 'azimuth') >= 75\n   and
+          state_attr('sun.sun', 'azimuth') <= 90 }}"
     - condition: not
       conditions:
       - condition: state
@@ -2287,6 +2298,12 @@
             ('Thunder' in states('sensor.local_two_hour_forecast'))\n   or ('Rain'
             in states('sensor.local_two_hour_forecast'))\n   or ('Shower' in states('sensor.local_two_hour_forecast'))\n
             \  or ('Wind' in states('sensor.local_two_hour_forecast')) }}"
+      - condition: not
+        conditions:
+        - condition: template
+          value_template: "{{ states('sun.sun') == 'above_horizon'\n   and state_attr('sun.sun',
+            'elevation') <= 60\n   and state_attr('sun.sun', 'azimuth') >= 75\n   and
+            state_attr('sun.sun', 'azimuth') <= 90 }}"
     - condition: template
       value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed >
         timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
@@ -3267,6 +3284,11 @@
       - automation.south_facing_blinds_auto_control
       - automation.kitchen_blinds_auto_control
       - automation.notify_when_vacuum_running_with_doors_open
+      - automation.dining_room_motion_timeout
+      - automation.elenas_room_motion_timeout
+      - automation.elis_room_motion_timeout
+      - automation.living_room_motion_timeout
+      - automation.parents_room_motion_timeout
   mode: single
 - id: '1672302011128'
   alias: South-Facing Blinds Auto Control
@@ -3950,11 +3972,11 @@
   use_blueprint:
     path: AlexanderBabel/occupancy.yaml
     input:
-      door_sensor: binary_sensor.junior_bathroom_door
       motion_sensor: binary_sensor.junior_bathroom_motion_sensors
       occupancy_helper: input_boolean.junior_bathroom_occupancy
       last_motion_helper: input_datetime.junior_bathroom_last_motion_detected
       turn_off_delay: 90
+      door_sensor: binary_sensor.junior_bathroom_door
 - id: '1675045768564'
   alias: Powder Room Occupancy
   description: Track occupancy in the Powder Room based on Wasp in a Box logic
@@ -4953,7 +4975,7 @@
         entity_id: input_number.motion_timeout_bedrooms
     - service: input_number.set_value
       data:
-        value: 20
+        value: 30
       target:
         entity_id: input_number.motion_timeout_sitting_rooms
     - service: automation.turn_on
