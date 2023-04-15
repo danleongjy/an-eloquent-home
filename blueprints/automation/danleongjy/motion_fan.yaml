@@ -78,10 +78,22 @@ action:
           percentage: "{{ (states(fan_speed_when_door_open) | int(4) / 6 * 100) | round(2) | int }}"
         target:
           entity_id: !input fan
+      - delay: 1
+      - service: fan.set_direction
+        data:
+          direction: forward
+        target:
+          entity_id: !input fan
     else:
       - service: fan.turn_on
         data:
           percentage: "{{ (states(fan_speed_when_door_closed) | int(1) / 6 * 100) | round(2) | int }}"
+        target:
+          entity_id: !input fan
+      - delay: 1
+      - service: fan.set_direction
+        data:
+          direction: reverse
         target:
           entity_id: !input fan
 mode: single
