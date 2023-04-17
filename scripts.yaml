@@ -931,7 +931,7 @@ set_recommended_scene_in_playroom:
       - automation.yard_motion_light
   mode: single
   icon: mdi:magic-staff
-recommended_light_level_in_study_walkway:
+recommended_light_level_for_study_walkway:
   alias: Recommended Light Level for Study Walkway
   use_blueprint:
     path: danleongjy/recommended_light_level.yaml
@@ -1108,5 +1108,21 @@ set_recommended_scene_in_master_bathroom:
       entity_id:
       - automation.master_bathroom_motion_light
       - automation.master_bathroom_motion_pendant_light
+  mode: single
+  icon: mdi:magic-staff
+recommended_light_level_for_hallway:
+  alias: Recommended Light Level for Hallway
+  use_blueprint:
+    path: danleongjy/recommended_light_level.yaml
+    input:
+      lights_list:
+      - light.hallway_lights
+  mode: single
+  icon: mdi:lightbulb-on-70
+set_recommended_scene_in_hallway:
+  alias: Set Recommended Scene in Hallway
+  sequence:
+  - service: script.recommended_light_level_for_hallway
+    data: {}
   mode: single
   icon: mdi:magic-staff

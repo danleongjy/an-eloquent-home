@@ -155,82 +155,6 @@
       button_down_long_max_loop_repeats: 50
       button_down_long_loop: true
       button_up_long_loop: true
-- id: '1643642651826'
-  alias: Hallway Motion
-  description: Control the Hallway Lights with motion
-  trigger:
-  - platform: state
-    entity_id: binary_sensor.hallway_motion
-    id: motion
-    from: 'off'
-    to: 'on'
-  - platform: state
-    entity_id: binary_sensor.hallway_motion
-    id: no_motion
-    from: 'on'
-    to: 'off'
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: motion
-    - condition: or
-      conditions:
-      - condition: numeric_state
-        entity_id: sensor.hallway_lux
-        below: input_number.minimum_lux
-      - condition: state
-        entity_id: light.dining_room_lights
-        state: 'on'
-      - condition: state
-        entity_id: light.dining_room_pendant_light_entity
-        state: 'on'
-    then:
-    - choose:
-      - conditions:
-        - condition: time
-          after: input_datetime.elenas_wind_down
-        - condition: state
-          entity_id: input_boolean.wind_down_lights
-          state: 'on'
-        sequence:
-        - service: light.turn_on
-          data:
-            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
-          target:
-            entity_id: light.hallway_bulb_1_entity
-      - conditions:
-        - condition: time
-          before: input_datetime.elenas_wind_down
-        sequence:
-        - if:
-          - condition: sun
-            before: sunrise
-          then:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                }}'
-            target:
-              entity_id: light.hallway_lights
-          else:
-          - service: light.turn_on
-            data:
-              brightness_pct: 100
-            target:
-              entity_id: light.hallway_lights
-      default:
-      - service: light.turn_on
-        data:
-          brightness_pct: 100
-        target:
-          entity_id: light.hallway_lights
-    else:
-    - service: light.turn_off
-      target:
-        entity_id: light.hallway_lights
-      data: {}
-  mode: single
 - id: '1643643181661'
   alias: Dining Room AC Controller
   description: Control the Dining Room AC
@@ -2133,11 +2057,8 @@
           - tue
           - mon
         - condition: state
-          entity_id: climate.parents_room_ac
-          state: 'off'
-        - condition: state
-          entity_id: fan.parents_room_fan
-          state: 'off'
+          entity_id: binary_sensor.master_bathroom_door
+          state: 'on'
       - service: cover.open_cover
         data: {}
         target:
@@ -4344,7 +4265,6 @@
     input:
       lights_list:
       - light.study_room_bulb_4_entity
-      recommended_light_level_script: script.recommended_light_level_for_study_walkway
       motion_sensor: binary_sensor.study_walkway_motion
       lux_sensor: sensor.study_walkway_lux
       blackout_hours_start: input_datetime.sleep_hours_end
@@ -4352,6 +4272,7 @@
       - light.study_room_bulb_1_entity
       - light.study_room_bulb_2_entity
       - light.study_room_bulb_3_entity
+      recommended_light_level_script: script.recommended_light_level_for_study_walkway
 - id: '1678322492101'
   alias: Study Walkway Motion Timeout
   description: Turn off Study Room Bulb 4 when no motion is detected for a certain
@@ -4888,3 +4809,16 @@
       target:
         entity_id: light.powder_room_pendant_light_entity
   mode: single
+- id: '1681731968251'
+  alias: Hallway Motion Lights
+  description: Control the Hallway Lights when motion is detected, depending on lux
+    level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.hallway_lights
+      recommended_light_level_script: script.recommended_light_level_for_hallway
+      motion_sensor: binary_sensor.hallway_motion
+      lux_sensor: sensor.hallway_lux
+      blackout_hours_start: input_datetime.sleep_hours_end
