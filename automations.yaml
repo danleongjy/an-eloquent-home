@@ -3303,8 +3303,8 @@
         - automation.junior_bathroom_motion
         - automation.kitchen_blinds_auto_control
         - automation.master_bathroom_blind_auto_control
-        - automation.master_bathroom_light_motion
-        - automation.master_bathroom_pendant_light_motion
+        - automation.master_bathroom_motion_light
+        - automation.master_bathroom_motion_pendant_light
         - automation.powder_room_motion
         - automation.water_heater_motion
         - automation.south_facing_blinds_auto_control
@@ -3356,8 +3356,8 @@
         - automation.junior_bathroom_motion
         - automation.kitchen_blinds_auto_control
         - automation.master_bathroom_blind_auto_control
-        - automation.master_bathroom_light_motion
-        - automation.master_bathroom_pendant_light_motion
+        - automation.master_bathroom_motion_light
+        - automation.master_bathroom_motion_pendant_light
         - automation.powder_room_motion
         - automation.water_heater_motion
         - automation.south_facing_blinds_auto_control
@@ -5332,3 +5332,60 @@
       fan: fan.study_room_fan
       fan_speed_door_closed: input_number.fans_lucci_speed_when_ac_on
       fan_speed_door_open: input_number.fans_lucci_speed_when_ac_off
+- id: '1681712828244'
+  alias: Master Bathroom Motion Light
+  description: Turn on the Master Bathroom Light according to motion and time of day
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.master_bathroom_motion
+    to: 'on'
+    id: motion
+  - platform: state
+    entity_id:
+    - input_boolean.master_bathroom_occupancy
+    to: 'off'
+    id: no_motion
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: motion
+    then:
+    - service: script.recommended_light_level_for_master_bathroom_light
+      data: {}
+    else:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.master_bathroom_light_entity
+  mode: single
+- id: '1681717642234'
+  alias: Master Bathroom Motion Pendant Light
+  description: Turn on the Master Bathroom Pendant Light according to motion and time
+    of day
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.master_shower_motion
+    to: 'on'
+    id: motion
+  - platform: state
+    entity_id:
+    - input_boolean.master_bathroom_occupancy
+    to: 'off'
+    id: no_motion
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id: motion
+    then:
+    - service: script.recommended_light_level_for_master_bathroom_pendant_light
+      data: {}
+    else:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.master_bathroom_pendant_light_entity
+  mode: single
