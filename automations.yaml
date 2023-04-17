@@ -66,42 +66,12 @@
       controller_device: cea5083fc6a1972a0b57048ffa03cfd8
       helper_last_controller_event: input_text.zz_dining_room_lights_controller_2_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.wind_down
-          - condition: state
-            entity_id: input_boolean.wind_down_lights
-            state: 'on'
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id:
-              - light.dining_room_lights
-              - light.dining_room_pendant_light_entity
-            data:
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-        - conditions:
-          - condition: sun
-            before: sunrise
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id:
-              - light.dining_room_lights
-              - light.dining_room_pendant_light_entity
-            data:
-              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                }}'
-        default:
-        - service: light.turn_on
-          target:
-            entity_id:
-            - light.dining_room_lights
-            - light.dining_room_pendant_light_entity
-          data:
-            brightness_pct: 100
+      - service: script.turn_on
+        data: {}
+        target:
+          entity_id:
+          - script.recommended_light_level_for_dining_room_lights
+          - script.recommended_light_level_for_dining_room_pendant_light
       action_button_up_long:
       - service: light.turn_on
         target:
@@ -150,42 +120,12 @@
       controller_device: 867b78e6f7808ffcceb260be52b0c174
       helper_last_controller_event: input_text.zz_playroom_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.wind_down
-          - condition: state
-            entity_id: input_boolean.wind_down_lights
-            state: 'on'
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id:
-              - light.playroom_lights
-              - light.yard_light_entity
-            data:
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-        - conditions:
-          - condition: sun
-            before: sunrise
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id:
-              - light.playroom_lights
-              - light.yard_light_entity
-            data:
-              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                }}'
-        default:
-        - service: light.turn_on
-          target:
-            entity_id:
-            - light.playroom_lights
-            - light.yard_light_entity
-          data:
-            brightness_pct: 100
+      - service: script.turn_on
+        data: {}
+        target:
+          entity_id:
+          - script.recommended_light_level_for_playroom
+          - script.recommended_light_level_for_yard
       action_button_up_long:
       - service: light.turn_on
         target:
@@ -392,34 +332,8 @@
       controller_device: 8fd4f8715be89cc0f383c887c3fac892
       helper_last_controller_event: input_text.zz_powder_room_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.wind_down
-            before: input_datetime.sleep_hours_end
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id: light.powder_room_pendant_light_entity
-            data:
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-        - conditions:
-          - condition: sun
-            before: sunrise
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id: light.powder_room_pendant_light_entity
-            data:
-              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                }}'
-        default:
-        - service: light.turn_on
-          target:
-            entity_id: light.powder_room_pendant_light_entity
-          data:
-            brightness_pct: 100
+      - service: script.recommended_light_level_for_powder_room
+        data: {}
       action_button_up_long:
       - service: light.turn_on
         target:
@@ -656,36 +570,8 @@
       controller_device: f084f2e55c0800941585a50dd83e5f47
       helper_last_controller_event: input_text.zz_junior_bathroom_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.elenas_bedtime
-          - condition: state
-            entity_id: input_boolean.wind_down_lights
-            state: 'on'
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id: light.junior_bathroom_lights
-            data:
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-        - conditions:
-          - condition: sun
-            before: sunrise
-          sequence:
-          - service: light.turn_on
-            target:
-              entity_id: light.junior_bathroom_lights
-            data:
-              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                }}'
-        default:
-        - service: light.turn_on
-          target:
-            entity_id: light.junior_bathroom_lights
-          data:
-            brightness_pct: 100
+      - service: script.recommended_light_level_for_junior_bathroom
+        data: {}
       action_button_up_long:
       - service: light.turn_on
         target:
@@ -1306,38 +1192,12 @@
       controller_device: c5d9eb9905ea6ac1a19d209a6dd0965c
       helper_last_controller_event: input_text.zz_living_room_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.wind_down
-          - condition: state
-            entity_id: input_boolean.wind_down_lights
-            state: 'on'
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-            target:
-              entity_id: light.living_room_pendant_light_entity
-        - conditions:
-          - condition: sun
-            before: sunrise
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                }}'
-            target:
-              entity_id: light.living_room_pendant_light_entity
-        default:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id:
-            - light.living_room_lights
-            - light.living_room_pendant_light_entity
+      - service: script.turn_on
+        data: {}
+        target:
+          entity_id:
+          - script.recommended_light_level_for_living_room_lights
+          - script.recommended_light_level_for_living_room_pendant_light
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -1515,6 +1375,9 @@
             brightness_pct: 100
           target:
             entity_id: light.study_room_lights
+        enabled: false
+      - service: script.recommended_light_level_for_study_room
+        data: {}
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -1716,42 +1579,8 @@
       controller_device: 2d7882ce6b51a89dbc5b012417d00c40
       helper_last_controller_event: input_text.zz_parents_room_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.wind_down
-            before: input_datetime.sleep_hours_end
-            weekday:
-            - mon
-            - tue
-            - wed
-            - thu
-            - fri
-            - sat
-            - sun
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-            target:
-              entity_id: light.parents_room_lights
-        - conditions:
-          - condition: sun
-            before: sunrise
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                }}'
-            target:
-              entity_id: light.parents_room_lights
-        default:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id: light.parents_room_lights
+      - service: script.recommended_light_level_for_parents_room
+        data: {}
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -1794,34 +1623,12 @@
       controller_device: 75fe391df20feec2911c6bf08707c353
       helper_last_controller_event: input_text.zz_master_bathroom_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.wind_down
-            before: input_datetime.sleep_hours_end
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-            target:
-              entity_id: light.master_bathroom_lights
-        - conditions:
-          - condition: sun
-            before: sunrise
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                }}'
-            target:
-              entity_id: light.master_bathroom_lights
-        default:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id: light.master_bathroom_lights
+      - service: script.turn_on
+        data: {}
+        target:
+          entity_id:
+          - script.recommended_light_level_for_master_bathroom_light
+          - script.recommended_light_level_for_master_bathroom_pendant_light
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -1956,36 +1763,8 @@
       controller_device: 13c989b42cc6640ec074b9c74df4101c
       helper_last_controller_event: input_text.zz_kitchen_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.wind_down
-          - condition: state
-            entity_id: input_boolean.wind_down_lights
-            state: 'on'
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-            target:
-              entity_id: light.kitchen_lights
-        - conditions:
-          - condition: sun
-            before: sunrise
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                }}'
-            target:
-              entity_id: light.kitchen_lights
-        default:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id: light.kitchen_lights
+      - service: script.recommended_light_level_for_kitchen
+        data: {}
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -2456,42 +2235,8 @@
       controller_device: bcfa3b3429c3ad745cc8299a3d74e3d3
       helper_last_controller_event: input_text.zz_elena_s_room_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.elenas_wind_down
-            before: input_datetime.sleep_hours_end
-            weekday:
-            - sun
-            - sat
-            - fri
-            - thu
-            - wed
-            - tue
-            - mon
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-            target:
-              entity_id: light.elenas_room_lights
-        - conditions:
-          - condition: sun
-            before: sunrise
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                }}'
-            target:
-              entity_id: light.elenas_room_lights
-        default:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id: light.elenas_room_lights
+      - service: script.recommended_light_level_for_elenas_room
+        data: {}
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -2764,42 +2509,8 @@
           target:
             entity_id: light.elis_room_lights
         else:
-        - choose:
-          - conditions:
-            - condition: time
-              after: input_datetime.wind_down
-              before: input_datetime.sleep_hours_end
-              weekday:
-              - mon
-              - tue
-              - wed
-              - thu
-              - fri
-              - sat
-              - sun
-            sequence:
-            - service: light.turn_on
-              data:
-                brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                  }}'
-              target:
-                entity_id: light.elis_room_lights
-          - conditions:
-            - condition: sun
-              before: sunrise
-            sequence:
-            - service: light.turn_on
-              data:
-                brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                  }}'
-              target:
-                entity_id: light.elis_room_lights
-          default:
-          - service: light.turn_on
-            data:
-              brightness_pct: 100
-            target:
-              entity_id: light.elis_room_lights
+        - service: script.recommended_light_level_for_elis_room
+          data: {}
       button_left_long_loop: true
       button_left_long_max_loop_repeats: 50
       button_right_long_loop: true
