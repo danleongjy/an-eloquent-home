@@ -2477,7 +2477,7 @@
         - condition: numeric_state
           entity_id: sun.sun
           attribute: elevation
-          below: 60
+          below: 35
         then:
         - service: cover.set_cover_position
           data:
@@ -2486,8 +2486,9 @@
           target:
             entity_id: cover.kitchen_blinds
         else:
-        - service: cover.close_cover
-          data: {}
+        - service: cover.set_cover_position
+          data:
+            position: 10
           target:
             entity_id: cover.kitchen_blinds
     default:
