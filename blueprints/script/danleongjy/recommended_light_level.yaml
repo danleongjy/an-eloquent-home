@@ -51,11 +51,22 @@ sequence:
         after: !input dim_hours_start
         before: !input dim_hours_end
     then:
-      - service: light.turn_on
-        data:
-          brightness_pct: "{{ states(night_brightness) | int(1) }}"
-        target:
-          entity_id: !input lights_list
+      - if:
+          - condition: state
+            entity_id: sun.sun
+            state: below_horizon
+        then:
+          - service: light.turn_on
+            data:
+              brightness_pct: "{{ states(night_brightness) | int(1) }}"
+            target:
+              entity_id: !input lights_list
+        else:
+          - service: light.turn_on
+            data:
+              brightness_pct: "{{ states(morning_brightness) | int(1) }}"
+            target:
+              entity_id: !input lights_list
     else:
       - service: light.turn_on
         data:

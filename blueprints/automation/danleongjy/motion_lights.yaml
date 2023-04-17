@@ -10,6 +10,12 @@ blueprint:
         entity:
           domain: light
           multiple: true
+    recommended_light_level_script:
+      name: Recommended Light Level Script
+      description: A script created by the Recommended Light Level blueprint that determines how brightly the light will turn on according to time.
+      selector:
+        entity:
+          domain: script
     motion_sensor:
       name: Motion Sensor
       description: When motion is detected by this sensor, the lights may turn on.
@@ -30,42 +36,28 @@ blueprint:
       selector:
         entity:
           domain: input_number
+      default: input_number.comfortable_lux
     insufficient_lux:
       name: Insufficient Lux Level
       description: A number helper indicating the lux level below which it is too dark and lights need to be on.
       selector:
         entity:
           domain: input_number
-    dim_hours_start:
-      name: Dim Hours Start
-      description: A time helper indicating when lights should be dimmed.  If lights never need to be dimmed, set this to the same as Blackout Hours Start.
-      selector:
-        entity:
-          domain: input_datetime
+      default: input_number.minimum_lux
     blackout_hours_start:
       name: Blackout Hours Start
       description: A time helper indicating when lights should be off.  If lights never need to be off, set this to the same time as Blackout Hours End.
       selector:
         entity:
           domain: input_datetime
+      default: input_datetime.sleep_hours_start
     blackout_hours_end:
       name: Blackout Hours End
       description: A time helper indicating when lights no longer need to be off.
       selector:
         entity:
           domain: input_datetime
-    dim_light_brightness:
-      name: Dim Light Brightness
-      description: A number helper indicating what percentage of brightness the lights should have if they are turned on between Dim Hours Start and Blackout Hours End.
-      selector:
-        entity:
-          domain: input_number
-    morning_light_brightness:
-      name: Morning Light Brightness
-      description: A number helper indicating what percentage of brightness the lights should have if they are turned on after Blackout Hours End but before sunrise.
-      selector:
-        entity:
-          domain: input_number
+      default: input_datetime.sleep_hours_end
     entities_list:
       name: Entities to Track
       description: A list of entities.  If the lights' state should not change when any of these entities are on even if motion is detected, specify them here.  Otherwise, leave blank.
@@ -103,38 +95,20 @@ condition:
       seconds: 2
 action:
   - variables:
-      night_brightness: !input dim_light_brightness
-      morning_brightness: !input morning_light_brightness
-      dim_start: !input dim_hours_start
       blackout_start: !input blackout_hours_start
       blackout_end: !input blackout_hours_end
   - choose:
       - conditions:
-          - condition: template
-            value_template: "{{ blackout_start != blackout_end }}"
-          - condition: time
-            after: !input blackout_hours_start
-            before: !input blackout_hours_end
-        sequence:
-          - service: light.turn_off
-            target:
-              entity_id: !input lights_list
-      - conditions:
-          - condition: template
-            value_template: "{{ dim_start != blackout_start }}"
-          - condition: time
-            after: !input dim_hours_start
-            before: !input blackout_hours_start
-        sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: "{{ states(night_brightness) | int(1) }}"
-            target:
-              entity_id: !input lights_list
-      - conditions:
-          - condition: numeric_state
-            entity_id: !input lux_sensor
-            above: !input sufficient_lux
+          - or:
+              - and:
+                  - condition: template
+                    value_template: "{{ blackout_start != blackout_end }}"
+                  - condition: time
+                    after: !input blackout_hours_start
+                    before: !input blackout_hours_end
+              - condition: numeric_state
+                entity_id: !input lux_sensor
+                above: !input sufficient_lux
         sequence:
           - service: light.turn_off
             target:
@@ -144,19 +118,5 @@ action:
             entity_id: !input lux_sensor
             below: !input insufficient_lux
         sequence:
-          - if:
-              - condition: sun
-                before: sunrise
-            then:
-              - service: light.turn_on
-                data:
-                  brightness_pct: "{{ states(morning_brightness) | int(10) }}"
-                target:
-                  entity_id: !input lights_list
-            else:
-              - service: light.turn_on
-                data:
-                  brightness_pct: 100
-                target:
-                  entity_id: !input lights_list
+          - service: !input recommended_light_level_script
 mode: single
