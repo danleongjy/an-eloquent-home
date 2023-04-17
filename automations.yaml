@@ -4825,3 +4825,63 @@
       recommended_light_level_script: script.recommended_light_level_for_hallway
       motion_sensor: binary_sensor.hallway_motion
       lux_sensor: sensor.hallway_lux
+- id: '1681735193653'
+  alias: Party Mode
+  description: Set recommended scenes in public areas and prevent lights dimming when
+    Party Mode is on
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.party_mode
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: input_boolean.party_mode
+      state: 'on'
+    then:
+    - service: input_datetime.set_datetime
+      data:
+        time: '{{ states(''input_datetime.dim_hours_end'') }}'
+      target:
+        entity_id: input_datetime.dim_hours_start
+    - delay: 1
+    - repeat:
+        for_each:
+        - script.set_recommended_scene_in_dining_room
+        - script.set_recommended_scene_in_living_room
+        - script.set_recommended_scene_in_study_room
+        sequence:
+        - service: script.turn_on
+          target:
+            entity_id: '{{ repeat.item }}'
+        - delay: 1
+    else:
+    - service: input_datetime.set_datetime
+      data:
+        time: '{{ states(''input_datetime.wind_down'') }}'
+      target:
+        entity_id: input_datetime.dim_hours_start
+    - delay: 1
+    - repeat:
+        for_each:
+        - script.set_recommended_scene_in_dining_room
+        - script.set_recommended_scene_in_living_room
+        - script.set_recommended_scene_in_study_room
+        sequence:
+        - service: script.turn_on
+          target:
+            entity_id: '{{ repeat.item }}'
+        - delay: 1
+  mode: single
+- id: '1681736538604'
+  alias: Hallway Motion Timeout
+  description: Turn off Hallway Lights when no motion is detected for a certain amount
+    of time.
+  use_blueprint:
+    path: danleongjy/motion_timeout.yaml
+    input:
+      motion_sensor: binary_sensor.hallway_motion
+      number_of_minutes: input_number.motion_timeout_walking_areas
+      turnoff_entities_list:
+      - light.hallway_lights
