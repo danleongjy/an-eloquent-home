@@ -438,7 +438,7 @@
           {% endif %}
         {% else %}
           {% if states('sensor.dining_room_lux') | int(1000) > states('input_number.minimum_lux') | int(0) 
-             or (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time() and states('input_boolean.wind_down_lights') == 'on') %}
+             or (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time() and states('input_boolean.party_mode') == 'off') %}
             0
           {% else %}
             100
@@ -448,7 +448,7 @@
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
            and now().time() <= strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time())
         %}
-          {% if states('input_boolean.wind_down_lights') == 'on' %}
+          {% if states('input_boolean.party_mode') == 'off' %}
             {{ states('input_number.night_light_brightness') }}
           {% else %}
             100
@@ -539,7 +539,7 @@
           {% endif %}
         {% else %}
           {% if states('sensor.living_room_lux') | int(1000) > states('input_number.minimum_lux') | int(0) 
-             or (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time() and states('input_boolean.wind_down_lights') == 'on') %}
+             or (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time() and states('input_boolean.party_mode') == 'off') %}
             0
           {% else %}
             100
@@ -549,7 +549,7 @@
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
            and now().time() <= strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time())
         %}
-          {% if states('input_boolean.wind_down_lights') == 'on' %}
+          {% if states('input_boolean.party_mode') == 'off' %}
             {{ states('input_number.night_light_brightness') }}
           {% else %}
             100
@@ -620,7 +620,7 @@
         {% if (now().time() > strptime(states('input_datetime.wind_down'), '%H:%M:%S').time()
            and now().time() <= strptime(states('input_datetime.sleep_hours_start'), '%H:%M:%S').time())
         %}
-          {% if states('input_boolean.wind_down_lights') == 'on' %}
+          {% if states('input_boolean.party_mode') == 'off' %}
             {{ states('input_number.night_light_brightness') }}
           {% else %}
             100
