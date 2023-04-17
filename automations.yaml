@@ -3441,16 +3441,16 @@
     at: input_datetime.wind_down
   - platform: state
     entity_id:
-    - input_boolean.wind_down_lights
-    from: 'off'
-    to: 'on'
+    - input_boolean.party_mode
+    from: 'on'
+    to: 'off'
   condition:
   - condition: template
     value_template: '{{ now() > today_at(states(''input_datetime.wind_down'')) - timedelta(minutes
       = 1) }}'
   - condition: state
-    entity_id: input_boolean.wind_down_lights
-    state: 'on'
+    entity_id: input_boolean.party_mode
+    state: 'off'
   action:
   - parallel:
     - if:
@@ -4376,6 +4376,8 @@
       - light.living_room_pendant_light_entity
       - climate.living_room_ac
       - fan.living_room_fan
+      entities_list:
+      - input_boolean.party_mode
 - id: '1679619826696'
   alias: Dining Room Motion Lights
   description: Control the Dining Room Lights when motion is detected, depending on
@@ -4416,6 +4418,8 @@
       - light.dining_room_pendant_light_entity
       - climate.dining_room_ac
       - fan.dining_room_fan
+      entities_list:
+      - input_boolean.party_mode
 - id: '1679620287237'
   alias: Living Room Motion Fan
   description: Control the Living Room Fan when motion is detected, depending on whether
