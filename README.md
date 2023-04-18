@@ -18,7 +18,7 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 Domain | Quantity
 -- | --
 [`automation`](https://www.home-assistant.io/components/automation) | 117
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 90
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 91
 [`button`](https://www.home-assistant.io/components/button) | 123
 [`calendar`](https://www.home-assistant.io/components/calendar) | 3
 [`camera`](https://www.home-assistant.io/components/camera) | 1
@@ -45,7 +45,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1276
+Total | 1277
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)

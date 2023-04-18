@@ -734,6 +734,11 @@
     unique_id: binary_sensor.washer_tub_dirty
     state: "{{ states('sensor.washer_tub_clean_counter') | int(0) > 30 }}"
 
+  - name: Study Room Ethernet Connection
+    unique_id: binary_sensor.study_room_ethernet_connection
+    state: "{{ 'home' in states.device_tracker | selectattr('entity_id', 'search', '._ethernet') | map(attribute = 'state') | list }}"
+    device_class: presence
+
 - sensor:
   - name: Washer Status
     unique_id: sensor.washer_status
