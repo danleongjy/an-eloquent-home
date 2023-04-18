@@ -2696,6 +2696,9 @@
         - automation.living_room_motion_fan
         - automation.living_room_motion_lights
         - automation.living_room_motion_pendant_light
+        - automation.study_room_motion_ac
+        - automation.study_room_motion_fan
+        - automation.study_room_motion_lights
     - repeat:
         for_each:
         - cover.living_room_left_blind
@@ -2749,6 +2752,9 @@
         - automation.living_room_motion_fan
         - automation.living_room_motion_lights
         - automation.living_room_motion_pendant_light
+        - automation.study_room_motion_ac
+        - automation.study_room_motion_fan
+        - automation.study_room_motion_lights
     - service: automation.trigger
       data:
         skip_condition: false
@@ -4694,10 +4700,22 @@
   use_blueprint:
     path: danleongjy/motion_fan.yaml
     input:
-      motion_sensor: binary_sensor.study_walkway_motion
+      motion_sensor: binary_sensor.study_room_ethernet_connection
       fan: fan.study_room_fan
       fan_speed_door_closed: input_number.fans_lucci_speed_when_ac_on
       fan_speed_door_open: input_number.fans_lucci_speed_when_ac_off
+      entities_list:
+      - light.study_room_lights
+      - fan.study_room_fan
+      - climate.study_room_ac
+      doors_list:
+      - binary_sensor.elenas_room_door
+      - binary_sensor.elis_room_door
+      - binary_sensor.junior_bathroom_door
+      - binary_sensor.parents_room_door
+      - binary_sensor.powder_room_door
+      - binary_sensor.main_door
+      respect_closed_doors: false
 - id: '1681712828244'
   alias: Master Bathroom Motion Light
   description: Turn on the Master Bathroom Light according to motion and time of day
@@ -4901,3 +4919,51 @@
       number_of_minutes: input_number.motion_timeout_walking_areas
       turnoff_entities_list:
       - light.hallway_lights
+- id: '1681781855944'
+  alias: Study Room Motion AC
+  description: Control the Study Room AC when motion is detected, depending on whether
+    the doors are closed.
+  use_blueprint:
+    path: danleongjy/motion_ac.yaml
+    input:
+      motion_sensor: binary_sensor.study_room_ethernet_connection
+      ac: climate.study_room_ac
+      entities_list:
+      - light.study_room_lights
+      - fan.study_room_fan
+      - climate.study_room_ac
+      doors_list:
+      - binary_sensor.elenas_room_door
+      - binary_sensor.elis_room_door
+      - binary_sensor.junior_bathroom_door
+      - binary_sensor.parents_room_door
+      - binary_sensor.powder_room_door
+      - binary_sensor.main_door
+      respect_closed_doors: false
+- id: '1681782121211'
+  alias: Study Room Motion Lights
+  description: Control the Study Room Lights when motion is detected, depending on
+    lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.study_room_lights
+      recommended_light_level_script: script.recommended_light_level_for_study_room
+      motion_sensor: binary_sensor.study_room_ethernet_connection
+      lux_sensor: sensor.study_walkway_lux
+- id: '1681782270863'
+  alias: Study Room Motion Timeout
+  description: Turn off Study Room Lights, Fan and AC when no motion is detected for
+    a certain amount of time.
+  use_blueprint:
+    path: danleongjy/motion_timeout.yaml
+    input:
+      motion_sensor: binary_sensor.study_room_ethernet_connection
+      number_of_minutes: input_number.motion_timeout_sitting_rooms
+      entities_list:
+      - input_boolean.party_mode
+      turnoff_entities_list:
+      - light.study_room_lights
+      - fan.study_room_fan
+      - climate.study_room_ac

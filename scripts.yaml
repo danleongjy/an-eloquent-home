@@ -554,51 +554,14 @@ turn_off_master_bathroom:
 set_recommended_scene_in_study_room:
   alias: Set Recommended Scene in Study Room
   sequence:
-  - choose:
-    - conditions:
-      - condition: numeric_state
-        entity_id: binary_sensor.recommended_scene_in_study_room
-        attribute: lights_level
-        above: '0'
-      sequence:
-      - service: light.turn_on
-        target:
-          entity_id: light.study_room_lights
-        data:
-          brightness_pct: '{{ state_attr(''binary_sensor.recommended_scene_in_study_room'',
-            ''lights_level'') }}
-
-            '
-    default:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.study_room_lights
-  - service: fan.turn_on
-    target:
-      entity_id: fan.study_room_fan
+  - service: automation.trigger
     data:
-      percentage: '{{ state_attr(''binary_sensor.recommended_scene_in_study_room'',
-
-        ''fan_speed'') | int }}
-
-        '
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.recommended_scene_in_study_room
-        attribute: ac_state
-        state: cool
-      sequence:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.study_room_ac
-    default:
-    - service: climate.turn_off
-      data: {}
-      target:
-        entity_id: climate.study_room_ac
+      skip_condition: true
+    target:
+      entity_id:
+      - automation.study_room_motion_ac
+      - automation.study_room_motion_lights
+      - automation.study_room_motion_fan
   mode: single
   icon: mdi:magic-staff
 set_recommended_scene_in_parents_room:
