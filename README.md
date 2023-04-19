@@ -1,15 +1,20 @@
 # An Eloquent Home
-[Hub](#hub) | [Entities](#entities) | [Core Integrations](#core-integrations) | [Extensions](#extensions) | [Dashboards](#dashboards)
+[Hub](#hub) | [Design Principles](#design-principles) | [Entities](#entities) | [Core Integrations](#core-integrations) | [Extensions](#extensions) | [Dashboards](#dashboards)
 
-Hello!  This repo contains the configuration for our [Home Assistant](https://www.home-assistant.io/) setup.  What started as a curiosity to while away the time during Covid lockdowns in 2020 is now the primary way in which we interact with and control our home.  We follow a few principles in our setup:
-1. __Automation first__: Things should just adjust themselves in response to changes in the environment, without needing user intervention
-2. __Maximum flexibility__: Devices, user interfaces and even the automation logic are as modular as possible, so it is easy to modify one part without affecting the whole
-3. __Maximum redundancy__: Aside from automated control, devices can be controlled by app, ZigBee remote controls or voice assistant.  The only things built into our walls are data and power cables.  All smart devices can be moved or removed easily.  All devices can function locally regardless of cloud connectivity.  A non-smart fallback option is always available.
-4. __Subtle helpfulness__: Other than reporting the current state, the platform recommends states based on context.  UI allows users to interpret the state of the whole system at a glance, including relationships between different devices.
+Hello!  This repo contains the configuration for our [Home Assistant](https://www.home-assistant.io/) setup.  What started as a curiosity to while away the time during Covid lockdowns in 2020 is now the primary way in which we interact with and control our home.
+
+## Design Principles
+The following graphic visualises all the components in our setup as a network, with components connected to each other if one references another (eg. if an `entity` belongs to a `device` or an `automation` calls a `script`).
+![Network Visualisation](www/readme_graphics/network_visualisation.png)
+The network topology demonstrates some principles we employ in setting up our system:
+1. An __automation first__ approach puts automation, scripts and blueprints at the centre: Things should just adjust themselves in response to changes in the environment, without needing user intervention
+2. The high degree of clustering in the core is driven by __maximum modularity__: Devices, user interfaces and even the automation logic are deployed as repeatable modules, allowing great flexibility in combining them to produce new functionalities, while minimising the number of distinct components that need to be maintained.
+3. Many entities are also linked to multiple automations, providing __maximum redundancy__: Aside from automated control, devices can be controlled by app, ZigBee remote controls or voice assistant.  The only things built into our walls are data and power cables.  All smart devices can be moved or removed easily.  All devices can function locally regardless of cloud connectivity.  A non-smart fallback option is always available.
+4. Each small part contributes to a larger pattern, enabling __emergent helpfulness__: The system responds robustly to changes in the real-world context.  UI allows users to interpret the state of the whole system at a glance, including relationships between different devices.
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://support.lenovo.com/sg/en/solutions/pd027573-detailed-specifications-for-thinkcentre-m93-m93p-tiny-form-factor)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [9.5](https://github.com/home-assistant/operating-system/releases/tag/9.5) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [9.5](https://github.com/home-assistant/operating-system/releases/tag/10.0) running in a [Proxmox VM](https://www.proxmox.com/)
 * [Home Assistant Core 2023.3.6](https://github.com/home-assistant/core/releases/tag/2023.3.6)
 * 4 cores, 4GB RAM, 32GB storage
 
@@ -99,7 +104,7 @@ In addition to providing direct control and visual feedback on the state of each
 2. __Consistency and interpretability__: Devices are grouped together in 2-dimensional grids by type and location to facilitate identification and interpretation.  Symbology (icons, representation of current state) is uniform across all devices of the same type.  Interactions with the controls are standardised: one tap to turn on, drag to adjust, two taps or drag to bottom to turn off, hold for more information and options.
 3. __Intuitiveness and playfulness__: The order of rooms in the grids roughly corresponds to the real arrangement of the rooms in space, facilitating the identification of trends across space and time.  With minimal text and the evocative use of multi-dimensional symbology (icon, colour, proportional fill, border etc.), the user is invited to interact with the controls to discover and learn how the controls adapt to different circumstances, in the spirit of experimentation and puzzle-solving.
 
-![Dashboards](www/dashboard_screenshots/animation.gif)
+![Dashboards](www/readme_graphics/animation.gif)
 From left to right:
 - __Main Dashboard__: Devices are generally grouped by room (rows) and type (columns).  A device that is off is represented by a simple button.  Tapping the button turns on the device and reveals a slider to adjust the device's setting (brightness, speed, temperature etc.).  Tapping the icon in the slider activates additional options (eg. reversing direction for fans, turning on auto control for ACs).  Holding brings up more information.  Tapping on the room icons sets the recommended scene in the room across all devices.  Double-tapping on the room icons turns off all devices in the room.
 - __Sensors Dashboard__: Sensors are grouped by room (rows) and type (columns).  Sensor states are reflected by colour codes, allowing the data in the grid to be interpreted spatially like a chloropleth map.  Key details are summarised by numerical labels.

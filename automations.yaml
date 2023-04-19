@@ -2884,6 +2884,8 @@
       - automation.elis_room_motion_timeout
       - automation.living_room_motion_timeout
       - automation.parents_room_motion_timeout
+      - automation.study_walkway_motion_timeout
+      - automation.study_room_motion_timeout
   mode: single
 - id: '1672302011128'
   alias: South-Facing Blinds Auto Control
@@ -2950,14 +2952,10 @@
           above: 65.1
         - condition: numeric_state
           entity_id: sensor.dining_room_lux
-          value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
-            | int + 300) }}'
-          below: 0
+          below: input_number.comfortable_lux
         - condition: numeric_state
           entity_id: sensor.living_room_lux
-          value_template: '{{ state.state | int(1000) - (states(''input_number.minimum_lux'')
-            | int + 300) }}'
-          below: 0
+          below: input_number.comfortable_lux
       - condition: template
         value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
           ''cover.living_room_blinds'']) | map(attribute = ''last_changed'') | list
