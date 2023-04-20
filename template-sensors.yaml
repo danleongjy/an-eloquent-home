@@ -875,29 +875,26 @@
   - name: Vacuum Clean Time
     unique_id: sensor.vacuum_clean_time
     state: >
-      {% if states('input_datetime.vacuum_last_run_end') | as_datetime > states('input_datetime.vacuum_last_run_start') | as_datetime %}
-        {{ ((states('input_datetime.vacuum_last_run_end') | as_datetime - states('input_datetime.vacuum_last_run_start') | as_datetime) | string)[:-3] }}
-      {% else %}
-        Running
-      {% endif %}
+      {% from 'text_formatting.jinja' import run_time %}
+      {{ run_time(states('input_datetime.vacuum_last_run_start') | as_datetime,
+                  states('input_datetime.vacuum_last_run_end') | as_datetime,
+                  -3) }}
 
   - name: Dishwasher Last Run Duration
     unique_id: sensor.dishwasher_last_run_duration
     state: >
-      {% if states('input_datetime.dishwasher_last_run_end') | as_datetime > states('input_datetime.dishwasher_last_run_start') | as_datetime %}
-        {{ ((states('input_datetime.dishwasher_last_run_end') | as_datetime - states('input_datetime.dishwasher_last_run_start') | as_datetime) | string)[:-3] }}
-      {% else %}
-        Running
-      {% endif %}
+      {% from 'text_formatting.jinja' import run_time %}
+      {{ run_time(states('input_datetime.dishwasher_last_run_start') | as_datetime,
+                  states('input_datetime.dishwasher_last_run_end') | as_datetime,
+                  -3) }}
 
   - name: Rice Cooker Last Run Duration
     unique_id: sensor.rice_cooker_last_run_duration
     state: >
-      {% if states('input_datetime.rice_cooker_last_run_end') | as_datetime > states('input_datetime.rice_cooker_last_run_start') | as_datetime %}
-        {{ ((states('input_datetime.rice_cooker_last_run_end') | as_datetime - states('input_datetime.rice_cooker_last_run_start') | as_datetime) | string)[:-3] }}
-      {% else %}
-        Running
-      {% endif %}
+      {% from 'text_formatting.jinja' import run_time %}
+      {{ run_time(states('input_datetime.rice_cooker_last_run_start') | as_datetime,
+                  states('input_datetime.rice_cooker_last_run_end') | as_datetime,
+                  -3) }}
 
 - trigger:
   - platform: time_pattern
