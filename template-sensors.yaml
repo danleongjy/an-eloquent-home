@@ -808,20 +808,8 @@
   - name: Raining With Yard Windows Open
     unique_id: sensor.raining_with_yard_windows_open
     state: >
-      {% if is_state('binary_sensor.yard_window', 'on') %}
-        {% if states('sensor.local_rainfall') | float(0) > 1 
-           or 'Thunder' in states('sensor.local_two_hour_forecast') %}
-          alert
-        {% elif states('sensor.local_rainfall') | float(0) > 0 
-           or 'Shower' in states('sensor.local_two_hour_forecast')
-           or 'Rain' in states('sensor.local_two_hour_forecast') %}
-          warning
-        {% else %}
-          clear
-        {% endif %}
-      {% else %}
-        clear
-      {% endif %}
+      {% from 'weather.jinja' import raining_with_window_open %}
+      {{ raining_with_window_open('binary_sensor.yard_window') }}
     attributes:
       yard_window: "{{ states('binary_sensor.yard_window') }}"
       local_rainfall: "{{ states('sensor.local_rainfall') }}"
@@ -830,20 +818,8 @@
   - name: Raining With Kitchen Window Open
     unique_id: sensor.raining_with_kitchen_window_open
     state: >
-      {% if is_state('binary_sensor.kitchen_window', 'on') %}
-        {% if states('sensor.local_rainfall') | float(0) > 1 
-           or 'Thunder' in states('sensor.local_two_hour_forecast') %}
-          alert
-        {% elif states('sensor.local_rainfall') | float(0) > 0 
-           or 'Shower' in states('sensor.local_two_hour_forecast')
-           or 'Rain' in states('sensor.local_two_hour_forecast') %}
-          warning
-        {% else %}
-          clear
-        {% endif %}
-      {% else %}
-        clear
-      {% endif %}
+      {% from 'weather.jinja' import raining_with_window_open %}
+      {{ raining_with_window_open('binary_sensor.kitchen_window') }}
     attributes:
       yard_window: "{{ states('binary_sensor.kitchen_window') }}"
       local_rainfall: "{{ states('sensor.local_rainfall') }}"
@@ -852,22 +828,17 @@
   - name: Raining With Windows Open
     unique_id: sensor.raining_with_windows_open
     state: >
-      {% if is_state('binary_sensor.yard_window', 'on') 
-         or is_state('binary_sensor.kitchen_window', 'on') %}
-        {% if states('sensor.local_rainfall') | float(0) > 1 
-           or 'Thunder' in states('sensor.local_two_hour_forecast') %}
-          alert
-        {% elif states('sensor.local_rainfall') | float(0) > 0 
-           or 'Shower' in states('sensor.local_two_hour_forecast')
-           or 'Rain' in states('sensor.local_two_hour_forecast') %}
-          warning
-        {% else %}
-          clear
-        {% endif %}
+      {% from 'weather.jinja' import raining_with_window_open %}
+      {% set status = [raining_with_window_open('binary_sensor.yard_window'), raining_with_window_open('binary_sensor.kitchen_window')] %}
+      {% if 'alert' in status %}
+        alert
+      {% elif 'warning' in status %}
+        warning
       {% else %}
         clear
       {% endif %}
     attributes:
+      kitchen_window: "{{ states('binary_sensor.kitchen_window') }}"
       yard_window: "{{ states('binary_sensor.yard_window') }}"
       local_rainfall: "{{ states('sensor.local_rainfall') }}"
       local_two_hour_forecast: "{{ states('sensor.local_two_hour_forecast') }}"
