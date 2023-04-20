@@ -1,0 +1,17 @@
+{% macro raining_with_windows_open(window_list) %}
+{% if 'on' in states | selectattr('entity_id', 'in', window_list) | map(attribute = 'state') | list %}
+    {% if states('sensor.local_rainfall') | float(0) > 1 
+       or 'Thunder' in states('sensor.local_two_hour_forecast') %}
+        {{ 'alert' }}
+    {% elif states('sensor.local_rainfall') | float(0) > 0 
+       or 'Shower' in states('sensor.local_two_hour_forecast')
+       or 'Rain' in states('sensor.local_two_hour_forecast') %}
+        {{ 'warning' }}
+    {% else %}
+        {{ 'clear' }}
+    {% endif %}
+{% else %}
+    {{ 'clear' }}
+{% endif %}
+
+{% endmacro% }

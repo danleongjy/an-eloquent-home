@@ -1,0 +1,9 @@
+{% macro ac_on_with_opening_open(opening_id, ac_ids_list) %}
+{% if ac_ids_list | length == 1 %}
+  {{ is_state(opening_id, 'on') and is_state(ac_ids_list[0], 'cool') }}
+{% elif ac_ids_list | length == 2 %}
+  {{ is_state(opening_id, 'on') and states(ac_ids_list[0]) != states(ac_ids_list[1]) }}
+{{ else }}
+  {{ 'Provide 1 door or window ID and a list of 1 or 2 AC IDs' }}
+{% endif %}
+{% endmacro %}
