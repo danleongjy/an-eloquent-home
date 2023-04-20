@@ -907,9 +907,8 @@
       unique_id: sensor.washer_last_wash_completed
       state: >
         {% if states('sensor.washer_status') == 'Off' %}
-          {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
-          {% set relative_age = relative_time(states('input_datetime.washer_last_wash_complete') | as_datetime).split() %}
-          {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+          {% from 'text_formatting.jinja' import relative_age %}
+          {{ relative_age(states('input_datetime.washer_last_wash_complete') | as_datetime) }}
         {% else %}
           In use
         {% endif %}
@@ -917,52 +916,45 @@
     - name: Vacuum Last Run Started
       unique_id: sensor.vacuum_last_run_started
       state: >
-        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
-        {% set relative_age = relative_time(states('input_datetime.vacuum_last_run_start') | as_datetime).split() %}
-        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% from 'text_formatting.jinja' import relative_age %}
+        {{ relative_age(states('input_datetime.vacuum_last_run_start') | as_datetime) }}
       
     - name: Vacuum Last Run Ended
       unique_id: sensor.vacuum_last_run_ended
       state: >
-        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
-        {% set relative_age = relative_time(states('input_datetime.vacuum_last_run_end') | as_datetime).split() %}
-        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% from 'text_formatting.jinja' import relative_age %}
+        {{ relative_age(states('input_datetime.vacuum_last_run_end') | as_datetime) }}
     
     - name: Dishwasher Last Run Started
       unique_id: sensor.dishwasher_last_run_started
       state: >
-        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
-        {% set relative_age = relative_time(states('input_datetime.dishwasher_last_run_start') | as_datetime).split() %}
-        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% from 'text_formatting.jinja' import relative_age %}
+        {{ relative_age(states('input_datetime.dishwasher_last_run_start') | as_datetime) }}
 
     - name: Dishwasher Last Run Ended
       unique_id: sensor.dishwasher_last_run_ended
       state: >
-        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
-        {% set relative_age = relative_time(states('input_datetime.dishwasher_last_run_end') | as_datetime).split() %}
-        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% from 'text_formatting.jinja' import relative_age %}
+        {{ relative_age(states('input_datetime.dishwasher_last_run_end') | as_datetime) }}
 
     - name: Rice Cooker Last Run Started
       unique_id: sensor.rice_cooker_last_run_started
       state: >
-        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
-        {% set relative_age = relative_time(states('input_datetime.rice_cooker_last_run_start') | as_datetime).split() %}
-        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% from 'text_formatting.jinja' import relative_age %}
+        {{ relative_age(states('input_datetime.rice_cooker_last_run_start') | as_datetime) }}
 
     - name: Rice Cooker Last Run Ended
       unique_id: sensor.rice_cooker_last_run_ended
       state: >
-        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
-        {% set relative_age = relative_time(states('input_datetime.rice_cooker_last_run_end') | as_datetime).split() %}
-        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% from 'text_formatting.jinja' import relative_age %}
+        {{ relative_age(states('input_datetime.rice_cooker_last_run_end') | as_datetime) }}
 
     - name: Stove Last Use
       unique_id: sensor.stove_last_use
       state: >
         {% if states('switch.stove_main_power') == 'off' %}
-          {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h'} %}
-          {% set relative_age = relative_time(states.switch.stove_main_power.last_changed).split() %}
-          {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+          {% from 'text_formatting.jinja' import relative_age %}
+          {{ relative_age(states.switch.stove_main_power.last_changed) }}
         {% else %}
           In use
         {% endif %}
@@ -970,23 +962,20 @@
     - name: Proxmox Last Boot
       unique_id: sensor.proxmox_last_boot
       state: >
-        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h', 'day': 'd', 'days': 'd', 'month': 'mo', 'months': 'mo', 'year': 'y', 'years': 'y'} %}
-        {% set relative_age = relative_time(states('sensor.node_proxmox_192_168_18_41_8006_uptime') | as_datetime).split() %}
-        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% from 'text_formatting.jinja' import relative_age %}
+        {{ relative_age(states('sensor.node_proxmox_192_168_18_41_8006_uptime') | as_datetime) }}
 
     - name: Home Assistant Last Boot
       unique_id: sensor.home_assistant_last_boot
       state: >
-        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h', 'day': 'd', 'days': 'd', 'month': 'mo', 'months': 'mo', 'year': 'y', 'years': 'y'} %}
-        {% set relative_age = relative_time(states('sensor.proxmox_eloquent_house_101_uptime') | as_datetime).split() %}
-        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% from 'text_formatting.jinja' import relative_age %}
+        {{ relative_age(states('sensor.proxmox_eloquent_house_101_uptime') | as_datetime) }}
 
     - name: pfSense Last Boot
       unique_id: sensor.pfsense_last_boot
       state: >
-        {% set time_units = {'second': 's', 'seconds': 's', 'minute': 'min', 'minutes': 'min', 'hour': 'h', 'hours': 'h', 'day': 'd', 'days': 'd', 'month': 'mo', 'months': 'mo', 'year': 'y', 'years': 'y'} %}
-        {% set relative_age = relative_time(states('sensor.proxmox_pfsense_100_uptime') | as_datetime).split() %}
-        {{ relative_age[0] + time_units.get(relative_age[-1], ' ' + relative_age[-1]) }} ago
+        {% from 'text_formatting.jinja' import relative_age %}
+        {{ relative_age(states('sensor.proxmox_pfsense_100_uptime') | as_datetime) }}
 
 - trigger:
   - platform: state
