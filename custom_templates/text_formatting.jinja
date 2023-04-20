@@ -5,3 +5,13 @@
 {{ output_str[0] + time_units.get(output_str[-1], ' ' + output_str[-1]) }} ago
 
 {% endmacro %}
+
+{% macro run_time(start_time_obj, end_time_obj, trunc) %}
+
+{% if end_time_obj > start_time_obj %}
+  {{ ((end_time_obj - start_time_obj) | string)[:trunc] }}
+{% else %}
+  Running
+{% endif %}
+
+{% endmacro %}
