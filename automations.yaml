@@ -1856,15 +1856,13 @@
     - binary_sensor.kitchen_motion_sensors
     to: 'on'
   - platform: numeric_state
-    entity_id: sun.sun
-    attribute: elevation
+    entity_id: sensor.sun_solar_elevation
     below: 65
-    above: 5
+    above: 2
   - platform: numeric_state
-    entity_id: sun.sun
+    entity_id: sensor.sun_solar_azimuth
     above: 60
     below: 120
-    attribute: azimuth
   condition: []
   action:
   - choose:
@@ -1897,10 +1895,14 @@
         target:
           entity_id: cover.kitchen_blinds
     - conditions:
-      - condition: template
-        value_template: "{{ state_attr('sun.sun', 'elevation') >= 5\n   and state_attr('sun.sun',
-          'elevation') <= 65\n   and state_attr('sun.sun', 'azimuth') >= 60\n   and
-          state_attr('sun.sun', 'azimuth') <= 120 }}"
+      - condition: numeric_state
+        entity_id: sensor.sun_solar_elevation
+        above: 2
+        below: 65
+      - condition: numeric_state
+        entity_id: sensor.sun_solar_azimuth
+        below: 120
+        above: 60
       sequence:
       - condition: template
         value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed
@@ -3340,7 +3342,7 @@
     id: elis_room
     above: input_number.comfortable_lux
   - platform: numeric_state
-    entity_id: sensor.yard_lux
+    entity_id: sensor.playroom_lux
     id: yard
     above: input_number.comfortable_lux
   - platform: numeric_state
@@ -4307,7 +4309,7 @@
       - light.playroom_lights
       recommended_light_level_script: script.recommended_light_level_for_playroom
       motion_sensor: binary_sensor.playroom_motion
-      lux_sensor: sensor.yard_lux
+      lux_sensor: sensor.playroom_lux
 - id: '1678323081528'
   alias: Playroom Motion Timeout
   description: Turn off Playroom Lights when no motion is detected for a certain amount
@@ -4330,7 +4332,7 @@
       - light.yard_light_entity
       recommended_light_level_script: script.recommended_light_level_for_yard
       motion_sensor: binary_sensor.yard_motion
-      lux_sensor: sensor.yard_lux
+      lux_sensor: sensor.playroom_lux
 - id: '1678323253914'
   alias: Yard Motion Timeout
   description: Turn off the Yard Light when no motion is detected for a certain amount
