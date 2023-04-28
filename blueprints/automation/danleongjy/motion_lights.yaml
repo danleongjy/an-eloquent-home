@@ -74,9 +74,16 @@ blueprint:
           device_class: door
           multiple: true
       default: []
+    lights_debounce:
+      name: Lights Debounce
+      description: Whether to prevent the lights from turning on again if motion is detected just after they turn off.
+      selector:
+        boolean:
+      default: true
 trigger_variables:
   doors: !input doors_list
   entities: !input entities_list
+  debounce: !input lights_debounce
 trigger:
   - platform: state
     entity_id: !input motion_sensor
@@ -88,11 +95,14 @@ condition:
   - condition: template
     value_template: >
       {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
-  - condition: state
-    entity_id: !input lights_list
-    state: "off"
-    for:
-      seconds: 2
+  - or:
+      - condition: state
+        entity_id: !input lights_list
+        state: "off"
+        for:
+          seconds: 2
+      - condition: template
+        value_template: "{{ not debounce }}"
 action:
   - variables:
       blackout_start: !input blackout_hours_start
