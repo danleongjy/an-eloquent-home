@@ -14,7 +14,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://support.lenovo.com/sg/en/solutions/pd027573-detailed-specifications-for-thinkcentre-m93-m93p-tiny-form-factor)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.0](https://github.com/home-assistant/operating-system/releases/tag/10.0) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.0](https://github.com/home-assistant/operating-system/releases/tag/10.1) running in a [Proxmox VM](https://www.proxmox.com/)
 * [Home Assistant Core 2023.4.5](https://github.com/home-assistant/core/releases/tag/2023.4.5)
 * 4 cores, 4GB RAM, 32GB storage
 
@@ -24,8 +24,7 @@ Domain | Quantity
 -- | --
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`update`](https://www.home-assistant.io/components/update) | 11
-[`sensor`](https://www.home-assistant.io/components/sensor) | 435
-[`sun`](https://www.home-assistant.io/components/sun) | 1
+[`sensor`](https://www.home-assistant.io/components/sensor) | 437
 [`zone`](https://www.home-assistant.io/components/zone) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 8
 [`input_number`](https://www.home-assistant.io/components/input_number) | 32
@@ -50,7 +49,8 @@ Domain | Quantity
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`light`](https://www.home-assistant.io/components/light) | 52
-Total | 1280
+[`sun`](https://www.home-assistant.io/components/sun) | 1
+Total | 1282
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
