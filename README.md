@@ -24,7 +24,7 @@ Domain | Quantity
 -- | --
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`update`](https://www.home-assistant.io/components/update) | 11
-[`sensor`](https://www.home-assistant.io/components/sensor) | 437
+[`sensor`](https://www.home-assistant.io/components/sensor) | 445
 [`zone`](https://www.home-assistant.io/components/zone) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 8
 [`input_number`](https://www.home-assistant.io/components/input_number) | 32
@@ -32,7 +32,7 @@ Domain | Quantity
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 22
 [`input_select`](https://www.home-assistant.io/components/input_select) | 7
 [`input_text`](https://www.home-assistant.io/components/input_text) | 29
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 85
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 87
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
 [`calendar`](https://www.home-assistant.io/components/calendar) | 3
@@ -44,13 +44,13 @@ Domain | Quantity
 [`number`](https://www.home-assistant.io/components/number) | 164
 [`automation`](https://www.home-assistant.io/components/automation) | 120
 [`weather`](https://www.home-assistant.io/components/weather) | 1
-[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 8
+[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 9
 [`script`](https://www.home-assistant.io/components/script) | 56
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`light`](https://www.home-assistant.io/components/light) | 52
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-Total | 1282
+Total | 1293
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -74,12 +74,12 @@ Total | 1282
 ## Extensions
 
 ### Add-ons
+- Advanced SSH & Web Terminal
 - Duck DNS
 - Home Assistant Google Drive Backup
 - MariaDB
 - Mosquitto broker
 - Samba share
-- SSH & Web Terminal
 - Studio Code Server
 
 ### Custom integrations
