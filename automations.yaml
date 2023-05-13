@@ -4972,3 +4972,100 @@
       - light.study_room_lights
       - fan.study_room_fan
       - climate.study_room_ac
+- id: '1683854614010'
+  alias: Parents' Headboard Controller
+  description: Set recommended scene in Parents' Room, adjust Parents' Room Lights
+    and provide a nap mode.
+  use_blueprint:
+    path: EPMatt/ikea_e1743.yaml
+    input:
+      integration: ZHA
+      controller_device: 685b4e90d0ee941d65313b1c9118e6a7
+      helper_last_controller_event: input_text.zz_parents_headboard_controller_last_event
+      action_button_up_short:
+      - service: script.set_recommended_scene_in_parents_room
+        data: {}
+      action_button_up_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            | int(0) }}'
+        target:
+          entity_id: light.parents_room_lights
+      action_button_up_double:
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.parents_room_motion_fan
+          - automation.parents_room_motion_ac
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.parents_room_lights
+      - service: cover.close_cover
+        data: {}
+        target:
+          entity_id: cover.master_bathroom_blind
+      action_button_down_short:
+      - service: script.turn_off_parents_room
+        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: automation.master_bathroom_blind_auto_control
+      action_button_down_long:
+      - service: light.turn_on
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            | int(0) }}
+        target:
+          entity_id: light.parents_room_lights
+      button_up_double_press: true
+      helper_double_press_delay: 700
+      action_button_down_double:
+      - service: script.turn_off_junior_bathroom
+        data: {}
+      - service: script.turn_off_powder_room
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 300
+      - service: script.turn_off_elenas_room
+        data: {}
+      - service: script.turn_off_elis_room
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 300
+      - service: script.turn_off_playroom
+        data: {}
+      - service: script.turn_off_hallway
+        data: {}
+      - service: script.turn_off_kitchen
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 300
+      - service: script.turn_off_dining_room
+        data: {}
+      - service: script.turn_off_living_room
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 300
+      - service: script.turn_off_master_bathroom
+        data: {}
+      - service: script.turn_off_study_room
+        data: {}
+      button_down_double_press: true
