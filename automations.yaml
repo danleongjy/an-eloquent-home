@@ -5073,19 +5073,9 @@
   alias: Parents' Room Fan Auto Control
   description: Set the Parents' Room Fan speed and direction based on temperature
   trigger:
-  - platform: numeric_state
-    entity_id: sensor.parents_room_temperature
-    below: 28
-    id: cold
-  - platform: numeric_state
-    entity_id: sensor.parents_room_temperature
-    above: 28
-    below: 28.5
-    id: cool
-  - platform: numeric_state
-    entity_id: sensor.parents_room_temperature
-    above: 28.5
-    id: warm
+  - platform: state
+    entity_id:
+    - sensor.parents_room_temperature
   condition:
   - condition: state
     entity_id: fan.parents_room_fan
@@ -5093,8 +5083,9 @@
   action:
   - choose:
     - conditions:
-      - condition: trigger
-        id: cold
+      - condition: numeric_state
+        entity_id: sensor.parents_room_temperature
+        below: 28
       sequence:
       - if:
         - condition: not
@@ -5123,8 +5114,10 @@
           target:
             entity_id: fan.parents_room_fan
     - conditions:
-      - condition: trigger
-        id: cool
+      - condition: numeric_state
+        entity_id: sensor.parents_room_temperature
+        above: 28
+        below: 28.5
       sequence:
       - if:
         - condition: not
