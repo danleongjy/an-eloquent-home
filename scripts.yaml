@@ -200,7 +200,9 @@ turn_off_elis_room:
   sequence:
   - service: automation.turn_off
     target:
-      entity_id: automation.elis_room_ac_auto_control
+      entity_id:
+      - automation.elis_room_ac_auto_control
+      - automation.elis_room_fan_auto_control
     data: {}
   - service: light.turn_off
     target:
@@ -226,7 +228,9 @@ turn_off_elenas_room:
   sequence:
   - service: automation.turn_off
     target:
-      entity_id: automation.elenas_room_ac_auto_control
+      entity_id:
+      - automation.elenas_room_ac_auto_control
+      - automation.elenas_room_fan_auto_control
     data: {}
   - service: light.turn_off
     target:
@@ -376,6 +380,24 @@ set_recommended_scene_in_elenas_room:
       - automation.elenas_room_motion_ac
       - automation.elenas_room_motion_fan
       - automation.elenas_room_motion_lights
+  - if:
+    - condition: time
+      after: input_datetime.ac_auto_control_start
+      before: input_datetime.ac_auto_control_end
+    then:
+    - service: automation.turn_on
+      data: {}
+      target:
+        entity_id: automation.elenas_room_fan_auto_control
+    - if:
+      - condition: state
+        entity_id: climate.elenas_room_ac
+        state: cool
+      then:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.elenas_room_ac_auto_control
   mode: single
   alias: Set Recommended Scene in Elena's Room
   icon: mdi:magic-staff
@@ -389,6 +411,24 @@ set_recommended_scene_in_elis_room:
       - automation.elis_room_motion_ac
       - automation.elis_room_motion_fan
       - automation.elis_room_motion_lights
+  - if:
+    - condition: time
+      after: input_datetime.ac_auto_control_start
+      before: input_datetime.ac_auto_control_end
+    then:
+    - service: automation.turn_on
+      data: {}
+      target:
+        entity_id: automation.elis_room_fan_auto_control
+    - if:
+      - condition: state
+        entity_id: climate.elis_room_ac
+        state: cool
+      then:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.elis_room_ac_auto_control
   mode: single
   alias: Set Recommended Scene in Eli's Room
   icon: mdi:magic-staff

@@ -520,8 +520,8 @@
       button_down_long_loop: true
       button_down_long_max_loop_repeats: 50
 - id: '1643721003621'
-  alias: AC Auto Control at Night
-  description: Turn on AC Auto Control at night in rooms where fans are on
+  alias: Auto Cooling at Night
+  description: Turn on AC and Fan Auto Control at night in bedrooms
   trigger:
   - platform: time
     id: start
@@ -548,7 +548,9 @@
       - service: automation.turn_on
         data: {}
         target:
-          entity_id: automation.elenas_room_ac_auto_control
+          entity_id:
+          - automation.elenas_room_ac_auto_control
+          - automation.elenas_room_fan_auto_control
     - if:
       - condition: or
         conditions:
@@ -562,7 +564,9 @@
       - service: automation.turn_on
         data: {}
         target:
-          entity_id: automation.elis_room_ac_auto_control
+          entity_id:
+          - automation.elis_room_ac_auto_control
+          - automation.elis_room_fan_auto_control
     - if:
       - condition: or
         conditions:
@@ -585,7 +589,9 @@
       target:
         entity_id:
         - automation.elenas_room_ac_auto_control
+        - automation.elenas_room_fan_auto_control
         - automation.elis_room_ac_auto_control
+        - automation.elis_room_fan_auto_control
         - automation.parents_room_ac_auto_control
         - automation.parents_room_fan_auto_control
     - service: climate.turn_off
@@ -2660,11 +2666,14 @@
         stop_actions: true
       target:
         entity_id:
-        - automation.ac_auto_control_at_night
+        - automation.auto_cooling_at_night
         - automation.motion_timeouts
         - automation.elenas_room_ac_auto_control
+        - automation.elenas_room_fan_auto_control
         - automation.elis_room_ac_auto_control
+        - automation.elis_room_fan_auto_control
         - automation.parents_room_ac_auto_control
+        - automation.parents_room_fan_auto_control
         - automation.hallway_motion_lights
         - automation.junior_bathroom_motion_lights
         - automation.kitchen_blinds_auto_control
@@ -2719,7 +2728,7 @@
       data: {}
       target:
         entity_id:
-        - automation.ac_auto_control_at_night
+        - automation.auto_cooling_at_night
         - automation.motion_timeouts
         - automation.hallway_motion_lights
         - automation.junior_bathroom_motion_lights
@@ -5081,3 +5090,19 @@
     input:
       fan: fan.parents_room_fan
       temp_sensor: sensor.parents_room_temperature
+- id: '1684246531388'
+  alias: Elena's Room Fan Auto Control
+  description: Set Elena's Room Fan speed and direction based on temperature
+  use_blueprint:
+    path: danleongjy/fan_auto_control.yaml
+    input:
+      fan: fan.elenas_room_fan
+      temp_sensor: sensor.elenas_room_temperature
+- id: '1684246574094'
+  alias: Eli's Room Fan Auto Control
+  description: Set the Eli's Room Fan speed and direction based on temperature
+  use_blueprint:
+    path: danleongjy/fan_auto_control.yaml
+    input:
+      fan: fan.elis_room_fan
+      temp_sensor: sensor.elis_room_temperature
