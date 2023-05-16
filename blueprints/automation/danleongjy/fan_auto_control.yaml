@@ -1,0 +1,152 @@
+blueprint:
+  name: Fan Auto Control
+  description: Set the fan speed and direction based on temperature
+  domain: automation
+  input:
+    fan:
+      name: Fan
+      description: Fan for auto control
+      selector:
+        entity:
+          domain: fan
+    temp_sensor:
+      name: Room Temperature Sensor
+      description: The temperature sensor in the room for fan auto control
+      selector:
+        entity:
+          domain: sensor
+          device_class: temperature
+    low_temp:
+      name: Low Temperature
+      description: Lower temperature threshold.  If the temperature is lower than this, the fan will turn on at low speed and reversed direction.
+      selector:
+        number:
+          min: 24
+          max: 30
+          step: 0.1
+          unit_of_measurement: °C
+          mode: slider
+      default: 28
+    high_temp:
+      name: High Temperature
+      description: Higher temperature threshold.  If the temperature is between this and Low Temperature, the fan will turn on at low speed and forward direction.  Otherwise, it will turn on at high speed and forward direction.
+      selector:
+        number:
+          min: 28
+          max: 32
+          step: 0.1
+          unit_of_measurement: °C
+          mode: slider
+      default: 28.5
+    low_speed:
+      name: Low Speed
+      description: A number helper indicating the speed of the fan when it should be turned on low.
+      selector:
+        entity:
+          domain: input_number
+      default: input_number.fans_po_eco_speed_when_ac_on
+    high_speed:
+      name: High Speed
+      description: A number helper indicating the speed of the fan when it should be turned on high.
+      selector:
+        entity:
+          domain: input_number
+      default: input_number.fans_po_eco_speed_when_ac_off
+trigger:
+  - platform: state
+    entity_id: !input temp_sensor
+condition:
+  - condition: state
+    entity_id: !input fan
+    state: "on"
+action:
+  - variables:
+      low_fan_speed: !input low_speed
+      high_fan_speed: !input high_speed
+  - choose:
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input temp_sensor
+            below: !input low_temp
+        sequence:
+          - if:
+              - condition: not
+                conditions:
+                  - condition: state
+                    entity_id: !input fan
+                    attribute: percentage
+                    state: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+            then:
+              - service: fan.set_percentage
+                data:
+                  percentage: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+                target:
+                  entity_id: !input fan
+          - if:
+              - condition: state
+                entity_id: !input fan
+                attribute: direction
+                state: forward
+            then:
+              - service: fan.set_direction
+                data:
+                  direction: reverse
+                target:
+                  entity_id: !input fan
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input temp_sensor
+            above: !input low_temp
+            below: !input high_temp
+        sequence:
+          - if:
+              - condition: not
+                conditions:
+                  - condition: state
+                    entity_id: !input fan
+                    attribute: percentage
+                    state: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+            then:
+              - service: fan.set_percentage
+                data:
+                  percentage: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+                target:
+                  entity_id: !input fan
+          - if:
+              - condition: state
+                entity_id: !input fan
+                attribute: direction
+                state: reverse
+            then:
+              - service: fan.set_direction
+                data:
+                  direction: forward
+                target:
+                  entity_id: !input fan
+    default:
+      - if:
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: !input fan
+                attribute: percentage
+                state: "{{ (states(high_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+        then:
+          - service: fan.set_percentage
+            data:
+              percentage: "{{ (states(high_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+            target:
+              entity_id: !input fan
+      - if:
+          - condition: state
+            entity_id: !input fan
+            attribute: direction
+            state: reverse
+        then:
+          - service: fan.set_direction
+            data:
+              direction: forward
+            target:
+              entity_id: !input fan
+mode: single
+
