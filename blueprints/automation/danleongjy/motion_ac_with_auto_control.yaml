@@ -78,19 +78,9 @@ action:
       - condition: template
         value_template: "{{ doors | length == 0 or not 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
     then:
-      - if:
-          - condition: template
-            value_template: "{{ state_attr(target_ac,'current_temperature') >= state_attr(target_ac,'temperature') }}"
-        then:
-          - service: climate.turn_on
-            data: {}
-            target:
-              entity_id: !input ac
-        else:
-          - service: climate.turn_off
-            data: {}
-            target:
-              entity_id: !input ac
+      - service: automation.trigger
+        target:
+          entity_id: !input ac_auto_control
       - if:
           - condition: time
             after: !input ac_auto_control_start
