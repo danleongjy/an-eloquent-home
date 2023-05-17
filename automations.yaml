@@ -376,7 +376,9 @@
       - service: automation.turn_on
         data: {}
         target:
-          entity_id: automation.elis_room_ac_auto_control
+          entity_id:
+          - automation.elis_room_ac_auto_control
+          - automation.elis_room_fan_auto_control
       - condition: time
         after: input_datetime.sleep_hours_end
         before: input_datetime.sleep_hours_start
@@ -405,7 +407,9 @@
       - service: automation.turn_off
         data: {}
         target:
-          entity_id: automation.elis_room_ac_auto_control
+          entity_id:
+          - automation.elis_room_ac_auto_control
+          - automation.elis_room_fan_auto_control
       - condition: time
         after: input_datetime.sleep_hours_end
         before: input_datetime.sleep_hours_start
@@ -1382,7 +1386,9 @@
       - service: automation.turn_on
         data: {}
         target:
-          entity_id: automation.parents_room_ac_auto_control
+          entity_id:
+          - automation.parents_room_ac_auto_control
+          - automation.parents_room_fan_auto_control
       - condition: time
         after: input_datetime.sleep_hours_end
         before: input_datetime.sleep_hours_start
@@ -1411,7 +1417,9 @@
       - service: automation.turn_off
         data: {}
         target:
-          entity_id: automation.parents_room_ac_auto_control
+          entity_id:
+          - automation.parents_room_ac_auto_control
+          - automation.parents_room_fan_auto_control
       - condition: time
         after: input_datetime.sleep_hours_end
         before: input_datetime.sleep_hours_start
@@ -1760,7 +1768,9 @@
       - service: automation.turn_on
         data: {}
         target:
-          entity_id: automation.elenas_room_ac_auto_control
+          entity_id:
+          - automation.elenas_room_ac_auto_control
+          - automation.elenas_room_fan_auto_control
       - condition: time
         after: input_datetime.sleep_hours_end
         before: input_datetime.elenas_bedtime
@@ -1789,7 +1799,9 @@
       - service: automation.turn_off
         data: {}
         target:
-          entity_id: automation.elenas_room_ac_auto_control
+          entity_id:
+          - automation.elenas_room_ac_auto_control
+          - automation.elenas_room_fan_auto_control
       - condition: time
         after: input_datetime.sleep_hours_end
         before: input_datetime.elenas_bedtime
@@ -1916,24 +1928,11 @@
         value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed
           > timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
           | int(0)) }}'
-      - if:
-        - condition: numeric_state
-          entity_id: sun.sun
-          attribute: elevation
-          below: 35
-        then:
-        - service: cover.set_cover_position
-          data:
-            position: '{{ ((state_attr(''sun.sun'',''elevation'') / 65 * 100) / 25)
-              | round(0) * 25 }}'
-          target:
-            entity_id: cover.kitchen_blinds
-        else:
-        - service: cover.set_cover_position
-          data:
-            position: 15
-          target:
-            entity_id: cover.kitchen_blinds
+      - service: cover.set_cover_position
+        data:
+          position: 15
+        target:
+          entity_id: cover.kitchen_blinds
     default:
     - condition: and
       conditions:
@@ -2674,6 +2673,9 @@
         - automation.elis_room_fan_auto_control
         - automation.parents_room_ac_auto_control
         - automation.parents_room_fan_auto_control
+        - automation.dining_room_fan_auto_control
+        - automation.living_room_fan_auto_control
+        - automation.study_room_fan_auto_control
         - automation.hallway_motion_lights
         - automation.junior_bathroom_motion_lights
         - automation.kitchen_blinds_auto_control
@@ -2712,6 +2714,7 @@
         - automation.study_room_motion_ac
         - automation.study_room_motion_fan
         - automation.study_room_motion_lights
+      enabled: true
     - repeat:
         for_each:
         - cover.living_room_left_blind
@@ -4066,8 +4069,7 @@
     input:
       motion_sensor: binary_sensor.parents_room_motion
       fan: fan.parents_room_fan
-      fan_speed_door_closed: input_number.fans_po_eco_speed_when_ac_on
-      fan_speed_door_open: input_number.fans_po_eco_speed_when_ac_off
+      fan_auto_control: automation.parents_room_fan_auto_control
       entities_list:
       - light.parents_room_lights
       - fan.parents_room_fan
@@ -4141,8 +4143,7 @@
     input:
       motion_sensor: binary_sensor.elenas_room_motion
       fan: fan.elenas_room_fan
-      fan_speed_door_closed: input_number.fans_po_eco_speed_when_ac_on
-      fan_speed_door_open: input_number.fans_po_eco_speed_when_ac_off
+      fan_auto_control: automation.elenas_room_fan_auto_control
       entities_list:
       - light.elenas_room_lights
       - fan.elenas_room_fan
@@ -4211,8 +4212,7 @@
     input:
       motion_sensor: binary_sensor.elis_room_motion
       fan: fan.elis_room_fan
-      fan_speed_door_closed: input_number.fans_po_eco_speed_when_ac_on
-      fan_speed_door_open: input_number.fans_po_eco_speed_when_ac_off
+      fan_auto_control: automation.elis_room_fan_auto_control
       entities_list:
       - light.elis_room_lights
       - fan.elis_room_fan
@@ -4451,8 +4451,7 @@
     input:
       motion_sensor: binary_sensor.living_room_motion
       fan: fan.living_room_fan
-      fan_speed_door_closed: input_number.fans_lucci_speed_when_ac_on
-      fan_speed_door_open: input_number.fans_lucci_speed_when_ac_off
+      fan_auto_control: automation.living_room_fan_auto_control
       entities_list:
       - light.living_room_lights
       - light.living_room_pendant_light_entity
@@ -4475,8 +4474,7 @@
     input:
       motion_sensor: binary_sensor.dining_room_motion
       fan: fan.dining_room_fan
-      fan_speed_door_closed: input_number.fans_po_eco_speed_when_ac_on
-      fan_speed_door_open: input_number.fans_po_eco_speed_when_ac_off
+      fan_auto_control: automation.dining_room_fan_auto_control
       doors_list:
       - binary_sensor.elenas_room_door
       - binary_sensor.elis_room_door
@@ -4718,8 +4716,7 @@
     input:
       motion_sensor: binary_sensor.study_room_ethernet_connection
       fan: fan.study_room_fan
-      fan_speed_door_closed: input_number.fans_lucci_speed_when_ac_on
-      fan_speed_door_open: input_number.fans_lucci_speed_when_ac_off
+      fan_auto_control: automation.study_room_fan_auto_control
       entities_list:
       - light.study_room_lights
       - fan.study_room_fan
@@ -5106,3 +5103,31 @@
     input:
       fan: fan.elis_room_fan
       temp_sensor: sensor.elis_room_temperature
+- id: '1684314607182'
+  alias: Dining Room Fan Auto Control
+  description: Set the Dining Room Fan speed and direction based on temperature
+  use_blueprint:
+    path: danleongjy/fan_auto_control.yaml
+    input:
+      fan: fan.dining_room_fan
+      temp_sensor: sensor.dining_room_temperature
+- id: '1684314664733'
+  alias: Living Room Fan Auto Control
+  description: Set the Living Room Fan speed and direction based on temperature
+  use_blueprint:
+    path: danleongjy/fan_auto_control.yaml
+    input:
+      fan: fan.living_room_fan
+      temp_sensor: sensor.dining_room_temperature
+      low_speed: input_number.fans_lucci_speed_when_ac_on
+      high_speed: input_number.fans_lucci_speed_when_ac_off
+- id: '1684314715221'
+  alias: Study Room Fan Auto Control
+  description: Set the Study Room Fan speed and direction based on temperature
+  use_blueprint:
+    path: danleongjy/fan_auto_control.yaml
+    input:
+      fan: fan.study_room_fan
+      temp_sensor: sensor.study_room_temperature
+      low_speed: input_number.fans_lucci_speed_when_ac_on
+      high_speed: input_number.fans_lucci_speed_when_ac_off

@@ -16,18 +16,12 @@ blueprint:
       selector:
         entity:
           domain: fan
-    fan_speed_door_closed:
-      name: Fan Speed when Doors are Closed
-      description: A number helper indicating the fan speed when the doors are closed for this room
+    fan_auto_control:
+      name: Fan Auto Control
+      description: Automation that sets the fan speed and direction according to temperature, created using the Fan Auto Control blueprint.
       selector:
         entity:
-          domain: input_number
-    fan_speed_door_open:
-      name: Fan Speed when Doors are Open
-      description: A number helper indicating the fan speed when the doors are open for this room
-      selector:
-        entity:
-          domain: input_number
+          domain: automation
     entities_list:
       name: Entities to Track
       description: A list of entities.  If the fan's state should not change when any of these entities are on even if motion is detected, specify them here.  Otherwise, leave blank.
@@ -65,36 +59,8 @@ condition:
   - condition: template
     value_template: "{{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}"
 action:
-  - variables:
-      fan_speed_when_door_closed: !input fan_speed_door_closed
-      fan_speed_when_door_open: !input fan_speed_door_open
-      doors: !input doors_list
-  - if:
-      - condition: template
-        value_template: "{{ doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
-    then:
-      - service: fan.turn_on
-        data:
-          percentage: "{{ (states(fan_speed_when_door_open) | int(4) / 6 * 100) | round(2) | int }}"
-        target:
-          entity_id: !input fan
-      - delay: 2
-      - service: fan.set_direction
-        data:
-          direction: forward
-        target:
-          entity_id: !input fan
-    else:
-      - service: fan.turn_on
-        data:
-          percentage: "{{ (states(fan_speed_when_door_closed) | int(1) / 6 * 100) | round(2) | int }}"
-        target:
-          entity_id: !input fan
-      - delay: 2
-      - service: fan.set_direction
-        data:
-          direction: reverse
-        target:
-          entity_id: !input fan
+  - service: automation.trigger
+    target:
+      entity_id: !input fan_auto_control
 mode: single
 max_exceeded: silent
