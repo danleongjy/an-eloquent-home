@@ -3650,89 +3650,160 @@
                       "template": "error"
                     },
                     "off": {
-                      "type": "custom:button-card",
-                      "entity": "fan.living_room_fan",
-                      "icon": "[[[ if (states['fan.living_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                      "template": "turn_on"
-                    },
-                    "on": {
                       "type": "custom:state-switch",
-                      "entity": "input_select.living_room_fan_direction",
-                      "default": "forward",
+                      "entity": "automation.living_room_fan_auto_control",
+                      "default": "off",
                       "states": {
-                        "forward": {
-                          "type": "custom:slider-button-card",
+                        "on": {
+                          "type": "custom:button-card",
                           "entity": "fan.living_room_fan",
-                          "slider": {
-                            "direction": "bottom-top",
-                            "background": "solid",
-                            "use_state_color": false,
-                            "use_percentage_bg_opacity": false,
-                            "show_track": false,
-                            "toggle_on_click": false,
-                            "force_square": true
+                          "template": "turn_on",
+                          "icon": "[[[ if (states['fan.living_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "label": "[[[ return states['fan.living_room_fan'].attributes.percentage + '%';]]]",
+                          "show_label": true,
+                          "hold_action": {
+                            "action": "more-info",
+                            "entity": "fan.living_room_fan"
                           },
-                          "show_name": false,
-                          "show_state": false,
-                          "compact": true,
-                          "icon": {
-                            "show": true,
-                            "use_state_color": true,
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "fan.set_direction",
-                              "service_data": {
-                                "entity_id": "fan.living_room_fan",
-                                "direction": "reverse"
-                              }
-                            },
-                            "icon": "mdi:fan-chevron-down"
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_off",
+                            "service_data": {
+                              "entity_id": "automation.living_room_fan_auto_control"
+                            }
                           },
-                          "action_button": {
-                            "mode": "toggle",
-                            "icon": "mdi:power",
-                            "show": false,
-                            "show_spinner": true,
-                            "tap_action": {
-                              "action": "toggle"
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "[[[\n  if (states['fan.living_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
+                            "service_data": {
+                              "entity_id": "fan.living_room_fan"
                             }
                           }
                         },
-                        "reverse": {
-                          "type": "custom:slider-button-card",
+                        "off": {
+                          "type": "custom:button-card",
                           "entity": "fan.living_room_fan",
-                          "slider": {
-                            "direction": "bottom-top",
-                            "background": "solid",
-                            "use_state_color": false,
-                            "use_percentage_bg_opacity": false,
-                            "show_track": false,
-                            "toggle_on_click": false,
-                            "force_square": true
+                          "icon": "[[[ if (states['fan.living_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "template": "turn_on",
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_on",
+                            "service_data": {
+                              "entity_id": "automation.living_room_fan_auto_control"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "on": {
+                      "type": "custom:state-switch",
+                      "entity": "automation.living_room_fan_auto_control",
+                      "default": "off",
+                      "states": {
+                        "on": {
+                          "type": "custom:button-card",
+                          "entity": "fan.living_room_fan",
+                          "template": "turn_on",
+                          "icon": "[[[ if (states['fan.living_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "label": "[[[ return states['fan.living_room_fan'].attributes.percentage + '%';]]]",
+                          "show_label": true,
+                          "hold_action": {
+                            "action": "more-info",
+                            "entity": "fan.living_room_fan"
                           },
-                          "show_name": false,
-                          "show_state": false,
-                          "compact": true,
-                          "icon": {
-                            "show": true,
-                            "use_state_color": true,
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "fan.set_direction",
-                              "service_data": {
-                                "entity_id": "fan.living_room_fan",
-                                "direction": "forward"
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_off",
+                            "service_data": {
+                              "entity_id": "automation.living_room_fan_auto_control"
+                            }
+                          },
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "[[[\n  if (states['fan.living_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
+                            "service_data": {
+                              "entity_id": "fan.living_room_fan"
+                            }
+                          }
+                        },
+                        "off": {
+                          "type": "custom:state-switch",
+                          "entity": "input_select.living_room_fan_direction",
+                          "default": "forward",
+                          "states": {
+                            "forward": {
+                              "type": "custom:slider-button-card",
+                              "entity": "fan.living_room_fan",
+                              "slider": {
+                                "direction": "bottom-top",
+                                "background": "solid",
+                                "use_state_color": false,
+                                "use_percentage_bg_opacity": false,
+                                "show_track": false,
+                                "toggle_on_click": false,
+                                "force_square": true
+                              },
+                              "show_name": false,
+                              "show_state": false,
+                              "compact": true,
+                              "icon": {
+                                "show": true,
+                                "use_state_color": true,
+                                "tap_action": {
+                                  "action": "call-service",
+                                  "service": "automation.turn_on",
+                                  "service_data": {
+                                    "entity_id": "automation.living_room_fan_auto_control"
+                                  }
+                                },
+                                "icon": "mdi:fan-chevron-down"
+                              },
+                              "action_button": {
+                                "mode": "toggle",
+                                "icon": "mdi:power",
+                                "show": false,
+                                "show_spinner": true,
+                                "tap_action": {
+                                  "action": "toggle"
+                                }
                               }
                             },
-                            "icon": "mdi:fan-chevron-up"
-                          },
-                          "action_button": {
-                            "mode": "toggle",
-                            "icon": "mdi:power",
-                            "show": false,
-                            "show_spinner": true,
-                            "tap_action": {
-                              "action": "toggle"
+                            "reverse": {
+                              "type": "custom:slider-button-card",
+                              "entity": "fan.living_room_fan",
+                              "slider": {
+                                "direction": "bottom-top",
+                                "background": "solid",
+                                "use_state_color": false,
+                                "use_percentage_bg_opacity": false,
+                                "show_track": false,
+                                "toggle_on_click": false,
+                                "force_square": true
+                              },
+                              "show_name": false,
+                              "show_state": false,
+                              "compact": true,
+                              "icon": {
+                                "show": true,
+                                "use_state_color": true,
+                                "tap_action": {
+                                  "action": "call-service",
+                                  "service": "automation.turn_on",
+                                  "service_data": {
+                                    "entity_id": "automation.living_room_fan_auto_control"
+                                  }
+                                },
+                                "icon": "mdi:fan-chevron-up"
+                              },
+                              "action_button": {
+                                "mode": "toggle",
+                                "icon": "mdi:power",
+                                "show": false,
+                                "show_spinner": true,
+                                "tap_action": {
+                                  "action": "toggle"
+                                }
+                              }
                             }
                           }
                         }
@@ -4014,89 +4085,160 @@
                       "template": "error"
                     },
                     "off": {
-                      "type": "custom:button-card",
-                      "entity": "fan.study_room_fan",
-                      "icon": "[[[ if (states['fan.study_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                      "template": "turn_on"
-                    },
-                    "on": {
                       "type": "custom:state-switch",
-                      "entity": "input_select.study_room_fan_direction",
-                      "default": "forward",
+                      "entity": "automation.study_room_fan_auto_control",
+                      "default": "off",
                       "states": {
-                        "forward": {
-                          "type": "custom:slider-button-card",
+                        "on": {
+                          "type": "custom:button-card",
                           "entity": "fan.study_room_fan",
-                          "slider": {
-                            "direction": "bottom-top",
-                            "background": "solid",
-                            "use_state_color": false,
-                            "use_percentage_bg_opacity": false,
-                            "show_track": false,
-                            "toggle_on_click": false,
-                            "force_square": true
+                          "template": "turn_on",
+                          "icon": "[[[ if (states['fan.study_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "label": "[[[ return states['fan.study_room_fan'].attributes.percentage + '%';]]]",
+                          "show_label": true,
+                          "hold_action": {
+                            "action": "more-info",
+                            "entity": "fan.study_room_fan"
                           },
-                          "show_name": false,
-                          "show_state": false,
-                          "compact": true,
-                          "icon": {
-                            "show": true,
-                            "use_state_color": true,
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "fan.set_direction",
-                              "service_data": {
-                                "entity_id": "fan.study_room_fan",
-                                "direction": "reverse"
-                              }
-                            },
-                            "icon": "mdi:fan-chevron-down"
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_off",
+                            "service_data": {
+                              "entity_id": "automation.study_room_fan_auto_control"
+                            }
                           },
-                          "action_button": {
-                            "mode": "toggle",
-                            "icon": "mdi:power",
-                            "show": false,
-                            "show_spinner": true,
-                            "tap_action": {
-                              "action": "toggle"
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "[[[\n  if (states['fan.study_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
+                            "service_data": {
+                              "entity_id": "fan.study_room_fan"
                             }
                           }
                         },
-                        "reverse": {
-                          "type": "custom:slider-button-card",
+                        "off": {
+                          "type": "custom:button-card",
                           "entity": "fan.study_room_fan",
-                          "slider": {
-                            "direction": "bottom-top",
-                            "background": "solid",
-                            "use_state_color": false,
-                            "use_percentage_bg_opacity": false,
-                            "show_track": false,
-                            "toggle_on_click": false,
-                            "force_square": true
+                          "icon": "[[[ if (states['fan.study_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "template": "turn_on",
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_on",
+                            "service_data": {
+                              "entity_id": "automation.study_room_fan_auto_control"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "on": {
+                      "type": "custom:state-switch",
+                      "entity": "automation.study_room_fan_auto_control",
+                      "default": "off",
+                      "states": {
+                        "on": {
+                          "type": "custom:button-card",
+                          "entity": "fan.study_room_fan",
+                          "template": "turn_on",
+                          "icon": "[[[ if (states['fan.study_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "label": "[[[ return states['fan.study_room_fan'].attributes.percentage + '%';]]]",
+                          "show_label": true,
+                          "hold_action": {
+                            "action": "more-info",
+                            "entity": "fan.study_room_fan"
                           },
-                          "show_name": false,
-                          "show_state": false,
-                          "compact": true,
-                          "icon": {
-                            "show": true,
-                            "use_state_color": true,
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "fan.set_direction",
-                              "service_data": {
-                                "entity_id": "fan.study_room_fan",
-                                "direction": "forward"
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_off",
+                            "service_data": {
+                              "entity_id": "automation.study_room_fan_auto_control"
+                            }
+                          },
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "[[[\n  if (states['fan.study_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
+                            "service_data": {
+                              "entity_id": "fan.study_room_fan"
+                            }
+                          }
+                        },
+                        "off": {
+                          "type": "custom:state-switch",
+                          "entity": "input_select.study_room_fan_direction",
+                          "default": "forward",
+                          "states": {
+                            "forward": {
+                              "type": "custom:slider-button-card",
+                              "entity": "fan.study_room_fan",
+                              "slider": {
+                                "direction": "bottom-top",
+                                "background": "solid",
+                                "use_state_color": false,
+                                "use_percentage_bg_opacity": false,
+                                "show_track": false,
+                                "toggle_on_click": false,
+                                "force_square": true
+                              },
+                              "show_name": false,
+                              "show_state": false,
+                              "compact": true,
+                              "icon": {
+                                "show": true,
+                                "use_state_color": true,
+                                "tap_action": {
+                                  "action": "call-service",
+                                  "service": "automation.turn_on",
+                                  "service_data": {
+                                    "entity_id": "automation.study_room_fan_auto_control"
+                                  }
+                                },
+                                "icon": "mdi:fan-chevron-down"
+                              },
+                              "action_button": {
+                                "mode": "toggle",
+                                "icon": "mdi:power",
+                                "show": false,
+                                "show_spinner": true,
+                                "tap_action": {
+                                  "action": "toggle"
+                                }
                               }
                             },
-                            "icon": "mdi:fan-chevron-up"
-                          },
-                          "action_button": {
-                            "mode": "toggle",
-                            "icon": "mdi:power",
-                            "show": false,
-                            "show_spinner": true,
-                            "tap_action": {
-                              "action": "toggle"
+                            "reverse": {
+                              "type": "custom:slider-button-card",
+                              "entity": "fan.study_room_fan",
+                              "slider": {
+                                "direction": "bottom-top",
+                                "background": "solid",
+                                "use_state_color": false,
+                                "use_percentage_bg_opacity": false,
+                                "show_track": false,
+                                "toggle_on_click": false,
+                                "force_square": true
+                              },
+                              "show_name": false,
+                              "show_state": false,
+                              "compact": true,
+                              "icon": {
+                                "show": true,
+                                "use_state_color": true,
+                                "tap_action": {
+                                  "action": "call-service",
+                                  "service": "automation.turn_on",
+                                  "service_data": {
+                                    "entity_id": "automation.study_room_fan_auto_control"
+                                  }
+                                },
+                                "icon": "mdi:fan-chevron-up"
+                              },
+                              "action_button": {
+                                "mode": "toggle",
+                                "icon": "mdi:power",
+                                "show": false,
+                                "show_spinner": true,
+                                "tap_action": {
+                                  "action": "toggle"
+                                }
+                              }
                             }
                           }
                         }
