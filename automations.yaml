@@ -2673,8 +2673,11 @@
         - automation.elis_room_fan_auto_control
         - automation.parents_room_ac_auto_control
         - automation.parents_room_fan_auto_control
+        - automation.dining_room_ac_auto_control
         - automation.dining_room_fan_auto_control
+        - automation.living_room_ac_auto_control
         - automation.living_room_fan_auto_control
+        - automation.study_room_ac_auto_control
         - automation.study_room_fan_auto_control
         - automation.hallway_motion_lights
         - automation.junior_bathroom_motion_lights
@@ -4082,7 +4085,7 @@
   description: Control the Parents' Room AC when motion is detected depending on whether
     the doors are open
   use_blueprint:
-    path: danleongjy/motion_ac_with_auto_control.yaml
+    path: danleongjy/motion_ac.yaml
     input:
       motion_sensor: binary_sensor.parents_room_motion
       ac: climate.parents_room_ac
@@ -4122,7 +4125,7 @@
   description: Control Elena's Room AC when motion is detected depending on whether
     the doors are open
   use_blueprint:
-    path: danleongjy/motion_ac_with_auto_control.yaml
+    path: danleongjy/motion_ac.yaml
     input:
       motion_sensor: binary_sensor.elenas_room_motion
       ac: climate.elenas_room_ac
@@ -4191,7 +4194,7 @@
   description: Control Eli's Room AC when motion is detected depending on whether
     the doors are open
   use_blueprint:
-    path: danleongjy/motion_ac_with_auto_control.yaml
+    path: danleongjy/motion_ac.yaml
     input:
       motion_sensor: binary_sensor.elis_room_motion
       ac: climate.elis_room_ac
@@ -4673,18 +4676,18 @@
     input:
       motion_sensor: binary_sensor.dining_room_motion
       ac: climate.dining_room_ac
+      ac_auto_control: automation.dining_room_ac_auto_control
+      ac_auto_control_start: input_datetime.ac_auto_control_end
+      ac_auto_control_end: input_datetime.ac_auto_control_end
       entities_list:
       - light.dining_room_lights
-      - light.dining_room_pendant_light_entity
       - fan.dining_room_fan
       - climate.dining_room_ac
+      - light.dining_room_pendant_light_entity
       doors_list:
-      - binary_sensor.elenas_room_door
-      - binary_sensor.elis_room_door
-      - binary_sensor.junior_bathroom_door
-      - binary_sensor.powder_room_door
-      - binary_sensor.parents_room_door
+      - binary_sensor.hallway_doors
       - binary_sensor.main_door
+      - binary_sensor.parents_room_door
       respect_closed_doors: false
 - id: '1679820093028'
   alias: Living Room Motion AC
@@ -4695,18 +4698,18 @@
     input:
       motion_sensor: binary_sensor.living_room_motion
       ac: climate.living_room_ac
+      ac_auto_control: automation.living_room_ac_auto_control
+      ac_auto_control_start: input_datetime.ac_auto_control_end
+      ac_auto_control_end: input_datetime.ac_auto_control_end
       entities_list:
       - light.living_room_lights
       - light.living_room_pendant_light_entity
       - fan.living_room_fan
       - climate.living_room_ac
       doors_list:
-      - binary_sensor.elenas_room_door
-      - binary_sensor.elis_room_door
-      - binary_sensor.junior_bathroom_door
-      - binary_sensor.powder_room_door
-      - binary_sensor.parents_room_door
+      - binary_sensor.hallway_doors
       - binary_sensor.main_door
+      - binary_sensor.parents_room_door
       respect_closed_doors: false
 - id: '1681034852325'
   alias: Study Room Motion Fan
@@ -4942,17 +4945,17 @@
     input:
       motion_sensor: binary_sensor.study_room_ethernet_connection
       ac: climate.study_room_ac
+      ac_auto_control: automation.study_room_ac_auto_control
+      ac_auto_control_start: input_datetime.ac_auto_control_end
+      ac_auto_control_end: input_datetime.ac_auto_control_end
       entities_list:
       - light.study_room_lights
       - fan.study_room_fan
       - climate.study_room_ac
       doors_list:
-      - binary_sensor.elenas_room_door
-      - binary_sensor.elis_room_door
-      - binary_sensor.junior_bathroom_door
-      - binary_sensor.parents_room_door
-      - binary_sensor.powder_room_door
+      - binary_sensor.hallway_doors
       - binary_sensor.main_door
+      - binary_sensor.parents_room_door
       respect_closed_doors: false
 - id: '1681782121211'
   alias: Study Room Motion Lights
@@ -5131,3 +5134,30 @@
       temp_sensor: sensor.study_room_temperature
       low_speed: input_number.fans_lucci_speed_when_ac_on
       high_speed: input_number.fans_lucci_speed_when_ac_off
+- id: '1684483829124'
+  alias: Dining Room AC Auto Control
+  description: Depending on the room temperature, automatically turn on or off the
+    Dining Room AC to maintain the temperature in a preset range.
+  use_blueprint:
+    path: danleongjy/ac_auto_control.yaml
+    input:
+      ac: climate.dining_room_ac
+      temp_sensor: sensor.dining_room_temperature
+- id: '1684483910863'
+  alias: Living Room AC Auto Control
+  description: Depending on the room temperature, automatically turn on or off the
+    Living Room AC to maintain the temperature in a preset range.
+  use_blueprint:
+    path: danleongjy/ac_auto_control.yaml
+    input:
+      ac: climate.living_room_ac
+      temp_sensor: sensor.dining_room_temperature
+- id: '1684483944757'
+  alias: Study Room AC Auto Control
+  description: Depending on the room temperature, automatically turn on or off the
+    Study Room AC to maintain the temperature in a preset range.
+  use_blueprint:
+    path: danleongjy/ac_auto_control.yaml
+    input:
+      ac: climate.study_room_ac
+      temp_sensor: sensor.study_room_temperature
