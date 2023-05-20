@@ -1784,50 +1784,24 @@
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "fan.elenas_room_fan",
-                  "default": "disabled",
+                  "entity": "automation.elenas_room_fan_auto_control",
+                  "default": "off",
                   "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "fan.elenas_room_fan",
-                      "template": "error"
-                    },
                     "off": {
                       "type": "custom:state-switch",
-                      "entity": "automation.elenas_room_fan_auto_control",
-                      "default": "off",
+                      "entity": "fan.elenas_room_fan",
+                      "default": "disabled",
                       "states": {
-                        "on": {
+                        "disabled": {
                           "type": "custom:button-card",
                           "entity": "fan.elenas_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.elenas_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.elenas_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.elenas_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.elenas_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.elenas_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.elenas_room_fan"
-                            }
-                          }
+                          "template": "error"
                         },
                         "off": {
                           "type": "custom:button-card",
                           "entity": "fan.elenas_room_fan",
-                          "icon": "[[[ if (states['fan.elenas_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "template": "turn_on",
+                          "icon": "[[[ if (states['fan.elenas_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "double_tap_action": {
                             "action": "call-service",
                             "service": "automation.turn_on",
@@ -1835,41 +1809,8 @@
                               "entity_id": "automation.elenas_room_fan_auto_control"
                             }
                           }
-                        }
-                      }
-                    },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "automation.elenas_room_fan_auto_control",
-                      "default": "off",
-                      "states": {
-                        "on": {
-                          "type": "custom:button-card",
-                          "entity": "fan.elenas_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.elenas_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.elenas_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.elenas_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.elenas_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.elenas_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.elenas_room_fan"
-                            }
-                          }
                         },
-                        "off": {
+                        "on": {
                           "type": "custom:state-switch",
                           "entity": "input_select.elenas_room_fan_direction",
                           "default": "forward",
@@ -1947,6 +1888,40 @@
                                   "action": "toggle"
                                 }
                               }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "on": {
+                      "type": "custom:state-switch",
+                      "entity": "fan.elenas_room_fan",
+                      "default": "available",
+                      "states": {
+                        "disabled": {
+                          "type": "custom:button-card",
+                          "entity": "fan.elenas_room_fan",
+                          "template": "error"
+                        },
+                        "available": {
+                          "type": "custom:button-card",
+                          "entity": "fan.elenas_room_fan",
+                          "template": "turn_on",
+                          "icon": "[[[ if (states['fan.elenas_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "label": "[[[ return states['fan.elenas_room_fan'].attributes.percentage + '%';]]]",
+                          "show_label": true,
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_off",
+                            "service_data": {
+                              "entity_id": "automation.elenas_room_fan_auto_control"
+                            }
+                          },
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "[[[\n  if (states['fan.elenas_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
+                            "service_data": {
+                              "entity_id": "fan.elenas_room_fan"
                             }
                           }
                         }
@@ -2197,50 +2172,24 @@
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "fan.elis_room_fan",
-                  "default": "disabled",
+                  "entity": "automation.elis_room_fan_auto_control",
+                  "default": "off",
                   "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "fan.elis_room_fan",
-                      "template": "error"
-                    },
                     "off": {
                       "type": "custom:state-switch",
-                      "entity": "automation.elis_room_fan_auto_control",
-                      "default": "off",
+                      "entity": "fan.elis_room_fan",
+                      "default": "disabled",
                       "states": {
-                        "on": {
+                        "disabled": {
                           "type": "custom:button-card",
                           "entity": "fan.elis_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.elis_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.elis_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.elis_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.elis_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.elis_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.elis_room_fan"
-                            }
-                          }
+                          "template": "error"
                         },
                         "off": {
                           "type": "custom:button-card",
                           "entity": "fan.elis_room_fan",
-                          "icon": "[[[ if (states['fan.elis_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "template": "turn_on",
+                          "icon": "[[[ if (states['fan.elis_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "double_tap_action": {
                             "action": "call-service",
                             "service": "automation.turn_on",
@@ -2248,41 +2197,8 @@
                               "entity_id": "automation.elis_room_fan_auto_control"
                             }
                           }
-                        }
-                      }
-                    },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "automation.elis_room_fan_auto_control",
-                      "default": "off",
-                      "states": {
-                        "on": {
-                          "type": "custom:button-card",
-                          "entity": "fan.elis_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.elis_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.elis_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.elis_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.elis_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.elis_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.elis_room_fan"
-                            }
-                          }
                         },
-                        "off": {
+                        "on": {
                           "type": "custom:state-switch",
                           "entity": "input_select.elis_room_fan_direction",
                           "default": "forward",
@@ -2360,6 +2276,40 @@
                                   "action": "toggle"
                                 }
                               }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "on": {
+                      "type": "custom:state-switch",
+                      "entity": "fan.elis_room_fan",
+                      "default": "available",
+                      "states": {
+                        "disabled": {
+                          "type": "custom:button-card",
+                          "entity": "fan.elis_room_fan",
+                          "template": "error"
+                        },
+                        "available": {
+                          "type": "custom:button-card",
+                          "entity": "fan.elis_room_fan",
+                          "template": "turn_on",
+                          "icon": "[[[ if (states['fan.elis_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "label": "[[[ return states['fan.elis_room_fan'].attributes.percentage + '%';]]]",
+                          "show_label": true,
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_off",
+                            "service_data": {
+                              "entity_id": "automation.elis_room_fan_auto_control"
+                            }
+                          },
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "[[[\n  if (states['fan.elis_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
+                            "service_data": {
+                              "entity_id": "fan.elis_room_fan"
                             }
                           }
                         }
@@ -3186,50 +3136,24 @@
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "fan.dining_room_fan",
-                  "default": "disabled",
+                  "entity": "automation.dining_room_fan_auto_control",
+                  "default": "off",
                   "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "fan.dining_room_fan",
-                      "template": "error"
-                    },
                     "off": {
                       "type": "custom:state-switch",
-                      "entity": "automation.dining_room_fan_auto_control",
-                      "default": "off",
+                      "entity": "fan.dining_room_fan",
+                      "default": "disabled",
                       "states": {
-                        "on": {
+                        "disabled": {
                           "type": "custom:button-card",
                           "entity": "fan.dining_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.dining_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.dining_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.dining_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.dining_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.dining_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.dining_room_fan"
-                            }
-                          }
+                          "template": "error"
                         },
                         "off": {
                           "type": "custom:button-card",
                           "entity": "fan.dining_room_fan",
-                          "icon": "[[[ if (states['fan.dining_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "template": "turn_on",
+                          "icon": "[[[ if (states['fan.dining_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "double_tap_action": {
                             "action": "call-service",
                             "service": "automation.turn_on",
@@ -3237,41 +3161,8 @@
                               "entity_id": "automation.dining_room_fan_auto_control"
                             }
                           }
-                        }
-                      }
-                    },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "automation.dining_room_fan_auto_control",
-                      "default": "off",
-                      "states": {
-                        "on": {
-                          "type": "custom:button-card",
-                          "entity": "fan.dining_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.dining_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.dining_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.dining_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.dining_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.dining_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.dining_room_fan"
-                            }
-                          }
                         },
-                        "off": {
+                        "on": {
                           "type": "custom:state-switch",
                           "entity": "sensor.dining_room_fan_direction",
                           "default": "forward",
@@ -3353,18 +3244,77 @@
                           }
                         }
                       }
+                    },
+                    "on": {
+                      "type": "custom:state-switch",
+                      "entity": "fan.dining_room_fan",
+                      "default": "available",
+                      "states": {
+                        "disabled": {
+                          "type": "custom:button-card",
+                          "entity": "fan.dining_room_fan",
+                          "template": "error"
+                        },
+                        "available": {
+                          "type": "custom:button-card",
+                          "entity": "fan.dining_room_fan",
+                          "template": "turn_on",
+                          "icon": "[[[ if (states['fan.dining_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "label": "[[[ return states['fan.dining_room_fan'].attributes.percentage + '%';]]]",
+                          "show_label": true,
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_off",
+                            "service_data": {
+                              "entity_id": "automation.dining_room_fan_auto_control"
+                            }
+                          },
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "[[[\n  if (states['fan.dining_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
+                            "service_data": {
+                              "entity_id": "fan.dining_room_fan"
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "climate.dining_room_ac",
+                  "entity": "sensor.dining_room_ac_status",
                   "default": "disabled",
                   "states": {
                     "disabled": {
                       "type": "custom:button-card",
                       "entity": "climate.dining_room_ac",
                       "template": "error"
+                    },
+                    "auto": {
+                      "type": "custom:button-card",
+                      "entity": "switch.dining_room_ac_switch",
+                      "template": "turn_on",
+                      "label": "[[[ return states['sensor.dining_room_temperature'].state + '°C';]]]",
+                      "show_label": true,
+                      "hold_action": {
+                        "action": "more-info",
+                        "entity": "climate.dining_room_ac"
+                      },
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": "automation.dining_room_ac_auto_control"
+                        }
+                      },
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "[[[\n  if (states['climate.dining_room_ac'].state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
+                        "service_data": {
+                          "entity_id": "climate.dining_room_ac"
+                        }
+                      }
                     },
                     "off": {
                       "type": "custom:button-card",
@@ -3375,6 +3325,13 @@
                         "service": "climate.turn_on",
                         "service_data": {
                           "entity_id": "climate.dining_room_ac"
+                        }
+                      },
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": "automation.dining_room_ac_auto_control"
                         }
                       }
                     },
@@ -3397,7 +3354,11 @@
                         "show": true,
                         "use_state_color": true,
                         "tap_action": {
-                          "action": "more-info"
+                          "action": "call-service",
+                          "service": "automation.turn_on",
+                          "service_data": {
+                            "entity_id": "automation.dining_room_ac_auto_control"
+                          }
                         },
                         "icon": ""
                       },
@@ -3641,50 +3602,24 @@
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "fan.living_room_fan",
-                  "default": "disabled",
+                  "entity": "automation.living_room_fan_auto_control",
+                  "default": "off",
                   "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "fan.living_room_fan",
-                      "template": "error"
-                    },
                     "off": {
                       "type": "custom:state-switch",
-                      "entity": "automation.living_room_fan_auto_control",
-                      "default": "off",
+                      "entity": "fan.living_room_fan",
+                      "default": "disabled",
                       "states": {
-                        "on": {
+                        "disabled": {
                           "type": "custom:button-card",
                           "entity": "fan.living_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.living_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.living_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.living_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.living_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.living_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.living_room_fan"
-                            }
-                          }
+                          "template": "error"
                         },
                         "off": {
                           "type": "custom:button-card",
                           "entity": "fan.living_room_fan",
-                          "icon": "[[[ if (states['fan.living_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "template": "turn_on",
+                          "icon": "[[[ if (states['fan.living_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "double_tap_action": {
                             "action": "call-service",
                             "service": "automation.turn_on",
@@ -3692,41 +3627,8 @@
                               "entity_id": "automation.living_room_fan_auto_control"
                             }
                           }
-                        }
-                      }
-                    },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "automation.living_room_fan_auto_control",
-                      "default": "off",
-                      "states": {
-                        "on": {
-                          "type": "custom:button-card",
-                          "entity": "fan.living_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.living_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.living_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.living_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.living_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.living_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.living_room_fan"
-                            }
-                          }
                         },
-                        "off": {
+                        "on": {
                           "type": "custom:state-switch",
                           "entity": "input_select.living_room_fan_direction",
                           "default": "forward",
@@ -3808,18 +3710,77 @@
                           }
                         }
                       }
+                    },
+                    "on": {
+                      "type": "custom:state-switch",
+                      "entity": "fan.living_room_fan",
+                      "default": "available",
+                      "states": {
+                        "disabled": {
+                          "type": "custom:button-card",
+                          "entity": "fan.living_room_fan",
+                          "template": "error"
+                        },
+                        "available": {
+                          "type": "custom:button-card",
+                          "entity": "fan.living_room_fan",
+                          "template": "turn_on",
+                          "icon": "[[[ if (states['fan.living_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "label": "[[[ return states['fan.living_room_fan'].attributes.percentage + '%';]]]",
+                          "show_label": true,
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_off",
+                            "service_data": {
+                              "entity_id": "automation.living_room_fan_auto_control"
+                            }
+                          },
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "[[[\n  if (states['fan.living_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
+                            "service_data": {
+                              "entity_id": "fan.living_room_fan"
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "climate.living_room_ac",
+                  "entity": "sensor.living_room_ac_status",
                   "default": "disabled",
                   "states": {
                     "disabled": {
                       "type": "custom:button-card",
                       "entity": "climate.living_room_ac",
                       "template": "error"
+                    },
+                    "auto": {
+                      "type": "custom:button-card",
+                      "entity": "switch.living_room_ac_switch",
+                      "template": "turn_on",
+                      "label": "[[[ return states['sensor.dining_room_temperature'].state + '°C';]]]",
+                      "show_label": true,
+                      "hold_action": {
+                        "action": "more-info",
+                        "entity": "climate.living_room_ac"
+                      },
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": "automation.living_room_ac_auto_control"
+                        }
+                      },
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "[[[\n  if (states['climate.living_room_ac'].state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
+                        "service_data": {
+                          "entity_id": "climate.living_room_ac"
+                        }
+                      }
                     },
                     "off": {
                       "type": "custom:button-card",
@@ -3830,6 +3791,13 @@
                         "service": "climate.turn_on",
                         "service_data": {
                           "entity_id": "climate.living_room_ac"
+                        }
+                      },
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": "automation.living_room_ac_auto_control"
                         }
                       }
                     },
@@ -3852,7 +3820,11 @@
                         "show": true,
                         "use_state_color": true,
                         "tap_action": {
-                          "action": "more-info"
+                          "action": "call-service",
+                          "service": "automation.turn_on",
+                          "service_data": {
+                            "entity_id": "automation.living_room_ac_auto_control"
+                          }
                         },
                         "icon": ""
                       },
@@ -4076,50 +4048,24 @@
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "fan.study_room_fan",
-                  "default": "disabled",
+                  "entity": "automation.study_room_fan_auto_control",
+                  "default": "off",
                   "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "fan.study_room_fan",
-                      "template": "error"
-                    },
                     "off": {
                       "type": "custom:state-switch",
-                      "entity": "automation.study_room_fan_auto_control",
-                      "default": "off",
+                      "entity": "fan.study_room_fan",
+                      "default": "disabled",
                       "states": {
-                        "on": {
+                        "disabled": {
                           "type": "custom:button-card",
                           "entity": "fan.study_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.study_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.study_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.study_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.study_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.study_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.study_room_fan"
-                            }
-                          }
+                          "template": "error"
                         },
                         "off": {
                           "type": "custom:button-card",
                           "entity": "fan.study_room_fan",
-                          "icon": "[[[ if (states['fan.study_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "template": "turn_on",
+                          "icon": "[[[ if (states['fan.study_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "double_tap_action": {
                             "action": "call-service",
                             "service": "automation.turn_on",
@@ -4127,41 +4073,8 @@
                               "entity_id": "automation.study_room_fan_auto_control"
                             }
                           }
-                        }
-                      }
-                    },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "automation.study_room_fan_auto_control",
-                      "default": "off",
-                      "states": {
-                        "on": {
-                          "type": "custom:button-card",
-                          "entity": "fan.study_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.study_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.study_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.study_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.study_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.study_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.study_room_fan"
-                            }
-                          }
                         },
-                        "off": {
+                        "on": {
                           "type": "custom:state-switch",
                           "entity": "input_select.study_room_fan_direction",
                           "default": "forward",
@@ -4243,18 +4156,77 @@
                           }
                         }
                       }
+                    },
+                    "on": {
+                      "type": "custom:state-switch",
+                      "entity": "fan.study_room_fan",
+                      "default": "available",
+                      "states": {
+                        "disabled": {
+                          "type": "custom:button-card",
+                          "entity": "fan.study_room_fan",
+                          "template": "error"
+                        },
+                        "available": {
+                          "type": "custom:button-card",
+                          "entity": "fan.study_room_fan",
+                          "template": "turn_on",
+                          "icon": "[[[ if (states['fan.study_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "label": "[[[ return states['fan.study_room_fan'].attributes.percentage + '%';]]]",
+                          "show_label": true,
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_off",
+                            "service_data": {
+                              "entity_id": "automation.study_room_fan_auto_control"
+                            }
+                          },
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "[[[\n  if (states['fan.study_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
+                            "service_data": {
+                              "entity_id": "fan.study_room_fan"
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "climate.study_room_ac",
+                  "entity": "sensor.study_room_ac_status",
                   "default": "disabled",
                   "states": {
                     "disabled": {
                       "type": "custom:button-card",
                       "entity": "climate.study_room_ac",
                       "template": "error"
+                    },
+                    "auto": {
+                      "type": "custom:button-card",
+                      "entity": "switch.study_room_ac_switch",
+                      "template": "turn_on",
+                      "label": "[[[ return states['sensor.study_room_temperature'].state + '°C';]]]",
+                      "show_label": true,
+                      "hold_action": {
+                        "action": "more-info",
+                        "entity": "climate.study_room_ac"
+                      },
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": "automation.study_room_ac_auto_control"
+                        }
+                      },
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "[[[\n  if (states['climate.study_room_ac'].state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
+                        "service_data": {
+                          "entity_id": "climate.study_room_ac"
+                        }
+                      }
                     },
                     "off": {
                       "type": "custom:button-card",
@@ -4265,6 +4237,13 @@
                         "service": "climate.turn_on",
                         "service_data": {
                           "entity_id": "climate.study_room_ac"
+                        }
+                      },
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": "automation.study_room_ac_auto_control"
                         }
                       }
                     },
@@ -4287,7 +4266,11 @@
                         "show": true,
                         "use_state_color": true,
                         "tap_action": {
-                          "action": "more-info"
+                          "action": "call-service",
+                          "service": "automation.turn_on",
+                          "service_data": {
+                            "entity_id": "automation.study_room_ac_auto_control"
+                          }
                         },
                         "icon": ""
                       },
@@ -4462,50 +4445,24 @@
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "fan.parents_room_fan",
-                  "default": "disabled",
+                  "entity": "automation.parents_room_fan_auto_control",
+                  "default": "off",
                   "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "fan.parents_room_fan",
-                      "template": "error"
-                    },
                     "off": {
                       "type": "custom:state-switch",
-                      "entity": "automation.parents_room_fan_auto_control",
-                      "default": "off",
+                      "entity": "fan.parents_room_fan",
+                      "default": "disabled",
                       "states": {
-                        "on": {
+                        "disabled": {
                           "type": "custom:button-card",
                           "entity": "fan.parents_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.parents_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.parents_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.parents_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.parents_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.parents_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.parents_room_fan"
-                            }
-                          }
+                          "template": "error"
                         },
                         "off": {
                           "type": "custom:button-card",
                           "entity": "fan.parents_room_fan",
-                          "icon": "[[[ if (states['fan.parents_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "template": "turn_on",
+                          "icon": "[[[ if (states['fan.parents_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                           "double_tap_action": {
                             "action": "call-service",
                             "service": "automation.turn_on",
@@ -4513,41 +4470,8 @@
                               "entity_id": "automation.parents_room_fan_auto_control"
                             }
                           }
-                        }
-                      }
-                    },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "automation.parents_room_fan_auto_control",
-                      "default": "off",
-                      "states": {
-                        "on": {
-                          "type": "custom:button-card",
-                          "entity": "fan.parents_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.parents_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.parents_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "hold_action": {
-                            "action": "more-info",
-                            "entity": "fan.parents_room_fan"
-                          },
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.parents_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.parents_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.parents_room_fan"
-                            }
-                          }
                         },
-                        "off": {
+                        "on": {
                           "type": "custom:state-switch",
                           "entity": "input_select.parents_room_fan_direction",
                           "default": "forward",
@@ -4625,6 +4549,40 @@
                                   "action": "toggle"
                                 }
                               }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "on": {
+                      "type": "custom:state-switch",
+                      "entity": "fan.parents_room_fan",
+                      "default": "available",
+                      "states": {
+                        "disabled": {
+                          "type": "custom:button-card",
+                          "entity": "fan.parents_room_fan",
+                          "template": "error"
+                        },
+                        "available": {
+                          "type": "custom:button-card",
+                          "entity": "fan.parents_room_fan",
+                          "template": "turn_on",
+                          "icon": "[[[ if (states['fan.parents_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                          "label": "[[[ return states['fan.parents_room_fan'].attributes.percentage + '%';]]]",
+                          "show_label": true,
+                          "double_tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_off",
+                            "service_data": {
+                              "entity_id": "automation.parents_room_fan_auto_control"
+                            }
+                          },
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "[[[\n  if (states['fan.parents_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
+                            "service_data": {
+                              "entity_id": "fan.parents_room_fan"
                             }
                           }
                         }

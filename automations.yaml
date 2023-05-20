@@ -190,6 +190,74 @@
           temperature: "{% if state_attr('climate.dining_room_ac', 'temperature')
             > 24 %}\n  {{ state_attr('climate.dining_room_ac', 'temperature') - 1
             }}\n{% else %}\n  24\n{% endif %}\n"
+      action_button_up_double:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id:
+          - automation.dining_room_ac_auto_control
+          - automation.dining_room_fan_auto_control
+      - if:
+        - condition: state
+          entity_id: light.dining_room_bulb_4_entity
+          state: 'off'
+        then:
+        - service: light.turn_on
+          data:
+            flash: short
+          target:
+            entity_id: light.dining_room_bulb_4_entity
+        - delay: 1
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id: light.dining_room_bulb_4_entity
+        else:
+        - service: light.turn_on
+          data:
+            flash: short
+          target:
+            entity_id: light.dining_room_bulb_4_entity
+      action_button_down_double:
+      - service: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          entity_id:
+          - automation.dining_room_ac_auto_control
+          - automation.dining_room_fan_auto_control
+      - if:
+        - condition: state
+          entity_id: light.dining_room_bulb_4_entity
+          state: 'off'
+        then:
+        - repeat:
+            count: 2
+            sequence:
+            - service: light.turn_on
+              data:
+                flash: short
+              target:
+                entity_id: light.dining_room_bulb_4_entity
+            - delay: 1
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id: light.dining_room_bulb_4_entity
+        else:
+        - repeat:
+            count: 2
+            sequence:
+            - service: light.turn_on
+              data:
+                flash: short
+              target:
+                entity_id: light.dining_room_bulb_4_entity
+            - delay: 1
+      button_up_long_loop: false
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
 - id: '1643643631965'
   alias: Dining Room Fan Controller
   description: Control the Dining Room Fan
@@ -1063,6 +1131,73 @@
           temperature: "{% if state_attr('climate.living_room_ac', 'temperature')
             > 24 %}\n  {{ state_attr('climate.living_room_ac', 'temperature') - 1
             }}\n{% else %}\n  24\n{% endif %}\n"
+      action_button_up_double:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id:
+          - automation.living_room_ac_auto_control
+          - automation.living_room_fan_auto_control
+      - if:
+        - condition: state
+          entity_id: light.living_room_bulb_2_entity
+          state: 'off'
+        then:
+        - service: light.turn_on
+          data:
+            flash: short
+          target:
+            entity_id: light.living_room_bulb_2_entity
+        - delay: 1
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id: light.living_room_bulb_2_entity
+        else:
+        - service: light.turn_on
+          data:
+            flash: short
+          target:
+            entity_id: light.living_room_bulb_2_entity
+      action_button_down_double:
+      - service: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          entity_id:
+          - automation.living_room_ac_auto_control
+          - automation.living_room_fan_auto_control
+      - if:
+        - condition: state
+          entity_id: light.living_room_bulb_2_entity
+          state: 'off'
+        then:
+        - repeat:
+            count: 2
+            sequence:
+            - service: light.turn_on
+              data:
+                flash: short
+              target:
+                entity_id: light.living_room_bulb_2_entity
+            - delay: 1
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id: light.living_room_bulb_2_entity
+        else:
+        - repeat:
+            count: 2
+            sequence:
+            - service: light.turn_on
+              data:
+                flash: short
+              target:
+                entity_id: light.living_room_bulb_2_entity
+            - delay: 1
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
 - id: '1659250198010'
   alias: Living Room Fan Controller
   description: Control the Living Room Fan
@@ -1210,6 +1345,74 @@
             else %}\n  24\n{% endif %}\n"
       action_button_up_release: []
       action_button_down_release: []
+      action_button_down_double:
+      - service: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          entity_id:
+          - automation.study_room_ac_auto_control
+          - automation.study_room_fan_auto_control
+      - if:
+        - condition: state
+          entity_id: light.study_room_bulb_4_entity
+          state: 'off'
+        then:
+        - repeat:
+            count: 2
+            sequence:
+            - service: light.turn_on
+              data:
+                flash: short
+              target:
+                entity_id: light.study_room_bulb_4_entity
+            - delay: 1
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id: light.study_room_bulb_4_entity
+        else:
+        - repeat:
+            count: 2
+            sequence:
+            - service: light.turn_on
+              data:
+                flash: short
+              target:
+                entity_id: light.study_room_bulb_4_entity
+            - delay: 1
+      action_button_up_double:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id:
+          - automation.study_room_ac_auto_control
+          - automation.study_room_fan_auto_control
+      - if:
+        - condition: state
+          entity_id: light.study_room_bulb_4_entity
+          state: 'off'
+        then:
+        - service: light.turn_on
+          data:
+            flash: short
+          target:
+            entity_id: light.study_room_bulb_4_entity
+        - delay: 1
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id: light.study_room_bulb_4_entity
+        else:
+        - service: light.turn_on
+          data:
+            flash: short
+          target:
+            entity_id: light.study_room_bulb_4_entity
+      button_down_long_loop: false
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
 - id: '1659251701760'
   alias: Study Room Fan Controller
   description: Control the Study Room Fan
@@ -5021,6 +5224,12 @@
         data: {}
         target:
           entity_id: cover.master_bathroom_blind
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id:
+          - automation.parents_room_ac_auto_control
+          - automation.parents_room_fan_auto_control
       action_button_down_short:
       - service: script.turn_off_parents_room
         data: {}

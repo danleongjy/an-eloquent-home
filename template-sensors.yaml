@@ -297,6 +297,42 @@
       ac_state: "{{ states('climate.elis_room_ac') }}"
       ac_auto_control: "{{ states('automation.elis_room_ac_auto_control') }}"
 
+  - name: Dining Room AC Status
+    unique_id: sensor.dining_room_ac_status
+    state: >
+      {% if is_state('automation.dining_room_ac_auto_control', 'on') %}
+        auto
+      {% else %}
+        {{ states('climate.dining_room_ac') }}
+      {% endif %}
+    attributes:
+      ac_state: "{{ states('climate.dining_room_ac') }}"
+      ac_auto_control: "{{ states('automation.dining_room_ac_auto_control') }}"
+
+  - name: Living Room AC Status
+    unique_id: sensor.living_room_ac_status
+    state: >
+      {% if is_state('automation.living_room_ac_auto_control', 'on') %}
+        auto
+      {% else %}
+        {{ states('climate.living_room_ac') }}
+      {% endif %}
+    attributes:
+      ac_state: "{{ states('climate.living_room_ac') }}"
+      ac_auto_control: "{{ states('automation.living_room_ac_auto_control') }}"
+
+  - name: Study Room AC Status
+    unique_id: sensor.study_room_ac_status
+    state: >
+      {% if is_state('automation.study_room_ac_auto_control', 'on') %}
+        auto
+      {% else %}
+        {{ states('climate.study_room_ac') }}
+      {% endif %}
+    attributes:
+      ac_state: "{{ states('climate.study_room_ac') }}"
+      ac_auto_control: "{{ states('automation.study_room_ac_auto_control') }}"
+
   - name: Parents' Room AC Status
     unique_id: sensor.parents_room_ac_status
     state: >

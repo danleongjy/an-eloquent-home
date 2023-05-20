@@ -24,7 +24,7 @@ Domain | Quantity
 -- | --
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`update`](https://www.home-assistant.io/components/update) | 10
-[`sensor`](https://www.home-assistant.io/components/sensor) | 459
+[`sensor`](https://www.home-assistant.io/components/sensor) | 462
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
 [`input_number`](https://www.home-assistant.io/components/input_number) | 32
@@ -39,7 +39,7 @@ Domain | Quantity
 [`button`](https://www.home-assistant.io/components/button) | 124
 [`remote`](https://www.home-assistant.io/components/remote) | 6
 [`calendar`](https://www.home-assistant.io/components/calendar) | 3
-[`automation`](https://www.home-assistant.io/components/automation) | 127
+[`automation`](https://www.home-assistant.io/components/automation) | 130
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`switch`](https://www.home-assistant.io/components/switch) | 26
 [`number`](https://www.home-assistant.io/components/number) | 164
@@ -50,7 +50,7 @@ Domain | Quantity
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`light`](https://www.home-assistant.io/components/light) | 52
-Total | 1313
+Total | 1319
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
