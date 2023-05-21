@@ -24,7 +24,7 @@ Domain | Quantity
 -- | --
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`update`](https://www.home-assistant.io/components/update) | 10
-[`sensor`](https://www.home-assistant.io/components/sensor) | 462
+[`sensor`](https://www.home-assistant.io/components/sensor) | 452
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
 [`input_number`](https://www.home-assistant.io/components/input_number) | 32
@@ -34,7 +34,7 @@ Domain | Quantity
 [`input_select`](https://www.home-assistant.io/components/input_select) | 7
 [`cover`](https://www.home-assistant.io/components/cover) | 8
 [`climate`](https://www.home-assistant.io/components/climate) | 6
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 88
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 87
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
 [`button`](https://www.home-assistant.io/components/button) | 124
 [`remote`](https://www.home-assistant.io/components/remote) | 6
@@ -45,12 +45,12 @@ Domain | Quantity
 [`number`](https://www.home-assistant.io/components/number) | 164
 [`select`](https://www.home-assistant.io/components/select) | 48
 [`weather`](https://www.home-assistant.io/components/weather) | 1
-[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 6
+[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 5
 [`script`](https://www.home-assistant.io/components/script) | 56
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`light`](https://www.home-assistant.io/components/light) | 52
-Total | 1319
+Total | 1307
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
