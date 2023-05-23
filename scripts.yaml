@@ -204,23 +204,11 @@ turn_off_elis_room:
       - automation.elis_room_ac_auto_control
       - automation.elis_room_fan_auto_control
     data: {}
-  - service: light.turn_off
+  - service: automation.trigger
+    data:
+      skip_condition: true
     target:
-      entity_id: light.elis_room_lights
-    data: {}
-  - service: fan.turn_off
-    target:
-      entity_id: fan.elis_room_fan
-    data: {}
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 0
-      milliseconds: 200
-  - service: climate.turn_off
-    target:
-      entity_id: climate.elis_room_ac
-    data: {}
+      entity_id: automation.elis_room_motion_timeout
   mode: single
   alias: Turn Off Eli's Room
   icon: mdi:power
@@ -232,18 +220,11 @@ turn_off_elenas_room:
       - automation.elenas_room_ac_auto_control
       - automation.elenas_room_fan_auto_control
     data: {}
-  - service: light.turn_off
+  - service: automation.trigger
+    data:
+      skip_condition: true
     target:
-      entity_id: light.elenas_room_lights
-    data: {}
-  - service: fan.turn_off
-    data: {}
-    target:
-      entity_id: fan.elenas_room_fan
-  - service: climate.turn_off
-    target:
-      entity_id: climate.elenas_room_ac
-    data: {}
+      entity_id: automation.elenas_room_motion_timeout
   mode: single
   alias: Turn Off Elena's Room
   icon: mdi:power
@@ -256,36 +237,23 @@ turn_off_dining_room:
       entity_id:
       - automation.dining_room_fan_auto_control
       - automation.dining_room_ac_auto_control
-  - service: light.turn_off
+  - service: automation.trigger
+    data:
+      skip_condition: true
     target:
-      entity_id:
-      - light.dining_room_lights
-      - light.dining_room_pendant_light_entity
-    data: {}
-  - if:
-    - condition: state
-      entity_id: fan.dining_room_fan
-      state: 'on'
-    then:
-    - service: fan.turn_off
-      data: {}
-      target:
-        entity_id: fan.dining_room_fan
-  - service: climate.turn_off
-    data: {}
-    target:
-      entity_id: climate.dining_room_ac
+      entity_id: automation.dining_room_motion_timeout
   mode: single
   alias: Turn Off Dining Room
   icon: mdi:power
 turn_off_playroom:
   sequence:
-  - service: light.turn_off
+  - service: automation.trigger
+    data:
+      skip_condition: true
     target:
       entity_id:
-      - light.playroom_lights
-      - light.yard_light_entity
-    data: {}
+      - automation.yard_motion_timeout
+      - automation.playroom_motion_timeout
   mode: single
   alias: Turn Off Playroom
   icon: mdi:power
@@ -312,9 +280,11 @@ turn_off_powder_room:
   icon: mdi:power
 turn_off_hallway:
   sequence:
-  - service: light.turn_off
+  - service: automation.trigger
+    data:
+      skip_condition: true
     target:
-      entity_id: light.hallway_lights
+      entity_id: automation.hallway_motion_timeout
   mode: single
   alias: Turn Off Hallway
   icon: mdi:power
@@ -513,20 +483,11 @@ turn_off_living_room:
       entity_id:
       - automation.living_room_fan_auto_control
       - automation.living_room_ac_auto_control
-  - service: light.turn_off
-    data: {}
+  - service: automation.trigger
+    data:
+      skip_condition: true
     target:
-      entity_id:
-      - light.living_room_lights
-      - light.living_room_pendant_light_entity
-  - service: fan.turn_off
-    data: {}
-    target:
-      entity_id: fan.living_room_fan
-  - service: climate.turn_off
-    data: {}
-    target:
-      entity_id: climate.living_room_ac
+      entity_id: automation.living_room_motion_timeout
   mode: single
   icon: mdi:power
 turn_off_study_room:
@@ -539,19 +500,11 @@ turn_off_study_room:
       entity_id:
       - automation.study_room_fan_auto_control
       - automation.study_room_ac_auto_control
-  - service: light.turn_off
-    data: {}
+  - service: automation.trigger
+    data:
+      skip_condition: true
     target:
-      entity_id: light.study_room_lights
-  - service: fan.turn_off
-    data: {}
-    target:
-      entity_id:
-      - fan.study_room_fan
-  - service: climate.turn_off
-    data: {}
-    target:
-      entity_id: climate.study_room_ac
+      entity_id: automation.study_room_motion_timeout
   - if:
     - condition: not
       conditions:
@@ -568,10 +521,11 @@ turn_off_study_room:
 turn_off_kitchen:
   alias: Turn Off Kitchen
   sequence:
-  - service: light.turn_off
-    data: {}
+  - service: automation.trigger
+    data:
+      skip_condition: true
     target:
-      entity_id: light.kitchen_lights
+      entity_id: automation.kitchen_motion_timeout
   - if:
     - condition: not
       conditions:
@@ -594,18 +548,11 @@ turn_off_parents_room:
       entity_id:
       - automation.parents_room_ac_auto_control
       - automation.parents_room_fan_auto_control
-  - service: light.turn_off
-    data: {}
+  - service: automation.trigger
+    data:
+      skip_condition: true
     target:
-      entity_id: light.parents_room_lights
-  - service: fan.turn_off
-    data: {}
-    target:
-      entity_id: fan.parents_room_fan
-  - service: climate.turn_off
-    data: {}
-    target:
-      entity_id: climate.parents_room_ac
+      entity_id: automation.parents_room_motion_timeout
   mode: single
   icon: mdi:power
 turn_off_master_bathroom:
