@@ -77,10 +77,6 @@ action:
           - condition: trigger
             id: power_off
         sequence:
-          - service: input_boolean.turn_off
-            data: {}
-            target:
-              entity_id: "input_boolean.{{ target_fan.split('.')[1] }}_power"
           - service: script.fan_set_state
             data:
               target_fan: "{{ state_attr(target_fan,'friendly_name') }}"
