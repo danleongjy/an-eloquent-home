@@ -22,35 +22,37 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 Domain | Quantity
 -- | --
-[`person`](https://www.home-assistant.io/components/person) | 3
-[`update`](https://www.home-assistant.io/components/update) | 10
-[`sensor`](https://www.home-assistant.io/components/sensor) | 450
-[`zone`](https://www.home-assistant.io/components/zone) | 1
-[`sun`](https://www.home-assistant.io/components/sun) | 1
-[`input_text`](https://www.home-assistant.io/components/input_text) | 30
-[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 21
+[`automation`](https://www.home-assistant.io/components/automation) | 130
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 87
+[`button`](https://www.home-assistant.io/components/button) | 122
+[`calendar`](https://www.home-assistant.io/components/calendar) | 3
+[`camera`](https://www.home-assistant.io/components/camera) | 1
+[`climate`](https://www.home-assistant.io/components/climate) | 6
+[`cover`](https://www.home-assistant.io/components/cover) | 8
+[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 5
+[`fan`](https://www.home-assistant.io/components/fan) | 6
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 22
+[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 21
 [`input_number`](https://www.home-assistant.io/components/input_number) | 32
 [`input_select`](https://www.home-assistant.io/components/input_select) | 7
-[`cover`](https://www.home-assistant.io/components/cover) | 8
-[`climate`](https://www.home-assistant.io/components/climate) | 6
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 87
-[`media_player`](https://www.home-assistant.io/components/media_player) | 4
-[`button`](https://www.home-assistant.io/components/button) | 122
-[`fan`](https://www.home-assistant.io/components/fan) | 6
-[`switch`](https://www.home-assistant.io/components/switch) | 26
-[`weather`](https://www.home-assistant.io/components/weather) | 1
-[`script`](https://www.home-assistant.io/components/script) | 56
-[`automation`](https://www.home-assistant.io/components/automation) | 130
-[`number`](https://www.home-assistant.io/components/number) | 164
-[`select`](https://www.home-assistant.io/components/select) | 48
-[`calendar`](https://www.home-assistant.io/components/calendar) | 3
-[`remote`](https://www.home-assistant.io/components/remote) | 6
-[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 5
-[`camera`](https://www.home-assistant.io/components/camera) | 1
-[`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
+[`input_text`](https://www.home-assistant.io/components/input_text) | 30
 [`light`](https://www.home-assistant.io/components/light) | 52
-Total | 1303
+[`media_player`](https://www.home-assistant.io/components/media_player) | 4
+[`number`](https://www.home-assistant.io/components/number) | 164
+[`person`](https://www.home-assistant.io/components/person) | 3
+[`remote`](https://www.home-assistant.io/components/remote) | 6
+[`script`](https://www.home-assistant.io/components/script) | 56
+[`select`](https://www.home-assistant.io/components/select) | 48
+[`sensor`](https://www.home-assistant.io/components/sensor) | 450
+[`stt`](https://www.home-assistant.io/components/stt) | 1
+[`sun`](https://www.home-assistant.io/components/sun) | 1
+[`switch`](https://www.home-assistant.io/components/switch) | 26
+[`tts`](https://www.home-assistant.io/components/tts) | 1
+[`update`](https://www.home-assistant.io/components/update) | 12
+[`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
+[`weather`](https://www.home-assistant.io/components/weather) | 1
+[`zone`](https://www.home-assistant.io/components/zone) | 1
+Total | 1307
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -78,8 +80,10 @@ Total | 1303
 - Home Assistant Google Drive Backup
 - MariaDB
 - Mosquitto broker
+- Piper
 - Samba share
 - Studio Code Server
+- Whisper
 
 ### Custom integrations
 - [Browser Mod](https://github.com/thomasloven/hass-browser_mod)
