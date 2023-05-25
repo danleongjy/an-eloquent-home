@@ -15,7 +15,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://support.lenovo.com/sg/en/solutions/pd027573-detailed-specifications-for-thinkcentre-m93-m93p-tiny-form-factor)
 * [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.1](https://github.com/home-assistant/operating-system/releases/tag/10.1) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core 2023.4.6](https://github.com/home-assistant/core/releases/tag/2023.4.6)
+* [Home Assistant Core 2023.5.4](https://github.com/home-assistant/core/releases/tag/2023.5.4)
 * 4 cores, 4GB RAM, 32GB storage
 
 ## Entities
@@ -24,33 +24,33 @@ Domain | Quantity
 -- | --
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`update`](https://www.home-assistant.io/components/update) | 10
-[`sensor`](https://www.home-assistant.io/components/sensor) | 452
-[`sun`](https://www.home-assistant.io/components/sun) | 1
+[`sensor`](https://www.home-assistant.io/components/sensor) | 450
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-[`input_number`](https://www.home-assistant.io/components/input_number) | 32
+[`sun`](https://www.home-assistant.io/components/sun) | 1
 [`input_text`](https://www.home-assistant.io/components/input_text) | 30
-[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 22
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 21
+[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 22
+[`input_number`](https://www.home-assistant.io/components/input_number) | 32
 [`input_select`](https://www.home-assistant.io/components/input_select) | 7
 [`cover`](https://www.home-assistant.io/components/cover) | 8
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 87
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
-[`button`](https://www.home-assistant.io/components/button) | 124
-[`remote`](https://www.home-assistant.io/components/remote) | 6
-[`calendar`](https://www.home-assistant.io/components/calendar) | 3
-[`automation`](https://www.home-assistant.io/components/automation) | 130
+[`button`](https://www.home-assistant.io/components/button) | 122
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`switch`](https://www.home-assistant.io/components/switch) | 26
+[`weather`](https://www.home-assistant.io/components/weather) | 1
+[`script`](https://www.home-assistant.io/components/script) | 56
+[`automation`](https://www.home-assistant.io/components/automation) | 130
 [`number`](https://www.home-assistant.io/components/number) | 164
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`weather`](https://www.home-assistant.io/components/weather) | 1
+[`calendar`](https://www.home-assistant.io/components/calendar) | 3
+[`remote`](https://www.home-assistant.io/components/remote) | 6
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 5
-[`script`](https://www.home-assistant.io/components/script) | 56
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`light`](https://www.home-assistant.io/components/light) | 52
-Total | 1307
+Total | 1303
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
