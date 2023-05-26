@@ -2854,13 +2854,6 @@
       data: {}
       target:
         entity_id: cover.kitchen_blinds
-    - service: switch.turn_off
-      data: {}
-      target:
-        entity_id:
-        - switch.stove_main_power
-        - switch.water_heater
-        - switch.rice_cooker
     - service: script.turn_off_all
       data: {}
     - service: automation.turn_off
@@ -5373,3 +5366,56 @@
     input:
       ac: climate.study_room_ac
       temp_sensor: sensor.study_room_temperature
+- id: '1685098214703'
+  alias: Notify When Kitchen Appliances On while Away
+  description: Send a notification if the Rice Cooker or Stove is on when Away Mode
+    is active.
+  trigger:
+  - platform: state
+    entity_id:
+    - input_boolean.away_mode
+    - switch.stove_main_power
+    - binary_sensor.rice_cooker
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: input_boolean.away_mode
+      state: 'on'
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: switch.stove_main_power
+        state: 'on'
+      - condition: state
+        entity_id: binary_sensor.rice_cooker
+        state: 'on'
+    then:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        title: Turn off kitchen appliances?
+        data:
+          tag: appliances_on
+        message: "{% if is_state('binary_sensor.rice_cooker', 'on')  and is_state('switch.stove_main_power',
+          'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker',
+          'on') %}\n  Rice cooker is on.\n{% else %}\n  Stove is on.\n{% endif %}"
+    - service: notify.mobile_app_grace_5
+      data:
+        title: Turn off kitchen appliances?
+        data:
+          tag: appliances_on
+        message: "{% if is_state('binary_sensor.rice_cooker', 'on')  and is_state('switch.stove_main_power',
+          'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker',
+          'on') %}\n  Rice cooker is on.\n{% else %}\n  Stove is on.\n{% endif %}"
+    else:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: clear_notification
+        data:
+          tag: appliances_on
+    - service: notify.mobile_app_grace_5
+      data:
+        message: clear_notification
+        data:
+          tag: appliances_on
+  mode: single
