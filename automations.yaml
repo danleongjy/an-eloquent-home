@@ -4001,7 +4001,7 @@
   - condition: state
     entity_id:
     - calendar.public_holidays
-    - calendar.elis_school_holidays
+    - calendar.eli_no_school
     state: 'off'
   - condition: state
     entity_id: input_boolean.elis_school_day_alarm_enabled
@@ -4041,7 +4041,7 @@
       entity_id: binary_sensor.pixel_4a_is_charging
       state: 'off'
     - condition: state
-      entity_id: calendar.elis_school_holidays
+      entity_id: calendar.eli_no_school
       state: 'off'
     - condition: state
       entity_id: input_boolean.elis_school_day_alarm_enabled
@@ -4053,7 +4053,7 @@
       entity_id: binary_sensor.pixel_4a_is_charging
       state: 'on'
     - condition: state
-      entity_id: calendar.elenas_school_holidays
+      entity_id: calendar.elena_no_school
       state: 'off'
     - condition: state
       entity_id: input_boolean.elenas_school_day_alarm_enabled
@@ -4066,28 +4066,28 @@
   description: Send notifications to apps when school or public holidays are upcoming
   trigger:
   - platform: template
-    value_template: '{{ (state_attr(''calendar.elenas_school_holidays'',''start_time'').split()[0]
+    value_template: '{{ (state_attr(''calendar.elena_no_school'',''start_time'').split()[0]
       | as_datetime).date() - now().date() <= timedelta(days = states(''input_number.holiday_advance_reminder'')
       | int(7)) }}'
     alias: When Elena's next school holiday is less than time threshold for advance
       reminder
-    id: calendar.elenas_school_holidays
+    id: calendar.elena_no_school
   - platform: template
-    value_template: '{{ (state_attr(''calendar.elenas_school_holidays'',''start_time'').split()[0]
+    value_template: '{{ (state_attr(''calendar.elena_no_school'',''start_time'').split()[0]
       | as_datetime).date() - now().date() <= timedelta(days = 1) }}'
     alias: When Elena's next school holiday is tomorrow
-    id: calendar.elenas_school_holidays
+    id: calendar.elena_no_school
   - platform: template
-    value_template: '{{ (state_attr(''calendar.elis_school_holidays'',''start_time'').split()[0]
+    value_template: '{{ (state_attr(''calendar.eli_no_school'',''start_time'').split()[0]
       | as_datetime).date() - now().date() <= timedelta(days = states(''input_number.holiday_advance_reminder'')
       | int(7)) }}'
     alias: When Eli's next school holiday is less than time threshold for advance
       reminder
-    id: calendar.elis_school_holidays
+    id: calendar.eli_no_school
   - platform: template
-    value_template: '{{ (state_attr(''calendar.elis_school_holidays'',''start_time'').split()[0]
+    value_template: '{{ (state_attr(''calendar.eli_no_school'',''start_time'').split()[0]
       | as_datetime).date() - now().date() <= timedelta(days = 1) }}'
-    id: calendar.elis_school_holidays
+    id: calendar.eli_no_school
     alias: When Eli's next school holiday is tomorrow
   - platform: template
     value_template: '{{ (state_attr(''calendar.public_holidays'',''start_time'').split()[0]
@@ -4109,8 +4109,8 @@
         | as_datetime - timedelta(days=1)).date() %} {% if start_date == end_date
         %}\n  {{ start_date.strftime('%a %d %b %Y') }}\n{% else %}\n  {{ start_date.strftime('%a
         %d %b %Y') }} to {{ end_date.strftime('%a %d %b %Y') }}\n{% endif %}"
-      message: '{% set preamble = {''calendar.elenas_school_holidays'': ''Elena has
-        no school'', ''calendar.elis_school_holidays'': ''Eli has no school'', ''calendar.public_holidays'':
+      message: '{% set preamble = {''calendar.elena_no_school'': ''Elena has
+        no school'', ''calendar.eli_no_school'': ''Eli has no school'', ''calendar.public_holidays'':
         ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(trigger.id,''message'')
         }}.'
   - service: notify.mobile_app_pixel_4a
@@ -4120,8 +4120,8 @@
         | as_datetime - timedelta(days=1)).date() %} {% if start_date == end_date
         %}\n  {{ start_date.strftime('%a %d %b %Y') }}\n{% else %}\n  {{ start_date.strftime('%a
         %d %b %Y') }} to {{ end_date.strftime('%a %d %b %Y') }}\n{% endif %}"
-      message: '{% set preamble = {''calendar.elenas_school_holidays'': ''Elena has
-        no school'', ''calendar.elis_school_holidays'': ''Eli has no school'', ''calendar.public_holidays'':
+      message: '{% set preamble = {''calendar.elena_no_school'': ''Elena has
+        no school'', ''calendar.eli_no_school'': ''Eli has no school'', ''calendar.public_holidays'':
         ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(trigger.id,''message'')
         }}.'
   mode: parallel
@@ -4702,8 +4702,8 @@
     at: '12:00:00'
   - platform: state
     entity_id:
-    - calendar.elenas_school_holidays
-    - calendar.elis_school_holidays
+    - calendar.elena_no_school
+    - calendar.eli_no_school
     - calendar.public_holidays
     to: 'on'
   condition: []
@@ -4759,8 +4759,8 @@
         after: '10:00:00'
       - condition: state
         entity_id:
-        - calendar.elenas_school_holidays
-        - calendar.elis_school_holidays
+        - calendar.elena_no_school
+        - calendar.eli_no_school
         - calendar.public_holidays
         state: 'off'
       sequence:
@@ -5419,3 +5419,4 @@
         data:
           tag: appliances_on
   mode: single
+  max_exceeded: silent
