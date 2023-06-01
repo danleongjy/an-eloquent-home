@@ -14,7 +14,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://support.lenovo.com/sg/en/solutions/pd027573-detailed-specifications-for-thinkcentre-m93-m93p-tiny-form-factor)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.1](https://github.com/home-assistant/operating-system/releases/tag/10.1) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.2](https://github.com/home-assistant/operating-system/releases/tag/10.2) running in a [Proxmox VM](https://www.proxmox.com/)
 * [Home Assistant Core 2023.5.4](https://github.com/home-assistant/core/releases/tag/2023.5.4)
 * 4 cores, 4GB RAM, 32GB storage
 
@@ -23,7 +23,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 Domain | Quantity
 -- | --
 [`automation`](https://www.home-assistant.io/components/automation) | 131
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 87
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 86
 [`button`](https://www.home-assistant.io/components/button) | 122
 [`calendar`](https://www.home-assistant.io/components/calendar) | 3
 [`camera`](https://www.home-assistant.io/components/camera) | 1
@@ -43,15 +43,15 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 6
 [`script`](https://www.home-assistant.io/components/script) | 56
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`sensor`](https://www.home-assistant.io/components/sensor) | 451
+[`sensor`](https://www.home-assistant.io/components/sensor) | 436
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 26
+[`switch`](https://www.home-assistant.io/components/switch) | 25
 [`tts`](https://www.home-assistant.io/components/tts) | 1
 [`update`](https://www.home-assistant.io/components/update) | 12
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1308
+Total | 1291
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)

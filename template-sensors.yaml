@@ -233,11 +233,6 @@
       dishwasher_status: "{{ states('input_select.rice_cooker_status') }}"
     availability: "{{ states('switch.rice_cooker') not in ['unavailable','unknown'] }}"
 
-  - name: Gas Water Heater
-    unique_id: binary_sensor.gas_water_heater
-    state: "{{ states('sensor.gas_water_heater_watts') | int(0) > 3 }}"
-    availability: "{{ states('switch.gas_water_heater') }}"
-
   - name: Washer Tub Dirty
     unique_id: binary_sensor.washer_tub_dirty
     state: "{{ states('sensor.washer_tub_clean_counter') | int(0) > 30 }}"

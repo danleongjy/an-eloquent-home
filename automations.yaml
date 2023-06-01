@@ -2061,11 +2061,6 @@
     not_to:
     - unavailable
     - unknown
-  - platform: state
-    entity_id:
-    - binary_sensor.gas_water_heater
-    from: 'off'
-    to: 'on'
   - platform: template
     value_template: "{{ not ((states('sensor.local_rainfall') | int(0) > 1)\n        or
       ('Thunder' in states('sensor.local_two_hour_forecast'))\n        or ('Rain'
@@ -2110,7 +2105,6 @@
           entity_id:
           - switch.stove_main_power
           - switch.rice_cooker
-          - binary_sensor.gas_water_heater
           state: 'on'
       sequence:
       - service: cover.close_cover
@@ -2153,9 +2147,6 @@
           enabled: true
         - condition: state
           entity_id: switch.stove_main_power
-          state: 'on'
-        - condition: state
-          entity_id: binary_sensor.gas_water_heater
           state: 'on'
         - condition: numeric_state
           entity_id: sensor.kitchen_lux
@@ -3051,7 +3042,6 @@
     - vacuum.pikachu
     from:
     - cleaning
-    - error
     to:
     - docked
     - idle
@@ -4109,8 +4099,8 @@
         | as_datetime - timedelta(days=1)).date() %} {% if start_date == end_date
         %}\n  {{ start_date.strftime('%a %d %b %Y') }}\n{% else %}\n  {{ start_date.strftime('%a
         %d %b %Y') }} to {{ end_date.strftime('%a %d %b %Y') }}\n{% endif %}"
-      message: '{% set preamble = {''calendar.elena_no_school'': ''Elena has
-        no school'', ''calendar.eli_no_school'': ''Eli has no school'', ''calendar.public_holidays'':
+      message: '{% set preamble = {''calendar.elena_no_school'': ''Elena has no school'',
+        ''calendar.eli_no_school'': ''Eli has no school'', ''calendar.public_holidays'':
         ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(trigger.id,''message'')
         }}.'
   - service: notify.mobile_app_pixel_4a
@@ -4120,8 +4110,8 @@
         | as_datetime - timedelta(days=1)).date() %} {% if start_date == end_date
         %}\n  {{ start_date.strftime('%a %d %b %Y') }}\n{% else %}\n  {{ start_date.strftime('%a
         %d %b %Y') }} to {{ end_date.strftime('%a %d %b %Y') }}\n{% endif %}"
-      message: '{% set preamble = {''calendar.elena_no_school'': ''Elena has
-        no school'', ''calendar.eli_no_school'': ''Eli has no school'', ''calendar.public_holidays'':
+      message: '{% set preamble = {''calendar.elena_no_school'': ''Elena has no school'',
+        ''calendar.eli_no_school'': ''Eli has no school'', ''calendar.public_holidays'':
         ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(trigger.id,''message'')
         }}.'
   mode: parallel
@@ -5072,6 +5062,8 @@
       motion_sensor: binary_sensor.hallway_motion
       lux_sensor: sensor.hallway_lux
       lights_debounce: false
+      blackout_hours_start: input_datetime.elenas_bedtime
+      blackout_hours_end: input_datetime.sleep_hours_end
 - id: '1681735193653'
   alias: Party Mode
   description: Set recommended scenes in public areas and prevent lights dimming when
