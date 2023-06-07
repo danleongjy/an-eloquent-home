@@ -2079,7 +2079,7 @@
     above: 1
   - platform: numeric_state
     entity_id: sensor.sun_solar_azimuth
-    above: 50
+    above: 45
     below: 120
   condition: []
   action:
@@ -2119,7 +2119,7 @@
       - condition: numeric_state
         entity_id: sensor.sun_solar_azimuth
         below: 120
-        above: 50
+        above: 45
       sequence:
       - condition: template
         value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed
@@ -5291,9 +5291,9 @@
   use_blueprint:
     path: danleongjy/fan_auto_control.yaml
     input:
-      fan: fan.elenas_room_fan
       temp_sensor: sensor.elenas_room_temperature
       high_temp: 29
+      fan: fan.elenas_room_fan
 - id: '1684246574094'
   alias: Eli's Room Fan Auto Control
   description: Set the Eli's Room Fan speed and direction based on temperature
@@ -5311,6 +5311,8 @@
     input:
       fan: fan.dining_room_fan
       temp_sensor: sensor.dining_room_temperature
+      low_speed: input_number.sitting_rooms_fan_speed_when_cool
+      high_speed: input_number.sitting_rooms_fan_speed_when_warm
 - id: '1684314664733'
   alias: Living Room Fan Auto Control
   description: Set the Living Room Fan speed and direction based on temperature
@@ -5319,8 +5321,8 @@
     input:
       fan: fan.living_room_fan
       temp_sensor: sensor.dining_room_temperature
-      low_speed: input_number.fans_lucci_speed_when_ac_on
-      high_speed: input_number.fans_lucci_speed_when_ac_off
+      low_speed: input_number.sitting_rooms_fan_speed_when_cool
+      high_speed: input_number.sitting_rooms_fan_speed_when_warm
 - id: '1684314715221'
   alias: Study Room Fan Auto Control
   description: Set the Study Room Fan speed and direction based on temperature
@@ -5329,8 +5331,8 @@
     input:
       fan: fan.study_room_fan
       temp_sensor: sensor.study_room_temperature
-      low_speed: input_number.fans_lucci_speed_when_ac_on
-      high_speed: input_number.fans_lucci_speed_when_ac_off
+      low_speed: input_number.sitting_rooms_fan_speed_when_cool
+      high_speed: input_number.sitting_rooms_fan_speed_when_warm
 - id: '1684483829124'
   alias: Dining Room AC Auto Control
   description: Depending on the room temperature, automatically turn on or off the
