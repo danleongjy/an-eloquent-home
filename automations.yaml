@@ -699,7 +699,7 @@
         title: Please manually dock vacuum
         data:
           tag: vacuum_undocked
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         message: Vacuum not docked properly
         title: Please manually dock vacuum
@@ -711,7 +711,7 @@
         message: clear_notification
         data:
           tag: vacuum_undocked
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         message: clear_notification
         data:
@@ -748,7 +748,7 @@
         title: Please close the doors and windows
         data:
           tag: doors_open
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         message: AC on with doors and windows open
         title: Please close the doors and windows
@@ -760,7 +760,7 @@
         message: clear_notification
         data:
           tag: doors_open
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         message: clear_notification
         data:
@@ -787,7 +787,7 @@
         message: Wash completed at {{ (now() | string)[11:16] }}
         data:
           tag: washer_load_clean
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         title: Please unload laundry
         message: Wash completed at {{ (now() | string)[11:16] }}
@@ -799,7 +799,7 @@
         message: clear_notification
         data:
           tag: washer_load_clean
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         message: clear_notification
         data:
@@ -843,7 +843,7 @@
           message: clear_notification
           data:
             tag: vacuum_running_with_bathroom_doors_open
-      - service: notify.mobile_app_grace_5
+      - service: notify.mobile_app_grace
         data:
           message: clear_notification
           data:
@@ -859,7 +859,7 @@
           title: Please close bathroom/main doors
           data:
             tag: vacuum_running_with_bathroom_doors_open
-      - service: notify.mobile_app_grace_5
+      - service: notify.mobile_app_grace
         data:
           message: Otherwise, vacuum will pause at {{ ((now() + timedelta(minutes
             = 1)).time() | string)[:5] }}.
@@ -922,7 +922,7 @@
         title: Please open dishwasher
         data:
           tag: dishwasher_load_clean
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         title: Please open dishwasher
         message: Dishwasher cooled down at {{ (now().time()| string)[:5] }}.
@@ -934,7 +934,7 @@
         message: clear_notification
         data:
           tag: dishwasher_load_clean
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         message: clear_notification
         data:
@@ -986,7 +986,7 @@
         message: Windows open in heavy rain
         data:
           tag: windows_open_raining
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         message: Windows open in heavy rain
         title: Please close windows
@@ -998,7 +998,7 @@
         message: clear_notification
         data:
           tag: windows_open_raining
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         message: clear_notification
         data:
@@ -3077,6 +3077,9 @@
     data: {}
   - service: readme.generate
     data: {}
+  - condition: state
+    entity_id: input_boolean.away_mode
+    state: 'off'
   - service: automation.turn_on
     data: {}
     target:
@@ -4092,7 +4095,7 @@
     alias: When the next public holiday is tomorrow
   condition: []
   action:
-  - service: notify.mobile_app_grace_5
+  - service: notify.mobile_app_grace
     data:
       title: "{% set start_date = (state_attr(trigger.id,'start_time').split()[0]
         | as_datetime).date() %} {% set end_date = (state_attr(trigger.id,'end_time').split()[0]
@@ -5393,7 +5396,7 @@
         message: "{% if is_state('binary_sensor.rice_cooker', 'on')  and is_state('switch.stove_main_power',
           'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker',
           'on') %}\n  Rice cooker is on.\n{% else %}\n  Stove is on.\n{% endif %}"
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         title: Turn off kitchen appliances?
         data:
@@ -5407,7 +5410,7 @@
         message: clear_notification
         data:
           tag: appliances_on
-    - service: notify.mobile_app_grace_5
+    - service: notify.mobile_app_grace
       data:
         message: clear_notification
         data:

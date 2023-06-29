@@ -14,8 +14,8 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://support.lenovo.com/sg/en/solutions/pd027573-detailed-specifications-for-thinkcentre-m93-m93p-tiny-form-factor)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.2](https://github.com/home-assistant/operating-system/releases/tag/10.2) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core 2023.5.4](https://github.com/home-assistant/core/releases/tag/2023.5.4)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.3](https://github.com/home-assistant/operating-system/releases/tag/10.3) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Core 2023.6.3](https://github.com/home-assistant/core/releases/tag/2023.6.3)
 * 4 cores, 4GB RAM, 32GB storage
 
 ## Entities
@@ -43,15 +43,15 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 6
 [`script`](https://www.home-assistant.io/components/script) | 56
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`sensor`](https://www.home-assistant.io/components/sensor) | 451
+[`sensor`](https://www.home-assistant.io/components/sensor) | 436
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 26
+[`switch`](https://www.home-assistant.io/components/switch) | 25
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 12
+[`update`](https://www.home-assistant.io/components/update) | 11
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1307
+Total | 1290
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -77,7 +77,6 @@ Total | 1307
 ### Add-ons
 - Advanced SSH & Web Terminal
 - Home Assistant Google Drive Backup
-- MariaDB
 - Mosquitto broker
 - Piper
 - Samba share
