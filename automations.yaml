@@ -1796,107 +1796,6 @@
       button_up_long_max_loop_repeats: 50
       button_down_long_loop: true
       button_down_long_max_loop_repeats: 50
-- id: '1659256881015'
-  alias: Kitchen Blind Controller
-  description: Control the Kitchen Blind
-  use_blueprint:
-    path: EPMatt/ikea_e1766.yaml
-    input:
-      integration: ZHA
-      controller_device: 63ca2b52933039d3f01175d8c06dd220
-      helper_last_controller_event: input_text.zz_kitchen_blinds_controller_last_event
-      action_button_up_short:
-      - if:
-        - condition: state
-          entity_id: cover.kitchen_blind
-          state: closing
-        then:
-        - service: cover.stop_cover
-          data: {}
-          target:
-            entity_id: cover.kitchen_blind
-        else:
-        - service: cover.open_cover
-          data: {}
-          target:
-            entity_id: cover.kitchen_blind
-      action_button_down_short:
-      - if:
-        - condition: state
-          entity_id: cover.kitchen_blind
-          state: opening
-        then:
-        - service: cover.stop_cover
-          data: {}
-          target:
-            entity_id: cover.kitchen_blind
-        else:
-        - service: cover.close_cover
-          data: {}
-          target:
-            entity_id: cover.kitchen_blind
-      action_button_up_double:
-      - service: automation.turn_on
-        data: {}
-        target:
-          entity_id: automation.kitchen_blind_auto_control
-      - if:
-        - condition: state
-          entity_id: light.kitchen_ceiling_light_entity
-          state: 'off'
-        then:
-        - service: light.turn_on
-          data:
-            flash: short
-          target:
-            entity_id: light.kitchen_ceiling_light_entity
-        - delay: 1
-        - service: light.turn_off
-          data: {}
-          target:
-            entity_id: light.kitchen_ceiling_light_entity
-        else:
-        - service: light.turn_on
-          data:
-            flash: short
-          target:
-            entity_id: light.kitchen_ceiling_light_entity
-      action_button_down_double:
-      - service: automation.turn_off
-        data: {}
-        target:
-          entity_id: automation.kitchen_blind_auto_control
-      - if:
-        - condition: state
-          entity_id: light.kitchen_ceiling_light_entity
-          state: 'off'
-        then:
-        - repeat:
-            count: 2
-            sequence:
-            - service: light.turn_on
-              data:
-                flash: short
-              target:
-                entity_id: light.kitchen_ceiling_light_entity
-            - delay: 1
-        - service: light.turn_off
-          data: {}
-          target:
-            entity_id: light.kitchen_ceiling_light_entity
-        else:
-        - repeat:
-            count: 2
-            sequence:
-            - service: light.turn_on
-              data:
-                flash: short
-              target:
-                entity_id: light.kitchen_ceiling_light_entity
-            - delay: 1
-      button_up_double_press: true
-      button_down_double_press: true
-      helper_double_press_delay: 500
 - id: '1659256970314'
   alias: Kitchen Lights Controller
   description: Control the Kitchen Lights
@@ -2039,144 +1938,6 @@
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 700
-- id: '1659777667257'
-  alias: Kitchen Blind Auto Control
-  description: Close the Kitchen Blind if raining, in the mornings or AC is on
-  trigger:
-  - platform: template
-    value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or ('Thunder'
-      in states('sensor.local_two_hour_forecast'))\n   or ('Rain' in states('sensor.local_two_hour_forecast'))\n
-      \  or ('Wind' in states('sensor.local_two_hour_forecast')) }}"
-  - platform: state
-    entity_id:
-    - climate.living_room_ac
-    to: cool
-  - platform: state
-    entity_id:
-    - switch.stove_main_power
-    - switch.rice_cooker
-    not_from:
-    - unavailable
-    - unknown
-    not_to:
-    - unavailable
-    - unknown
-  - platform: template
-    value_template: "{{ not ((states('sensor.local_rainfall') | int(0) > 1)\n        or
-      ('Thunder' in states('sensor.local_two_hour_forecast'))\n        or ('Rain'
-      in states('sensor.local_two_hour_forecast'))\n        or ('Wind' in states('sensor.local_two_hour_forecast')))
-      }}"
-  - platform: state
-    entity_id:
-    - sensor.kitchen_lux
-  - platform: state
-    entity_id:
-    - binary_sensor.kitchen_motion_sensors
-    to: 'on'
-  - platform: numeric_state
-    entity_id: sensor.sun_solar_elevation
-    below: 65
-    above: 1
-  - platform: numeric_state
-    entity_id: sensor.sun_solar_azimuth
-    above: 45
-    below: 120
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: or
-        conditions:
-        - condition: template
-          value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or
-            ('Thunder' in states('sensor.local_two_hour_forecast'))\n   or ('Rain'
-            in states('sensor.local_two_hour_forecast'))\n   or ('Wind' in states('sensor.local_two_hour_forecast'))
-            }}"
-        - condition: state
-          entity_id: climate.living_room_ac
-          state: cool
-        - condition: numeric_state
-          entity_id:
-          - sensor.kitchen_lux
-          above: input_number.maximum_lux
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id:
-          - switch.stove_main_power
-          - switch.rice_cooker
-          state: 'on'
-      sequence:
-      - service: cover.close_cover
-        data: {}
-        target:
-          entity_id: cover.kitchen_blind
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.sun_solar_elevation
-        above: 1
-        below: 65
-      - condition: numeric_state
-        entity_id: sensor.sun_solar_azimuth
-        below: 120
-        above: 45
-      sequence:
-      - condition: template
-        value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed
-          > timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
-          | int(0)) }}'
-      - service: cover.set_cover_position
-        data:
-          position: 15
-        target:
-          entity_id: cover.kitchen_blind
-    default:
-    - condition: and
-      conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: sun.sun
-          attribute: rising
-          state: false
-          enabled: true
-        - condition: numeric_state
-          entity_id: sun.sun
-          above: '65'
-          attribute: elevation
-          enabled: true
-        - condition: state
-          entity_id: switch.stove_main_power
-          state: 'on'
-        - condition: numeric_state
-          entity_id: sensor.kitchen_lux
-          below: input_number.minimum_lux
-        - condition: state
-          entity_id: switch.rice_cooker
-          state: 'on'
-      - condition: not
-        conditions:
-        - condition: template
-          value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or
-            ('Thunder' in states('sensor.local_two_hour_forecast'))\n   or ('Rain'
-            in states('sensor.local_two_hour_forecast'))\n   or ('Wind' in states('sensor.local_two_hour_forecast'))
-            }}"
-      - condition: not
-        conditions:
-        - condition: template
-          value_template: "{{ states('sun.sun') == 'above_horizon'\n   and state_attr('sun.sun',
-            'elevation') <= 60\n   and state_attr('sun.sun', 'azimuth') >= 75\n   and
-            state_attr('sun.sun', 'azimuth') <= 90 }}"
-    - condition: template
-      value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed >
-        timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
-        | int(0)) }}'
-    - service: cover.open_cover
-      data: {}
-      target:
-        entity_id: cover.kitchen_blind
-  mode: single
-  max_exceeded: silent
 - id: '1660034693952'
   alias: Master Bathroom Blind Auto Control
   description: Control the Master Bathroom Blind based on whether there is motion
@@ -2844,7 +2605,7 @@
     - service: cover.close_cover
       data: {}
       target:
-        entity_id: cover.kitchen_blinds
+        entity_id: cover.kitchen_blind
     - service: script.turn_off_all
       data: {}
     - service: automation.turn_off
@@ -5431,7 +5192,7 @@
       - choose:
         - conditions:
           - condition: state
-            entity_id: binary_sensor.kitchen_blinds_closed
+            entity_id: binary_sensor.kitchen_blind_closed
             state: 'off'
           - condition: numeric_state
             entity_id: input_number.kitchen_blind_position
@@ -5444,7 +5205,7 @@
               entity_id: input_number.kitchen_blind_position
         - conditions:
           - condition: state
-            entity_id: binary_sensor.kitchen_blinds_closed
+            entity_id: binary_sensor.kitchen_blind_closed
             state: 'on'
           - condition: state
             entity_id: input_number.kitchen_blind_position
@@ -5455,5 +5216,244 @@
               value: 100
             target:
               entity_id: input_number.kitchen_blind_position
+  mode: single
+  max_exceeded: silent
+- id: '1659256881015'
+  alias: Kitchen Blind Controller
+  description: Control the Kitchen Blind
+  use_blueprint:
+    path: EPMatt/ikea_e1766.yaml
+    input:
+      integration: ZHA
+      controller_device: 63ca2b52933039d3f01175d8c06dd220
+      helper_last_controller_event: input_text.zz_kitchen_blind_controller_last_event
+      action_button_up_short:
+      - if:
+        - condition: state
+          entity_id: cover.kitchen_blind
+          state: closing
+        then:
+        - service: cover.stop_cover
+          data: {}
+          target:
+            entity_id: cover.kitchen_blind
+        else:
+        - service: cover.open_cover
+          data: {}
+          target:
+            entity_id: cover.kitchen_blind
+      action_button_down_short:
+      - if:
+        - condition: state
+          entity_id: cover.kitchen_blind
+          state: opening
+        then:
+        - service: cover.stop_cover
+          data: {}
+          target:
+            entity_id: cover.kitchen_blind
+        else:
+        - service: cover.close_cover
+          data: {}
+          target:
+            entity_id: cover.kitchen_blind
+      action_button_up_double:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: automation.kitchen_blind_auto_control
+      - if:
+        - condition: state
+          entity_id: light.kitchen_ceiling_light_entity
+          state: 'off'
+        then:
+        - service: light.turn_on
+          data:
+            flash: short
+          target:
+            entity_id: light.kitchen_ceiling_light_entity
+        - delay: 1
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id: light.kitchen_ceiling_light_entity
+        else:
+        - service: light.turn_on
+          data:
+            flash: short
+          target:
+            entity_id: light.kitchen_ceiling_light_entity
+      action_button_down_double:
+      - service: automation.turn_off
+        data: {}
+        target:
+          entity_id: automation.kitchen_blind_auto_control
+      - if:
+        - condition: state
+          entity_id: light.kitchen_ceiling_light_entity
+          state: 'off'
+        then:
+        - repeat:
+            count: 2
+            sequence:
+            - service: light.turn_on
+              data:
+                flash: short
+              target:
+                entity_id: light.kitchen_ceiling_light_entity
+            - delay: 1
+        - service: light.turn_off
+          data: {}
+          target:
+            entity_id: light.kitchen_ceiling_light_entity
+        else:
+        - repeat:
+            count: 2
+            sequence:
+            - service: light.turn_on
+              data:
+                flash: short
+              target:
+                entity_id: light.kitchen_ceiling_light_entity
+            - delay: 1
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 500
+- id: '1659777667257'
+  alias: Kitchen Blind Auto Control
+  description: Close the Kitchen Blind if raining, in the mornings or AC is on
+  trigger:
+  - platform: template
+    value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or ('Thunder'
+      in states('sensor.local_two_hour_forecast'))\n   or ('Rain' in states('sensor.local_two_hour_forecast'))\n
+      \  or ('Wind' in states('sensor.local_two_hour_forecast')) }}"
+  - platform: state
+    entity_id:
+    - climate.living_room_ac
+    to: cool
+  - platform: state
+    entity_id:
+    - switch.stove_main_power
+    - switch.rice_cooker
+    not_from:
+    - unavailable
+    - unknown
+    not_to:
+    - unavailable
+    - unknown
+  - platform: template
+    value_template: "{{ not ((states('sensor.local_rainfall') | int(0) > 1)\n        or
+      ('Thunder' in states('sensor.local_two_hour_forecast'))\n        or ('Rain'
+      in states('sensor.local_two_hour_forecast'))\n        or ('Wind' in states('sensor.local_two_hour_forecast')))
+      }}"
+  - platform: state
+    entity_id:
+    - sensor.kitchen_lux
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_motion_sensors
+    to: 'on'
+  - platform: numeric_state
+    entity_id: sensor.sun_solar_elevation
+    below: 65
+    above: 1
+  - platform: numeric_state
+    entity_id: sensor.sun_solar_azimuth
+    above: 45
+    below: 120
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: template
+          value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or
+            ('Thunder' in states('sensor.local_two_hour_forecast'))\n   or ('Rain'
+            in states('sensor.local_two_hour_forecast'))\n   or ('Wind' in states('sensor.local_two_hour_forecast'))
+            }}"
+        - condition: state
+          entity_id: climate.living_room_ac
+          state: cool
+        - condition: numeric_state
+          entity_id:
+          - sensor.kitchen_lux
+          above: input_number.maximum_lux
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id:
+          - switch.stove_main_power
+          - switch.rice_cooker
+          state: 'on'
+      sequence:
+      - service: cover.close_cover
+        data: {}
+        target:
+          entity_id: cover.kitchen_blind
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.sun_solar_elevation
+        above: 1
+        below: 65
+      - condition: numeric_state
+        entity_id: sensor.sun_solar_azimuth
+        below: 120
+        above: 45
+      sequence:
+      - condition: template
+        value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed
+          > timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+          | int(0)) }}'
+      - service: cover.set_cover_position
+        data:
+          position: 15
+        target:
+          entity_id: cover.kitchen_blind
+    default:
+    - condition: and
+      conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: sun.sun
+          attribute: rising
+          state: false
+          enabled: true
+        - condition: numeric_state
+          entity_id: sun.sun
+          above: '65'
+          attribute: elevation
+          enabled: true
+        - condition: state
+          entity_id: switch.stove_main_power
+          state: 'on'
+        - condition: numeric_state
+          entity_id: sensor.kitchen_lux
+          below: input_number.minimum_lux
+        - condition: state
+          entity_id: switch.rice_cooker
+          state: 'on'
+      - condition: not
+        conditions:
+        - condition: template
+          value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or
+            ('Thunder' in states('sensor.local_two_hour_forecast'))\n   or ('Rain'
+            in states('sensor.local_two_hour_forecast'))\n   or ('Wind' in states('sensor.local_two_hour_forecast'))
+            }}"
+      - condition: not
+        conditions:
+        - condition: template
+          value_template: "{{ states('sun.sun') == 'above_horizon'\n   and state_attr('sun.sun',
+            'elevation') <= 60\n   and state_attr('sun.sun', 'azimuth') >= 75\n   and
+            state_attr('sun.sun', 'azimuth') <= 90 }}"
+    - condition: template
+      value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed >
+        timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+        | int(0)) }}'
+    - service: cover.open_cover
+      data: {}
+      target:
+        entity_id: cover.kitchen_blind
   mode: single
   max_exceeded: silent
