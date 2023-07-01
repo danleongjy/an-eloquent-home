@@ -1,15 +1,26 @@
-- platform: cover_rf_time_based
-  devices:
-    kitchen_blinds:
-      name: Kitchen Blinds
-      travelling_time_up: 14
-      travelling_time_down: 14
-      close_script_entity_id: script.kitchen_blinds_down
-      stop_script_entity_id: script.kitchen_blinds_stop
-      open_script_entity_id: script.kitchen_blinds_up
-
 - platform: template
   covers:
+    kitchen_blind:
+      friendly_name: Kitchen Blind
+      unique_id: cover.kitchen_blind
+      device_class: shutter
+      position_template: "{{ states('input_number.kitchen_blind_position') | int(0) }}"
+      open_cover:
+        service: script.kitchen_blind_set_position
+        data:
+          target_position: 100
+      close_cover:
+        service: script.kitchen_blind_set_position
+        data:
+          target_position: 0
+      stop_cover:
+        service: script.kitchen_blind_set_position
+        data:
+          target_position: "{{ states('input_number.kitchen_blind_position') | int(0) }}"
+      set_cover_position:
+        service: script.kitchen_blind_set_position
+        data:
+          target_position: "{{ position }}"
     dining_room_blinds:
       friendly_name: Dining Room Blinds
       unique_id: cover.dining_room_blinds

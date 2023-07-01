@@ -423,42 +423,6 @@ set_recommended_scene_in_dining_room:
       - automation.dining_room_motion_ac
   mode: single
   icon: mdi:magic-staff
-kitchen_blinds_up:
-  alias: Kitchen Blinds Up
-  sequence:
-  - service: remote.send_command
-    data:
-      device: Kitchen Blinds
-      command: Up
-    target:
-      entity_id: remote.study_room_universal_remote
-  mode: single
-  max_exceeded: silent
-  icon: mdi:blinds-open
-kitchen_blinds_down:
-  alias: Kitchen Blinds Down
-  sequence:
-  - service: remote.send_command
-    data:
-      device: Kitchen Blinds
-      command: Down
-    target:
-      entity_id: remote.study_room_universal_remote
-  mode: single
-  max_exceeded: silent
-  icon: mdi:blinds
-kitchen_blinds_stop:
-  alias: Kitchen Blinds Stop
-  sequence:
-  - service: remote.send_command
-    data:
-      device: Kitchen Blinds
-      command: Stop
-    target:
-      entity_id: remote.study_room_universal_remote
-  mode: single
-  max_exceeded: silent
-  icon: mdi:blinds
 set_recommended_scene_in_living_room:
   alias: Set Recommended Scene in Living Room
   sequence:
@@ -1133,3 +1097,79 @@ set_recommended_scene_in_hallway:
     data: {}
   mode: single
   icon: mdi:magic-staff
+kitchen_blind_set_position:
+  alias: Kitchen Blind Set Position
+  fields:
+    target_position:
+      name: Target Position
+      description: The position that the cover should move to. 0 is closed, 100 is
+        open
+      required: true
+      default: 100
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+          unit_of_measurement: '%'
+  sequence:
+  - if:
+    - condition: template
+      value_template: '{{ states(''input_number.kitchen_blind_position'') | int(0)
+        < target_position }}'
+    then:
+    - service: input_select.select_option
+      data:
+        option: opening
+      target:
+        entity_id: input_select.kitchen_blind_movement
+    - service: remote.send_command
+      data:
+        device: Kitchen Blinds
+        command: Up
+      target:
+        entity_id: remote.study_room_universal_remote
+    - wait_template: '{{ states(''input_number.kitchen_blind_position'') | int(0)
+        >= target_position }}'
+      continue_on_timeout: true
+      timeout: '14'
+    - service: input_select.select_option
+      data:
+        option: stopped
+      target:
+        entity_id: input_select.kitchen_blind_movement
+    - service: remote.send_command
+      data:
+        device: Kitchen Blinds
+        command: Stop
+      target:
+        entity_id: remote.study_room_universal_remote
+    else:
+    - service: input_select.select_option
+      data:
+        option: closing
+      target:
+        entity_id: input_select.kitchen_blind_movement
+    - service: remote.send_command
+      data:
+        device: Kitchen Blinds
+        command: Down
+      target:
+        entity_id: remote.study_room_universal_remote
+    - wait_template: '{{ states(''input_number.kitchen_blind_position'') | int(0)
+        <= target_position }}'
+      continue_on_timeout: true
+      timeout: '14'
+    - service: input_select.select_option
+      data:
+        option: stopped
+      target:
+        entity_id: input_select.kitchen_blind_movement
+    - service: remote.send_command
+      data:
+        device: Kitchen Blinds
+        command: Stop
+      target:
+        entity_id: remote.study_room_universal_remote
+  mode: restart
+  icon: mdi:window-shutter-open

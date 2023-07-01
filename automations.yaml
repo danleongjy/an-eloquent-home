@@ -1797,8 +1797,8 @@
       button_down_long_loop: true
       button_down_long_max_loop_repeats: 50
 - id: '1659256881015'
-  alias: Kitchen Blinds Controller
-  description: Control the Kitchen Blinds
+  alias: Kitchen Blind Controller
+  description: Control the Kitchen Blind
   use_blueprint:
     path: EPMatt/ikea_e1766.yaml
     input:
@@ -1808,38 +1808,38 @@
       action_button_up_short:
       - if:
         - condition: state
-          entity_id: cover.kitchen_blinds
+          entity_id: cover.kitchen_blind
           state: closing
         then:
         - service: cover.stop_cover
           data: {}
           target:
-            entity_id: cover.kitchen_blinds
+            entity_id: cover.kitchen_blind
         else:
         - service: cover.open_cover
           data: {}
           target:
-            entity_id: cover.kitchen_blinds
+            entity_id: cover.kitchen_blind
       action_button_down_short:
       - if:
         - condition: state
-          entity_id: cover.kitchen_blinds
+          entity_id: cover.kitchen_blind
           state: opening
         then:
         - service: cover.stop_cover
           data: {}
           target:
-            entity_id: cover.kitchen_blinds
+            entity_id: cover.kitchen_blind
         else:
         - service: cover.close_cover
           data: {}
           target:
-            entity_id: cover.kitchen_blinds
+            entity_id: cover.kitchen_blind
       action_button_up_double:
       - service: automation.turn_on
         data: {}
         target:
-          entity_id: automation.kitchen_blinds_auto_control
+          entity_id: automation.kitchen_blind_auto_control
       - if:
         - condition: state
           entity_id: light.kitchen_ceiling_light_entity
@@ -1865,7 +1865,7 @@
       - service: automation.turn_off
         data: {}
         target:
-          entity_id: automation.kitchen_blinds_auto_control
+          entity_id: automation.kitchen_blind_auto_control
       - if:
         - condition: state
           entity_id: light.kitchen_ceiling_light_entity
@@ -2040,8 +2040,8 @@
       button_down_double_press: true
       helper_double_press_delay: 700
 - id: '1659777667257'
-  alias: Kitchen Blinds Auto Control
-  description: Close the Kitchen Blinds if raining, in the mornings or AC is on
+  alias: Kitchen Blind Auto Control
+  description: Close the Kitchen Blind if raining, in the mornings or AC is on
   trigger:
   - platform: template
     value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or ('Thunder'
@@ -2110,7 +2110,7 @@
       - service: cover.close_cover
         data: {}
         target:
-          entity_id: cover.kitchen_blinds
+          entity_id: cover.kitchen_blind
     - conditions:
       - condition: numeric_state
         entity_id: sensor.sun_solar_elevation
@@ -2129,7 +2129,7 @@
         data:
           position: 15
         target:
-          entity_id: cover.kitchen_blinds
+          entity_id: cover.kitchen_blind
     default:
     - condition: and
       conditions:
@@ -2174,7 +2174,7 @@
     - service: cover.open_cover
       data: {}
       target:
-        entity_id: cover.kitchen_blinds
+        entity_id: cover.kitchen_blind
   mode: single
   max_exceeded: silent
 - id: '1660034693952'
@@ -2868,7 +2868,7 @@
         - automation.study_room_fan_auto_control
         - automation.hallway_motion_lights
         - automation.junior_bathroom_motion_lights
-        - automation.kitchen_blinds_auto_control
+        - automation.kitchen_blind_auto_control
         - automation.master_bathroom_blind_auto_control
         - automation.master_bathroom_motion_light
         - automation.master_bathroom_motion_pendant_light
@@ -2925,7 +2925,7 @@
         - automation.motion_timeouts
         - automation.hallway_motion_lights
         - automation.junior_bathroom_motion_lights
-        - automation.kitchen_blinds_auto_control
+        - automation.kitchen_blind_auto_control
         - automation.master_bathroom_blind_auto_control
         - automation.master_bathroom_motion_light
         - automation.master_bathroom_motion_pendant_light
@@ -2966,64 +2966,9 @@
         skip_condition: false
       target:
         entity_id:
-        - automation.kitchen_blinds_auto_control
         - automation.south_facing_blinds_auto_control
         - automation.motion_timeouts
-  mode: single
-- id: '1669620569638'
-  alias: Kitchen Blinds Set Known Position
-  description: Set the Kitchen Blind to open or closed based on contact sensor
-  trigger:
-  - platform: state
-    entity_id:
-    - cover.kitchen_blinds
-    from:
-    - closing
-    - opening
-  condition:
-  - condition: not
-    conditions:
-    - condition: state
-      entity_id: binary_sensor.kitchen_blinds_closed
-      state:
-      - unavailable
-      - unknown
-    enabled: true
-  action:
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 5
-      milliseconds: 0
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.kitchen_blinds_closed
-        state: 'off'
-      - condition: state
-        entity_id: cover.kitchen_blinds
-        state: open
-      sequence:
-      - service: cover_rf_time_based.set_known_position
-        data:
-          entity_id: cover.kitchen_blinds
-          position: 0
-          position_type: current
-          confident: true
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.kitchen_blinds_closed
-        state: 'on'
-      - condition: state
-        entity_id: cover.kitchen_blinds
-        state: closed
-      sequence:
-      - service: cover_rf_time_based.set_known_position
-        data:
-          entity_id: cover.kitchen_blinds
-          position: 100
-          position_type: current
-          confident: true
+        - automation.kitchen_blind_auto_control
   mode: single
 - id: '1670833166536'
   alias: Vacuum Last Use
@@ -3070,7 +3015,7 @@
     report and README.md
   trigger:
   - platform: time
-    at: 02:00:00
+    at: 01:50:00
   condition: []
   action:
   - service: watchman.report
@@ -3085,7 +3030,7 @@
     target:
       entity_id:
       - automation.south_facing_blinds_auto_control
-      - automation.kitchen_blinds_auto_control
+      - automation.kitchen_blind_auto_control
       - automation.notify_when_vacuum_running_with_doors_open
       - automation.dining_room_motion_timeout
       - automation.elenas_room_motion_timeout
@@ -5415,5 +5360,100 @@
         message: clear_notification
         data:
           tag: appliances_on
+  mode: single
+  max_exceeded: silent
+- id: '1688177050049'
+  alias: Kitchen Blind Position
+  description: Set the current position of the Kitchen Blind based on time spent opening,
+    closing or stopped.
+  trigger:
+  - platform: state
+    entity_id:
+    - input_select.kitchen_blind_movement
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.kitchen_blind_movement
+        state: opening
+      sequence:
+      - repeat:
+          while:
+          - condition: state
+            entity_id: input_select.kitchen_blind_movement
+            state: opening
+          sequence:
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 140
+          - condition: template
+            value_template: '{{ states(''input_number.kitchen_blind_position'') |
+              int(0) + 1 <= 100 }}'
+          - service: input_number.set_value
+            data:
+              value: '{{ states(''input_number.kitchen_blind_position'') | int(0)
+                + 1 }}'
+            target:
+              entity_id: input_number.kitchen_blind_position
+    - conditions:
+      - condition: state
+        entity_id: input_select.kitchen_blind_movement
+        state: closing
+      sequence:
+      - repeat:
+          while:
+          - condition: state
+            entity_id: input_select.kitchen_blind_movement
+            state: closing
+          sequence:
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 140
+          - condition: template
+            value_template: '{{ states(''input_number.kitchen_blind_position'') |
+              int(0) - 1 >= 0 }}'
+          - service: input_number.set_value
+            data:
+              value: '{{ states(''input_number.kitchen_blind_position'') | int(0)
+                - 1 }}'
+            target:
+              entity_id: input_number.kitchen_blind_position
+    - conditions:
+      - condition: state
+        entity_id: input_select.kitchen_blind_movement
+        state: stopped
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.kitchen_blinds_closed
+            state: 'off'
+          - condition: numeric_state
+            entity_id: input_number.kitchen_blind_position
+            above: 0
+          sequence:
+          - service: input_number.set_value
+            data:
+              value: 0
+            target:
+              entity_id: input_number.kitchen_blind_position
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.kitchen_blinds_closed
+            state: 'on'
+          - condition: state
+            entity_id: input_number.kitchen_blind_position
+            state: '0'
+          sequence:
+          - service: input_number.set_value
+            data:
+              value: 100
+            target:
+              entity_id: input_number.kitchen_blind_position
   mode: single
   max_exceeded: silent
