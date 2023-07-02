@@ -4,6 +4,12 @@
       friendly_name: Kitchen Blind
       unique_id: cover.kitchen_blind
       device_class: shutter
+      value_template: >
+        {% if states('input_select.kitchen_blind_movement') in ['opening','closing'] %}
+          {{ states('input_select.kitchen_blind_movement') }}
+        {% else %}
+          {{ states('input_number.kitchen_blind_position') | int(0) > 0 }}
+        {% endif %}
       position_template: "{{ states('input_number.kitchen_blind_position') | int(0) }}"
       open_cover:
         service: script.kitchen_blind_set_position

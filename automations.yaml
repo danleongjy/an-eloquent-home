@@ -2641,6 +2641,7 @@
         - automation.lights_for_sleep_hours_start
         - automation.elis_school_day_alarm
         - automation.parents_room_school_day_alarm
+        - automation.parents_room_eca_day_alarm
         - automation.parents_room_motion_ac
         - automation.parents_room_motion_fan
         - automation.parents_room_motion_lights
@@ -2698,6 +2699,7 @@
         - automation.lights_for_sleep_hours_start
         - automation.elis_school_day_alarm
         - automation.parents_room_school_day_alarm
+        - automation.parents_room_eca_day_alarm
         - automation.parents_room_motion_ac
         - automation.parents_room_motion_fan
         - automation.parents_room_motion_lights
@@ -2738,19 +2740,17 @@
   - platform: state
     entity_id:
     - vacuum.pikachu
-    to: cleaning
-    id: start
     from:
     - docked
     - idle
+    to: cleaning
+    id: start
   - platform: state
     entity_id:
     - vacuum.pikachu
     from:
     - cleaning
-    to:
-    - docked
-    - idle
+    not_to: paused
     id: stop
   condition: []
   action:
@@ -5144,15 +5144,15 @@
           - condition: state
             entity_id: input_select.kitchen_blind_movement
             state: opening
+          - condition: template
+            value_template: '{{ states(''input_number.kitchen_blind_position'') |
+              int(0) + 1 <= 100 }}'
           sequence:
           - delay:
               hours: 0
               minutes: 0
               seconds: 0
-              milliseconds: 140
-          - condition: template
-            value_template: '{{ states(''input_number.kitchen_blind_position'') |
-              int(0) + 1 <= 100 }}'
+              milliseconds: 141
           - service: input_number.set_value
             data:
               value: '{{ states(''input_number.kitchen_blind_position'') | int(0)
@@ -5169,15 +5169,15 @@
           - condition: state
             entity_id: input_select.kitchen_blind_movement
             state: closing
+          - condition: template
+            value_template: '{{ states(''input_number.kitchen_blind_position'') |
+              int(0) - 1 >= 0 }}'
           sequence:
           - delay:
               hours: 0
               minutes: 0
               seconds: 0
-              milliseconds: 140
-          - condition: template
-            value_template: '{{ states(''input_number.kitchen_blind_position'') |
-              int(0) - 1 >= 0 }}'
+              milliseconds: 141
           - service: input_number.set_value
             data:
               value: '{{ states(''input_number.kitchen_blind_position'') | int(0)
@@ -5402,8 +5402,8 @@
         above: 45
       sequence:
       - condition: template
-        value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed
-          > timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+        value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed >
+          timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
           | int(0)) }}'
       - service: cover.set_cover_position
         data:
@@ -5448,12 +5448,29 @@
             'elevation') <= 60\n   and state_attr('sun.sun', 'azimuth') >= 75\n   and
             state_attr('sun.sun', 'azimuth') <= 90 }}"
     - condition: template
-      value_template: '{{ now() - states[''cover.kitchen_blinds''].last_changed >
-        timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
-        | int(0)) }}'
+      value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed > timedelta(minutes
+        = states(''input_number.blinds_auto_control_debounce'') | int(0)) }}'
     - service: cover.open_cover
       data: {}
       target:
         entity_id: cover.kitchen_blind
   mode: single
   max_exceeded: silent
+- id: '1688268225530'
+  alias: Parents' Room ECA Day Alarm
+  description: Wake up parents on Saturdays at 7.30 for ECAs
+  trigger:
+  - platform: time
+    at: 07:30:00
+  condition:
+  - condition: time
+    after: 00:01:00
+    weekday:
+    - sat
+  - condition: state
+    entity_id: calendar.public_holidays
+    state: 'off'
+  action:
+  - service: script.parents_room_school_day_alarm
+    data: {}
+  mode: single

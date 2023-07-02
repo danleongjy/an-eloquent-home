@@ -1113,6 +1113,9 @@ kitchen_blind_set_position:
           step: 1
           unit_of_measurement: '%'
   sequence:
+  - condition: template
+    value_template: '{{ states(''input_number.kitchen_blind_position'') | int(0) !=
+      target_position }}'
   - if:
     - condition: template
       value_template: '{{ states(''input_number.kitchen_blind_position'') | int(0)
@@ -1132,7 +1135,7 @@ kitchen_blind_set_position:
     - wait_template: '{{ states(''input_number.kitchen_blind_position'') | int(0)
         >= target_position }}'
       continue_on_timeout: true
-      timeout: '14'
+      timeout: '15'
     - service: input_select.select_option
       data:
         option: stopped
@@ -1159,7 +1162,7 @@ kitchen_blind_set_position:
     - wait_template: '{{ states(''input_number.kitchen_blind_position'') | int(0)
         <= target_position }}'
       continue_on_timeout: true
-      timeout: '14'
+      timeout: '15'
     - service: input_select.select_option
       data:
         option: stopped
