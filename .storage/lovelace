@@ -95,7 +95,8 @@
                             "type": "custom:button-card",
                             "entity": "binary_sensor.dishwasher_door",
                             "template": "square_cell",
-                            "show_state": true
+                            "show_state": true,
+                            "state_display": "[[[\n  if (entity.state == \"off\") \n    return \"Open\"; \n  else if (entity.state == \"on\") \n    return \"Closed\"; \n  else \n    return entity.state;\n]]]"
                           }
                         ]
                       }
@@ -194,7 +195,14 @@
                             "type": "custom:button-card",
                             "entity": "input_select.rice_cooker_status",
                             "template": "square_cell",
-                            "show_state": true
+                            "show_state": true,
+                            "tap_action": {
+                              "action": "call-service",
+                              "service": "switch.turn_on",
+                              "service_data": {
+                                "entity_id": "switch.rice_cooker"
+                              }
+                            }
                           },
                           {
                             "type": "custom:button-card",
@@ -212,7 +220,8 @@
                             "type": "custom:button-card",
                             "entity": "binary_sensor.rice_cooker_lid",
                             "template": "square_cell",
-                            "show_state": true
+                            "show_state": true,
+                            "state_display": "[[[\n  if (entity.state == \"off\") \n    return \"Open\"; \n  else if (entity.state == \"on\") \n    return \"Closed\"; \n  else \n    return entity.state;\n]]]"
                           }
                         ]
                       }
@@ -303,7 +312,8 @@
                                 "type": "custom:button-card",
                                 "entity": "switch.stove_main_power",
                                 "show_name": false,
-                                "icon": "mdi:power"
+                                "icon": "mdi:power",
+                                "state_display": "[[[ return entity.state.charAt(0).toUpperCase() + entity.state.slice(1) ]]]"
                               },
                               {
                                 "type": "custom:button-card",
@@ -353,7 +363,8 @@
                             "type": "custom:button-card",
                             "entity": "switch.stove_main_power",
                             "template": "square_cell",
-                            "show_state": true
+                            "show_state": true,
+                            "state_display": "[[[ return entity.state.charAt(0).toUpperCase() + entity.state.slice(1) ]]]"
                           },
                           {
                             "type": "custom:button-card",
@@ -418,7 +429,8 @@
                           "type": "custom:button-card",
                           "entity": "vacuum.pikachu",
                           "show_name": false,
-                          "show_state": true
+                          "show_state": true,
+                          "state_display": "[[[ return entity.state.charAt(0).toUpperCase() + entity.state.slice(1) ]]]"
                         },
                         {
                           "type": "custom:button-card",
@@ -736,7 +748,8 @@
                             "type": "custom:button-card",
                             "entity": "binary_sensor.washer_door",
                             "template": "square_cell",
-                            "show_state": true
+                            "show_state": true,
+                            "state_display": "[[[\n  if (entity.state == \"off\") \n    return \"Open\"; \n  else if (entity.state == \"on\") \n    return \"Closed\"; \n  else \n    return entity.state;\n]]]"
                           }
                         ]
                       }
@@ -5190,7 +5203,7 @@
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "binary_sensor.rice_cooker",
+                  "entity": "input_select.rice_cooker_status",
                   "default": "disabled",
                   "states": {
                     "disabled": {
@@ -5198,16 +5211,30 @@
                       "entity": "binary_sensor.rice_cooker",
                       "template": "error"
                     },
-                    "off": {
+                    "Off": {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.rice_cooker",
+                      "entity": "switch.rice_cooker",
                       "template": "rice_cooker_more_info"
                     },
-                    "on": {
+                    "Cooking": {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.rice_cooker",
                       "template": "rice_cooker_more_info",
-                      "label": "[[[\n  if (states['input_select.rice_cooker_status'].state == 'Cooking')\n    return 'Cook'\n  else if (states['input_select.rice_cooker_status'].state == 'Warming')\n    return 'Warm'\n  else if (states['input_select.rice_cooker_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
+                      "label": "Cook",
+                      "show_label": true
+                    },
+                    "Warming": {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.rice_cooker",
+                      "template": "rice_cooker_more_info",
+                      "label": "Warm",
+                      "show_label": true
+                    },
+                    "Standby": {
+                      "type": "custom:button-card",
+                      "entity": "switch.rice_cooker",
+                      "template": "rice_cooker_more_info",
+                      "label": "...",
                       "show_label": true
                     }
                   }
@@ -6998,6 +7025,9 @@
                 },
                 {
                   "entity": "automation.parents_room_school_day_alarm"
+                },
+                {
+                  "entity": "automation.parents_room_eca_day_alarm"
                 }
               ]
             }
@@ -7055,7 +7085,7 @@
                   "name": "Auto South-Facing Blinds"
                 },
                 {
-                  "entity": "automation.kitchen_blinds_auto_control",
+                  "entity": "automation.kitchen_blind_auto_control",
                   "name": "Auto Kitchen Blinds"
                 }
               ]
@@ -7095,11 +7125,15 @@
                   "entities": [
                     {
                       "entity": "input_number.sitting_rooms_fan_speed_when_cool",
-                      "name": "Speed when Cool"
+                      "name": "Cool Speed"
                     },
                     {
                       "entity": "input_number.sitting_rooms_fan_speed_when_warm",
-                      "name": "Speed When Warm"
+                      "name": "Warm Speed"
+                    },
+                    {
+                      "entity": "input_number.sitting_rooms_lucci_fan_speed_when_warm",
+                      "name": "Lucci: Warm Speed"
                     }
                   ],
                   "title": "Sitting Rooms"
@@ -7109,11 +7143,11 @@
                   "entities": [
                     {
                       "entity": "input_number.bedrooms_fan_speed_when_cool",
-                      "name": "Speed When Cool"
+                      "name": "Cool Speed"
                     },
                     {
                       "entity": "input_number.bedrooms_fan_speed_when_warm",
-                      "name": "Speed When Warm"
+                      "name": "Warm Speed"
                     }
                   ],
                   "title": "Bedrooms"

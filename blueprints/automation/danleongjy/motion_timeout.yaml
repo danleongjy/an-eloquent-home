@@ -58,9 +58,15 @@ condition:
     value_template: >
       {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
 action:
-  - service: homeassistant.turn_off
-    data: {}
-    target:
-      entity_id: !input turnoff_entities_list
+  - repeat:
+      for_each: !input turnoff_entities_list
+      sequence:
+        - if:
+          - condition: template
+            value_template: "{{ states(repeat.item) == 'on' }}"
+          then:
+          - service: homeassistant.turn_off
+            target:
+              entity_id: "{{ repeat.item }}"
 mode: single
 max_exceeded: silent
