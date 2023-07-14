@@ -13,7 +13,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 4. Each small part contributes to a larger pattern, enabling __emergent helpfulness__: The system responds robustly to changes in the real-world context.  The UI allows users to interpret the state of the whole system at a glance, including relationships between different devices.
 
 ## Hub
-* Refurbished [Lenovo Thinkcentre M93p Tiny](https://support.lenovo.com/sg/en/solutions/pd027573-detailed-specifications-for-thinkcentre-m93-m93p-tiny-form-factor)
+* Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
 * [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.3](https://github.com/home-assistant/operating-system/releases/tag/10.3) running in a [Proxmox VM](https://www.proxmox.com/)
 * [Home Assistant Core 2023.6.3](https://github.com/home-assistant/core/releases/tag/2023.6.3)
 * 4 cores, 4GB RAM, 32GB storage
@@ -23,8 +23,8 @@ The network topology demonstrates some principles we employ in setting up our sy
 Domain | Quantity
 -- | --
 [`automation`](https://www.home-assistant.io/components/automation) | 132
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 88
-[`button`](https://www.home-assistant.io/components/button) | 125
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 103
+[`button`](https://www.home-assistant.io/components/button) | 131
 [`calendar`](https://www.home-assistant.io/components/calendar) | 3
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`climate`](https://www.home-assistant.io/components/climate) | 6
@@ -33,25 +33,25 @@ Domain | Quantity
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 22
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 21
-[`input_number`](https://www.home-assistant.io/components/input_number) | 34
+[`input_number`](https://www.home-assistant.io/components/input_number) | 35
 [`input_select`](https://www.home-assistant.io/components/input_select) | 8
 [`input_text`](https://www.home-assistant.io/components/input_text) | 30
 [`light`](https://www.home-assistant.io/components/light) | 52
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
-[`number`](https://www.home-assistant.io/components/number) | 164
+[`number`](https://www.home-assistant.io/components/number) | 182
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 6
 [`script`](https://www.home-assistant.io/components/script) | 53
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`sensor`](https://www.home-assistant.io/components/sensor) | 424
+[`sensor`](https://www.home-assistant.io/components/sensor) | 442
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 25
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 13
+[`update`](https://www.home-assistant.io/components/update) | 16
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1286
+Total | 1347
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -59,14 +59,13 @@ Total | 1286
 - [<img src="https://brands.home-assistant.io/_/generic_thermostat/icon.png" height="24"/>](https://home-assistant.io/integrations/generic_thermostat) [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
 - [<img src="https://brands.home-assistant.io/_/google_assistant/icon.png" height="24"/>](https://home-assistant.io/integrations/google_assistant) [Google Assistant](https://home-assistant.io/integrations/google_assistant)
 - [<img src="https://brands.home-assistant.io/_/cast/icon.png" height="24"/>](https://home-assistant.io/integrations/cast) [Google Cast](https://home-assistant.io/integrations/cast)
+- [<img src="https://brands.home-assistant.io/_/esphome/icon.png" height="24"/>](https://home-assistant.io/integrations/esphome) [ESPHome](https://home-assistant.io/integrations/esphome)
 - [<img src="https://brands.home-assistant.io/_/mobile_app/icon.png" height="24"/>](https://home-assistant.io/integrations/mobile_app) [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [<img src="https://brands.home-assistant.io/_/local_calendar/icon.png" height="24"/>](https://home-assistant.io/integrations/local_calendar) [Local Calendar](https://home-assistant.io/integrations/local_calendar)
-- [<img src="https://brands.home-assistant.io/_/mqtt/icon.png" height="24"/>](https://home-assistant.io/integrations/mqtt) [MQTT](https://home-assistant.io/integrations/mqtt)
 - [<img src="https://brands.home-assistant.io/_/neato/icon.png" height="24"/>](https://home-assistant.io/integrations/neato) [Neato](https://home-assistant.io/integrations/neato)
 - [<img src="https://brands.home-assistant.io/_/rest/icon.png" height="24"/>](https://home-assistant.io/integrations/sensor.rest) [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [<img src="https://brands.home-assistant.io/_/statistics/icon.png" height="24"/>](https://home-assistant.io/integrations/statistics) [Statistics Sensor](https://home-assistant.io/integrations/statistics)
 - [<img src="https://brands.home-assistant.io/_/systemmonitor/icon.png" height="24"/>](https://home-assistant.io/integrations/systemmonitor) [System Monitor](https://home-assistant.io/integrations/systemmonitor)
-- [<img src="https://brands.home-assistant.io/_/tasmota/icon.png" height="24"/>](https://home-assistant.io/integrations/tasmota) [Tasmota](https://home-assistant.io/integrations/tasmota)
 - [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/template) [Template Binary Sensors & Sensors](https://home-assistant.io/integrations/template)
 - [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/cover.template) [Template Cover](https://home-assistant.io/integrations/cover.template)
 - [<img src="https://brands.home-assistant.io/_/template/icon.png" height="24"/>](https://home-assistant.io/integrations/fan.template) [Template Fan](https://home-assistant.io/integrations/fan.template)

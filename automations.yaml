@@ -1021,7 +1021,7 @@
   - platform: state
     entity_id:
     - sensor.dishwasher_watts
-    to: '0'
+    to: '0.0'
     id: 'off'
   condition: []
   action:
@@ -4163,7 +4163,7 @@
       lights_list:
       - light.kitchen_lights
       recommended_light_level_script: script.recommended_light_level_for_kitchen
-      motion_sensor: binary_sensor.kitchen_motion_sensors
+      motion_sensor: binary_sensor.kitchen_presence
       lux_sensor: sensor.kitchen_lux
       lights_debounce: false
 - id: '1677927981807'
@@ -4173,8 +4173,8 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.kitchen_motion_sensors
-      number_of_minutes: input_number.motion_timeout_walking_areas
+      motion_sensor: binary_sensor.kitchen_presence
+      number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.kitchen_lights
 - id: '1678321703771'
@@ -4266,7 +4266,7 @@
       lights_list:
       - light.living_room_lights
       recommended_light_level_script: script.recommended_light_level_for_living_room_lights
-      motion_sensor: binary_sensor.living_room_motion
+      motion_sensor: binary_sensor.living_room_presence
       lux_sensor: sensor.living_room_lux
       blackout_hours_start: input_datetime.dim_hours_start
       lights_debounce: false
@@ -4280,7 +4280,7 @@
       lights_list:
       - light.living_room_pendant_light_entity
       recommended_light_level_script: script.recommended_light_level_for_living_room_pendant_light
-      motion_sensor: binary_sensor.living_room_motion
+      motion_sensor: binary_sensor.living_room_presence
       lux_sensor: sensor.living_room_lux
 - id: '1679619704393'
   alias: Living Room Motion Timeout
@@ -4289,8 +4289,8 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.living_room_motion
-      number_of_minutes: input_number.motion_timeout_sitting_rooms
+      motion_sensor: binary_sensor.living_room_presence
+      number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.living_room_lights
       - light.living_room_pendant_light_entity
@@ -4308,7 +4308,7 @@
       lights_list:
       - light.dining_room_lights
       recommended_light_level_script: script.recommended_light_level_for_dining_room_lights
-      motion_sensor: binary_sensor.dining_room_motion
+      motion_sensor: binary_sensor.dining_room_presence
       lux_sensor: sensor.dining_room_lux
       blackout_hours_start: input_datetime.dim_hours_start
       lights_debounce: false
@@ -4322,7 +4322,7 @@
       lights_list:
       - light.dining_room_pendant_light_entity
       recommended_light_level_script: script.recommended_light_level_for_dining_room_pendant_light
-      motion_sensor: binary_sensor.dining_room_motion
+      motion_sensor: binary_sensor.dining_room_presence
       lux_sensor: sensor.dining_room_lux
 - id: '1679619971749'
   alias: Dining Room Motion Timeout
@@ -4331,8 +4331,8 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.dining_room_motion
-      number_of_minutes: input_number.motion_timeout_sitting_rooms
+      motion_sensor: binary_sensor.dining_room_presence
+      number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.dining_room_lights
       - light.dining_room_pendant_light_entity
@@ -4347,7 +4347,7 @@
   use_blueprint:
     path: danleongjy/motion_fan.yaml
     input:
-      motion_sensor: binary_sensor.living_room_motion
+      motion_sensor: binary_sensor.living_room_presence
       fan: fan.living_room_fan
       fan_auto_control: automation.living_room_fan_auto_control
       entities_list:
@@ -4370,7 +4370,7 @@
   use_blueprint:
     path: danleongjy/motion_fan.yaml
     input:
-      motion_sensor: binary_sensor.dining_room_motion
+      motion_sensor: binary_sensor.dining_room_presence
       fan: fan.dining_room_fan
       fan_auto_control: automation.dining_room_fan_auto_control
       doors_list:
@@ -4569,7 +4569,7 @@
   use_blueprint:
     path: danleongjy/motion_ac.yaml
     input:
-      motion_sensor: binary_sensor.dining_room_motion
+      motion_sensor: binary_sensor.dining_room_presence
       ac: climate.dining_room_ac
       ac_auto_control: automation.dining_room_ac_auto_control
       ac_auto_control_start: input_datetime.ac_auto_control_end
@@ -4591,7 +4591,7 @@
   use_blueprint:
     path: danleongjy/motion_ac.yaml
     input:
-      motion_sensor: binary_sensor.living_room_motion
+      motion_sensor: binary_sensor.living_room_presence
       ac: climate.living_room_ac
       ac_auto_control: automation.living_room_ac_auto_control
       ac_auto_control_start: input_datetime.ac_auto_control_end
@@ -5353,7 +5353,7 @@
     - sensor.kitchen_lux
   - platform: state
     entity_id:
-    - binary_sensor.kitchen_motion_sensors
+    - binary_sensor.kitchen_presence
     to: 'on'
   - platform: numeric_state
     entity_id: sensor.sun_solar_elevation

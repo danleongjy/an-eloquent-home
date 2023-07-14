@@ -29,6 +29,33 @@
       kitchen_sink_motion: "{{ states('binary_sensor.kitchen_sink_motion') }}"
       kitchen_stove_motion: "{{ states('binary_sensor.kitchen_stove_motion') }}"
 
+  - name: Kitchen Presence
+    unique_id: binary_sensor.kitchen_presence
+    device_class: occupancy
+    state: "{{ is_state('binary_sensor.kitchen_radar','on') or is_state('binary_sensor.kitchen_radar_motion', 'on') }}"
+    availability: "{{ states('binary_sensor.kitchen_radar') in ['on','off'] and states('binary_sensor.kitchen_radar_motion') in ['on','off'] }}"
+    attributes:
+      kitchen_radar: "{{ states('binary_sensor.kitchen_radar' )}}"
+      kitchen_radar_motion: "{{ states('binary_sensor.kitchen_radar_motion') }}"
+
+  - name: Dining Room Presence
+    unique_id: binary_sensor.dining_room_presence
+    device_class: occupancy
+    state: "{{ is_state('binary_sensor.dining_room_radar','on') or is_state('binary_sensor.dining_room_radar_motion', 'on') }}"
+    availability: "{{ states('binary_sensor.dining_room_radar') in ['on','off'] and states('binary_sensor.dining_room_radar_motion') in ['on','off'] }}"
+    attributes:
+      dining_room_radar: "{{ states('binary_sensor.dining_room_radar' )}}"
+      dining_room_radar_motion: "{{ states('binary_sensor.dining_room_radar_motion') }}"
+
+  - name: Living Room Presence
+    unique_id: binary_sensor.living_room_presence
+    device_class: occupancy
+    state: "{{ is_state('binary_sensor.living_room_radar','on') or is_state('binary_sensor.living_room_radar_motion', 'on') }}"
+    availability: "{{ states('binary_sensor.living_room_radar') in ['on','off'] and states('binary_sensor.living_room_radar_motion') in ['on','off'] }}"
+    attributes:
+      dining_room_radar: "{{ states('binary_sensor.living_room_radar' )}}"
+      dining_room_radar_motion: "{{ states('binary_sensor.living_room_radar_motion') }}"
+
   - name: Hallway Doors
     unique_id: binary_sensor.hallway_doors
     device_class: door
