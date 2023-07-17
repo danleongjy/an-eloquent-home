@@ -91,7 +91,16 @@ trigger:
     entity_id: !input motion_sensor
     from: "off"
     to: "on"
+  - platform: numeric_state
+    entity_id: !input lux_sensor
+    below: !input insufficient_lux
+  - platform: numeric_state
+    entity_id: !input lux_sensor
+    above: !input sufficient_lux
 condition:
+  - condition: state
+    entity_id: !input motion_sensor
+    state: "on"
   - condition: template
     value_template: "{{ doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
   - condition: template
