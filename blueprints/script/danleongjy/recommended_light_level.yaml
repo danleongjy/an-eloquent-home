@@ -44,6 +44,7 @@ sequence:
       morning_brightness: !input morning_light_brightness
       dim_start: !input dim_hours_start
       dim_end: !input dim_hours_end
+      lights: !input lights_list
   - choose:
       - conditions:
           - condition: template
@@ -55,6 +56,7 @@ sequence:
           - service: light.turn_on
             data:
               brightness_pct: "{{ states(night_brightness) | int(1) }}"
+              transition: "{{ 2 if lights | select('is_state', 'on') | list | length == lights | length else 0 }}"
             target:
               entity_id: !input lights_list
       - conditions:
@@ -71,11 +73,13 @@ sequence:
           - service: light.turn_on
             data:
               brightness_pct: "{{ states(morning_brightness) | int(1) }}"
+              transition: "{{ 2 if lights | select('is_state', 'on') | list | length == lights | length else 0 }}"
             target:
               entity_id: !input lights_list
     default:
       - service: light.turn_on
         data:
           brightness_pct: 100
+          transition: "{{ 2 if lights | select('is_state', 'on') | list | length == lights | length else 0 }}"
         target:
           entity_id: !input lights_list
