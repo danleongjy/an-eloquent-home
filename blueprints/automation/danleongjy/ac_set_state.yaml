@@ -1,6 +1,6 @@
 blueprint:
-  name: AC Set State
-  description: Depending on state changes in the Generic Thermostat climate entities, pass the state parameters to the AC Set State script to sync the actual state of the physical AC units by sending the corresponding IR commands.
+  name: AC Set State with Resync
+  description: Depending on state changes in the Generic Thermostat climate entities, pass the state parameters to the AC Set State script to sync the actual state of the physical AC units by sending the corresponding IR commands.  Also check if AC state is synced with IR commands using a Vent Sensor.
   domain: automation
   input:
     ac:
@@ -19,6 +19,18 @@ blueprint:
           unit_of_measurement: °C
           mode: slider
       default: 27
+    vent:
+      name: Vent Sensor
+      description: Contact sensor indicating whether the vent is open or not.
+      selector:
+        entity:
+          domain: binary_sensor
+    resync_delay:
+      name: AC Resync Delay
+      description: Number helper indicating how long after an IR command is sent to check the AC state via the Vent Sensor.
+      selector:
+        entity:
+          domain: input_number
 trigger:
   - platform: state
     entity_id: !input ac
@@ -35,23 +47,42 @@ trigger:
 action:
   - variables:
       target_ac: !input ac
+      resync_delay_minutes: !input resync_delay
   - choose:
       - conditions:
           - condition: trigger
             id: cooling
         sequence:
-          - service: script.ac_set_state
-            data:
-              target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
-              target_ac_temp: "{{ state_attr(target_ac, 'temperature') }}"
+          - repeat:
+              sequence:
+                - service: script.ac_set_state
+                  data:
+                    target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
+                    target_ac_temp: "{{ state_attr(target_ac, 'temperature') }}"
+                - delay: "{{ resync_delay_minutes | int(1) * 60 }}"
+              until:
+                - condition: not
+                  conditions:
+                    - condition: state
+                      entity_id: !input vent
+                      state: 'off'
       - conditions:
           - condition: trigger
             id: power_off
         sequence:
-          - service: script.ac_set_state
-            data:
-              target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
-              target_ac_power: false
+          - repeat:
+              sequence:
+                - service: script.ac_set_state
+                  data:
+                    target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
+                    target_ac_power: false
+                - delay: "{{ resync_delay_minutes | int(1) * 60 }}"
+              until:
+                - condition: not
+                  conditions:
+                    - condition: state
+                      entity_id: !input vent
+                      state: 'on'
       - conditions:
           - condition: trigger
             id: temperature_changed
@@ -69,19 +100,37 @@ action:
                 data: {}
                 target:
                   entity_id: !input ac
-              - service: script.ac_set_state
-                data:
-                  target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
-                  target_ac_power: false
+              - repeat:
+                  sequence:
+                    - service: script.ac_set_state
+                      data:
+                        target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
+                        target_ac_power: false
+                    - delay: "{{ resync_delay_minutes | int(1) * 60 }}"
+                  until:
+                    - condition: not
+                      conditions:
+                        - condition: state
+                          entity_id: !input vent
+                          state: 'on'
             else:
               - service: climate.turn_on
                 data: {}
                 target:
                   entity_id: !input ac
-              - service: script.ac_set_state
-                data:
-                  target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
-                  target_ac_temp: "{{ state_attr(target_ac, 'temperature') }}"
+              - repeat:
+                  sequence:
+                    - service: script.ac_set_state
+                      data:
+                        target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
+                        target_ac_temp: "{{ state_attr(target_ac, 'temperature') }}"
+                    - delay: "{{ resync_delay_minutes | int(1) * 60 }}"
+                  until:
+                    - condition: not
+                      conditions:
+                        - condition: state
+                          entity_id: !input vent
+                          state: 'off'
     default: []
-mode: single
+mode: restart
 max_exceeded: silent
