@@ -276,6 +276,12 @@
         -
       {% endif %}
 
+  - name: Vacuum Cleaned Area
+    unique_id: sensor.vacuum_cleaned_area
+    unit_of_measurement: sqm
+    state: "{{ state_attr('vacuum.pikachu', 'clean_area') }}"
+    availability: "{{ states('vacuum.pikachu') in ['docked','idle'] }}"
+
   - name: Elena's Room AC Status
     unique_id: sensor.elenas_room_ac_status
     state: >

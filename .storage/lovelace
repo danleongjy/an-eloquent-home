@@ -34,15 +34,7 @@
           "styles": {
             "card": [
               {
-                "background-color": "#9e110d"
-              }
-            ],
-            "icon": [
-              {
-                "animation": "blink 2s ease infinite"
-              },
-              {
-                "color": "white"
+                "background-color": "#484848"
               }
             ]
           }
@@ -50,753 +42,36 @@
         "dishwasher_more_info": {
           "template": "square_cell",
           "hold_action": {
-            "action": "fire-dom-event",
-            "browser_mod": {
-              "service": "browser_mod.popup",
-              "data": {
-                "dismissable": true,
-                "content": {
-                  "type": "vertical-stack",
-                  "cards": [
-                    {
-                      "type": "markdown",
-                      "content": "## Dishwasher"
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "binary_sensor.dishwasher",
-                          "state": "off"
-                        }
-                      ],
-                      "card": {
-                        "type": "horizontal-stack",
-                        "cards": [
-                          {
-                            "type": "custom:button-card",
-                            "entity": "input_select.dishwasher_status",
-                            "template": "square_cell",
-                            "show_state": true
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "sensor.dishwasher_last_run_ended",
-                            "template": "square_cell",
-                            "show_state": true
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "sensor.dishwasher_last_run_duration",
-                            "template": "square_cell",
-                            "show_state": true
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "binary_sensor.dishwasher_door",
-                            "template": "square_cell",
-                            "show_state": true
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "binary_sensor.dishwasher",
-                          "state": "on"
-                        }
-                      ],
-                      "card": {
-                        "type": "vertical-stack",
-                        "cards": [
-                          {
-                            "type": "horizontal-stack",
-                            "cards": [
-                              {
-                                "type": "custom:button-card",
-                                "entity": "input_select.dishwasher_status",
-                                "template": "square_cell",
-                                "show_state": true
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "entity": "sensor.dishwasher_last_run_started",
-                                "template": "square_cell",
-                                "show_state": true
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "entity": "sensor.dishwasher_watts",
-                                "template": "square_cell",
-                                "show_state": true
-                              }
-                            ]
-                          },
-                          {
-                            "type": "history-graph",
-                            "hours_to_show": 1,
-                            "entities": [
-                              "sensor.dishwasher_watts"
-                            ]
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "input_boolean.dishwasher_load_clean",
-                          "state": "on"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"success\">Dishwasher cooled down.  Please open dishwasher.</ha-alert>"
-                      }
-                    }
-                  ]
-                },
-                "style": "--popup-border-radius: 6px\n"
-              }
-            }
+            "action": "navigate",
+            "navigation_path": "/lovelace/dishwasher"
           }
         },
         "rice_cooker_more_info": {
           "template": "square_cell",
           "hold_action": {
-            "action": "fire-dom-event",
-            "browser_mod": {
-              "service": "browser_mod.popup",
-              "data": {
-                "dismissable": true,
-                "content": {
-                  "type": "vertical-stack",
-                  "cards": [
-                    {
-                      "type": "markdown",
-                      "content": "## Rice Cooker"
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "binary_sensor.rice_cooker",
-                          "state": "off"
-                        }
-                      ],
-                      "card": {
-                        "type": "horizontal-stack",
-                        "cards": [
-                          {
-                            "type": "custom:button-card",
-                            "entity": "input_select.rice_cooker_status",
-                            "template": "square_cell",
-                            "show_state": true,
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "switch.turn_on",
-                              "service_data": {
-                                "entity_id": "switch.rice_cooker"
-                              }
-                            }
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "sensor.rice_cooker_last_run_ended",
-                            "template": "square_cell",
-                            "show_state": true
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "sensor.rice_cooker_last_run_duration",
-                            "template": "square_cell",
-                            "show_state": true
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "binary_sensor.rice_cooker_lid",
-                            "template": "square_cell",
-                            "show_state": true,
-                            "state_display": "[[[\n  if (states['binary_sensor.rice_cooker_lid'].state == \"off\") \n    return \"Closed\"; \n  else if (states['binary_sensor.rice_cooker_lid'].state == \"on\") \n    return \"Open\"; \n  else \n    return states['binary_sensor.rice_cooker_lid'].state;\n]]]\n"
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "binary_sensor.rice_cooker",
-                          "state": "on"
-                        }
-                      ],
-                      "card": {
-                        "type": "vertical-stack",
-                        "cards": [
-                          {
-                            "type": "horizontal-stack",
-                            "cards": [
-                              {
-                                "type": "custom:button-card",
-                                "entity": "input_select.rice_cooker_status",
-                                "template": "square_cell",
-                                "show_state": true
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "entity": "sensor.rice_cooker_last_run_started",
-                                "template": "square_cell",
-                                "show_state": true
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "entity": "sensor.rice_cooker_watts",
-                                "template": "square_cell",
-                                "show_state": true
-                              }
-                            ]
-                          },
-                          {
-                            "type": "history-graph",
-                            "hours_to_show": 1,
-                            "entities": [
-                              "sensor.rice_cooker_watts"
-                            ]
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                },
-                "style": "--popup-border-radius: 6px\n"
-              }
-            }
+            "action": "navigate",
+            "navigation_path": "/lovelace/rice_cooker"
           }
         },
         "stove_more_info": {
           "template": "square_cell",
           "hold_action": {
-            "action": "fire-dom-event",
-            "browser_mod": {
-              "service": "browser_mod.popup",
-              "data": {
-                "dismissable": true,
-                "content": {
-                  "type": "vertical-stack",
-                  "cards": [
-                    {
-                      "type": "markdown",
-                      "content": "## Stove"
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "switch.stove_main_power",
-                          "state": "on"
-                        }
-                      ],
-                      "card": {
-                        "type": "vertical-stack",
-                        "cards": [
-                          {
-                            "type": "grid",
-                            "columns": 4,
-                            "square": false,
-                            "cards": [
-                              {
-                                "type": "custom:button-card",
-                                "entity": "switch.stove_main_power",
-                                "show_name": false,
-                                "icon": "mdi:power",
-                                "state_display": "[[[ return entity.state.charAt(0).toUpperCase() + entity.state.slice(1) ]]]"
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "entity": "input_boolean.stove_select_left_burner",
-                                "show_name": false
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "entity": "input_boolean.stove_select_right_burner",
-                                "show_name": false
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "entity": "switch.stove_pause",
-                                "show_name": false
-                              }
-                            ]
-                          },
-                          {
-                            "type": "entities",
-                            "entities": [
-                              {
-                                "entity": "input_number.stove_current_burner_power_slider",
-                                "name": "Heat"
-                              },
-                              {
-                                "entity": "number.stove_current_burner_timer",
-                                "name": "Timer (min)"
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "switch.stove_main_power",
-                          "state": "off"
-                        }
-                      ],
-                      "card": {
-                        "type": "horizontal-stack",
-                        "cards": [
-                          {
-                            "type": "custom:button-card",
-                            "entity": "switch.stove_main_power",
-                            "template": "square_cell",
-                            "show_state": true,
-                            "state_display": "[[[ return entity.state.charAt(0).toUpperCase() + entity.state.slice(1) ]]]"
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "sensor.stove_last_use",
-                            "template": "square_cell",
-                            "show_state": true
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "sensor.stove_total_time_used",
-                            "template": "square_cell",
-                            "show_state": true
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "sensor.stove_total_power_consumed",
-                            "template": "square_cell",
-                            "show_state": true
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "select.stove_error_code",
-                          "state_not": "None"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">{{ states(\"select.stove_error_code\") }}</ha-alert>"
-                      }
-                    }
-                  ]
-                },
-                "style": "--popup-border-radius: 6px\n"
-              }
-            }
+            "action": "navigate",
+            "navigation_path": "/lovelace/stove"
           }
         },
         "vacuum_more_info": {
           "template": "top_row",
           "hold_action": {
-            "action": "fire-dom-event",
-            "browser_mod": {
-              "service": "browser_mod.popup",
-              "data": {
-                "dismissable": true,
-                "content": {
-                  "type": "vertical-stack",
-                  "cards": [
-                    {
-                      "type": "markdown",
-                      "content": "## Vacuum"
-                    },
-                    {
-                      "type": "horizontal-stack",
-                      "cards": [
-                        {
-                          "type": "custom:button-card",
-                          "entity": "vacuum.pikachu",
-                          "show_name": false,
-                          "show_state": true,
-                          "state_display": "[[[ return entity.state.charAt(0).toUpperCase() + entity.state.slice(1) ]]]"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.pikachu_battery",
-                          "show_name": false,
-                          "show_state": true
-                        }
-                      ]
-                    },
-                    {
-                      "type": "custom:state-switch",
-                      "entity": "{% if states('vacuum.pikachu') in ['cleaning', 'paused', 'returning'] %} cleaning {% elif states('vacuum.pikachu') in ['docked', 'idle'] %} not_cleaning {% else %} error {% endif %}",
-                      "default": "error",
-                      "states": {
-                        "cleaning": {
-                          "type": "grid",
-                          "columns": 4,
-                          "cards": [
-                            {
-                              "type": "custom:button-card",
-                              "entity": "sensor.vacuum_last_run_started",
-                              "template": "square_cell",
-                              "show_state": true
-                            },
-                            {
-                              "type": "custom:state-switch",
-                              "entity": "vacuum.pikachu",
-                              "default": "cleaning",
-                              "states": {
-                                "paused": {
-                                  "type": "custom:button-card",
-                                  "icon": "mdi:play",
-                                  "template": "square_cell",
-                                  "tap_action": {
-                                    "action": "call-service",
-                                    "service": "vacuum.start",
-                                    "service_data": {
-                                      "entity_id": "vacuum.pikachu"
-                                    }
-                                  }
-                                },
-                                "cleaning": {
-                                  "type": "custom:button-card",
-                                  "icon": "mdi:pause",
-                                  "template": "square_cell",
-                                  "tap_action": {
-                                    "action": "call-service",
-                                    "service": "vacuum.pause",
-                                    "service_data": {
-                                      "entity_id": "vacuum.pikachu"
-                                    }
-                                  }
-                                }
-                              }
-                            },
-                            {
-                              "type": "custom:button-card",
-                              "icon": "mdi:stop",
-                              "template": "square_cell",
-                              "tap_action": {
-                                "action": "call-service",
-                                "service": "vacuum.stop",
-                                "service_data": {
-                                  "entity_id": "vacuum.pikachu"
-                                }
-                              }
-                            },
-                            {
-                              "type": "custom:button-card",
-                              "icon": "mdi:home-import-outline",
-                              "template": "square_cell",
-                              "tap_action": {
-                                "action": "call-service",
-                                "service": "vacuum.return_to_base",
-                                "service_data": {
-                                  "entity_id": "vacuum.pikachu"
-                                }
-                              }
-                            }
-                          ]
-                        },
-                        "not_cleaning": {
-                          "type": "grid",
-                          "columns": 5,
-                          "cards": [
-                            {
-                              "type": "custom:button-card",
-                              "entity": "sensor.vacuum_last_run_ended",
-                              "show_state": true,
-                              "template": "square_cell"
-                            },
-                            {
-                              "type": "custom:button-card",
-                              "entity": "sensor.vacuum_clean_time",
-                              "template": "square_cell",
-                              "show_state": true
-                            },
-                            {
-                              "type": "custom:button-card",
-                              "icon": "mdi:tape-measure",
-                              "template": "square_cell",
-                              "label": "[[[ return Math.round(states['vacuum.pikachu'].attributes.clean_area) + 'sqm' ]]]",
-                              "show_label": true
-                            },
-                            {
-                              "type": "custom:button-card",
-                              "entity": "camera.pikachu_cleaning_map",
-                              "template": "square_cell"
-                            },
-                            {
-                              "type": "custom:button-card",
-                              "icon": "mdi:play",
-                              "template": "square_cell",
-                              "tap_action": {
-                                "action": "call-service",
-                                "service": "vacuum.start",
-                                "service_data": {
-                                  "entity_id": "vacuum.pikachu"
-                                }
-                              }
-                            }
-                          ]
-                        },
-                        "error": {
-                          "type": "grid",
-                          "columns": 4,
-                          "cards": [
-                            {
-                              "type": "custom:button-card",
-                              "color_type": "blank-card"
-                            },
-                            {
-                              "type": "custom:button-card",
-                              "entity": "sensor.vacuum_last_run_started",
-                              "template": "square_cell",
-                              "show_state": true
-                            },
-                            {
-                              "type": "custom:button-card",
-                              "entity": "sensor.vacuum_clean_time",
-                              "template": "square_cell",
-                              "show_state": true
-                            },
-                            {
-                              "type": "custom:button-card",
-                              "color_type": "blank-card"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    {
-                      "type": "entities",
-                      "entities": [
-                        {
-                          "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                          "name": "Warn if vacuum may get wet"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "vacuum.pikachu",
-                          "state": "idle"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">Vacuum not docked properly</ha-alert>"
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "binary_sensor.vacuum_running_with_doors_open",
-                          "state": "on"
-                        },
-                        {
-                          "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                          "state": "on"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">Please close bathroom doors. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "binary_sensor.vacuum_running_with_doors_open",
-                          "state": "on"
-                        },
-                        {
-                          "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                          "state": "off"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with bathroom doors open.</ha-alert>"
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "vacuum.pikachu",
-                          "state": "error"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">{{ state_attr('vacuum.pikachu', 'status') }}</ha-alert>"
-                      }
-                    }
-                  ]
-                },
-                "style": "--popup-border-radius: 6px\n"
-              }
-            }
+            "action": "navigate",
+            "navigation_path": "/lovelace/vacuum"
           }
         },
         "washer_more_info": {
           "template": "square_cell",
           "tap_action": {
-            "action": "fire-dom-event",
-            "browser_mod": {
-              "service": "browser_mod.popup",
-              "data": {
-                "dismissable": true,
-                "content": {
-                  "type": "vertical-stack",
-                  "cards": [
-                    {
-                      "type": "markdown",
-                      "content": "## Washer"
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "sensor.washer_status",
-                          "state_not": "Off"
-                        }
-                      ],
-                      "card": {
-                        "type": "vertical-stack",
-                        "cards": [
-                          {
-                            "type": "grid",
-                            "columns": 3,
-                            "square": true,
-                            "cards": [
-                              {
-                                "type": "custom:button-card",
-                                "entity": "sensor.washer_current_course",
-                                "template": "square_cell",
-                                "show_state": true
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "entity": "sensor.washer_run_state",
-                                "template": "square_cell",
-                                "show_state": true
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "entity": "sensor.washer_countdown",
-                                "template": "square_cell",
-                                "show_state": true
-                              }
-                            ]
-                          },
-                          {
-                            "type": "entities",
-                            "entities": [
-                              "sensor.washer_spin_speed",
-                              "sensor.washer_water_temp",
-                              "binary_sensor.washer_door_lock",
-                              "binary_sensor.washer_child_lock"
-                            ]
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "sensor.washer_status",
-                          "state": "Off"
-                        }
-                      ],
-                      "card": {
-                        "type": "horizontal-stack",
-                        "cards": [
-                          {
-                            "type": "custom:button-card",
-                            "entity": "sensor.washer_status",
-                            "template": "square_cell",
-                            "show_state": true
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "sensor.washer_last_wash_completed",
-                            "template": "square_cell",
-                            "show_state": true
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "binary_sensor.washer_door",
-                            "template": "square_cell",
-                            "show_state": true,
-                            "state_display": "[[[\n  if (states['binary_sensor.washer_door'].state == \"off\") \n    return \"Closed\"; \n  else if (states['binary_sensor.washer_door'].state == \"on\") \n    return \"Open\"; \n  else \n    return states['binary_sensor.washer_door'].state;\n]]]\n"
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "binary_sensor.washer_error_state",
-                          "state": "on"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">{{ state_attr(\"sensor.washer\", \"error_message\") }}</ha-alert>"
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "input_boolean.washer_load_clean",
-                          "state": "on"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"success\">Wash completed.  Please unload laundry.</ha-alert>"
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "binary_sensor.washer_tub_dirty",
-                          "state": "on"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"info\">{{ states('sensor.washer_tub_clean_counter') }} loads since last tub cleaning</ha-alert>"
-                      }
-                    }
-                  ]
-                },
-                "style": "--popup-border-radius: 6px\n"
-              }
-            }
+            "action": "navigate",
+            "navigation_path": "/lovelace/washer"
           }
         },
         "zigbee_endpoint": {
@@ -970,96 +245,8 @@
                     ]
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Local Weather"
-                            },
-                            {
-                              "type": "custom:button-card",
-                              "entity": "sensor.local_two_hour_forecast",
-                              "show_name": false,
-                              "show_state": true,
-                              "icon": "[[[\n  if (entity.state.includes('Fair'))\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-sunny\";\n    else\n      return \"mdi:weather-night\";\n  else if (entity.state == 'Partly Cloudy')\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-partly-cloudy\";\n    else\n      return \"mdi:weather-night-partly-cloudy\";\n  else if (entity.state == 'Cloudy')\n    return \"mdi:weather-cloudy\";\n  else if (entity.state.includes('Thunder'))\n    return \"mdi:weather-lightning-rainy\";\n  else if (entity.state.includes('Shower'))\n    return \"mdi:weather-pouring\";\n  else if (entity.state.includes('Rain'))\n    return \"mdi:weather-rainy\";\n  else if (entity.state.includes('Wind'))\n    return \"mdi:weather-windy\";\n  else\n    return \"mdi:weather-cloudy-alert\"\n]]]\n"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 5,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.local_rainfall",
-                                  "icon": "mdi:weather-pouring",
-                                  "show_state": true,
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.local_outdoor_temperature",
-                                  "icon": "mdi:sun-thermometer",
-                                  "show_state": true,
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.local_outdoor_humidity",
-                                  "icon": "mdi:water-percent",
-                                  "show_state": true,
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.sun_solar_elevation",
-                                  "show_state": true,
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.sun_solar_azimuth",
-                                  "show_state": true,
-                                  "template": "square_cell"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "sensor.raining_with_windows_open",
-                                  "state": "alert"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Heavy rain with windows open</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "sensor.raining_with_windows_open",
-                                  "state": "warning"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
-                              }
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/weather"
                   }
                 },
                 {
@@ -1347,99 +534,8 @@
                     "service": "script.turn_off_playroom"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Playroom"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 5,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.playroom_motion",
-                                  "template": "square_cell",
-                                  "label": "Play",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.yard_motion",
-                                  "template": "square_cell",
-                                  "label": "Yard",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.yard_window_1",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.yard_window_2",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.yard_lux",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                }
-                              ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.ac_on_with_window_open_at_yard",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">AC on with windows open</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "sensor.raining_with_yard_windows_open",
-                                  "state": "alert"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Heavy rain with windows open</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "sensor.raining_with_yard_windows_open",
-                                  "state": "warning"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
-                              }
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/playroom"
                   },
                   "styles": {
                     "card": [
@@ -1688,71 +784,8 @@
                     "service": "script.set_recommended_scene_in_elenas_room"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Elena's Room"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 5,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.elenas_room_motion",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.elenas_room_door",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.elenas_room_temperature",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.elenas_room_humidity",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.elenas_room_lux",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                }
-                              ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.ac_on_with_door_open_at_elenas_room",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
-                              }
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/elenas_room"
                   },
                   "styles": {
                     "card": [
@@ -2079,71 +1112,8 @@
                     "service": "script.set_recommended_scene_in_elis_room"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Eli's Room"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 5,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.elis_room_motion",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.elis_room_door",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.elis_room_temperature",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.elis_room_humidity",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.elis_room_lux",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                }
-                              ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.ac_on_with_door_open_at_elis_room",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
-                              }
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/elis_room"
                   },
                   "styles": {
                     "card": [
@@ -2468,69 +1438,8 @@
                     "service": "script.turn_off_hallway"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Hallway"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 4,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.elenas_room_door",
-                                  "template": "square_cell",
-                                  "label": "Elena",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.elis_room_door",
-                                  "template": "square_cell",
-                                  "label": "Eli",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.junior_bathroom_door",
-                                  "template": "square_cell",
-                                  "label": "Jr Bath",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.powder_room_door",
-                                  "template": "square_cell",
-                                  "label": "Powder",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.hallway_motion",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.hallway_lux",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/hallway"
                   }
                 },
                 {
@@ -2596,123 +1505,8 @@
                     "service": "script.turn_off_powder_room"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Powder Room"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 4,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.powder_room_motion",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.powder_room_door",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:state-switch",
-                                  "entity": "switch.water_heater",
-                                  "default": "disabled",
-                                  "states": {
-                                    "disabled": {
-                                      "type": "custom:button-card",
-                                      "icon": "mdi:water-boiler-off",
-                                      "template": "square_cell"
-                                    },
-                                    "off": {
-                                      "type": "custom:button-card",
-                                      "entity": "switch.water_heater",
-                                      "template": "square_cell",
-                                      "hold_action": {
-                                        "action": "more-info"
-                                      }
-                                    },
-                                    "on": {
-                                      "type": "custom:button-card",
-                                      "entity": "switch.water_heater",
-                                      "template": "square_cell",
-                                      "hold_action": {
-                                        "action": "more-info"
-                                      }
-                                    }
-                                  }
-                                }
-                              ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "binary_sensor.powder_room_door",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Please close the powder room door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "binary_sensor.powder_room_door",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "off"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with the powder room door open.</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.ac_on_with_door_open_at_powder_room",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">AC on with door open.</ha-alert>"
-                              }
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/powder_room"
                   },
                   "styles": {
                     "card": [
@@ -2789,104 +1583,8 @@
                     "service": "script.turn_off_junior_bathroom"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Junior Bathroom"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 4,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.junior_bathroom_motion",
-                                  "template": "square_cell",
-                                  "label": "Entry",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.junior_shower_motion",
-                                  "template": "square_cell",
-                                  "label": "Shower",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.junior_bathroom_door",
-                                  "template": "square_cell"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "binary_sensor.junior_bathroom_door",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Please close the junior bathroom door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "binary_sensor.junior_bathroom_door",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "off"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with the junior bathroom door open.</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.ac_on_with_door_open_at_junior_bathroom",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">AC on with door open.</ha-alert>"
-                              }
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/junior_bathroom"
                   },
                   "styles": {
                     "card": [
@@ -2963,113 +1661,8 @@
                     "service": "script.set_recommended_scene_in_dining_room"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Dining Room"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 5,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.dining_room_presence",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.main_door",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.dining_room_temperature",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.dining_room_humidity",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.dining_room_lux",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                }
-                              ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "binary_sensor.main_door",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Please close the main door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "binary_sensor.main_door",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "off"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Vacuum running with main door open.</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.ac_on_with_door_open_at_dining_room",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
-                              }
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/dining_room"
                   },
                   "styles": {
                     "card": [
@@ -3499,53 +2092,8 @@
                     "service": "script.set_recommended_scene_in_living_room"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Living Room"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 4,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.living_room_presence",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.dining_room_temperature",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.dining_room_humidity",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.living_room_lux",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/living_room"
                   }
                 },
                 {
@@ -3968,85 +2516,8 @@
                     "service": "script.set_recommended_scene_in_study_room"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Study Room"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 4,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.study_walkway_motion",
-                                  "template": "square_cell",
-                                  "label": "Walkway",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.study_room_presence",
-                                  "template": "square_cell",
-                                  "label": "Desk",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.study_room_ethernet_connection",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.parents_room_door",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.study_room_temperature",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.study_room_humidity",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.study_walkway_lux",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                }
-                              ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.ac_on_with_door_open_at_study_room",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
-                              }
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/study_room"
                   },
                   "styles": {
                     "card": [
@@ -4373,80 +2844,8 @@
                     "service": "script.set_recommended_scene_in_parents_room"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Parents' Room"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 4,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.parents_room_motion",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.parents_room_door",
-                                  "template": "square_cell",
-                                  "label": "Bedroom",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.master_bathroom_door",
-                                  "template": "square_cell",
-                                  "label": "Bathroom",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.parents_room_temperature",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.parents_room_humidity",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.parents_room_lux",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                }
-                              ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.ac_on_with_doors_open_at_parents_room",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">AC on with doors open</ha-alert>"
-                              }
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/parents_room"
                   },
                   "styles": {
                     "card": [
@@ -4777,104 +3176,8 @@
                     "service": "script.turn_off_master_bathroom"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Parents' Bathroom"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 4,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.master_bathroom_motion",
-                                  "template": "square_cell",
-                                  "label": "Entry",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.master_shower_motion",
-                                  "template": "square_cell",
-                                  "label": "Shower",
-                                  "show_label": true
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.master_bathroom_door",
-                                  "template": "square_cell"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "binary_sensor.master_bathroom_door",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Please close the master bathroom door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.vacuum_running_with_doors_open",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "binary_sensor.master_bathroom_door",
-                                  "state": "on"
-                                },
-                                {
-                                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                                  "state": "off"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with the master bathroom door open.</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.ac_on_with_door_open_at_master_bathroom",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">AC on with door open.</ha-alert>"
-                              }
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/parents_bathroom"
                   },
                   "styles": {
                     "card": [
@@ -5064,80 +3367,8 @@
                     "service": "script.turn_off_kitchen"
                   },
                   "hold_action": {
-                    "action": "fire-dom-event",
-                    "browser_mod": {
-                      "service": "browser_mod.popup",
-                      "data": {
-                        "dismissable": true,
-                        "content": {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "markdown",
-                              "content": "## Kitchen"
-                            },
-                            {
-                              "type": "grid",
-                              "columns": 4,
-                              "square": true,
-                              "cards": [
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "binary_sensor.kitchen_presence",
-                                  "template": "square_cell"
-                                },
-                                {
-                                  "type": "custom:button-card",
-                                  "entity": "sensor.kitchen_lux",
-                                  "template": "square_cell",
-                                  "show_state": true
-                                }
-                              ]
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "binary_sensor.ac_on_with_window_open_at_kitchen",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">AC on with window open</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "sensor.raining_with_kitchen_window_open",
-                                  "state": "alert"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Heavy rain with window open</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "sensor.raining_with_kitchen_window_open",
-                                  "state": "warning"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"warning\">Raining with window open</ha-alert>"
-                              }
-                            }
-                          ]
-                        },
-                        "style": "--popup-border-radius: 6px\n"
-                      }
-                    }
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/kitchen"
                   },
                   "styles": {
                     "card": [
@@ -7001,7 +5232,7 @@
           ]
         },
         {
-          "theme": "Backend-selected",
+          "theme": "no_border",
           "subview": true,
           "title": "Settings - Sleep",
           "path": "settings-sleep",
@@ -7048,65 +5279,6 @@
                 },
                 {
                   "entity": "automation.parents_room_eca_day_alarm"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "theme": "Backend-selected",
-          "title": "Settings - Lighting",
-          "path": "settings-lighting",
-          "icon": "mdi:home-lightbulb-outline",
-          "subview": true,
-          "badges": [],
-          "cards": [
-            {
-              "type": "entities",
-              "entities": [
-                {
-                  "entity": "input_number.minimum_lux"
-                },
-                {
-                  "entity": "input_number.comfortable_lux"
-                },
-                {
-                  "entity": "input_number.maximum_lux"
-                },
-                {
-                  "entity": "input_number.light_brightness_change_step",
-                  "name": "Brightness Change"
-                },
-                {
-                  "entity": "input_number.morning_light_brightness",
-                  "name": "Morning Brightness"
-                },
-                {
-                  "entity": "input_number.night_light_brightness",
-                  "name": "Night Brightness"
-                },
-                {
-                  "entity": "input_datetime.dim_hours_start"
-                },
-                {
-                  "entity": "input_datetime.dim_hours_end"
-                }
-              ]
-            },
-            {
-              "type": "entities",
-              "entities": [
-                {
-                  "entity": "input_number.blinds_auto_control_debounce",
-                  "name": "Blinds Debounce"
-                },
-                {
-                  "entity": "automation.south_facing_blinds_auto_control",
-                  "name": "Auto South-Facing Blinds"
-                },
-                {
-                  "entity": "automation.kitchen_blind_auto_control",
-                  "name": "Auto Kitchen Blinds"
                 }
               ]
             }
@@ -7178,6 +5350,65 @@
         },
         {
           "theme": "no_border",
+          "title": "Settings - Lighting",
+          "path": "settings-lighting",
+          "icon": "mdi:home-lightbulb-outline",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_number.minimum_lux"
+                },
+                {
+                  "entity": "input_number.comfortable_lux"
+                },
+                {
+                  "entity": "input_number.maximum_lux"
+                },
+                {
+                  "entity": "input_number.light_brightness_change_step",
+                  "name": "Brightness Change"
+                },
+                {
+                  "entity": "input_number.morning_light_brightness",
+                  "name": "Morning Brightness"
+                },
+                {
+                  "entity": "input_number.night_light_brightness",
+                  "name": "Night Brightness"
+                },
+                {
+                  "entity": "input_datetime.dim_hours_start"
+                },
+                {
+                  "entity": "input_datetime.dim_hours_end"
+                }
+              ]
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_number.blinds_auto_control_debounce",
+                  "name": "Blinds Debounce"
+                },
+                {
+                  "entity": "automation.south_facing_blinds_auto_control",
+                  "name": "Auto South-Facing Blinds"
+                },
+                {
+                  "entity": "automation.kitchen_blind_auto_control",
+                  "name": "Auto Kitchen Blinds"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "theme": "no_border",
           "title": "Automation",
           "path": "automations",
           "icon": "mdi:home-automation",
@@ -7208,6 +5439,7 @@
           "path": "diagnostics",
           "icon": "mdi:arrow-expand-vertical",
           "subview": true,
+          "theme": "no_border",
           "badges": [],
           "cards": [
             {
@@ -7242,7 +5474,7 @@
           ]
         },
         {
-          "theme": "Backend-selected",
+          "theme": "no_border",
           "title": "Network",
           "path": "network",
           "icon": "mdi:server-security",
@@ -8006,6 +6238,1672 @@
               ],
               "title": "Timeouts",
               "show_header_toggle": false
+            }
+          ]
+        },
+        {
+          "title": "Vacuum",
+          "path": "vacuum",
+          "icon": "mdi:robot-vacuum-variant",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "features": [
+                {
+                  "type": "vacuum-commands",
+                  "commands": [
+                    "start_pause",
+                    "stop",
+                    "return_home"
+                  ]
+                }
+              ],
+              "type": "tile",
+              "entity": "vacuum.pikachu",
+              "show_entity_picture": false,
+              "tap_action": {
+                "action": "more-info"
+              },
+              "icon_tap_action": {
+                "action": "more-info"
+              }
+            },
+            {
+              "type": "conditional",
+              "conditions": [
+                {
+                  "entity": "vacuum.pikachu",
+                  "state_not": "cleaning"
+                },
+                {
+                  "entity": "vacuum.pikachu",
+                  "state_not": "error"
+                },
+                {
+                  "entity": "vacuum.pikachu",
+                  "state_not": "returning"
+                }
+              ],
+              "card": {
+                "show_state": false,
+                "show_name": true,
+                "camera_view": "auto",
+                "type": "picture-entity",
+                "entity": "camera.pikachu_cleaning_map",
+                "name": "Cleaning Map",
+                "tap_action": {
+                  "action": "none"
+                },
+                "hold_action": {
+                  "action": "none"
+                }
+              }
+            },
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "sensor.pikachu_battery",
+                  "secondary_info": "none",
+                  "name": "Battery"
+                },
+                {
+                  "entity": "sensor.vacuum_last_run_started",
+                  "name": "Last Run Started"
+                },
+                {
+                  "entity": "sensor.vacuum_clean_time",
+                  "secondary_info": "none",
+                  "name": "Clean Time"
+                },
+                {
+                  "entity": "sensor.vacuum_cleaned_area",
+                  "name": "Cleaned Area"
+                }
+              ],
+              "state_color": true
+            },
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "tile",
+                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                  "name": "Warn if vacuum may get wet",
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "vacuum.pikachu",
+                      "state": "idle"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Vacuum not docked properly</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Please close bathroom doors. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "off"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with bathroom doors open.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "vacuum.pikachu",
+                      "state": "error"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">{{ state_attr('vacuum.pikachu', 'status') }}</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Washer",
+          "path": "washer",
+          "icon": "mdi:washing-machine",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.washer_status",
+                      "state_not": "Off"
+                    }
+                  ],
+                  "card": {
+                    "type": "vertical-stack",
+                    "cards": [
+                      {
+                        "type": "horizontal-stack",
+                        "cards": [
+                          {
+                            "type": "tile",
+                            "entity": "sensor.washer_status",
+                            "name": " "
+                          },
+                          {
+                            "type": "tile",
+                            "entity": "sensor.washer_countdown",
+                            "name": " "
+                          }
+                        ]
+                      },
+                      {
+                        "type": "entities",
+                        "entities": [
+                          {
+                            "entity": "sensor.washer_current_course"
+                          },
+                          {
+                            "entity": "sensor.washer_water_temp"
+                          },
+                          {
+                            "entity": "sensor.washer_spin_speed"
+                          },
+                          {
+                            "entity": "binary_sensor.washer_door_lock"
+                          },
+                          {
+                            "entity": "binary_sensor.washer_child_lock"
+                          }
+                        ],
+                        "state_color": true
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.washer_status",
+                      "state": "Off"
+                    }
+                  ],
+                  "card": {
+                    "type": "vertical-stack",
+                    "cards": [
+                      {
+                        "type": "tile",
+                        "entity": "sensor.washer_status",
+                        "name": " "
+                      },
+                      {
+                        "type": "horizontal-stack",
+                        "cards": [
+                          {
+                            "type": "tile",
+                            "entity": "sensor.washer_last_wash_completed",
+                            "name": " "
+                          },
+                          {
+                            "type": "tile",
+                            "entity": "binary_sensor.washer_door",
+                            "name": " "
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.washer_error_state",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">{{ state_attr(\"sensor.washer\", \"error_message\") }}</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "input_boolean.washer_load_clean",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"success\">Wash completed.  Please unload laundry.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.washer_tub_dirty",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"info\">{{ states('sensor.washer_tub_clean_counter') }} loads since last tub cleaning</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Dishwasher",
+          "path": "dishwasher",
+          "icon": "mdi:dishwasher",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.dishwasher",
+                      "state": "off"
+                    }
+                  ],
+                  "card": {
+                    "type": "vertical-stack",
+                    "cards": [
+                      {
+                        "type": "horizontal-stack",
+                        "cards": [
+                          {
+                            "type": "tile",
+                            "entity": "input_select.dishwasher_status",
+                            "name": " "
+                          },
+                          {
+                            "type": "tile",
+                            "entity": "binary_sensor.dishwasher_door",
+                            "name": " "
+                          }
+                        ]
+                      },
+                      {
+                        "type": "horizontal-stack",
+                        "cards": [
+                          {
+                            "type": "tile",
+                            "entity": "sensor.dishwasher_last_run_ended",
+                            "name": " "
+                          },
+                          {
+                            "type": "tile",
+                            "entity": "sensor.dishwasher_last_run_duration",
+                            "name": " "
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.dishwasher",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "vertical-stack",
+                    "cards": [
+                      {
+                        "type": "horizontal-stack",
+                        "cards": [
+                          {
+                            "type": "tile",
+                            "entity": "input_select.dishwasher_status",
+                            "name": " "
+                          },
+                          {
+                            "type": "tile",
+                            "entity": "sensor.dishwasher_last_run_started",
+                            "name": " "
+                          }
+                        ]
+                      },
+                      {
+                        "type": "history-graph",
+                        "hours_to_show": 1,
+                        "entities": [
+                          "sensor.dishwasher_watts"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "input_boolean.dishwasher_load_clean",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"success\">Dishwasher cooled down.  Please open dishwasher.</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Rice Cooker",
+          "path": "rice_cooker",
+          "icon": "mdi:rice",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "switch.rice_cooker",
+                      "state": "off"
+                    }
+                  ],
+                  "card": {
+                    "type": "vertical-stack",
+                    "cards": [
+                      {
+                        "type": "horizontal-stack",
+                        "cards": [
+                          {
+                            "type": "tile",
+                            "entity": "input_select.rice_cooker_status",
+                            "name": " ",
+                            "tap_action": {
+                              "action": "call-service",
+                              "service": "switch.turn_on",
+                              "service_data": {
+                                "entity_id": "switch.rice_cooker"
+                              }
+                            },
+                            "icon_tap_action": {
+                              "action": "more-info"
+                            },
+                            "vertical": false
+                          },
+                          {
+                            "type": "tile",
+                            "entity": "binary_sensor.rice_cooker_lid",
+                            "name": " ",
+                            "vertical": false
+                          }
+                        ]
+                      },
+                      {
+                        "type": "horizontal-stack",
+                        "cards": [
+                          {
+                            "type": "tile",
+                            "entity": "sensor.rice_cooker_last_run_ended",
+                            "name": " ",
+                            "vertical": false
+                          },
+                          {
+                            "type": "tile",
+                            "entity": "sensor.rice_cooker_last_run_duration",
+                            "name": " ",
+                            "vertical": false
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "switch.rice_cooker",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "vertical-stack",
+                    "cards": [
+                      {
+                        "type": "horizontal-stack",
+                        "cards": [
+                          {
+                            "type": "tile",
+                            "entity": "input_select.rice_cooker_status",
+                            "name": " "
+                          },
+                          {
+                            "type": "tile",
+                            "entity": "sensor.rice_cooker_last_run_started",
+                            "name": " "
+                          }
+                        ]
+                      },
+                      {
+                        "type": "history-graph",
+                        "hours_to_show": 1,
+                        "entities": [
+                          "sensor.rice_cooker_watts"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Stove",
+          "path": "stove",
+          "icon": "mdi:stove",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "switch.stove_main_power",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "vertical-stack",
+                    "cards": [
+                      {
+                        "square": true,
+                        "type": "grid",
+                        "columns": 4,
+                        "cards": [
+                          {
+                            "type": "button",
+                            "entity": "switch.stove_main_power",
+                            "icon": "mdi:power",
+                            "show_name": false
+                          },
+                          {
+                            "show_name": false,
+                            "show_icon": true,
+                            "type": "button",
+                            "entity": "input_boolean.stove_select_left_burner"
+                          },
+                          {
+                            "type": "button",
+                            "entity": "input_boolean.stove_select_right_burner",
+                            "show_name": false
+                          },
+                          {
+                            "type": "button",
+                            "entity": "switch.stove_pause",
+                            "show_name": false
+                          }
+                        ]
+                      },
+                      {
+                        "type": "entities",
+                        "entities": [
+                          {
+                            "entity": "input_number.stove_current_burner_power_slider",
+                            "name": "Heat"
+                          },
+                          {
+                            "entity": "number.stove_current_burner_timer",
+                            "name": "Timer (min)"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "switch.stove_main_power",
+                      "state": "off"
+                    }
+                  ],
+                  "card": {
+                    "type": "vertical-stack",
+                    "cards": [
+                      {
+                        "type": "horizontal-stack",
+                        "cards": [
+                          {
+                            "type": "tile",
+                            "entity": "switch.stove_main_power",
+                            "name": " "
+                          },
+                          {
+                            "type": "tile",
+                            "entity": "sensor.stove_last_use",
+                            "name": " "
+                          }
+                        ]
+                      },
+                      {
+                        "type": "horizontal-stack",
+                        "cards": [
+                          {
+                            "type": "tile",
+                            "entity": "sensor.stove_total_time_used",
+                            "name": " "
+                          },
+                          {
+                            "type": "tile",
+                            "entity": "sensor.stove_total_power_consumed",
+                            "name": " "
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "select.stove_error_code",
+                      "state_not": "None"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">{{ states(\"select.stove_error_code\") }}</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Playroom",
+          "path": "playroom",
+          "icon": "mdi:teddy-bear",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 5,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.playroom_motion",
+                      "template": "square_cell",
+                      "label": "Play",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.yard_motion",
+                      "template": "square_cell",
+                      "label": "Yard",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.yard_window_1",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.yard_window_2",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.playroom_lux",
+                      "template": "square_cell",
+                      "show_state": true
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.ac_on_with_window_open_at_yard",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with windows open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.raining_with_yard_windows_open",
+                      "state": "alert"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Heavy rain with windows open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.raining_with_yard_windows_open",
+                      "state": "warning"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Elena's Room",
+          "path": "elenas_room",
+          "icon": "mdi:bed",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 5,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.elenas_room_motion",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.elenas_room_door",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.elenas_room_temperature",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.elenas_room_humidity",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.elenas_room_lux",
+                      "template": "square_cell",
+                      "show_state": true
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.ac_on_with_door_open_at_elenas_room",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Eli's Room",
+          "path": "elis_room",
+          "icon": "mdi:bed",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 5,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.elis_room_motion",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.elis_room_door",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.elis_room_temperature",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.elis_room_humidity",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.elis_room_lux",
+                      "template": "square_cell",
+                      "show_state": true
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.ac_on_with_door_open_at_elis_room",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Hallway",
+          "path": "hallway",
+          "icon": "mdi:swap-horizontal-circle-outline",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 4,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.elenas_room_door",
+                      "template": "square_cell",
+                      "label": "Elena",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.elis_room_door",
+                      "template": "square_cell",
+                      "label": "Eli",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.junior_bathroom_door",
+                      "template": "square_cell",
+                      "label": "Jr Bath",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.powder_room_door",
+                      "template": "square_cell",
+                      "label": "Powder",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.hallway_motion",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.hallway_lux",
+                      "template": "square_cell",
+                      "show_state": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Powder Room",
+          "path": "powder_room",
+          "icon": "mdi:toilet",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 4,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.powder_room_motion",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.powder_room_door",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "switch.water_heater",
+                      "template": "turn_on"
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "binary_sensor.powder_room_door",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Please close the powder room door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "binary_sensor.powder_room_door",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "off"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with the powder room door open.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.ac_on_with_door_open_at_powder_room",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with door open.</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Junior Bathroom",
+          "path": "junior_bathroom",
+          "icon": "mdi:shower-head",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 4,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.junior_bathroom_motion",
+                      "template": "square_cell",
+                      "label": "Entry",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.junior_shower_motion",
+                      "template": "square_cell",
+                      "label": "Shower",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.junior_bathroom_door",
+                      "template": "square_cell"
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "binary_sensor.junior_bathroom_door",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Please close the junior bathroom door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "binary_sensor.junior_bathroom_door",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "off"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with the junior bathroom door open.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.ac_on_with_door_open_at_junior_bathroom",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with door open.</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Dining Room",
+          "path": "dining_room",
+          "icon": "mdi:pasta",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 5,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.dining_room_presence",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.main_door",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.dining_room_temperature",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.dining_room_humidity",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.dining_room_lux",
+                      "template": "square_cell",
+                      "show_state": true
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "binary_sensor.main_door",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Please close the main door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "binary_sensor.main_door",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "off"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Vacuum running with main door open.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.ac_on_with_door_open_at_dining_room",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Living Room",
+          "path": "living_room",
+          "icon": "mdi:sofa",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 4,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.living_room_presence",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.dining_room_temperature",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.dining_room_humidity",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.living_room_lux",
+                      "template": "square_cell",
+                      "show_state": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Study Room",
+          "path": "study_room",
+          "icon": "mdi:bookshelf",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 4,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.study_walkway_motion",
+                      "template": "square_cell",
+                      "label": "Walkway",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.study_room_presence",
+                      "template": "square_cell",
+                      "label": "Desk",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.study_room_ethernet_connection",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.parents_room_door",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.study_room_temperature",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.study_room_humidity",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.study_walkway_lux",
+                      "template": "square_cell",
+                      "show_state": true
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.ac_on_with_door_open_at_study_room",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Parents' Room",
+          "path": "parents_room",
+          "icon": "mdi:bed",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 4,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.parents_room_motion",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.parents_room_door",
+                      "template": "square_cell",
+                      "label": "Bedroom",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.master_bathroom_door",
+                      "template": "square_cell",
+                      "label": "Bathroom",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.parents_room_temperature",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.parents_room_humidity",
+                      "template": "square_cell",
+                      "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.parents_room_lux",
+                      "template": "square_cell",
+                      "show_state": true
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.ac_on_with_doors_open_at_parents_room",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with doors open</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Parents' Bathroom",
+          "path": "parents_bathroom",
+          "icon": "mdi:bathtub",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 4,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.master_bathroom_motion",
+                      "template": "square_cell",
+                      "label": "Entry",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.master_shower_motion",
+                      "template": "square_cell",
+                      "label": "Shower",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.master_bathroom_door",
+                      "template": "square_cell"
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "binary_sensor.master_bathroom_door",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Please close the master bathroom door. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "binary_sensor.master_bathroom_door",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "off"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with the master bathroom door open.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.ac_on_with_door_open_at_master_bathroom",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with door open.</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Kitchen",
+          "path": "kitchen",
+          "icon": "mdi:pot-steam",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "grid",
+                  "columns": 4,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.kitchen_presence",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.kitchen_lux",
+                      "template": "square_cell",
+                      "show_state": true
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.ac_on_with_window_open_at_kitchen",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with window open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.raining_with_kitchen_window_open",
+                      "state": "alert"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Heavy rain with window open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.raining_with_kitchen_window_open",
+                      "state": "warning"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"warning\">Raining with window open</ha-alert>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Weather",
+          "path": "weather",
+          "icon": "mdi:weather-cloudy",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.local_two_hour_forecast",
+                  "show_name": false,
+                  "show_state": true,
+                  "icon": "[[[\n  if (entity.state.includes('Fair'))\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-sunny\";\n    else\n      return \"mdi:weather-night\";\n  else if (entity.state == 'Partly Cloudy')\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-partly-cloudy\";\n    else\n      return \"mdi:weather-night-partly-cloudy\";\n  else if (entity.state == 'Cloudy')\n    return \"mdi:weather-cloudy\";\n  else if (entity.state.includes('Thunder'))\n    return \"mdi:weather-lightning-rainy\";\n  else if (entity.state.includes('Shower'))\n    return \"mdi:weather-pouring\";\n  else if (entity.state.includes('Rain'))\n    return \"mdi:weather-rainy\";\n  else if (entity.state.includes('Wind'))\n    return \"mdi:weather-windy\";\n  else\n    return \"mdi:weather-cloudy-alert\"\n]]]\n"
+                },
+                {
+                  "type": "grid",
+                  "columns": 5,
+                  "square": true,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.local_rainfall",
+                      "icon": "mdi:weather-pouring",
+                      "show_state": true,
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.local_outdoor_temperature",
+                      "icon": "mdi:sun-thermometer",
+                      "show_state": true,
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.local_outdoor_humidity",
+                      "icon": "mdi:water-percent",
+                      "show_state": true,
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.sun_solar_elevation",
+                      "show_state": true,
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.sun_solar_azimuth",
+                      "show_state": true,
+                      "template": "square_cell"
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.raining_with_windows_open",
+                      "state": "alert"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Heavy rain with windows open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.raining_with_windows_open",
+                      "state": "warning"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
+                  }
+                }
+              ]
             }
           ]
         }
