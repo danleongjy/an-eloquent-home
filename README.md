@@ -23,7 +23,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 Domain | Quantity
 -- | --
 [`automation`](https://www.home-assistant.io/components/automation) | 132
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 108
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 105
 [`button`](https://www.home-assistant.io/components/button) | 137
 [`calendar`](https://www.home-assistant.io/components/calendar) | 3
 [`camera`](https://www.home-assistant.io/components/camera) | 1
@@ -36,14 +36,14 @@ Domain | Quantity
 [`input_number`](https://www.home-assistant.io/components/input_number) | 34
 [`input_select`](https://www.home-assistant.io/components/input_select) | 8
 [`input_text`](https://www.home-assistant.io/components/input_text) | 30
-[`light`](https://www.home-assistant.io/components/light) | 52
-[`media_player`](https://www.home-assistant.io/components/media_player) | 4
+[`light`](https://www.home-assistant.io/components/light) | 51
+[`media_player`](https://www.home-assistant.io/components/media_player) | 3
 [`number`](https://www.home-assistant.io/components/number) | 188
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 6
 [`script`](https://www.home-assistant.io/components/script) | 53
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`sensor`](https://www.home-assistant.io/components/sensor) | 454
+[`sensor`](https://www.home-assistant.io/components/sensor) | 448
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 25
@@ -51,7 +51,7 @@ Domain | Quantity
 [`update`](https://www.home-assistant.io/components/update) | 17
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1376
+Total | 1365
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -83,7 +83,6 @@ Total | 1376
 - Whisper
 
 ### Custom integrations
-- [Browser Mod](https://github.com/thomasloven/hass-browser_mod)
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
 - [Local Tuya](https://github.com/rospogrigio/localtuya)
