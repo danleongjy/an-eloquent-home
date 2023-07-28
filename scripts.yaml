@@ -75,6 +75,7 @@ fan_set_state:
           - Parents' Room Fan
           - Study Room Fan
           - Living Room Fan
+          - Dining Room Fan
           - Elena's Room Fan
           - Eli's Room Fan
       required: true
@@ -102,9 +103,10 @@ fan_set_state:
     target:
       entity_id: "{% set universal_remote = \n  { \"Elena's Room Fan\": \"remote.elis_room_universal_remote\",\n
         \   \"Eli's Room Fan\": \"remote.elis_room_universal_remote\",\n    \"Living
-        Room Fan\": \"remote.study_room_universal_remote\",\n    \"Study Room Fan\":
-        \"remote.study_room_universal_remote\",\n    \"Parents' Room Fan\": \"remote.study_room_universal_remote\",\n
-        \ } %}\n{{ universal_remote[target_fan] }}\n"
+        Room Fan\": \"remote.study_room_universal_remote\",\n    \"Dining Room Fan\":
+        \"remote.study_room_universal_remote\",\n    \"Study Room Fan\": \"remote.study_room_universal_remote\",\n
+        \   \"Parents' Room Fan\": \"remote.study_room_universal_remote\",\n  } %}\n{{
+        universal_remote[target_fan] }}\n"
     data:
       device: '{{ target_fan }}
 
@@ -127,6 +129,7 @@ fan_set_direction:
           options:
           - Parents' Room Fan
           - Study Room Fan
+          - Dining Room Fan
           - Living Room Fan
           - Elena's Room Fan
           - Eli's Room Fan
@@ -156,6 +159,10 @@ fan_set_direction:
         entity_id: fan.living_room_fan
         remote: remote.study_room_universal_remote
         direction: input_select.living_room_fan_direction
+      Dining Room Fan:
+        entity_id: fan.dining_room_fan
+        remote: remote.study_room_universal_remote
+        direction: input_select.dining_room_fan_direction
       Study Room Fan:
         entity_id: fan.study_room_fan
         remote: remote.study_room_universal_remote
