@@ -6284,6 +6284,10 @@
                 {
                   "entity": "vacuum.pikachu",
                   "state_not": "returning"
+                },
+                {
+                  "entity": "vacuum.pikachu",
+                  "state_not": "paused"
                 }
               ],
               "card": {
@@ -6302,11 +6306,10 @@
               }
             },
             {
-              "type": "entities",
+              "type": "entity-filter",
               "entities": [
                 {
                   "entity": "sensor.pikachu_battery",
-                  "secondary_info": "none",
                   "name": "Battery"
                 },
                 {
@@ -6315,7 +6318,6 @@
                 },
                 {
                   "entity": "sensor.vacuum_clean_time",
-                  "secondary_info": "none",
                   "name": "Clean Time"
                 },
                 {
@@ -6323,7 +6325,19 @@
                   "name": "Cleaned Area"
                 }
               ],
-              "state_color": true
+              "state_filter": [
+                {
+                  "operator": "not in",
+                  "value": [
+                    "unavailable",
+                    "unknown"
+                  ]
+                }
+              ],
+              "card": {
+                "type": "entities",
+                "state_color": true
+              }
             },
             {
               "type": "vertical-stack",
@@ -7831,51 +7845,11 @@
               "type": "vertical-stack",
               "cards": [
                 {
-                  "type": "custom:button-card",
-                  "entity": "sensor.local_two_hour_forecast",
-                  "show_name": false,
-                  "show_state": true,
-                  "icon": "[[[\n  if (entity.state.includes('Fair'))\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-sunny\";\n    else\n      return \"mdi:weather-night\";\n  else if (entity.state == 'Partly Cloudy')\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-partly-cloudy\";\n    else\n      return \"mdi:weather-night-partly-cloudy\";\n  else if (entity.state == 'Cloudy')\n    return \"mdi:weather-cloudy\";\n  else if (entity.state.includes('Thunder'))\n    return \"mdi:weather-lightning-rainy\";\n  else if (entity.state.includes('Shower'))\n    return \"mdi:weather-pouring\";\n  else if (entity.state.includes('Rain'))\n    return \"mdi:weather-rainy\";\n  else if (entity.state.includes('Wind'))\n    return \"mdi:weather-windy\";\n  else\n    return \"mdi:weather-cloudy-alert\"\n]]]\n"
-                },
-                {
-                  "type": "grid",
-                  "columns": 5,
-                  "square": true,
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.local_rainfall",
-                      "icon": "mdi:weather-pouring",
-                      "show_state": true,
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.local_outdoor_temperature",
-                      "icon": "mdi:sun-thermometer",
-                      "show_state": true,
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.local_outdoor_humidity",
-                      "icon": "mdi:water-percent",
-                      "show_state": true,
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.sun_solar_elevation",
-                      "show_state": true,
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.sun_solar_azimuth",
-                      "show_state": true,
-                      "template": "square_cell"
-                    }
-                  ]
+                  "show_current": true,
+                  "show_forecast": true,
+                  "type": "weather-forecast",
+                  "entity": "weather.local_weather",
+                  "secondary_info_attribute": "humidity"
                 },
                 {
                   "type": "conditional",

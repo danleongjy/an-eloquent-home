@@ -13,5 +13,24 @@
 {% else %}
     {{ 'clear' }}
 {% endif %}
-
 {% endmacro %}
+
+{%- macro weather_condition(condition) %}
+{%- if 'Fair' in condition or 'fair' in condition %}
+    {{- 'sunny' if is_state('sun.sun','above_horizon') else 'clear-night' }}
+{%- elif condition == 'Partly Cloudy' or condition == 'partly cloudy' %}
+    {{- 'partlycloudy' }}
+{%- elif condition == 'Cloudy' or condition == 'cloudy' %}
+    {{- 'cloudy' }}
+{%- elif 'Thunder' in condition or 'thunder' in condition %}
+    {{- 'lightning-rainy' }}
+{%- elif 'Shower' in condition or 'shower' in condition %}
+    {{- 'pouring' }}
+{%- elif 'Rain' in condition or 'rain' in condition %}
+    {{- 'rainy' }}
+{%- elif 'Wind' in condition or 'wind' in condition %}
+    {{- 'windy' }}
+{%- else %}
+    {{- 'exceptional'}}
+{%- endif %}
+{%- endmacro %}

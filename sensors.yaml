@@ -73,6 +73,54 @@
     {% endif %}
   scan_interval: 600
 
+- platform: rest
+  resource: https://api.data.gov.sg/v1/environment/4-day-weather-forecast
+  name: Local Forecast Day 1
+  unique_id: sensor.local_forecast_day_1
+  value_template: "{{ value_json['items'][0]['forecasts'][0]['timestamp'] }}"
+  json_attributes_path: '$.items.[0].forecasts.[0]'
+  json_attributes:
+    - forecast
+    - temperature
+    - relative_humidity
+    - wind
+
+- platform: rest
+  resource: https://api.data.gov.sg/v1/environment/4-day-weather-forecast
+  name: Local Forecast Day 2
+  unique_id: sensor.local_forecast_day_2
+  value_template: "{{ value_json['items'][0]['forecasts'][1]['timestamp'] }}"
+  json_attributes_path: '$.items.[0].forecasts.[1]'
+  json_attributes:
+    - forecast
+    - temperature
+    - relative_humidity
+    - wind
+    
+- platform: rest
+  resource: https://api.data.gov.sg/v1/environment/4-day-weather-forecast
+  name: Local Forecast Day 3
+  unique_id: sensor.local_forecast_day_3
+  value_template: "{{ value_json['items'][0]['forecasts'][2]['timestamp'] }}"
+  json_attributes_path: '$.items.[0].forecasts.[2]'
+  json_attributes:
+    - forecast
+    - temperature
+    - relative_humidity
+    - wind
+
+- platform: rest
+  resource: https://api.data.gov.sg/v1/environment/4-day-weather-forecast
+  name: Local Forecast Day 4
+  unique_id: sensor.local_forecast_day_4
+  value_template: "{{ value_json['items'][0]['forecasts'][3]['timestamp'] }}"
+  json_attributes_path: '$.items.[0].forecasts.[3]'
+  json_attributes:
+    - forecast
+    - temperature
+    - relative_humidity
+    - wind
+
 - platform: statistics
   name: Rice Cooker Watts Recent Max
   unique_id: sensor.rice_cooker_watts_recent_max
