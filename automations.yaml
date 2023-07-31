@@ -5669,11 +5669,20 @@
     then:
     - service: notify.mobile_app_pixel_4a
       data:
-        message: command_activity
+        message: command_dnd
         data:
-          intent_action: android.intent.action.SET_TIMER
-          intent_extras: android.intent.extra.alarm.LENGTH:1,android.intent.extra.alarm.SKIP_UI:true
-      alias: Trigger a 1s timer on Daniel's phone
+          command: 'off'
+      alias: Turn off Do Not Disturb
+    - service: notify.mobile_app_pixel_4a
+      data:
+        title: Good Morning!
+        message: Time to wake up at {{ states('input_datetime.daniels_next_alarm')[-8:-3]
+          }}
+        data:
+          ttl: 0
+          priority: high
+          channel: alarm_stream
+      alias: Trigger a critical alert Daniel's phone
   - delay:
       hours: 0
       minutes: 1
