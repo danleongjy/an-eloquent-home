@@ -5488,3 +5488,247 @@
     input:
       fan: fan.dining_room_fan
       motion_fan_automation: automation.dining_room_motion_fan
+- id: '1690715091749'
+  alias: Daniel's Next Alarm
+  description: Set the date and time for Daniel's next alarm
+  trigger:
+  - platform: template
+    value_template: '{{ now() > as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo)
+      + timedelta(minutes = 1) }}'
+    alias: When Daniel's Next Alarm has fired
+    id: alarm_fired
+  - platform: state
+    entity_id:
+    - calendar.late_work_nights
+    attribute: start_time
+    id: late_work_night
+  - platform: state
+    entity_id:
+    - input_datetime.elenas_school_day_alarm
+    - input_datetime.elis_school_day_alarm
+    id: childrens_alarms_changed
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id:
+      - alarm_fired
+    then:
+    - repeat:
+        until:
+        - condition: template
+          value_template: '{{ (as_datetime(states(''input_datetime.daniels_next_alarm''))).weekday()
+            in range(0,5) }}'
+          alias: Daniel's Next Day Alarm is on a weekday
+        - condition: template
+          value_template: '{{ now().date() < as_datetime(states(''input_datetime.daniels_next_alarm'')).date()
+            }}'
+          alias: Daniel's Next Alarm is on a future day
+        sequence:
+        - service: input_datetime.set_datetime
+          data:
+            date: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).date()
+              + timedelta(days = 1) }}'
+          target:
+            entity_id: input_datetime.daniels_next_alarm
+          alias: Increment Daniel's Next Alarm by 1 day
+      alias: Increment Daniel's Next Alarm by 1 day until it is a future weekday
+    - service: calendar.list_events
+      data:
+        duration:
+          minutes: 1
+        start_date_time: '{{ states(''input_datetime.daniels_next_alarm'') }}'
+      target:
+        entity_id: calendar.public_holidays
+      response_variable: public_holiday
+      alias: List public holidays occurring on Daniel's Next Alarm
+    - service: calendar.list_events
+      data:
+        duration:
+          minutes: 1
+        start_date_time: '{{ states(''input_datetime.daniels_next_alarm'') }}'
+      target:
+        entity_id: calendar.eli_no_school
+      response_variable: eli_no_school
+      alias: List Eli's school holidays occurring on Daniel's Next Alarm
+    - service: calendar.list_events
+      data:
+        duration:
+          minutes: 1
+        start_date_time: '{{ states(''input_datetime.daniels_next_alarm'') }}'
+      target:
+        entity_id: calendar.elena_no_school
+      response_variable: elena_no_school
+      alias: List Elena's school holidays occurring on Daniel's Next Alarm
+    - repeat:
+        while:
+        - condition: template
+          value_template: '{{ public_holiday.events or (eli_no_school.events and elena_no_school.events
+            ) }}'
+        sequence:
+        - service: input_datetime.set_datetime
+          data:
+            date: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).date()
+              + timedelta(days = 1) }}'
+          target:
+            entity_id: input_datetime.daniels_next_alarm
+          alias: Increment Daniel's Next Alarm by 1 day
+        - service: calendar.list_events
+          data:
+            duration:
+              minutes: 1
+            start_date_time: '{{ states(''input_datetime.daniels_next_alarm'') }}'
+          target:
+            entity_id: calendar.public_holidays
+          response_variable: public_holiday
+          alias: List public holidays occurring on Daniel's Next Alarm
+        - service: calendar.list_events
+          data:
+            duration:
+              minutes: 1
+            start_date_time: '{{ states(''input_datetime.daniels_next_alarm'') }}'
+          target:
+            entity_id: calendar.eli_no_school
+          response_variable: eli_no_school
+          alias: List Eli's school holidays occurring on Daniel's Next Alarm
+        - service: calendar.list_events
+          data:
+            duration:
+              minutes: 1
+            start_date_time: '{{ states(''input_datetime.daniels_next_alarm'') }}'
+          target:
+            entity_id: calendar.elena_no_school
+          response_variable: elena_no_school
+          alias: List Elena's school holidays occurring on Daniel's Next Alarm
+      alias: Increment Daniel's Next Alarm by 1 day as long as it is a public holiday
+        or both kids have no school
+  - service: calendar.list_events
+    data:
+      start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
+        = 21).replace(minute = 30) - timedelta(days = 1) }}'
+      duration:
+        hours: 2
+        minutes: 30
+    target:
+      entity_id: calendar.late_work_nights
+    response_variable: late_work_night_yesterday
+    alias: List late work nights occurring the day before Daniel's Next Alarm
+  - service: calendar.list_events
+    data:
+      duration:
+        minutes: 1
+      start_date_time: '{{ states(''input_datetime.daniels_next_alarm'') }}'
+    target:
+      entity_id: calendar.eli_no_school
+    response_variable: eli_no_school
+    alias: List Eli's school holidays occurring on Daniel's Next Alarm
+  - if:
+    - condition: template
+      value_template: "{% set ns = namespace(late_work_night = false) %}\n{% for event
+        in late_work_night_yesterday.events %}\n  {% if 'Grace' in event.summary or
+        'grace' in event.summary %}\n    {% set ns.late_work_night = true %}\n    {%
+        break %}\n  {% endif %}\n{% endfor %}\n{{ ns.late_work_night }}"
+      alias: If Grace had a late work night
+    - condition: template
+      value_template: '{{ eli_no_school.events | length == 0 }}'
+      alias: If Eli has school
+    then:
+    - service: input_datetime.set_datetime
+      data:
+        time: '{{ states(''input_datetime.elis_school_day_alarm'') }}'
+      target:
+        entity_id: input_datetime.daniels_next_alarm
+      alias: Set Daniel's Next Alarm to Eli's School Day Alarm
+    else:
+    - service: input_datetime.set_datetime
+      data:
+        time: '{{ states(''input_datetime.elenas_school_day_alarm'') }}'
+      target:
+        entity_id: input_datetime.daniels_next_alarm
+      alias: Set Daniel's Next Day Alarm to Elena's School Day Alarm
+  - service: input_datetime.set_datetime
+    data:
+      datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')) - timedelta(minutes
+        = 5) }}'
+    target:
+      entity_id: input_datetime.daniels_next_alarm
+    alias: Set Daniel's Next Alarm 5min before the kids' alarms
+  mode: single
+- id: '1690717352582'
+  alias: Daniel's Alarm
+  description: Ring Daniel's phone at Daniel's Next Alarm
+  trigger:
+  - platform: time
+    at: input_datetime.daniels_next_alarm
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: input_boolean.daniels_next_alarm_dismissed
+      state: 'off'
+    then:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: command_activity
+        data:
+          intent_action: android.intent.action.SET_TIMER
+          intent_extras: android.intent.extra.alarm.LENGTH:1,android.intent.extra.alarm.SKIP_UI:true
+      alias: Trigger a 1s timer on Daniel's phone
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.daniels_next_alarm_dismissed
+  mode: single
+- id: '1690718460853'
+  alias: Notify When Daniel's Next Alarm Upcoming
+  description: Send an actionable notification when Daniel's Next Alarm is imminent,
+    allowing dismissal of the alarm.
+  trigger:
+  - platform: template
+    value_template: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo)
+      - now() < timedelta(minutes = 15) }}'
+    alias: 15min before Daniel's Next Alarm
+  condition: []
+  action:
+  - service: notify.mobile_app_pixel_4a
+    data:
+      message: Upcoming alarm at {{ states('input_datetime.daniels_next_alarm')[-8:-3]
+        }}
+      data:
+        actions:
+        - action: dismiss
+          title: Dismiss Alarm
+        - action: continue
+          title: Continue Alarm
+  - wait_for_trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: dismiss
+      context:
+        user_id:
+        - ad2bcce775894550affb6dfef93a2a36
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: continue
+      context:
+        user_id:
+        - ad2bcce775894550affb6dfef93a2a36
+    timeout:
+      hours: 0
+      minutes: 15
+      seconds: 0
+      milliseconds: 0
+    continue_on_timeout: false
+  - service: input_boolean.turn_{{ 'on' if wait.trigger.event.data.action == dismiss
+      else 'off' }}
+    data: {}
+    target:
+      entity_id: input_boolean.daniels_next_alarm_dismissed
+  mode: single
