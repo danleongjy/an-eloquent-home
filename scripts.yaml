@@ -769,8 +769,8 @@ stove_programme_cook_rice_on_right_burner:
         message: Please turn on the stove first
   mode: single
   icon: mdi:stove
-elis_school_day_alarm:
-  alias: Eli's School Day Alarm
+elis_room_alarm_lights:
+  alias: Eli's Room Alarm Lights
   sequence:
   - service: light.turn_off
     data: {}
@@ -820,8 +820,8 @@ elis_school_day_alarm:
       entity_id: light.elis_room_lights
   mode: single
   icon: mdi:alarm
-parents_room_school_day_alarm:
-  alias: Parents' Room School Day Alarm
+parents_room_alarm_lights:
+  alias: Parents' Room Alarm Lights
   sequence:
   - service: light.turn_off
     data: {}
@@ -1184,3 +1184,115 @@ kitchen_blind_set_position:
         entity_id: remote.study_room_universal_remote
   mode: restart
   icon: mdi:window-shutter-open
+increment_alarm_day:
+  alias: Increment Alarm Day
+  fields:
+    alarm_datetime:
+      name: Alarm Datetime Helper
+      description: A datetime helper containing the current datetime of the alarm
+      required: true
+      selector:
+        entity:
+          filter:
+          - domain: input_datetime
+    off_time_calendars:
+      name: Off-time Calendars
+      description: A calendar indicating public holidays, and if applicable, another
+        calendar indicating when the owner of this alarm has no work/school.  Must
+        specify either one or two calendars.
+      required: true
+      selector:
+        entity:
+          multiple: true
+          filter:
+          - domain: calendar
+  sequence:
+  - repeat:
+      while:
+      - condition: or
+        conditions:
+        - condition: template
+          value_template: '{{ (as_datetime(states(alarm_datetime))).weekday() in range(5,7)
+            }}'
+          alias: Alarm day is on a weekend
+        - condition: template
+          value_template: '{{ now().date() >= as_datetime(states(alarm_datetime)).date()
+            }}'
+          alias: Alarm day is not in the future
+      sequence:
+      - service: input_datetime.set_datetime
+        data:
+          date: '{{ as_datetime(states(alarm_datetime)).date() + timedelta(days =
+            1) }}'
+        target:
+          entity_id: '{{ alarm_datetime }}'
+        alias: Increment alarm by 1 day
+    alias: Increment alarm by 1 day until it is a future weekday
+  - service: calendar.list_events
+    data:
+      duration:
+        minutes: 1
+      start_date_time: '{{ states(alarm_datetime) }}'
+    target:
+      entity_id: '{{ off_time_calendars[0] }}'
+    response_variable: public_holiday
+    alias: List public holidays occurring on next alarm
+  - if:
+    - condition: template
+      value_template: '{{ off_time_calendars | length == 2 }}'
+    then:
+    - service: calendar.list_events
+      data:
+        duration:
+          minutes: 1
+        start_date_time: '{{ states(alarm_datetime) }}'
+      target:
+        entity_id: '{{ off_time_calendars[1] }}'
+      response_variable: off_time
+      alias: List days with no work/school occurring on next alarm
+    else:
+    - variables:
+        off_time:
+          events: '{{ [] }}'
+  - repeat:
+      while:
+      - condition: template
+        value_template: '{{ (public_holiday.events + off_time.events) | length > 0
+          }}'
+      sequence:
+      - service: input_datetime.set_datetime
+        data:
+          date: '{{ as_datetime(states(alarm_datetime)).date() + timedelta(days =
+            1) }}'
+        target:
+          entity_id: '{{ alarm_datetime }}'
+        alias: Increment alarm by 1 day
+      - service: calendar.list_events
+        data:
+          duration:
+            minutes: 1
+          start_date_time: '{{ states(alarm_datetime) }}'
+        target:
+          entity_id: '{{ off_time_calendars[0] }}'
+        response_variable: public_holiday
+        alias: List public holidays occurring on next alarm
+      - if:
+        - condition: template
+          value_template: '{{ off_time_calendars | length == 2 }}'
+        then:
+        - service: calendar.list_events
+          data:
+            duration:
+              minutes: 1
+            start_date_time: '{{ states(alarm_datetime) }}'
+          target:
+            entity_id: '{{ off_time_calendars[1] }}'
+          response_variable: off_time
+          alias: List days with no work/school occurring on next alarm
+        else:
+        - variables:
+            off_time:
+              events: '{{ [] }}'
+    alias: Increment alarm by 1 day as long as it is a public holiday or an off day
+  mode: parallel
+  icon: mdi:alarm

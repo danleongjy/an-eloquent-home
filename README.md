@@ -22,7 +22,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 136
+[`automation`](https://www.home-assistant.io/components/automation) | 139
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 105
 [`button`](https://www.home-assistant.io/components/button) | 137
 [`calendar`](https://www.home-assistant.io/components/calendar) | 4
@@ -31,8 +31,8 @@ Domain | Quantity
 [`cover`](https://www.home-assistant.io/components/cover) | 8
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 5
 [`fan`](https://www.home-assistant.io/components/fan) | 6
-[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 24
-[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 23
+[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 22
+[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 27
 [`input_number`](https://www.home-assistant.io/components/input_number) | 35
 [`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 30
@@ -41,7 +41,7 @@ Domain | Quantity
 [`number`](https://www.home-assistant.io/components/number) | 188
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 6
-[`script`](https://www.home-assistant.io/components/script) | 53
+[`script`](https://www.home-assistant.io/components/script) | 54
 [`select`](https://www.home-assistant.io/components/select) | 48
 [`sensor`](https://www.home-assistant.io/components/sensor) | 451
 [`stt`](https://www.home-assistant.io/components/stt) | 1
@@ -52,7 +52,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1380
+Total | 1386
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
