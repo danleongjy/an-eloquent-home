@@ -1,4 +1,13 @@
 - binary_sensor:
+  - name: Next Alarm Imminent
+    unique_id: binary_sensor.next_alarm_imminent
+    state: "{{ not is_state('sensor.next_alarm_timings', 'AAAA') }}"
+    attributes:
+      Daniel: "{{ states('input_datetime.daniels_next_alarm') }}"
+      Grace: "{{ states('input_datetime.graces_next_alarm') }}"
+      Eli: "{{ states('input_datetime.elis_next_alarm') }}"
+      Elena: "{{ states('input_datetime.elenas_next_alarm') }}"
+
   - name: Yard Window
     unique_id: binary_sensor.yard_window
     device_class: window
@@ -251,6 +260,32 @@
     device_class: motion
 
 - sensor:
+  - name: Next Alarm Timings
+    unique_id: sensor.next_alarm_timings
+    state: >
+      {% set alarms = namespace({ 'Daniel': as_datetime(states('input_datetime.daniels_next_alarm')).astimezone(now().tzinfo),
+                                  'Grace': as_datetime(states('input_datetime.graces_next_alarm')).astimezone(now().tzinfo),
+                                  'Eli': as_datetime(states('input_datetime.elis_next_alarm')).astimezone(now().tzinfo),
+                                  'Elena': as_datetime(states('input_datetime.elenas_next_alarm')).astimezone(now().tzinfo)}) %}
+      {% set alarm_timings = namespace(output = '') %}
+      {% for person in ['Daniel','Grace','Eli','Elena'] %}
+        {% if alarms[person] - now() > timedelta(hours = 12) %}
+          {% set alarm_timings.output = alarm_timings.output + 'A' %}
+        {% elif (alarms[person] - alarms['Eli']) <= timedelta(minutes = 10) and (alarms['Eli'] - alarms[person]) <= timedelta(minutes = 10) %}
+          {% set alarm_timings.output = alarm_timings.output + 'B' %}
+        {% elif (alarms[person] - alarms['Elena']) <= timedelta(minutes = 10) and (alarms['Elena'] - alarms[person]) <= timedelta(minutes = 10) %}
+          {% set alarm_timings.output = alarm_timings.output + 'C' %}
+        {% else %}
+          {% set alarm_timings.output = alarm_timings.output + 'D' %}
+        {% endif %}
+      {% endfor %}
+      {{ alarm_timings.output }}
+    attributes:
+      Daniel: "{{ states('input_datetime.daniels_next_alarm') }}"
+      Grace: "{{ states('input_datetime.graces_next_alarm') }}"
+      Eli: "{{ states('input_datetime.elis_next_alarm') }}"
+      Elena: "{{ states('input_datetime.elenas_next_alarm') }}"
+
   - name: Washer Status
     unique_id: sensor.washer_status
     state: >
