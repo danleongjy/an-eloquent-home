@@ -15,9 +15,9 @@
 {% endif %}
 {% endmacro %}
 
-{%- macro weather_condition(condition) %}
+{%- macro weather_condition(condition, forecast) %}
 {%- if 'Fair' in condition or 'fair' in condition %}
-    {{- 'sunny' if is_state('sun.sun','above_horizon') else 'clear-night' }}
+    {{- 'sunny' if (forecast or is_state('sun.sun','above_horizon')) else 'clear-night' }}
 {%- elif condition == 'Partly Cloudy' or condition == 'partly cloudy' %}
     {{- 'partlycloudy' }}
 {%- elif condition == 'Cloudy' or condition == 'cloudy' %}

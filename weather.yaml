@@ -3,7 +3,7 @@
   unique_id: weather.local_weather
   condition_template: >-
     {% from 'weather.jinja' import weather_condition %}
-    {{ weather_condition(states('sensor.local_two_hour_forecast')) }}
+    {{ weather_condition(states('sensor.local_two_hour_forecast'), false) }}
   temperature_template: "{{ states('sensor.local_outdoor_temperature')}}"
   humidity_template: "{{ states('sensor.local_outdoor_humidity') }}"
   temperature_unit: °C
@@ -12,7 +12,7 @@
     {%- set ns = namespace(items = []) %}
     {%- for i in range (1,5) %}
       {%- set ns.items = ns.items + [{ 'datetime': states('sensor.local_forecast_day_' ~ i ), 
-                                      'condition': weather_condition(state_attr('sensor.local_forecast_day_' ~ i, 'forecast')), 
+                                      'condition': weather_condition(state_attr('sensor.local_forecast_day_' ~ i, 'forecast'), true), 
                                       'native_temperature': state_attr('sensor.local_forecast_day_' ~ i, 'temperature')['high'],
                                       'native_templow': state_attr('sensor.local_forecast_day_' ~ i, 'temperature')['low'],
                                       'humidity': (state_attr('sensor.local_forecast_day_' ~ i, 'relative_humidity')['low'] | int(95) + 
