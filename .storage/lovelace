@@ -4,6 +4,12 @@
   "key": "lovelace",
   "data": {
     "config": {
+      "resources": [
+        {
+          "url": "/local/decluttering-card.js",
+          "type": "module"
+        }
+      ],
       "button_card_templates": {
         "square_cell": {
           "aspect_ratio": "1/1",
@@ -36,6 +42,11 @@
               {
                 "background-color": "#484848"
               }
+            ],
+            "icon": [
+              {
+                "color": "#FFFFFF"
+              }
             ]
           }
         },
@@ -62,6 +73,10 @@
         },
         "vacuum_more_info": {
           "template": "top_row",
+          "tap_action": {
+            "action": "navigate",
+            "navigation_path": "/lovelace/vacuum"
+          },
           "hold_action": {
             "action": "navigate",
             "navigation_path": "/lovelace/vacuum"
@@ -220,6 +235,213 @@
           ]
         }
       },
+      "decluttering_templates": {
+        "light": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "[[light_entity]]",
+            "default": "disabled",
+            "states": {
+              "disabled": {
+                "type": "custom:button-card",
+                "entity": "[[light_entity]]",
+                "template": "error"
+              },
+              "off": {
+                "type": "custom:button-card",
+                "entity": "[[light_entity]]",
+                "template": "turn_on",
+                "tap_action": {
+                  "action": "call-service",
+                  "service": "[[recommended_light_level_script]]"
+                }
+              },
+              "on": {
+                "type": "custom:slider-button-card",
+                "entity": "[[light_entity]]",
+                "slider": {
+                  "direction": "bottom-top",
+                  "background": "solid",
+                  "use_state_color": false,
+                  "use_percentage_bg_opacity": false,
+                  "show_track": false,
+                  "toggle_on_click": false,
+                  "force_square": true
+                },
+                "show_name": false,
+                "show_state": false,
+                "compact": true,
+                "icon": {
+                  "show": true,
+                  "use_state_color": true,
+                  "tap_action": {
+                    "action": "more-info"
+                  },
+                  "icon": ""
+                },
+                "action_button": {
+                  "mode": "toggle",
+                  "icon": "mdi:power",
+                  "show": false,
+                  "show_spinner": true,
+                  "tap_action": {
+                    "action": null
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fan": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "[[fan_auto_control_automation]]",
+            "default": "off",
+            "states": {
+              "off": {
+                "type": "custom:state-switch",
+                "entity": "[[fan_entity]]",
+                "default": "disabled",
+                "states": {
+                  "disabled": {
+                    "type": "custom:button-card",
+                    "entity": "[[fan_entity]]",
+                    "template": "error"
+                  },
+                  "off": {
+                    "type": "custom:button-card",
+                    "entity": "[[fan_entity]]",
+                    "template": "turn_on",
+                    "icon": "[[[ if (entity.attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.turn_on",
+                      "service_data": {
+                        "entity_id": "[[fan_auto_control_automation]]"
+                      }
+                    }
+                  },
+                  "on": {
+                    "type": "custom:state-switch",
+                    "entity": "[[fan_direction_indicator]]",
+                    "default": "forward",
+                    "states": {
+                      "forward": {
+                        "type": "custom:slider-button-card",
+                        "entity": "[[fan_entity]]",
+                        "slider": {
+                          "direction": "bottom-top",
+                          "background": "solid",
+                          "use_state_color": false,
+                          "use_percentage_bg_opacity": false,
+                          "show_track": false,
+                          "toggle_on_click": false,
+                          "force_square": true
+                        },
+                        "show_name": false,
+                        "show_state": false,
+                        "compact": true,
+                        "icon": {
+                          "show": true,
+                          "use_state_color": true,
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_on",
+                            "service_data": {
+                              "entity_id": "[[fan_auto_control_automation]]"
+                            }
+                          },
+                          "icon": "mdi:fan-chevron-down"
+                        },
+                        "action_button": {
+                          "mode": "toggle",
+                          "icon": "mdi:power",
+                          "show": false,
+                          "show_spinner": true,
+                          "tap_action": {
+                            "action": "toggle"
+                          }
+                        }
+                      },
+                      "reverse": {
+                        "type": "custom:slider-button-card",
+                        "entity": "[[fan_entity]]",
+                        "slider": {
+                          "direction": "bottom-top",
+                          "background": "solid",
+                          "use_state_color": false,
+                          "use_percentage_bg_opacity": false,
+                          "show_track": false,
+                          "toggle_on_click": false,
+                          "force_square": true
+                        },
+                        "show_name": false,
+                        "show_state": false,
+                        "compact": true,
+                        "icon": {
+                          "show": true,
+                          "use_state_color": true,
+                          "tap_action": {
+                            "action": "call-service",
+                            "service": "automation.turn_on",
+                            "service_data": {
+                              "entity_id": "[[fan_auto_control_automation]]"
+                            }
+                          },
+                          "icon": "mdi:fan-chevron-up"
+                        },
+                        "action_button": {
+                          "mode": "toggle",
+                          "icon": "mdi:power",
+                          "show": false,
+                          "show_spinner": true,
+                          "tap_action": {
+                            "action": "toggle"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "on": {
+                "type": "custom:state-switch",
+                "entity": "[[fan_entity]]",
+                "default": "available",
+                "states": {
+                  "disabled": {
+                    "type": "custom:button-card",
+                    "entity": "[[fan_entity]]",
+                    "template": "error"
+                  },
+                  "available": {
+                    "type": "custom:button-card",
+                    "entity": "[[fan_entity]]",
+                    "template": "turn_on",
+                    "icon": "[[[ if (entity.attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
+                    "label": "[[[ return entity.attributes.percentage + '%';]]]",
+                    "show_label": true,
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.turn_off",
+                      "service_data": {
+                        "entity_id": "[[fan_auto_control_automation]]"
+                      }
+                    },
+                    "tap_action": {
+                      "action": "call-service",
+                      "service": "[[[\n  if (entity.state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
+                      "service_data": {
+                        "entity_id": "[[fan_entity]]"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "views": [
         {
           "title": "Home",
@@ -236,7 +458,7 @@
                   "type": "custom:button-card",
                   "entity": "sensor.local_two_hour_forecast",
                   "template": "top_row",
-                  "icon": "[[[\n  if (entity.state.includes('Fair'))\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-sunny\";\n    else\n      return \"mdi:weather-night\";\n  else if (entity.state == 'Partly Cloudy')\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-partly-cloudy\";\n    else\n      return \"mdi:weather-night-partly-cloudy\";\n  else if (entity.state == 'Cloudy')\n    return \"mdi:weather-cloudy\";\n  else if (entity.state.includes('Thunder'))\n    return \"mdi:weather-lightning-rainy\";\n  else if (entity.state.includes('Shower'))\n    return \"mdi:weather-rainy\";\n  else if (entity.state.includes('Rain'))\n    return \"mdi:weather-pouring\";\n  else if (entity.state.includes('Wind'))\n    return \"mdi:weather-windy\";\n  else\n    return \"mdi:weather-cloudy-alert\"\n]]]\n",
+                  "icon": "[[[\n  if (entity.state.includes('Fair'))\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-sunny\";\n    else\n      return \"mdi:weather-night\";\n  else if (entity.state == 'Partly Cloudy')\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-partly-cloudy\";\n    else\n      return \"mdi:weather-night-partly-cloudy\";\n  else if (entity.state == 'Cloudy')\n    return \"mdi:weather-cloudy\";\n  else if (entity.state.includes('Thunder'))\n    return \"mdi:weather-lightning-rainy\";\n  else if (entity.state.includes('Shower'))\n    return \"mdi:weather-pouring\";\n  else if (entity.state.includes('Rain'))\n    return \"mdi:weather-rainy\";\n  else if (entity.state.includes('Wind'))\n    return \"mdi:weather-windy\";\n  else\n    return \"mdi:weather-cloudy-alert\"\n]]]\n",
                   "styles": {
                     "card": [
                       {
@@ -501,6 +723,9 @@
                         "icon": [
                           {
                             "animation": "blink 2s ease infinite"
+                          },
+                          {
+                            "color": "#FFFFFF"
                           }
                         ]
                       }
@@ -509,7 +734,7 @@
                       "type": "custom:button-card",
                       "entity": "vacuum.pikachu",
                       "template": "vacuum_more_info",
-                      "label": "[[[ \n  if (parseInt(states['vacuum.pikachu'].attributes.battery_level) <= 95)\n    return states['vacuum.pikachu'].attributes.battery_level + '%';\n  else\n    return ''\n]]]\n",
+                      "label": "[[[ \n  if (parseInt(entity.attributes.battery_level) <= 95)\n    return entity.attributes.battery_level + '%';\n  else\n    return ''\n]]]\n",
                       "show_label": true,
                       "color": "rgb(68,115,158)",
                       "double_tap_action": {
@@ -524,7 +749,7 @@
                       "type": "custom:button-card",
                       "entity": "vacuum.pikachu",
                       "template": "vacuum_more_info",
-                      "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
+                      "label": "[[[ return entity.attributes.battery_level + '%']]]",
                       "show_label": true,
                       "color": "rgb(253,216,53)",
                       "tap_action": {
@@ -539,7 +764,7 @@
                       "type": "custom:button-card",
                       "entity": "vacuum.pikachu",
                       "template": "vacuum_more_info",
-                      "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
+                      "label": "[[[ return entity.attributes.battery_level + '%']]]",
                       "show_label": true,
                       "color": "rgb(253,216,53)",
                       "tap_action": {
@@ -555,7 +780,7 @@
                       "entity": "vacuum.pikachu",
                       "template": "vacuum_more_info",
                       "color": "rgb(68,115,158)",
-                      "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
+                      "label": "[[[ return entity.attributes.battery_level + '%']]]",
                       "show_label": true,
                       "tap_action": {
                         "action": "call-service",
@@ -581,7 +806,7 @@
                       "type": "custom:button-card",
                       "entity": "vacuum.pikachu",
                       "template": "vacuum_more_info",
-                      "label": "[[[ return states['vacuum.pikachu'].attributes.battery_level + '%']]]",
+                      "label": "[[[ return entity.attributes.battery_level + '%']]]",
                       "show_label": true,
                       "styles": {
                         "card": [
@@ -634,112 +859,28 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.playroom_lights",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.playroom_lights",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.playroom_lights"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.playroom_lights",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_playroom"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.playroom_lights",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_playroom"
                     }
-                  }
+                  ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.yard_light_entity",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.yard_light_entity",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.yard_light_entity"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.yard_light_entity",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_yard"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.yard_light_entity",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_yard"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -752,12 +893,12 @@
                   "states": {
                     "disabled": {
                       "type": "custom:button-card",
-                      "entity": "sensor.washer",
+                      "entity": "switch.washer_power",
                       "template": "error"
                     },
                     "Off": {
                       "type": "custom:button-card",
-                      "entity": "sensor.washer",
+                      "entity": "switch.washer_power",
                       "template": "washer_more_info",
                       "styles": {
                         "card": [
@@ -769,54 +910,54 @@
                     },
                     "Standby": {
                       "type": "custom:button-card",
-                      "entity": "sensor.washer",
+                      "entity": "switch.washer_power",
                       "template": "washer_more_info"
                     },
                     "Detecting": {
                       "type": "custom:button-card",
-                      "entity": "sensor.washer",
+                      "entity": "switch.washer_power",
                       "template": "washer_more_info",
                       "label": "...",
                       "show_label": true
                     },
                     "Delay Set": {
                       "type": "custom:button-card",
-                      "entity": "sensor.washer",
+                      "entity": "switch.washer_power",
                       "template": "washer_more_info",
                       "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
                       "show_label": true
                     },
                     "Washing": {
                       "type": "custom:button-card",
-                      "entity": "sensor.washer",
+                      "entity": "switch.washer_power",
                       "template": "washer_more_info",
                       "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
                       "show_label": true
                     },
                     "Rinsing": {
                       "type": "custom:button-card",
-                      "entity": "sensor.washer",
+                      "entity": "switch.washer_power",
                       "template": "washer_more_info",
                       "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
                       "show_label": true
                     },
                     "Spinning": {
                       "type": "custom:button-card",
-                      "entity": "sensor.washer",
+                      "entity": "switch.washer_power",
                       "template": "washer_more_info",
                       "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
                       "show_label": true
                     },
                     "Finished": {
                       "type": "custom:button-card",
-                      "entity": "sensor.washer",
+                      "entity": "switch.washer_power",
                       "template": "washer_more_info",
                       "label": "Done!",
                       "show_label": true
                     },
                     "Paused": {
                       "type": "custom:button-card",
-                      "entity": "sensor.washer_status",
+                      "entity": "switch.washer_power",
                       "template": "washer_more_info",
                       "label": "Paused",
                       "show_label": true,
@@ -834,7 +975,7 @@
                     },
                     "Error": {
                       "type": "custom:button-card",
-                      "entity": "sensor.washer",
+                      "entity": "switch.washer_power",
                       "template": "washer_more_info",
                       "label": "Error",
                       "show_label": true,
@@ -884,209 +1025,35 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.elenas_room_lights",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.elenas_room_lights",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.elenas_room_lights"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.elenas_room_lights",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_elenas_room"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.elenas_room_lights",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_elenas_room"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "automation.elenas_room_fan_auto_control",
-                  "default": "off",
-                  "states": {
-                    "off": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.elenas_room_fan",
-                      "default": "disabled",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.elenas_room_fan",
-                          "template": "error"
-                        },
-                        "off": {
-                          "type": "custom:button-card",
-                          "entity": "fan.elenas_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.elenas_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_on",
-                            "service_data": {
-                              "entity_id": "automation.elenas_room_fan_auto_control"
-                            }
-                          }
-                        },
-                        "on": {
-                          "type": "custom:state-switch",
-                          "entity": "input_select.elenas_room_fan_direction",
-                          "default": "forward",
-                          "states": {
-                            "forward": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.elenas_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.elenas_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-down"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            },
-                            "reverse": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.elenas_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.elenas_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-up"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
+                  "type": "custom:decluttering-card",
+                  "template": "fan",
+                  "variables": [
+                    {
+                      "fan_entity": "fan.elenas_room_fan"
                     },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.elenas_room_fan",
-                      "default": "available",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.elenas_room_fan",
-                          "template": "error"
-                        },
-                        "available": {
-                          "type": "custom:button-card",
-                          "entity": "fan.elenas_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.elenas_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.elenas_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.elenas_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.elenas_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.elenas_room_fan"
-                            }
-                          }
-                        }
-                      }
+                    {
+                      "fan_auto_control_automation": "automation.elenas_room_fan_auto_control"
+                    },
+                    {
+                      "fan_direction_indicator": "input_select.elenas_room_fan_direction"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:state-switch",
@@ -1117,7 +1084,7 @@
                       },
                       "tap_action": {
                         "action": "call-service",
-                        "service": "[[[\n  if (states['climate.elenas_room_ac'].state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
+                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
                         "service_data": {
                           "entity_id": "climate.elenas_room_ac"
                         }
@@ -1212,209 +1179,35 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.elis_room_lights",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.elis_room_lights",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.elis_room_lights"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.elis_room_lights",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_elis_room"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.elis_room_lights",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_elis_room"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "automation.elis_room_fan_auto_control",
-                  "default": "off",
-                  "states": {
-                    "off": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.elis_room_fan",
-                      "default": "disabled",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.elis_room_fan",
-                          "template": "error"
-                        },
-                        "off": {
-                          "type": "custom:button-card",
-                          "entity": "fan.elis_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.elis_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_on",
-                            "service_data": {
-                              "entity_id": "automation.elis_room_fan_auto_control"
-                            }
-                          }
-                        },
-                        "on": {
-                          "type": "custom:state-switch",
-                          "entity": "input_select.elis_room_fan_direction",
-                          "default": "forward",
-                          "states": {
-                            "forward": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.elis_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.elis_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-down"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            },
-                            "reverse": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.elis_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.elis_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-up"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
+                  "type": "custom:decluttering-card",
+                  "template": "fan",
+                  "variables": [
+                    {
+                      "fan_entity": "fan.elis_room_fan"
                     },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.elis_room_fan",
-                      "default": "available",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.elis_room_fan",
-                          "template": "error"
-                        },
-                        "available": {
-                          "type": "custom:button-card",
-                          "entity": "fan.elis_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.elis_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.elis_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.elis_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.elis_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.elis_room_fan"
-                            }
-                          }
-                        }
-                      }
+                    {
+                      "fan_auto_control_automation": "automation.elis_room_fan_auto_control"
+                    },
+                    {
+                      "fan_direction_indicator": "input_select.elis_room_fan_direction"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:state-switch",
@@ -1445,7 +1238,7 @@
                       },
                       "tap_action": {
                         "action": "call-service",
-                        "service": "[[[\n  if (states['climate.elis_room_ac'].state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
+                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
                         "service_data": {
                           "entity_id": "climate.elis_room_ac"
                         }
@@ -1531,54 +1324,16 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.hallway_lights",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.hallway_lights",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.hallway_lights"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.hallway_lights",
-                      "template": "turn_on"
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.hallway_lights",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_hallway"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -1605,58 +1360,16 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.powder_room_pendant_light_entity",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.powder_room_pendant_light_entity",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.powder_room_pendant_light_entity"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.powder_room_pendant_light_entity",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_powder_room"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.powder_room_pendant_light_entity",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_powder_room"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -1683,58 +1396,16 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.junior_bathroom_lights",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.junior_bathroom_lights",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.junior_bathroom_lights"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.junior_bathroom_lights",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_junior_bathroom"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.junior_bathroom_lights",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_junior_bathroom"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -1761,259 +1432,43 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.dining_room_lights",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.dining_room_lights",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.dining_room_lights"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.dining_room_lights",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_dining_room_lights"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.dining_room_lights",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_dining_room_lights"
                     }
-                  }
+                  ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.dining_room_pendant_light_entity",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.dining_room_pendant_light_entity",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.dining_room_pendant_light_entity"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.dining_room_pendant_light_entity",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_dining_room_pendant_light"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.dining_room_pendant_light_entity",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_dining_room_pendant_light"
                     }
-                  }
+                  ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "automation.dining_room_fan_auto_control",
-                  "default": "off",
-                  "states": {
-                    "off": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.dining_room_fan",
-                      "default": "disabled",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.dining_room_fan",
-                          "template": "error"
-                        },
-                        "off": {
-                          "type": "custom:button-card",
-                          "entity": "fan.dining_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.dining_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_on",
-                            "service_data": {
-                              "entity_id": "automation.dining_room_fan_auto_control"
-                            }
-                          }
-                        },
-                        "on": {
-                          "type": "custom:state-switch",
-                          "entity": "input_select.dining_room_fan_direction",
-                          "default": "forward",
-                          "states": {
-                            "forward": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.dining_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.dining_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-down"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            },
-                            "reverse": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.dining_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.dining_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-up"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
+                  "type": "custom:decluttering-card",
+                  "template": "fan",
+                  "variables": [
+                    {
+                      "fan_entity": "fan.dining_room_fan"
                     },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.dining_room_fan",
-                      "default": "available",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.dining_room_fan",
-                          "template": "error"
-                        },
-                        "available": {
-                          "type": "custom:button-card",
-                          "entity": "fan.dining_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.dining_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.dining_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.dining_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.dining_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.dining_room_fan"
-                            }
-                          }
-                        }
-                      }
+                    {
+                      "fan_auto_control_automation": "automation.dining_room_fan_auto_control"
+                    },
+                    {
+                      "fan_direction_indicator": "input_select.dining_room_fan_direction"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:state-switch",
@@ -2044,7 +1499,7 @@
                       },
                       "tap_action": {
                         "action": "call-service",
-                        "service": "[[[\n  if (states['climate.dining_room_ac'].state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
+                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
                         "service_data": {
                           "entity_id": "climate.dining_room_ac"
                         }
@@ -2185,259 +1640,43 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.living_room_lights",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.living_room_lights",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.living_room_lights"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.living_room_lights",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_living_room_lights"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.living_room_lights",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_living_room_lights"
                     }
-                  }
+                  ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.living_room_pendant_light_entity",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.living_room_pendant_light_entity",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.living_room_pendant_light_entity"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.living_room_pendant_light_entity",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_living_room_pendant_light"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.living_room_pendant_light_entity",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_living_room_pendant_light"
                     }
-                  }
+                  ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "automation.living_room_fan_auto_control",
-                  "default": "off",
-                  "states": {
-                    "off": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.living_room_fan",
-                      "default": "disabled",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.living_room_fan",
-                          "template": "error"
-                        },
-                        "off": {
-                          "type": "custom:button-card",
-                          "entity": "fan.living_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.living_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_on",
-                            "service_data": {
-                              "entity_id": "automation.living_room_fan_auto_control"
-                            }
-                          }
-                        },
-                        "on": {
-                          "type": "custom:state-switch",
-                          "entity": "input_select.living_room_fan_direction",
-                          "default": "forward",
-                          "states": {
-                            "forward": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.living_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.living_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-down"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            },
-                            "reverse": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.living_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.living_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-up"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
+                  "type": "custom:decluttering-card",
+                  "template": "fan",
+                  "variables": [
+                    {
+                      "fan_entity": "fan.living_room_fan"
                     },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.living_room_fan",
-                      "default": "available",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.living_room_fan",
-                          "template": "error"
-                        },
-                        "available": {
-                          "type": "custom:button-card",
-                          "entity": "fan.living_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.living_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.living_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.living_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.living_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.living_room_fan"
-                            }
-                          }
-                        }
-                      }
+                    {
+                      "fan_auto_control_automation": "automation.living_room_fan_auto_control"
+                    },
+                    {
+                      "fan_direction_indicator": "input_select.living_room_fan_direction"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:state-switch",
@@ -2468,7 +1707,7 @@
                       },
                       "tap_action": {
                         "action": "call-service",
-                        "service": "[[[\n  if (states['climate.living_room_ac'].state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
+                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
                         "service_data": {
                           "entity_id": "climate.living_room_ac"
                         }
@@ -2616,209 +1855,35 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.study_room_lights",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.study_room_lights",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.study_room_lights"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.study_room_lights",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_study_room"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.study_room_lights",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_study_room"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "automation.study_room_fan_auto_control",
-                  "default": "off",
-                  "states": {
-                    "off": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.study_room_fan",
-                      "default": "disabled",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.study_room_fan",
-                          "template": "error"
-                        },
-                        "off": {
-                          "type": "custom:button-card",
-                          "entity": "fan.study_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.study_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_on",
-                            "service_data": {
-                              "entity_id": "automation.study_room_fan_auto_control"
-                            }
-                          }
-                        },
-                        "on": {
-                          "type": "custom:state-switch",
-                          "entity": "input_select.study_room_fan_direction",
-                          "default": "forward",
-                          "states": {
-                            "forward": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.study_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.study_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-down"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            },
-                            "reverse": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.study_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.study_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-up"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
+                  "type": "custom:decluttering-card",
+                  "template": "fan",
+                  "variables": [
+                    {
+                      "fan_entity": "fan.study_room_fan"
                     },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.study_room_fan",
-                      "default": "available",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.study_room_fan",
-                          "template": "error"
-                        },
-                        "available": {
-                          "type": "custom:button-card",
-                          "entity": "fan.study_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.study_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.study_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.study_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.study_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.study_room_fan"
-                            }
-                          }
-                        }
-                      }
+                    {
+                      "fan_auto_control_automation": "automation.study_room_fan_auto_control"
+                    },
+                    {
+                      "fan_direction_indicator": "input_select.study_room_fan_direction"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:state-switch",
@@ -2849,7 +1914,7 @@
                       },
                       "tap_action": {
                         "action": "call-service",
-                        "service": "[[[\n  if (states['climate.study_room_ac'].state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
+                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
                         "service_data": {
                           "entity_id": "climate.study_room_ac"
                         }
@@ -2940,213 +2005,44 @@
                       {
                         "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_doors_open_at_parents_room'].state == 'on')\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
                       }
+                    ],
+                    "name": [
+                      {
+                        "animation": "[[[ \n  if (states['input_boolean.parents_room_flag'].state == 'on')\n    return 'blink 2s ease infinite';\n]]]\n"
+                      }
                     ]
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.parents_room_lights",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.parents_room_lights",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.parents_room_lights"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.parents_room_lights",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_parents_room"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.parents_room_lights",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_parents_room"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
                   "color_type": "blank-card"
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "automation.parents_room_fan_auto_control",
-                  "default": "off",
-                  "states": {
-                    "off": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.parents_room_fan",
-                      "default": "disabled",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.parents_room_fan",
-                          "template": "error"
-                        },
-                        "off": {
-                          "type": "custom:button-card",
-                          "entity": "fan.parents_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.parents_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_on",
-                            "service_data": {
-                              "entity_id": "automation.parents_room_fan_auto_control"
-                            }
-                          }
-                        },
-                        "on": {
-                          "type": "custom:state-switch",
-                          "entity": "input_select.parents_room_fan_direction",
-                          "default": "forward",
-                          "states": {
-                            "forward": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.parents_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.parents_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-down"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            },
-                            "reverse": {
-                              "type": "custom:slider-button-card",
-                              "entity": "fan.parents_room_fan",
-                              "slider": {
-                                "direction": "bottom-top",
-                                "background": "solid",
-                                "use_state_color": false,
-                                "use_percentage_bg_opacity": false,
-                                "show_track": false,
-                                "toggle_on_click": false,
-                                "force_square": true
-                              },
-                              "show_name": false,
-                              "show_state": false,
-                              "compact": true,
-                              "icon": {
-                                "show": true,
-                                "use_state_color": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "automation.turn_on",
-                                  "service_data": {
-                                    "entity_id": "automation.parents_room_fan_auto_control"
-                                  }
-                                },
-                                "icon": "mdi:fan-chevron-up"
-                              },
-                              "action_button": {
-                                "mode": "toggle",
-                                "icon": "mdi:power",
-                                "show": false,
-                                "show_spinner": true,
-                                "tap_action": {
-                                  "action": "toggle"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
+                  "type": "custom:decluttering-card",
+                  "template": "fan",
+                  "variables": [
+                    {
+                      "fan_entity": "fan.parents_room_fan"
                     },
-                    "on": {
-                      "type": "custom:state-switch",
-                      "entity": "fan.parents_room_fan",
-                      "default": "available",
-                      "states": {
-                        "disabled": {
-                          "type": "custom:button-card",
-                          "entity": "fan.parents_room_fan",
-                          "template": "error"
-                        },
-                        "available": {
-                          "type": "custom:button-card",
-                          "entity": "fan.parents_room_fan",
-                          "template": "turn_on",
-                          "icon": "[[[ if (states['fan.parents_room_fan'].attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                          "label": "[[[ return states['fan.parents_room_fan'].attributes.percentage + '%';]]]",
-                          "show_label": true,
-                          "double_tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_off",
-                            "service_data": {
-                              "entity_id": "automation.parents_room_fan_auto_control"
-                            }
-                          },
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "[[[\n  if (states['fan.parents_room_fan'].state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                            "service_data": {
-                              "entity_id": "fan.parents_room_fan"
-                            }
-                          }
-                        }
-                      }
+                    {
+                      "fan_auto_control_automation": "automation.parents_room_fan_auto_control"
+                    },
+                    {
+                      "fan_direction_indicator": "input_select.parents_room_fan_direction"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:state-switch",
@@ -3177,7 +2073,7 @@
                       },
                       "tap_action": {
                         "action": "call-service",
-                        "service": "[[[\n  if (states['climate.parents_room_ac'].state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
+                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
                         "service_data": {
                           "entity_id": "climate.parents_room_ac"
                         }
@@ -3276,104 +2172,28 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.master_bathroom_light_entity",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.master_bathroom_light_entity",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.master_bathroom_light_entity"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.master_bathroom_light_entity",
-                      "template": "turn_on"
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.master_bathroom_light_entity",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_master_bathroom_light"
                     }
-                  }
+                  ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.master_bathroom_pendant_light_entity",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.master_bathroom_pendant_light_entity",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.master_bathroom_pendant_light_entity"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.master_bathroom_pendant_light_entity",
-                      "template": "turn_on"
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.master_bathroom_pendant_light_entity",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_master_bathroom_pendant_light"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -3467,58 +2287,16 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "light.kitchen_lights",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "light.kitchen_lights",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "light",
+                  "variables": [
+                    {
+                      "light_entity": "light.kitchen_lights"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "light.kitchen_lights",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.recommended_light_level_for_kitchen"
-                      }
-                    },
-                    "on": {
-                      "type": "custom:slider-button-card",
-                      "entity": "light.kitchen_lights",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_kitchen"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:state-switch",
@@ -5347,12 +4125,6 @@
             {
               "type": "entities",
               "entities": [
-                {
-                  "entity": "input_datetime.elenas_wind_down"
-                },
-                {
-                  "entity": "input_datetime.elenas_bedtime"
-                },
                 {
                   "entity": "input_datetime.wind_down"
                 },
@@ -7762,6 +6534,16 @@
                       "show_state": true
                     }
                   ]
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_boolean.parents_room_flag",
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "icon_tap_action": {
+                    "action": "toggle"
+                  }
                 },
                 {
                   "type": "conditional",

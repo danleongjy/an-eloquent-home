@@ -14,7 +14,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.3](https://github.com/home-assistant/operating-system/releases/tag/10.3) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.3](https://github.com/home-assistant/operating-system/releases/tag/10.4) running in a [Proxmox VM](https://www.proxmox.com/)
 * [Home Assistant Core 2023.7.3](https://github.com/home-assistant/core/releases/tag/2023.7.3)
 * 4 cores, 4GB RAM, 32GB storage
 
@@ -22,7 +22,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 139
+[`automation`](https://www.home-assistant.io/components/automation) | 138
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 106
 [`button`](https://www.home-assistant.io/components/button) | 137
 [`calendar`](https://www.home-assistant.io/components/calendar) | 4
@@ -31,8 +31,8 @@ Domain | Quantity
 [`cover`](https://www.home-assistant.io/components/cover) | 8
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 5
 [`fan`](https://www.home-assistant.io/components/fan) | 6
-[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 22
-[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 27
+[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 23
+[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 25
 [`input_number`](https://www.home-assistant.io/components/input_number) | 35
 [`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 30
@@ -52,7 +52,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1388
+Total | 1386
 
 ## Core Integrations
 - [<img src="https://brands.home-assistant.io/_/adguard/icon.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -95,6 +95,7 @@ Total | 1388
 
 ### Custom dashboard cards
 - [Button Card](https://github.com/custom-cards/button-card)
+- [Decluttering Card](https://github.com/custom-cards/decluttering-card)
 - [Slider Button Card](https://github.com/custom-cards/slider-button-card)
 - [State Switch](https://github.com/thomasloven/lovelace-state-switch)
 
