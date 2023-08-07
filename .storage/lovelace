@@ -15,6 +15,16 @@
           "aspect_ratio": "1/1",
           "show_name": false
         },
+        "square_cell_background": {
+          "template": "square_cell",
+          "styles": {
+            "card": [
+              {
+                "background-color": "var(--primary-background-color)"
+              }
+            ]
+          }
+        },
         "top_row": {
           "template": "square_cell",
           "styles": {
@@ -435,6 +445,101 @@
                         "entity_id": "[[fan_entity]]"
                       }
                     }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ac": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "[[ac_status_sensor]]",
+            "default": "disabled",
+            "states": {
+              "disabled": {
+                "type": "custom:button-card",
+                "entity": "[[climate_entity]]",
+                "template": "error"
+              },
+              "auto": {
+                "type": "custom:button-card",
+                "entity": "[[climate_entity]]",
+                "template": "turn_on",
+                "label": "[[[ return entity.attributes.current_temperature + '°C';]]]",
+                "show_label": true,
+                "hold_action": {
+                  "action": "more-info",
+                  "entity": "[[climate_entity]]"
+                },
+                "double_tap_action": {
+                  "action": "call-service",
+                  "service": "automation.turn_off",
+                  "service_data": {
+                    "entity_id": "[[ac_auto_control_automation]]"
+                  }
+                },
+                "tap_action": {
+                  "action": "call-service",
+                  "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
+                  "service_data": {
+                    "entity_id": "[[climate_entity]]"
+                  }
+                }
+              },
+              "off": {
+                "type": "custom:button-card",
+                "entity": "[[climate_entity]]",
+                "template": "turn_on",
+                "tap_action": {
+                  "action": "call-service",
+                  "service": "climate.turn_on",
+                  "service_data": {
+                    "entity_id": "[[climate_entity]]"
+                  }
+                },
+                "double_tap_action": {
+                  "action": "call-service",
+                  "service": "automation.turn_on",
+                  "service_data": {
+                    "entity_id": "[[ac_auto_control_automation]]"
+                  }
+                }
+              },
+              "cool": {
+                "type": "custom:slider-button-card",
+                "entity": "[[climate_entity]]",
+                "slider": {
+                  "direction": "bottom-top",
+                  "background": "solid",
+                  "use_state_color": false,
+                  "use_percentage_bg_opacity": false,
+                  "show_track": false,
+                  "toggle_on_click": false,
+                  "force_square": true
+                },
+                "show_name": false,
+                "show_state": false,
+                "compact": true,
+                "icon": {
+                  "show": true,
+                  "use_state_color": true,
+                  "tap_action": {
+                    "action": "call-service",
+                    "service": "automation.turn_on",
+                    "service_data": {
+                      "entity_id": "[[ac_auto_control_automation]]"
+                    }
+                  },
+                  "icon": ""
+                },
+                "action_button": {
+                  "mode": "toggle",
+                  "icon": "mdi:power",
+                  "show": false,
+                  "show_spinner": true,
+                  "tap_action": {
+                    "action": "toggle"
                   }
                 }
               }
@@ -1056,97 +1161,19 @@
                   ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "sensor.elenas_room_ac_status",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "climate.elenas_room_ac",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "ac",
+                  "variables": [
+                    {
+                      "climate_entity": "climate.elenas_room_ac"
                     },
-                    "auto": {
-                      "type": "custom:button-card",
-                      "entity": "switch.elenas_room_ac_switch",
-                      "template": "turn_on",
-                      "label": "[[[ return states['sensor.elenas_room_temperature'].state + '°C';]]]",
-                      "show_label": true,
-                      "hold_action": {
-                        "action": "more-info",
-                        "entity": "climate.elenas_room_ac"
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_off",
-                        "service_data": {
-                          "entity_id": "automation.elenas_room_ac_auto_control"
-                        }
-                      },
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
-                        "service_data": {
-                          "entity_id": "climate.elenas_room_ac"
-                        }
-                      }
+                    {
+                      "ac_status_sensor": "sensor.elenas_room_ac_status"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "climate.elenas_room_ac",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "climate.turn_on",
-                        "service_data": {
-                          "entity_id": "climate.elenas_room_ac"
-                        }
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_on",
-                        "service_data": {
-                          "entity_id": "automation.elenas_room_ac_auto_control"
-                        }
-                      }
-                    },
-                    "cool": {
-                      "type": "custom:slider-button-card",
-                      "entity": "climate.elenas_room_ac",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "automation.turn_on",
-                          "service_data": {
-                            "entity_id": "automation.elenas_room_ac_auto_control"
-                          }
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "ac_auto_control_automation": "automation.elenas_room_ac_auto_control"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -1210,97 +1237,19 @@
                   ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "sensor.elis_room_ac_status",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "climate.elis_room_ac",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "ac",
+                  "variables": [
+                    {
+                      "climate_entity": "climate.elis_room_ac"
                     },
-                    "auto": {
-                      "type": "custom:button-card",
-                      "entity": "switch.elis_room_ac_switch",
-                      "template": "turn_on",
-                      "label": "[[[ return states['sensor.elis_room_temperature'].state + '°C';]]]",
-                      "show_label": true,
-                      "hold_action": {
-                        "action": "more-info",
-                        "entity": "climate.elis_room_ac"
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_off",
-                        "service_data": {
-                          "entity_id": "automation.elis_room_ac_auto_control"
-                        }
-                      },
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
-                        "service_data": {
-                          "entity_id": "climate.elis_room_ac"
-                        }
-                      }
+                    {
+                      "ac_status_sensor": "sensor.elis_room_ac_status"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "climate.elis_room_ac",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "climate.turn_on",
-                        "service_data": {
-                          "entity_id": "climate.elis_room_ac"
-                        }
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_on",
-                        "service_data": {
-                          "entity_id": "automation.elis_room_ac_auto_control"
-                        }
-                      }
-                    },
-                    "cool": {
-                      "type": "custom:slider-button-card",
-                      "entity": "climate.elis_room_ac",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "automation.turn_on",
-                          "service_data": {
-                            "entity_id": "automation.elis_room_ac_auto_control"
-                          }
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "ac_auto_control_automation": "automation.elis_room_ac_auto_control"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -1471,97 +1420,19 @@
                   ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "sensor.dining_room_ac_status",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "climate.dining_room_ac",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "ac",
+                  "variables": [
+                    {
+                      "climate_entity": "climate.dining_room_ac"
                     },
-                    "auto": {
-                      "type": "custom:button-card",
-                      "entity": "switch.dining_room_ac_switch",
-                      "template": "turn_on",
-                      "label": "[[[ return states['sensor.dining_room_temperature'].state + '°C';]]]",
-                      "show_label": true,
-                      "hold_action": {
-                        "action": "more-info",
-                        "entity": "climate.dining_room_ac"
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_off",
-                        "service_data": {
-                          "entity_id": "automation.dining_room_ac_auto_control"
-                        }
-                      },
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
-                        "service_data": {
-                          "entity_id": "climate.dining_room_ac"
-                        }
-                      }
+                    {
+                      "ac_status_sensor": "sensor.dining_room_ac_status"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "climate.dining_room_ac",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "climate.turn_on",
-                        "service_data": {
-                          "entity_id": "climate.dining_room_ac"
-                        }
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_on",
-                        "service_data": {
-                          "entity_id": "automation.dining_room_ac_auto_control"
-                        }
-                      }
-                    },
-                    "cool": {
-                      "type": "custom:slider-button-card",
-                      "entity": "climate.dining_room_ac",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "automation.turn_on",
-                          "service_data": {
-                            "entity_id": "automation.dining_room_ac_auto_control"
-                          }
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "ac_auto_control_automation": "automation.dining_room_ac_auto_control"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:state-switch",
@@ -1679,97 +1550,19 @@
                   ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "sensor.living_room_ac_status",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "climate.living_room_ac",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "ac",
+                  "variables": [
+                    {
+                      "climate_entity": "climate.living_room_ac"
                     },
-                    "auto": {
-                      "type": "custom:button-card",
-                      "entity": "switch.living_room_ac_switch",
-                      "template": "turn_on",
-                      "label": "[[[ return states['sensor.dining_room_temperature'].state + '°C';]]]",
-                      "show_label": true,
-                      "hold_action": {
-                        "action": "more-info",
-                        "entity": "climate.living_room_ac"
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_off",
-                        "service_data": {
-                          "entity_id": "automation.living_room_ac_auto_control"
-                        }
-                      },
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
-                        "service_data": {
-                          "entity_id": "climate.living_room_ac"
-                        }
-                      }
+                    {
+                      "ac_status_sensor": "sensor.living_room_ac_status"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "climate.living_room_ac",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "climate.turn_on",
-                        "service_data": {
-                          "entity_id": "climate.living_room_ac"
-                        }
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_on",
-                        "service_data": {
-                          "entity_id": "automation.living_room_ac_auto_control"
-                        }
-                      }
-                    },
-                    "cool": {
-                      "type": "custom:slider-button-card",
-                      "entity": "climate.living_room_ac",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "automation.turn_on",
-                          "service_data": {
-                            "entity_id": "automation.living_room_ac_auto_control"
-                          }
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "ac_auto_control_automation": "automation.living_room_ac_auto_control"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:state-switch",
@@ -1886,97 +1679,19 @@
                   ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "sensor.study_room_ac_status",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "climate.study_room_ac",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "ac",
+                  "variables": [
+                    {
+                      "climate_entity": "climate.study_room_ac"
                     },
-                    "auto": {
-                      "type": "custom:button-card",
-                      "entity": "switch.study_room_ac_switch",
-                      "template": "turn_on",
-                      "label": "[[[ return states['sensor.study_room_temperature'].state + '°C';]]]",
-                      "show_label": true,
-                      "hold_action": {
-                        "action": "more-info",
-                        "entity": "climate.study_room_ac"
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_off",
-                        "service_data": {
-                          "entity_id": "automation.study_room_ac_auto_control"
-                        }
-                      },
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
-                        "service_data": {
-                          "entity_id": "climate.study_room_ac"
-                        }
-                      }
+                    {
+                      "ac_status_sensor": "sensor.study_room_ac_status"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "climate.study_room_ac",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "climate.turn_on",
-                        "service_data": {
-                          "entity_id": "climate.study_room_ac"
-                        }
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_on",
-                        "service_data": {
-                          "entity_id": "automation.study_room_ac_auto_control"
-                        }
-                      }
-                    },
-                    "cool": {
-                      "type": "custom:slider-button-card",
-                      "entity": "climate.study_room_ac",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "automation.turn_on",
-                          "service_data": {
-                            "entity_id": "automation.study_room_ac_auto_control"
-                          }
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "ac_auto_control_automation": "automation.study_room_ac_auto_control"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -2045,97 +1760,19 @@
                   ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "sensor.parents_room_ac_status",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "climate.parents_room_ac",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "ac",
+                  "variables": [
+                    {
+                      "climate_entity": "climate.parents_room_ac"
                     },
-                    "auto": {
-                      "type": "custom:button-card",
-                      "entity": "switch.parents_room_ac_switch",
-                      "template": "turn_on",
-                      "label": "[[[ return states['sensor.parents_room_temperature'].state + '°C';]]]",
-                      "show_label": true,
-                      "hold_action": {
-                        "action": "more-info",
-                        "entity": "climate.parents_room_ac"
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_off",
-                        "service_data": {
-                          "entity_id": "automation.parents_room_ac_auto_control"
-                        }
-                      },
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
-                        "service_data": {
-                          "entity_id": "climate.parents_room_ac"
-                        }
-                      }
+                    {
+                      "ac_status_sensor": "sensor.parents_room_ac_status"
                     },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "climate.parents_room_ac",
-                      "template": "turn_on",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "climate.turn_on",
-                        "service_data": {
-                          "entity_id": "climate.parents_room_ac"
-                        }
-                      },
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_on",
-                        "service_data": {
-                          "entity_id": "automation.parents_room_ac_auto_control"
-                        }
-                      }
-                    },
-                    "cool": {
-                      "type": "custom:slider-button-card",
-                      "entity": "climate.parents_room_ac",
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "automation.turn_on",
-                          "service_data": {
-                            "entity_id": "automation.parents_room_ac_auto_control"
-                          }
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "ac_auto_control_automation": "automation.parents_room_ac_auto_control"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -2499,221 +2136,8 @@
                         ]
                       },
                       "tap_action": {
-                        "action": "fire-dom-event",
-                        "browser_mod": {
-                          "service": "browser_mod.popup",
-                          "data": {
-                            "title": "Legend",
-                            "dismissable": true,
-                            "content": {
-                              "type": "vertical-stack",
-                              "cards": [
-                                {
-                                  "type": "horizontal-stack",
-                                  "cards": [
-                                    {
-                                      "type": "custom:button-card",
-                                      "icon": "mdi:motion-sensor"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Minutes",
-                                      "show_label": true
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Motion",
-                                      "show_label": true,
-                                      "color": "#b4fab4",
-                                      "color_type": "card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "color_type": "blank-card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Clear",
-                                      "show_label": true,
-                                      "color": "#9e110d",
-                                      "color_type": "card"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "horizontal-stack",
-                                  "cards": [
-                                    {
-                                      "type": "custom:button-card",
-                                      "icon": "mdi:door-open"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "# Open",
-                                      "show_label": true
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Open",
-                                      "show_label": true,
-                                      "color": "#b4fab4",
-                                      "color_type": "card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "color_type": "blank-card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Closed",
-                                      "show_label": true,
-                                      "color": "#9e110d",
-                                      "color_type": "card"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "horizontal-stack",
-                                  "cards": [
-                                    {
-                                      "type": "custom:button-card",
-                                      "icon": "mdi:window-open"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "# Open",
-                                      "show_label": true
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Open",
-                                      "show_label": true,
-                                      "color": "#b4fab4",
-                                      "color_type": "card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "color_type": "blank-card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Closed",
-                                      "show_label": true,
-                                      "color": "#9e110d",
-                                      "color_type": "card"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "horizontal-stack",
-                                  "cards": [
-                                    {
-                                      "type": "custom:button-card",
-                                      "icon": "mdi:thermometer"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "°C",
-                                      "show_label": true
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Cool",
-                                      "show_label": true,
-                                      "color": "#b4fab4",
-                                      "color_type": "card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Warm",
-                                      "show_label": true,
-                                      "color": "#f2900f",
-                                      "color_type": "card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Hot",
-                                      "show_label": true,
-                                      "color": "#9e110d",
-                                      "color_type": "card"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "horizontal-stack",
-                                  "cards": [
-                                    {
-                                      "type": "custom:button-card",
-                                      "icon": "mdi:water-percent"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "%",
-                                      "show_label": true
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Dry",
-                                      "show_label": true,
-                                      "color": "#b4fab4",
-                                      "color_type": "card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Humid",
-                                      "show_label": true,
-                                      "color": "#f2900f",
-                                      "color_type": "card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Muggy",
-                                      "show_label": true,
-                                      "color": "#9e110d",
-                                      "color_type": "card"
-                                    }
-                                  ]
-                                },
-                                {
-                                  "type": "horizontal-stack",
-                                  "cards": [
-                                    {
-                                      "type": "custom:button-card",
-                                      "icon": "mdi:brightness-5"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Lux",
-                                      "show_label": true
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Bright",
-                                      "show_label": true,
-                                      "color": "#b4fab4",
-                                      "color_type": "card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Dim",
-                                      "show_label": true,
-                                      "color": "#f2900f",
-                                      "color_type": "card"
-                                    },
-                                    {
-                                      "type": "custom:button-card",
-                                      "label": "Dark",
-                                      "show_label": true,
-                                      "color": "#9e110d",
-                                      "color_type": "card"
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            "style": "--popup-border-radius: 6px\n"
-                          }
-                        }
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/sensors-legend"
                       }
                     },
                     {
@@ -5806,31 +5230,31 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.playroom_motion",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Play",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.yard_motion",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Yard",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.yard_window_1",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.yard_window_2",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.playroom_lux",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     }
                   ]
@@ -5897,29 +5321,29 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.elenas_room_motion",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.elenas_room_door",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.elenas_room_temperature",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.elenas_room_humidity",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.elenas_room_lux",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     }
                   ]
@@ -5960,29 +5384,29 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.elis_room_motion",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.elis_room_door",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.elis_room_temperature",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.elis_room_humidity",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.elis_room_lux",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     }
                   ]
@@ -6023,40 +5447,40 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.elenas_room_door",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Elena",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.elis_room_door",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Eli",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.junior_bathroom_door",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Jr Bath",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.powder_room_door",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Powder",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.hallway_motion",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.hallway_lux",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     }
                   ]
@@ -6084,12 +5508,12 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.powder_room_motion",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.powder_room_door",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
@@ -6176,21 +5600,21 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.junior_bathroom_motion",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Entry",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.junior_shower_motion",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Shower",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.junior_bathroom_door",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     }
                   ]
                 },
@@ -6272,29 +5696,29 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.dining_room_presence",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.main_door",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.dining_room_temperature",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.dining_room_humidity",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.dining_room_lux",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     }
                   ]
@@ -6377,24 +5801,24 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.living_room_presence",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.dining_room_temperature",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.dining_room_humidity",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.living_room_lux",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     }
                   ]
@@ -6422,43 +5846,43 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.study_walkway_motion",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Walkway",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.study_room_presence",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Desk",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.study_room_ethernet_connection",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.parents_room_door",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.study_room_temperature",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.study_room_humidity",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.study_walkway_lux",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     }
                   ]
@@ -6499,51 +5923,46 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.parents_room_motion",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.parents_room_door",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Bedroom",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.master_bathroom_door",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Bathroom",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.parents_room_temperature",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.parents_room_humidity",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.parents_room_lux",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_boolean.parents_room_flag",
+                      "template": "turn_on"
                     }
                   ]
-                },
-                {
-                  "type": "tile",
-                  "entity": "input_boolean.parents_room_flag",
-                  "tap_action": {
-                    "action": "toggle"
-                  },
-                  "icon_tap_action": {
-                    "action": "toggle"
-                  }
                 },
                 {
                   "type": "conditional",
@@ -6581,21 +6000,21 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.master_bathroom_motion",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Entry",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.master_shower_motion",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "label": "Shower",
                       "show_label": true
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.master_bathroom_door",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     }
                   ]
                 },
@@ -6677,12 +6096,12 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.kitchen_presence",
-                      "template": "square_cell"
+                      "template": "square_cell_background"
                     },
                     {
                       "type": "custom:button-card",
                       "entity": "sensor.kitchen_lux",
-                      "template": "square_cell",
+                      "template": "square_cell_background",
                       "show_state": true
                     }
                   ]
@@ -6774,6 +6193,306 @@
                     "type": "markdown",
                     "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
                   }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Legend",
+          "path": "sensors-legend",
+          "icon": "mdi:information-outline",
+          "theme": "no_border",
+          "subview": true,
+          "badges": [],
+          "cards": [
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "icon": "mdi:motion-sensor",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Minutes",
+                      "show_label": true,
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Motion",
+                      "show_label": true,
+                      "color": "#b4fab4",
+                      "color_type": "card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "color_type": "blank-card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Clear",
+                      "show_label": true,
+                      "color": "#9e110d",
+                      "color_type": "card"
+                    }
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "icon": "mdi:door-open",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "# Open",
+                      "show_label": true,
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Open",
+                      "show_label": true,
+                      "color": "#b4fab4",
+                      "color_type": "card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "color_type": "blank-card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Closed",
+                      "show_label": true,
+                      "color": "#9e110d",
+                      "color_type": "card"
+                    }
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "icon": "mdi:window-open",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "# Open",
+                      "show_label": true,
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Open",
+                      "show_label": true,
+                      "color": "#b4fab4",
+                      "color_type": "card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "color_type": "blank-card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Closed",
+                      "show_label": true,
+                      "color": "#9e110d",
+                      "color_type": "card"
+                    }
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "icon": "mdi:thermometer",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "°C",
+                      "show_label": true,
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Cool",
+                      "show_label": true,
+                      "color": "#b4fab4",
+                      "color_type": "card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Warm",
+                      "show_label": true,
+                      "color": "#f2900f",
+                      "color_type": "card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Hot",
+                      "show_label": true,
+                      "color": "#9e110d",
+                      "color_type": "card"
+                    }
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "icon": "mdi:water-percent",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "%",
+                      "show_label": true,
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Dry",
+                      "show_label": true,
+                      "color": "#b4fab4",
+                      "color_type": "card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Humid",
+                      "show_label": true,
+                      "color": "#f2900f",
+                      "color_type": "card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Muggy",
+                      "show_label": true,
+                      "color": "#9e110d",
+                      "color_type": "card"
+                    }
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "icon": "mdi:brightness-5",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Lux",
+                      "show_label": true,
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "var(--primary-background-color)"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Bright",
+                      "show_label": true,
+                      "color": "#b4fab4",
+                      "color_type": "card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Dim",
+                      "show_label": true,
+                      "color": "#f2900f",
+                      "color_type": "card"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "label": "Dark",
+                      "show_label": true,
+                      "color": "#9e110d",
+                      "color_type": "card"
+                    }
+                  ]
                 }
               ]
             }

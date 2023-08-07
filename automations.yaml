@@ -32,10 +32,13 @@
           brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
             }}'
       action_button_down_short:
-      - service: script.turn_off_living_room
-        data: {}
-      - service: script.turn_off_dining_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.dining_room_motion_timeout
+          - automation.living_room_motion_timeout
       action_button_down_long:
       - service: light.turn_on
         target:
@@ -63,7 +66,6 @@
     path: EPMatt/ikea_e1743.yaml
     input:
       integration: ZHA
-      controller_device: cea5083fc6a1972a0b57048ffa03cfd8
       helper_last_controller_event: input_text.zz_dining_room_lights_controller_2_last_event
       action_button_up_short:
       - service: script.turn_on
@@ -105,8 +107,11 @@
       - service: script.set_recommended_scene_in_dining_room
         data: {}
       action_button_down_double:
-      - service: script.turn_off_dining_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: automation.dining_room_motion_timeout
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 700
@@ -1300,8 +1305,11 @@
       button_down_long_loop: true
       button_down_long_max_loop_repeats: 50
       action_button_down_double:
-      - service: script.turn_off_living_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: automation.living_room_motion_timeout
       button_down_double_press: true
       helper_double_press_delay: 700
       action_button_up_double:
@@ -1542,8 +1550,11 @@
       button_down_long_loop: true
       button_down_long_max_loop_repeats: 50
       action_button_down_double:
-      - service: script.turn_off_study_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: automation.study_room_motion_timeout
       button_down_double_press: true
       helper_double_press_delay: 700
       action_button_up_double:
@@ -1749,8 +1760,11 @@
       button_down_long_loop: true
       button_down_long_max_loop_repeats: 50
       action_button_down_double:
-      - service: script.turn_off_parents_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: automation.parents_room_motion_timeout
       button_down_double_press: true
       helper_double_press_delay: 700
       action_button_up_double:
@@ -2213,8 +2227,11 @@
       - service: script.set_recommended_scene_in_elenas_room
         data: {}
       action_button_down_double:
-      - service: script.turn_off_elenas_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: automation.elenas_room_motion_timeout
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 700
@@ -2408,8 +2425,11 @@
       - service: script.set_recommended_scene_in_elis_room
         data: {}
       action_button_down_double:
-      - service: script.turn_off_elis_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: automation.elis_room_motion_timeout
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 700
@@ -3623,8 +3643,11 @@
         target:
           entity_id: light.study_room_lights
       action_button_down_short:
-      - service: script.turn_off_study_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: automation.study_room_motion_timeout
       action_button_down_long:
       - service: light.turn_on
         data:
@@ -3635,48 +3658,64 @@
         target:
           entity_id: light.study_room_lights
       action_button_down_double:
-      - service: script.turn_off_junior_bathroom
-        data: {}
-      - service: script.turn_off_powder_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.junior_bathroom_motion_lights
+          - automation.powder_room_motion_pendant_light
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: script.turn_off_elenas_room
-        data: {}
-      - service: script.turn_off_elis_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.elis_room_motion_timeout
+          - automation.elenas_room_motion_timeout
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: script.turn_off_playroom
-        data: {}
-      - service: script.turn_off_hallway
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.yard_motion_timeout
+          - automation.playroom_motion_timeout
+          - automation.hallway_motion_timeout
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: script.turn_off_kitchen
-        data: {}
-      - service: script.turn_off_master_bathroom
-        data: {}
-      - service: script.turn_off_parents_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.kitchen_motion_timeout
+          - automation.master_bathroom_motion_light
+          - automation.master_bathroom_motion_pendant_light
+          - automation.parents_room_motion_timeout
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: script.turn_off_dining_room
-        data: {}
-      - service: script.turn_off_living_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.dining_room_motion_timeout
+          - automation.living_room_motion_timeout
       button_up_long_loop: true
       button_up_long_max_loop_repeats: 20
       button_down_long_loop: true
@@ -4015,6 +4054,7 @@
       - fan.elenas_room_fan
       - climate.elenas_room_ac
       - automation.elenas_room_ac_auto_control
+      - automation.elenas_room_fan_auto_control
 - id: '1677909834890'
   alias: Eli's Room Motion AC
   description: Control Eli's Room AC when motion is detected depending on whether
@@ -4084,6 +4124,7 @@
       - fan.elis_room_fan
       - climate.elis_room_ac
       - automation.elis_room_ac_auto_control
+      - automation.elis_room_fan_auto_control
 - id: '1677927683160'
   alias: Kitchen Motion Lights
   description: Set Kitchen Lights when motion is detected, depending on lux level
@@ -4227,6 +4268,8 @@
       - light.living_room_pendant_light_entity
       - climate.living_room_ac
       - fan.living_room_fan
+      - automation.living_room_ac_auto_control
+      - automation.living_room_fan_auto_control
       entities_list:
       - input_boolean.party_mode
 - id: '1679619826696'
@@ -4269,6 +4312,8 @@
       - light.dining_room_pendant_light_entity
       - climate.dining_room_ac
       - fan.dining_room_fan
+      - automation.dining_room_ac_auto_control
+      - automation.dining_room_fan_auto_control
       entities_list:
       - input_boolean.party_mode
 - id: '1679620287237'
@@ -4802,6 +4847,8 @@
       - light.study_room_lights
       - fan.study_room_fan
       - climate.study_room_ac
+      - automation.study_room_ac_auto_control
+      - automation.study_room_fan_auto_control
 - id: '1683854614010'
   alias: Parents' Headboard Controller
   description: Set recommended scene in Parents' Room, adjust Parents' Room Lights
@@ -4845,13 +4892,13 @@
           - automation.parents_room_ac_auto_control
           - automation.parents_room_fan_auto_control
       action_button_down_short:
-      - service: script.turn_off_parents_room
-        data: {}
       - service: automation.trigger
         data:
           skip_condition: true
         target:
-          entity_id: automation.master_bathroom_blind_auto_control
+          entity_id:
+          - automation.master_bathroom_blind_auto_control
+          - automation.parents_room_motion_timeout
       action_button_down_long:
       - service: light.turn_on
         data:
@@ -4862,48 +4909,64 @@
       button_up_double_press: true
       helper_double_press_delay: 700
       action_button_down_double:
-      - service: script.turn_off_junior_bathroom
-        data: {}
-      - service: script.turn_off_powder_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.junior_bathroom_motion_lights
+          - automation.powder_room_motion_pendant_light
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: script.turn_off_elenas_room
-        data: {}
-      - service: script.turn_off_elis_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.elenas_room_motion_timeout
+          - automation.elis_room_motion_timeout
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: script.turn_off_playroom
-        data: {}
-      - service: script.turn_off_hallway
-        data: {}
-      - service: script.turn_off_kitchen
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.yard_motion_timeout
+          - automation.playroom_motion_timeout
+          - automation.kitchen_motion_timeout
+          - automation.hallway_motion_timeout
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: script.turn_off_dining_room
-        data: {}
-      - service: script.turn_off_living_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.dining_room_motion_timeout
+          - automation.living_room_motion_timeout
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: script.turn_off_master_bathroom
-        data: {}
-      - service: script.turn_off_study_room
-        data: {}
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id:
+          - automation.master_bathroom_motion_light
+          - automation.master_bathroom_motion_pendant_light
+          - automation.study_room_motion_timeout
       button_down_double_press: true
 - id: '1684242432236'
   alias: Parents' Room Fan Auto Control

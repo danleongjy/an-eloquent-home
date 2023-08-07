@@ -203,154 +203,111 @@ fan_set_direction:
   icon: mdi:rotate-3d-variant
   max: 10
   max_exceeded: silent
-turn_off_elis_room:
-  sequence:
-  - service: automation.turn_off
-    target:
-      entity_id:
-      - automation.elis_room_ac_auto_control
-      - automation.elis_room_fan_auto_control
-    data: {}
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.elis_room_motion_timeout
-  mode: single
-  alias: Turn Off Eli's Room
-  icon: mdi:power
-turn_off_elenas_room:
-  sequence:
-  - service: automation.turn_off
-    target:
-      entity_id:
-      - automation.elenas_room_ac_auto_control
-      - automation.elenas_room_fan_auto_control
-    data: {}
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.elenas_room_motion_timeout
-  mode: single
-  alias: Turn Off Elena's Room
-  icon: mdi:power
-turn_off_dining_room:
-  sequence:
-  - service: automation.turn_off
-    data:
-      stop_actions: true
-    target:
-      entity_id:
-      - automation.dining_room_fan_auto_control
-      - automation.dining_room_ac_auto_control
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.dining_room_motion_timeout
-  mode: single
-  alias: Turn Off Dining Room
-  icon: mdi:power
-turn_off_playroom:
+turn_off_all:
   sequence:
   - service: automation.trigger
     data:
       skip_condition: true
     target:
       entity_id:
-      - automation.yard_motion_timeout
       - automation.playroom_motion_timeout
-  mode: single
-  alias: Turn Off Playroom
-  icon: mdi:power
-turn_off_junior_bathroom:
-  sequence:
-  - service: light.turn_off
+      - automation.yard_motion_timeout
+      - automation.kitchen_motion_timeout
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: media_player.kitchen_speaker
+        state: 'off'
+    then:
+    - service: media_player.media_stop
+      data: {}
+      target:
+        entity_id: media_player.kitchen_speaker
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 300
+  - service: automation.trigger
+    data:
+      skip_condition: true
     target:
-      entity_id: light.junior_bathroom_lights
-    data: {}
-  - service: switch.turn_off
-    data: {}
+      entity_id:
+      - automation.elenas_room_motion_timeout
+      - automation.master_bathroom_motion_light
+      - automation.master_bathroom_motion_pendant_light
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 300
+  - service: automation.trigger
+    data:
+      skip_condition: true
     target:
-      entity_id: switch.water_heater
-  mode: single
-  alias: Turn Off Junior Bathroom
-  icon: mdi:power
-turn_off_powder_room:
-  sequence:
-  - service: light.turn_off
-    target:
-      entity_id: light.powder_room_pendant_light_entity
-  mode: single
-  alias: Turn Off Powder Room
-  icon: mdi:power
-turn_off_hallway:
-  sequence:
+      entity_id:
+      - automation.elis_room_motion_timeout
+      - automation.parents_room_motion_timeout
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 300
   - service: automation.trigger
     data:
       skip_condition: true
     target:
       entity_id: automation.hallway_motion_timeout
-  mode: single
-  alias: Turn Off Hallway
-  icon: mdi:power
-turn_off_all:
-  sequence:
-  - service: script.turn_off_playroom
-    data: {}
-  - service: script.turn_off_kitchen
-    data: {}
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 0
-      milliseconds: 300
-  - service: script.turn_off_elenas_room
-    data: {}
-  - service: script.turn_off_master_bathroom
-    data: {}
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 0
-      milliseconds: 300
-  - service: script.turn_off_elis_room
-    data: {}
-  - service: script.turn_off_parents_room
-    data: {}
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 0
-      milliseconds: 300
-  - service: script.turn_off_hallway
-    data: {}
   - delay:
       hours: 0
       minutes: 0
       seconds: 0
       milliseconds: 100
-  - service: script.turn_off_junior_bathroom
-    data: {}
+  - service: automation.trigger
+    data:
+      skip_condition: true
+    target:
+      entity_id: automation.junior_bathroom_motion_lights
   - delay:
       hours: 0
       minutes: 0
       seconds: 0
       milliseconds: 100
-  - service: script.turn_off_study_room
-    data: {}
-  - service: script.turn_off_powder_room
-    data: {}
+  - service: automation.trigger
+    data:
+      skip_condition: true
+    target:
+      entity_id:
+      - automation.study_room_motion_timeout
+      - automation.powder_room_motion_pendant_light
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: media_player.study_room_speaker
+        state: 'off'
+    then:
+    - service: media_player.media_stop
+      data: {}
+      target:
+        entity_id: media_player.study_room_speaker
   - delay:
       hours: 0
       minutes: 0
       seconds: 0
       milliseconds: 300
-  - service: script.turn_off_dining_room
+  - service: automation.trigger
+    data:
+      skip_condition: true
+    target:
+      entity_id:
+      - automation.dining_room_motion_timeout
+      - automation.living_room_motion_timeout
+  - service: switch.turn_off
     data: {}
-  - service: script.turn_off_living_room
-    data: {}
+    target:
+      entity_id: switch.water_heater
   mode: single
   alias: Turn Off All
   icon: mdi:home-export-outline
@@ -444,97 +401,6 @@ set_recommended_scene_in_living_room:
       - automation.living_room_motion_ac
   mode: single
   icon: mdi:magic-staff
-turn_off_living_room:
-  alias: Turn Off Living Room
-  sequence:
-  - service: automation.turn_off
-    data:
-      stop_actions: true
-    target:
-      entity_id:
-      - automation.living_room_fan_auto_control
-      - automation.living_room_ac_auto_control
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.living_room_motion_timeout
-  mode: single
-  icon: mdi:power
-turn_off_study_room:
-  alias: Turn Off Study Room
-  sequence:
-  - service: automation.turn_off
-    data:
-      stop_actions: true
-    target:
-      entity_id:
-      - automation.study_room_fan_auto_control
-      - automation.study_room_ac_auto_control
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.study_room_motion_timeout
-  - if:
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: media_player.study_room_speaker
-        state: 'off'
-    then:
-    - service: media_player.media_stop
-      data: {}
-      target:
-        entity_id: media_player.study_room_speaker
-  mode: single
-  icon: mdi:power
-turn_off_kitchen:
-  alias: Turn Off Kitchen
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.kitchen_motion_timeout
-  - if:
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: media_player.kitchen_speaker
-        state: 'off'
-    then:
-    - service: media_player.media_stop
-      data: {}
-      target:
-        entity_id: media_player.kitchen_speaker
-  mode: single
-  icon: mdi:power
-turn_off_parents_room:
-  alias: Turn Off Parents' Room
-  sequence:
-  - service: automation.turn_off
-    data: {}
-    target:
-      entity_id:
-      - automation.parents_room_ac_auto_control
-      - automation.parents_room_fan_auto_control
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.parents_room_motion_timeout
-  mode: single
-  icon: mdi:power
-turn_off_master_bathroom:
-  alias: Turn Off Master Bathroom
-  sequence:
-  - service: light.turn_off
-    data: {}
-    target:
-      entity_id: light.master_bathroom_lights
-  mode: single
-  icon: mdi:power
 set_recommended_scene_in_study_room:
   alias: Set Recommended Scene in Study Room
   sequence:
