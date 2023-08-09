@@ -103,9 +103,9 @@ fan_set_state:
     target:
       entity_id: "{% set universal_remote = \n  { \"Elena's Room Fan\": \"remote.elis_room_universal_remote\",\n
         \   \"Eli's Room Fan\": \"remote.elis_room_universal_remote\",\n    \"Living
-        Room Fan\": \"remote.living_room_universal_remote\",\n    \"Dining Room Fan\":
-        \"remote.living_room_universal_remote\",\n    \"Study Room Fan\": \"remote.living_room_universal_remote\",\n
-        \   \"Parents' Room Fan\": \"remote.living_room_universal_remote\",\n  } %}\n{{
+        Room Fan\": \"remote.study_room_universal_remote\",\n    \"Dining Room Fan\":
+        \"remote.study_room_universal_remote\",\n    \"Study Room Fan\": \"remote.study_room_universal_remote\",\n
+        \   \"Parents' Room Fan\": \"remote.study_room_universal_remote\",\n  } %}\n{{
         universal_remote[target_fan] }}\n"
     data:
       device: '{{ target_fan }}
@@ -157,19 +157,19 @@ fan_set_direction:
         direction: input_select.elis_room_fan_direction
       Living Room Fan:
         entity_id: fan.living_room_fan
-        remote: remote.living_room_universal_remote
+        remote: remote.study_room_universal_remote
         direction: input_select.living_room_fan_direction
       Dining Room Fan:
         entity_id: fan.dining_room_fan
-        remote: remote.living_room_universal_remote
+        remote: remote.study_room_universal_remote
         direction: input_select.dining_room_fan_direction
       Study Room Fan:
         entity_id: fan.study_room_fan
-        remote: remote.living_room_universal_remote
+        remote: remote.study_room_universal_remote
         direction: input_select.study_room_fan_direction
       Parents' Room Fan:
         entity_id: fan.parents_room_fan
-        remote: remote.living_room_universal_remote
+        remote: remote.study_room_universal_remote
         direction: input_select.parents_room_fan_direction
   sequence:
   - if:
@@ -1005,7 +1005,7 @@ kitchen_blind_set_position:
         device: Kitchen Blinds
         command: Up
       target:
-        entity_id: remote.living_room_universal_remote
+        entity_id: remote.study_room_universal_remote
     - wait_template: '{{ states(''input_number.kitchen_blind_position'') | int(0)
         >= target_position }}'
       continue_on_timeout: true
@@ -1020,7 +1020,7 @@ kitchen_blind_set_position:
         device: Kitchen Blinds
         command: Stop
       target:
-        entity_id: remote.living_room_universal_remote
+        entity_id: remote.study_room_universal_remote
     else:
     - service: input_select.select_option
       data:
@@ -1032,7 +1032,7 @@ kitchen_blind_set_position:
         device: Kitchen Blinds
         command: Down
       target:
-        entity_id: remote.living_room_universal_remote
+        entity_id: remote.study_room_universal_remote
     - wait_template: '{{ states(''input_number.kitchen_blind_position'') | int(0)
         <= target_position }}'
       continue_on_timeout: true
@@ -1047,7 +1047,7 @@ kitchen_blind_set_position:
         device: Kitchen Blinds
         command: Stop
       target:
-        entity_id: remote.living_room_universal_remote
+        entity_id: remote.study_room_universal_remote
   mode: restart
   icon: mdi:window-shutter-open
 increment_alarm_day:
@@ -1072,6 +1072,9 @@ increment_alarm_day:
           multiple: true
           filter:
           - domain: calendar
+  variables:
+    off_time:
+      events: []
   sequence:
   - repeat:
       while:
@@ -1119,7 +1122,7 @@ increment_alarm_day:
     else:
     - variables:
         off_time:
-          events: '{{ [] }}'
+          events: []
   - repeat:
       while:
       - condition: template

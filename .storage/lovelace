@@ -949,7 +949,13 @@
                   },
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_playroom"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": [
+                        "automation.yard_motion_timeout",
+                        "automation.playroom_motion_timeout"
+                      ]
+                    }
                   },
                   "hold_action": {
                     "action": "navigate",
@@ -1111,7 +1117,10 @@
                   "show_name": true,
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_elenas_room"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.elenas_room_motion_timeout"
+                    }
                   },
                   "tap_action": {
                     "action": "call-service",
@@ -1187,7 +1196,10 @@
                   "show_name": true,
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_elis_room"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.elis_room_motion_timeout"
+                    }
                   },
                   "tap_action": {
                     "action": "call-service",
@@ -1265,7 +1277,10 @@
                   },
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_hallway"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.hallway_motion_timeout"
+                    }
                   },
                   "hold_action": {
                     "action": "navigate",
@@ -1294,7 +1309,10 @@
                   },
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_powder_room"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.powder_room_motion_pendant_light"
+                    }
                   },
                   "hold_action": {
                     "action": "navigate",
@@ -1330,7 +1348,10 @@
                   },
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_junior_bathroom"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.junior_bathroom_motion_lights"
+                    }
                   },
                   "hold_action": {
                     "action": "navigate",
@@ -1362,7 +1383,10 @@
                   "template": "square_cell",
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_dining_room"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.dining_room_motion_timeout"
+                    }
                   },
                   "tap_action": {
                     "action": "call-service",
@@ -1415,7 +1439,7 @@
                       "fan_auto_control_automation": "automation.dining_room_fan_auto_control"
                     },
                     {
-                      "fan_direction_indicator": "input_select.dining_room_fan_direction"
+                      "fan_direction_indicator": "sensor.dining_room_fan_direction"
                     }
                   ]
                 },
@@ -1499,7 +1523,10 @@
                   "icon": "mdi:sofa",
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_living_room"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.living_room_motion_timeout"
+                    }
                   },
                   "tap_action": {
                     "action": "call-service",
@@ -1629,7 +1656,10 @@
                   "template": "square_cell",
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_study_room"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.study_room_motion_timeout"
+                    }
                   },
                   "tap_action": {
                     "action": "call-service",
@@ -1705,7 +1735,10 @@
                   "template": "square_cell",
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_parents_room"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.parents_room_motion_timeout"
+                    }
                   },
                   "tap_action": {
                     "action": "call-service",
@@ -1794,7 +1827,13 @@
                   },
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_master_bathroom"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": [
+                        "automation.master_bathroom_motion_light",
+                        "automation.master_bathroom_motion_pendant_light"
+                      ]
+                    }
                   },
                   "hold_action": {
                     "action": "navigate",
@@ -1909,7 +1948,10 @@
                   },
                   "double_tap_action": {
                     "action": "call-service",
-                    "service": "script.turn_off_kitchen"
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.kitchen_motion_timeout"
+                    }
                   },
                   "hold_action": {
                     "action": "navigate",
@@ -4578,6 +4620,82 @@
               }
             },
             {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "vacuum.pikachu",
+                      "state": "idle"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Vacuum not docked properly</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Please close bathroom doors. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "binary_sensor.vacuum_running_with_doors_open",
+                      "state": "on"
+                    },
+                    {
+                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                      "state": "off"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with bathroom doors open.</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "vacuum.pikachu",
+                      "state": "error"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">{{ state_attr('vacuum.pikachu', 'status') }}</ha-alert>"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
+                  "name": "Warn if vacuum may get wet",
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                }
+              ]
+            },
+            {
               "type": "conditional",
               "conditions": [
                 {
@@ -4649,82 +4767,6 @@
                 "type": "entities",
                 "state_color": true
               }
-            },
-            {
-              "type": "vertical-stack",
-              "cards": [
-                {
-                  "type": "tile",
-                  "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                  "name": "Warn if vacuum may get wet",
-                  "tap_action": {
-                    "action": "toggle"
-                  },
-                  "icon_tap_action": {
-                    "action": "more-info"
-                  }
-                },
-                {
-                  "type": "conditional",
-                  "conditions": [
-                    {
-                      "entity": "vacuum.pikachu",
-                      "state": "idle"
-                    }
-                  ],
-                  "card": {
-                    "type": "markdown",
-                    "content": "<ha-alert alert-type=\"error\">Vacuum not docked properly</ha-alert>"
-                  }
-                },
-                {
-                  "type": "conditional",
-                  "conditions": [
-                    {
-                      "entity": "binary_sensor.vacuum_running_with_doors_open",
-                      "state": "on"
-                    },
-                    {
-                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                      "state": "on"
-                    }
-                  ],
-                  "card": {
-                    "type": "markdown",
-                    "content": "<ha-alert alert-type=\"error\">Please close bathroom doors. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
-                  }
-                },
-                {
-                  "type": "conditional",
-                  "conditions": [
-                    {
-                      "entity": "binary_sensor.vacuum_running_with_doors_open",
-                      "state": "on"
-                    },
-                    {
-                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                      "state": "off"
-                    }
-                  ],
-                  "card": {
-                    "type": "markdown",
-                    "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with bathroom doors open.</ha-alert>"
-                  }
-                },
-                {
-                  "type": "conditional",
-                  "conditions": [
-                    {
-                      "entity": "vacuum.pikachu",
-                      "state": "error"
-                    }
-                  ],
-                  "card": {
-                    "type": "markdown",
-                    "content": "<ha-alert alert-type=\"error\">{{ state_attr('vacuum.pikachu', 'status') }}</ha-alert>"
-                  }
-                }
-              ]
             }
           ]
         },

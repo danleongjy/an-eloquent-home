@@ -4201,7 +4201,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: binary_sensor.playroom_motion
-      number_of_minutes: input_number.motion_timeout_walking_areas
+      number_of_minutes: input_number.motion_timeout_bedrooms
       turnoff_entities_list:
       - light.playroom_lights
 - id: '1678323204367'
@@ -5491,6 +5491,16 @@
     id: childrens_alarms_changed
   condition: []
   action:
+  - service: input_datetime.set_datetime
+    data:
+      date: '{{ now().date() }}'
+    target:
+      entity_id: input_datetime.daniels_next_alarm
+  - service: script.increment_alarm_day
+    data:
+      alarm_datetime: input_datetime.daniels_next_alarm
+      off_time_calendars:
+      - calendar.public_holidays
   - if:
     - condition: trigger
       id:
@@ -5546,6 +5556,7 @@
           response_variable: public_holiday
           alias: List public holidays occurring on Daniel's Next Alarm
       alias: Increment Daniel's Next Alarm by 1 day as long as it is a public holiday
+    enabled: false
   - service: calendar.list_events
     data:
       start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
@@ -5750,6 +5761,16 @@
     id: childrens_alarms_changed
   condition: []
   action:
+  - service: input_datetime.set_datetime
+    data:
+      date: '{{ now().date() }}'
+    target:
+      entity_id: input_datetime.graces_next_alarm
+  - service: script.increment_alarm_day
+    data:
+      off_time_calendars:
+      - calendar.public_holidays
+      alarm_datetime: input_datetime.graces_next_alarm
   - if:
     - condition: trigger
       id:
@@ -5783,29 +5804,10 @@
         entity_id: calendar.public_holidays
       response_variable: public_holiday
       alias: List public holidays occurring on Grace's Next Alarm
-    - service: calendar.list_events
-      data:
-        duration:
-          minutes: 1
-        start_date_time: '{{ states(''input_datetime.graces_next_alarm'') }}'
-      target:
-        entity_id: calendar.eli_no_school
-      response_variable: eli_no_school
-      alias: List Eli's school holidays occurring on Grace's Next Alarm
-    - service: calendar.list_events
-      data:
-        duration:
-          minutes: 1
-        start_date_time: '{{ states(''input_datetime.graces_next_alarm'') }}'
-      target:
-        entity_id: calendar.elena_no_school
-      response_variable: elena_no_school
-      alias: List Elena's school holidays occurring on Grace's Next Alarm
     - repeat:
         while:
         - condition: template
-          value_template: '{{ public_holiday.events or (eli_no_school.events and elena_no_school.events
-            ) }}'
+          value_template: '{{ public_holiday.events | length > 0 }}'
         sequence:
         - service: input_datetime.set_datetime
           data:
@@ -5823,25 +5825,8 @@
             entity_id: calendar.public_holidays
           response_variable: public_holiday
           alias: List public holidays occurring on Grace's Next Alarm
-        - service: calendar.list_events
-          data:
-            duration:
-              minutes: 1
-            start_date_time: '{{ states(''input_datetime.graces_next_alarm'') }}'
-          target:
-            entity_id: calendar.eli_no_school
-          response_variable: eli_no_school
-          alias: List Eli's school holidays occurring on Grace's Next Alarm
-        - service: calendar.list_events
-          data:
-            duration:
-              minutes: 1
-            start_date_time: '{{ states(''input_datetime.graces_next_alarm'') }}'
-          target:
-            entity_id: calendar.elena_no_school
-          response_variable: elena_no_school
-          alias: List Elena's school holidays occurring on Grace's Next Alarm
       alias: Increment Grace's Next Alarm by 1 day as long as it is a public holiday
+    enabled: false
   - service: calendar.list_events
     data:
       start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
