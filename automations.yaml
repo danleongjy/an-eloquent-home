@@ -3126,7 +3126,9 @@
     value_template: '{{ is_state(''switch.rice_cooker'',''on'') and states(''sensor.rice_cooker_watts'')
       | float(0) <= 1 }}'
     for:
-      minutes: 2
+      hours: 0
+      minutes: 5
+      seconds: 0
     id: idle
   condition: []
   action:
@@ -5491,16 +5493,6 @@
     id: childrens_alarms_changed
   condition: []
   action:
-  - service: input_datetime.set_datetime
-    data:
-      date: '{{ now().date() }}'
-    target:
-      entity_id: input_datetime.daniels_next_alarm
-  - service: script.increment_alarm_day
-    data:
-      alarm_datetime: input_datetime.daniels_next_alarm
-      off_time_calendars:
-      - calendar.public_holidays
   - if:
     - condition: trigger
       id:
@@ -5525,6 +5517,7 @@
             entity_id: input_datetime.daniels_next_alarm
           alias: Increment Daniel's Next Alarm by 1 day
       alias: Increment Daniel's Next Alarm by 1 day until it is a future weekday
+      enabled: false
     - service: calendar.list_events
       data:
         duration:
@@ -5534,6 +5527,7 @@
         entity_id: calendar.public_holidays
       response_variable: public_holiday
       alias: List public holidays occurring on Daniel's Next Alarm
+      enabled: false
     - repeat:
         while:
         - condition: template
@@ -5556,7 +5550,18 @@
           response_variable: public_holiday
           alias: List public holidays occurring on Daniel's Next Alarm
       alias: Increment Daniel's Next Alarm by 1 day as long as it is a public holiday
-    enabled: false
+      enabled: false
+    - service: input_datetime.set_datetime
+      data:
+        date: '{{ (now() - timedelta(days = 1)).date() }}'
+      target:
+        entity_id: input_datetime.daniels_next_alarm
+    - service: script.increment_alarm_day
+      data:
+        alarm_datetime: input_datetime.daniels_next_alarm
+        off_time_calendars:
+        - calendar.public_holidays
+    enabled: true
   - service: calendar.list_events
     data:
       start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
@@ -5761,16 +5766,6 @@
     id: childrens_alarms_changed
   condition: []
   action:
-  - service: input_datetime.set_datetime
-    data:
-      date: '{{ now().date() }}'
-    target:
-      entity_id: input_datetime.graces_next_alarm
-  - service: script.increment_alarm_day
-    data:
-      off_time_calendars:
-      - calendar.public_holidays
-      alarm_datetime: input_datetime.graces_next_alarm
   - if:
     - condition: trigger
       id:
@@ -5795,6 +5790,7 @@
             entity_id: input_datetime.graces_next_alarm
           alias: Increment Grace's Next Alarm by 1 day
       alias: Increment Grace's Next Alarm by 1 day until it is a future weekday
+      enabled: false
     - service: calendar.list_events
       data:
         duration:
@@ -5804,6 +5800,7 @@
         entity_id: calendar.public_holidays
       response_variable: public_holiday
       alias: List public holidays occurring on Grace's Next Alarm
+      enabled: false
     - repeat:
         while:
         - condition: template
@@ -5826,7 +5823,18 @@
           response_variable: public_holiday
           alias: List public holidays occurring on Grace's Next Alarm
       alias: Increment Grace's Next Alarm by 1 day as long as it is a public holiday
-    enabled: false
+      enabled: false
+    - service: input_datetime.set_datetime
+      data:
+        date: '{{ (now() - timedelta(days = 1)).date() }}'
+      target:
+        entity_id: input_datetime.graces_next_alarm
+    - service: script.increment_alarm_day
+      data:
+        off_time_calendars:
+        - calendar.public_holidays
+        alarm_datetime: input_datetime.graces_next_alarm
+    enabled: true
   - service: calendar.list_events
     data:
       start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
@@ -5918,17 +5926,22 @@
     - input_datetime.elis_school_day_alarm
   condition: []
   action:
-  - service: input_datetime.set_datetime
-    data:
-      date: '{{ now().date() }}'
-    target:
-      entity_id: input_datetime.elis_next_alarm
-  - service: script.increment_alarm_day
-    data:
-      alarm_datetime: input_datetime.elis_next_alarm
-      off_time_calendars:
-      - calendar.public_holidays
-      - calendar.eli_no_school
+  - if:
+    - condition: trigger
+      id:
+      - alarm_fired
+    then:
+    - service: input_datetime.set_datetime
+      data:
+        date: '{{ (now() - timedelta(days = 1)).date() }}'
+      target:
+        entity_id: input_datetime.elis_next_alarm
+    - service: script.increment_alarm_day
+      data:
+        alarm_datetime: input_datetime.elis_next_alarm
+        off_time_calendars:
+        - calendar.public_holidays
+        - calendar.eli_no_school
   - service: input_datetime.set_datetime
     data:
       time: '{{ states(''input_datetime.elis_school_day_alarm'') }}'
@@ -5951,17 +5964,22 @@
     - input_datetime.elenas_school_day_alarm
   condition: []
   action:
-  - service: input_datetime.set_datetime
-    data:
-      date: '{{ now().date() }}'
-    target:
-      entity_id: input_datetime.elenas_next_alarm
-  - service: script.increment_alarm_day
-    data:
-      alarm_datetime: input_datetime.elenas_next_alarm
-      off_time_calendars:
-      - calendar.public_holidays
-      - calendar.elena_no_school
+  - if:
+    - condition: trigger
+      id:
+      - alarm_fired
+    then:
+    - service: input_datetime.set_datetime
+      data:
+        date: '{{ (now() - timedelta(days = 1)).date() }}'
+      target:
+        entity_id: input_datetime.elenas_next_alarm
+    - service: script.increment_alarm_day
+      data:
+        alarm_datetime: input_datetime.elenas_next_alarm
+        off_time_calendars:
+        - calendar.public_holidays
+        - calendar.elena_no_school
   - service: input_datetime.set_datetime
     data:
       time: '{{ states(''input_datetime.elenas_school_day_alarm'') }}'
@@ -5992,4 +6010,61 @@
   action:
   - service: script.elis_room_alarm_lights
     data: {}
+  mode: single
+- id: '1691714619105'
+  alias: NEA Rain Radar Timestamp Update
+  description: Update the timestamp used to retrieve NEA rain radar images
+  trigger:
+  - platform: time_pattern
+    seconds: /10
+  condition: []
+  action:
+  - if:
+    - condition: template
+      value_template: '{{ now() - as_datetime(states(''input_datetime.nea_rain_radar_timestamp'')).astimezone(now().tzinfo)
+        > timedelta(hours = 3, minutes = 15) }}'
+      alias: Timestamp is more than 3h15min in the past
+    then:
+    - service: input_datetime.set_datetime
+      data:
+        datetime: '{{ (now() - timedelta(hours = 3)).replace(minute = (now() - timedelta(hours
+          = 3)).minute // 15 * 15) }}'
+      target:
+        entity_id: input_datetime.nea_rain_radar_timestamp
+      alias: Set timestamp to 3h in the past to the nearest 15min
+    else:
+    - if:
+      - condition: template
+        value_template: '{{ as_datetime(states(''input_datetime.nea_rain_radar_timestamp'')).astimezone(now().tzinfo)
+          + timedelta(minutes = 15) < now() - timedelta(minutes = 30) }}'
+        alias: New timestamp is still at least 30min in the past
+      then:
+      - service: input_datetime.set_datetime
+        data:
+          datetime: '{{ as_datetime(states(''input_datetime.nea_rain_radar_timestamp''))
+            + timedelta(minutes = 15) }}'
+        target:
+          entity_id: input_datetime.nea_rain_radar_timestamp
+        alias: Increment timestamp by 15min
+      else:
+      - service: input_datetime.set_datetime
+        data:
+          datetime: '{{ (as_datetime(states(''input_datetime.nea_rain_radar_timestamp''))
+            - timedelta(hours = 3)) }}'
+        target:
+          entity_id: input_datetime.nea_rain_radar_timestamp
+  - if:
+    - condition: state
+      entity_id: automation.nea_rain_radar_timestamp_update
+      state: 'on'
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
+    then:
+    - service: automation.turn_off
+      data:
+        stop_actions: true
+      target:
+        entity_id: automation.nea_rain_radar_timestamp_update
   mode: single

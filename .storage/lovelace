@@ -6211,6 +6211,24 @@
                   "name": "NEA via data.gov.sg"
                 },
                 {
+                  "type": "picture-elements",
+                  "elements": [
+                    {
+                      "type": "image",
+                      "camera_image": "camera.nea_rain_radar",
+                      "style": {
+                        "transform": "none",
+                        "top": "0%",
+                        "left": "0%",
+                        "height": "100%",
+                        "width": "100%",
+                        "opacity": "50%"
+                      }
+                    }
+                  ],
+                  "image": "https://www.nea.gov.sg/assets/images/map/240km-v2.jpg"
+                },
+                {
                   "type": "conditional",
                   "conditions": [
                     {
@@ -6234,6 +6252,21 @@
                   "card": {
                     "type": "markdown",
                     "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_datetime.nea_rain_radar_timestamp",
+                  "tap_action": {
+                    "action": "call-service",
+                    "service": "automation.toggle",
+                    "target": {
+                      "entity_id": "automation.nea_rain_radar_timestamp_update"
+                    },
+                    "data": {}
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
                   }
                 }
               ]
