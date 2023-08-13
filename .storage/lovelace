@@ -628,6 +628,44 @@
             }
           }
         },
+        "media_player": {
+          "card": {
+            "type": "custom:slider-button-card",
+            "entity": "[[media_player_entity]]",
+            "icon": {
+              "show": true,
+              "use_state_color": true,
+              "tap_action": {
+                "action": "call-service",
+                "service": "media_player.media_play_pause",
+                "service_data": {
+                  "entity_id": "[[media_player_entity]]"
+                }
+              }
+            },
+            "slider": {
+              "direction": "bottom-top",
+              "background": "solid",
+              "use_state_color": false,
+              "use_percentage_bg_opacity": false,
+              "show_track": false,
+              "toggle_on_click": false,
+              "force_square": true
+            },
+            "show_name": false,
+            "show_state": false,
+            "compact": true,
+            "action_button": {
+              "mode": "toggle",
+              "icon": "mdi:power",
+              "show": false,
+              "show_spinner": true,
+              "tap_action": {
+                "action": "toggle"
+              }
+            }
+          }
+        },
         "floorplan_slider": {
           "card": {
             "type": "custom:slider-button-card",
@@ -698,6 +736,20 @@
             }
           }
         },
+        "floorplan_slider_icon_disabled": {
+          "card": {
+            "type": "custom:button-card",
+            "entity": "[[entity]]",
+            "template": "floorplan_slider_icon",
+            "styles": {
+              "icon": [
+                {
+                  "color": "#484848"
+                }
+              ]
+            }
+          }
+        },
         "floorplan_slider_light_icon": {
           "card": {
             "type": "custom:state-switch",
@@ -705,16 +757,13 @@
             "default": "disabled",
             "states": {
               "disabled": {
-                "type": "custom:button-card",
-                "entity": "[[light_entity]]",
-                "template": "floorplan_slider_icon",
-                "styles": {
-                  "icon": [
-                    {
-                      "color": "#484848"
-                    }
-                  ]
-                }
+                "type": "custom:decluttering-card",
+                "template": "floorplan_slider_icon_disabled",
+                "variables": [
+                  {
+                    "entity": "[[light_entity]]"
+                  }
+                ]
               },
               "off": {
                 "type": "custom:button-card",
@@ -743,28 +792,22 @@
             "default": "available",
             "states": {
               "unavailable": {
-                "type": "custom:button-card",
-                "entity": "[[fan_entity]]",
-                "template": "floorplan_slider_icon",
-                "styles": {
-                  "icon": [
-                    {
-                      "color": "#484848"
-                    }
-                  ]
-                }
+                "type": "custom:decluttering-card",
+                "template": "floorplan_slider_icon_disabled",
+                "variables": [
+                  {
+                    "entity": "[[fan_entity]]"
+                  }
+                ]
               },
               "unknown": {
-                "type": "custom:button-card",
-                "entity": "[[fan_entity]]",
-                "template": "floorplan_slider_icon",
-                "styles": {
-                  "icon": [
-                    {
-                      "color": "#484848"
-                    }
-                  ]
-                }
+                "type": "custom:decluttering-card",
+                "template": "floorplan_slider_icon_disabled",
+                "variables": [
+                  {
+                    "entity": "[[fan_entity]]"
+                  }
+                ]
               },
               "available": {
                 "type": "custom:state-switch",
@@ -841,28 +884,22 @@
             "default": "available",
             "states": {
               "unavailable": {
-                "type": "custom:button-card",
-                "entity": "[[ac_entity]]",
-                "template": "floorplan_slider_icon",
-                "styles": {
-                  "icon": [
-                    {
-                      "color": "#484848"
-                    }
-                  ]
-                }
+                "type": "custom:decluttering-card",
+                "template": "floorplan_slider_icon_disabled",
+                "variables": [
+                  {
+                    "entity": "[[ac_entity]]"
+                  }
+                ]
               },
               "unknown": {
-                "type": "custom:button-card",
-                "entity": "[[ac_entity]]",
-                "template": "floorplan_slider_icon",
-                "styles": {
-                  "icon": [
-                    {
-                      "color": "#484848"
-                    }
-                  ]
-                }
+                "type": "custom:decluttering-card",
+                "template": "floorplan_slider_icon_disabled",
+                "variables": [
+                  {
+                    "entity": "[[ac_entity]]"
+                  }
+                ]
               },
               "available": {
                 "type": "custom:state-switch",
@@ -951,28 +988,22 @@
             "default": "enabled",
             "states": {
               "unavailable": {
-                "type": "custom:button-card",
-                "entity": "[[cover_entity]]",
-                "template": "floorplan_slider_icon",
-                "styles": {
-                  "icon": [
-                    {
-                      "color": "#484848"
-                    }
-                  ]
-                }
+                "type": "custom:decluttering-card",
+                "template": "floorplan_slider_icon_disabled",
+                "variables": [
+                  {
+                    "entity": "[[cover_entity]]"
+                  }
+                ]
               },
               "unknown": {
-                "type": "custom:button-card",
-                "entity": "[[cover_entity]]",
-                "template": "floorplan_slider_icon",
-                "styles": {
-                  "icon": [
-                    {
-                      "color": "#484848"
-                    }
-                  ]
-                }
+                "type": "custom:decluttering-card",
+                "template": "floorplan_slider_icon_disabled",
+                "variables": [
+                  {
+                    "entity": "[[cover_entity]]"
+                  }
+                ]
               },
               "enabled": {
                 "type": "custom:button-card",
@@ -998,6 +1029,53 @@
                 "service": "automation.toggle",
                 "service_data": {
                   "entity_id": "[[cover_auto_control_automation]]"
+                }
+              }
+            }
+          }
+        },
+        "floorplan_slider_media_player_icon": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "[[media_player_entity]]",
+            "default": "not_off",
+            "states": {
+              "unavailable": {
+                "type": "custom:decluttering-card",
+                "template": "floorplan_slider_icon_disabled",
+                "variables": [
+                  {
+                    "entity": "[[media_player_entity]]"
+                  }
+                ]
+              },
+              "unknown": {
+                "type": "custom:decluttering-card",
+                "template": "floorplan_slider_icon_disabled",
+                "variables": [
+                  {
+                    "entity": "[[media_player_entity]]"
+                  }
+                ]
+              },
+              "off": {
+                "type": "custom:button-card",
+                "entity": "[[media_player_entity]]",
+                "template": "floorplan_slider_icon",
+                "tap_action": {
+                  "action": "toggle"
+                }
+              },
+              "not_off": {
+                "type": "custom:button-card",
+                "entity": "[[media_player_entity]]",
+                "template": "floorplan_slider_icon",
+                "tap_action": {
+                  "action": "call-service",
+                  "service": "media_player.media_play_pause",
+                  "service_data": {
+                    "entity_id": "[[media_player_entity]]"
+                  }
                 }
               }
             }
@@ -1159,112 +1237,31 @@
                       "default": "both",
                       "states": {
                         "study_room_speaker": {
-                          "type": "custom:slider-button-card",
-                          "entity": "media_player.study_room_speaker",
-                          "icon": {
-                            "show": true,
-                            "use_state_color": true,
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "media_player.media_play_pause",
-                              "service_data": {
-                                "entity_id": "media_player.study_room_speaker"
-                              }
+                          "type": "custom:decluttering-card",
+                          "template": "media_player",
+                          "variables": [
+                            {
+                              "media_player_entity": "media_player.study_room_speaker"
                             }
-                          },
-                          "slider": {
-                            "direction": "bottom-top",
-                            "background": "solid",
-                            "use_state_color": false,
-                            "use_percentage_bg_opacity": false,
-                            "show_track": false,
-                            "toggle_on_click": false,
-                            "force_square": true
-                          },
-                          "show_name": false,
-                          "show_state": false,
-                          "compact": true,
-                          "action_button": {
-                            "mode": "toggle",
-                            "icon": "mdi:power",
-                            "show": false,
-                            "show_spinner": true,
-                            "tap_action": {
-                              "action": "toggle"
-                            }
-                          }
+                          ]
                         },
                         "kitchen_speaker": {
-                          "type": "custom:slider-button-card",
-                          "entity": "media_player.kitchen_speaker",
-                          "icon": {
-                            "show": true,
-                            "use_state_color": true,
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "media_player.media_play_pause",
-                              "service_data": {
-                                "entity_id": "media_player.kitchen_speaker"
-                              }
+                          "type": "custom:decluttering-card",
+                          "template": "media_player",
+                          "variables": [
+                            {
+                              "media_player_entity": "media_player.kitchen_speaker"
                             }
-                          },
-                          "slider": {
-                            "direction": "bottom-top",
-                            "background": "solid",
-                            "use_state_color": false,
-                            "use_percentage_bg_opacity": false,
-                            "show_track": false,
-                            "toggle_on_click": false,
-                            "force_square": true
-                          },
-                          "show_name": false,
-                          "show_state": false,
-                          "compact": true,
-                          "action_button": {
-                            "mode": "toggle",
-                            "icon": "mdi:power",
-                            "show": false,
-                            "show_spinner": true,
-                            "tap_action": {
-                              "action": "toggle"
-                            }
-                          }
+                          ]
                         },
                         "both": {
-                          "type": "custom:slider-button-card",
-                          "entity": "media_player.all_speakers",
-                          "icon": {
-                            "show": true,
-                            "use_state_color": true,
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "media_player.media_play_pause",
-                              "service_data": {
-                                "entity_id": "media_player.all_speakers"
-                              }
+                          "type": "custom:decluttering-card",
+                          "template": "media_player",
+                          "variables": [
+                            {
+                              "media_player_entity": "media_player.all_speakers"
                             }
-                          },
-                          "slider": {
-                            "direction": "bottom-top",
-                            "background": "solid",
-                            "use_state_color": false,
-                            "use_percentage_bg_opacity": false,
-                            "show_track": false,
-                            "toggle_on_click": false,
-                            "force_square": true
-                          },
-                          "show_name": false,
-                          "show_state": false,
-                          "compact": true,
-                          "action_button": {
-                            "mode": "toggle",
-                            "icon": "mdi:power",
-                            "show": false,
-                            "show_spinner": true,
-                            "tap_action": {
-                              "action": "toggle"
-                            }
-                          }
+                          ]
                         }
                       }
                     }
@@ -7686,68 +7683,34 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
+                  "type": "custom:decluttering-card",
                   "style": {
                     "top": "25%",
                     "left": "95%",
                     "height": "9%",
                     "width": "4.5%"
                   },
-                  "entity": "media_player.kitchen_speaker",
-                  "default": "in_use",
-                  "states": {
-                    "unavailable": {
-                      "type": "custom:button-card",
-                      "entity": "media_player.kitchen_speaker",
-                      "template": "error"
-                    },
-                    "unknown": {
-                      "type": "custom:button-card",
-                      "icon": "mdi:music-off",
-                      "template": "square_cell"
-                    },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "media_player.kitchen_speaker",
-                      "template": "square_cell"
-                    },
-                    "in_use": {
-                      "type": "custom:slider-button-card",
-                      "entity": "media_player.kitchen_speaker",
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "media_player.media_play_pause",
-                          "service_data": {
-                            "entity_id": "media_player.kitchen_speaker"
-                          }
-                        }
-                      },
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                  "template": "floorplan_slider",
+                  "variables": [
+                    {
+                      "slider_entity": "media_player.kitchen_speaker"
                     }
-                  }
+                  ]
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "25%",
+                    "left": "95%",
+                    "height": "5%",
+                    "width": "2.5%"
+                  },
+                  "template": "floorplan_slider_media_player_icon",
+                  "variables": [
+                    {
+                      "media_player_entity": "media_player.kitchen_speaker"
+                    }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -8735,68 +8698,34 @@
                   ]
                 },
                 {
-                  "type": "custom:state-switch",
+                  "type": "custom:decluttering-card",
                   "style": {
                     "top": "95%",
                     "left": "32.5%",
                     "height": "9%",
                     "width": "4.5%"
                   },
-                  "entity": "media_player.study_room_speaker",
-                  "default": "in_use",
-                  "states": {
-                    "unavailable": {
-                      "type": "custom:button-card",
-                      "entity": "media_player.study_room_speaker",
-                      "template": "error"
-                    },
-                    "unknown": {
-                      "type": "custom:button-card",
-                      "icon": "mdi:music-off",
-                      "template": "square_cell"
-                    },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "media_player.study_room_speaker",
-                      "template": "square_cell"
-                    },
-                    "in_use": {
-                      "type": "custom:slider-button-card",
-                      "entity": "media_player.study_room_speaker",
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "media_player.media_play_pause",
-                          "service_data": {
-                            "entity_id": "media_player.study_room_speaker"
-                          }
-                        }
-                      },
-                      "slider": {
-                        "direction": "bottom-top",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "show_track": false,
-                        "toggle_on_click": false,
-                        "force_square": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                  "template": "floorplan_slider",
+                  "variables": [
+                    {
+                      "slider_entity": "media_player.study_room_speaker"
                     }
-                  }
+                  ]
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "95%",
+                    "left": "32.5%",
+                    "height": "5%",
+                    "width": "2.5%"
+                  },
+                  "template": "floorplan_slider_media_player_icon",
+                  "variables": [
+                    {
+                      "media_player_entity": "media_player.study_room_speaker"
+                    }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
