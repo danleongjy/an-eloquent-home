@@ -6036,8 +6036,8 @@
     - if:
       - condition: template
         value_template: '{{ as_datetime(states(''input_datetime.nea_rain_radar_timestamp'')).astimezone(now().tzinfo)
-          + timedelta(minutes = 15) < now() - timedelta(minutes = 30) }}'
-        alias: New timestamp is still at least 30min in the past
+          + timedelta(minutes = 15) < now() - timedelta(minutes = 15) }}'
+        alias: New timestamp is still at least 15min in the past
       then:
       - service: input_datetime.set_datetime
         data:
