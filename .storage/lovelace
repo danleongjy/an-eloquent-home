@@ -567,12 +567,108 @@
             }
           }
         },
+        "cover": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "[[cover_position_sensor]]",
+            "default": "not_fully_open",
+            "states": {
+              "100": {
+                "type": "custom:button-card",
+                "entity": "[[cover_entity]]",
+                "template": "turn_on",
+                "color": "rgb(68,115,158)",
+                "tap_action": {
+                  "action": "call-service",
+                  "service": "cover.close_cover",
+                  "service_data": {
+                    "entity_id": "[[cover_entity]]"
+                  }
+                }
+              },
+              "unavailable": {
+                "type": "custom:button-card",
+                "entity": "[[cover_entity]]",
+                "template": "error"
+              },
+              "not_fully_open": {
+                "type": "custom:slider-button-card",
+                "entity": "[[cover_entity]]",
+                "slider": {
+                  "direction": "top-bottom",
+                  "background": "solid",
+                  "use_state_color": false,
+                  "use_percentage_bg_opacity": false,
+                  "toggle_on_click": false,
+                  "show_track": false,
+                  "force_square": true,
+                  "invert": true
+                },
+                "show_name": false,
+                "show_state": false,
+                "compact": true,
+                "icon": {
+                  "show": true,
+                  "use_state_color": true,
+                  "tap_action": {
+                    "action": "more-info"
+                  },
+                  "icon": ""
+                },
+                "action_button": {
+                  "mode": "toggle",
+                  "icon": "mdi:power",
+                  "show": false,
+                  "show_spinner": true,
+                  "tap_action": {
+                    "action": "toggle"
+                  }
+                }
+              }
+            }
+          }
+        },
         "floorplan_slider": {
           "card": {
             "type": "custom:slider-button-card",
             "entity": "[[slider_entity]]",
             "slider": {
               "direction": "bottom-top",
+              "background": "solid",
+              "use_state_color": false,
+              "use_percentage_bg_opacity": false,
+              "show_track": false,
+              "toggle_on_click": false,
+              "force_square": true
+            },
+            "show_name": false,
+            "show_state": false,
+            "compact": true,
+            "icon": {
+              "show": false,
+              "use_state_color": true,
+              "tap_action": {
+                "action": "more-info"
+              },
+              "icon": ""
+            },
+            "action_button": {
+              "mode": "toggle",
+              "icon": "mdi:power",
+              "show": false,
+              "show_spinner": true,
+              "tap_action": {
+                "action": null
+              }
+            }
+          }
+        },
+        "floorplan_slider_cover": {
+          "card": {
+            "type": "custom:slider-button-card",
+            "entity": "[[cover_entity]]",
+            "slider": {
+              "direction": "top-bottom",
               "background": "solid",
               "use_state_color": false,
               "use_percentage_bg_opacity": false,
@@ -843,6 +939,65 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        },
+        "floorplan_slider_cover_icon": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "[[cover_entity]]",
+            "default": "enabled",
+            "states": {
+              "unavailable": {
+                "type": "custom:button-card",
+                "entity": "[[cover_entity]]",
+                "template": "floorplan_slider_icon",
+                "styles": {
+                  "icon": [
+                    {
+                      "color": "#484848"
+                    }
+                  ]
+                }
+              },
+              "unknown": {
+                "type": "custom:button-card",
+                "entity": "[[cover_entity]]",
+                "template": "floorplan_slider_icon",
+                "styles": {
+                  "icon": [
+                    {
+                      "color": "#484848"
+                    }
+                  ]
+                }
+              },
+              "enabled": {
+                "type": "custom:button-card",
+                "entity": "[[cover_entity]]",
+                "template": "floorplan_slider_icon",
+                "styles": {
+                  "icon": [
+                    {
+                      "color": "[[[\n  if (entity.attributes.current_position == 100)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
+                    }
+                  ]
+                },
+                "tap_action": {
+                  "action": "call-service",
+                  "service": "[[[\n  if (entity.attributes.current_position == 100)\n    return \"cover.close_cover\";\n  else\n    return \"cover.open_cover\";\n]]]\n",
+                  "service_data": {
+                    "entity_id": "[[cover_entity]]"
+                  }
+                }
+              },
+              "double_tap_action": {
+                "action": "call-service",
+                "service": "automation.toggle",
+                "service_data": {
+                  "entity_id": "[[cover_auto_control_automation]]"
                 }
               }
             }
@@ -1761,63 +1916,16 @@
                   ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "{% if is_state('cover.dining_room_blinds', 'unavailable') %} unavailable {% elif state_attr('cover.dining_room_blinds','current_position') == 100 %} open {% else %} not_open {% endif %}",
-                  "default": "not_open",
-                  "states": {
-                    "unavailable": {
-                      "type": "custom:button-card",
-                      "entity": "cover.dining_room_blinds",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "cover",
+                  "variables": [
+                    {
+                      "cover_position_sensor": "sensor.dining_room_blinds_position"
                     },
-                    "open": {
-                      "type": "custom:button-card",
-                      "entity": "cover.dining_room_blinds",
-                      "template": "turn_on",
-                      "color": "rgb(68,115,158)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "cover.close_cover",
-                        "service_data": {
-                          "entity_id": "cover.dining_room_blinds"
-                        }
-                      }
-                    },
-                    "not_open": {
-                      "type": "custom:slider-button-card",
-                      "entity": "cover.dining_room_blinds",
-                      "slider": {
-                        "direction": "top-bottom",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "toggle_on_click": false,
-                        "show_track": false,
-                        "force_square": true,
-                        "invert": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "cover_entity": "cover.dining_room_blinds"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -1894,63 +2002,16 @@
                   ]
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "{% if is_state('cover.living_room_blinds', 'unavailable') %} unavailable {% elif state_attr('cover.living_room_blinds','current_position') == 100 %} open {% else %} not_open {% endif %}",
-                  "default": "not_open",
-                  "states": {
-                    "unavailable": {
-                      "type": "custom:button-card",
-                      "entity": "cover.living_room_blinds",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "cover",
+                  "variables": [
+                    {
+                      "cover_position_sensor": "sensor.living_room_blinds_position"
                     },
-                    "open": {
-                      "type": "custom:button-card",
-                      "entity": "cover.living_room_blinds",
-                      "template": "turn_on",
-                      "color": "rgb(68,115,158)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "cover.close_cover",
-                        "service_data": {
-                          "entity_id": "cover.living_room_blinds"
-                        }
-                      }
-                    },
-                    "not_open": {
-                      "type": "custom:slider-button-card",
-                      "entity": "cover.living_room_blinds",
-                      "slider": {
-                        "direction": "top-bottom",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "toggle_on_click": false,
-                        "show_track": false,
-                        "force_square": true,
-                        "invert": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "cover_entity": "cover.living_room_blinds"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -2182,63 +2243,16 @@
                   "color_type": "blank-card"
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "{% if is_state('cover.master_bathroom_blind', 'unavailable') %} unavailable {% elif state_attr('cover.master_bathroom_blind','current_position') == 100 %} open {% else %} not_open {% endif %}",
-                  "default": "not_open",
-                  "states": {
-                    "unavailable": {
-                      "type": "custom:button-card",
-                      "entity": "cover.master_bathroom_blind",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "cover",
+                  "variables": [
+                    {
+                      "cover_position_sensor": "sensor.master_bathroom_blind_position"
                     },
-                    "open": {
-                      "type": "custom:button-card",
-                      "entity": "cover.master_bathroom_blind",
-                      "template": "turn_on",
-                      "color": "rgb(68,115,158)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "cover.close_cover",
-                        "service_data": {
-                          "entity_id": "cover.master_bathroom_blind"
-                        }
-                      }
-                    },
-                    "not_open": {
-                      "type": "custom:slider-button-card",
-                      "slider": {
-                        "direction": "top-bottom",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "toggle_on_click": false,
-                        "show_track": false,
-                        "force_square": true,
-                        "invert": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      },
-                      "entity": "cover.master_bathroom_blind"
+                    {
+                      "cover_entity": "cover.master_bathroom_blind"
                     }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -2382,63 +2396,16 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
-                  "entity": "{% if is_state('cover.kitchen_blind', 'unavailable') %} unavailable {% elif state_attr('cover.kitchen_blind','current_position') == 100 %} open {% else %} not_open {% endif %}",
-                  "default": "not_open",
-                  "states": {
-                    "unavailable": {
-                      "type": "custom:button-card",
-                      "entity": "cover.kitchen_blind",
-                      "template": "error"
+                  "type": "custom:decluttering-card",
+                  "template": "cover",
+                  "variables": [
+                    {
+                      "cover_position_sensor": "sensor.kitchen_blind_position"
                     },
-                    "open": {
-                      "type": "custom:button-card",
-                      "entity": "cover.kitchen_blind",
-                      "template": "turn_on",
-                      "color": "rgb(68,115,158)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "cover.close_cover",
-                        "service_data": {
-                          "entity_id": "cover.kitchen_blind"
-                        }
-                      }
-                    },
-                    "not_open": {
-                      "type": "custom:slider-button-card",
-                      "entity": "cover.kitchen_blind",
-                      "slider": {
-                        "direction": "top-bottom",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "toggle_on_click": false,
-                        "show_track": false,
-                        "force_square": true,
-                        "invert": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "cover_entity": "cover.kitchen_blind"
                     }
-                  }
+                  ]
                 }
               ]
             }
@@ -7686,68 +7653,36 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_cover",
+                  "variables": [
+                    {
+                      "cover_entity": "cover.kitchen_blind"
+                    }
+                  ],
                   "style": {
                     "top": "25%",
                     "left": "90%",
                     "height": "9%",
                     "width": "4.5%"
-                  },
-                  "entity": "{% if is_state('cover.kitchen_blind', 'unavailable') %} unavailable {% elif state_attr('cover.kitchen_blind','current_position') == 100 %} open {% else %} not_open {% endif %}",
-                  "default": "not_open",
-                  "states": {
-                    "unavailable": {
-                      "type": "custom:button-card",
-                      "entity": "cover.kitchen_blind",
-                      "template": "error"
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_cover_icon",
+                  "variables": [
+                    {
+                      "cover_entity": "cover.kitchen_blind"
                     },
-                    "open": {
-                      "type": "custom:button-card",
-                      "entity": "cover.kitchen_blind",
-                      "template": "turn_on",
-                      "color": "rgb(68,115,158)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "cover.close_cover",
-                        "service_data": {
-                          "entity_id": "cover.kitchen_blind"
-                        }
-                      }
-                    },
-                    "not_open": {
-                      "type": "custom:slider-button-card",
-                      "entity": "cover.kitchen_blind",
-                      "slider": {
-                        "direction": "top-bottom",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "toggle_on_click": false,
-                        "show_track": false,
-                        "force_square": true,
-                        "invert": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "cover_auto_control_automation": "automation.kitchen_blind_auto_control"
                     }
+                  ],
+                  "style": {
+                    "top": "25%",
+                    "left": "90%",
+                    "height": "5%",
+                    "width": "2.5%"
                   }
                 },
                 {
@@ -8303,68 +8238,36 @@
                   ]
                 },
                 {
-                  "type": "custom:state-switch",
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_cover",
+                  "variables": [
+                    {
+                      "cover_entity": "cover.dining_room_blinds"
+                    }
+                  ],
                   "style": {
                     "top": "75%",
                     "left": "32.5%",
                     "height": "9%",
                     "width": "4.5%"
-                  },
-                  "entity": "{% if is_state('cover.dining_room_blinds', 'unavailable') %} unavailable {% elif state_attr('cover.dining_room_blinds','current_position') == 100 %} open {% else %} not_open {% endif %}",
-                  "default": "not_open",
-                  "states": {
-                    "unavailable": {
-                      "type": "custom:button-card",
-                      "entity": "cover.dining_room_blinds",
-                      "template": "error"
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_cover_icon",
+                  "variables": [
+                    {
+                      "cover_entity": "cover.dining_room_blinds"
                     },
-                    "open": {
-                      "type": "custom:button-card",
-                      "entity": "cover.dining_room_blinds",
-                      "template": "turn_on",
-                      "color": "rgb(68,115,158)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "cover.close_cover",
-                        "service_data": {
-                          "entity_id": "cover.dining_room_blinds"
-                        }
-                      }
-                    },
-                    "not_open": {
-                      "type": "custom:slider-button-card",
-                      "entity": "cover.dining_room_blinds",
-                      "slider": {
-                        "direction": "top-bottom",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "toggle_on_click": false,
-                        "show_track": false,
-                        "force_square": true,
-                        "invert": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "cover_auto_control_automation": "automation.south_facing_blinds_auto_control"
                     }
+                  ],
+                  "style": {
+                    "top": "75%",
+                    "left": "32.5%",
+                    "height": "5%",
+                    "width": "2.5%"
                   }
                 },
                 {
@@ -8526,68 +8429,36 @@
                   ]
                 },
                 {
-                  "type": "custom:state-switch",
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_cover",
+                  "variables": [
+                    {
+                      "cover_entity": "cover.living_room_blinds"
+                    }
+                  ],
                   "style": {
                     "top": "85%",
                     "left": "35%",
                     "height": "9%",
                     "width": "4.5%"
-                  },
-                  "entity": "{% if is_state('cover.living_room_blinds', 'unavailable') %} unavailable {% elif state_attr('cover.living_room_blinds','current_position') == 100 %} open {% else %} not_open {% endif %}",
-                  "default": "not_open",
-                  "states": {
-                    "unavailable": {
-                      "type": "custom:button-card",
-                      "entity": "cover.living_room_blinds",
-                      "template": "error"
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_cover_icon",
+                  "variables": [
+                    {
+                      "cover_entity": "cover.living_room_blinds"
                     },
-                    "open": {
-                      "type": "custom:button-card",
-                      "entity": "cover.living_room_blinds",
-                      "template": "turn_on",
-                      "color": "rgb(68,115,158)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "cover.close_cover",
-                        "service_data": {
-                          "entity_id": "cover.living_room_blinds"
-                        }
-                      }
-                    },
-                    "not_open": {
-                      "type": "custom:slider-button-card",
-                      "entity": "cover.living_room_blinds",
-                      "slider": {
-                        "direction": "top-bottom",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "toggle_on_click": false,
-                        "show_track": false,
-                        "force_square": true,
-                        "invert": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
+                    {
+                      "cover_auto_control_automation": "automation.south_facing_blinds_auto_control"
                     }
+                  ],
+                  "style": {
+                    "top": "85%",
+                    "left": "35%",
+                    "height": "5%",
+                    "width": "2.5%"
                   }
                 },
                 {
@@ -8699,68 +8570,36 @@
                   }
                 },
                 {
-                  "type": "custom:state-switch",
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_cover",
+                  "variables": [
+                    {
+                      "cover_entity": "cover.master_bathroom_blind"
+                    }
+                  ],
                   "style": {
                     "top": "85%",
                     "left": "92.5%",
                     "height": "9%",
                     "width": "4.5%"
-                  },
-                  "entity": "{% if is_state('cover.master_bathroom_blind', 'unavailable') %} unavailable {% elif state_attr('cover.master_bathroom_blind','current_position') == 100 %} open {% else %} not_open {% endif %}",
-                  "default": "not_open",
-                  "states": {
-                    "unavailable": {
-                      "type": "custom:button-card",
-                      "entity": "cover.master_bathroom_blind",
-                      "template": "error"
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_cover_icon",
+                  "variables": [
+                    {
+                      "cover_entity": "cover.master_bathroom_blind"
                     },
-                    "open": {
-                      "type": "custom:button-card",
-                      "entity": "cover.master_bathroom_blind",
-                      "template": "turn_on",
-                      "color": "rgb(68,115,158)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "cover.close_cover",
-                        "service_data": {
-                          "entity_id": "cover.master_bathroom_blind"
-                        }
-                      }
-                    },
-                    "not_open": {
-                      "type": "custom:slider-button-card",
-                      "slider": {
-                        "direction": "top-bottom",
-                        "background": "solid",
-                        "use_state_color": false,
-                        "use_percentage_bg_opacity": false,
-                        "toggle_on_click": false,
-                        "show_track": false,
-                        "force_square": true,
-                        "invert": true
-                      },
-                      "show_name": false,
-                      "show_state": false,
-                      "compact": true,
-                      "icon": {
-                        "show": true,
-                        "use_state_color": true,
-                        "tap_action": {
-                          "action": "more-info"
-                        },
-                        "icon": ""
-                      },
-                      "action_button": {
-                        "mode": "toggle",
-                        "icon": "mdi:power",
-                        "show": false,
-                        "show_spinner": true,
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      },
-                      "entity": "cover.master_bathroom_blind"
+                    {
+                      "cover_auto_control_automation": "automation.master_bathroom_blind_auto_control"
                     }
+                  ],
+                  "style": {
+                    "top": "85%",
+                    "left": "92.5%",
+                    "height": "5%",
+                    "width": "2.5%"
                   }
                 },
                 {
