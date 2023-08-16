@@ -95,8 +95,11 @@ Total | 1383
 - [Watchman](https://github.com/dummylabs/thewatchman)
 
 ### Custom dashboard cards
+- [Apexcharts Card](https://github.com/RomRider/apexcharts-card)
 - [Button Card](https://github.com/custom-cards/button-card)
 - [Decluttering Card](https://github.com/custom-cards/decluttering-card)
+- [Mini Graph Card](https://github.com/kalkih/mini-graph-card)
+- [Simple Weather Card](https://github.com/kalkih/simple-weather-card)
 - [Slider Button Card](https://github.com/custom-cards/slider-button-card)
 - [State Switch](https://github.com/thomasloven/lovelace-state-switch)
 

@@ -264,6 +264,136 @@
               }
             ]
           }
+        },
+        "floorplan_sensor_diag": {
+          "template": "square_cell",
+          "color_type": "card",
+          "tap_action": {
+            "action": "more-info"
+          },
+          "styles": {
+            "icon": [
+              {
+                "height": "80%"
+              },
+              {
+                "width": "80%"
+              }
+            ]
+          }
+        },
+        "floorplan_sensor_binary": {
+          "template": "floorplan_sensor_diag",
+          "state": [
+            {
+              "value": "on",
+              "color": "var(--state-binary-sensor-color)"
+            },
+            {
+              "value": "off",
+              "color": "#1c1c1c"
+            },
+            {
+              "operator": "default",
+              "color": "grey"
+            }
+          ]
+        },
+        "floorplan_sensor_temperature": {
+          "template": "floorplan_sensor_diag",
+          "state": [
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.temperature_threshold_cold'].state) ]]]",
+              "color": "#1c1c1c"
+            },
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.temperature_threshold_warm'].state) ]]]",
+              "color": "var(--state-binary-sensor-color)"
+            },
+            {
+              "operator": ">",
+              "value": "[[[ return parseInt(states['input_number.temperature_threshold_warm'].state) ]]]",
+              "color": "#f2900f"
+            },
+            {
+              "operator": "default",
+              "color": "grey"
+            }
+          ]
+        },
+        "floorplan_sensor_humidity": {
+          "template": "floorplan_sensor_diag",
+          "state": [
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.humidity_threshold_low'].state) ]]]",
+              "color": "#1c1c1c"
+            },
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.humidity_threshold_high'].state) ]]]",
+              "color": "var(--state-binary-sensor-color)"
+            },
+            {
+              "operator": ">",
+              "value": "[[[ return parseInt(states['input_number.humidity_threshold_high'].state) ]]]",
+              "color": "#f2900f"
+            },
+            {
+              "operator": "default",
+              "color": "grey"
+            }
+          ]
+        },
+        "floorplan_sensor_lux": {
+          "template": "floorplan_sensor_diag",
+          "state": [
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.minimum_lux'].state) ]]]",
+              "color": "#f2900f"
+            },
+            {
+              "operator": "<=",
+              "value": "[[[ return parseInt(states['input_number.comfortable_lux'].state) ]]]",
+              "color": "var(--state-binary-sensor-color)"
+            },
+            {
+              "operator": ">",
+              "value": "[[[ return parseInt(states['input_number.comfortable_lux'].state) ]]]",
+              "color": "#1c1c1c"
+            },
+            {
+              "operator": "default",
+              "color": "grey"
+            }
+          ]
+        },
+        "floorplan_sensor_cpu": {
+          "template": "floorplan_sensor_diag",
+          "state": [
+            {
+              "operator": "<=",
+              "value": 3,
+              "color": "#1c1c1c"
+            },
+            {
+              "operator": "<=",
+              "value": 6,
+              "color": "var(--state-binary-sensor-color)"
+            },
+            {
+              "operator": ">",
+              "value": 6,
+              "color": "#f2900f"
+            },
+            {
+              "operator": "default",
+              "color": "grey"
+            }
+          ]
         }
       },
       "decluttering_templates": {
@@ -844,7 +974,7 @@
                       "custom_fields": {
                         "auto_control": [
                           {
-                            "color": "var(--state-climate-cool-color)"
+                            "color": "#f2900f"
                           },
                           {
                             "font-size": "10px"
@@ -941,7 +1071,7 @@
                       "custom_fields": {
                         "auto_control": [
                           {
-                            "color": "var(--state-climate-cool-color)"
+                            "color": "#f2900f"
                           },
                           {
                             "font-size": "10px"
@@ -1006,29 +1136,92 @@
                 ]
               },
               "enabled": {
-                "type": "custom:button-card",
-                "entity": "[[cover_entity]]",
-                "template": "floorplan_slider_icon",
-                "styles": {
-                  "icon": [
-                    {
-                      "color": "[[[\n  if (entity.attributes.current_position == 100)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
+                "type": "custom:state-switch",
+                "entity": "[[cover_auto_control_automation]]",
+                "default": "off",
+                "states": {
+                  "off": {
+                    "type": "custom:button-card",
+                    "entity": "[[cover_entity]]",
+                    "template": "floorplan_slider_icon",
+                    "styles": {
+                      "icon": [
+                        {
+                          "color": "[[[\n  if (entity.attributes.current_position == 100)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
+                        }
+                      ]
+                    },
+                    "tap_action": {
+                      "action": "call-service",
+                      "service": "[[[\n  if (entity.attributes.current_position == 100)\n    return \"cover.close_cover\";\n  else\n    return \"cover.open_cover\";\n]]]\n",
+                      "service_data": {
+                        "entity_id": "[[cover_entity]]"
+                      }
+                    },
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.toggle",
+                      "service_data": {
+                        "entity_id": "[[cover_auto_control_automation]]"
+                      }
                     }
-                  ]
-                },
-                "tap_action": {
-                  "action": "call-service",
-                  "service": "[[[\n  if (entity.attributes.current_position == 100)\n    return \"cover.close_cover\";\n  else\n    return \"cover.open_cover\";\n]]]\n",
-                  "service_data": {
-                    "entity_id": "[[cover_entity]]"
+                  },
+                  "on": {
+                    "type": "custom:button-card",
+                    "entity": "[[cover_entity]]",
+                    "template": "floorplan_slider_icon",
+                    "custom_fields": {
+                      "auto_control": "A"
+                    },
+                    "styles": {
+                      "grid": [
+                        {
+                          "position": "relative"
+                        }
+                      ],
+                      "custom_fields": {
+                        "auto_control": [
+                          {
+                            "color": "#f2900f"
+                          },
+                          {
+                            "font-size": "10px"
+                          },
+                          {
+                            "font-weight": "bold"
+                          },
+                          {
+                            "position": "absolute"
+                          },
+                          {
+                            "right": "5%"
+                          },
+                          {
+                            "top": "-5%"
+                          }
+                        ]
+                      },
+                      "icon": [
+                        {
+                          "color": "[[[\n  if (entity.attributes.current_position == 100)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
+                        }
+                      ]
+                    },
+                    "tap_action": {
+                      "action": "call-service",
+                      "service": "[[[\n  if (entity.attributes.current_position == 100)\n    return \"cover.close_cover\";\n  else\n    return \"cover.open_cover\";\n]]]\n",
+                      "service_data": {
+                        "entity_id": "[[cover_entity]]"
+                      }
+                    },
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.toggle",
+                      "service_data": {
+                        "entity_id": "[[cover_auto_control_automation]]"
+                      }
+                    }
                   }
-                }
-              },
-              "double_tap_action": {
-                "action": "call-service",
-                "service": "automation.toggle",
-                "service_data": {
-                  "entity_id": "[[cover_auto_control_automation]]"
                 }
               }
             }
@@ -1078,6 +1271,55 @@
                   }
                 }
               }
+            }
+          }
+        },
+        "floorplan_weather_forecast": {
+          "card": {
+            "type": "custom:button-card",
+            "entity": "weather.local_weather",
+            "icon": "[[[ return 'mdi:weather-' + [[icon_template]] ]]]",
+            "show_name": false,
+            "tap_action": {
+              "action": "navigate",
+              "navigation_path": "/lovelace/weather"
+            }
+          }
+        }
+      },
+      "apexcharts_card_templates": {
+        "standard": {
+          "header": {
+            "show": true,
+            "show_states": true,
+            "colorize_states": true
+          },
+          "graph_span": "4h",
+          "apex_config": {
+            "grid": {
+              "show": false
+            }
+          },
+          "all_series_config": {
+            "stroke_width": 2,
+            "show": {
+              "legend_value": false
+            }
+          }
+        },
+        "floorplan": {
+          "config_templates": "standard",
+          "apex_config": {
+            "legend": {
+              "show": false
+            },
+            "grid": {
+              "show": false
+            }
+          },
+          "all_series_config": {
+            "show": {
+              "in_header": false
             }
           }
         }
@@ -4330,22 +4572,29 @@
                   ]
                 },
                 {
-                  "type": "history-graph",
-                  "entities": [
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Network Traffic"
+                  },
+                  "series": [
                     {
-                      "entity": "sensor.pfsense_mb_in_within_1min"
+                      "entity": "sensor.pfsense_mb_in_within_1min",
+                      "name": "pfSense inbound"
                     },
                     {
-                      "entity": "sensor.pfsense_mb_out_within_1min"
+                      "entity": "sensor.pfsense_mb_out_within_1min",
+                      "name": "pfSense outbound"
                     },
                     {
-                      "entity": "sensor.home_assistant_mb_in_within_1min"
+                      "entity": "sensor.home_assistant_mb_in_within_1min",
+                      "name": "HA inbound"
                     },
                     {
-                      "entity": "sensor.home_assistant_mb_out_within_1min"
+                      "entity": "sensor.home_assistant_mb_out_within_1min",
+                      "name": "HA outbound"
                     }
-                  ],
-                  "hours_to_show": 12
+                  ]
                 },
                 {
                   "type": "markdown",
@@ -4399,34 +4648,58 @@
                   ]
                 },
                 {
-                  "type": "history-graph",
-                  "entities": [
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "AdGuard DNS Processing Speed"
+                  },
+                  "series": [
                     {
-                      "entity": "sensor.adguard_home_average_processing_speed"
+                      "entity": "sensor.adguard_home_average_processing_speed",
+                      "name": " ",
+                      "stroke_width": 2
                     }
-                  ],
-                  "hours_to_show": 12
+                  ]
                 },
                 {
-                  "type": "history-graph",
-                  "entities": [
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "AdGuard DNS Queries"
+                  },
+                  "series": [
                     {
-                      "entity": "sensor.dns_query_filter_block_rate_within_5min"
-                    }
-                  ],
-                  "hours_to_show": 12
-                },
-                {
-                  "type": "history-graph",
-                  "entities": [
-                    {
-                      "entity": "sensor.dns_queries_within_5min"
+                      "entity": "sensor.dns_queries_within_5min",
+                      "type": "column",
+                      "name": "requested within 5min",
+                      "yaxis_id": "count",
+                      "color": "teal"
                     },
                     {
-                      "entity": "sensor.dns_queries_blocked_by_filters_within_5min"
+                      "entity": "sensor.dns_queries_blocked_by_filters_within_5min",
+                      "name": "blocked within 5min",
+                      "type": "column",
+                      "yaxis_id": "count",
+                      "color": "red"
+                    },
+                    {
+                      "entity": "sensor.dns_query_filter_block_rate_within_5min",
+                      "name": "requests blocked within 5min",
+                      "yaxis_id": "percent",
+                      "color": "orange"
                     }
                   ],
-                  "hours_to_show": 12
+                  "yaxis": [
+                    {
+                      "id": "count",
+                      "decimals": 0
+                    },
+                    {
+                      "id": "percent",
+                      "decimals": 0,
+                      "opposite": true
+                    }
+                  ]
                 },
                 {
                   "type": "entities",
@@ -6866,7 +7139,7 @@
                   "type": "custom:button-card",
                   "style": {
                     "top": "5%",
-                    "left": "7.5%",
+                    "left": "22.5%",
                     "height": "9%",
                     "width": "4.5%"
                   },
@@ -6905,7 +7178,7 @@
                   ],
                   "style": {
                     "top": "5%",
-                    "left": "12.5%",
+                    "left": "27.5%",
                     "height": "9%",
                     "width": "4.5%"
                   }
@@ -6923,7 +7196,7 @@
                   ],
                   "style": {
                     "top": "5%",
-                    "left": "12.5%",
+                    "left": "27.5%",
                     "height": "5%",
                     "width": "2.5%"
                   }
@@ -6932,7 +7205,7 @@
                   "type": "custom:button-card",
                   "style": {
                     "top": "5%",
-                    "left": "17.5%",
+                    "left": "32.5%",
                     "height": "9%",
                     "width": "4.5%"
                   },
@@ -6942,24 +7215,24 @@
                 {
                   "type": "custom:button-card",
                   "style": {
-                    "top": "2.25%",
-                    "left": "21.25%",
+                    "top": "2.5%",
+                    "left": "36.25%",
                     "height": "4%",
                     "width": "2%"
                   },
-                  "entity": "input_boolean.junior_bathroom_occupancy",
-                  "template": "sensor_motion"
+                  "entity": "input_boolean.powder_room_occupancy",
+                  "template": "floorplan_sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
                   "style": {
                     "top": "7.5%",
-                    "left": "21.25%",
+                    "left": "36.25%",
                     "height": "4%",
                     "width": "2%"
                   },
-                  "entity": "binary_sensor.junior_bathroom_door",
-                  "template": "sensor_binary"
+                  "entity": "binary_sensor.powder_room_door",
+                  "template": "floorplan_sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
@@ -6979,10 +7252,7 @@
                     "action": "call-service",
                     "service": "automation.trigger",
                     "service_data": {
-                      "entity_id": [
-                        "automation.yard_motion_timeout",
-                        "automation.playroom_motion_timeout"
-                      ]
+                      "entity_id": "automation.yard_motion_timeout"
                     }
                   },
                   "hold_action": {
@@ -7272,8 +7542,138 @@
                 {
                   "type": "custom:button-card",
                   "style": {
+                    "top": "2.5%",
+                    "left": "66.25%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.yard_window_1",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "7.5%",
+                    "left": "66.25%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.yard_motion",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "2.5%",
+                    "left": "68.875%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.yard_window_2",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:simple-weather-card",
+                  "style": {
+                    "top": "5%",
+                    "left": "85%",
+                    "height": "9%",
+                    "width": "29.5%"
+                  },
+                  "entity": "weather.local_weather",
+                  "name": " ",
+                  "secondary_info": "humidity",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/weather"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "16%",
+                    "left": "75%",
+                    "height": "2%",
+                    "width": "9.5%"
+                  },
+                  "name": "Forecasts:",
+                  "styles": {
+                    "name": [
+                      {
+                        "font-size": "10pt"
+                      }
+                    ]
+                  },
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/weather"
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "16%",
+                    "left": "82.5%",
+                    "height": "2%",
+                    "width": "4.5%"
+                  },
+                  "template": "floorplan_weather_forecast",
+                  "variables": [
+                    {
+                      "icon_template": "entity.attributes.forecast[0].condition"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "16%",
+                    "left": "87.5%",
+                    "height": "2%",
+                    "width": "4.5%"
+                  },
+                  "template": "floorplan_weather_forecast",
+                  "variables": [
+                    {
+                      "icon_template": "entity.attributes.forecast[1].condition"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "16%",
+                    "left": "92.5%",
+                    "height": "2%",
+                    "width": "4.5%"
+                  },
+                  "template": "floorplan_weather_forecast",
+                  "variables": [
+                    {
+                      "icon_template": "entity.attributes.forecast[2].condition"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "16%",
+                    "left": "97.5%",
+                    "height": "2%",
+                    "width": "4.5%"
+                  },
+                  "template": "floorplan_weather_forecast",
+                  "variables": [
+                    {
+                      "icon_template": "entity.attributes.forecast[3].condition"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
                     "top": "15%",
-                    "left": "5%",
+                    "left": "15%",
                     "height": "9%",
                     "width": "4.5%"
                   },
@@ -7312,7 +7712,7 @@
                   ],
                   "style": {
                     "top": "15%",
-                    "left": "10%",
+                    "left": "20%",
                     "height": "9%",
                     "width": "4.5%"
                   }
@@ -7330,10 +7730,32 @@
                   ],
                   "style": {
                     "top": "15%",
-                    "left": "10%",
+                    "left": "20%",
                     "height": "5%",
                     "width": "2.5%"
                   }
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "12.5%",
+                    "left": "23.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "input_boolean.junior_bathroom_occupancy",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "17.5%",
+                    "left": "23.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.junior_bathroom_door",
+                  "template": "floorplan_sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
@@ -7353,22 +7775,12 @@
                     "action": "call-service",
                     "service": "automation.trigger",
                     "service_data": {
-                      "entity_id": [
-                        "automation.yard_motion_timeout",
-                        "automation.playroom_motion_timeout"
-                      ]
+                      "entity_id": "automation.playroom_motion_timeout"
                     }
                   },
                   "hold_action": {
                     "action": "navigate",
                     "navigation_path": "/lovelace/playroom"
-                  },
-                  "styles": {
-                    "card": [
-                      {
-                        "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_window_open_at_yard'].state == 'on')\n    return '#9e110d';\n  else if (states['sensor.raining_with_yard_windows_open'].state == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_yard_windows_open'].state == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                      }
-                    ]
                   }
                 },
                 {
@@ -7407,8 +7819,30 @@
                 {
                   "type": "custom:button-card",
                   "style": {
+                    "top": "12.5%",
+                    "left": "58.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.playroom_motion",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "17.5%",
+                    "left": "58.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.playroom_lux",
+                  "template": "floorplan_sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
                     "top": "25%",
-                    "left": "2.5%",
+                    "left": "5%",
                     "height": "9%",
                     "width": "4.5%"
                   },
@@ -7440,7 +7874,7 @@
                   ],
                   "style": {
                     "top": "25%",
-                    "left": "7.5%",
+                    "left": "10%",
                     "height": "9%",
                     "width": "4.5%"
                   }
@@ -7458,10 +7892,87 @@
                   ],
                   "style": {
                     "top": "25%",
-                    "left": "7.5%",
+                    "left": "10%",
                     "height": "5%",
                     "width": "2.5%"
                   }
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "22.5%",
+                    "left": "13.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.hallway_motion",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "27.5%",
+                    "left": "13.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.hallway_lux",
+                  "template": "floorplan_sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "25%",
+                    "left": "52.5%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  },
+                  "icon": "mdi:server-network",
+                  "template": "square_cell"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "22.5%",
+                    "left": "56.25%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.node_proxmox_cpu_used",
+                  "template": "floorplan_sensor_cpu"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "27.5%",
+                    "left": "56.25%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.qemu_pfsense_100_cpu_used",
+                  "template": "floorplan_sensor_cpu"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "22.5%",
+                    "left": "58.875%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.qemu_eloquent_house_101_cpu_used",
+                  "template": "floorplan_sensor_cpu"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "27.5%",
+                    "left": "58.875%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.qemu_docker_102_cpu_used",
+                  "template": "floorplan_sensor_cpu"
                 },
                 {
                   "type": "custom:button-card",
@@ -7715,6 +8226,196 @@
                 {
                   "type": "custom:button-card",
                   "style": {
+                    "top": "22.5%",
+                    "left": "98.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.kitchen_presence",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "27.5%",
+                    "left": "98.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.kitchen_lux",
+                  "template": "floorplan_sensor_lux"
+                },
+                {
+                  "type": "custom:mini-graph-card",
+                  "style": {
+                    "top": "40%",
+                    "left": "7.5%",
+                    "height": "19%",
+                    "width": "14.5%"
+                  },
+                  "hours_to_show": 4,
+                  "points_per_hour": 5,
+                  "line_width": 2,
+                  "show": {
+                    "legend": false,
+                    "name": false,
+                    "state": false
+                  },
+                  "entities": [
+                    {
+                      "entity": "sensor.playroom_lux",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.kitchen_lux",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.elenas_room_lux",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.elis_room_lux",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.hallway_lux",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.dining_room_lux",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.living_room_lux",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.study_walkway_lux",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.parents_room_lux",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.sun_solar_elevation",
+                      "color": "yellow",
+                      "show_fill": false,
+                      "y_axis": "secondary"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:mini-graph-card",
+                  "style": {
+                    "top": "42.5%",
+                    "left": "90%",
+                    "height": "24%",
+                    "width": "19.5%"
+                  },
+                  "hours_to_show": 4,
+                  "points_per_hour": 5,
+                  "line_width": 2,
+                  "show": {
+                    "legend": false,
+                    "name": false,
+                    "state": false
+                  },
+                  "entities": [
+                    {
+                      "entity": "sensor.elenas_room_temperature",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.elis_room_temperature",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.dining_room_temperature",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.study_room_temperature",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.parents_room_temperature",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.local_outdoor_temperature",
+                      "color": "green",
+                      "show_fill": false
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:mini-graph-card",
+                  "style": {
+                    "top": "67.5%",
+                    "left": "90%",
+                    "height": "24%",
+                    "width": "19.5%"
+                  },
+                  "hours_to_show": 4,
+                  "points_per_hour": 5,
+                  "line_width": 2,
+                  "show": {
+                    "legend": false,
+                    "name": false,
+                    "state": false
+                  },
+                  "entities": [
+                    {
+                      "entity": "sensor.elenas_room_humidity",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.elis_room_humidity",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.dining_room_humidity",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.study_room_humidity",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.parents_room_humidity",
+                      "show_fill": false,
+                      "color": "#555555"
+                    },
+                    {
+                      "entity": "sensor.local_outdoor_humidity",
+                      "color": "cyan",
+                      "show_fill": false
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
                     "top": "55%",
                     "left": "2.5%",
                     "height": "9%",
@@ -7855,7 +8556,7 @@
                     "width": "2%"
                   },
                   "entity": "binary_sensor.elenas_room_motion",
-                  "template": "sensor_motion"
+                  "template": "floorplan_sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
@@ -7866,7 +8567,7 @@
                     "width": "2%"
                   },
                   "entity": "binary_sensor.elenas_room_door",
-                  "template": "sensor_binary"
+                  "template": "floorplan_sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
@@ -7877,7 +8578,7 @@
                     "width": "2%"
                   },
                   "entity": "sensor.elenas_room_temperature",
-                  "template": "sensor_temperature"
+                  "template": "floorplan_sensor_temperature"
                 },
                 {
                   "type": "custom:button-card",
@@ -7888,7 +8589,7 @@
                     "width": "2%"
                   },
                   "entity": "sensor.elenas_room_humidity",
-                  "template": "sensor_humidity"
+                  "template": "floorplan_sensor_humidity"
                 },
                 {
                   "type": "custom:button-card",
@@ -7899,7 +8600,7 @@
                     "width": "2%"
                   },
                   "entity": "sensor.elenas_room_lux",
-                  "template": "sensor_lux"
+                  "template": "floorplan_sensor_lux"
                 },
                 {
                   "type": "custom:button-card",
@@ -8034,6 +8735,61 @@
                       "ac_auto_control_automation": "automation.elis_room_ac_auto_control"
                     }
                   ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "62.5%",
+                    "left": "23.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.elis_room_motion",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "67.5%",
+                    "left": "23.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.elis_room_door",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "62.5%",
+                    "left": "26.375%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.elis_room_temperature",
+                  "template": "floorplan_sensor_temperature"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "67.5%",
+                    "left": "26.375%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.elis_room_humidity",
+                  "template": "floorplan_sensor_humidity"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "67.5%",
+                    "left": "28.755%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.elis_room_lux",
+                  "template": "floorplan_sensor_lux"
                 },
                 {
                   "type": "custom:button-card",
@@ -8236,6 +8992,61 @@
                 {
                   "type": "custom:button-card",
                   "style": {
+                    "top": "72.5%",
+                    "left": "36.25%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.dining_room_presence",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "77.5%",
+                    "left": "36.25%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.main_door",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "72.5%",
+                    "left": "38.875%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.dining_room_temperature",
+                  "template": "floorplan_sensor_temperature"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "77.5%",
+                    "left": "38.875%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.dining_room_humidity",
+                  "template": "floorplan_sensor_humidity"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "77.5%",
+                    "left": "41.255%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.dining_room_lux",
+                  "template": "floorplan_sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
                     "top": "85%",
                     "left": "10%",
                     "height": "9%",
@@ -8427,6 +9238,28 @@
                 {
                   "type": "custom:button-card",
                   "style": {
+                    "top": "82.5%",
+                    "left": "38.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.living_room_presence",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "87.5%",
+                    "left": "38.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.living_room_lux",
+                  "template": "floorplan_sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
                     "top": "85%",
                     "left": "77.5%",
                     "height": "9%",
@@ -8564,6 +9397,28 @@
                     "height": "5%",
                     "width": "2.5%"
                   }
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "82.5%",
+                    "left": "96.25%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "input_boolean.master_bathroom_occupancy",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "87.5%",
+                    "left": "96.25%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.master_bathroom_door",
+                  "template": "floorplan_sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
@@ -8730,6 +9585,72 @@
                 {
                   "type": "custom:button-card",
                   "style": {
+                    "top": "92.5%",
+                    "left": "36.25%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.study_walkway_motion",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "97.5%",
+                    "left": "36.25%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.study_room_presence",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "92.5%",
+                    "left": "38.875%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.study_room_ethernet_connection",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "97.5%",
+                    "left": "38.875%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.study_room_temperature",
+                  "template": "floorplan_sensor_temperature"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "92.5%",
+                    "left": "41.255%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.study_room_humidity",
+                  "template": "floorplan_sensor_humidity"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "97.5%",
+                    "left": "41.255%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.study_walkway_lux",
+                  "template": "floorplan_sensor_lux"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
                     "top": "95%",
                     "left": "75%",
                     "height": "9%",
@@ -8865,9 +9786,64 @@
                       "ac_auto_control_automation": "automation.parents_room_ac_auto_control"
                     }
                   ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "92.5%",
+                    "left": "93.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.parents_room_motion",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "97.5%",
+                    "left": "93.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.parents_room_door",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "92.5%",
+                    "left": "96.375%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.parents_room_temperature",
+                  "template": "floorplan_sensor_temperature"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "97.5%",
+                    "left": "96.375%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.parents_room_humidity",
+                  "template": "floorplan_sensor_humidity"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "92.5%",
+                    "left": "98.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.parents_room_lux",
+                  "template": "floorplan_sensor_lux"
                 }
               ],
-              "image": "/local/floorplan/floorplan_pointers2.png"
+              "image": "/local/floorplan/floorplan_pointers_boxes.png"
             }
           ]
         }
