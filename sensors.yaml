@@ -28,7 +28,7 @@
     {% if readings | length > 0 %}
       {{ (ns.totaltemp | float(0) / readings | length) | round(1) }}
     {% else %}
-      unavailable
+      30
     {% endif %}
   unit_of_measurement: °C
   device_class: temperature
@@ -46,7 +46,7 @@
     {% if readings | length > 0 %}
       {{ (ns.totalhum | float(0) / readings | length) | round(1) }}
     {% else %}
-      unavailable
+      100
     {% endif %}
   unit_of_measurement: '%'
   device_class: humidity
@@ -137,3 +137,6 @@
     - type: swap_use_percent
     - type: processor_use
     - type: last_boot
+
+- platform: folder
+  folder: /config/www/rain_radar

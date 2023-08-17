@@ -6070,3 +6070,25 @@
       target:
         entity_id: automation.nea_rain_radar_timestamp_update
   mode: single
+- id: '1692197225346'
+  alias: NEA Rain Radar Overlay Download
+  description: Download the latest rain radar overlay from NEA
+  trigger:
+  - platform: time_pattern
+    minutes: /15
+  condition: []
+  action:
+  - service: downloader.download_file
+    data:
+      overwrite: false
+      url: '{% set target_time = now() - timedelta(minutes = 15) %} https://www.nea.gov.sg/docs/default-source/rain-area-240km/dpsri_240km_{{
+        target_time.year }}{{ 0~target_time.month if target_time.month < 10 else target_time.month
+        }}{{ 0~target_time.day if target_time.day < 10 else target_time.day }}{{ 0~target_time.hour
+        if target_time.hour < 10 else target_time.hour }}{{ ''00'' if target_time.minute
+        // 15 == 0 else target_time.minute // 15 * 15 }}0000dBR.dpsri.png'
+      filename: '{% set target_time = now() - timedelta(minutes = 15) %} dpsri_240km_{{
+        target_time.year }}{{ 0~target_time.month if target_time.month < 10 else target_time.month
+        }}{{ 0~target_time.day if target_time.day < 10 else target_time.day }}{{ 0~target_time.hour
+        if target_time.hour < 10 else target_time.hour }}{{ ''00'' if target_time.minute
+        // 15 == 0 else target_time.minute // 15 * 15 }}0000dBR.dpsri.png'
+  mode: single
