@@ -1306,22 +1306,6 @@
               "legend_value": false
             }
           }
-        },
-        "floorplan": {
-          "config_templates": "standard",
-          "apex_config": {
-            "legend": {
-              "show": false
-            },
-            "grid": {
-              "show": false
-            }
-          },
-          "all_series_config": {
-            "show": {
-              "in_header": false
-            }
-          }
         }
       },
       "views": [
@@ -5692,10 +5676,11 @@
                         "columns": 4,
                         "cards": [
                           {
+                            "show_name": false,
+                            "show_icon": true,
                             "type": "button",
                             "entity": "switch.stove_main_power",
-                            "icon": "mdi:power",
-                            "show_name": false
+                            "icon": "mdi:power"
                           },
                           {
                             "show_name": false,
@@ -5716,17 +5701,72 @@
                         ]
                       },
                       {
-                        "type": "entities",
-                        "entities": [
-                          {
-                            "entity": "input_number.stove_current_burner_power_slider",
-                            "name": "Heat"
+                        "type": "custom:slider-button-card",
+                        "entity": "input_number.stove_current_burner_power_slider",
+                        "slider": {
+                          "direction": "left-right",
+                          "background": "solid",
+                          "use_state_color": false,
+                          "use_percentage_bg_opacity": false,
+                          "show_track": false,
+                          "toggle_on_click": false,
+                          "force_square": false
+                        },
+                        "show_name": true,
+                        "show_state": true,
+                        "compact": true,
+                        "icon": {
+                          "show": true,
+                          "use_state_color": true,
+                          "tap_action": {
+                            "action": "more-info"
                           },
-                          {
-                            "entity": "number.stove_current_burner_timer",
-                            "name": "Timer (min)"
+                          "icon": ""
+                        },
+                        "action_button": {
+                          "mode": "toggle",
+                          "icon": "mdi:power",
+                          "show": false,
+                          "show_spinner": true,
+                          "tap_action": {
+                            "action": "toggle"
                           }
-                        ]
+                        },
+                        "name": "Power:"
+                      },
+                      {
+                        "type": "custom:slider-button-card",
+                        "entity": "number.stove_current_burner_timer",
+                        "slider": {
+                          "direction": "left-right",
+                          "background": "solid",
+                          "use_percentage_bg_opacity": false,
+                          "use_state_color": false,
+                          "show_track": false,
+                          "toggle_on_click": false,
+                          "force_square": false
+                        },
+                        "show_name": true,
+                        "show_state": true,
+                        "compact": true,
+                        "icon": {
+                          "show": true,
+                          "use_state_color": true,
+                          "tap_action": {
+                            "action": "more-info"
+                          },
+                          "icon": ""
+                        },
+                        "action_button": {
+                          "mode": "toggle",
+                          "icon": "mdi:power",
+                          "show": false,
+                          "show_spinner": true,
+                          "tap_action": {
+                            "action": "toggle"
+                          }
+                        },
+                        "name": "Timer (min):"
                       }
                     ]
                   }
@@ -8244,174 +8284,6 @@
                   },
                   "entity": "sensor.kitchen_lux",
                   "template": "floorplan_sensor_lux"
-                },
-                {
-                  "type": "custom:mini-graph-card",
-                  "style": {
-                    "top": "40%",
-                    "left": "7.5%",
-                    "height": "19%",
-                    "width": "14.5%"
-                  },
-                  "hours_to_show": 4,
-                  "points_per_hour": 5,
-                  "line_width": 2,
-                  "show": {
-                    "legend": false,
-                    "name": false,
-                    "state": false
-                  },
-                  "entities": [
-                    {
-                      "entity": "sensor.playroom_lux",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.kitchen_lux",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.elenas_room_lux",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.elis_room_lux",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.hallway_lux",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.dining_room_lux",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.living_room_lux",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.study_walkway_lux",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.parents_room_lux",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.sun_solar_elevation",
-                      "color": "yellow",
-                      "show_fill": false,
-                      "y_axis": "secondary"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:mini-graph-card",
-                  "style": {
-                    "top": "42.5%",
-                    "left": "90%",
-                    "height": "24%",
-                    "width": "19.5%"
-                  },
-                  "hours_to_show": 4,
-                  "points_per_hour": 5,
-                  "line_width": 2,
-                  "show": {
-                    "legend": false,
-                    "name": false,
-                    "state": false
-                  },
-                  "entities": [
-                    {
-                      "entity": "sensor.elenas_room_temperature",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.elis_room_temperature",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.dining_room_temperature",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.study_room_temperature",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.parents_room_temperature",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.local_outdoor_temperature",
-                      "color": "green",
-                      "show_fill": false
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:mini-graph-card",
-                  "style": {
-                    "top": "67.5%",
-                    "left": "90%",
-                    "height": "24%",
-                    "width": "19.5%"
-                  },
-                  "hours_to_show": 4,
-                  "points_per_hour": 5,
-                  "line_width": 2,
-                  "show": {
-                    "legend": false,
-                    "name": false,
-                    "state": false
-                  },
-                  "entities": [
-                    {
-                      "entity": "sensor.elenas_room_humidity",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.elis_room_humidity",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.dining_room_humidity",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.study_room_humidity",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.parents_room_humidity",
-                      "show_fill": false,
-                      "color": "#555555"
-                    },
-                    {
-                      "entity": "sensor.local_outdoor_humidity",
-                      "color": "cyan",
-                      "show_fill": false
-                    }
-                  ]
                 },
                 {
                   "type": "custom:button-card",

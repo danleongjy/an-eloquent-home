@@ -43,7 +43,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 6
 [`script`](https://www.home-assistant.io/components/script) | 42
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`sensor`](https://www.home-assistant.io/components/sensor) | 455
+[`sensor`](https://www.home-assistant.io/components/sensor) | 458
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 25
@@ -52,28 +52,30 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1382
+Total | 1385
 
 ## Core Integrations
-- [<img src="https://brands.home-assistant.io/_/adguard/logo.png" height="24"/>](https://home-assistant.io/integrations/adguard) [AdGuard](https://home-assistant.io/integrations/adguard)
-- [<img src="https://brands.home-assistant.io/_/broadlink/logo.png" height="24"/>](https://home-assistant.io/integrations/broadlink) [Broadlink](https://home-assistant.io/integrations/broadlink)
-- [<img src="https://brands.home-assistant.io/_/camera/logo.png" height="24"/>](https://home-assistant.io/integrations/generic) [Generic Camera](https://home-assistant.io/integrations/generic)
-- [<img src="https://brands.home-assistant.io/_/generic_thermostat/logo.png" height="24"/>](https://home-assistant.io/integrations/generic_thermostat) [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
-- [<img src="https://brands.home-assistant.io/_/google_assistant/logo.png" height="24"/>](https://home-assistant.io/integrations/google_assistant) [Google Assistant](https://home-assistant.io/integrations/google_assistant)
-- [<img src="https://brands.home-assistant.io/_/cast/logo.png" height="24"/>](https://home-assistant.io/integrations/cast) [Google Cast](https://home-assistant.io/integrations/cast)
-- [<img src="https://brands.home-assistant.io/_/esphome/logo.png" height="24"/>](https://home-assistant.io/integrations/esphome) [ESPHome](https://home-assistant.io/integrations/esphome)
-- [<img src="https://brands.home-assistant.io/_/mobile_app/logo.png" height="24"/>](https://home-assistant.io/integrations/mobile_app) [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
-- [<img src="https://brands.home-assistant.io/_/local_calendar/logo.png" height="24"/>](https://home-assistant.io/integrations/local_calendar) [Local Calendar](https://home-assistant.io/integrations/local_calendar)
-- [<img src="https://brands.home-assistant.io/_/neato/logo.png" height="24"/>](https://home-assistant.io/integrations/neato) [Neato](https://home-assistant.io/integrations/neato)
-- [<img src="https://brands.home-assistant.io/_/rest/logo.png" height="24"/>](https://home-assistant.io/integrations/sensor.rest) [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
-- [<img src="https://brands.home-assistant.io/_/statistics/logo.png" height="24"/>](https://home-assistant.io/integrations/statistics) [Statistics Sensor](https://home-assistant.io/integrations/statistics)
-- [<img src="https://brands.home-assistant.io/_/systemmonitor/logo.png" height="24"/>](https://home-assistant.io/integrations/systemmonitor) [System Monitor](https://home-assistant.io/integrations/systemmonitor)
-- [<img src="https://brands.home-assistant.io/_/template/logo.png" height="24"/>](https://home-assistant.io/integrations/template) [Template Binary Sensors & Sensors](https://home-assistant.io/integrations/template)
-- [<img src="https://brands.home-assistant.io/_/template/logo.png" height="24"/>](https://home-assistant.io/integrations/cover.template) [Template Cover](https://home-assistant.io/integrations/cover.template)
-- [<img src="https://brands.home-assistant.io/_/template/logo.png" height="24"/>](https://home-assistant.io/integrations/fan.template) [Template Fan](https://home-assistant.io/integrations/fan.template)
-- [<img src="https://brands.home-assistant.io/_/template/logo.png" height="24"/>](https://home-assistant.io/integrations/switch.template) [Template Switch](https://home-assistant.io/integrations/switch.template)
-- [<img src="https://brands.home-assistant.io/_/template/logo.png" height="24"/>](https://home-assistant.io/integrations/weather.template) [Template Weather](https://home-assistant.io/integrations/weather.template)
-- [<img src="https://brands.home-assistant.io/_/zha/logo.png" height="24"/>](https://home-assistant.io/integrations/zha) [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
+- [AdGuard](https://home-assistant.io/integrations/adguard)
+- [Broadlink](https://home-assistant.io/integrations/broadlink)
+- [Generic Camera](https://home-assistant.io/integrations/generic)
+- [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
+- [Google Assistant](https://home-assistant.io/integrations/google_assistant)
+- [Google Cast](https://home-assistant.io/integrations/cast)
+- [Downloader](https://home-assistant.io/integrations/downloader)
+- [ESPHome](https://home-assistant.io/integrations/esphome)
+- [Folder Sensor](https://home-assistant.io/integrations/folder)
+- [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
+- [Local Calendar](https://home-assistant.io/integrations/local_calendar)
+- [Neato](https://home-assistant.io/integrations/neato)
+- [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
+- [Statistics Sensor](https://home-assistant.io/integrations/statistics)
+- [System Monitor](https://home-assistant.io/integrations/systemmonitor)
+- [Template Binary Sensors & Sensors](https://home-assistant.io/integrations/template)
+- [Template Cover](https://home-assistant.io/integrations/cover.template)
+- [Template Fan](https://home-assistant.io/integrations/fan.template)
+- [Template Switch](https://home-assistant.io/integrations/switch.template)
+- [Template Weather](https://home-assistant.io/integrations/weather.template)
+- [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
 ## Extensions
 
 ### Add-ons
@@ -98,7 +100,6 @@ Total | 1382
 - [Apexcharts Card](https://github.com/RomRider/apexcharts-card)
 - [Button Card](https://github.com/custom-cards/button-card)
 - [Decluttering Card](https://github.com/custom-cards/decluttering-card)
-- [Mini Graph Card](https://github.com/kalkih/mini-graph-card)
 - [Simple Weather Card](https://github.com/kalkih/simple-weather-card)
 - [Slider Button Card](https://github.com/custom-cards/slider-button-card)
 - [State Switch](https://github.com/thomasloven/lovelace-state-switch)

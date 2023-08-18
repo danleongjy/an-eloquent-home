@@ -19,7 +19,6 @@ recorder:
   purge_keep_days: 14
   db_url: sqlite:////share/database/home-assistant_v2.db
 
-
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
@@ -36,7 +35,10 @@ google_assistant: !include google_assistant.yaml
 
 downloader:
   download_dir: www/rain_radar
-  
+
+shell_command:
+  removeoldrainradar: 'find /config/www/rain_radar/* -mtime 1 -exec rm {} \;'
+
 zha:
   zigpy_config:
     network:

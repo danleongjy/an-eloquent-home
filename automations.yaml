@@ -6018,22 +6018,22 @@
   description: Update the timestamp used to retrieve NEA rain radar images
   trigger:
   - platform: time_pattern
-    seconds: /10
+    seconds: /7
   condition: []
   action:
   - if:
     - condition: template
       value_template: '{{ now() - as_datetime(states(''input_datetime.nea_rain_radar_timestamp'')).astimezone(now().tzinfo)
-        > timedelta(hours = 3, minutes = 15) }}'
-      alias: Timestamp is more than 3h15min in the past
+        > timedelta(days = 1, minutes = 30) }}'
+      alias: Timestamp is more than 1 day 30min in the past
     then:
     - service: input_datetime.set_datetime
       data:
-        datetime: '{{ (now() - timedelta(hours = 3)).replace(minute = (now() - timedelta(hours
-          = 3)).minute // 15 * 15) }}'
+        datetime: '{{ strptime((state_attr(''sensor.rain_radar'',''file_list'') |
+          sort)[0][35:47], ''%Y%m%d%H%M'') }}'
       target:
         entity_id: input_datetime.nea_rain_radar_timestamp
-      alias: Set timestamp to 3h in the past to the nearest 15min
+      alias: Set timestamp to earliest available snapshot
     else:
     - if:
       - condition: template
@@ -6051,8 +6051,8 @@
       else:
       - service: input_datetime.set_datetime
         data:
-          datetime: '{{ (as_datetime(states(''input_datetime.nea_rain_radar_timestamp''))
-            - timedelta(hours = 3)) }}'
+          datetime: '{{ strptime((state_attr(''sensor.rain_radar'',''file_list'')
+            | sort)[0][35:47], ''%Y%m%d%H%M'') }}'
         target:
           entity_id: input_datetime.nea_rain_radar_timestamp
   - if:
@@ -6091,4 +6091,6 @@
         }}{{ 0~target_time.day if target_time.day < 10 else target_time.day }}{{ 0~target_time.hour
         if target_time.hour < 10 else target_time.hour }}{{ ''00'' if target_time.minute
         // 15 == 0 else target_time.minute // 15 * 15 }}0000dBR.dpsri.png'
+  - service: shell_command.removeoldrainradar
+    data: {}
   mode: single
