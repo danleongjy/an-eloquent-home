@@ -1301,6 +1301,7 @@
             }
           },
           "all_series_config": {
+            "curve": "stepline",
             "stroke_width": 2,
             "show": {
               "legend_value": false
@@ -4561,6 +4562,9 @@
                   "header": {
                     "title": "Network Traffic"
                   },
+                  "all_series_config": {
+                    "curve": "smooth"
+                  },
                   "series": [
                     {
                       "entity": "sensor.pfsense_mb_in_within_1min",
@@ -4641,7 +4645,8 @@
                     {
                       "entity": "sensor.adguard_home_average_processing_speed",
                       "name": " ",
-                      "stroke_width": 2
+                      "stroke_width": 2,
+                      "curve": "smooth"
                     }
                   ]
                 },
@@ -5513,10 +5518,18 @@
                         ]
                       },
                       {
-                        "type": "history-graph",
-                        "hours_to_show": 1,
-                        "entities": [
-                          "sensor.dishwasher_watts"
+                        "type": "custom:apexcharts-card",
+                        "config_templates": "standard",
+                        "graph_span": "30min",
+                        "header": {
+                          "title": "Dishwasher Watts"
+                        },
+                        "series": [
+                          {
+                            "entity": "sensor.dishwasher_watts",
+                            "name": " ",
+                            "stroke_width": 2
+                          }
                         ]
                       }
                     ]
@@ -5635,10 +5648,18 @@
                         ]
                       },
                       {
-                        "type": "history-graph",
-                        "hours_to_show": 1,
-                        "entities": [
-                          "sensor.rice_cooker_watts"
+                        "type": "custom:apexcharts-card",
+                        "config_templates": "standard",
+                        "graph_span": "30min",
+                        "header": {
+                          "title": "Rice Cooker Watts"
+                        },
+                        "series": [
+                          {
+                            "entity": "sensor.rice_cooker_watts",
+                            "name": " ",
+                            "stroke_width": 2
+                          }
                         ]
                       }
                     ]
@@ -6790,45 +6811,14 @@
                   "name": "NEA via data.gov.sg"
                 },
                 {
-                  "type": "picture-elements",
-                  "elements": [
-                    {
-                      "type": "image",
-                      "camera_image": "camera.nea_rain_radar",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "automation.toggle",
-                        "data": {
-                          "entity_id": "automation.nea_rain_radar_timestamp_update"
-                        }
-                      },
-                      "style": {
-                        "transform": "none",
-                        "top": "0%",
-                        "left": "0%",
-                        "height": "100%",
-                        "width": "100%",
-                        "opacity": "50%"
-                      }
-                    }
-                  ],
-                  "image": "https://www.nea.gov.sg/assets/images/map/240km-v2.jpg"
-                },
-                {
-                  "type": "tile",
-                  "entity": "input_datetime.nea_rain_radar_timestamp",
+                  "type": "picture",
                   "tap_action": {
-                    "action": "call-service",
-                    "service": "automation.toggle",
-                    "target": {
-                      "entity_id": "automation.nea_rain_radar_timestamp_update"
-                    },
-                    "data": {}
+                    "action": "none"
                   },
-                  "icon_tap_action": {
-                    "action": "more-info"
+                  "hold_action": {
+                    "action": "none"
                   },
-                  "name": "NEA Rain Radar Animation"
+                  "image_entity": "image.rain_radar_animation"
                 },
                 {
                   "type": "conditional",
@@ -7176,109 +7166,77 @@
               "type": "picture-elements",
               "elements": [
                 {
-                  "type": "custom:button-card",
+                  "type": "image",
+                  "entity": "image.rain_radar_animation",
                   "style": {
-                    "top": "5%",
-                    "left": "22.5%",
-                    "height": "9%",
-                    "width": "4.5%"
+                    "top": "50%",
+                    "left": "85%",
+                    "height": "59%",
+                    "width": "29.5%"
                   },
-                  "icon": "mdi:toilet",
-                  "template": "square_cell",
                   "tap_action": {
-                    "action": "call-service",
-                    "service": "script.recommended_light_level_for_powder_room"
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/weather"
+                  }
+                },
+                {
+                  "type": "image",
+                  "style": {
+                    "top": "50%",
+                    "left": "50%",
+                    "height": "100%",
+                    "width": "100%"
                   },
-                  "double_tap_action": {
-                    "action": "call-service",
-                    "service": "automation.trigger",
-                    "service_data": {
-                      "entity_id": "automation.powder_room_motion_pendant_light"
-                    }
+                  "image": "/local/floorplan/floorplan_transparent_background.png",
+                  "tap_action": {
+                    "action": "none"
                   },
                   "hold_action": {
+                    "action": "none"
+                  }
+                },
+                {
+                  "type": "image",
+                  "style": {
+                    "top": "50%",
+                    "left": "50%",
+                    "height": "100%",
+                    "width": "100%"
+                  },
+                  "image": "/local/floorplan/pointers_transparent_background.png",
+                  "tap_action": {
+                    "action": "none"
+                  },
+                  "hold_action": {
+                    "action": "none"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "50%",
+                    "left": "85%",
+                    "height": "59%",
+                    "width": "29.5%"
+                  },
+                  "aspect_ratio": 1,
+                  "tap_action": {
                     "action": "navigate",
-                    "navigation_path": "/lovelace/powder_room"
+                    "navigation_path": "/lovelace/weather"
                   },
                   "styles": {
                     "card": [
                       {
-                        "background-color": "[[[\n  if ((states['binary_sensor.ac_on_with_door_open_at_powder_room'].state == 'on')\n      || (states['binary_sensor.vacuum_running_with_doors_open'].state == 'on'\n          && states['binary_sensor.powder_room_door'].state == 'on'))\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                        "background-color": "rgba(0,0,0,0.0)"
                       }
                     ]
                   }
                 },
                 {
-                  "type": "custom:decluttering-card",
-                  "template": "floorplan_slider",
-                  "variables": [
-                    {
-                      "slider_entity": "light.powder_room_pendant_light_entity"
-                    }
-                  ],
-                  "style": {
-                    "top": "5%",
-                    "left": "27.5%",
-                    "height": "9%",
-                    "width": "4.5%"
-                  }
-                },
-                {
-                  "type": "custom:decluttering-card",
-                  "template": "floorplan_slider_light_icon",
-                  "variables": [
-                    {
-                      "light_entity": "light.powder_room_pendant_light_entity"
-                    },
-                    {
-                      "recommended_light_level_script": "script.recommended_light_level_for_powder_room"
-                    }
-                  ],
-                  "style": {
-                    "top": "5%",
-                    "left": "27.5%",
-                    "height": "5%",
-                    "width": "2.5%"
-                  }
-                },
-                {
                   "type": "custom:button-card",
                   "style": {
                     "top": "5%",
-                    "left": "32.5%",
-                    "height": "9%",
-                    "width": "4.5%"
-                  },
-                  "entity": "switch.water_heater",
-                  "template": "turn_on"
-                },
-                {
-                  "type": "custom:button-card",
-                  "style": {
-                    "top": "2.5%",
-                    "left": "36.25%",
-                    "height": "4%",
-                    "width": "2%"
-                  },
-                  "entity": "input_boolean.powder_room_occupancy",
-                  "template": "floorplan_sensor_binary"
-                },
-                {
-                  "type": "custom:button-card",
-                  "style": {
-                    "top": "7.5%",
-                    "left": "36.25%",
-                    "height": "4%",
-                    "width": "2%"
-                  },
-                  "entity": "binary_sensor.powder_room_door",
-                  "template": "floorplan_sensor_binary"
-                },
-                {
-                  "type": "custom:button-card",
-                  "style": {
-                    "top": "5%",
-                    "left": "47.5%",
+                    "left": "2.5%",
                     "height": "9%",
                     "width": "4.5%"
                   },
@@ -7317,7 +7275,7 @@
                   ],
                   "style": {
                     "top": "5%",
-                    "left": "52.5%",
+                    "left": "7.5%",
                     "height": "9%",
                     "width": "4.5%"
                   }
@@ -7335,7 +7293,7 @@
                   ],
                   "style": {
                     "top": "5%",
-                    "left": "52.5%",
+                    "left": "7.5%",
                     "height": "5%",
                     "width": "2.5%"
                   }
@@ -7344,7 +7302,7 @@
                   "type": "custom:state-switch",
                   "style": {
                     "top": "5%",
-                    "left": "57.5%",
+                    "left": "12.5%",
                     "height": "9%",
                     "width": "4.5%"
                   },
@@ -7458,7 +7416,7 @@
                   "type": "custom:state-switch",
                   "style": {
                     "top": "5%",
-                    "left": "62.5%",
+                    "left": "17.5%",
                     "height": "9%",
                     "width": "4.5%"
                   },
@@ -7583,7 +7541,7 @@
                   "type": "custom:button-card",
                   "style": {
                     "top": "2.5%",
-                    "left": "66.25%",
+                    "left": "21.25%",
                     "height": "4%",
                     "width": "2%"
                   },
@@ -7594,7 +7552,7 @@
                   "type": "custom:button-card",
                   "style": {
                     "top": "7.5%",
-                    "left": "66.25%",
+                    "left": "21.25%",
                     "height": "4%",
                     "width": "2%"
                   },
@@ -7605,12 +7563,283 @@
                   "type": "custom:button-card",
                   "style": {
                     "top": "2.5%",
-                    "left": "68.875%",
+                    "left": "23.875%",
                     "height": "4%",
                     "width": "2%"
                   },
                   "entity": "binary_sensor.yard_window_2",
                   "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "5%",
+                    "left": "30%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  },
+                  "icon": "mdi:pot-steam",
+                  "template": "square_cell",
+                  "tap_action": {
+                    "action": "call-service",
+                    "service": "script.set_recommended_scene_in_kitchen"
+                  },
+                  "double_tap_action": {
+                    "action": "call-service",
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.kitchen_motion_timeout"
+                    }
+                  },
+                  "hold_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/kitchen"
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_window_open_at_kitchen'].state == 'on')\n    return '#9e110d';\n  else if (states['sensor.raining_with_kitchen_window_open'].state == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_kitchen_window_open'].state == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider",
+                  "variables": [
+                    {
+                      "slider_entity": "light.kitchen_lights"
+                    }
+                  ],
+                  "style": {
+                    "top": "5%",
+                    "left": "35%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_light_icon",
+                  "variables": [
+                    {
+                      "light_entity": "light.kitchen_lights"
+                    },
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_kitchen"
+                    }
+                  ],
+                  "style": {
+                    "top": "5%",
+                    "left": "35%",
+                    "height": "5%",
+                    "width": "2.5%"
+                  }
+                },
+                {
+                  "type": "custom:state-switch",
+                  "style": {
+                    "top": "5%",
+                    "left": "40%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  },
+                  "entity": "input_select.rice_cooker_status",
+                  "default": "disabled",
+                  "states": {
+                    "disabled": {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.rice_cooker",
+                      "template": "error"
+                    },
+                    "Off": {
+                      "type": "custom:button-card",
+                      "entity": "switch.rice_cooker",
+                      "template": "rice_cooker_more_info"
+                    },
+                    "Cooking": {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.rice_cooker",
+                      "template": "rice_cooker_more_info",
+                      "label": "Cook",
+                      "show_label": true
+                    },
+                    "Warming": {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.rice_cooker",
+                      "template": "rice_cooker_more_info",
+                      "label": "Warm",
+                      "show_label": true
+                    },
+                    "Standby": {
+                      "type": "custom:button-card",
+                      "entity": "switch.rice_cooker",
+                      "template": "rice_cooker_more_info",
+                      "label": "...",
+                      "show_label": true
+                    }
+                  }
+                },
+                {
+                  "type": "custom:state-switch",
+                  "style": {
+                    "top": "5%",
+                    "left": "45%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  },
+                  "entity": "switch.stove_main_power",
+                  "default": "disabled",
+                  "states": {
+                    "disabled": {
+                      "type": "custom:button-card",
+                      "entity": "switch.stove_main_power",
+                      "template": "error"
+                    },
+                    "on": {
+                      "type": "custom:button-card",
+                      "entity": "switch.stove_main_power",
+                      "template": "stove_more_info",
+                      "icon": "[[[ return 'mdi:chevron-' + states['select.stove_current_burner'].state + '-circle-outline' ]]]",
+                      "label": "[[[ \n  if (parseInt(states['number.stove_current_burner_timer'].state) >= 70)\n    return states['select.stove_current_burner_power'].state + '|1:' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 60)\n    return states['select.stove_current_burner_power'].state + '|1:0' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 10)\n    return states['select.stove_current_burner_power'].state + '|0:' +\n      states['number.stove_current_burner_timer'].state\n  else if (parseInt(states['number.stove_current_burner_timer'].state) > 0)\n    return states['select.stove_current_burner_power'].state + '|0:0' +\n      states['number.stove_current_burner_timer'].state\n  else\n    return states['select.stove_current_burner_power'].state\n]]]",
+                      "show_label": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "select.select_option",
+                        "service_data": {
+                          "entity_id": "select.stove_current_burner",
+                          "option": "[[[\n  if (states['select.stove_current_burner'].state == 'right')\n    return 'left'\n  else\n    return 'right'\n]]]"
+                        }
+                      }
+                    },
+                    "off": {
+                      "type": "custom:button-card",
+                      "entity": "switch.stove_main_power",
+                      "template": "stove_more_info"
+                    }
+                  }
+                },
+                {
+                  "type": "custom:state-switch",
+                  "style": {
+                    "top": "5%",
+                    "left": "50%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  },
+                  "entity": "binary_sensor.dishwasher",
+                  "default": "disabled",
+                  "states": {
+                    "disabled": {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.dishwasher",
+                      "template": "error"
+                    },
+                    "off": {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.dishwasher",
+                      "template": "dishwasher_more_info",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "[[[\n  if (states['input_boolean.dishwasher_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                          }
+                        ]
+                      }
+                    },
+                    "on": {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.dishwasher",
+                      "template": "dishwasher_more_info",
+                      "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
+                      "show_label": true
+                    }
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_cover",
+                  "variables": [
+                    {
+                      "cover_entity": "cover.kitchen_blind"
+                    }
+                  ],
+                  "style": {
+                    "top": "5%",
+                    "left": "55%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_cover_icon",
+                  "variables": [
+                    {
+                      "cover_entity": "cover.kitchen_blind"
+                    },
+                    {
+                      "cover_auto_control_automation": "automation.kitchen_blind_auto_control"
+                    }
+                  ],
+                  "style": {
+                    "top": "5%",
+                    "left": "55%",
+                    "height": "5%",
+                    "width": "2.5%"
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "5%",
+                    "left": "60%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  },
+                  "template": "floorplan_slider",
+                  "variables": [
+                    {
+                      "slider_entity": "media_player.kitchen_speaker"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "5%",
+                    "left": "60%",
+                    "height": "5%",
+                    "width": "2.5%"
+                  },
+                  "template": "floorplan_slider_media_player_icon",
+                  "variables": [
+                    {
+                      "media_player_entity": "media_player.kitchen_speaker"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "2.5%",
+                    "left": "63.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.kitchen_presence",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "7.5%",
+                    "left": "63.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "sensor.kitchen_lux",
+                  "template": "floorplan_sensor_lux"
                 },
                 {
                   "type": "custom:simple-weather-card",
@@ -7713,31 +7942,31 @@
                   "type": "custom:button-card",
                   "style": {
                     "top": "15%",
-                    "left": "15%",
+                    "left": "7.5%",
                     "height": "9%",
                     "width": "4.5%"
                   },
-                  "icon": "mdi:shower-head",
+                  "icon": "mdi:toilet",
                   "template": "square_cell",
                   "tap_action": {
                     "action": "call-service",
-                    "service": "script.recommended_light_level_for_junior_bathroom"
+                    "service": "script.recommended_light_level_for_powder_room"
                   },
                   "double_tap_action": {
                     "action": "call-service",
                     "service": "automation.trigger",
                     "service_data": {
-                      "entity_id": "automation.junior_bathroom_motion_lights"
+                      "entity_id": "automation.powder_room_motion_pendant_light"
                     }
                   },
                   "hold_action": {
                     "action": "navigate",
-                    "navigation_path": "/lovelace/junior_bathroom"
+                    "navigation_path": "/lovelace/powder_room"
                   },
                   "styles": {
                     "card": [
                       {
-                        "background-color": "[[[\n  if ((states['binary_sensor.ac_on_with_door_open_at_junior_bathroom'].state == 'on')\n      || (states['binary_sensor.vacuum_running_with_doors_open'].state == 'on'\n          && states['binary_sensor.junior_bathroom_door'].state == 'on'))\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                        "background-color": "[[[\n  if ((states['binary_sensor.ac_on_with_door_open_at_powder_room'].state == 'on')\n      || (states['binary_sensor.vacuum_running_with_doors_open'].state == 'on'\n          && states['binary_sensor.powder_room_door'].state == 'on'))\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
                       }
                     ]
                   }
@@ -7747,12 +7976,12 @@
                   "template": "floorplan_slider",
                   "variables": [
                     {
-                      "slider_entity": "light.junior_bathroom_lights"
+                      "slider_entity": "light.powder_room_pendant_light_entity"
                     }
                   ],
                   "style": {
                     "top": "15%",
-                    "left": "20%",
+                    "left": "12.5%",
                     "height": "9%",
                     "width": "4.5%"
                   }
@@ -7762,15 +7991,15 @@
                   "template": "floorplan_slider_light_icon",
                   "variables": [
                     {
-                      "light_entity": "light.junior_bathroom_lights"
+                      "light_entity": "light.powder_room_pendant_light_entity"
                     },
                     {
-                      "recommended_light_level_script": "script.recommended_light_level_for_junior_bathroom"
+                      "recommended_light_level_script": "script.recommended_light_level_for_powder_room"
                     }
                   ],
                   "style": {
                     "top": "15%",
-                    "left": "20%",
+                    "left": "12.5%",
                     "height": "5%",
                     "width": "2.5%"
                   }
@@ -7778,23 +8007,34 @@
                 {
                   "type": "custom:button-card",
                   "style": {
+                    "top": "15%",
+                    "left": "17.5%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  },
+                  "entity": "switch.water_heater",
+                  "template": "turn_on"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
                     "top": "12.5%",
-                    "left": "23.75%",
+                    "left": "21.25%",
                     "height": "4%",
                     "width": "2%"
                   },
-                  "entity": "input_boolean.junior_bathroom_occupancy",
+                  "entity": "input_boolean.powder_room_occupancy",
                   "template": "floorplan_sensor_binary"
                 },
                 {
                   "type": "custom:button-card",
                   "style": {
-                    "top": "17.5%",
-                    "left": "23.75%",
+                    "top": "12.5%",
+                    "left": "21.25%",
                     "height": "4%",
                     "width": "2%"
                   },
-                  "entity": "binary_sensor.junior_bathroom_door",
+                  "entity": "binary_sensor.powder_room_door",
                   "template": "floorplan_sensor_binary"
                 },
                 {
@@ -7886,6 +8126,94 @@
                     "height": "9%",
                     "width": "4.5%"
                   },
+                  "icon": "mdi:shower-head",
+                  "template": "square_cell",
+                  "tap_action": {
+                    "action": "call-service",
+                    "service": "script.recommended_light_level_for_junior_bathroom"
+                  },
+                  "double_tap_action": {
+                    "action": "call-service",
+                    "service": "automation.trigger",
+                    "service_data": {
+                      "entity_id": "automation.junior_bathroom_motion_lights"
+                    }
+                  },
+                  "hold_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/junior_bathroom"
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "background-color": "[[[\n  if ((states['binary_sensor.ac_on_with_door_open_at_junior_bathroom'].state == 'on')\n      || (states['binary_sensor.vacuum_running_with_doors_open'].state == 'on'\n          && states['binary_sensor.junior_bathroom_door'].state == 'on'))\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider",
+                  "variables": [
+                    {
+                      "slider_entity": "light.junior_bathroom_lights"
+                    }
+                  ],
+                  "style": {
+                    "top": "25%",
+                    "left": "10%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "template": "floorplan_slider_light_icon",
+                  "variables": [
+                    {
+                      "light_entity": "light.junior_bathroom_lights"
+                    },
+                    {
+                      "recommended_light_level_script": "script.recommended_light_level_for_junior_bathroom"
+                    }
+                  ],
+                  "style": {
+                    "top": "25%",
+                    "left": "10%",
+                    "height": "5%",
+                    "width": "2.5%"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "22.5%",
+                    "left": "13.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "input_boolean.junior_bathroom_occupancy",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "27.5%",
+                    "left": "13.75%",
+                    "height": "4%",
+                    "width": "2%"
+                  },
+                  "entity": "binary_sensor.junior_bathroom_door",
+                  "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "35%",
+                    "left": "2.5%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  },
                   "icon": "mdi:swap-horizontal-circle-outline",
                   "template": "square_cell",
                   "tap_action": {
@@ -7913,8 +8241,8 @@
                     }
                   ],
                   "style": {
-                    "top": "25%",
-                    "left": "10%",
+                    "top": "35%",
+                    "left": "7.5%",
                     "height": "9%",
                     "width": "4.5%"
                   }
@@ -7931,8 +8259,8 @@
                     }
                   ],
                   "style": {
-                    "top": "25%",
-                    "left": "10%",
+                    "top": "35%",
+                    "left": "7.5%",
                     "height": "5%",
                     "width": "2.5%"
                   }
@@ -7940,8 +8268,8 @@
                 {
                   "type": "custom:button-card",
                   "style": {
-                    "top": "22.5%",
-                    "left": "13.75%",
+                    "top": "32.5%",
+                    "left": "11.25%",
                     "height": "4%",
                     "width": "2%"
                   },
@@ -7951,8 +8279,8 @@
                 {
                   "type": "custom:button-card",
                   "style": {
-                    "top": "27.5%",
-                    "left": "13.75%",
+                    "top": "37.5%",
+                    "left": "11.25%",
                     "height": "4%",
                     "width": "2%"
                   },
@@ -7968,7 +8296,11 @@
                     "width": "4.5%"
                   },
                   "icon": "mdi:server-network",
-                  "template": "square_cell"
+                  "template": "square_cell",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/network"
+                  }
                 },
                 {
                   "type": "custom:button-card",
@@ -8013,277 +8345,6 @@
                   },
                   "entity": "sensor.qemu_docker_102_cpu_used",
                   "template": "floorplan_sensor_cpu"
-                },
-                {
-                  "type": "custom:button-card",
-                  "style": {
-                    "top": "25%",
-                    "left": "65%",
-                    "height": "9%",
-                    "width": "4.5%"
-                  },
-                  "icon": "mdi:pot-steam",
-                  "template": "square_cell",
-                  "tap_action": {
-                    "action": "call-service",
-                    "service": "script.set_recommended_scene_in_kitchen"
-                  },
-                  "double_tap_action": {
-                    "action": "call-service",
-                    "service": "automation.trigger",
-                    "service_data": {
-                      "entity_id": "automation.kitchen_motion_timeout"
-                    }
-                  },
-                  "hold_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/kitchen"
-                  },
-                  "styles": {
-                    "card": [
-                      {
-                        "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_window_open_at_kitchen'].state == 'on')\n    return '#9e110d';\n  else if (states['sensor.raining_with_kitchen_window_open'].state == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_kitchen_window_open'].state == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                      }
-                    ]
-                  }
-                },
-                {
-                  "type": "custom:decluttering-card",
-                  "template": "floorplan_slider",
-                  "variables": [
-                    {
-                      "slider_entity": "light.kitchen_lights"
-                    }
-                  ],
-                  "style": {
-                    "top": "25%",
-                    "left": "70%",
-                    "height": "9%",
-                    "width": "4.5%"
-                  }
-                },
-                {
-                  "type": "custom:decluttering-card",
-                  "template": "floorplan_slider_light_icon",
-                  "variables": [
-                    {
-                      "light_entity": "light.kitchen_lights"
-                    },
-                    {
-                      "recommended_light_level_script": "script.recommended_light_level_for_kitchen"
-                    }
-                  ],
-                  "style": {
-                    "top": "25%",
-                    "left": "70%",
-                    "height": "5%",
-                    "width": "2.5%"
-                  }
-                },
-                {
-                  "type": "custom:state-switch",
-                  "style": {
-                    "top": "25%",
-                    "left": "75%",
-                    "height": "9%",
-                    "width": "4.5%"
-                  },
-                  "entity": "input_select.rice_cooker_status",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.rice_cooker",
-                      "template": "error"
-                    },
-                    "Off": {
-                      "type": "custom:button-card",
-                      "entity": "switch.rice_cooker",
-                      "template": "rice_cooker_more_info"
-                    },
-                    "Cooking": {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.rice_cooker",
-                      "template": "rice_cooker_more_info",
-                      "label": "Cook",
-                      "show_label": true
-                    },
-                    "Warming": {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.rice_cooker",
-                      "template": "rice_cooker_more_info",
-                      "label": "Warm",
-                      "show_label": true
-                    },
-                    "Standby": {
-                      "type": "custom:button-card",
-                      "entity": "switch.rice_cooker",
-                      "template": "rice_cooker_more_info",
-                      "label": "...",
-                      "show_label": true
-                    }
-                  }
-                },
-                {
-                  "type": "custom:state-switch",
-                  "style": {
-                    "top": "25%",
-                    "left": "80%",
-                    "height": "9%",
-                    "width": "4.5%"
-                  },
-                  "entity": "switch.stove_main_power",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "switch.stove_main_power",
-                      "template": "error"
-                    },
-                    "on": {
-                      "type": "custom:button-card",
-                      "entity": "switch.stove_main_power",
-                      "template": "stove_more_info",
-                      "icon": "[[[ return 'mdi:chevron-' + states['select.stove_current_burner'].state + '-circle-outline' ]]]",
-                      "label": "[[[ \n  if (parseInt(states['number.stove_current_burner_timer'].state) >= 70)\n    return states['select.stove_current_burner_power'].state + '|1:' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 60)\n    return states['select.stove_current_burner_power'].state + '|1:0' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 10)\n    return states['select.stove_current_burner_power'].state + '|0:' +\n      states['number.stove_current_burner_timer'].state\n  else if (parseInt(states['number.stove_current_burner_timer'].state) > 0)\n    return states['select.stove_current_burner_power'].state + '|0:0' +\n      states['number.stove_current_burner_timer'].state\n  else\n    return states['select.stove_current_burner_power'].state\n]]]",
-                      "show_label": true,
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "select.select_option",
-                        "service_data": {
-                          "entity_id": "select.stove_current_burner",
-                          "option": "[[[\n  if (states['select.stove_current_burner'].state == 'right')\n    return 'left'\n  else\n    return 'right'\n]]]"
-                        }
-                      }
-                    },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "switch.stove_main_power",
-                      "template": "stove_more_info"
-                    }
-                  }
-                },
-                {
-                  "type": "custom:state-switch",
-                  "style": {
-                    "top": "25%",
-                    "left": "85%",
-                    "height": "9%",
-                    "width": "4.5%"
-                  },
-                  "entity": "binary_sensor.dishwasher",
-                  "default": "disabled",
-                  "states": {
-                    "disabled": {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.dishwasher",
-                      "template": "error"
-                    },
-                    "off": {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.dishwasher",
-                      "template": "dishwasher_more_info",
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "[[[\n  if (states['input_boolean.dishwasher_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                          }
-                        ]
-                      }
-                    },
-                    "on": {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.dishwasher",
-                      "template": "dishwasher_more_info",
-                      "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
-                      "show_label": true
-                    }
-                  }
-                },
-                {
-                  "type": "custom:decluttering-card",
-                  "template": "floorplan_slider_cover",
-                  "variables": [
-                    {
-                      "cover_entity": "cover.kitchen_blind"
-                    }
-                  ],
-                  "style": {
-                    "top": "25%",
-                    "left": "90%",
-                    "height": "9%",
-                    "width": "4.5%"
-                  }
-                },
-                {
-                  "type": "custom:decluttering-card",
-                  "template": "floorplan_slider_cover_icon",
-                  "variables": [
-                    {
-                      "cover_entity": "cover.kitchen_blind"
-                    },
-                    {
-                      "cover_auto_control_automation": "automation.kitchen_blind_auto_control"
-                    }
-                  ],
-                  "style": {
-                    "top": "25%",
-                    "left": "90%",
-                    "height": "5%",
-                    "width": "2.5%"
-                  }
-                },
-                {
-                  "type": "custom:decluttering-card",
-                  "style": {
-                    "top": "25%",
-                    "left": "95%",
-                    "height": "9%",
-                    "width": "4.5%"
-                  },
-                  "template": "floorplan_slider",
-                  "variables": [
-                    {
-                      "slider_entity": "media_player.kitchen_speaker"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:decluttering-card",
-                  "style": {
-                    "top": "25%",
-                    "left": "95%",
-                    "height": "5%",
-                    "width": "2.5%"
-                  },
-                  "template": "floorplan_slider_media_player_icon",
-                  "variables": [
-                    {
-                      "media_player_entity": "media_player.kitchen_speaker"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:button-card",
-                  "style": {
-                    "top": "22.5%",
-                    "left": "98.75%",
-                    "height": "4%",
-                    "width": "2%"
-                  },
-                  "entity": "binary_sensor.kitchen_presence",
-                  "template": "floorplan_sensor_binary"
-                },
-                {
-                  "type": "custom:button-card",
-                  "style": {
-                    "top": "27.5%",
-                    "left": "98.75%",
-                    "height": "4%",
-                    "width": "2%"
-                  },
-                  "entity": "sensor.kitchen_lux",
-                  "template": "floorplan_sensor_lux"
                 },
                 {
                   "type": "custom:button-card",

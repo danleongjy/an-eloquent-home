@@ -2618,16 +2618,6 @@
       entity_id: input_boolean.away_mode
       state: 'on'
     then:
-    - service: cover.open_cover
-      data: {}
-      target:
-        entity_id: cover.master_bathroom_blind
-    - service: cover.close_cover
-      data: {}
-      target:
-        entity_id: cover.kitchen_blind
-    - service: script.turn_off_all
-      data: {}
     - service: automation.turn_off
       data:
         stop_actions: true
@@ -2687,6 +2677,16 @@
         - automation.study_room_motion_fan
         - automation.study_room_motion_lights
       enabled: true
+    - service: cover.open_cover
+      data: {}
+      target:
+        entity_id: cover.master_bathroom_blind
+    - service: cover.close_cover
+      data: {}
+      target:
+        entity_id: cover.kitchen_blind
+    - service: script.turn_off_all
+      data: {}
     - repeat:
         for_each:
         - cover.living_room_left_blind
@@ -5661,41 +5661,48 @@
     at: input_datetime.daniels_next_alarm
   condition: []
   action:
-  - condition: state
-    entity_id: input_boolean.daniels_next_alarm_dismissed
-    state: 'off'
-  - service: notify.mobile_app_pixel_4a
-    data:
-      message: command_dnd
+  - if:
+    - condition: state
+      entity_id: input_boolean.daniels_next_alarm_dismissed
+      state: 'off'
+    then:
+    - service: notify.mobile_app_pixel_4a
       data:
-        command: 'off'
-    alias: Turn off Do Not Disturb
-  - service: notify.mobile_app_pixel_4a
-    data:
-      title: Good Morning!
-      message: Time to wake up at {{ states('input_datetime.daniels_next_alarm')[-8:-3]
-        }}
+        message: command_dnd
+        data:
+          command: 'off'
+      alias: Turn off Do Not Disturb
+    - service: notify.mobile_app_pixel_4a
       data:
-        ttl: 0
-        priority: high
-        channel: alarm_stream
-    alias: Trigger a critical alert Daniel's phone
+        title: Good Morning!
+        message: Time to wake up at {{ states('input_datetime.daniels_next_alarm')[-8:-3]
+          }}
+        data:
+          ttl: 0
+          priority: high
+          channel: alarm_stream
+      alias: Trigger a critical alert Daniel's phone
   - delay:
       hours: 0
       minutes: 5
       seconds: 0
       milliseconds: 0
+  - if:
+    - condition: state
+      entity_id: input_boolean.daniels_next_alarm_dismissed
+      state: 'off'
+    then:
+    - condition: state
+      entity_id: sensor.pixel_4a_battery_state
+      state:
+      - charging
+      - full
+    - service: script.parents_room_alarm_lights
+      data: {}
   - service: input_boolean.turn_off
     data: {}
     target:
       entity_id: input_boolean.daniels_next_alarm_dismissed
-  - condition: state
-    entity_id: sensor.pixel_4a_battery_state
-    state:
-    - charging
-    - full
-  - service: script.parents_room_alarm_lights
-    data: {}
   mode: single
 - id: '1690718460853'
   alias: Notify When Daniel's Next Alarm Upcoming
@@ -6013,71 +6020,19 @@
   - service: script.elis_room_alarm_lights
     data: {}
   mode: single
-- id: '1691714619105'
-  alias: NEA Rain Radar Timestamp Update
-  description: Update the timestamp used to retrieve NEA rain radar images
-  trigger:
-  - platform: time_pattern
-    seconds: /7
-  condition: []
-  action:
-  - if:
-    - condition: template
-      value_template: '{{ now() - as_datetime(states(''input_datetime.nea_rain_radar_timestamp'')).astimezone(now().tzinfo)
-        > timedelta(days = 1, minutes = 30) }}'
-      alias: Timestamp is more than 1 day 30min in the past
-    then:
-    - service: input_datetime.set_datetime
-      data:
-        datetime: '{{ strptime((state_attr(''sensor.rain_radar'',''file_list'') |
-          sort)[0][35:47], ''%Y%m%d%H%M'') }}'
-      target:
-        entity_id: input_datetime.nea_rain_radar_timestamp
-      alias: Set timestamp to earliest available snapshot
-    else:
-    - if:
-      - condition: template
-        value_template: '{{ as_datetime(states(''input_datetime.nea_rain_radar_timestamp'')).astimezone(now().tzinfo)
-          + timedelta(minutes = 15) < now() - timedelta(minutes = 15) }}'
-        alias: New timestamp is still at least 15min in the past
-      then:
-      - service: input_datetime.set_datetime
-        data:
-          datetime: '{{ as_datetime(states(''input_datetime.nea_rain_radar_timestamp''))
-            + timedelta(minutes = 15) }}'
-        target:
-          entity_id: input_datetime.nea_rain_radar_timestamp
-        alias: Increment timestamp by 15min
-      else:
-      - service: input_datetime.set_datetime
-        data:
-          datetime: '{{ strptime((state_attr(''sensor.rain_radar'',''file_list'')
-            | sort)[0][35:47], ''%Y%m%d%H%M'') }}'
-        target:
-          entity_id: input_datetime.nea_rain_radar_timestamp
-  - if:
-    - condition: state
-      entity_id: automation.nea_rain_radar_timestamp_update
-      state: 'on'
-      for:
-        hours: 0
-        minutes: 5
-        seconds: 0
-    then:
-    - service: automation.turn_off
-      data:
-        stop_actions: true
-      target:
-        entity_id: automation.nea_rain_radar_timestamp_update
-  mode: single
 - id: '1692197225346'
-  alias: NEA Rain Radar Overlay Download
-  description: Download the latest rain radar overlay from NEA
+  alias: NEA Rain Radar Animation
+  description: Download the latest rain radar overlay from NEA, compile 24h animation,
+    and clean up old images
   trigger:
   - platform: time_pattern
     minutes: /15
   condition: []
   action:
+  - service: shell_command.removeoldrainradar
+    data: {}
+  - service: shell_command.removeoldrainradaranimation
+    data: {}
   - service: downloader.download_file
     data:
       overwrite: false
@@ -6091,6 +6046,11 @@
         }}{{ 0~target_time.day if target_time.day < 10 else target_time.day }}{{ 0~target_time.hour
         if target_time.hour < 10 else target_time.hour }}{{ ''00'' if target_time.minute
         // 15 == 0 else target_time.minute // 15 * 15 }}0000dBR.dpsri.png'
-  - service: shell_command.removeoldrainradar
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - service: pyscript.compile_rain_radar_animation
     data: {}
   mode: single

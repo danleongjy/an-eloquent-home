@@ -475,6 +475,25 @@
     availability: "{{ states('cover.dining_room_blinds') not in ['unavailable','unknown'] }}"
 
 - trigger:
+    - platform: state
+      entity_id: image.rain_radar_animation
+      to: 
+        - unknown
+        - unavailable
+    - platform: time_pattern
+      minutes: 2
+    - platform: time_pattern
+      minutes: 17
+    - platform: time_pattern
+      minutes: 32
+    - platform: time_pattern
+      minutes: 47
+  image:
+    - url: https://an-eloquent-home.duckdns.org/local/rain_radar_animation_{{ (now() - timedelta(minutes = 15)).replace(minute = (now() - timedelta(minutes = 15)).minute // 15 *15).strftime('%Y%m%d%H%M') }}.gif
+      name: Rain Radar Animation
+      unique_id: image.rain_radar_animation
+
+- trigger:
   - platform: time_pattern
     minutes: '/1'
   sensor:

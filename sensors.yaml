@@ -28,7 +28,12 @@
     {% if readings | length > 0 %}
       {{ (ns.totaltemp | float(0) / readings | length) | round(1) }}
     {% else %}
-      30
+      {% set all_temp = states.sensor | selectattr('attributes.device_class','defined') | selectattr('attributes.device_class','eq','temperature') | map(attribute = 'state') | list %}
+      {% set ns = namespace(sum = 0) %}
+      {% for temp in all_temp %}
+        {% set ns.sum = ns.sum + temp | float %}
+      {% endfor %}
+      {{ (ns.sum / (all_temp | length)) | round(2) }}
     {% endif %}
   unit_of_measurement: °C
   device_class: temperature
@@ -46,7 +51,12 @@
     {% if readings | length > 0 %}
       {{ (ns.totalhum | float(0) / readings | length) | round(1) }}
     {% else %}
-      100
+      {% set all_hum = states.sensor | selectattr('attributes.device_class','defined') | selectattr('attributes.device_class','eq','humidity') | map(attribute = 'state') | list %}
+      {% set ns = namespace(sum = 0) %}
+      {% for hum in all_hum %}
+        {% set ns.sum = ns.sum + hum | float %}
+      {% endfor %}
+      {{ (ns.sum / (all_hum | length)) | round(2) }}
     {% endif %}
   unit_of_measurement: '%'
   device_class: humidity
@@ -137,6 +147,3 @@
     - type: swap_use_percent
     - type: processor_use
     - type: last_boot
-
-- platform: folder
-  folder: /config/www/rain_radar

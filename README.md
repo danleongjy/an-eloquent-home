@@ -14,7 +14,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.3](https://github.com/home-assistant/operating-system/releases/tag/10.4) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [10.3](https://github.com/home-assistant/operating-system/releases/tag/10.5) running in a [Proxmox VM](https://www.proxmox.com/)
 * [Home Assistant Core 2023.7.3](https://github.com/home-assistant/core/releases/tag/2023.7.3)
 * 4 cores, 4GB RAM, 32GB storage
 
@@ -22,17 +22,18 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 140
+[`automation`](https://www.home-assistant.io/components/automation) | 139
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 106
 [`button`](https://www.home-assistant.io/components/button) | 137
 [`calendar`](https://www.home-assistant.io/components/calendar) | 4
-[`camera`](https://www.home-assistant.io/components/camera) | 2
+[`camera`](https://www.home-assistant.io/components/camera) | 1
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`cover`](https://www.home-assistant.io/components/cover) | 8
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 5
 [`fan`](https://www.home-assistant.io/components/fan) | 7
+[`image`](https://www.home-assistant.io/components/image) | 1
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 23
-[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 26
+[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 25
 [`input_number`](https://www.home-assistant.io/components/input_number) | 35
 [`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 30
@@ -43,7 +44,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 6
 [`script`](https://www.home-assistant.io/components/script) | 42
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`sensor`](https://www.home-assistant.io/components/sensor) | 458
+[`sensor`](https://www.home-assistant.io/components/sensor) | 457
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 25
@@ -52,25 +53,25 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1385
+Total | 1382
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
 - [Broadlink](https://home-assistant.io/integrations/broadlink)
+- [Downloader](https://home-assistant.io/integrations/downloader)
+- [ESPHome](https://home-assistant.io/integrations/esphome)
 - [Generic Camera](https://home-assistant.io/integrations/generic)
 - [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
 - [Google Assistant](https://home-assistant.io/integrations/google_assistant)
 - [Google Cast](https://home-assistant.io/integrations/cast)
-- [Downloader](https://home-assistant.io/integrations/downloader)
-- [ESPHome](https://home-assistant.io/integrations/esphome)
-- [Folder Sensor](https://home-assistant.io/integrations/folder)
 - [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
 - [Neato](https://home-assistant.io/integrations/neato)
 - [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
+- [Shell Command](https://home-assistant.io/integrations/shell_command)
 - [Statistics Sensor](https://home-assistant.io/integrations/statistics)
 - [System Monitor](https://home-assistant.io/integrations/systemmonitor)
-- [Template Binary Sensors & Sensors](https://home-assistant.io/integrations/template)
+- [Template Binary Sensors, Sensors & Images](https://home-assistant.io/integrations/template)
 - [Template Cover](https://home-assistant.io/integrations/cover.template)
 - [Template Fan](https://home-assistant.io/integrations/fan.template)
 - [Template Switch](https://home-assistant.io/integrations/switch.template)
@@ -93,6 +94,7 @@ Total | 1385
 - [Local Tuya](https://github.com/rospogrigio/localtuya)
 - [Pfsense Integration For Home Assistant](https://github.com/travisghansen/hass-pfsense)
 - [Proxmox Ve](https://github.com/dougiteixeira/proxmoxve)
+- [Pyscript](https://github.com/custom-components/pyscript)
 - [Smartthinq Lge Sensors](https://github.com/ollo69/ha-smartthinq-sensors)
 - [Watchman](https://github.com/dummylabs/thewatchman)
 
