@@ -259,6 +259,23 @@
     state: "{{ 'home' in states.device_tracker | selectattr('entity_id', 'search', '._ethernet') | map(attribute = 'state') | list }}"
     device_class: motion
 
+  - name: Sims Drive Market Bus Stop
+    unique_id: binary_sensor.sims_drive_market_bus_stop
+    state: "{{ is_state('schedule.sims_drive_market_bus_stop_operating', 'on') and states('sensor.sims_drive_market_bus_134') | int(100) < 5 or states('sensor.sims_drive_market_bus_137') | int(100) < 5 or states('sensor.sims_drive_market_bus_64') | int(100) < 5 }}"
+    attributes:
+      nextbus: >
+        {% set nextbus = namespace(min = states('sensor.sims_drive_market_bus_134') | int(100), number = '134') %}
+        {% if states('sensor.sims_drive_market_bus_137') | int(100) < nextbus.min %}
+          {% set nextbus.min = states('sensor.sims_drive_market_bus_137') | int(100) %}
+          {% set nextbus.number = '137' %}
+        {% endif %}
+        {% if states('sensor.sims_drive_market_bus_64') | int(100) < nextbus.min %}
+          {% set nextbus.min = states('sensor.sims_drive_market_bus_64') | int(100) %}
+          {% set nextbus.number = '64' %}
+        {% endif %}
+        {{ {'nextbus_number': nextbus.number, 'nextbus_min': nextbus.min} }}
+    availability: "{{ is_state('schedule.sims_drive_market_bus_stop_operating', 'on') }}"
+
 - sensor:
   - name: Next Alarm Timings
     unique_id: sensor.next_alarm_timings
@@ -489,7 +506,7 @@
     - platform: time_pattern
       minutes: 47
   image:
-    - url: https://an-eloquent-home.duckdns.org/local/rain_radar_animation_{{ (now() - timedelta(minutes = 15)).replace(minute = (now() - timedelta(minutes = 15)).minute // 15 *15).strftime('%Y%m%d%H%M') }}.gif
+    - url: https://an-eloquent-home.duckdns.org/local/{{ (state_attr('sensor.rain_radar','file_list') | sort)[-1][12:] }}
       name: Rain Radar Animation
       unique_id: image.rain_radar_animation
 

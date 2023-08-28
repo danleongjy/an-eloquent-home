@@ -22,29 +22,30 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 139
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 106
+[`automation`](https://www.home-assistant.io/components/automation) | 140
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 107
 [`button`](https://www.home-assistant.io/components/button) | 137
 [`calendar`](https://www.home-assistant.io/components/calendar) | 4
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`cover`](https://www.home-assistant.io/components/cover) | 8
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 5
-[`fan`](https://www.home-assistant.io/components/fan) | 7
+[`fan`](https://www.home-assistant.io/components/fan) | 6
 [`image`](https://www.home-assistant.io/components/image) | 1
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 23
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 25
 [`input_number`](https://www.home-assistant.io/components/input_number) | 35
-[`input_select`](https://www.home-assistant.io/components/input_select) | 9
+[`input_select`](https://www.home-assistant.io/components/input_select) | 10
 [`input_text`](https://www.home-assistant.io/components/input_text) | 30
 [`light`](https://www.home-assistant.io/components/light) | 51
 [`media_player`](https://www.home-assistant.io/components/media_player) | 3
 [`number`](https://www.home-assistant.io/components/number) | 188
 [`person`](https://www.home-assistant.io/components/person) | 3
-[`remote`](https://www.home-assistant.io/components/remote) | 6
+[`remote`](https://www.home-assistant.io/components/remote) | 5
+[`schedule`](https://www.home-assistant.io/components/schedule) | 1
 [`script`](https://www.home-assistant.io/components/script) | 42
 [`select`](https://www.home-assistant.io/components/select) | 48
-[`sensor`](https://www.home-assistant.io/components/sensor) | 457
+[`sensor`](https://www.home-assistant.io/components/sensor) | 474
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 25
@@ -53,13 +54,14 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1382
+Total | 1401
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
 - [Broadlink](https://home-assistant.io/integrations/broadlink)
 - [Downloader](https://home-assistant.io/integrations/downloader)
 - [ESPHome](https://home-assistant.io/integrations/esphome)
+- [Folder Sensor](https://home-assistant.io/integrations/folder)
 - [Generic Camera](https://home-assistant.io/integrations/generic)
 - [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
 - [Google Assistant](https://home-assistant.io/integrations/google_assistant)
@@ -67,6 +69,7 @@ Total | 1382
 - [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
 - [Neato](https://home-assistant.io/integrations/neato)
+- [RESTful](https://home-assistant.io/integrations/rest)
 - [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [Shell Command](https://home-assistant.io/integrations/shell_command)
 - [Statistics Sensor](https://home-assistant.io/integrations/statistics)

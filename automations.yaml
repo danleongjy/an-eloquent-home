@@ -6046,6 +6046,23 @@
         }}{{ 0~target_time.day if target_time.day < 10 else target_time.day }}{{ 0~target_time.hour
         if target_time.hour < 10 else target_time.hour }}{{ ''00'' if target_time.minute
         // 15 == 0 else target_time.minute // 15 * 15 }}0000dBR.dpsri.png'
+    enabled: false
+  - repeat:
+      for_each: "{% set start_time = (now() - timedelta(days = 1, minutes = 15)).replace(minute
+        = (now() - timedelta(minutes = 15)).minute // 15 * 15) %} {% set missing_frames
+        = namespace(frames = []) %} {% for i in range(97) %}\n  {% set current_frame
+        = '/config/www/rain_radar/frames/dpsri_240km_' + (start_time + timedelta(minutes
+        = 15 * i)).strftime('%Y%m%d%H%M') + '0000dBR.dpsri.png' %}\n  {% if current_frame
+        not in state_attr('sensor.frames','file_list') %}\n    {% set missing_frames.frames
+        = missing_frames.frames + [current_frame] %}\n  {% endif %}\n{% endfor %}
+        {{ missing_frames.frames }}\n"
+      sequence:
+      - service: downloader.download_file
+        data:
+          overwrite: false
+          url: https://www.nea.gov.sg/docs/default-source/rain-area-240km/{{ repeat.item.split('/')[-1]
+            }}
+          filename: '{{ repeat.item.split(''/'')[-1] }}'
   - delay:
       hours: 0
       minutes: 0
@@ -6053,4 +6070,280 @@
       milliseconds: 0
   - service: pyscript.compile_rain_radar_animation
     data: {}
+  mode: single
+- id: '1693121253660'
+  alias: Live Bus Arrivals
+  description: Update the live bus arrival timings from LTA Datamall for buses stopping
+    nearby during operating hours
+  trigger:
+  - platform: time_pattern
+    minutes: /1
+  condition: []
+  action:
+  - service: homeassistant.update_entity
+    data: {}
+    target:
+      entity_id:
+      - sensor.sims_drive_market_bus_134
+      - sensor.sims_drive_market_bus_137
+      - sensor.sims_drive_market_bus_64
+      - sensor.opposite_aljunied_station_bus_125
+      - sensor.opposite_aljunied_station_bus_40
+      - sensor.aljunied_station_bus_100
+      - sensor.aljunied_station_bus_40
+      - sensor.aljunied_station_bus_80
+      - sensor.before_lorong_23_geylang_bus_13
+      - sensor.before_lorong_23_geylang_bus_26
+      - sensor.before_lorong_23_geylang_bus_51
+      - sensor.before_lorong_23_geylang_bus_67
+    enabled: false
+  - if:
+    - condition: time
+      after: 05:30:00
+      before: '23:40:00'
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.sims_drive_market_bus_64
+  - if:
+    - condition: time
+      after: 06:00:00
+      before: '23:45:00'
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.sims_drive_market_bus_134
+  - if:
+    - condition: time
+      after: 06:00:00
+      before: '23:30:00'
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.sims_drive_market_bus_137
+  - if:
+    - condition: or
+      conditions:
+      - condition: time
+        after: 06:10:00
+        before: '23:55:00'
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      - condition: time
+        after: 06:10:00
+        before: '23:57:00'
+        weekday:
+        - sat
+      - condition: time
+        after: 06:25:00
+        before: '23:55:00'
+        weekday:
+        - sun
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.opposite_aljunied_station_bus_40
+  - if:
+    - condition: time
+      after: 05:55:00
+      before: '23:25:00'
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.opposite_aljunied_station_bus_125
+  - if:
+    - condition: or
+      conditions:
+      - condition: time
+        after: 05:55:00
+        before: 00:10:00
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      - condition: time
+        after: 06:25:00
+        before: 00:10:00
+        weekday:
+        - sat
+      - condition: time
+        after: 06:45:00
+        before: 00:10:00
+        weekday:
+        - sun
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.aljunied_station_bus_40
+  - if:
+    - condition: or
+      conditions:
+      - condition: time
+        after: 06:05:00
+        before: 00:20:00
+        weekday:
+        - mon
+        - wed
+        - tue
+        - thu
+        - fri
+      - condition: time
+        after: 06:00:00
+        before: 00:22:00
+        weekday:
+        - sat
+      - condition: time
+        after: 06:00:00
+        before: 00:17:00
+        weekday:
+        - sun
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.aljunied_station_bus_80
+  - if:
+    - condition: time
+      after: 05:45:00
+      before: '23:59:00'
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.aljunied_station_bus_100
+  - if:
+    - condition: or
+      conditions:
+      - condition: time
+        after: 05:40:00
+        before: 00:28:00
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+      - condition: time
+        after: 06:05:00
+        before: 00:25:00
+        weekday:
+        - sun
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.before_lorong_23_geylang_bus_2
+  - if:
+    - condition: or
+      conditions:
+      - condition: time
+        after: 06:22:00
+        before: 00:15:00
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      - condition: time
+        after: 06:32:00
+        before: 00:15:00
+        weekday:
+        - sat
+        - sun
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.before_lorong_23_geylang_bus_13
+  - if:
+    - condition: or
+      conditions:
+      - condition: time
+        after: 05:45:00
+        before: '23:50:00'
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+      - condition: time
+        after: 06:15:00
+        before: '23:50:00'
+        weekday:
+        - sun
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.before_lorong_23_geylang_bus_26
+  - if:
+    - condition: or
+      conditions:
+      - condition: time
+        after: 07:05:00
+        before: 01:05:00
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      - condition: time
+        after: 06:55:00
+        before: 00:57:00
+        weekday:
+        - sat
+      - condition: time
+        after: 07:05:00
+        before: 00:55:00
+        weekday:
+        - sun
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.before_lorong_23_geylang_bus_51
+  - if:
+    - condition: or
+      conditions:
+      - condition: time
+        after: 05:45:00
+        before: '23:55:00'
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      - condition: time
+        after: 05:45:00
+        before: 00:00:00
+        weekday:
+        - sat
+      - condition: time
+        after: 06:25:00
+        before: 00:22:00
+        weekday:
+        - sun
+    then:
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.before_lorong_23_geylang_bus_67
   mode: single

@@ -1,0 +1,35 @@
+- resource: 'http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=80249'
+  scan_interval: 172800
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  sensor:
+    - name: Sims Drive Market Bus 134
+      unique_id: sensor.sims_drive_market_bus_134
+      value_template: "{{ (as_datetime(value_json['Services'][0]['NextBus']['EstimatedArrival']) - now()) // timedelta(minutes = 1) }}"
+      unit_of_measurement: min
+      json_attributes_path: $.Services.[0]
+      json_attributes:
+        - 'ServiceNo'
+        - 'NextBus'
+        - 'NextBus2'
+        - 'NextBus3'
+    - name: Sims Drive Market Bus 137
+      unique_id: sensor.sims_drive_market_bus_137
+      value_template: "{{ (as_datetime(value_json['Services'][1]['NextBus']['EstimatedArrival']) - now()) // timedelta(minutes = 1) }}"
+      unit_of_measurement: min
+      json_attributes_path: $.Services.[1]
+      json_attributes:
+        - 'ServiceNo'
+        - 'NextBus'
+        - 'NextBus2'
+        - 'NextBus3'
+    - name: Sims Drive Market Bus 64
+      unique_id: sensor.sims_drive_market_bus_64
+      value_template: "{{ (as_datetime(value_json['Services'][2]['NextBus']['EstimatedArrival']) - now()) // timedelta(minutes = 1) }}"
+      unit_of_measurement: min
+      json_attributes_path: $.Services.[2]
+      json_attributes:
+        - 'ServiceNo'
+        - 'NextBus'
+        - 'NextBus2'
+        - 'NextBus3'
