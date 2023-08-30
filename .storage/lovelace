@@ -404,10 +404,10 @@
           },
           "custom_fields": {
             "service_no": "[[[ return entity.attributes.ServiceNo ]]]",
-            "nextbus1_min": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (states['schedule.sims_drive_market_bus_stop_operating'].state == 'off') {\n    return 'Not Operating'\n  } else if (isNaN(min)) {\n    return 'Unavailable' \n  } else if (min < 0) {\n    return '0min'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
-            "nextbus2_min": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (states['schedule.sims_drive_market_bus_stop_operating'].state == 'off') {\n    return ''\n  } else if (isNaN(min)) {\n    return '' \n  } else if (min < 0) {\n    return '0min'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
-            "nextbus3_min": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (states['schedule.sims_drive_market_bus_stop_operating'].state == 'off') {\n    return ''\n  } else if (isNaN(min)) {\n    return '' \n  } else if (min < 0) {\n    return '0min'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
-            "nextbus1": "[[[\n  let bus = ``\n  if (entity.attributes.NextBus.Load == 'LSD') {\n    bus = bus + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus.Load == 'SDA') {\n    bus = bus + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus.Load == 'SEA') {\n    bus = bus + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n",
+            "nextbus1_min": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return ''\n  } else if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
+            "nextbus2_min": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return ''\n  } else if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
+            "nextbus3_min": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return ''\n  } else if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
+            "nextbus1": "[[[\n  let bus = `<ha-icon icon=\"mdi:circle-off-outline\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  if (entity.attributes.NextBus.Load == 'LSD') {\n    bus = `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus.Load == 'SDA') {\n    bus = `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus.Load == 'SEA') {\n    bus = `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n",
             "nextbus2": "[[[\n  let bus = ``\n  if (entity.attributes.NextBus2.Load == 'LSD') {\n    bus = bus + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus2.Load == 'SDA') {\n    bus = bus + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus2.Load == 'SEA') {\n    bus = bus + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus2.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus2.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n",
             "nextbus3": "[[[\n  let bus = ``\n  if (entity.attributes.NextBus3.Load == 'LSD') {\n    bus = bus + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus3.Load == 'SDA') {\n    bus = bus + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus3.Load == 'SEA') {\n    bus = bus + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus3.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus3.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n"
           },
@@ -439,17 +439,17 @@
               ],
               "nextbus1_min": [
                 {
-                  "color": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min) || states['schedule.sims_drive_market_bus_stop_operating'].state == 'off') {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min) || states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
                 }
               ],
               "nextbus2_min": [
                 {
-                  "color": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min) || states['schedule.sims_drive_market_bus_stop_operating'].state == 'off') {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min) || states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
                 }
               ],
               "nextbus3_min": [
                 {
-                  "color": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min) || states['schedule.sims_drive_market_bus_stop_operating'].state == 'off') {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min) || states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
                 }
               ]
             }
@@ -1393,9 +1393,12 @@
                       }
                     ]
                   },
-                  "hold_action": {
+                  "tap_action": {
                     "action": "navigate",
                     "navigation_path": "/lovelace/weather"
+                  },
+                  "hold_action": {
+                    "action": "more-info"
                   }
                 },
                 {
@@ -1554,12 +1557,12 @@
                   "type": "custom:button-card",
                   "entity": "binary_sensor.sims_drive_market_bus_stop",
                   "template": "top_row",
-                  "label": "[[[ if (states['schedule.sims_drive_market_bus_stop_operating'].state == 'on') { return entity.attributes.nextbus.nextbus_number } else { return '' } ]]]",
+                  "label": "[[[ if (entity.state == 'on') { return entity.attributes.nextbus.nextbus_number } else { return '' } ]]]",
                   "show_label": true,
                   "styles": {
                     "label": [
                       {
-                        "animation": "[[[\n  if (states['schedule.sims_drive_market_bus_stop_operating'].state == 'on') {\n    if (entity.attributes.nextbus.nextbus_min < 3) {\n      return 'blink 2s ease infinite'\n    }\n  }\n]]]\n"
+                        "animation": "[[[\n  if (entity.state == 'on') {\n    if (entity.attributes.nextbus.nextbus_min < 3) {\n      return 'blink 2s ease infinite'\n    }\n  }\n]]]\n"
                       }
                     ]
                   },
@@ -6952,6 +6955,9 @@
                     "font-weight": "bold"
                   },
                   {
+                    "font-size": "20px"
+                  },
+                  {
                     "background-color": "#007700"
                   },
                   {
@@ -7094,15 +7100,6 @@
                 {
                   "type": "custom:button-card",
                   "entity": "sensor.before_lorong_23_geylang_bus_26",
-                  "template": "nextbus",
-                  "variables": {
-                    "comfortable_walk_time": 10,
-                    "min_walk_time": 5
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "sensor.before_lorong_23_geylang_bus_51",
                   "template": "nextbus",
                   "variables": {
                     "comfortable_walk_time": 10,

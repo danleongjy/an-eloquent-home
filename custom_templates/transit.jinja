@@ -1,0 +1,12 @@
+{% macro bus_operating(json, target_service) %}
+{% set operating = namespace(result = false) %}
+{% if json['Services'] is defined %}
+    {% for service in json['Services'] %}
+    {% if service['ServiceNo'] == target_service %}
+        {% set operating.result = true %}
+        {% break %}
+    {% endif %}
+    {% endfor %}
+{% endif %}
+{{ operating.result }}
+{% endmacro %}

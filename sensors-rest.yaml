@@ -2,34 +2,82 @@
   scan_interval: 172800
   headers:
     accountKey: !secret lta_datamall_apikey
-  sensor:
-    - name: Sims Drive Market Bus 134
-      unique_id: sensor.sims_drive_market_bus_134
-      value_template: "{{ (as_datetime(value_json['Services'][0]['NextBus']['EstimatedArrival']) - now()) // timedelta(minutes = 1) }}"
-      unit_of_measurement: min
-      json_attributes_path: $.Services.[0]
-      json_attributes:
-        - 'ServiceNo'
-        - 'NextBus'
-        - 'NextBus2'
-        - 'NextBus3'
-    - name: Sims Drive Market Bus 137
-      unique_id: sensor.sims_drive_market_bus_137
-      value_template: "{{ (as_datetime(value_json['Services'][1]['NextBus']['EstimatedArrival']) - now()) // timedelta(minutes = 1) }}"
-      unit_of_measurement: min
-      json_attributes_path: $.Services.[1]
-      json_attributes:
-        - 'ServiceNo'
-        - 'NextBus'
-        - 'NextBus2'
-        - 'NextBus3'
-    - name: Sims Drive Market Bus 64
-      unique_id: sensor.sims_drive_market_bus_64
-      value_template: "{{ (as_datetime(value_json['Services'][2]['NextBus']['EstimatedArrival']) - now()) // timedelta(minutes = 1) }}"
-      unit_of_measurement: min
-      json_attributes_path: $.Services.[2]
-      json_attributes:
-        - 'ServiceNo'
-        - 'NextBus'
-        - 'NextBus2'
-        - 'NextBus3'
+  binary_sensor:
+    - name: Sims Drive Market Bus 134 Operating
+      unique_id: binary_sensor.sims_drive_market_bus_134_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '134') }}
+    - name: Sims Drive Market Bus 137 Operating
+      unique_id: binary_sensor.sims_drive_market_bus_137_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '137') }}
+    - name: Sims Drive Market Bus 64 Operating
+      unique_id: binary_sensor.sims_drive_market_bus_64_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '64') }}
+
+- resource: 'http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81081'
+  scan_interval: 172800
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  binary_sensor:
+    - name: Opposite Aljunied Station Bus 40 Operating
+      unique_id: binary_sensor.opposite_aljunied_station_bus_40_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '40') }}
+    - name: Opposite Aljunied Station Bus 125 Operating
+      unique_id: binary_sensor.opposite_aljunied_station_bus_125_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '125') }}
+
+- resource: 'http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81089'
+  scan_interval: 172800
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  binary_sensor:
+    - name: Aljunied Station Bus 40 Operating
+      unique_id: binary_sensor.aljunied_station_bus_40_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '40') }}
+    - name: Aljunied Station Bus 80 Operating
+      unique_id: binary_sensor.aljunied_station_bus_80_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '80') }}
+    - name: Aljunied Station Bus 100 Operating
+      unique_id: binary_sensor.aljunied_station_bus_100_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '100') }}
+
+- resource: 'http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=80091'
+  scan_interval: 172800
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  binary_sensor:
+    - name: Before Lorong 23 Geylang Bus 2 Operating
+      unique_id: binary_sensor.before_lorong_23_geylang_bus_2_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '2') }}
+    - name: Before Lorong 23 Geylang Bus 13 Operating
+      unique_id: binary_sensor.before_lorong_23_geylang_bus_13_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '13') }}
+    - name: Before Lorong 23 Geylang Bus 26 Operating
+      unique_id: binary_sensor.before_lorong_23_geylang_bus_26_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '26') }}
+    - name: Before Lorong 23 Geylang Bus 67 Operating
+      unique_id: binary_sensor.before_lorong_23_geylang_bus_67_operating
+      value_template: >
+        {% from 'transit.jinja' import bus_operating %}
+        {{ bus_operating(value_json, '67') }}

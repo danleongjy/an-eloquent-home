@@ -132,6 +132,54 @@
     - wind
 
 - platform: rest
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=80249&ServiceNo=64
+  name: Sims Drive Market Bus 64
+  unique_id: sensor.sims_drive_market_bus_64
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: "{{ (as_datetime(value_json['Services'][0]['NextBus']['EstimatedArrival']) - now()) // timedelta(minutes = 1) }}"
+  unit_of_measurement: min
+  json_attributes_path: $.Services.[0]
+  json_attributes:
+    - 'ServiceNo'
+    - 'NextBus'
+    - 'NextBus2'
+    - 'NextBus3'
+
+- platform: rest
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=80249&ServiceNo=134
+  name: Sims Drive Market Bus 134
+  unique_id: sensor.sims_drive_market_bus_134
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: "{{ (as_datetime(value_json['Services'][0]['NextBus']['EstimatedArrival']) - now()) // timedelta(minutes = 1) }}"
+  unit_of_measurement: min
+  json_attributes_path: $.Services.[0]
+  json_attributes:
+    - 'ServiceNo'
+    - 'NextBus'
+    - 'NextBus2'
+    - 'NextBus3'
+
+- platform: rest
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=80249&ServiceNo=137
+  name: Sims Drive Market Bus 137
+  unique_id: sensor.sims_drive_market_bus_137
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: "{{ (as_datetime(value_json['Services'][0]['NextBus']['EstimatedArrival']) - now()) // timedelta(minutes = 1) }}"
+  unit_of_measurement: min
+  json_attributes_path: $.Services.[0]
+  json_attributes:
+    - 'ServiceNo'
+    - 'NextBus'
+    - 'NextBus2'
+    - 'NextBus3'
+
+- platform: rest
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81081&ServiceNo=40
   name: Opposite Aljunied Station Bus 40
   unique_id: sensor.opposite_aljunied_station_bus_40
@@ -247,22 +295,6 @@
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=80091&ServiceNo=26
   name: Before Lorong 23 Geylang Bus 26
   unique_id: sensor.before_lorong_23_geylang_bus_26
-  headers:
-    accountKey: !secret lta_datamall_apikey
-  scan_interval: 172800
-  value_template: "{{ (as_datetime(value_json['Services'][0]['NextBus']['EstimatedArrival']) - now()) // timedelta(minutes = 1) }}"
-  unit_of_measurement: min
-  json_attributes_path: $.Services.[0]
-  json_attributes:
-    - 'ServiceNo'
-    - 'NextBus'
-    - 'NextBus2'
-    - 'NextBus3'
-
-- platform: rest
-  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=80091&ServiceNo=51
-  name: Before Lorong 23 Geylang Bus 51
-  unique_id: sensor.before_lorong_23_geylang_bus_51
   headers:
     accountKey: !secret lta_datamall_apikey
   scan_interval: 172800

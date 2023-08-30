@@ -261,7 +261,7 @@
 
   - name: Sims Drive Market Bus Stop
     unique_id: binary_sensor.sims_drive_market_bus_stop
-    state: "{{ is_state('schedule.sims_drive_market_bus_stop_operating', 'on') and states('sensor.sims_drive_market_bus_134') | int(100) < 5 or states('sensor.sims_drive_market_bus_137') | int(100) < 5 or states('sensor.sims_drive_market_bus_64') | int(100) < 5 }}"
+    state: "{{ states('sensor.sims_drive_market_bus_134') | int(100) < 5 or states('sensor.sims_drive_market_bus_137') | int(100) < 5 or states('sensor.sims_drive_market_bus_64') | int(100) < 5 }}"
     attributes:
       nextbus: >
         {% set nextbus = namespace(min = states('sensor.sims_drive_market_bus_134') | int(100), number = '134') %}
@@ -274,7 +274,7 @@
           {% set nextbus.number = '64' %}
         {% endif %}
         {{ {'nextbus_number': nextbus.number, 'nextbus_min': nextbus.min} }}
-    availability: "{{ is_state('schedule.sims_drive_market_bus_stop_operating', 'on') }}"
+    availability: "{{ is_state('binary_sensor.sims_drive_market_bus_64_operating', 'on') or is_state('binary_sensor.sims_drive_market_bus_134_operating', 'on') or is_state('binary_sensor.sims_drive_market_bus_137_operating', 'on') }}"
 
 - sensor:
   - name: Next Alarm Timings
