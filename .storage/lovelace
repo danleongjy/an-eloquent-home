@@ -399,17 +399,18 @@
           "show_icon": false,
           "show_name": false,
           "variables": {
+            "service_no": "",
             "comfortable_walk_time": 5,
             "min_walk_time": 3
           },
           "custom_fields": {
-            "service_no": "[[[ return entity.attributes.ServiceNo ]]]",
-            "nextbus1_min": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return ''\n  } else if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
-            "nextbus2_min": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return ''\n  } else if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
-            "nextbus3_min": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return ''\n  } else if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
-            "nextbus1": "[[[\n  let bus = `<ha-icon icon=\"mdi:circle-off-outline\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  if (entity.attributes.NextBus.Load == 'LSD') {\n    bus = `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus.Load == 'SDA') {\n    bus = `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus.Load == 'SEA') {\n    bus = `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n",
-            "nextbus2": "[[[\n  let bus = ``\n  if (entity.attributes.NextBus2.Load == 'LSD') {\n    bus = bus + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus2.Load == 'SDA') {\n    bus = bus + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus2.Load == 'SEA') {\n    bus = bus + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus2.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus2.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n",
-            "nextbus3": "[[[\n  let bus = ``\n  if (entity.attributes.NextBus3.Load == 'LSD') {\n    bus = bus + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus3.Load == 'SDA') {\n    bus = bus + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus3.Load == 'SEA') {\n    bus = bus + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus3.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus3.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n"
+            "service_no": "[[[ return variables.service_no ]]]",
+            "nextbus1_min": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return ''\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
+            "nextbus2_min": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return ''\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
+            "nextbus3_min": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return ''\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
+            "nextbus1": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return `<ha-icon icon=\"mdi:circle-off-outline\" style=\"width: 40px; height: 40px\"></ha-icon>`\n    }\n  let bus = ``\n  if (entity.attributes.NextBus.Load == 'LSD') {\n    bus = `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus.Load == 'SDA') {\n    bus = `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus.Load == 'SEA') {\n    bus = `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n",
+            "nextbus2": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return ''\n    }\n  let bus = ``\n  if (entity.attributes.NextBus2.Load == 'LSD') {\n    bus = bus + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus2.Load == 'SDA') {\n    bus = bus + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus2.Load == 'SEA') {\n    bus = bus + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus2.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus2.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n",
+            "nextbus3": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return ''\n    }\n  let bus = ``\n  if (entity.attributes.NextBus3.Load == 'LSD') {\n    bus = bus + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus3.Load == 'SDA') {\n    bus = bus + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus3.Load == 'SEA') {\n    bus = bus + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus3.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus3.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n"
           },
           "styles": {
             "card": [
@@ -439,17 +440,17 @@
               ],
               "nextbus1_min": [
                 {
-                  "color": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min) || states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
                 }
               ],
               "nextbus2_min": [
                 {
-                  "color": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min) || states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
                 }
               ],
               "nextbus3_min": [
                 {
-                  "color": "[[[\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min) || states['binary_' + entity.entity_id + '_operating'].state == 'off') {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
                 }
               ]
             }
@@ -1654,6 +1655,7 @@
                       "type": "custom:button-card",
                       "entity": "switch.washer_power",
                       "template": "washer_more_info",
+                      "color": "rgb(68,115,158)",
                       "styles": {
                         "card": [
                           {
@@ -1665,7 +1667,9 @@
                     "Standby": {
                       "type": "custom:button-card",
                       "entity": "switch.washer_power",
-                      "template": "washer_more_info"
+                      "template": "washer_more_info",
+                      "label": "...",
+                      "show_label": true
                     },
                     "Detecting": {
                       "type": "custom:button-card",
@@ -6995,17 +6999,26 @@
                 {
                   "type": "custom:button-card",
                   "template": "nextbus",
-                  "entity": "sensor.sims_drive_market_bus_64"
+                  "entity": "sensor.sims_drive_market_bus_64",
+                  "variables": {
+                    "service_no": 64
+                  }
                 },
                 {
                   "type": "custom:button-card",
                   "template": "nextbus",
-                  "entity": "sensor.sims_drive_market_bus_134"
+                  "entity": "sensor.sims_drive_market_bus_134",
+                  "variables": {
+                    "service_no": 134
+                  }
                 },
                 {
                   "type": "custom:button-card",
                   "template": "nextbus",
-                  "entity": "sensor.sims_drive_market_bus_137"
+                  "entity": "sensor.sims_drive_market_bus_137",
+                  "variables": {
+                    "service_no": 137
+                  }
                 }
               ]
             },
@@ -7022,7 +7035,8 @@
                   "template": "nextbus",
                   "variables": {
                     "comfortable_walk_time": 10,
-                    "min_walk_time": 5
+                    "min_walk_time": 5,
+                    "service_no": 40
                   }
                 },
                 {
@@ -7031,7 +7045,8 @@
                   "template": "nextbus",
                   "variables": {
                     "comfortable_walk_time": 10,
-                    "min_walk_time": 5
+                    "min_walk_time": 5,
+                    "service_no": 125
                   }
                 }
               ]
@@ -7049,7 +7064,8 @@
                   "template": "nextbus",
                   "variables": {
                     "comfortable_walk_time": 12,
-                    "min_walk_time": 7
+                    "min_walk_time": 7,
+                    "service_no": 40
                   }
                 },
                 {
@@ -7058,7 +7074,8 @@
                   "template": "nextbus",
                   "variables": {
                     "comfortable_walk_time": 12,
-                    "min_walk_time": 7
+                    "min_walk_time": 7,
+                    "service_no": 80
                   }
                 },
                 {
@@ -7067,7 +7084,8 @@
                   "template": "nextbus",
                   "variables": {
                     "comfortable_walk_time": 12,
-                    "min_walk_time": 7
+                    "min_walk_time": 7,
+                    "service_no": 100
                   }
                 }
               ]
@@ -7085,7 +7103,8 @@
                   "template": "nextbus",
                   "variables": {
                     "comfortable_walk_time": 10,
-                    "min_walk_time": 5
+                    "min_walk_time": 5,
+                    "service_no": 2
                   }
                 },
                 {
@@ -7094,7 +7113,8 @@
                   "template": "nextbus",
                   "variables": {
                     "comfortable_walk_time": 10,
-                    "min_walk_time": 5
+                    "min_walk_time": 5,
+                    "service_no": 13
                   }
                 },
                 {
@@ -7103,7 +7123,8 @@
                   "template": "nextbus",
                   "variables": {
                     "comfortable_walk_time": 10,
-                    "min_walk_time": 5
+                    "min_walk_time": 5,
+                    "service_no": 26
                   }
                 },
                 {
@@ -7112,7 +7133,8 @@
                   "template": "nextbus",
                   "variables": {
                     "comfortable_walk_time": 10,
-                    "min_walk_time": 5
+                    "min_walk_time": 5,
+                    "service_no": 67
                   }
                 }
               ]

@@ -63,25 +63,28 @@
       friendly_name: Living Room Blinds
       unique_id: cover.living_room_blinds
       device_class: blind
-      position_template: "{{ (state_attr('cover.living_room_left_blind','current_position') + state_attr('cover.living_room_right_blind','current_position')) / 2 }}"
+      position_template: "{{ (state_attr('cover.living_room_left_blind','current_position') + state_attr('cover.living_room_middle_blind','current_position') + state_attr('cover.living_room_right_blind','current_position')) / 3 }}"
       availability_template: "{{ states('cover.living_room_left_blind') not in ['unavailable', 'unknown'] and states('cover.living_room_right_blind') not in ['unavailable', 'unknown'] }}"
       open_cover:
         service: cover.open_cover
         target:
           entity_id:
             - cover.living_room_left_blind
+            - cover.living_room_middle_blind
             - cover.living_room_right_blind
       close_cover:
         service: cover.close_cover
         target:
           entity_id:
             - cover.living_room_left_blind
+            - cover.living_room_middle_blind
             - cover.living_room_right_blind
       stop_cover:
         service: cover.stop_cover
         target:
           entity_id:
             - cover.living_room_left_blind
+            - cover.living_room_middle_blind
             - cover.living_room_right_blind
       set_cover_position:
         service: cover.set_cover_position
@@ -90,4 +93,5 @@
         target:
           entity_id:
             - cover.living_room_left_blind
+            - cover.living_room_middle_blind
             - cover.living_room_right_blind
