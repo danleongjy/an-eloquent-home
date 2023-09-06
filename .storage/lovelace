@@ -3728,6 +3728,11 @@
                     },
                     {
                       "type": "custom:button-card",
+                      "entity": "sensor.living_room_middle_blind_lqi",
+                      "template": "zigbee_endpoint"
+                    },
+                    {
+                      "type": "custom:button-card",
                       "entity": "sensor.living_room_right_blind_lqi",
                       "template": "zigbee_endpoint"
                     },
@@ -6889,17 +6894,73 @@
                   "type": "weather-forecast",
                   "entity": "weather.local_weather",
                   "secondary_info_attribute": "humidity",
-                  "name": "NEA via data.gov.sg"
+                  "name": "NEA via data.gov.sg",
+                  "forecast_type": "legacy"
                 },
                 {
                   "type": "picture",
                   "tap_action": {
-                    "action": "none"
+                    "action": "call-service",
+                    "service": "script.nea_rain_radar_animation"
                   },
                   "hold_action": {
                     "action": "none"
                   },
                   "image_entity": "image.rain_radar_animation"
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "script.nea_rain_radar_animation",
+                      "state": "off"
+                    }
+                  ],
+                  "card": {
+                    "type": "custom:button-card",
+                    "entity": "script.nea_rain_radar_animation",
+                    "name": "Last Updated",
+                    "state_display": "[[[ \n  return helpers.formatShortDateTime(states['image.rain_radar_animation'].last_changed)\n]]]\n",
+                    "show_state": true,
+                    "show_icon": false,
+                    "tap_action": {
+                      "action": "call-service",
+                      "service": "script.nea_rain_radar_animation"
+                    },
+                    "layout": "name_state",
+                    "styles": {
+                      "card": [
+                        {
+                          "height": "20px"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "script.nea_rain_radar_animation",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "custom:button-card",
+                    "name": "Updating...",
+                    "styles": {
+                      "card": [
+                        {
+                          "height": "20px"
+                        }
+                      ],
+                      "name": [
+                        {
+                          "animation": "blink 2s ease infinite"
+                        }
+                      ]
+                    }
+                  }
                 },
                 {
                   "type": "conditional",
@@ -6939,56 +7000,6 @@
           "subview": true,
           "badges": [],
           "cards": [
-            {
-              "type": "custom:button-card",
-              "entity": "sensor.aljunied_station_crowdedness",
-              "name": "EW9 Aljunied Station",
-              "label": "[[[\n  if (entity.state == 'Heavy Crowd') {\n    return `<ha-icon icon='mdi:account-group'>`\n  } else if (entity.state == 'Moderate Crowd') {\n    return `<ha-icon icon='mdi:account-supervisor'>`\n  } else {\n    return `<ha-icon icon='mdi:account'>`\n  }\n]]]\n",
-              "show_label": true,
-              "styles": {
-                "icon": [
-                  {
-                    "height": "40px"
-                  },
-                  {
-                    "width": "40px"
-                  }
-                ],
-                "name": [
-                  {
-                    "font-weight": "bold"
-                  },
-                  {
-                    "font-size": "20px"
-                  },
-                  {
-                    "background-color": "#007700"
-                  },
-                  {
-                    "border": "4px solid #007700"
-                  }
-                ],
-                "label": [
-                  {
-                    "height": "40px"
-                  },
-                  {
-                    "width": "40px"
-                  },
-                  {
-                    "color": "[[[\n  if (entity.state == 'Moderate Crowd') {\n    return 'orange'\n  } else if (entity.state == 'Heavy Crowd') {\n    return 'red'\n  } else {\n    return 'white'\n  }\n]]]\n"
-                  }
-                ],
-                "grid": [
-                  {
-                    "grid-template-areas": "'i n l'"
-                  },
-                  {
-                    "grid-template-columns": "1fr min-content 1fr"
-                  }
-                ]
-              }
-            },
             {
               "type": "vertical-stack",
               "cards": [

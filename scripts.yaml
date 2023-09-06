@@ -1165,3 +1165,36 @@ increment_alarm_day:
     alias: Increment alarm by 1 day as long as it is a public holiday or an off day
   mode: parallel
   icon: mdi:alarm
+nea_rain_radar_animation:
+  alias: NEA Rain Radar Animation
+  sequence:
+  - repeat:
+      for_each: "{% set start_time = (now() - timedelta(days = 1, minutes = 15)).replace(minute
+        = (now() - timedelta(minutes = 15)).minute // 15 * 15) %} {% set missing_frames
+        = namespace(frames = []) %} {% for i in range(97) %}\n  {% set current_frame
+        = '/config/www/rain_radar/frames/dpsri_240km_' + (start_time + timedelta(minutes
+        = 15 * i)).strftime('%Y%m%d%H%M') + '0000dBR.dpsri.png' %}\n  {% if current_frame
+        not in state_attr('sensor.frames','file_list') %}\n    {% set missing_frames.frames
+        = missing_frames.frames + [current_frame] %}\n  {% endif %}\n{% endfor %}
+        {{ missing_frames.frames }}\n"
+      sequence:
+      - service: downloader.download_file
+        data:
+          overwrite: false
+          url: https://www.nea.gov.sg/docs/default-source/rain-area-240km/{{ repeat.item.split('/')[-1]
+            }}
+          filename: '{{ repeat.item.split(''/'')[-1] }}'
+      - delay: 2
+  - service: shell_command.removeoldrainradar
+    data: {}
+  - service: shell_command.removeoldrainradaranimation
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
+  - service: pyscript.compile_rain_radar_animation
+    data: {}
+  mode: single
+  icon: mdi:weather-cloudy

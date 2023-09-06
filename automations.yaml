@@ -2698,7 +2698,11 @@
         - service: cover.close_cover
           target:
             entity_id: '{{ repeat.item }}'
-        - delay: 1.5
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 2
+            milliseconds: 0
     else:
     - service: automation.turn_on
       data: {}
@@ -2869,6 +2873,7 @@
       - repeat:
           for_each:
           - cover.living_room_left_blind
+          - cover.living_room_middle_blind
           - cover.living_room_right_blind
           - cover.dining_room_left_blind
           - cover.dining_room_right_blind
@@ -2876,7 +2881,7 @@
           - service: cover.close_cover
             target:
               entity_id: '{{ repeat.item }}'
-          - delay: 1.5
+          - delay: 2
     - conditions:
       - condition: or
         conditions:
@@ -2903,6 +2908,7 @@
       - repeat:
           for_each:
           - cover.living_room_left_blind
+          - cover.living_room_middle_blind
           - cover.living_room_right_blind
           - cover.dining_room_left_blind
           - cover.dining_room_right_blind
@@ -2910,7 +2916,7 @@
           - service: cover.open_cover
             target:
               entity_id: '{{ repeat.item }}'
-          - delay: 1.5
+          - delay: 2
   mode: single
 - id: '1672314137246'
   alias: Dining Room Blinds Controller
@@ -6019,57 +6025,6 @@
   condition: []
   action:
   - service: script.elis_room_alarm_lights
-    data: {}
-  mode: single
-- id: '1692197225346'
-  alias: NEA Rain Radar Animation
-  description: Download the latest rain radar overlay from NEA, compile 24h animation,
-    and clean up old images
-  trigger:
-  - platform: time_pattern
-    minutes: /15
-  condition: []
-  action:
-  - service: shell_command.removeoldrainradar
-    data: {}
-  - service: shell_command.removeoldrainradaranimation
-    data: {}
-  - service: downloader.download_file
-    data:
-      overwrite: false
-      url: '{% set target_time = now() - timedelta(minutes = 15) %} https://www.nea.gov.sg/docs/default-source/rain-area-240km/dpsri_240km_{{
-        target_time.year }}{{ 0~target_time.month if target_time.month < 10 else target_time.month
-        }}{{ 0~target_time.day if target_time.day < 10 else target_time.day }}{{ 0~target_time.hour
-        if target_time.hour < 10 else target_time.hour }}{{ ''00'' if target_time.minute
-        // 15 == 0 else target_time.minute // 15 * 15 }}0000dBR.dpsri.png'
-      filename: '{% set target_time = now() - timedelta(minutes = 15) %} dpsri_240km_{{
-        target_time.year }}{{ 0~target_time.month if target_time.month < 10 else target_time.month
-        }}{{ 0~target_time.day if target_time.day < 10 else target_time.day }}{{ 0~target_time.hour
-        if target_time.hour < 10 else target_time.hour }}{{ ''00'' if target_time.minute
-        // 15 == 0 else target_time.minute // 15 * 15 }}0000dBR.dpsri.png'
-    enabled: false
-  - repeat:
-      for_each: "{% set start_time = (now() - timedelta(days = 1, minutes = 15)).replace(minute
-        = (now() - timedelta(minutes = 15)).minute // 15 * 15) %} {% set missing_frames
-        = namespace(frames = []) %} {% for i in range(97) %}\n  {% set current_frame
-        = '/config/www/rain_radar/frames/dpsri_240km_' + (start_time + timedelta(minutes
-        = 15 * i)).strftime('%Y%m%d%H%M') + '0000dBR.dpsri.png' %}\n  {% if current_frame
-        not in state_attr('sensor.frames','file_list') %}\n    {% set missing_frames.frames
-        = missing_frames.frames + [current_frame] %}\n  {% endif %}\n{% endfor %}
-        {{ missing_frames.frames }}\n"
-      sequence:
-      - service: downloader.download_file
-        data:
-          overwrite: false
-          url: https://www.nea.gov.sg/docs/default-source/rain-area-240km/{{ repeat.item.split('/')[-1]
-            }}
-          filename: '{{ repeat.item.split(''/'')[-1] }}'
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 10
-      milliseconds: 0
-  - service: pyscript.compile_rain_radar_animation
     data: {}
   mode: single
 - id: '1693121253660'

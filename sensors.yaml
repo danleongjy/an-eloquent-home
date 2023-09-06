@@ -228,7 +228,7 @@
     - 'NextBus3'
 
 - platform: rest
-  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81081&ServiceNo=80
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81089&ServiceNo=80
   name: Aljunied Station Bus 80
   unique_id: sensor.aljunied_station_bus_80
   headers:
@@ -244,7 +244,7 @@
     - 'NextBus3'
 
 - platform: rest
-  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81081&ServiceNo=100
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81089&ServiceNo=100
   name: Aljunied Station Bus 100
   unique_id: sensor.aljunied_station_bus_100
   headers:
@@ -322,22 +322,6 @@
     - 'NextBus'
     - 'NextBus2'
     - 'NextBus3'
-
-- platform: rest
-  resource: http://datamall2.mytransport.sg/ltaodataservice/PCDRealTime?TrainLine=EWL
-  name: Aljunied Station Crowdedness
-  unique_id: sensor.aljunied_station_crowdedness
-  headers:
-    accountKey: !secret lta_datamall_apikey
-  value_template: >
-    {% set crowdedness = namespace(output = 'unavailable') %}
-    {% set crowdcodes = {'l': 'Low Crowd', 'm': 'Moderate Crowd', 'h': 'Heavy Crowd', 'NA': 'Crowd Data Unavailable'} %}
-    {% for station in value_json['value'] %}
-      {% if station['Station'] == 'EW9' %}
-        {% set crowdedness.output = crowdcodes[station['CrowdLevel']] %}
-      {% endif %}
-    {% endfor %}
-    {{ crowdedness.output }}
 
 - platform: folder
   folder: /config/www/rain_radar/frames

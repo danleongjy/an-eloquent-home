@@ -491,24 +491,10 @@
     state: "{{ state_attr('cover.dining_room_blinds','current_position') | int(100)}}"
     availability: "{{ states('cover.dining_room_blinds') not in ['unavailable','unknown'] }}"
 
-- trigger:
-    - platform: state
-      entity_id: image.rain_radar_animation
-      to: 
-        - unknown
-        - unavailable
-    - platform: time_pattern
-      minutes: 2
-    - platform: time_pattern
-      minutes: 17
-    - platform: time_pattern
-      minutes: 32
-    - platform: time_pattern
-      minutes: 47
-  image:
-    - url: https://an-eloquent-home.duckdns.org/local/{{ (state_attr('sensor.rain_radar','file_list') | sort)[-1][12:] }}
-      name: Rain Radar Animation
-      unique_id: image.rain_radar_animation
+- image:
+  - url: https://an-eloquent-home.duckdns.org/local/{{ (state_attr('sensor.rain_radar','file_list') | sort)[-1][12:] }}
+    name: Rain Radar Animation
+    unique_id: image.rain_radar_animation
 
 - trigger:
   - platform: time_pattern

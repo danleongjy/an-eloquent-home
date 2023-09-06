@@ -6,7 +6,7 @@ def rain_radar_animation(ms_per_frame = 500, basemap_file = '/config/www/rain_ra
     import os
     from PIL import Image
 
-    frames = [Image.open(input_folder + '/' + frame) for frame in sorted(os.listdir(input_folder))]
+    frames = [Image.open(input_folder + '/' + frame) for frame in sorted(os.listdir(input_folder))[-97:]]
     overlaid_frames = []
     for frame in frames:
         basemap = Image.open(basemap_file)
