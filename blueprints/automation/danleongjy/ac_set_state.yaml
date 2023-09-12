@@ -31,6 +31,12 @@ blueprint:
       selector:
         entity:
           domain: input_number
+    resync:
+      name: Resync
+      description: Whether to sync AC state with Vent Sensor
+      selector:
+        boolean:
+      default: true
 trigger:
   - platform: state
     entity_id: !input ac
@@ -48,6 +54,7 @@ action:
   - variables:
       target_ac: !input ac
       resync_delay_minutes: !input resync_delay
+      resync_on: !input resync
   - choose:
       - conditions:
           - condition: trigger
@@ -61,11 +68,15 @@ action:
                     target_ac_temp: "{{ state_attr(target_ac, 'temperature') }}"
                 - delay: "{{ resync_delay_minutes | int(1) * 60 }}"
               until:
-                - condition: not
+                - condition: or
                   conditions:
-                    - condition: state
-                      entity_id: !input vent
-                      state: 'off'
+                    - condition: template
+                      value_template: "{{ not resync_on }}"
+                    - condition: not
+                      conditions:
+                        - condition: state
+                          entity_id: !input vent
+                          state: 'off'
       - conditions:
           - condition: trigger
             id: power_off
@@ -78,11 +89,15 @@ action:
                     target_ac_power: false
                 - delay: "{{ resync_delay_minutes | int(1) * 60 }}"
               until:
-                - condition: not
+                - condition: or
                   conditions:
-                    - condition: state
-                      entity_id: !input vent
-                      state: 'on'
+                    - condition: template
+                      value_template: "{{ not resync_on }}"
+                    - condition: not
+                      conditions:
+                        - condition: state
+                          entity_id: !input vent
+                          state: 'on'
       - conditions:
           - condition: trigger
             id: temperature_changed
@@ -108,11 +123,15 @@ action:
                         target_ac_power: false
                     - delay: "{{ resync_delay_minutes | int(1) * 60 }}"
                   until:
-                    - condition: not
+                    - condition: or
                       conditions:
-                        - condition: state
-                          entity_id: !input vent
-                          state: 'on'
+                        - condition: template
+                          value_template: "{{ not resync_on }}"
+                        - condition: not
+                          conditions:
+                            - condition: state
+                              entity_id: !input vent
+                              state: 'on'
             else:
               - service: climate.turn_on
                 data: {}
@@ -126,11 +145,15 @@ action:
                         target_ac_temp: "{{ state_attr(target_ac, 'temperature') }}"
                     - delay: "{{ resync_delay_minutes | int(1) * 60 }}"
                   until:
-                    - condition: not
+                    - condition: or
                       conditions:
-                        - condition: state
-                          entity_id: !input vent
-                          state: 'off'
+                        - condition: template
+                          value_template: "{{ not resync_on }}"
+                        - condition: not
+                          conditions:
+                            - condition: state
+                              entity_id: !input vent
+                              state: 'off'
     default: []
 mode: restart
 max_exceeded: silent
