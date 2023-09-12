@@ -6088,3 +6088,20 @@
         - binary_sensor.sims_drive_market_bus_134_operating
         - binary_sensor.sims_drive_market_bus_137_operating
   mode: single
+- id: '1694229495079'
+  alias: NEA Rain Radar Animation
+  description: Update NEA Rain Radar Animation 5min past every hour if it is not during
+    Sleep Hours
+  trigger:
+  - platform: time_pattern
+    minutes: '5'
+  condition:
+  - condition: not
+    conditions:
+    - condition: time
+      after: input_datetime.sleep_hours_start
+      before: input_datetime.sleep_hours_end
+  action:
+  - service: script.nea_rain_radar_animation
+    data: {}
+  mode: single

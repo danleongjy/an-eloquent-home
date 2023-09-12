@@ -22,7 +22,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 139
+[`automation`](https://www.home-assistant.io/components/automation) | 140
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 119
 [`button`](https://www.home-assistant.io/components/button) | 138
 [`calendar`](https://www.home-assistant.io/components/calendar) | 4
@@ -53,7 +53,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1417
+Total | 1418
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
