@@ -36,6 +36,14 @@
       dining_room_radar_occupancy: "{{ states('binary_sensor.dining_room_radar_occupancy') }}"
       dining_room_motion: "{{ states('binary_sensor.dining_room_motion') }}"
 
+  - name: Living Room Presence
+    unique_id: binary_sensor.living_room_presence
+    device_class: occupancy
+    state: "{{ is_state('binary_sensor.living_room_radar_occupancy', 'on') or is_state('binary_sensor.living_room_motion', 'on') }}"
+    attributes:
+      living_room_radar_occupancy: "{{ states('binary_sensor.living_room_radar_occupancy') }}"
+      living_room_motion: "{{ states('binary_sensor.living_room_motion') }}"
+
   - name: Study Room Motion
     unique_id: binary_sensor.study_room_motion
     device_class: motion
