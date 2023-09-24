@@ -3290,10 +3290,6 @@
     id: playroom
     above: input_number.comfortable_lux
   - platform: numeric_state
-    entity_id: sensor.dining_room_lux
-    id: dining_room
-    above: input_number.comfortable_lux
-  - platform: numeric_state
     entity_id: sensor.living_room_lux
     id: living_room
     above: input_number.comfortable_lux
@@ -3337,16 +3333,6 @@
           - light.playroom_lights
     - conditions:
       - condition: trigger
-        id: dining_room
-      sequence:
-      - service: light.turn_off
-        data: {}
-        target:
-          entity_id:
-          - light.dining_room_lights
-          - light.dining_room_pendant_light_entity
-    - conditions:
-      - condition: trigger
         id: living_room
       sequence:
       - service: light.turn_off
@@ -3355,6 +3341,8 @@
           entity_id:
           - light.living_room_lights
           - light.living_room_pendant_light_entity
+          - light.dining_room_lights
+          - light.dining_room_pendant_light_entity
   mode: single
 - id: '1672898689403'
   alias: Lights for Wind Down
@@ -3837,9 +3825,10 @@
   use_blueprint:
     path: danleongjy/ac_set_state.yaml
     input:
-      ac: climate.elenas_room_ac
       vent: binary_sensor.elenas_room_ac_vent
       resync_delay: input_number.ac_resync_delay
+      resync: true
+      ac: climate.elenas_room_ac
 - id: '1676871202756'
   alias: Eli's Room AC Set State
   description: Set Eli's Room AC power and temperature
@@ -4307,7 +4296,7 @@
       - light.dining_room_pendant_light_entity
       recommended_light_level_script: script.recommended_light_level_for_dining_room_pendant_light
       motion_sensor: binary_sensor.dining_room_presence
-      lux_sensor: sensor.dining_room_lux
+      lux_sensor: sensor.living_room_lux
 - id: '1679619971749'
   alias: Dining Room Motion Timeout
   description: Turn off lights, fan and AC in the Dining Room when no motion is detected
@@ -5024,7 +5013,7 @@
       fan: fan.living_room_fan
       temp_sensor: sensor.dining_room_temperature
       low_speed: input_number.sitting_rooms_fan_speed_when_cool
-      high_speed: input_number.sitting_rooms_lucci_fan_speed_when_warm
+      high_speed: input_number.sitting_rooms_fan_speed_when_warm
 - id: '1684314715221'
   alias: Study Room Fan Auto Control
   description: Set the Study Room Fan speed and direction based on temperature

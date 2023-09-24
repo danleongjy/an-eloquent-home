@@ -1076,27 +1076,6 @@ increment_alarm_day:
     off_time:
       events: []
   sequence:
-  - repeat:
-      while:
-      - condition: or
-        conditions:
-        - condition: template
-          value_template: '{{ (as_datetime(states(alarm_datetime))).weekday() in range(5,7)
-            }}'
-          alias: Alarm day is on a weekend
-        - condition: template
-          value_template: '{{ now().date() >= as_datetime(states(alarm_datetime)).date()
-            }}'
-          alias: Alarm day is not in the future
-      sequence:
-      - service: input_datetime.set_datetime
-        data:
-          date: '{{ as_datetime(states(alarm_datetime)).date() + timedelta(days =
-            1) }}'
-        target:
-          entity_id: '{{ alarm_datetime }}'
-        alias: Increment alarm by 1 day
-    alias: Increment alarm by 1 day until it is a future weekday
   - service: calendar.list_events
     data:
       duration:
@@ -1125,9 +1104,20 @@ increment_alarm_day:
           events: []
   - repeat:
       while:
-      - condition: template
-        value_template: '{{ (public_holiday.events + off_time.events) | length > 0
-          }}'
+      - condition: or
+        conditions:
+        - condition: template
+          value_template: '{{ (as_datetime(states(alarm_datetime))).weekday() in range(5,7)
+            }}'
+          alias: Alarm day is on a weekend
+        - condition: template
+          value_template: '{{ now().date() >= as_datetime(states(alarm_datetime)).date()
+            }}'
+          alias: Alarm day is not in the future
+        - condition: template
+          value_template: '{{ (public_holiday.events + off_time.events) | length >
+            0 }}'
+          alias: Alarm day is on an off day
       sequence:
       - service: input_datetime.set_datetime
         data:
@@ -1162,7 +1152,8 @@ increment_alarm_day:
         - variables:
             off_time:
               events: '{{ [] }}'
-    alias: Increment alarm by 1 day as long as it is a public holiday or an off day
+    alias: Increment alarm by 1 day until it is a future weekday that is not an off
+      day
   mode: parallel
   icon: mdi:alarm
 nea_rain_radar_animation:

@@ -440,20 +440,101 @@
               ],
               "nextbus1_min": [
                 {
-                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min <= variables.min_walk_time) {\n    return 'red';\n  } else if (min <= variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
                 }
               ],
               "nextbus2_min": [
                 {
-                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min <= variables.min_walk_time) {\n    return 'red';\n  } else if (min <= variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
                 }
               ],
               "nextbus3_min": [
                 {
-                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min < variables.min_walk_time) {\n    return 'red';\n  } else if (min < variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min <= variables.min_walk_time) {\n    return 'red';\n  } else if (min <= variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
                 }
               ]
             }
+          }
+        },
+        "floorplan_nextbus": {
+          "variables": {
+            "stop_no": 1,
+            "comfortable_walk_time": 5,
+            "min_walk_time": 2
+          },
+          "icon": "[[[ return 'mdi:numeric-' + variables.stop_no.toString() + '-circle' ]]]",
+          "label": "[[[ return ' 🚶︎ ' + variables.comfortable_walk_time.toString() + 'min' ]]]",
+          "show_label": true,
+          "show_name": false,
+          "tap_action": {
+            "action": "navigate",
+            "navigation_path": "/lovelace/transit"
+          },
+          "custom_fields": {
+            "nextbus1": "[[[\n  if (entity.state == 'unavailable') {\n    return `No service`\n  } else if (entity.attributes.next_buses.length < 1) {\n    return `No service`\n  } else {\n    let bus = `<b>` + entity.attributes.next_buses[0].ServiceNo + `</b>: `\n    let min = Math.floor((Date.parse(entity.attributes.next_buses[0].EstimatedArrival) - Date.parse(Date())) / 60000)\n    if (isNaN(min)) {\n      bus = bus + 'c' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n  return 'b'\n]]]\n",
+            "nextbus2": "[[[\n  if (entity.state == 'unavailable') {\n    return ``\n  } else if (entity.attributes.next_buses.length < 2) {\n    return ``\n  } else {\n    let bus = `<b>` + entity.attributes.next_buses[1].ServiceNo + `</b>: `\n    let min = Math.floor((Date.parse(entity.attributes.next_buses[1].EstimatedArrival) - Date.parse(Date())) / 60000)\n    if (isNaN(min)) {\n      bus = bus + 'c' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n  return 'b'\n]]]\n",
+            "nextbus3": "[[[\n  if (entity.state == 'unavailable') {\n    return ``\n  } else if (entity.attributes.next_buses.length < 3) {\n    return ``\n  } else {\n    let bus = `<b>` + entity.attributes.next_buses[2].ServiceNo + `</b>: `\n    let min = Math.floor((Date.parse(entity.attributes.next_buses[2].EstimatedArrival) - Date.parse(Date())) / 60000)\n    if (isNaN(min)) {\n      bus = bus + 'c' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n  return 'b'\n]]]\n"
+          },
+          "styles": {
+            "grid": [
+              {
+                "grid-template-areas": "\"i l\" \"nextbus1 nextbus1\" \"nextbus2 nextbus2\" \"nextbus3 nextbus3\""
+              },
+              {
+                "grid-template-rows": "1fr 1fr 1fr 1fr"
+              },
+              {
+                "grid-template-columns": "min-content 1fr"
+              }
+            ],
+            "icon": [
+              {
+                "color": "rgb(181,230,29)"
+              },
+              {
+                "height": "20px"
+              },
+              {
+                "width": "20px"
+              }
+            ],
+            "card": [
+              {
+                "border-radius": "0px"
+              },
+              {
+                "border-color": "rgb(181,230,29)"
+              },
+              {
+                "border-width": "2px"
+              },
+              {
+                "padding": "0px"
+              }
+            ]
+          }
+        },
+        "floorplan_busstop": {
+          "variables": {
+            "stop_no": 1
+          },
+          "icon": "[[[ return 'mdi:numeric-' + variables.stop_no ]]]",
+          "show_name": false,
+          "tap_action": {
+            "action": "navigate",
+            "navigation_path": "/lovelace/transit"
+          },
+          "styles": {
+            "card": [
+              {
+                "background-color": "rgba(0,0,0,0.0)"
+              }
+            ],
+            "icon": [
+              {
+                "color": "black"
+              }
+            ]
           }
         }
       },
@@ -1558,12 +1639,12 @@
                   "type": "custom:button-card",
                   "entity": "binary_sensor.sims_drive_market_bus_stop",
                   "template": "top_row",
-                  "label": "[[[ if (entity.state == 'on') { return entity.attributes.nextbus.nextbus_number } else { return '' } ]]]",
+                  "label": "[[[ if (entity.state == 'on') { return entity.attributes.next_buses[0].ServiceNo } else { return '' } ]]]",
                   "show_label": true,
                   "styles": {
                     "label": [
                       {
-                        "animation": "[[[\n  if (entity.state == 'on') {\n    if (entity.attributes.nextbus.nextbus_min < 3) {\n      return 'blink 2s ease infinite'\n    }\n  }\n]]]\n"
+                        "animation": "[[[\n  if (entity.state == 'on') {\n    if (Math.floor((Date.parse(entity.attributes.next_buses[0].EstimatedArrival) - Date.parse(Date())) / 60000) < 3) {\n      return 'blink 2s ease infinite'\n    }\n  }\n]]]\n"
                       }
                     ]
                   },
@@ -7485,10 +7566,27 @@
                         "left": "85%",
                         "height": "59%",
                         "width": "29.5%"
-                      },
-                      "tap_action": {
-                        "action": "navigate",
-                        "navigation_path": "/lovelace/weather"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "input_select.floorplan_panel_view",
+                      "state": "transit"
+                    }
+                  ],
+                  "elements": [
+                    {
+                      "type": "image",
+                      "image": "/local/floorplan/transit_basemap.png",
+                      "style": {
+                        "top": "50%",
+                        "left": "85%",
+                        "height": "59%",
+                        "width": "29.5%"
                       }
                     }
                   ]
@@ -7526,25 +7624,36 @@
                   }
                 },
                 {
-                  "type": "custom:button-card",
-                  "style": {
-                    "top": "50%",
-                    "left": "85%",
-                    "height": "59%",
-                    "width": "29.5%"
-                  },
-                  "aspect_ratio": 1,
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/weather"
-                  },
-                  "styles": {
-                    "card": [
-                      {
-                        "background-color": "rgba(0,0,0,0.0)"
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "input_select.floorplan_panel_view",
+                      "state": "weather"
+                    }
+                  ],
+                  "elements": [
+                    {
+                      "type": "custom:button-card",
+                      "aspect_ratio": 1,
+                      "style": {
+                        "top": "50%",
+                        "left": "85%",
+                        "height": "59%",
+                        "width": "29.5%"
+                      },
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/weather"
+                      },
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "rgba(0,0,0,0.0)"
+                          }
+                        ]
                       }
-                    ]
-                  }
+                    }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -7631,6 +7740,7 @@
                     "Off": {
                       "type": "custom:button-card",
                       "entity": "switch.washer_power",
+                      "color": "rgb(68,115,158)",
                       "template": "washer_more_info",
                       "styles": {
                         "card": [
@@ -8156,110 +8266,99 @@
                   "template": "floorplan_sensor_lux"
                 },
                 {
-                  "type": "conditional",
-                  "conditions": [
+                  "type": "custom:simple-weather-card",
+                  "style": {
+                    "top": "5%",
+                    "left": "85%",
+                    "height": "9%",
+                    "width": "29.5%"
+                  },
+                  "entity": "weather.local_weather",
+                  "name": " ",
+                  "secondary_info": "humidity",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/weather"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "16%",
+                    "left": "75%",
+                    "height": "2%",
+                    "width": "9.5%"
+                  },
+                  "name": "Forecasts:",
+                  "styles": {
+                    "name": [
+                      {
+                        "font-size": "10pt"
+                      }
+                    ]
+                  },
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/weather"
+                  }
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "16%",
+                    "left": "82.5%",
+                    "height": "2%",
+                    "width": "4.5%"
+                  },
+                  "template": "floorplan_weather_forecast",
+                  "variables": [
                     {
-                      "entity": "input_select.floorplan_panel_view",
-                      "state": "weather"
+                      "icon_template": "entity.attributes.forecast[0].condition"
                     }
-                  ],
-                  "elements": [
+                  ]
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "16%",
+                    "left": "87.5%",
+                    "height": "2%",
+                    "width": "4.5%"
+                  },
+                  "template": "floorplan_weather_forecast",
+                  "variables": [
                     {
-                      "type": "custom:simple-weather-card",
-                      "style": {
-                        "top": "5%",
-                        "left": "85%",
-                        "height": "9%",
-                        "width": "29.5%"
-                      },
-                      "entity": "weather.local_weather",
-                      "name": " ",
-                      "secondary_info": "humidity",
-                      "tap_action": {
-                        "action": "navigate",
-                        "navigation_path": "/lovelace/weather"
-                      }
-                    },
+                      "icon_template": "entity.attributes.forecast[1].condition"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "16%",
+                    "left": "92.5%",
+                    "height": "2%",
+                    "width": "4.5%"
+                  },
+                  "template": "floorplan_weather_forecast",
+                  "variables": [
                     {
-                      "type": "custom:button-card",
-                      "style": {
-                        "top": "16%",
-                        "left": "75%",
-                        "height": "2%",
-                        "width": "9.5%"
-                      },
-                      "name": "Forecasts:",
-                      "styles": {
-                        "name": [
-                          {
-                            "font-size": "10pt"
-                          }
-                        ]
-                      },
-                      "tap_action": {
-                        "action": "navigate",
-                        "navigation_path": "/lovelace/weather"
-                      }
-                    },
+                      "icon_template": "entity.attributes.forecast[2].condition"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:decluttering-card",
+                  "style": {
+                    "top": "16%",
+                    "left": "97.5%",
+                    "height": "2%",
+                    "width": "4.5%"
+                  },
+                  "template": "floorplan_weather_forecast",
+                  "variables": [
                     {
-                      "type": "custom:decluttering-card",
-                      "style": {
-                        "top": "16%",
-                        "left": "82.5%",
-                        "height": "2%",
-                        "width": "4.5%"
-                      },
-                      "template": "floorplan_weather_forecast",
-                      "variables": [
-                        {
-                          "icon_template": "entity.attributes.forecast[0].condition"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "custom:decluttering-card",
-                      "style": {
-                        "top": "16%",
-                        "left": "87.5%",
-                        "height": "2%",
-                        "width": "4.5%"
-                      },
-                      "template": "floorplan_weather_forecast",
-                      "variables": [
-                        {
-                          "icon_template": "entity.attributes.forecast[1].condition"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "custom:decluttering-card",
-                      "style": {
-                        "top": "16%",
-                        "left": "92.5%",
-                        "height": "2%",
-                        "width": "4.5%"
-                      },
-                      "template": "floorplan_weather_forecast",
-                      "variables": [
-                        {
-                          "icon_template": "entity.attributes.forecast[2].condition"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "custom:decluttering-card",
-                      "style": {
-                        "top": "16%",
-                        "left": "97.5%",
-                        "height": "2%",
-                        "width": "4.5%"
-                      },
-                      "template": "floorplan_weather_forecast",
-                      "variables": [
-                        {
-                          "icon_template": "entity.attributes.forecast[3].condition"
-                        }
-                      ]
+                      "icon_template": "entity.attributes.forecast[3].condition"
                     }
                   ]
                 },
@@ -8275,98 +8374,110 @@
                     {
                       "type": "custom:button-card",
                       "style": {
-                        "top": "5%",
-                        "left": "90%",
-                        "height": "9%",
-                        "width": "19.5%"
+                        "top": "30%",
+                        "left": "75%",
+                        "height": "19%",
+                        "width": "9.5%"
                       },
-                      "template": "nextbus",
-                      "entity": "sensor.sims_drive_market_bus_64",
-                      "name": 64
+                      "template": "floorplan_nextbus",
+                      "entity": "binary_sensor.sims_drive_market_bus_stop"
                     },
                     {
                       "type": "custom:button-card",
                       "style": {
-                        "top": "15%",
-                        "left": "90%",
-                        "height": "9%",
-                        "width": "19.5%"
+                        "top": "30%",
+                        "left": "85%",
+                        "height": "19%",
+                        "width": "9.5%"
                       },
-                      "template": "nextbus",
-                      "entity": "sensor.sims_drive_market_bus_134",
-                      "name": 134
+                      "template": "floorplan_nextbus",
+                      "entity": "binary_sensor.opposite_aljunied_station_bus_stop",
+                      "variables": {
+                        "stop_no": 2,
+                        "comfortable_walk_time": 10,
+                        "min_walk_time": 5
+                      }
                     },
                     {
                       "type": "custom:button-card",
                       "style": {
-                        "top": "25%",
-                        "left": "90%",
-                        "height": "9%",
-                        "width": "19.5%"
+                        "top": "30%",
+                        "left": "95%",
+                        "height": "19%",
+                        "width": "9.5%"
                       },
-                      "template": "nextbus",
-                      "entity": "sensor.sims_drive_market_bus_137",
-                      "name": 137
+                      "template": "floorplan_nextbus",
+                      "entity": "binary_sensor.aljunied_station_bus_stop",
+                      "variables": {
+                        "stop_no": 3,
+                        "comfortable_walk_time": 12,
+                        "min_walk_time": 7
+                      }
                     },
                     {
                       "type": "custom:button-card",
                       "style": {
-                        "top": "35%",
-                        "left": "90%",
-                        "height": "9%",
-                        "width": "19.5%"
+                        "top": "70%",
+                        "left": "95%",
+                        "height": "19%",
+                        "width": "9.5%"
                       },
-                      "template": "nextbus",
-                      "entity": "sensor.opposite_aljunied_station_bus_40",
-                      "name": 40
+                      "template": "floorplan_nextbus",
+                      "entity": "binary_sensor.before_lorong_23_geylang_bus_stop",
+                      "variables": {
+                        "stop_no": 4,
+                        "comfortable_walk_time": 10,
+                        "min_walk_time": 5
+                      }
                     },
                     {
                       "type": "custom:button-card",
                       "style": {
-                        "top": "45%",
-                        "left": "90%",
-                        "height": "9%",
-                        "width": "19.5%"
+                        "top": "42.9%",
+                        "left": "77.75%",
+                        "height": "3.5%",
+                        "width": "3.5%"
                       },
-                      "template": "nextbus",
-                      "entity": "sensor.opposite_aljunied_station_bus_125",
-                      "name": 125
+                      "template": "floorplan_busstop"
                     },
                     {
                       "type": "custom:button-card",
                       "style": {
-                        "top": "55%",
-                        "left": "90%",
-                        "height": "9%",
-                        "width": "19.5%"
+                        "top": "53.7%",
+                        "left": "91.65%",
+                        "height": "3.5%",
+                        "width": "3.5%"
                       },
-                      "template": "nextbus",
-                      "entity": "sensor.aljunied_station_bus_40",
-                      "name": 137
+                      "template": "floorplan_busstop",
+                      "variables": {
+                        "stop_no": 2
+                      }
                     },
                     {
                       "type": "custom:button-card",
                       "style": {
-                        "top": "65%",
-                        "left": "90%",
-                        "height": "9%",
-                        "width": "19.5%"
+                        "top": "53%",
+                        "left": "94%",
+                        "height": "3.5%",
+                        "width": "3.5%"
                       },
-                      "template": "nextbus",
-                      "entity": "sensor.aljunied_station_bus_80",
-                      "name": 137
+                      "template": "floorplan_busstop",
+                      "variables": {
+                        "stop_no": 3
+                      }
                     },
                     {
                       "type": "custom:button-card",
                       "style": {
-                        "top": "75%",
-                        "left": "90%",
-                        "height": "9%",
-                        "width": "19.5%"
+                        "top": "74.3%",
+                        "left": "85.65%",
+                        "height": "3.5%",
+                        "width": "3.5%"
                       },
-                      "template": "nextbus",
-                      "entity": "sensor.aljunied_station_bus_100",
-                      "name": 137
+                      "template": "floorplan_busstop",
+                      "variables": {
+                        "stop_no": 4
+                      }
                     }
                   ]
                 },
@@ -9412,8 +9523,8 @@
                 {
                   "type": "custom:button-card",
                   "style": {
-                    "top": "77.5%",
-                    "left": "98.75%",
+                    "top": "2.5%",
+                    "left": "68.75%",
                     "height": "4%",
                     "width": "2%"
                   },
@@ -9433,6 +9544,11 @@
                       },
                       {
                         "width": "100%"
+                      }
+                    ],
+                    "card": [
+                      {
+                        "background-color": "rgba(0,0,0,0.0)"
                       }
                     ]
                   }
