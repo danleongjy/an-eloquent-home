@@ -1091,6 +1091,13 @@
                     "entity": "[[fan_entity]]",
                     "template": "floorplan_slider_icon",
                     "icon": "[[[ \n  if (entity.attributes.direction == 'forward') \n    return 'mdi:fan-chevron-down'; \n  else \n    return 'mdi:fan-chevron-up';\n]]]",
+                    "styles": {
+                      "icon": [
+                        {
+                          "animation": "[[[ \n  if (entity.state == 'on') {\n    return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n  } else {\n    return ''\n  }\n]]]"
+                        }
+                      ]
+                    },
                     "double_tap_action": {
                       "action": "call-service",
                       "service": "automation.toggle",
@@ -1108,6 +1115,11 @@
                       "auto_control": "A"
                     },
                     "styles": {
+                      "icon": [
+                        {
+                          "animation": "[[[ \n  if (entity.state == 'on') {\n    return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n  } else {\n    return ''\n  }\n]]]"
+                        }
+                      ],
                       "grid": [
                         {
                           "position": "relative"
@@ -7086,32 +7098,66 @@
               "type": "vertical-stack",
               "cards": [
                 {
-                  "type": "markdown",
-                  "content": "## 🚏 Sims Drive Market"
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "markdown",
+                      "content": "## <ha-icon icon=\"mdi:numeric-1-circle\"></ha-icon> Sims Drive Market"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "nextbus",
+                      "entity": "sensor.sims_drive_market_bus_64",
+                      "variables": {
+                        "service_no": 64
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "nextbus",
+                      "entity": "sensor.sims_drive_market_bus_134",
+                      "variables": {
+                        "service_no": 134
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "nextbus",
+                      "entity": "sensor.sims_drive_market_bus_137",
+                      "variables": {
+                        "service_no": 137
+                      }
+                    }
+                  ]
                 },
                 {
-                  "type": "custom:button-card",
-                  "template": "nextbus",
-                  "entity": "sensor.sims_drive_market_bus_64",
-                  "variables": {
-                    "service_no": 64
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "template": "nextbus",
-                  "entity": "sensor.sims_drive_market_bus_134",
-                  "variables": {
-                    "service_no": 134
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "template": "nextbus",
-                  "entity": "sensor.sims_drive_market_bus_137",
-                  "variables": {
-                    "service_no": 137
-                  }
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "markdown",
+                      "content": "## <ha-icon icon=\"mdi:numeric-2-circle\"></ha-icon> Opposite Aljunied Station"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.opposite_aljunied_station_bus_40",
+                      "template": "nextbus",
+                      "variables": {
+                        "comfortable_walk_time": 10,
+                        "min_walk_time": 5,
+                        "service_no": 40
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.opposite_aljunied_station_bus_125",
+                      "template": "nextbus",
+                      "variables": {
+                        "comfortable_walk_time": 10,
+                        "min_walk_time": 5,
+                        "service_no": 125
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -7119,118 +7165,98 @@
               "type": "vertical-stack",
               "cards": [
                 {
-                  "type": "markdown",
-                  "content": "## 🚏 Opposite Aljunied Station"
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "markdown",
+                      "content": "## <ha-icon icon=\"mdi:numeric-3-circle\"></ha-icon> Aljunied Station"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.aljunied_station_bus_40",
+                      "template": "nextbus",
+                      "variables": {
+                        "comfortable_walk_time": 12,
+                        "min_walk_time": 7,
+                        "service_no": 40
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.aljunied_station_bus_80",
+                      "template": "nextbus",
+                      "variables": {
+                        "comfortable_walk_time": 12,
+                        "min_walk_time": 7,
+                        "service_no": 80
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.aljunied_station_bus_100",
+                      "template": "nextbus",
+                      "variables": {
+                        "comfortable_walk_time": 12,
+                        "min_walk_time": 7,
+                        "service_no": 100
+                      }
+                    }
+                  ]
                 },
                 {
-                  "type": "custom:button-card",
-                  "entity": "sensor.opposite_aljunied_station_bus_40",
-                  "template": "nextbus",
-                  "variables": {
-                    "comfortable_walk_time": 10,
-                    "min_walk_time": 5,
-                    "service_no": 40
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "sensor.opposite_aljunied_station_bus_125",
-                  "template": "nextbus",
-                  "variables": {
-                    "comfortable_walk_time": 10,
-                    "min_walk_time": 5,
-                    "service_no": 125
-                  }
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "markdown",
+                      "content": "## <ha-icon icon=\"mdi:numeric-4-circle\"></ha-icon> Before Lorong 23 Geylang"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.before_lorong_23_geylang_bus_2",
+                      "template": "nextbus",
+                      "variables": {
+                        "comfortable_walk_time": 10,
+                        "min_walk_time": 5,
+                        "service_no": 2
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.before_lorong_23_geylang_bus_13",
+                      "template": "nextbus",
+                      "variables": {
+                        "comfortable_walk_time": 10,
+                        "min_walk_time": 5,
+                        "service_no": 13
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.before_lorong_23_geylang_bus_26",
+                      "template": "nextbus",
+                      "variables": {
+                        "comfortable_walk_time": 10,
+                        "min_walk_time": 5,
+                        "service_no": 26
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.before_lorong_23_geylang_bus_67",
+                      "template": "nextbus",
+                      "variables": {
+                        "comfortable_walk_time": 10,
+                        "min_walk_time": 5,
+                        "service_no": 67
+                      }
+                    }
+                  ]
                 }
               ]
             },
             {
-              "type": "vertical-stack",
-              "cards": [
-                {
-                  "type": "markdown",
-                  "content": "## 🚏 Aljunied Station"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "sensor.aljunied_station_bus_40",
-                  "template": "nextbus",
-                  "variables": {
-                    "comfortable_walk_time": 12,
-                    "min_walk_time": 7,
-                    "service_no": 40
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "sensor.aljunied_station_bus_80",
-                  "template": "nextbus",
-                  "variables": {
-                    "comfortable_walk_time": 12,
-                    "min_walk_time": 7,
-                    "service_no": 80
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "sensor.aljunied_station_bus_100",
-                  "template": "nextbus",
-                  "variables": {
-                    "comfortable_walk_time": 12,
-                    "min_walk_time": 7,
-                    "service_no": 100
-                  }
-                }
-              ]
-            },
-            {
-              "type": "vertical-stack",
-              "cards": [
-                {
-                  "type": "markdown",
-                  "content": "## 🚏 Before Lorong 23 Geylang"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "sensor.before_lorong_23_geylang_bus_2",
-                  "template": "nextbus",
-                  "variables": {
-                    "comfortable_walk_time": 10,
-                    "min_walk_time": 5,
-                    "service_no": 2
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "sensor.before_lorong_23_geylang_bus_13",
-                  "template": "nextbus",
-                  "variables": {
-                    "comfortable_walk_time": 10,
-                    "min_walk_time": 5,
-                    "service_no": 13
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "sensor.before_lorong_23_geylang_bus_26",
-                  "template": "nextbus",
-                  "variables": {
-                    "comfortable_walk_time": 10,
-                    "min_walk_time": 5,
-                    "service_no": 26
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "sensor.before_lorong_23_geylang_bus_67",
-                  "template": "nextbus",
-                  "variables": {
-                    "comfortable_walk_time": 10,
-                    "min_walk_time": 5,
-                    "service_no": 67
-                  }
-                }
-              ]
+              "type": "picture",
+              "image": "/local/floorplan/transit_basemap_numbered.png"
             }
           ]
         },
@@ -9928,6 +9954,23 @@
                   },
                   "entity": "binary_sensor.master_bathroom_door",
                   "template": "floorplan_sensor_binary"
+                },
+                {
+                  "type": "custom:button-card",
+                  "style": {
+                    "top": "95%",
+                    "left": "2.5%",
+                    "height": "9%",
+                    "width": "4.5%"
+                  },
+                  "entity": "input_boolean.away_mode",
+                  "template": "top_row",
+                  "double_tap_action": {
+                    "action": "toggle"
+                  },
+                  "tap_action": {
+                    "action": "more-info"
+                  }
                 },
                 {
                   "type": "custom:button-card",
