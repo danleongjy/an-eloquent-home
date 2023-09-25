@@ -400,8 +400,9 @@
           "show_name": false,
           "variables": {
             "service_no": "",
-            "comfortable_walk_time": 5,
-            "min_walk_time": 3
+            "bus_stop_binary_sensor": "binary_sensor.sims_drive_market_bus_stop",
+            "comfortable_walk_time": "[[[ return states[variables.bus_stop_binary_sensor].attributes.comfortable_walk_time ]]]",
+            "min_walk_time": "[[[ return states[variables.bus_stop_binary_sensor].attributes.min_walk_time ]]]"
           },
           "custom_fields": {
             "service_no": "[[[ return variables.service_no ]]]",
@@ -459,8 +460,8 @@
         "floorplan_nextbus": {
           "variables": {
             "stop_no": 1,
-            "comfortable_walk_time": 5,
-            "min_walk_time": 2
+            "comfortable_walk_time": "[[[ return entity.attributes.comfortable_walk_time ]]]",
+            "min_walk_time": "[[[ return entity.attributes.min_walk_time ]]]"
           },
           "icon": "[[[ return 'mdi:numeric-' + variables.stop_no.toString() + '-circle' ]]]",
           "label": "[[[ return ' 🚶︎ ' + variables.comfortable_walk_time.toString() + 'min' ]]]",
@@ -4244,21 +4245,25 @@
           "badges": [],
           "cards": [
             {
-              "type": "entity",
-              "entity": "input_datetime.daniels_next_alarm",
-              "state_color": false
-            },
-            {
-              "type": "entity",
-              "entity": "input_datetime.graces_next_alarm"
-            },
-            {
-              "type": "entity",
-              "entity": "input_datetime.elis_next_alarm"
-            },
-            {
-              "type": "entity",
-              "entity": "input_datetime.elenas_next_alarm"
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "tile",
+                  "entity": "input_datetime.daniels_next_alarm"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_datetime.graces_next_alarm"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_datetime.elis_next_alarm"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_datetime.elenas_next_alarm"
+                }
+              ]
             },
             {
               "type": "entities",
@@ -7142,9 +7147,8 @@
                       "entity": "sensor.opposite_aljunied_station_bus_40",
                       "template": "nextbus",
                       "variables": {
-                        "comfortable_walk_time": 10,
-                        "min_walk_time": 5,
-                        "service_no": 40
+                        "service_no": 40,
+                        "bus_stop_binary_sensor": "binary_sensor.opposite_aljunied_station_bus_stop"
                       }
                     },
                     {
@@ -7152,9 +7156,8 @@
                       "entity": "sensor.opposite_aljunied_station_bus_125",
                       "template": "nextbus",
                       "variables": {
-                        "comfortable_walk_time": 10,
-                        "min_walk_time": 5,
-                        "service_no": 125
+                        "service_no": 125,
+                        "bus_stop_binary_sensor": "binary_sensor.opposite_aljunied_station_bus_stop"
                       }
                     }
                   ]
@@ -7176,9 +7179,8 @@
                       "entity": "sensor.aljunied_station_bus_40",
                       "template": "nextbus",
                       "variables": {
-                        "comfortable_walk_time": 12,
-                        "min_walk_time": 7,
-                        "service_no": 40
+                        "service_no": 40,
+                        "bus_stop_binary_sensor": "binary_sensor.aljunied_station_bus_stop"
                       }
                     },
                     {
@@ -7186,9 +7188,8 @@
                       "entity": "sensor.aljunied_station_bus_80",
                       "template": "nextbus",
                       "variables": {
-                        "comfortable_walk_time": 12,
-                        "min_walk_time": 7,
-                        "service_no": 80
+                        "service_no": 80,
+                        "bus_stop_binary_sensor": "binary_sensor.aljunied_station_bus_stop"
                       }
                     },
                     {
@@ -7196,9 +7197,8 @@
                       "entity": "sensor.aljunied_station_bus_100",
                       "template": "nextbus",
                       "variables": {
-                        "comfortable_walk_time": 12,
-                        "min_walk_time": 7,
-                        "service_no": 100
+                        "service_no": 100,
+                        "bus_stop_binary_sensor": "binary_sensor.aljunied_station_bus_stop"
                       }
                     }
                   ]
@@ -7215,9 +7215,8 @@
                       "entity": "sensor.before_lorong_23_geylang_bus_2",
                       "template": "nextbus",
                       "variables": {
-                        "comfortable_walk_time": 10,
-                        "min_walk_time": 5,
-                        "service_no": 2
+                        "service_no": 2,
+                        "bus_stop_binary_sensor": "binary_sensor.before_lorong_23_geylang_bus_stop"
                       }
                     },
                     {
@@ -7225,9 +7224,8 @@
                       "entity": "sensor.before_lorong_23_geylang_bus_13",
                       "template": "nextbus",
                       "variables": {
-                        "comfortable_walk_time": 10,
-                        "min_walk_time": 5,
-                        "service_no": 13
+                        "service_no": 13,
+                        "bus_stop_binary_sensor": "binary_sensor.before_lorong_23_geylang_bus_stop"
                       }
                     },
                     {
@@ -7235,9 +7233,8 @@
                       "entity": "sensor.before_lorong_23_geylang_bus_26",
                       "template": "nextbus",
                       "variables": {
-                        "comfortable_walk_time": 10,
-                        "min_walk_time": 5,
-                        "service_no": 26
+                        "service_no": 26,
+                        "bus_stop_binary_sensor": "binary_sensor.before_lorong_23_geylang_bus_stop"
                       }
                     },
                     {
@@ -7245,9 +7242,8 @@
                       "entity": "sensor.before_lorong_23_geylang_bus_67",
                       "template": "nextbus",
                       "variables": {
-                        "comfortable_walk_time": 10,
-                        "min_walk_time": 5,
-                        "service_no": 67
+                        "service_no": 67,
+                        "bus_stop_binary_sensor": "binary_sensor.before_lorong_23_geylang_bus_stop"
                       }
                     }
                   ]
@@ -8419,9 +8415,7 @@
                       "template": "floorplan_nextbus",
                       "entity": "binary_sensor.opposite_aljunied_station_bus_stop",
                       "variables": {
-                        "stop_no": 2,
-                        "comfortable_walk_time": 10,
-                        "min_walk_time": 5
+                        "stop_no": 2
                       }
                     },
                     {
@@ -8435,9 +8429,7 @@
                       "template": "floorplan_nextbus",
                       "entity": "binary_sensor.aljunied_station_bus_stop",
                       "variables": {
-                        "stop_no": 3,
-                        "comfortable_walk_time": 12,
-                        "min_walk_time": 7
+                        "stop_no": 3
                       }
                     },
                     {
@@ -8451,9 +8443,7 @@
                       "template": "floorplan_nextbus",
                       "entity": "binary_sensor.before_lorong_23_geylang_bus_stop",
                       "variables": {
-                        "stop_no": 4,
-                        "comfortable_walk_time": 10,
-                        "min_walk_time": 5
+                        "stop_no": 4
                       }
                     },
                     {

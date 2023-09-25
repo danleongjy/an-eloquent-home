@@ -61,7 +61,6 @@ Total | 1422
 - [Downloader](https://home-assistant.io/integrations/downloader)
 - [ESPHome](https://home-assistant.io/integrations/esphome)
 - [Folder Sensor](https://home-assistant.io/integrations/folder)
-- [Generic Camera](https://home-assistant.io/integrations/generic)
 - [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
 - [Google Assistant](https://home-assistant.io/integrations/google_assistant)
 - [Google Cast](https://home-assistant.io/integrations/cast)

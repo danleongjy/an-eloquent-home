@@ -272,6 +272,8 @@
     state: "{{ states('sensor.sims_drive_market_bus_134') | int(100) < 5 or states('sensor.sims_drive_market_bus_137') | int(100) < 5 or states('sensor.sims_drive_market_bus_64') | int(100) < 5 }}"
     attributes:
       services: "{{ ['64','134','137'] }}"
+      comfortable_walk_time: 5
+      min_walk_time: 2
       next_buses: >
         {% set next_buses = namespace(output = []) %}
         {% for service_no in this.attributes.services %}
@@ -291,6 +293,8 @@
     state: "{{ states('sensor.opposite_aljunied_station_bus_40') | int(100) < 10 or states('sensor.opposite_aljunied_station_bus_125') | int(100) < 10 or states('sensor.sims_drive_market_bus_64') | int(100) < 5 }}"
     attributes:
       services: "{{ ['40','125'] }}"
+      comfortable_walk_time: 10
+      min_walk_time: 5
       next_buses: >
         {% set next_buses = namespace(output = []) %}
         {% for service_no in this.attributes.services %}
@@ -310,6 +314,8 @@
     state: "{{ states('sensor.aljunied_station_bus_40') | int(100) < 12 or states('sensor.aljunied_station_bus_80') | int(100) < 12 or states('sensor.aljunied_station_bus_100') | int(100) < 12 }}"
     attributes:
       services: "{{ ['40','80','100'] }}"
+      comfortable_walk_time: 12
+      min_walk_time: 7
       next_buses: >
         {% set next_buses = namespace(output = []) %}
         {% for service_no in this.attributes.services %}
@@ -329,6 +335,8 @@
     state: "{{ states('sensor.before_lorong_23_geylang_bus_2') | int(100) < 10 or states('sensor.before_lorong_23_geylang_bus_13') | int(100) < 10 or states('sensor.before_lorong_23_geylang_bus_26') | int(100) < 10 or states('sensor.before_lorong_23_geylang_bus_67') | int(100) < 10 }}"
     attributes:
       services: "{{ ['2','13','26','67'] }}"
+      comfortable_walk_time: 10
+      min_walk_time: 5
       next_buses: >
         {% set next_buses = namespace(output = []) %}
         {% for service_no in this.attributes.services %}
