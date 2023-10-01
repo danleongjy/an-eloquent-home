@@ -571,182 +571,211 @@
     state: >
       {% if is_state('binary_sensor.yard_motion','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.yard_light_entity']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.yard_light_entity','on') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('binary_sensor.yard_motion') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.yard_light_entity']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      yard_light: "{{ states('light.yard_light_entity') }}"
 
   - name: Floorplan Playroom Status
     unique_id: sensor.floorplan_playroom_status
     state: >
       {% if is_state('binary_sensor.playroom_motion','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.playroom_lights']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.playroom_lights','on') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('binary_sensor.playroom_motion') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.playroom_lights']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      playroom_lights: "{{ states('light.playroom_lights') }}"
 
   - name: Floorplan Junior Bathroom Status
     unique_id: sensor.floorplan_junior_bathroom_status
     state: >
       {% if is_state('input_boolean.junior_bathroom_occupancy','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.junior_bathroom_lights']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.junior_bathroom_lights','on') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('input_boolean.junior_bathroom_occupancy') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.junior_bathroom_lights']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      junior_bathroom_lights: "{{ states('light.junior_bathroom_lights') }}"
 
   - name: Floorplan Powder Room Status
     unique_id: sensor.floorplan_powder_room_status
     state: >
       {% if is_state('input_boolean.powder_room_occupancy','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.powder_room_pendant_light_entity']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.powder_room_pendant_light_entity','on') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('input_boolean.powder_room_occupancy') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.powder_room_pendant_light_entity']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      powder_room_pendant_light: "{{ states('light.powder_room_pendant_light_entity') }}"
 
   - name: Floorplan Elena's Room Status
     unique_id: sensor.floorplan_elenas_room_status
     state: >
       {% if is_state('binary_sensor.elenas_room_motion','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.elenas_room_lights','fan.elenas_room_fan','climate.elenas_room_ac']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.elenas_room_lights','on') 
+         or is_state('fan.elenas_room_fan','on')
+         or is_state('climate.elenas_room_ac','cool') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('binary_sensor.elenas_room_motion') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.elenas_room_lights','fan.elenas_room_fan','climate.elenas_room_ac']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      elenas_room_lights: "{{ states('light.elenas_room_lights') }}"
+      elenas_room_fan: "{{ states('fan.elenas_room_fan') }}"
+      elenas_room_ac: "{{ states('climate.elenas_room_ac') }}"
 
   - name: Floorplan Eli's Room Status
     unique_id: sensor.floorplan_elis_room_status
     state: >
       {% if is_state('binary_sensor.elis_room_motion','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.elis_room_lights','fan.elis_room_fan','climate.elis_room_ac']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.elis_room_lights','on') 
+         or is_state('fan.elis_room_fan','on')
+         or is_state('climate.elis_room_ac','cool') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('binary_sensor.elis_room_motion') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.elis_room_lights','fan.elis_room_fan','climate.elis_room_ac']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      elis_room_lights: "{{ states('light.elis_room_lights') }}"
+      elis_room_fan: "{{ states('fan.elis_room_fan') }}"
+      elis_room_ac: "{{ states('climate.elis_room_ac') }}"
 
   - name: Floorplan Hallway Status
     unique_id: sensor.floorplan_hallway_status
     state: >
       {% if is_state('binary_sensor.hallway_motion','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.hallway_lights']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.hallway_lights','on') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('binary_sensor.hallway_motion') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.hallway_lights']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      hallway_lights: "{{ states('light.hallway_lights') }}"
 
   - name: Floorplan Dining Room Status
     unique_id: sensor.floorplan_dining_room_status
     state: >
       {% if is_state('binary_sensor.dining_room_presence','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.dining_room_lights','light.dining_room_pendant_light_entity','fan.dining_room_fan','climate.dining_room_ac']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.dining_room_lights','on') 
+         or is_state('light.dining_room_pendant_light_entity','on')
+         or is_state('fan.dining_room_fan','on')
+         or is_state('climate.dining_room_ac','cool') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
-      presence: "{{ states('binary_sensor.dining_room_presence') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.dining_room_lights','light.dining_room_pendant_light_entity','fan.dining_room_fan','climate.dining_room_ac']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      dining_room_lights: "{{ states('light.dining_room_lights') }}"
+      dining_room_pendant_light: "{{ states('light.dining_room_pendant_light_entity') }}"
+      dining_room_fan: "{{ states('fan.dining_room_fan') }}"
+      dining_room_ac: "{{ states('climate.dining_room_ac') }}"
 
   - name: Floorplan Living Room Status
     unique_id: sensor.floorplan_living_room_status
     state: >
       {% if is_state('binary_sensor.living_room_presence','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.living_room_lights','light.living_room_pendant_light_entity','fan.living_room_fan','climate.living_room_ac']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.living_room_lights','on') 
+         or is_state('light.living_room_pendant_light_entity','on')
+         or is_state('fan.living_room_fan','on')
+         or is_state('climate.living_room_ac','cool') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('binary_sensor.living_room_presence') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.living_room_lights','light.living_room_pendant_light_entity','fan.living_room_fan','climate.living_room_ac']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      living_room_lights: "{{ states('light.living_room_lights') }}"
+      living_room_pendant_light: "{{ states('light.living_room_pendant_light_entity') }}"
+      living_room_fan: "{{ states('fan.living_room_fan') }}"
+      living_room_ac: "{{ states('climate.living_room_ac') }}"
 
   - name: Floorplan Study Room Status
     unique_id: sensor.floorplan_study_room_status
     state: >
       {% if is_state('binary_sensor.study_room_motion','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.study_room_lights','fan.study_room_fan','climate.study_room_ac']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.study_room_lights','on') 
+         or is_state('fan.study_room_fan','on')
+         or is_state('climate.study_room_ac','cool') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('binary_sensor.study_room_motion') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.study_room_lights','fan.study_room_fan','climate.study_room_ac']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      study_room_lights: "{{ states('light.study_room_lights') }}"
+      study_room_fan: "{{ states('fan.study_room_fan') }}"
+      study_room_ac: "{{ states('climate.study_room_ac') }}"
 
   - name: Floorplan Parents' Room Status
     unique_id: sensor.floorplan_parents_room_status
     state: >
       {% if is_state('binary_sensor.parents_room_motion','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.parents_room_lights','fan.parents_room_fan','climate.parents_room_ac']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.parents_room_lights','on') 
+         or is_state('fan.parents_room_fan','on')
+         or is_state('climate.parents_room_ac','cool') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('binary_sensor.parents_room_motion') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.parents_room_lights','fan.parents_room_fan','climate.parents_room_ac']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      parents_room_lights: "{{ states('light.parents_room_lights') }}"
+      parents_room_fan: "{{ states('fan.parents_room_fan') }}"
+      parents_room_ac: "{{ states('climate.parents_room_ac') }}"
 
   - name: Floorplan Master Bathroom Status
     unique_id: sensor.floorplan_master_bathroom_status
     state: >
       {% if is_state('input_boolean.master_bathroom_occupancy','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.master_bathroom_light_entity','light.master_bathroom_pendant_light_entity']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.master_bathroom_light_entity','on')
+         or is_state('light.master_bathroom_pendant_light_entity','on') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('input_boolean.master_bathroom_occupancy') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.master_bathroom_light_entity','light.master_bathroom_pendant_light_entity']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      master_bathroom_light: "{{ states('light.master_bathroom_light_entity') }}"
+      master_bathroom_pendant_light: "{{ states('light.master_bathroom_pendant_light_entity') }}"
 
   - name: Floorplan Kitchen Status
     unique_id: sensor.floorplan_kitchen_status
     state: >
       {% if is_state('binary_sensor.kitchen_presence','on') %}
         Occupied
-      {% elif 'on' in states | selectattr('entity_id','in',['light.kitchen_lights']) | map(attribute = 'state') | list %}
+      {% elif is_state('light.kitchen_lights','on') %}
         Devices On
       {% else %}
         Clear
       {% endif %}
     attributes:
       presence: "{{ states('binary_sensor.kitchen_presence') }}"
-      devices_on: "{{ states | selectattr('entity_id','in',['light.kitchen_lights']) | selectattr('state','eq','on') | map(attribute = 'entity_id') | list }}"
+      kitchen_lights: "{{ states('light.kitchen_lights') }}"
 
 - image:
   - url: https://an-eloquent-home.duckdns.org/local/{{ (state_attr('sensor.rain_radar','file_list') | sort)[-1][12:] }}
