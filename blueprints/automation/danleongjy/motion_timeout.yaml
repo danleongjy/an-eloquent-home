@@ -12,6 +12,7 @@ blueprint:
           device_class: 
             - motion
             - occupancy
+          multiple: true
     number_of_minutes:
       name: Number of Minutes
       description: Number helper indicating the number of minutes for the motion timeout.
@@ -54,6 +55,11 @@ trigger:
       minutes: "{{ states(minutes_input_number) | int(15) }}"
       seconds: 0
 condition:
+  - condition: state
+    entity_id: !input motion_sensor
+    state: "off"
+    for: 
+      minutes: "{{ states(minutes_input_number) | int(15) }}"
   - condition: template
     value_template: "{{ doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
   - condition: template

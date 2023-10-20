@@ -31,7 +31,7 @@
       {% set all_temp = states.sensor | selectattr('attributes.device_class','defined') | selectattr('attributes.device_class','eq','temperature') | map(attribute = 'state') | list %}
       {% set ns = namespace(sum = 0) %}
       {% for temp in all_temp %}
-        {% set ns.sum = ns.sum + temp | float %}
+        {% set ns.sum = ns.sum + temp | float(0) %}
       {% endfor %}
       {{ (ns.sum / (all_temp | length)) | round(2) }}
     {% endif %}
@@ -94,6 +94,7 @@
     - temperature
     - relative_humidity
     - wind
+  scan_interval: 600
 
 - platform: rest
   resource: https://api.data.gov.sg/v1/environment/4-day-weather-forecast
@@ -106,6 +107,7 @@
     - temperature
     - relative_humidity
     - wind
+  scan_interval: 600
     
 - platform: rest
   resource: https://api.data.gov.sg/v1/environment/4-day-weather-forecast
@@ -118,6 +120,7 @@
     - temperature
     - relative_humidity
     - wind
+  scan_interval: 600
 
 - platform: rest
   resource: https://api.data.gov.sg/v1/environment/4-day-weather-forecast
@@ -130,6 +133,7 @@
     - temperature
     - relative_humidity
     - wind
+  scan_interval: 600
 
 - platform: rest
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=80249&ServiceNo=64

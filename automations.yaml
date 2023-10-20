@@ -2846,12 +2846,30 @@
     entity_id:
     - sensor.dining_room_lux
     - sensor.living_room_lux
+    - sensor.dining_room_radar_lux
     above: input_number.maximum_lux
+    enabled: false
   - platform: numeric_state
     entity_id:
     - sensor.dining_room_lux
+    - sensor.dining_room_radar_lux
     - sensor.living_room_lux
     below: input_number.comfortable_lux
+    enabled: false
+  - platform: numeric_state
+    entity_id: sensor.dining_room_radar_lux
+    below: input_number.comfortable_lux
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+  - platform: numeric_state
+    entity_id: sensor.dining_room_radar_lux
+    above: input_number.maximum_lux
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
   condition: []
   action:
   - choose:
@@ -2861,8 +2879,13 @@
         - condition: numeric_state
           entity_id: sensor.dining_room_lux
           above: input_number.maximum_lux
+          enabled: false
         - condition: numeric_state
           entity_id: sensor.living_room_lux
+          above: input_number.maximum_lux
+          enabled: false
+        - condition: numeric_state
+          entity_id: sensor.dining_room_radar_lux
           above: input_number.maximum_lux
       - condition: template
         value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
@@ -2896,9 +2919,14 @@
         - condition: numeric_state
           entity_id: sensor.dining_room_lux
           below: input_number.comfortable_lux
+          enabled: false
         - condition: numeric_state
           entity_id: sensor.living_room_lux
           below: input_number.comfortable_lux
+          enabled: false
+        - condition: numeric_state
+          entity_id: sensor.dining_room_radar_lux
+          below: 300
       - condition: template
         value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
           ''cover.living_room_blinds'']) | map(attribute = ''last_changed'') | list
@@ -3827,7 +3855,6 @@
     input:
       vent: binary_sensor.elenas_room_ac_vent
       resync_delay: input_number.ac_resync_delay
-      resync: true
       ac: climate.elenas_room_ac
 - id: '1676871202756'
   alias: Eli's Room AC Set State
@@ -3838,7 +3865,6 @@
       ac: climate.elis_room_ac
       vent: binary_sensor.elis_room_ac_vent
       resync_delay: input_number.ac_resync_delay
-      resync: false
 - id: '1676873827127'
   alias: Elena's Room AC Auto Control
   description: Automatically turn on or off Elena's Room AC to keep Elena's Room Temperature
@@ -4265,9 +4291,7 @@
       turnoff_entities_list:
       - light.living_room_lights
       - light.living_room_pendant_light_entity
-      - climate.living_room_ac
       - fan.living_room_fan
-      - automation.living_room_ac_auto_control
       - automation.living_room_fan_auto_control
       entities_list:
       - input_boolean.party_mode
@@ -4309,9 +4333,7 @@
       turnoff_entities_list:
       - light.dining_room_lights
       - light.dining_room_pendant_light_entity
-      - climate.dining_room_ac
       - fan.dining_room_fan
-      - automation.dining_room_ac_auto_control
       - automation.dining_room_fan_auto_control
       entities_list:
       - input_boolean.party_mode
@@ -4967,6 +4989,10 @@
           - automation.master_bathroom_motion_pendant_light
           - automation.study_room_motion_timeout
       button_down_double_press: true
+      button_up_long_loop: true
+      button_down_long_loop: true
+      button_up_long_max_loop_repeats: 50
+      button_down_long_max_loop_repeats: 50
 - id: '1684242432236'
   alias: Parents' Room Fan Auto Control
   description: Set the Parents' Room Fan speed and direction based on temperature
@@ -5004,6 +5030,8 @@
       temp_sensor: sensor.dining_room_temperature
       low_speed: input_number.sitting_rooms_fan_speed_when_cool
       high_speed: input_number.sitting_rooms_fan_speed_when_warm
+      low_temp: 28.5
+      high_temp: 29
 - id: '1684314664733'
   alias: Living Room Fan Auto Control
   description: Set the Living Room Fan speed and direction based on temperature
@@ -5338,14 +5366,10 @@
     entity_id:
     - binary_sensor.kitchen_presence
     to: 'on'
-  - platform: numeric_state
+  - platform: state
     entity_id: sensor.sun_solar_elevation
-    below: 65
-    above: 1
-  - platform: numeric_state
+  - platform: state
     entity_id: sensor.sun_solar_azimuth
-    above: 45
-    below: 120
   condition: []
   action:
   - choose:
@@ -5360,10 +5384,6 @@
         - condition: state
           entity_id: climate.living_room_ac
           state: cool
-        - condition: numeric_state
-          entity_id:
-          - sensor.kitchen_lux
-          above: input_number.maximum_lux
       - condition: not
         conditions:
         - condition: state
@@ -5383,7 +5403,7 @@
         below: 65
       - condition: numeric_state
         entity_id: sensor.sun_solar_azimuth
-        below: 120
+        below: 105
         above: 45
       sequence:
       - condition: template
@@ -5419,6 +5439,12 @@
         - condition: state
           entity_id: switch.rice_cooker
           state: 'on'
+        - condition: numeric_state
+          entity_id: sensor.sun_solar_azimuth
+          above: 105
+        - condition: numeric_state
+          entity_id: sensor.sun_solar_azimuth
+          below: 45
       - condition: not
         conditions:
         - condition: template
@@ -5430,8 +5456,8 @@
         conditions:
         - condition: template
           value_template: "{{ states('sun.sun') == 'above_horizon'\n   and state_attr('sun.sun',
-            'elevation') <= 60\n   and state_attr('sun.sun', 'azimuth') >= 75\n   and
-            state_attr('sun.sun', 'azimuth') <= 90 }}"
+            'elevation') <= 60\n   and state_attr('sun.sun', 'azimuth') >= 45\n   and
+            state_attr('sun.sun', 'azimuth') <= 105 }}"
     - condition: template
       value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed > timedelta(minutes
         = states(''input_number.blinds_auto_control_debounce'') | int(0)) }}'
@@ -6095,3 +6121,101 @@
   - service: script.nea_rain_radar_animation
     data: {}
   mode: single
+- id: '1697798770695'
+  alias: Dining Living Room AC Interlock
+  description: Sync the states of the Dining and Living Room ACs
+  trigger:
+  - platform: template
+    value_template: '{{ states(''climate.dining_room_ac'') != states(''climate.living_room_ac'')
+      or state_attr(''climate.dining_room_ac'',''temperature'') != state_attr(''climate.living_room_ac'',''temperature'')
+      }}'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 2
+  condition: []
+  action:
+  - if:
+    - condition: template
+      value_template: '{{ states.climate.dining_room_ac.last_updated > states.climate.living_room_ac.last_updated
+        }}'
+    then:
+    - if:
+      - condition: state
+        entity_id: climate.dining_room_ac
+        state: 'off'
+      then:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: climate.living_room_ac
+      else:
+      - if:
+        - condition: template
+          value_template: '{{ states(''climate.living_room_ac'') != states(''climate.dining_room_ac'')
+            }}'
+        then:
+        - service: climate.turn_on
+          data: {}
+          target:
+            entity_id: climate.living_room_ac
+      - if:
+        - condition: template
+          value_template: '{{ state_attr(''climate.living_room_ac'',''temperature'')
+            != state_attr(''climate.dining_room_ac'',''temperature'') }}'
+        then:
+        - service: climate.set_temperature
+          data:
+            temperature: '{{ state_attr(''climate.dining_room_ac'',''temperature'')
+              }}'
+          target:
+            entity_id: climate.living_room_ac
+    else:
+    - if:
+      - condition: state
+        entity_id: climate.living_room_ac
+        state: 'off'
+      then:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: climate.dining_room_ac
+      else:
+      - if:
+        - condition: template
+          value_template: '{{ states(''climate.living_room_ac'') != states(''climate.dining_room_ac'')
+            }}'
+        then:
+        - service: climate.turn_on
+          data: {}
+          target:
+            entity_id: climate.dining_room_ac
+      - if:
+        - condition: template
+          value_template: '{{ state_attr(''climate.living_room_ac'',''temperature'')
+            != state_attr(''climate.dining_room_ac'',''temperature'') }}'
+        then:
+        - service: climate.set_temperature
+          data:
+            temperature: '{{ state_attr(''climate.living_room_ac'',''temperature'')
+              }}'
+          target:
+            entity_id: climate.dining_room_ac
+  mode: single
+  max_exceeded: silent
+- id: '1697806604813'
+  alias: Dining and Living Room AC Motion Timeout
+  description: Turn off the Dining and Living Room ACs if no motion is detected in
+    both rooms
+  use_blueprint:
+    path: danleongjy/motion_timeout.yaml
+    input:
+      motion_sensor:
+      - binary_sensor.dining_room_presence
+      - binary_sensor.living_room_presence
+      number_of_minutes: input_number.motion_timeout_presence
+      turnoff_entities_list:
+      - climate.dining_room_ac
+      - automation.dining_room_ac_auto_control
+      - climate.living_room_ac
+      - automation.living_room_ac_auto_control
