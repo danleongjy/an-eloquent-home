@@ -2827,10 +2827,6 @@
       - automation.parents_room_motion_timeout
       - automation.study_walkway_motion_timeout
       - automation.study_room_motion_timeout
-  - service: homeassistant.turn_off
-    data: {}
-    target:
-      entity_id: input_boolean.parents_room_flag
   mode: single
 - id: '1672302011128'
   alias: South-Facing Blinds Auto Control
@@ -2895,6 +2891,10 @@
           | sort)[-1] > timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
           | int(0)) }}'
       sequence:
+      - condition: state
+        entity_id: sun.sun
+        attribute: rising
+        state: true
       - repeat:
           for_each:
           - cover.dining_room_right_blind

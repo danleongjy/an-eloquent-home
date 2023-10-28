@@ -742,6 +742,13 @@
                       "service_data": {
                         "entity_id": "[[fan_entity]]"
                       }
+                    },
+                    "styles": {
+                      "icon": [
+                        {
+                          "animation": "[[[ \n  if (entity.state == 'on') {\n    return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n  } else {\n    return ''\n  }\n]]]"
+                        }
+                      ]
                     }
                   }
                 }
@@ -2537,11 +2544,6 @@
                     "card": [
                       {
                         "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_doors_open_at_parents_room'].state == 'on')\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                      }
-                    ],
-                    "name": [
-                      {
-                        "animation": "[[[ \n  if (states['input_boolean.parents_room_flag'].state == 'on')\n    return 'blink 2s ease infinite';\n]]]\n"
                       }
                     ]
                   }
@@ -5716,11 +5718,6 @@
                     "card": [
                       {
                         "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_doors_open_at_parents_room'].state == 'on')\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                      }
-                    ],
-                    "name": [
-                      {
-                        "animation": "[[[ \n  if (states['input_boolean.parents_room_flag'].state == 'on')\n    return 'blink 2s ease infinite';\n]]]\n"
                       }
                     ]
                   }
@@ -9876,11 +9873,6 @@
                       "entity": "sensor.parents_room_lux",
                       "template": "square_cell_background",
                       "show_state": true
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "input_boolean.parents_room_flag",
-                      "template": "turn_on"
                     }
                   ]
                 },
