@@ -1016,7 +1016,7 @@
   trigger:
   - platform: numeric_state
     entity_id: sensor.dishwasher_watts
-    above: '4'
+    above: 4
     id: washing
   - platform: numeric_state
     entity_id: sensor.dishwasher_watts
@@ -1025,8 +1025,8 @@
     id: idle
   - platform: state
     entity_id:
-    - sensor.dishwasher_watts
-    to: '0.0'
+    - switch.dishwasher
+    to: 'off'
     id: 'off'
   condition: []
   action:
@@ -1984,6 +1984,11 @@
     from: 'off'
     to: 'on'
     id: door_open
+  - platform: state
+    entity_id:
+    - binary_sensor.parents_room_motion
+    to: 'on'
+    id: parents_room_motion
   condition: []
   action:
   - choose:
@@ -2080,6 +2085,18 @@
           entity_id: fan.parents_room_fan
           state: 'off'
       - service: cover.open_cover
+        data: {}
+        target:
+          entity_id: cover.master_bathroom_blind
+    - conditions:
+      - condition: trigger
+        id:
+        - parents_room_motion
+      sequence:
+      - condition: time
+        after: input_datetime.sleep_hours_start
+        before: input_datetime.sleep_hours_end
+      - service: cover.close_cover
         data: {}
         target:
           entity_id: cover.master_bathroom_blind
@@ -3174,7 +3191,7 @@
       | float(0) <= 1 }}'
     for:
       hours: 0
-      minutes: 5
+      minutes: 15
       seconds: 0
     id: idle
   condition: []
@@ -4268,7 +4285,7 @@
       - light.living_room_lights
       recommended_light_level_script: script.recommended_light_level_for_living_room_lights
       motion_sensor: binary_sensor.living_room_presence
-      lux_sensor: sensor.living_room_lux
+      lux_sensor: sensor.dining_room_radar_lux
       blackout_hours_start: input_datetime.dim_hours_start
       lights_debounce: false
 - id: '1679619511575'
@@ -4310,7 +4327,7 @@
       - light.dining_room_lights
       recommended_light_level_script: script.recommended_light_level_for_dining_room_lights
       motion_sensor: binary_sensor.dining_room_presence
-      lux_sensor: sensor.living_room_lux
+      lux_sensor: sensor.dining_room_radar_lux
       blackout_hours_start: input_datetime.dim_hours_start
       lights_debounce: false
 - id: '1679619906548'
@@ -4528,9 +4545,11 @@
     id: door_closed
   - platform: template
     value_template: '{{ is_state(''switch.dishwasher'',''on'') and states(''sensor.dishwasher_watts'')
-      | float(0) <= 2 }}'
+      | float(0) <= 3 }}'
     for:
-      minutes: 2
+      hours: 0
+      minutes: 10
+      seconds: 0
     id: idle
   condition: []
   action:

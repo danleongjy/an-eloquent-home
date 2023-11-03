@@ -62,7 +62,7 @@
         },
         "dishwasher_more_info": {
           "template": "square_cell",
-          "hold_action": {
+          "tap_action": {
             "action": "navigate",
             "navigation_path": "/lovelace/dishwasher"
           }
@@ -1876,6 +1876,16 @@
                     "disabled": {
                       "type": "custom:button-card",
                       "entity": "vacuum.pikachu",
+                      "template": "error",
+                      "icon": "mdi:robot-vacuum-variant-alert",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/vacuum"
+                      }
+                    },
+                    "error": {
+                      "type": "custom:button-card",
+                      "entity": "vacuum.pikachu",
                       "template": "vacuum_more_info",
                       "icon": "mdi:robot-vacuum-variant-alert",
                       "styles": {
@@ -2790,17 +2800,17 @@
                 },
                 {
                   "type": "custom:state-switch",
-                  "entity": "binary_sensor.dishwasher",
+                  "entity": "switch.dishwasher",
                   "default": "disabled",
                   "states": {
                     "disabled": {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.dishwasher",
+                      "entity": "switch.dishwasher",
                       "template": "error"
                     },
                     "off": {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.dishwasher",
+                      "entity": "switch.dishwasher",
                       "template": "dishwasher_more_info",
                       "styles": {
                         "card": [
@@ -2812,7 +2822,7 @@
                     },
                     "on": {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.dishwasher",
+                      "entity": "switch.dishwasher",
                       "template": "dishwasher_more_info",
                       "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
                       "show_label": true
@@ -3479,6 +3489,16 @@
                     "disabled": {
                       "type": "custom:button-card",
                       "entity": "vacuum.pikachu",
+                      "template": "error",
+                      "icon": "mdi:robot-vacuum-variant-alert",
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/vacuum"
+                      }
+                    },
+                    "error": {
+                      "type": "custom:button-card",
+                      "entity": "vacuum.pikachu",
                       "template": "vacuum_more_info",
                       "icon": "mdi:robot-vacuum-variant-alert",
                       "styles": {
@@ -3769,17 +3789,17 @@
                     "height": "9%",
                     "width": "4.5%"
                   },
-                  "entity": "binary_sensor.dishwasher",
+                  "entity": "switch.dishwasher",
                   "default": "disabled",
                   "states": {
                     "disabled": {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.dishwasher",
+                      "entity": "switch.dishwasher",
                       "template": "error"
                     },
                     "off": {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.dishwasher",
+                      "entity": "switch.dishwasher",
                       "template": "dishwasher_more_info",
                       "styles": {
                         "card": [
@@ -3791,7 +3811,7 @@
                     },
                     "on": {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.dishwasher",
+                      "entity": "switch.dishwasher",
                       "template": "dishwasher_more_info",
                       "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
                       "show_label": true
@@ -6219,7 +6239,7 @@
                     },
                     {
                       "type": "custom:button-card",
-                      "entity": "sensor.dining_room_lux",
+                      "entity": "sensor.dining_room_radar_lux",
                       "template": "sensor_lux"
                     }
                   ]
@@ -8726,7 +8746,7 @@
                   "type": "conditional",
                   "conditions": [
                     {
-                      "entity": "binary_sensor.dishwasher",
+                      "entity": "switch.dishwasher",
                       "state": "off"
                     }
                   ],
@@ -8770,7 +8790,7 @@
                   "type": "conditional",
                   "conditions": [
                     {
-                      "entity": "binary_sensor.dishwasher",
+                      "entity": "switch.dishwasher",
                       "state": "on"
                     }
                   ],
