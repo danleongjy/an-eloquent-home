@@ -518,29 +518,6 @@
               }
             ]
           }
-        },
-        "floorplan_busstop": {
-          "variables": {
-            "stop_no": 1
-          },
-          "icon": "[[[ return 'mdi:numeric-' + variables.stop_no ]]]",
-          "show_name": false,
-          "tap_action": {
-            "action": "navigate",
-            "navigation_path": "/lovelace/transit"
-          },
-          "styles": {
-            "card": [
-              {
-                "background-color": "rgba(0,0,0,0.0)"
-              }
-            ],
-            "icon": [
-              {
-                "color": "black"
-              }
-            ]
-          }
         }
       },
       "decluttering_templates": {
@@ -2895,7 +2872,7 @@
                   "elements": [
                     {
                       "type": "image",
-                      "image": "/local/floorplan/transit_basemap.png",
+                      "image": "/local/floorplan/transit_basemap_numbered.png",
                       "style": {
                         "top": "50%",
                         "left": "85%",
@@ -3263,36 +3240,25 @@
                   }
                 },
                 {
-                  "type": "conditional",
-                  "conditions": [
-                    {
-                      "entity": "input_select.floorplan_panel_view",
-                      "state": "weather"
-                    }
-                  ],
-                  "elements": [
-                    {
-                      "type": "custom:button-card",
-                      "aspect_ratio": 1,
-                      "style": {
-                        "top": "50%",
-                        "left": "85%",
-                        "height": "59%",
-                        "width": "29.5%"
-                      },
-                      "tap_action": {
-                        "action": "navigate",
-                        "navigation_path": "/lovelace/weather"
-                      },
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "rgba(0,0,0,0.0)"
-                          }
-                        ]
+                  "type": "custom:button-card",
+                  "aspect_ratio": 1,
+                  "style": {
+                    "top": "50%",
+                    "left": "85%",
+                    "height": "59%",
+                    "width": "29.5%"
+                  },
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "[[[ return '/lovelace/' + states['input_select.floorplan_panel_view'].state ]]]"
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "background-color": "rgba(0,0,0,0.0)"
                       }
-                    }
-                  ]
+                    ]
+                  }
                 },
                 {
                   "type": "custom:button-card",
@@ -4047,55 +4013,6 @@
                       },
                       "template": "floorplan_nextbus",
                       "entity": "binary_sensor.before_lorong_23_geylang_bus_stop",
-                      "variables": {
-                        "stop_no": 4
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "style": {
-                        "top": "42.9%",
-                        "left": "77.75%",
-                        "height": "3.5%",
-                        "width": "3.5%"
-                      },
-                      "template": "floorplan_busstop"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "style": {
-                        "top": "53.7%",
-                        "left": "91.65%",
-                        "height": "3.5%",
-                        "width": "3.5%"
-                      },
-                      "template": "floorplan_busstop",
-                      "variables": {
-                        "stop_no": 2
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "style": {
-                        "top": "53%",
-                        "left": "94%",
-                        "height": "3.5%",
-                        "width": "3.5%"
-                      },
-                      "template": "floorplan_busstop",
-                      "variables": {
-                        "stop_no": 3
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "style": {
-                        "top": "74.3%",
-                        "left": "85.65%",
-                        "height": "3.5%",
-                        "width": "3.5%"
-                      },
-                      "template": "floorplan_busstop",
                       "variables": {
                         "stop_no": 4
                       }
