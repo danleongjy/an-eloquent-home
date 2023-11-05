@@ -1016,12 +1016,12 @@
   trigger:
   - platform: numeric_state
     entity_id: sensor.dishwasher_watts
-    above: 4
+    above: 5
     id: washing
   - platform: numeric_state
     entity_id: sensor.dishwasher_watts
     above: '0'
-    below: '5'
+    below: 5
     id: idle
   - platform: state
     entity_id:
@@ -2004,6 +2004,11 @@
         - condition: state
           entity_id: binary_sensor.master_bathroom_door
           state: 'off'
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: cover.master_bathroom_blind
+          state: closed
       - service: cover.close_cover
         data: {}
         target:
@@ -2042,6 +2047,12 @@
         - condition: state
           entity_id: binary_sensor.master_bathroom_door
           state: 'on'
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: cover.master_bathroom_blind
+          attribute: current_position
+          state: '100'
       - service: cover.open_cover
         data: {}
         target:
@@ -2050,6 +2061,11 @@
       - condition: trigger
         id: sleep_hours_start
       sequence:
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: cover.master_bathroom_blind
+          state: closed
       - service: cover.close_cover
         data: {}
         target:
@@ -2084,6 +2100,12 @@
         - condition: state
           entity_id: fan.parents_room_fan
           state: 'off'
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: cover.master_bathroom_blind
+          attribute: current_position
+          state: '100'
       - service: cover.open_cover
         data: {}
         target:
@@ -2096,6 +2118,11 @@
       - condition: time
         after: input_datetime.sleep_hours_start
         before: input_datetime.sleep_hours_end
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: cover.master_bathroom_blind
+          state: closed
       - service: cover.close_cover
         data: {}
         target:
@@ -2859,16 +2886,14 @@
     above: 65
   - platform: numeric_state
     entity_id:
-    - sensor.dining_room_lux
-    - sensor.living_room_lux
     - sensor.dining_room_radar_lux
+    - sensor.living_room_radar_lux_calibrated
     above: input_number.maximum_lux
     enabled: false
   - platform: numeric_state
     entity_id:
-    - sensor.dining_room_lux
     - sensor.dining_room_radar_lux
-    - sensor.living_room_lux
+    - sensor.living_room_radar_lux_calibrated
     below: input_number.comfortable_lux
     enabled: false
   - platform: numeric_state
@@ -2892,11 +2917,7 @@
       - condition: or
         conditions:
         - condition: numeric_state
-          entity_id: sensor.dining_room_lux
-          above: input_number.maximum_lux
-          enabled: false
-        - condition: numeric_state
-          entity_id: sensor.living_room_lux
+          entity_id: sensor.living_room_radar_lux_calibrated
           above: input_number.maximum_lux
           enabled: false
         - condition: numeric_state
@@ -2940,12 +2961,9 @@
           entity_id: sun.sun
           attribute: elevation
           above: 65.1
-        - condition: numeric_state
-          entity_id: sensor.dining_room_lux
-          below: input_number.comfortable_lux
           enabled: false
         - condition: numeric_state
-          entity_id: sensor.living_room_lux
+          entity_id: sensor.living_room_radar_lux_calibrated
           below: input_number.comfortable_lux
           enabled: false
         - condition: numeric_state
@@ -3347,8 +3365,8 @@
     id: playroom
     above: input_number.comfortable_lux
   - platform: numeric_state
-    entity_id: sensor.living_room_lux
-    id: living_room
+    entity_id: sensor.dining_room_radar_lux
+    id: dining_room
     above: input_number.comfortable_lux
   - platform: numeric_state
     entity_id: sensor.kitchen_lux
@@ -3390,7 +3408,7 @@
           - light.playroom_lights
     - conditions:
       - condition: trigger
-        id: living_room
+        id: dining_room
       sequence:
       - service: light.turn_off
         data: {}
@@ -4299,7 +4317,7 @@
       - light.living_room_pendant_light_entity
       recommended_light_level_script: script.recommended_light_level_for_living_room_pendant_light
       motion_sensor: binary_sensor.living_room_presence
-      lux_sensor: sensor.living_room_lux
+      lux_sensor: sensor.dining_room_radar_lux
 - id: '1679619704393'
   alias: Living Room Motion Timeout
   description: Turn off lights, fan and AC in the Living Room when no motion is detected
@@ -4341,7 +4359,7 @@
       - light.dining_room_pendant_light_entity
       recommended_light_level_script: script.recommended_light_level_for_dining_room_pendant_light
       motion_sensor: binary_sensor.dining_room_presence
-      lux_sensor: sensor.living_room_lux
+      lux_sensor: sensor.dining_room_radar_lux
 - id: '1679619971749'
   alias: Dining Room Motion Timeout
   description: Turn off lights, fan and AC in the Dining Room when no motion is detected
@@ -4697,72 +4715,6 @@
       data: {}
       target:
         entity_id: light.master_bathroom_pendant_light_entity
-  mode: single
-- id: '1681718355562'
-  alias: Junior Bathroom Motion Lights
-  description: Turn on the Junior Bathroom Lights according to motion and time of
-    day
-  trigger:
-  - platform: state
-    entity_id:
-    - input_boolean.junior_bathroom_occupancy
-    to: 'on'
-    id: motion
-  - platform: state
-    entity_id:
-    - input_boolean.junior_bathroom_occupancy
-    to: 'off'
-    id: no_motion
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: motion
-    then:
-    - condition: state
-      entity_id: light.junior_bathroom_lights
-      state: 'off'
-      for: 2
-    - service: script.recommended_light_level_for_junior_bathroom
-      data: {}
-    else:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.junior_bathroom_lights
-  mode: single
-- id: '1681718454090'
-  alias: Powder Room Motion Pendant Light
-  description: Turn on the Powder Room Pendant Light according to motion and time
-    of day
-  trigger:
-  - platform: state
-    entity_id:
-    - input_boolean.powder_room_occupancy
-    to: 'on'
-    id: motion
-  - platform: state
-    entity_id:
-    - input_boolean.powder_room_occupancy
-    to: 'off'
-    id: no_motion
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: motion
-    then:
-    - condition: state
-      entity_id: light.powder_room_pendant_light_entity
-      state: 'off'
-      for: 2
-    - service: script.recommended_light_level_for_powder_room
-      data: {}
-    else:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.powder_room_pendant_light_entity
   mode: single
 - id: '1681731968251'
   alias: Hallway Motion Lights
@@ -6317,3 +6269,51 @@
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 500
+- id: '1699176933163'
+  alias: Junior Bathroom Motion Lights
+  description: Control the Junior Bathroom lights when motion is detected, depending
+    on lux level and time
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      recommended_light_level_script: script.recommended_light_level_for_junior_bathroom
+      motion_sensor: binary_sensor.junior_bathroom_occupancy
+      lux_sensor: sensor.junior_shower_lux
+      lights_list:
+      - light.junior_bathroom_lights
+- id: '1699177531859'
+  alias: Junior Bathroom Motion Timeout
+  description: Turn off Junior Bathroom Lights when no motion is detected for a certain
+    amount of time.
+  use_blueprint:
+    path: danleongjy/motion_timeout.yaml
+    input:
+      motion_sensor:
+      - binary_sensor.junior_bathroom_occupancy
+      number_of_minutes: input_number.motion_timeout_presence
+      turnoff_entities_list:
+      - light.junior_bathroom_lights
+- id: '1699177618893'
+  alias: Powder Room Motion Pendant Light
+  description: Control the Powder Room Pendant Light when motion is detected, depending
+    on lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.powder_room_pendant_light_entity
+      recommended_light_level_script: script.recommended_light_level_for_powder_room
+      motion_sensor: binary_sensor.powder_room_occupancy
+      lux_sensor: sensor.powder_room_lux
+- id: '1699177686268'
+  alias: Powder Room Motion Timeout
+  description: Turn off Powder Room Pendant Light when no motion is detected for a
+    certain amount of time.
+  use_blueprint:
+    path: danleongjy/motion_timeout.yaml
+    input:
+      motion_sensor:
+      - binary_sensor.powder_room_occupancy
+      number_of_minutes: input_number.motion_timeout_presence
+      turnoff_entities_list:
+      - light.powder_room_pendant_light_entity

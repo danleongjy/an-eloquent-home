@@ -22,8 +22,8 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 140
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 122
+[`automation`](https://www.home-assistant.io/components/automation) | 142
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 125
 [`button`](https://www.home-assistant.io/components/button) | 143
 [`calendar`](https://www.home-assistant.io/components/calendar) | 4
 [`camera`](https://www.home-assistant.io/components/camera) | 1
@@ -44,7 +44,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 43
 [`select`](https://www.home-assistant.io/components/select) | 49
-[`sensor`](https://www.home-assistant.io/components/sensor) | 511
+[`sensor`](https://www.home-assistant.io/components/sensor) | 513
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 25
@@ -53,7 +53,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1460
+Total | 1467
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -103,6 +103,7 @@ Total | 1460
 - [Apexcharts Card](https://github.com/RomRider/apexcharts-card)
 - [Button Card](https://github.com/custom-cards/button-card)
 - [Decluttering Card](https://github.com/custom-cards/decluttering-card)
+- [History Explorer Card](https://github.com/alexarch21/history-explorer-card)
 - [Simple Weather Card](https://github.com/kalkih/simple-weather-card)
 - [Slider Button Card](https://github.com/custom-cards/slider-button-card)
 - [State Switch](https://github.com/thomasloven/lovelace-state-switch)

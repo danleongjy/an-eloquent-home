@@ -245,6 +245,16 @@
       master_bathroom_door: "{{ states('binary_sensor.master_bathroom_door') }}"
       main_door: "{{ states('binary_sensor.main_door') }}"
       
+  - name: Junior Bathroom Occupancy
+    unique_id: binary_sensor.junior_bathroom_occupancy
+    state: "{{ states('input_boolean.junior_bathroom_occupancy') }}"
+    device_class: occupancy
+
+  - name: Powder Room Occupancy
+    unique_id: binary_sensor.powder_room_occupancy
+    state: "{{ states('input_boolean.powder_room_occupancy') }}"
+    device_class: occupancy
+
   - name: Rice Cooker
     unique_id: binary_sensor.rice_cooker
     state: "{{ states('sensor.rice_cooker_watts') | int(0) > 0 }}"
@@ -544,6 +554,24 @@
   - name: Living Room Fan Direction
     unique_id: sensor.living_room_fan_direction
     state: "{{ state_attr('fan.living_room_fan','direction') }}"
+
+  - name: Living Room Radar Lux Calibrated
+    unique_id: sensor.living_room_radar_lux_calibrated
+    state: "{{ e**(-0.143485757 + 1.217946494 * log(states('sensor.living_room_radar_lux') | float(0))) }}"
+    device_class: illuminance
+    unit_of_measurement: lx
+    availability: "{{ states('sensor.living_room_radar_lux') not in ['unavailable','unknown'] }}"
+    attributes:
+      raw: "{{ states('sensor.living_room_radar_lux') }}"
+
+  - name: Study Room Radar Lux Calibrated
+    unique_id: sensor.study_room_radar_lux_calibrated
+    state: "{{ e**(1.049044265 + 1.403927828 * log(states('sensor.study_room_radar_lux') | float(0))) }}"
+    device_class: illuminance
+    unit_of_measurement: lx
+    availability: "{{ states('sensor.study_room_radar_lux') not in ['unavailable','unknown'] }}"
+    attributes:
+      raw: "{{ states('sensor.study_room_radar_lux') }}"
 
   - name: Kitchen Blind Position
     unique_id: sensor.kitchen_blind_position
