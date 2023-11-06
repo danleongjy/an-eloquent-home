@@ -2900,16 +2900,14 @@
     entity_id: sensor.dining_room_radar_lux
     below: input_number.comfortable_lux
     for:
-      hours: 0
-      minutes: 10
-      seconds: 0
+      minutes: '{{ states(''input_number.blinds_auto_control_debounce'') | int(5)
+        }}'
   - platform: numeric_state
     entity_id: sensor.dining_room_radar_lux
     above: input_number.maximum_lux
     for:
-      hours: 0
-      minutes: 2
-      seconds: 0
+      minutes: '{{ states(''input_number.blinds_auto_control_debounce'') | int(5)
+        }}'
   condition: []
   action:
   - choose:
@@ -3369,7 +3367,7 @@
     id: dining_room
     above: input_number.comfortable_lux
   - platform: numeric_state
-    entity_id: sensor.kitchen_lux
+    entity_id: sensor.kitchen_radar_lux_calibrated
     id: kitchen
     above: input_number.comfortable_lux
   - platform: numeric_state
@@ -4200,7 +4198,7 @@
       - light.kitchen_lights
       recommended_light_level_script: script.recommended_light_level_for_kitchen
       motion_sensor: binary_sensor.kitchen_presence
-      lux_sensor: sensor.kitchen_lux
+      lux_sensor: sensor.kitchen_radar_lux_calibrated
       lights_debounce: false
 - id: '1677927981807'
   alias: Kitchen Motion Timeout
@@ -4651,71 +4649,6 @@
       - binary_sensor.powder_room_door
       - binary_sensor.main_door
       respect_closed_doors: false
-- id: '1681712828244'
-  alias: Master Bathroom Motion Light
-  description: Turn on the Master Bathroom Light according to motion and time of day
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.master_bathroom_motion
-    to: 'on'
-    id: motion
-  - platform: state
-    entity_id:
-    - input_boolean.master_bathroom_occupancy
-    to: 'off'
-    id: no_motion
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: motion
-    then:
-    - condition: state
-      entity_id: light.master_bathroom_light_entity
-      state: 'off'
-      for: 2
-    - service: script.recommended_light_level_for_master_bathroom_light
-      data: {}
-    else:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.master_bathroom_light_entity
-  mode: single
-- id: '1681717642234'
-  alias: Master Bathroom Motion Pendant Light
-  description: Turn on the Master Bathroom Pendant Light according to motion and time
-    of day
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.master_shower_motion
-    to: 'on'
-    id: motion
-  - platform: state
-    entity_id:
-    - input_boolean.master_bathroom_occupancy
-    to: 'off'
-    id: no_motion
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: motion
-    then:
-    - condition: state
-      entity_id: light.master_bathroom_pendant_light_entity
-      state: 'off'
-      for: 2
-    - service: script.recommended_light_level_for_master_bathroom_pendant_light
-      data: {}
-    else:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.master_bathroom_pendant_light_entity
-  mode: single
 - id: '1681731968251'
   alias: Hallway Motion Lights
   description: Control the Hallway Lights when motion is detected, depending on lux
@@ -5336,7 +5269,7 @@
       }}"
   - platform: state
     entity_id:
-    - sensor.kitchen_lux
+    - sensor.kitchen_radar_lux_calibrated
   - platform: state
     entity_id:
     - binary_sensor.kitchen_presence
@@ -5409,7 +5342,7 @@
           entity_id: switch.stove_main_power
           state: 'on'
         - condition: numeric_state
-          entity_id: sensor.kitchen_lux
+          entity_id: sensor.kitchen_radar_lux_calibrated
           below: input_number.minimum_lux
         - condition: state
           entity_id: switch.rice_cooker
@@ -6317,3 +6250,39 @@
       number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.powder_room_pendant_light_entity
+- id: '1699233038725'
+  alias: Master Bathroom Motion Light
+  description: Control the Master Bathroom Light when motion is detected, depending
+    on lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.master_bathroom_light_entity
+      recommended_light_level_script: script.recommended_light_level_for_master_bathroom_light
+      motion_sensor: binary_sensor.master_bathroom_motion
+      lux_sensor: sensor.master_shower_lux
+- id: '1699233080526'
+  alias: Master Bathroom Motion Pendant Light
+  description: Control the Master Bathroom Pendant Light when motion is detected,
+    depending on lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.master_bathroom_pendant_light_entity
+      recommended_light_level_script: script.recommended_light_level_for_master_bathroom_pendant_light
+      motion_sensor: binary_sensor.master_shower_motion
+      lux_sensor: sensor.master_shower_lux
+- id: '1699233249112'
+  alias: Master Bathroom Motion Timeout
+  description: Turn off Master Bathroom Lights when no motion is detected for a certain
+    amount of time.
+  use_blueprint:
+    path: danleongjy/motion_timeout.yaml
+    input:
+      motion_sensor:
+      - binary_sensor.master_bathroom_occupancy
+      number_of_minutes: input_number.motion_timeout_presence
+      turnoff_entities_list:
+      - light.master_bathroom_lights
