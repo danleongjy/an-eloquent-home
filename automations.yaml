@@ -1020,7 +1020,6 @@
     id: washing
   - platform: numeric_state
     entity_id: sensor.dishwasher_watts
-    above: '0'
     below: 5
     id: idle
   - platform: state
@@ -3378,6 +3377,18 @@
     entity_id: sensor.parents_room_lux
     id: parents_room
     above: input_number.comfortable_lux
+  - platform: numeric_state
+    entity_id: sensor.junior_shower_lux
+    above: input_number.comfortable_lux
+    id: junior_bathroom
+  - platform: numeric_state
+    entity_id: sensor.powder_room_lux
+    above: input_number.comfortable_lux
+    id: powder_room
+  - platform: numeric_state
+    entity_id: sensor.master_shower_lux
+    above: input_number.comfortable_lux
+    id: master_bathroom
   condition: []
   action:
   - choose:
@@ -3389,6 +3400,8 @@
         - study_room
         - parents_room
         - kitchen
+        - junior_bathroom
+        - master_bathroom
       sequence:
       - service: light.turn_off
         data: {}
@@ -3416,6 +3429,15 @@
           - light.living_room_pendant_light_entity
           - light.dining_room_lights
           - light.dining_room_pendant_light_entity
+    - conditions:
+      - condition: trigger
+        id:
+        - powder_room
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.powder_room_pendant_light_entity
   mode: single
 - id: '1672898689403'
   alias: Lights for Wind Down
