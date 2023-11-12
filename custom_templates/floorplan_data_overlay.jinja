@@ -1,0 +1,51 @@
+{% macro data_overlay(presence_sensor, devices_list, lux_sensor, temperature_sensor, humidity_sensor) %}
+
+{% if is_state('input_select.floorplan_data_overlay','Presence') %}
+  {% if is_state(presence_sensor,'on') %}
+    C
+  {% else %}
+    {% set devices = namespace(on = 0) %}
+    {% for device in devices_list %}
+      {% if states(device) in ['on','cool'] %}
+        {% set devices.on = devices.on + 1 %}
+      {% endif %}
+    {% endfor %}
+    {% if devices.on > 0%}
+      B
+    {% else %}
+      A
+    {% endif %}
+  {% endif %}
+{% elif is_state('input_select.floorplan_data_overlay','Lux') %}
+  {% if states(lux_sensor) in ['unavailable','unknown'] %}
+    D
+  {% elif states(lux_sensor) | float(0) > states('input_number.comfortable_lux') | float %}
+    C
+  {% elif states(lux_sensor) | float(0) > states('input_number.minimum_lux') | float %}
+    B
+  {% else %}
+    A
+  {% endif %}
+{% elif is_state('input_select.floorplan_data_overlay','Temperature') %}
+  {% if states(temperature_sensor) in ['unavailable','unknown'] %}
+    D
+  {% elif states(temperature_sensor) | float(0) > states('input_number.temperature_threshold_warm') | float %}
+    C
+  {% elif states(temperature_sensor) | float(0) > states('input_number.temperature_threshold_cold') | float %}
+    B
+  {% else %}
+    A
+  {% endif %}
+{% elif is_state('input_select.floorplan_data_overlay','Humidity') %}
+  {% if states(humidity_sensor) in ['unavailable','unknown'] %}
+    D
+  {% elif states(humidity_sensor) | float(0) > states('input_number.humidity_threshold_high') | float %}
+    C
+  {% elif states(humidity_sensor) | float(0) > states('input_number.humidity_threshold_low') | float %}
+    B
+  {% else %}
+    A
+  {% endif %}
+{% endif %}
+
+{% endmacro %}

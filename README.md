@@ -32,10 +32,10 @@ Domain | Quantity
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 5
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`image`](https://www.home-assistant.io/components/image) | 1
-[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 20
+[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 21
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 25
 [`input_number`](https://www.home-assistant.io/components/input_number) | 34
-[`input_select`](https://www.home-assistant.io/components/input_select) | 8
+[`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 31
 [`light`](https://www.home-assistant.io/components/light) | 51
 [`media_player`](https://www.home-assistant.io/components/media_player) | 3
@@ -49,9 +49,9 @@ Domain | Quantity
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 27
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 19
+[`update`](https://www.home-assistant.io/components/update) | 18
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
-[`wake_word`](https://www.home-assistant.io/components/wake_word) | 2
+[`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
 Total | 1479
@@ -85,7 +85,6 @@ Total | 1479
 - Advanced SSH & Web Terminal
 - ESPHome
 - Home Assistant Google Drive Backup
-- openWakeWord
 - Piper
 - porcupine1
 - Samba share
