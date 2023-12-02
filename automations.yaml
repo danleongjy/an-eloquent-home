@@ -2923,7 +2923,7 @@
       - condition: template
         value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
           ''cover.living_room_blinds'']) | map(attribute = ''last_changed'') | list
-          | sort)[-1] > timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+          | sort)[-1] >= timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
           | int(0)) }}'
       sequence:
       - condition: state
@@ -2969,7 +2969,7 @@
       - condition: template
         value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
           ''cover.living_room_blinds'']) | map(attribute = ''last_changed'') | list
-          | sort)[-1] > timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+          | sort)[-1] >= timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
           | int(0)) }}'
       sequence:
       - repeat:
@@ -3952,14 +3952,6 @@
       temp_sensor: sensor.elis_room_temperature
       min_temp_offset: 0.2
       max_temp_offset: 1.2
-- id: '1676891025656'
-  alias: Study Room Fan Set State
-  description: Set the Study Room Fan speed and power
-  use_blueprint:
-    path: danleongjy/fan_set_state.yaml
-    input:
-      fan: fan.study_room_fan
-      motion_fan_automation: automation.study_room_motion_fan
 - id: '1676891156966'
   alias: Parents' Room Fan Set State
   description: Set the Parents' Room Fan speed and power
@@ -4865,8 +4857,8 @@
           skip_condition: true
         target:
           entity_id:
-          - automation.junior_bathroom_motion_lights
-          - automation.powder_room_motion_pendant_light
+          - automation.junior_bathroom_motion_timeout
+          - automation.powder_room_motion_timeout
       - delay:
           hours: 0
           minutes: 0
@@ -4915,9 +4907,8 @@
           skip_condition: true
         target:
           entity_id:
-          - automation.master_bathroom_motion_light
-          - automation.master_bathroom_motion_pendant_light
           - automation.study_room_motion_timeout
+          - automation.master_bathroom_motion_timeout
       button_down_double_press: true
       button_up_long_loop: true
       button_down_long_loop: true
@@ -4960,8 +4951,8 @@
       temp_sensor: sensor.dining_room_temperature
       low_speed: input_number.sitting_rooms_fan_speed_when_cool
       high_speed: input_number.sitting_rooms_fan_speed_when_warm
-      low_temp: 28.5
-      high_temp: 29
+      low_temp: 28
+      high_temp: 28.5
 - id: '1684314664733'
   alias: Living Room Fan Auto Control
   description: Set the Living Room Fan speed and direction based on temperature
@@ -4981,7 +4972,7 @@
       fan: fan.study_room_fan
       temp_sensor: sensor.study_room_temperature
       low_speed: input_number.sitting_rooms_fan_speed_when_cool
-      high_speed: input_number.sitting_rooms_lucci_fan_speed_when_warm
+      high_speed: input_number.sitting_rooms_fan_speed_when_warm
 - id: '1684483829124'
   alias: Dining Room AC Auto Control
   description: Depending on the room temperature, automatically turn on or off the
