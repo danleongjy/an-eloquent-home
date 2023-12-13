@@ -1,0 +1,43 @@
+substitutions:
+  core_room: elis_room
+  hostname_room: elis-room
+  capitalised_room_name: Eli's Room
+  display_rotation: 270°
+
+esphome:
+  name: ${hostname_room}-core
+  friendly_name: ${capitalised_room_name} Core
+
+esp32:
+  board: m5stack-fire
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "3NQFmL4Y0QyJt7MFvqt9s3Wjq5nLpHTSIcG6mdgFYOM="
+
+ota:
+  password: "1aaafe04f74a3080a6d01d10b4280023"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  manual_ip:
+    static_ip: 192.168.18.14
+    gateway: 192.168.18.1
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${hostname_room}-core"
+    password: "8YWHfGBFFify"
+
+captive_portal:
+    
+<<: !include bedroom_core/core.yaml

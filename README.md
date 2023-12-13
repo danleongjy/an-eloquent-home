@@ -14,7 +14,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [11.1](https://github.com/home-assistant/operating-system/releases/tag/11.1) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [11.1](https://github.com/home-assistant/operating-system/releases/tag/11.2) running in a [Proxmox VM](https://www.proxmox.com/)
 * [Home Assistant Core 2023.11.3](https://github.com/home-assistant/core/releases/tag/2023.11.3)
 * 4 cores, 4GB RAM, 32GB storage
 
@@ -22,14 +22,14 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 142
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 127
-[`button`](https://www.home-assistant.io/components/button) | 143
+[`automation`](https://www.home-assistant.io/components/automation) | 144
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 133
+[`button`](https://www.home-assistant.io/components/button) | 146
 [`calendar`](https://www.home-assistant.io/components/calendar) | 4
 [`camera`](https://www.home-assistant.io/components/camera) | 1
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`cover`](https://www.home-assistant.io/components/cover) | 14
-[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 5
+[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 6
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`image`](https://www.home-assistant.io/components/image) | 1
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 21
@@ -37,24 +37,24 @@ Domain | Quantity
 [`input_number`](https://www.home-assistant.io/components/input_number) | 34
 [`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 31
-[`light`](https://www.home-assistant.io/components/light) | 52
+[`light`](https://www.home-assistant.io/components/light) | 56
 [`media_player`](https://www.home-assistant.io/components/media_player) | 3
 [`number`](https://www.home-assistant.io/components/number) | 188
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 44
-[`select`](https://www.home-assistant.io/components/select) | 51
-[`sensor`](https://www.home-assistant.io/components/sensor) | 523
+[`select`](https://www.home-assistant.io/components/select) | 57
+[`sensor`](https://www.home-assistant.io/components/sensor) | 526
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 27
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 18
+[`update`](https://www.home-assistant.io/components/update) | 20
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1490
+Total | 1517
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -84,11 +84,11 @@ Total | 1490
 ### Add-ons
 - Advanced SSH & Web Terminal
 - ESPHome
+- File editor
 - Home Assistant Google Drive Backup
 - Piper
 - porcupine1
 - Samba share
-- Studio Code Server
 - Whisper
 
 ### Custom integrations
@@ -105,7 +105,6 @@ Total | 1490
 - [Apexcharts Card](https://github.com/RomRider/apexcharts-card)
 - [Button Card](https://github.com/custom-cards/button-card)
 - [Decluttering Card](https://github.com/custom-cards/decluttering-card)
-- [History Explorer Card](https://github.com/alexarch21/history-explorer-card)
 - [Simple Weather Card](https://github.com/kalkih/simple-weather-card)
 - [Slider Button Card](https://github.com/custom-cards/slider-button-card)
 - [State Switch](https://github.com/thomasloven/lovelace-state-switch)

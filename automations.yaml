@@ -1290,6 +1290,7 @@
           entity_id:
           - light.living_room_lights
           - light.living_room_pendant_light_entity
+          - light.christmas_tree
       action_button_down_long:
       - service: light.turn_on
         data:
@@ -3554,6 +3555,15 @@
         - delay: 2
   - if:
     - condition: state
+      entity_id: light.christmas_tree
+      state: 'on'
+    then:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.christmas_tree
+  - if:
+    - condition: state
       entity_id: light.living_room_pendant_light_entity
       state: 'on'
     then:
@@ -3755,8 +3765,8 @@
           skip_condition: true
         target:
           entity_id:
-          - automation.junior_bathroom_motion_lights
-          - automation.powder_room_motion_pendant_light
+          - automation.junior_bathroom_motion_timeout
+          - automation.powder_room_motion_timeout
       - delay:
           hours: 0
           minutes: 0
@@ -3793,9 +3803,8 @@
         target:
           entity_id:
           - automation.kitchen_motion_timeout
-          - automation.master_bathroom_motion_light
-          - automation.master_bathroom_motion_pendant_light
           - automation.parents_room_motion_timeout
+          - automation.master_bathroom_motion_timeout
       - delay:
           hours: 0
           minutes: 0
@@ -4925,6 +4934,7 @@
       fan: fan.parents_room_fan
       temp_sensor: sensor.parents_room_temperature
       high_temp: 29
+      low_temp: 28.5
 - id: '1684246531388'
   alias: Elena's Room Fan Auto Control
   description: Set Elena's Room Fan speed and direction based on temperature
@@ -5666,11 +5676,19 @@
       seconds: 0
       milliseconds: 0
     continue_on_timeout: false
-  - service: input_boolean.turn_{{ 'on' if wait.trigger.event.data.action == 'dismiss'
-      else 'off' }}
-    data: {}
-    target:
-      entity_id: input_boolean.daniels_next_alarm_dismissed
+  - if:
+    - condition: template
+      value_template: '{{ wait.trigger.event.data.action == ''dismiss'' }}'
+    then:
+    - service: input_boolean.turn_on
+      data: {}
+      target:
+        entity_id: input_boolean.daniels_next_alarm_dismissed
+    else:
+    - service: input_boolean.turn_off
+      data: {}
+      target:
+        entity_id: input_boolean.daniels_next_alarm_dismissed
   mode: single
 - id: '1690765502879'
   alias: Grace's Next Alarm
@@ -6301,3 +6319,51 @@
       number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.master_bathroom_lights
+- id: '1702255296989'
+  alias: Eli's Room Core
+  description: Interface between Eli's Room devices and Home Assistant via ESPHome
+    and M5Stack Fire
+  use_blueprint:
+    path: danleongjy/bedroom_core.yaml
+    input:
+      core_left_button: binary_sensor.elis_room_core_left_button
+      core_middle_button: binary_sensor.elis_room_core_middle_button
+      core_right_button: binary_sensor.elis_room_core_right_button
+      core_display_backlight: light.elis_room_core_display_backlight
+      core_current_command: select.elis_room_core_current_command
+      motion_sensor: binary_sensor.elis_room_motion
+      lights: light.elis_room_lights
+      auto_control_indicator_light: light.elis_room_bulb_3_entity
+      fan: fan.elis_room_fan
+      ac: climate.elis_room_ac
+      recommended_light_level_script: script.recommended_light_level_for_elis_room
+      recommended_scene_script: script.set_recommended_scene_in_elis_room
+      motion_timeout_automation: automation.elis_room_motion_timeout
+      fan_auto_control_automation: automation.elis_room_fan_auto_control
+      ac_auto_control_automation: automation.elis_room_ac_auto_control
+      sleep_hours_start: input_datetime.sleep_hours_start
+      sleep_hours_end: input_datetime.sleep_hours_end
+- id: '1702256763571'
+  alias: Parents' Room Core
+  description: Interface between Parents' Room devices and Home Assistant via ESPHome
+    and M5Stack Fire
+  use_blueprint:
+    path: danleongjy/bedroom_core.yaml
+    input:
+      core_left_button: binary_sensor.parents_room_core_left_button
+      core_middle_button: binary_sensor.parents_room_core_middle_button
+      core_right_button: binary_sensor.parents_room_core_right_button
+      core_display_backlight: light.parents_room_core_display_backlight
+      core_current_command: select.parents_room_core_current_command
+      motion_sensor: binary_sensor.parents_room_motion
+      lights: light.parents_room_lights
+      auto_control_indicator_light: light.parents_room_bulb_3_entity
+      fan: fan.parents_room_fan
+      ac: climate.parents_room_ac
+      recommended_light_level_script: script.recommended_light_level_for_parents_room
+      recommended_scene_script: script.set_recommended_scene_in_parents_room
+      motion_timeout_automation: automation.parents_room_motion_timeout
+      fan_auto_control_automation: automation.parents_room_fan_auto_control
+      ac_auto_control_automation: automation.parents_room_ac_auto_control
+      sleep_hours_start: input_datetime.sleep_hours_start
+      sleep_hours_end: input_datetime.sleep_hours_end

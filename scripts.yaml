@@ -73,7 +73,6 @@ fan_set_state:
         select:
           options:
           - Parents' Room Fan
-          - Study Room Fan
           - Elena's Room Fan
           - Eli's Room Fan
       required: true
@@ -100,9 +99,8 @@ fan_set_state:
   - service: remote.send_command
     target:
       entity_id: "{% set universal_remote = \n  { \"Elena's Room Fan\": \"remote.elis_room_universal_remote\",\n
-        \   \"Eli's Room Fan\": \"remote.elis_room_universal_remote\",\n    \"Study
-        Room Fan\": \"remote.study_room_universal_remote\",\n    \"Parents' Room Fan\":
-        \"remote.study_room_universal_remote\",\n  } %}\n{{ universal_remote[target_fan]
+        \   \"Eli's Room Fan\": \"remote.elis_room_universal_remote\",\n    \"Parents'
+        Room Fan\": \"remote.parents_room_universal_remote\",\n  } %}\n{{ universal_remote[target_fan]
         }}\n"
     data:
       device: '{{ target_fan }}
@@ -125,7 +123,6 @@ fan_set_direction:
         select:
           options:
           - Parents' Room Fan
-          - Study Room Fan
           - Elena's Room Fan
           - Eli's Room Fan
       required: true
@@ -150,13 +147,9 @@ fan_set_direction:
         entity_id: fan.elis_room_fan
         remote: remote.elis_room_universal_remote
         direction: input_select.elis_room_fan_direction
-      Study Room Fan:
-        entity_id: fan.study_room_fan
-        remote: remote.study_room_universal_remote
-        direction: input_select.study_room_fan_direction
       Parents' Room Fan:
         entity_id: fan.parents_room_fan
-        remote: remote.study_room_universal_remote
+        remote: remote.parents_room_universal_remote
         direction: input_select.parents_room_fan_direction
   sequence:
   - if:
@@ -639,7 +632,16 @@ elis_room_alarm_lights:
       brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
         }}\n{% else %}\n  100\n{% endif %}\n"
     target:
-      entity_id: light.elis_room_bulb_2_entity
+      entity_id: light.elis_room_lights
+  - service: light.turn_on
+    data:
+      rgb_color:
+      - 229
+      - 208
+      - 164
+      effect: Alarm
+    target:
+      entity_id: light.elis_room_core_led_strips
   - delay:
       hours: 0
       minutes: 0
@@ -657,20 +659,32 @@ elis_room_alarm_lights:
             }}\n{% else %}\n  100\n{% endif %}\n"
         target:
           entity_id:
-          - light.elis_room_bulb_1_entity
-          - light.elis_room_bulb_2_entity
-          - light.elis_room_bulb_3_entity
+          - light.elis_room_lights
       - delay:
           hours: 0
           minutes: 0
-          seconds: 1
+          seconds: 2
           milliseconds: 0
+      - if:
+        - condition: template
+          value_template: "{{ now() - state_attr('script.elis_room_alarm_lights','last_triggered')
+            > timedelta(minutes = 5) and\n   now() - state_attr('script.elis_room_alarm_lights','last_triggered')
+            <= timedelta(minutes = 5, seconds = 3) }}"
+        then:
+        - service: button.press
+          data: {}
+          target:
+            entity_id: button.elis_room_core_play_ringtone
   - service: light.turn_on
     data:
       brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
         }}\n{% else %}\n  100\n{% endif %}\n"
     target:
       entity_id: light.elis_room_lights
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.elis_room_core_led_strips
   mode: single
   icon: mdi:alarm
 parents_room_alarm_lights:
@@ -691,8 +705,16 @@ parents_room_alarm_lights:
         }}\n{% else %}\n  100\n{% endif %}\n"
     target:
       entity_id:
-      - light.parents_room_bulb_1_entity
-      - light.parents_room_bulb_3_entity
+      - light.parents_room_lights
+  - service: light.turn_on
+    data:
+      rgb_color:
+      - 229
+      - 208
+      - 164
+      effect: Alarm
+    target:
+      entity_id: light.parents_room_core_led_strips
   - delay:
       hours: 0
       minutes: 0
@@ -710,21 +732,32 @@ parents_room_alarm_lights:
             }}\n{% else %}\n  100\n{% endif %}\n"
         target:
           entity_id:
-          - light.parents_room_bulb_1_entity
-          - light.parents_room_bulb_2_entity
-          - light.parents_room_bulb_3_entity
-          - light.parents_room_bulb_4_entity
+          - light.parents_room_lights
       - delay:
           hours: 0
           minutes: 0
           seconds: 2
           milliseconds: 0
+      - if:
+        - condition: template
+          value_template: "{{ now() - state_attr('script.parents_room_alarm_lights','last_triggered')
+            > timedelta(minutes = 5) and\n   now() - state_attr('script.parents_room_alarm_lights','last_triggered')
+            <= timedelta(minutes = 5, seconds = 3) }}"
+        then:
+        - service: button.press
+          data: {}
+          target:
+            entity_id: button.parents_room_core_play_ringtone
   - service: light.turn_on
     data:
       brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
         }}\n{% else %}\n  100\n{% endif %}\n"
     target:
       entity_id: light.parents_room_lights
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.parents_room_core_led_strips
   mode: single
   icon: mdi:alarm
 set_recommended_scene_in_kitchen:
@@ -784,6 +817,7 @@ recommended_light_level_for_living_room_lights:
     input:
       lights_list:
       - light.living_room_lights
+      - light.christmas_tree
   mode: single
   icon: mdi:lightbulb-on-70
 recommended_light_level_for_living_room_pendant_light:
@@ -1184,4 +1218,4 @@ recommended_light_level_for_christmas_tree:
     target:
       entity_id: light.christmas_tree
   mode: single
-  icon: mdi:magic-staff
+  icon: mdi:lightbulb-on-70
