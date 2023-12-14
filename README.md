@@ -49,12 +49,12 @@ Domain | Quantity
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 27
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 20
+[`update`](https://www.home-assistant.io/components/update) | 22
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
-[`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
+[`wake_word`](https://www.home-assistant.io/components/wake_word) | 2
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1517
+Total | 1520
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -83,9 +83,11 @@ Total | 1517
 
 ### Add-ons
 - Advanced SSH & Web Terminal
+- Assist Microphone
 - ESPHome
 - File editor
 - Home Assistant Google Drive Backup
+- openWakeWord
 - Piper
 - porcupine1
 - Samba share

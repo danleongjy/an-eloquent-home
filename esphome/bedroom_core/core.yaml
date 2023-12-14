@@ -93,6 +93,15 @@ sensor:
     id: ac_temp
     entity_id: climate.${core_room}_ac
     attribute: temperature
+  - platform: homeassistant
+    id: room_temp
+    entity_id: sensor.${core_room}_temperature
+  - platform: homeassistant
+    id: room_hum
+    entity_id: sensor.${core_room}_humidity
+  - platform: homeassistant
+    id: room_lux
+    entity_id: sensor.${core_room}_lux
 
 binary_sensor:
   - platform: homeassistant
@@ -107,7 +116,6 @@ binary_sensor:
   - platform: homeassistant
     id: ac_auto_control
     entity_id: automation.${core_room}_ac_auto_control
-
   - platform: gpio
     pin: 39
     name: 'Left Button'
@@ -408,12 +416,27 @@ font:
   - file: 
       type: gfonts
       family: Roboto
+      weight: light
+    id: status_bar
+    size: 20
+  - file: 
+      type: gfonts
+      family: Roboto
       weight: bold
     id: auto_control_indicator
     size: 50
 
 image:
-  - file: mdi:alarm
+  - file: mdi:thermometer
+    id: status_temp
+    resize: 20x20
+  - file: mdi:water-percent
+    id: status_hum
+    resize: 20x20
+  - file: mdi:brightness-5
+    id: status_lux
+    resize: 20x20
+  - file: mdi:clock-outline
     id: tab_current_time
     resize: 30x30
   - file: mdi:lightbulb-group
@@ -424,6 +447,9 @@ image:
     resize: 30x30
   - file: mdi:snowflake
     id: tab_ac
+    resize: 30x30
+  - file: mdi:alarm
+    id: main_alarm
     resize: 30x30
   - file: mdi:lightbulb-group
     id: main_lights
@@ -525,6 +551,12 @@ display:
           
           // bottom status bar
           it.line(0, height * 0.9, width, height * 0.9, border);
+          it.image(0,height * 0.92, id(status_temp));
+          it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
+          it.image(80,height * 0.92,id(status_hum));
+          it.printf(100, height * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
+          it.image(160,height * 0.92,id(status_lux));
+          it.printf(183, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
 
           // display time
           it.strftime(width * 0.25, height * 0.325, id(main_time), TextAlign::CENTER, "%H", id(homeassistant_time).now());
@@ -558,6 +590,12 @@ display:
 
           // bottom status bar
           it.line(0, height * 0.9, width, height * 0.9, border);
+          it.image(0,height * 0.92, id(status_temp));
+          it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
+          it.image(80,height * 0.92,id(status_hum));
+          it.printf(100, height * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
+          it.image(160,height * 0.92,id(status_lux));
+          it.printf(183, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
 
           // main display
           if (id(lights_power).state) {
@@ -589,6 +627,12 @@ display:
 
           // bottom status bar
           it.line(0, height * 0.9, width, height * 0.9, border);
+          it.image(0,height * 0.92, id(status_temp));
+          it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
+          it.image(80,height * 0.92,id(status_hum));
+          it.printf(100, height * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
+          it.image(160,height * 0.92,id(status_lux));
+          it.printf(183, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
 
           // main display
           if (id(fan_power).state) {
@@ -630,6 +674,12 @@ display:
 
           // bottom status bar
           it.line(0, height * 0.9, width, height * 0.9, border);
+          it.image(0,height * 0.92, id(status_temp));
+          it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
+          it.image(80,height * 0.92,id(status_hum));
+          it.printf(100, height * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
+          it.image(160,height * 0.92,id(status_lux));
+          it.printf(183, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
 
           // main display
           if (id(ac_mode).state == "cool") {
