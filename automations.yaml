@@ -5593,7 +5593,7 @@
   action:
   - if:
     - condition: state
-      entity_id: input_boolean.daniels_next_alarm_dismissed
+      entity_id: input_boolean.parents_room_next_alarm_dismissed
       state: 'off'
     then:
     - service: notify.mobile_app_pixel_4a
@@ -5619,7 +5619,7 @@
       milliseconds: 0
   - if:
     - condition: state
-      entity_id: input_boolean.daniels_next_alarm_dismissed
+      entity_id: input_boolean.parents_room_next_alarm_dismissed
       state: 'off'
     then:
     - condition: state
@@ -5632,7 +5632,7 @@
   - service: input_boolean.turn_off
     data: {}
     target:
-      entity_id: input_boolean.daniels_next_alarm_dismissed
+      entity_id: input_boolean.parents_room_next_alarm_dismissed
   mode: single
 - id: '1690718460853'
   alias: Notify When Daniel's Next Alarm Upcoming
@@ -5683,12 +5683,12 @@
     - service: input_boolean.turn_on
       data: {}
       target:
-        entity_id: input_boolean.daniels_next_alarm_dismissed
+        entity_id: input_boolean.parents_room_next_alarm_dismissed
     else:
     - service: input_boolean.turn_off
       data: {}
       target:
-        entity_id: input_boolean.daniels_next_alarm_dismissed
+        entity_id: input_boolean.parents_room_next_alarm_dismissed
   mode: single
 - id: '1690765502879'
   alias: Grace's Next Alarm
@@ -5941,11 +5941,20 @@
     at: input_datetime.graces_next_alarm
   condition: []
   action:
-  - condition: state
-    entity_id: sensor.pixel_4a_battery_state
-    state: discharging
-  - service: script.parents_room_alarm_lights
+  - if:
+    - condition: state
+      entity_id: input_boolean.parents_room_next_alarm_dismissed
+      state: 'off'
+    then:
+    - condition: state
+      entity_id: sensor.pixel_4a_battery_state
+      state: discharging
+    - service: script.parents_room_alarm_lights
+      data: {}
+  - service: input_boolean.turn_off
     data: {}
+    target:
+      entity_id: input_boolean.parents_room_next_alarm_dismissed
   mode: single
 - id: '1690850158819'
   alias: Eli's Alarm
@@ -5955,8 +5964,17 @@
     at: input_datetime.elis_next_alarm
   condition: []
   action:
-  - service: script.elis_room_alarm_lights
+  - if:
+    - condition: state
+      entity_id: input_boolean.elis_room_next_alarm_dismissed
+      state: 'off'
+    then:
+    - service: script.elis_room_alarm_lights
+      data: {}
+  - service: input_boolean.turn_off
     data: {}
+    target:
+      entity_id: input_boolean.elis_room_next_alarm_dismissed
   mode: single
 - id: '1693121253660'
   alias: Live Bus Arrivals
@@ -6367,3 +6385,41 @@
       ac_auto_control_automation: automation.parents_room_ac_auto_control
       sleep_hours_start: input_datetime.sleep_hours_start
       sleep_hours_end: input_datetime.sleep_hours_end
+- id: '1702546323876'
+  alias: Voice Assistant Listening for Wake Word
+  description: Turn on wake word detection on voice assistants during waking hours
+    only if Away Mode is off
+  trigger:
+  - platform: time
+    at: input_datetime.sleep_hours_start
+  - platform: time
+    at: input_datetime.sleep_hours_end
+  - platform: state
+    entity_id:
+    - input_boolean.away_mode
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: input_boolean.away_mode
+      state: 'off'
+    - condition: time
+      after: input_datetime.sleep_hours_end
+      before: input_datetime.sleep_hours_start
+    then:
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.kitchen_voice_assistant_use_wake_word
+    - service: hassio.addon_start
+      data:
+        addon: 47701997_assist_microphone
+    else:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.kitchen_voice_assistant_use_wake_word
+    - service: hassio.addon_stop
+      data:
+        addon: 47701997_assist_microphone
+  mode: single

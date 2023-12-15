@@ -7,6 +7,9 @@
       Grace: "{{ states('input_datetime.graces_next_alarm') }}"
       Eli: "{{ states('input_datetime.elis_next_alarm') }}"
       Elena: "{{ states('input_datetime.elenas_next_alarm') }}"
+      parents_room_next_alarm_time: "{{ ([states('input_datetime.daniels_next_alarm') | as_datetime, states('input_datetime.graces_next_alarm') | as_datetime] | min).strftime('%H:%M') }}"
+      elis_room_next_alarm_time: "{{ (states('input_datetime.elis_next_alarm') | as_datetime).strftime('%H:%M') }}"
+      elenas_room_next_alarm_time: "{{ (states('input_datetime.elenas_next_alarm') | as_datetime).strftime('%H:%M') }}"
 
   - name: Yard Window
     unique_id: binary_sensor.yard_window
@@ -380,12 +383,29 @@
           {% set alarm_timings.output = alarm_timings.output + 'D' %}
         {% endif %}
       {% endfor %}
+      {% for person in ['Daniel','Grace','Eli','Elena'] %}
+        {% if alarms[person] - now() <= timedelta(minutes = 15) %}
+          {% set alarm_timings.output = alarm_timings.output + 'T' %}
+        {% else %}
+          {% set alarm_timings.output = alarm_timings.output + 'F' %}
+        {% endif %}
+      {% endfor %}
       {{ alarm_timings.output }}
     attributes:
       Daniel: "{{ states('input_datetime.daniels_next_alarm') }}"
+      daniel_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[0] != 'A' }}"
+      daniel_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[4] == 'T' }}"
       Grace: "{{ states('input_datetime.graces_next_alarm') }}"
+      grace_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[1] != 'A' }}"
+      grace_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[5] == 'T' }}"
+      parents_room_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[0] != 'A' or states('sensor.next_alarm_timings')[1] != 'A' }}"
+      parents_room_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[4] == 'T' or states('sensor.next_alarm_timings')[5] == 'T' }}"
       Eli: "{{ states('input_datetime.elis_next_alarm') }}"
+      eli_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[2] != 'A' }}"
+      eli_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[6] == 'T' }}"
       Elena: "{{ states('input_datetime.elenas_next_alarm') }}"
+      elena_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[3] != 'A' }}"
+      elena_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[7] == 'T' }}"
 
   - name: Washer Status
     unique_id: sensor.washer_status
@@ -614,7 +634,7 @@
     unique_id: sensor.study_room_blinds_position
     state: "{{ state_attr('cover.study_room_blinds','current_position') | int(100) }}"
     availability: "{{ states('cover.study_room_blinds') not in ['unavailable','unknown'] }}"
-
+    
   - name: Floorplan Yard Status
     unique_id: sensor.floorplan_yard_status
     state: >

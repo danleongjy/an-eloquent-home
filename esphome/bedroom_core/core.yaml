@@ -79,6 +79,10 @@ text_sensor:
   - platform: homeassistant
     id: ac_mode
     entity_id: climate.${core_room}_ac
+  - platform: homeassistant
+    id: next_alarm_timing
+    entity_id: binary_sensor.next_alarm_imminent
+    attribute: ${core_room}_next_alarm_time
 
 sensor:
   - platform: homeassistant
@@ -116,6 +120,17 @@ binary_sensor:
   - platform: homeassistant
     id: ac_auto_control
     entity_id: automation.${core_room}_ac_auto_control
+  - platform: homeassistant
+    id: room_next_alarm_imminent
+    entity_id: sensor.next_alarm_timings
+    attribute: ${next_alarm_imminent_attribute}
+  - platform: homeassistant
+    id: room_next_alarm_dismissable
+    entity_id: sensor.next_alarm_timings
+    attribute: ${next_alarm_dismissable_attribute}
+  - platform: homeassistant
+    id: room_next_alarm_dismissed
+    entity_id: input_boolean.${core_room}_next_alarm_dismissed
   - platform: gpio
     pin: 39
     name: 'Left Button'
@@ -135,6 +150,18 @@ binary_sensor:
               condition:
                 light.is_on: backlight
               then:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "current_time";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(room_next_alarm_dismissable).state;'
+                          then:
+                            - homeassistant.service:
+                                service: input_boolean.turn_off
+                                data:
+                                  entity_id: input_boolean.${core_room}_next_alarm_dismissed
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
@@ -267,7 +294,16 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "current_time";'
                     then:
-                      - light.turn_off: backlight
+                      - if:
+                          condition:
+                            lambda: 'return id(room_next_alarm_dismissable).state;'
+                          then:
+                            - homeassistant.service:
+                                service: input_boolean.turn_on
+                                data:
+                                  entity_id: input_boolean.${core_room}_next_alarm_dismissed
+                          else:
+                            - light.turn_off: backlight
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
@@ -400,6 +436,8 @@ color:
     hex: 41A7F2
   - id: auto_control
     hex: F2900F
+  - id: alarm_dismissable
+    hex: '990000'
 
 font:
   - file: 
@@ -450,6 +488,9 @@ image:
     resize: 30x30
   - file: mdi:alarm
     id: main_alarm
+    resize: 30x30
+  - file: mdi:alarm-off
+    id: main_alarm_off
     resize: 30x30
   - file: mdi:lightbulb-group
     id: main_lights
@@ -558,9 +599,27 @@ display:
           it.image(160,height * 0.92,id(status_lux));
           it.printf(183, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
 
+          // display alarm
+          if (id(room_next_alarm_imminent).state) {
+            if (id(room_next_alarm_dismissable).state) {
+              if (id(room_next_alarm_dismissed).state) {
+                it.image(width * 0.325, height * 0.125, id(main_alarm_off), ImageAlign::CENTER);            
+                it.printf(width * 0.575, height * 0.125, id(small_time), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
+              } else {
+                if (id(homeassistant_time).now().second % 2 == 0) {
+                  it.image(width * 0.325, height * 0.125, id(main_alarm), ImageAlign::CENTER, id(alarm_dismissable));
+                }
+                it.printf(width * 0.575, height * 0.125, id(small_time), id(alarm_dismissable), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
+              }
+            } else {
+              it.image(width * 0.325, height * 0.125, id(main_alarm), ImageAlign::CENTER);            
+              it.printf(width * 0.575, height * 0.125, id(small_time), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
+            }
+          }
+
           // display time
-          it.strftime(width * 0.25, height * 0.325, id(main_time), TextAlign::CENTER, "%H", id(homeassistant_time).now());
-          it.strftime(width * 0.75, height * 0.325, id(main_time), TextAlign::CENTER, "%M", id(homeassistant_time).now());
+          it.strftime(width * 0.25, height * 0.35, id(main_time), TextAlign::CENTER, "%H", id(homeassistant_time).now());
+          it.strftime(width * 0.75, height * 0.35, id(main_time), TextAlign::CENTER, "%M", id(homeassistant_time).now());
           if (id(homeassistant_time).now().second % 2 == 0) {
             it.print(width * 0.5, height * 0.325, id(main_time), TextAlign::CENTER, ":");
           }
