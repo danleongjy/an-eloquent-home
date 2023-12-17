@@ -1,7 +1,7 @@
 - binary_sensor:
   - name: Next Alarm Imminent
     unique_id: binary_sensor.next_alarm_imminent
-    state: "{{ not is_state('sensor.next_alarm_timings', 'AAAA') }}"
+    state: "{{ not states('sensor.next_alarm_timings')[:4] == 'AAAA' }}"
     attributes:
       Daniel: "{{ states('input_datetime.daniels_next_alarm') }}"
       Grace: "{{ states('input_datetime.graces_next_alarm') }}"
@@ -784,13 +784,13 @@
       {{ data_overlay('binary_sensor.parents_room_motion', 
                       ['light.parents_room_lights','fan.parents_room_fan','climate.parents_room_ac'], 
                       'sensor.parents_room_lux',
-                      'sensor.parents_room_temperature', 
-                      'sensor.parents_room_humidity') }}
+                      'sensor.parents_room_core_temperature', 
+                      'sensor.parents_room_core_humidity') }}
     attributes:
       presence: "{{ states('binary_sensor.parents_room_motion') }}"
       lux: "{{ states('sensor.parents_room_lux') }}"
-      temperature: "{{ states('sensor.parents_room_temperature') }}"
-      humidity: "{{ states('sensor.parents_room_humidity') }}"
+      temperature: "{{ states('sensor.parents_room_core_temperature') }}"
+      humidity: "{{ states('sensor.parents_room_core_humidity') }}"
       parents_room_lights: "{{ states('light.parents_room_lights') }}"
       parents_room_fan: "{{ states('fan.parents_room_fan') }}"
       parents_room_ac: "{{ states('climate.parents_room_ac') }}"
@@ -810,7 +810,7 @@
     unique_id: sensor.floorplan_kitchen_status
     state: >
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
-      {{ data_overlay('binary_sensor.kitchen_presence', ['light.kitchen_lights'], 'sensor.kitchen_radar_lux_calibrated', 'none', 'none') }}
+      {{ data_overlay('binary_sensor.kitchen_presence', ['light.kitchen_lights'], 'sensor.kitchen_radar_lux_calibrated', 'sensor.kitchen_temperature', 'sensor.kitchen_humidity') }}
     attributes:
       presence: "{{ states('binary_sensor.kitchen_presence') }}"
       lux: "{{ states('sensor.kitchen_radar_lux_calibrated') }}"
@@ -904,6 +904,34 @@
       state: >
         {% from 'text_formatting.jinja' import relative_age %}
         {{ relative_age(states('sensor.pfsense_system_boottime') | as_datetime) }}
+
+- trigger:
+  - platform: state
+    entity_id: binary_sensor.junior_bathroom_motion
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  - platform: state
+    entity_id: binary_sensor.junior_shower_motion
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+    for:
+      minutes: 1
+  binary_sensor:
+    - name: Junior Bathroom Motion Sensors
+      unique_id: binary_sensor.junior_bathroom_motion_sensors
+      state: "{{ is_state('binary_sensor.junior_bathroom_motion','on') or is_state('binary_sensor.junior_shower_motion','on') }}"
+      device_class: motion
+      attributes:
+        junior_bathroom_motion: "{{ states('binary_sensor.junior_bathroom_motion') }}"
+        junior_shower_motion: "{{ states('binary_sensor.junior_shower_motion') }}"
 
 - trigger:
   - platform: state
@@ -1060,7 +1088,7 @@
 
 - trigger:
     - platform: time_pattern
-      minutes: /1
+      hours: /1
   action:
     - service: weather.get_forecast
       data:

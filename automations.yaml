@@ -3977,7 +3977,7 @@
     path: danleongjy/ac_auto_control.yaml
     input:
       ac: climate.parents_room_ac
-      temp_sensor: sensor.parents_room_temperature
+      temp_sensor: sensor.parents_room_core_temperature
       min_temp_offset: 0.2
       max_temp_offset: 1.2
 - id: '1676891528260'
@@ -4932,7 +4932,7 @@
     path: danleongjy/fan_auto_control.yaml
     input:
       fan: fan.parents_room_fan
-      temp_sensor: sensor.parents_room_temperature
+      temp_sensor: sensor.parents_room_core_temperature
       high_temp: 29
       low_temp: 28.5
 - id: '1684246531388'
@@ -5643,6 +5643,11 @@
     value_template: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo)
       - now() < timedelta(minutes = 15) }}'
     alias: 15min before Daniel's Next Alarm
+  - platform: state
+    entity_id:
+    - sensor.next_alarm_timings
+    attribute: parents_room_next_alarm_imminent
+    to: true
   condition: []
   action:
   - service: notify.mobile_app_pixel_4a
@@ -5655,6 +5660,11 @@
           title: Dismiss Alarm
         - action: continue
           title: Continue Alarm
+  - service: light.turn_on
+    data:
+      brightness_pct: 30
+    target:
+      entity_id: light.parents_room_core_display_backlight
   - wait_for_trigger:
     - platform: event
       event_type: mobile_app_notification_action
@@ -6385,15 +6395,14 @@
       ac_auto_control_automation: automation.parents_room_ac_auto_control
       sleep_hours_start: input_datetime.sleep_hours_start
       sleep_hours_end: input_datetime.sleep_hours_end
-- id: '1702546323876'
-  alias: Voice Assistant Listening for Wake Word
-  description: Turn on wake word detection on voice assistants during waking hours
-    only if Away Mode is off
+- id: '1702652446399'
+  alias: Kitchen Voice Assistant Listening for Wake Word
+  description: Turn on wake word listening on Kitchen Voice Assistant when presence
+    detected in kitchen
   trigger:
-  - platform: time
-    at: input_datetime.sleep_hours_start
-  - platform: time
-    at: input_datetime.sleep_hours_end
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_presence
   - platform: state
     entity_id:
     - input_boolean.away_mode
@@ -6401,25 +6410,75 @@
   action:
   - if:
     - condition: state
+      entity_id: binary_sensor.kitchen_presence
+      state: 'on'
+    - condition: state
       entity_id: input_boolean.away_mode
       state: 'off'
-    - condition: time
-      after: input_datetime.sleep_hours_end
-      before: input_datetime.sleep_hours_start
     then:
     - service: switch.turn_on
       data: {}
       target:
         entity_id: switch.kitchen_voice_assistant_use_wake_word
-    - service: hassio.addon_start
-      data:
-        addon: 47701997_assist_microphone
     else:
     - service: switch.turn_off
       data: {}
       target:
         entity_id: switch.kitchen_voice_assistant_use_wake_word
+  mode: single
+  max_exceeded: silent
+- id: '1702652712056'
+  alias: Living Room Voice Assistant Listening for Wake Word
+  description: Listen for wake word  on the Living Room Voice Assistant if presence
+    is detected in the kitchen, living room, dining room or study room
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_presence
+    - binary_sensor.study_room_presence
+    - binary_sensor.dining_room_presence
+    - binary_sensor.living_room_presence
+    to:
+    from:
+  - platform: state
+    entity_id:
+    - input_boolean.away_mode
+  condition: []
+  action:
+  - if:
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id:
+        - binary_sensor.kitchen_presence
+        - binary_sensor.dining_room_presence
+        - binary_sensor.living_room_presence
+        - binary_sensor.study_room_presence
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.away_mode
+        state: 'on'
+    then:
     - service: hassio.addon_stop
       data:
         addon: 47701997_assist_microphone
+    else:
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: binary_sensor.kitchen_presence
+        state: 'on'
+      - condition: state
+        entity_id: binary_sensor.study_room_presence
+        state: 'on'
+      - condition: state
+        entity_id: binary_sensor.dining_room_presence
+        state: 'on'
+      - condition: state
+        entity_id: binary_sensor.living_room_presence
+        state: 'on'
+    - service: hassio.addon_start
+      data:
+        addon: 47701997_assist_microphone
   mode: single
+  max_exceeded: silent

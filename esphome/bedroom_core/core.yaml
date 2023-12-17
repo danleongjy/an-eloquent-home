@@ -134,6 +134,7 @@ binary_sensor:
   - platform: gpio
     pin: 39
     name: 'Left Button'
+    id: left_button
     filters:
       - invert:
     on_multi_click:
@@ -184,8 +185,7 @@ binary_sensor:
                           id: current_command
                           option: ac_on
       - timing:
-          - ON for 1s to 2s
-          - OFF for at least 0.5s
+          - ON for at least 1.5s
         then:
           - if:
               condition:
@@ -200,23 +200,38 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: lights_brighten
+                      - while:
+                          condition:
+                            binary_sensor.is_on: left_button
+                          then:
+                            - select.set:
+                                id: current_command
+                                option: lights_brighten
+                            - delay: 1.5s
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "fan";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: fan_speed_up
+                      - while:
+                          condition:
+                            binary_sensor.is_on: left_button
+                          then:
+                            - select.set:
+                                id: current_command
+                                option: fan_speed_up
+                            - delay: 1.5s
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "ac";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: ac_warmer
+                      - while:
+                          condition:
+                            binary_sensor.is_on: left_button
+                          then:
+                            - select.set:
+                                id: current_command
+                                option: ac_warmer
+                            - delay: 1.5s
       - timing:
           - ON for at most 1s
           - OFF for at most 1s
@@ -274,6 +289,7 @@ binary_sensor:
   - platform: gpio
     pin: 37
     name: 'Right Button'
+    id: right_button
     filters:
       - invert:
     on_multi_click:
@@ -326,8 +342,7 @@ binary_sensor:
                           id: current_command
                           option: ac_off
       - timing:
-          - ON for 1s to 2s
-          - OFF for at least 0.5s
+          - ON for at least 1.5s
         then:
           - if:
               condition:
@@ -342,23 +357,38 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: lights_darken
+                      - while:
+                          condition:
+                            binary_sensor.is_on: right_button
+                          then:
+                            - select.set:
+                                id: current_command
+                                option: lights_darken
+                            - delay: 1.5s
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "fan";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: fan_slow_down
+                      - while:
+                          condition:
+                            binary_sensor.is_on: right_button
+                          then:
+                            - select.set:
+                                id: current_command
+                                option: fan_slow_down
+                            - delay: 1.5s
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "ac";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: ac_colder
+                      - while:
+                          condition:
+                            binary_sensor.is_on: right_button
+                          then:
+                            - select.set:
+                                id: current_command
+                                option: ac_colder
+                            - delay: 1.5s
       - timing:
           - ON for at most 1s
           - OFF for at most 1s
