@@ -3978,7 +3978,7 @@
     input:
       ac: climate.parents_room_ac
       temp_sensor: sensor.parents_room_core_temperature
-      min_temp_offset: 0.2
+      min_temp_offset: 0.7
       max_temp_offset: 1.2
 - id: '1676891528260'
   alias: Elena's Room Fan Set State
@@ -4243,12 +4243,12 @@
     input:
       lights_list:
       - light.study_room_bulb_4_entity
-      - light.study_room_bulb_1_entity
       motion_sensor: binary_sensor.study_walkway_motion
       lux_sensor: sensor.study_walkway_lux
       entities_list:
       - light.study_room_bulb_2_entity
       - light.study_room_bulb_3_entity
+      - light.study_room_bulb_1_entity
       recommended_light_level_script: script.recommended_light_level_for_study_walkway
 - id: '1678322492101'
   alias: Study Walkway Motion Timeout
@@ -4262,9 +4262,9 @@
       entities_list:
       - light.study_room_bulb_2_entity
       - light.study_room_bulb_3_entity
+      - light.study_room_bulb_1_entity
       turnoff_entities_list:
       - light.study_room_bulb_4_entity
-      - light.study_room_bulb_1_entity
 - id: '1678322978006'
   alias: Playroom Motion Lights
   description: Control the Playroom Lights when motion is detected, depending on lux
@@ -5646,7 +5646,8 @@
   - platform: state
     entity_id:
     - sensor.next_alarm_timings
-    attribute: parents_room_next_alarm_imminent
+    attribute: parents_room_next_alarm_dismissable
+    from: false
     to: true
   condition: []
   action:
@@ -6482,3 +6483,27 @@
         addon: 47701997_assist_microphone
   mode: single
   max_exceeded: silent
+- id: '1702898924227'
+  alias: Elena's Room Core
+  description: Interface between Elena's Room devices and Home Assistant via ESPHome
+    and M5Stack Fire
+  use_blueprint:
+    path: danleongjy/bedroom_core.yaml
+    input:
+      core_left_button: binary_sensor.elenas_room_core_left_button
+      core_middle_button: binary_sensor.elenas_room_core_middle_button
+      core_right_button: binary_sensor.elenas_room_core_right_button
+      core_display_backlight: light.elenas_room_core_display_backlight
+      core_current_command: select.elenas_room_core_current_command
+      motion_sensor: binary_sensor.elenas_room_motion
+      lights: light.elenas_room_lights
+      auto_control_indicator_light: light.elenas_room_bulb_1_entity
+      fan: fan.elenas_room_fan
+      ac: climate.elenas_room_ac
+      recommended_light_level_script: script.recommended_light_level_for_elenas_room
+      recommended_scene_script: script.set_recommended_scene_in_elenas_room
+      motion_timeout_automation: automation.elenas_room_motion_timeout
+      fan_auto_control_automation: automation.elenas_room_fan_auto_control
+      ac_auto_control_automation: automation.elenas_room_ac_auto_control
+      sleep_hours_start: input_datetime.sleep_hours_start
+      sleep_hours_end: input_datetime.sleep_hours_end

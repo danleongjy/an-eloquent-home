@@ -1,0 +1,40 @@
+substitutions:
+  core_room: elenas_room
+  hostname_room: elenas-room
+  capitalised_room_name: Elena's Room
+  display_rotation: 270°
+  next_alarm_imminent_attribute: elena_next_alarm_imminent
+  next_alarm_dismissable_attribute: elena_next_alarm_dismissable
+
+esphome:
+  name: ${hostname_room}-core
+  friendly_name: ${capitalised_room_name} Core
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "HMj6W7HEsF81jSVqVepKHYg5OGiNSN7sDyzrZXgDbFE="
+
+ota:
+  password: "e821a668f82480297e18b6eb9e33ed9e"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  manual_ip:
+    static_ip: 192.168.18.16
+    gateway: 192.168.18.1
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${hostname_room}-core"
+    password: "nzd0tQHzwagh"
+
+captive_portal:
+    
+<<: !include bedroom_core/core.yaml

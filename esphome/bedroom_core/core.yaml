@@ -66,9 +66,10 @@ select:
     optimistic: true
     options:
       - 'elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f'
+      - 'mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6,8p,8g,8p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,16p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16c7,16p,16c7,16c7,p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16d#6,8p,16d6,8p,16c6'
       - 'beep:d=4,o=5,b=200:8c,4c'
       - 'positive_beep:d=4,o=5,b=200:4c4,8c,4c'
-      - 'negative_beep:d=4,o=5,b=200:8c,4c,4c4'
+      - 'negative_beep:d=4,o=5,b=200:8c,4c,2c4'
     initial_option: 'elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f'
 
 text_sensor:
@@ -312,7 +313,7 @@ binary_sensor:
                     then:
                       - if:
                           condition:
-                            lambda: 'return id(room_next_alarm_dismissable).state;'
+                            lambda: 'return id(room_next_alarm_dismissable).state && !id(room_next_alarm_dismissed).state;'
                           then:
                             - homeassistant.service:
                                 service: input_boolean.turn_on
@@ -612,16 +613,16 @@ display:
           it.image(width * 0.375, height * 0.825, id(tab_lights), ImageAlign::CENTER);
           it.image(width * 0.625, height * 0.825, id(tab_fan), ImageAlign::CENTER);
           it.image(width * 0.875, height * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.line(width * 0.25, height * 0.75, width, height * 0.75, border);
+          it.line(width * 0.25, height * 0.75, width, height * 0.75, id(border));
 
           // borders
-          it.rectangle(0, 0, width, height, border);
-          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, border);
-          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, border);
-          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, border);
+          it.rectangle(0, 0, width, height, id(border));
+          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, id(border));
+          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, id(border));
+          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, id(border));
           
           // bottom status bar
-          it.line(0, height * 0.9, width, height * 0.9, border);
+          it.line(0, height * 0.9, width, height * 0.9, id(border));
           it.image(0,height * 0.92, id(status_temp));
           it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
           it.image(80,height * 0.92,id(status_hum));
@@ -665,20 +666,21 @@ display:
           it.image(width * 0.125, height * 0.825, id(tab_current_time), ImageAlign::CENTER);
           if (id(lights_power).state) {
             it.filled_rectangle(width * 0.25, height * 0.75, width * 0.25, height * 0.15, id(slider));
+            it.line(width * 0.25, height * 0.75, width * 0.5, height * 0.75, id(slider));
           }
           it.image(width * 0.625, height * 0.825, id(tab_fan), ImageAlign::CENTER);
           it.image(width * 0.875, height * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.line(0, height * 0.75, width * 0.25, height * 0.75, border);
-          it.line(width * 0.5, height * 0.75, width, height * 0.75, border);
+          it.line(0, height * 0.75, width * 0.25, height * 0.75, id(border));
+          it.line(width * 0.5, height * 0.75, width, height * 0.75, id(border));
 
           // borders
-          it.rectangle(0, 0, width, height, border);
-          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, border);
-          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, border);
-          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, border);
+          it.rectangle(0, 0, width, height, id(border));
+          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, id(border));
+          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, id(border));
+          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, id(border));
 
           // bottom status bar
-          it.line(0, height * 0.9, width, height * 0.9, border);
+          it.line(0, height * 0.9, width, height * 0.9, id(border));
           it.image(0,height * 0.92, id(status_temp));
           it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
           it.image(80,height * 0.92,id(status_hum));
@@ -703,19 +705,20 @@ display:
           it.image(width * 0.375, height * 0.825, id(tab_lights), ImageAlign::CENTER);
           if (id(fan_power).state) {
             it.filled_rectangle(width * 0.5, height * 0.75, width * 0.25, height * 0.15, id(slider));
+            it.line(width * 0.5, height * 0.75, width * 0.75, height * 0.75, id(slider));
           }
           it.image(width * 0.875, height * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.line(0, height * 0.75, width * 0.5, height * 0.75, border);
-          it.line(width * 0.75, height * 0.75, width, height * 0.75, border);
+          it.line(0, height * 0.75, width * 0.5, height * 0.75, id(border));
+          it.line(width * 0.75, height * 0.75, width, height * 0.75, id(border));
 
           // borders
-          it.rectangle(0, 0, width, height, border);
-          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, border);
-          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, border);
-          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, border);
+          it.rectangle(0, 0, width, height, id(border));
+          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, id(border));
+          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, id(border));
+          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, id(border));
 
           // bottom status bar
-          it.line(0, height * 0.9, width, height * 0.9, border);
+          it.line(0, height * 0.9, width, height * 0.9, id(border));
           it.image(0,height * 0.92, id(status_temp));
           it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
           it.image(80,height * 0.92,id(status_hum));
@@ -752,17 +755,18 @@ display:
           it.image(width * 0.625, height * 0.825, id(tab_fan), ImageAlign::CENTER);
           if (id(ac_mode).state == "cool") {
             it.filled_rectangle(width * 0.75, height * 0.75, width * 0.25, height * 0.15, id(slider));
+            it.line(width * 0.75, height * 0.75, width, height * 0.75, id(slider));
           }
-          it.line(0, height * 0.75, width * 0.75, height * 0.75, border);
+          it.line(0, height * 0.75, width * 0.75, height * 0.75, id(border));
 
           // borders
-          it.rectangle(0, 0, width, height, border);
-          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, border);
-          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, border);
-          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, border);
+          it.rectangle(0, 0, width, height, id(border));
+          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, id(border));
+          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, id(border));
+          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, id(border));
 
           // bottom status bar
-          it.line(0, height * 0.9, width, height * 0.9, border);
+          it.line(0, height * 0.9, width, height * 0.9, id(border));
           it.image(0,height * 0.92, id(status_temp));
           it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
           it.image(80,height * 0.92,id(status_hum));
