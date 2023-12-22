@@ -49,16 +49,17 @@ Domain | Quantity
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 27
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 23
+[`update`](https://www.home-assistant.io/components/update) | 22
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
-[`wake_word`](https://www.home-assistant.io/components/wake_word) | 2
+[`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1539
+Total | 1537
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
 - [Broadlink](https://home-assistant.io/integrations/broadlink)
+- [Conversation](https://home-assistant.io/integrations/conversation)
 - [Downloader](https://home-assistant.io/integrations/downloader)
 - [ESPHome](https://home-assistant.io/integrations/esphome)
 - [Folder Sensor](https://home-assistant.io/integrations/folder)
@@ -66,6 +67,7 @@ Total | 1539
 - [Google Assistant](https://home-assistant.io/integrations/google_assistant)
 - [Google Cast](https://home-assistant.io/integrations/cast)
 - [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
+- [Intent Script](https://home-assistant.io/integrations/intent_script)
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
 - [Neato](https://home-assistant.io/integrations/neato)
 - [RESTful](https://home-assistant.io/integrations/rest)
@@ -89,7 +91,6 @@ Total | 1539
 - Home Assistant Google Drive Backup
 - openWakeWord
 - Piper
-- porcupine1
 - Samba share
 - Whisper
 
