@@ -6453,7 +6453,7 @@
     to: 'off'
     from: 'on'
     for:
-      minutes: ”{{ states('input_number.motion_timeout_presence') }}”
+      minutes: '{{ states(''input_number.motion_timeout_presence'') | int(5) }}'
   condition: []
   action:
   - if:
@@ -6467,7 +6467,7 @@
         - binary_sensor.study_room_presence
         state: 'off'
         for:
-          minutes: '{{ states(''input_number.motion_timeout_presence'') }}'
+          minutes: '{{ states(''input_number.motion_timeout_presence'') | int(5) }}'
       - condition: state
         entity_id: input_boolean.away_mode
         state: 'on'
