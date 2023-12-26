@@ -1,0 +1,3 @@
+{% macro set_recommended_scene(room) %}
+{{ states.automation | selectattr('entity_id', 'search', room + '_motion') | rejectattr('entity_id','search','timeout') | map(attribute = 'entity_id') | list }}
+{% endmacro %}

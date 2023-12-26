@@ -24,6 +24,20 @@ blueprint:
       selector:
         entity:
           domain: automation
+    fan_auto_control_start:
+      name: Fan Auto Control Start
+      description: Time helper indicating when fan auto control should be turned on.  If fan auto control never needs to turn on, set this to the same as Fan Auto Control End.
+      selector:
+        entity:
+          domain: input_datetime
+      default: input_datetime.ac_auto_control_end
+    fan_auto_control_end:
+      name: Fan Auto Control End
+      description: Time helper indicating when fan auto control should be turned off.
+      selector:
+        entity:
+          domain: input_datetime
+      default: input_datetime.ac_auto_control_end
     entities_list:
       name: Entities to Track
       description: A list of entities.  If the fan's state should not change when any of these entities are on even if motion is detected, specify them here.  Otherwise, leave blank.
@@ -61,8 +75,29 @@ condition:
   - condition: template
     value_template: "{{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}"
 action:
+  - variables:
+      auto_control_start: !input fan_auto_control_start
+      auto_control_end: !input fan_auto_control_end
   - service: automation.trigger
     target:
       entity_id: !input fan_auto_control
+  - condition: template
+    value_template: "{{ states(auto_control_start) != states(auto_control_end) }}"
+  - if:
+      - condition: time
+        after: !input fan_auto_control_start
+        before: !input fan_auto_control_end
+    then:
+      - service: automation.turn_on
+        data: {}
+        target:
+          entity_id: !input fan_auto_control
+    else:
+      - service: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          entity_id: !input fan_auto_control
+    
 mode: single
 max_exceeded: silent

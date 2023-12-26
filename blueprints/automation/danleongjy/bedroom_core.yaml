@@ -3,6 +3,18 @@ blueprint:
   description: Interface between bedroom devices and Home Assistant via ESPHome and M5Stack Fire
   domain: automation
   input:
+    bedroom:
+      name: Bedroom
+      description: The bedroom that the M5Stack Fire is in
+      selector:
+        select:
+          options:
+            - label: Parents' Room
+              value: parents_room
+            - label: Eli's Room
+              value: elis_room
+            - label: Elena's Room
+              value: elenas_room
     core_left_button:
       name: Core Left Button
       description: Binary sensor indicating the state of the left button of the Core
@@ -70,12 +82,6 @@ blueprint:
     recommended_light_level_script:
       name: Recommended Light Level Script
       description: Script providing the recommended brightness for room lights
-      selector:
-        entity:
-          domain: script
-    recommended_scene_script:
-      name: Recommended Scene Script
-      description: Script providing the recommended state for room devices
       selector:
         entity:
           domain: script
@@ -262,8 +268,9 @@ action:
                 entity_id: !input core_current_command
                 state: set_recommended_room_scene
             sequence:
-              - service: !input recommended_scene_script
-                data: {}
+              - service: script.set_recommended_scene
+                data:
+                  room: !input bedroom
           - conditions:
               - condition: state
                 entity_id: !input core_current_command

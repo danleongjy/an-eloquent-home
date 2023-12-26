@@ -291,330 +291,6 @@ turn_off_all:
   mode: single
   alias: Turn Off All
   icon: mdi:home-export-outline
-set_recommended_scene_in_elenas_room:
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id:
-      - automation.elenas_room_motion_ac
-      - automation.elenas_room_motion_fan
-      - automation.elenas_room_motion_lights
-  - if:
-    - condition: time
-      after: input_datetime.ac_auto_control_start
-      before: input_datetime.ac_auto_control_end
-    then:
-    - service: automation.turn_on
-      data: {}
-      target:
-        entity_id: automation.elenas_room_fan_auto_control
-    - if:
-      - condition: state
-        entity_id: climate.elenas_room_ac
-        state: cool
-      then:
-      - service: automation.turn_on
-        data: {}
-        target:
-          entity_id: automation.elenas_room_ac_auto_control
-  mode: single
-  alias: Set Recommended Scene in Elena's Room
-  icon: mdi:magic-staff
-set_recommended_scene_in_elis_room:
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id:
-      - automation.elis_room_motion_ac
-      - automation.elis_room_motion_fan
-      - automation.elis_room_motion_lights
-  - if:
-    - condition: time
-      after: input_datetime.ac_auto_control_start
-      before: input_datetime.ac_auto_control_end
-    then:
-    - service: automation.turn_on
-      data: {}
-      target:
-        entity_id: automation.elis_room_fan_auto_control
-    - if:
-      - condition: state
-        entity_id: climate.elis_room_ac
-        state: cool
-      then:
-      - service: automation.turn_on
-        data: {}
-        target:
-          entity_id: automation.elis_room_ac_auto_control
-  mode: single
-  alias: Set Recommended Scene in Eli's Room
-  icon: mdi:magic-staff
-set_recommended_scene_in_dining_room:
-  alias: Set Recommended Scene in Dining Room
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id:
-      - automation.dining_room_motion_fan
-      - automation.dining_room_motion_lights
-      - automation.dining_room_motion_pendant_light
-      - automation.dining_room_motion_ac
-  mode: single
-  icon: mdi:magic-staff
-set_recommended_scene_in_living_room:
-  alias: Set Recommended Scene in Living Room
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id:
-      - automation.living_room_motion_fan
-      - automation.living_room_motion_lights
-      - automation.living_room_motion_pendant_light
-      - automation.living_room_motion_ac
-  mode: single
-  icon: mdi:magic-staff
-set_recommended_scene_in_study_room:
-  alias: Set Recommended Scene in Study Room
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id:
-      - automation.study_room_motion_ac
-      - automation.study_room_motion_lights
-      - automation.study_room_motion_fan
-  mode: single
-  icon: mdi:magic-staff
-set_recommended_scene_in_parents_room:
-  alias: Set Recommended Scene in Parents' Room
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id:
-      - automation.parents_room_motion_ac
-      - automation.parents_room_motion_fan
-      - automation.parents_room_motion_lights
-  - if:
-    - condition: time
-      after: input_datetime.ac_auto_control_start
-      before: input_datetime.ac_auto_control_end
-    then:
-    - service: automation.turn_on
-      data: {}
-      target:
-        entity_id: automation.parents_room_fan_auto_control
-    - if:
-      - condition: state
-        entity_id: climate.parents_room_ac
-        state: cool
-      then:
-      - service: automation.turn_on
-        data: {}
-        target:
-          entity_id: automation.parents_room_ac_auto_control
-  mode: single
-  icon: mdi:magic-staff
-stove_programme_cook_rice_on_left_burner:
-  alias: Stove Programme - Cook Rice on Left Burner
-  sequence:
-  - if:
-    - condition: state
-      entity_id: switch.stove_main_power
-      state: 'on'
-    then:
-    - service: select.select_option
-      data:
-        option: left
-      target:
-        entity_id: select.stove_current_burner
-    - service: select.select_option
-      data:
-        option: '1'
-      target:
-        entity_id: select.stove_current_burner_power
-    - service: number.set_value
-      data:
-        value: '16'
-      target:
-        entity_id: number.stove_current_burner_timer
-    else:
-    - service: tts.google_translate_say
-      data:
-        entity_id: media_player.kitchen_speaker
-        message: Please turn on the stove first
-  mode: single
-  icon: mdi:stove
-stove_programme_boil_water_on_left_burner:
-  alias: Stove Programme - Boil Water on Left Burner
-  sequence:
-  - if:
-    - condition: state
-      entity_id: switch.stove_main_power
-      state: 'on'
-    then:
-    - service: select.select_option
-      data:
-        option: left
-      target:
-        entity_id: select.stove_current_burner
-    - service: select.select_option
-      data:
-        option: '7'
-      target:
-        entity_id: select.stove_current_burner_power
-    - service: number.set_value
-      data:
-        value: '5'
-      target:
-        entity_id: number.stove_current_burner_timer
-    else:
-    - service: tts.google_translate_say
-      data:
-        entity_id: media_player.kitchen_speaker
-        message: Please turn on the stove first
-  mode: single
-  icon: mdi:stove
-stove_programme_current_status:
-  alias: Stove Programme - Current Status
-  sequence:
-  - if:
-    - condition: state
-      entity_id: switch.stove_main_power
-      state: 'on'
-    then:
-    - service: tts.google_translate_say
-      data:
-        entity_id: media_player.kitchen_speaker
-        message: "{% if states('select.stove_current_burner_power') == '0' %}   \n
-          \ The {{ states('select.stove_current_burner') }} burner is off \n{% else
-          %}\n  The {{ states('select.stove_current_burner') }} burner is on level
-          {{ states('select.stove_current_burner_power') }}\n  {% if states('number.stove_current_burner_timer')
-          | int(0) > 0 %}\n    with {{ states('number.stove_current_burner_timer')
-          }} minutes remaining   \n  {% endif %} \n{% endif %}"
-    - if:
-      - condition: state
-        entity_id: select.stove_current_burner
-        state: left
-      then:
-      - service: select.select_option
-        data:
-          option: right
-        target:
-          entity_id: select.stove_current_burner
-      else:
-      - service: select.select_option
-        data:
-          option: left
-        target:
-          entity_id: select.stove_current_burner
-    - delay:
-        hours: 0
-        minutes: 0
-        seconds: 6
-        milliseconds: 0
-    - service: tts.google_translate_say
-      data:
-        entity_id: media_player.kitchen_speaker
-        message: "{% if states('select.stove_current_burner_power') == '0' %}   \n
-          \ The {{ states('select.stove_current_burner') }} burner is off \n{% else
-          %}\n  The {{ states('select.stove_current_burner') }} burner is on level
-          {{ states('select.stove_current_burner_power') }}\n  {% if states('number.stove_current_burner_timer')
-          | int(0) > 0 %}\n    with {{ states('number.stove_current_burner_timer')
-          }} minutes remaining   \n  {% endif %} \n{% endif %}"
-    - if:
-      - condition: state
-        entity_id: select.stove_current_burner
-        state: left
-      then:
-      - service: select.select_option
-        data:
-          option: right
-        target:
-          entity_id: select.stove_current_burner
-      else:
-      - service: select.select_option
-        data:
-          option: left
-        target:
-          entity_id: select.stove_current_burner
-    else:
-    - service: tts.google_translate_say
-      data:
-        entity_id: media_player.kitchen_speaker
-        message: The stove is off
-  mode: single
-  icon: mdi:stove
-stove_programme_boil_water_on_right_burner:
-  alias: Stove Programme - Boil Water on Right Burner
-  sequence:
-  - if:
-    - condition: state
-      entity_id: switch.stove_main_power
-      state: 'on'
-    then:
-    - service: select.select_option
-      data:
-        option: right
-      target:
-        entity_id: select.stove_current_burner
-    - service: select.select_option
-      data:
-        option: '7'
-      target:
-        entity_id: select.stove_current_burner_power
-    - service: number.set_value
-      data:
-        value: '5'
-      target:
-        entity_id: number.stove_current_burner_timer
-    else:
-    - service: tts.google_translate_say
-      data:
-        entity_id: media_player.kitchen_speaker
-        message: Please turn on the stove first
-  mode: single
-  icon: mdi:stove
-stove_programme_cook_rice_on_right_burner:
-  alias: Stove Programme - Cook Rice on Right Burner
-  sequence:
-  - if:
-    - condition: state
-      entity_id: switch.stove_main_power
-      state: 'on'
-    then:
-    - service: select.select_option
-      data:
-        option: right
-      target:
-        entity_id: select.stove_current_burner
-    - service: select.select_option
-      data:
-        option: '1'
-      target:
-        entity_id: select.stove_current_burner_power
-    - service: number.set_value
-      data:
-        value: '16'
-      target:
-        entity_id: number.stove_current_burner_timer
-    else:
-    - service: tts.google_translate_say
-      data:
-        entity_id: media_player.kitchen_speaker
-        message: Please turn on the stove first
-  mode: single
-  icon: mdi:stove
 elis_room_alarm_lights:
   alias: Eli's Room Alarm Lights
   sequence:
@@ -750,10 +426,14 @@ parents_room_alarm_lights:
           milliseconds: 0
       - if:
         - condition: template
-          value_template: "{{ now() - state_attr('script.parents_room_alarm_lights','last_triggered')
-            > timedelta(minutes = 5) and\n   now() - state_attr('script.parents_room_alarm_lights','last_triggered')
-            <= timedelta(minutes = 5, seconds = 3) }}"
+          value_template: '{{ now() - state_attr(''script.parents_room_alarm_lights'',''last_triggered'')
+            > timedelta(minutes = 5) }}'
         then:
+        - service: select.select_option
+          data:
+            option: beep:d=4,o=5,b=200:8c,4c
+          target:
+            entity_id: select.parents_room_core_ringtone
         - service: button.press
           data: {}
           target:
@@ -770,28 +450,6 @@ parents_room_alarm_lights:
       entity_id: light.parents_room_core_led_strips
   mode: single
   icon: mdi:alarm
-set_recommended_scene_in_kitchen:
-  alias: Set Recommended Scene in Kitchen
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.kitchen_motion_lights
-  mode: single
-  icon: mdi:magic-staff
-set_recommended_scene_in_playroom:
-  alias: Set Recommended Scene in Playroom
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id:
-      - automation.playroom_motion_lights
-      - automation.yard_motion_light
-  mode: single
-  icon: mdi:magic-staff
 recommended_light_level_for_study_walkway:
   alias: Recommended Light Level for Study Walkway
   use_blueprint:
@@ -951,38 +609,6 @@ recommended_light_level_for_powder_room:
       dim_hours_end: input_datetime.sleep_hours_end
   mode: single
   icon: mdi:lightbulb-on-70
-set_recommended_scene_in_junior_bathroom:
-  alias: Set Recommended Scene in Junior Bathroom
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.junior_bathroom_motion_lights
-  mode: single
-  icon: mdi:magic-staff
-set_recommended_scene_in_powder_room:
-  alias: Set Recommended Scene in Powder Room
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.powder_room_motion_pendant_light
-  mode: single
-  icon: mdi:magic-staff
-set_recommended_scene_in_master_bathroom:
-  alias: Set Recommended Scene in Master Bathroom
-  sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id:
-      - automation.master_bathroom_motion_light
-      - automation.master_bathroom_motion_pendant_light
-  mode: single
-  icon: mdi:magic-staff
 recommended_light_level_for_hallway:
   alias: Recommended Light Level for Hallway
   use_blueprint:
@@ -994,13 +620,6 @@ recommended_light_level_for_hallway:
       dim_hours_end: input_datetime.sleep_hours_end
   mode: single
   icon: mdi:lightbulb-on-70
-set_recommended_scene_in_hallway:
-  alias: Set Recommended Scene in Hallway
-  sequence:
-  - service: script.recommended_light_level_for_hallway
-    data: {}
-  mode: single
-  icon: mdi:magic-staff
 kitchen_blind_set_position:
   alias: Kitchen Blind Set Position
   fields:
@@ -1228,3 +847,52 @@ recommended_light_level_for_christmas_tree:
       entity_id: light.christmas_tree
   mode: single
   icon: mdi:lightbulb-on-70
+set_recommended_scene:
+  alias: Set Recommended Scene
+  sequence:
+  - service: automation.trigger
+    data:
+      skip_condition: true
+    target:
+      entity_id: '{{ states.automation | selectattr(''entity_id'', ''search'', room
+        + ''_motion'') | rejectattr(''entity_id'',''search'',''timeout'') | map(attribute
+        = ''entity_id'') | list }}
+
+        '
+  mode: parallel
+  icon: mdi:magic-staff
+  max: 15
+  fields:
+    room:
+      name: Room
+      description: The room to set the recommended scene in
+      selector:
+        select:
+          options:
+          - label: Parents' Room
+            value: parents_room
+          - label: Master Bathroom
+            value: master_bathroom
+          - label: Kitchen
+            value: kitchen
+          - label: Study Room
+            value: study_room
+          - label: Living Room
+            value: living_room
+          - label: Dining Room
+            value: dining_room
+          - label: Playroom
+            value: playroom
+          - label: Yard
+            value: yard
+          - label: Hallway
+            value: hallway
+          - label: Powder Room
+            value: powder_room
+          - label: Junior Bathroom
+            value: junior_bathroom
+          - label: Eli's Room
+            value: elis_room
+          - label: Elena's Room
+            value: elenas_room
+      required: true

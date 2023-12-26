@@ -398,6 +398,7 @@
       Grace: "{{ states('input_datetime.graces_next_alarm') }}"
       grace_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[1] != 'A' }}"
       grace_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[5] == 'T' }}"
+      parents_room: "{{ [states('input_datetime.daniels_next_alarm') | as_datetime, states('input_datetime.graces_next_alarm') | as_datetime] | min }}"
       parents_room_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[0] != 'A' or states('sensor.next_alarm_timings')[1] != 'A' }}"
       parents_room_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[4] == 'T' or states('sensor.next_alarm_timings')[5] == 'T' }}"
       Eli: "{{ states('input_datetime.elis_next_alarm') }}"

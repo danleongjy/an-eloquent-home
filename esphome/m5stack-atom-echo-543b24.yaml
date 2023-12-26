@@ -5,10 +5,6 @@ esphome:
   name: ${name}
   name_add_mac_suffix: false
   friendly_name: ${friendly_name}
-  project:
-    name: m5stack.atom-echo-voice-assistant
-    version: "1.0"
-  min_version: 2023.11.1
   
 api:
   encryption:
@@ -21,11 +17,6 @@ wifi:
     static_ip: 192.168.18.13
     gateway: 192.168.18.1
     subnet: 255.255.255.0
-  on_connect:
-    - delay: 5s # Gives time for improv results to be transmitted
-    - ble.disable:
-  on_disconnect:
-    - ble.enable:
   ap:
 
 esp32:
@@ -35,14 +26,6 @@ esp32:
 
 logger:
 ota:
-
-dashboard_import:
-  package_import_url: github://esphome/firmware/voice-assistant/m5stack-atom-echo.yaml@main
-
-improv_serial:
-
-esp32_improv:
-  authorizer: none
 
 button:
   - platform: factory_reset
@@ -66,7 +49,7 @@ speaker:
     i2s_dout_pin: 22
     dac_type: external
     mode: mono
-
+    
 voice_assistant:
   id: va
   microphone: echo_microphone

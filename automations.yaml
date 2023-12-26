@@ -18,10 +18,12 @@
           target:
             entity_id: input_boolean.away_mode
         else:
-        - service: script.set_recommended_scene_in_dining_room
-          data: {}
-        - service: script.set_recommended_scene_in_living_room
-          data: {}
+        - service: script.set_recommended_scene
+          data:
+            room: dining_room
+        - service: script.set_recommended_scene
+          data:
+            room: living_room
       action_button_up_long:
       - service: light.turn_on
         target:
@@ -104,8 +106,9 @@
       button_down_long_loop: true
       button_up_long_loop: true
       action_button_up_double:
-      - service: script.set_recommended_scene_in_dining_room
-        data: {}
+      - service: script.set_recommended_scene
+        data:
+          room: dining_room
       action_button_down_double:
       - service: automation.trigger
         data:
@@ -965,10 +968,12 @@
     data: {}
     target:
       entity_id: input_boolean.away_mode
-  - service: script.set_recommended_scene_in_dining_room
-    data: {}
-  - service: script.set_recommended_scene_in_living_room
-    data: {}
+  - service: script.set_recommended_scene
+    data:
+      room: dining_room
+  - service: script.set_recommended_scene
+    data:
+      room: living_room
   mode: single
 - id: '1653105007378'
   alias: Notify When Raining With Windows Open
@@ -1313,8 +1318,9 @@
       button_down_double_press: true
       helper_double_press_delay: 700
       action_button_up_double:
-      - service: script.set_recommended_scene_in_living_room
-        data: {}
+      - service: script.set_recommended_scene
+        data:
+          room: living_room
       button_up_double_press: true
 - id: '1659251600711'
   alias: Study Room AC Controller
@@ -1558,8 +1564,9 @@
       button_down_double_press: true
       helper_double_press_delay: 700
       action_button_up_double:
-      - service: script.set_recommended_scene_in_study_room
-        data: {}
+      - service: script.set_recommended_scene
+        data:
+          room: study_room
       button_up_double_press: true
 - id: '1659255925964'
   alias: Parents' Room AC Controller
@@ -1768,8 +1775,9 @@
       button_down_double_press: true
       helper_double_press_delay: 700
       action_button_up_double:
-      - service: script.set_recommended_scene_in_parents_room
-        data: {}
+      - service: script.set_recommended_scene
+        data:
+          room: parents_room
       button_up_double_press: true
 - id: '1659256178839'
   alias: Master Bathroom Lights Controller
@@ -2268,8 +2276,9 @@
       button_right_long_loop: true
       button_right_long_max_loop_repeats: 50
       action_button_up_double:
-      - service: script.set_recommended_scene_in_elenas_room
-        data: {}
+      - service: script.set_recommended_scene
+        data:
+          room: elenas_room
       action_button_down_double:
       - service: automation.trigger
         data:
@@ -2466,8 +2475,9 @@
       button_down_long_loop: true
       button_down_long_max_loop_repeats: 50
       action_button_up_double:
-      - service: script.set_recommended_scene_in_elis_room
-        data: {}
+      - service: script.set_recommended_scene
+        data:
+          room: elis_room
       action_button_down_double:
       - service: automation.trigger
         data:
@@ -3735,8 +3745,9 @@
       controller_device: 43f2d52bfecdf388c86e9f919d45e359
       helper_last_controller_event: input_text.zz_study_table_controller_last_event
       action_button_up_short:
-      - service: script.set_recommended_scene_in_study_room
-        data: {}
+      - service: script.set_recommended_scene
+        data:
+          room: study_room
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -4030,6 +4041,7 @@
       doors_list:
       - binary_sensor.parents_room_door
       - binary_sensor.master_bathroom_door
+      fan_auto_control_start: input_datetime.ac_auto_control_start
 - id: '1677902645887'
   alias: Parents' Room Motion AC
   description: Control the Parents' Room AC when motion is detected depending on whether
@@ -4103,6 +4115,7 @@
       - climate.elenas_room_ac
       doors_list:
       - binary_sensor.elenas_room_door
+      fan_auto_control_start: input_datetime.ac_auto_control_start
 - id: '1677909588511'
   alias: Elena's Room Motion Lights
   description: Set Elena's Room Lights when motion is detected, at least one door
@@ -4173,6 +4186,7 @@
       - climate.elis_room_ac
       doors_list:
       - binary_sensor.elis_room_door
+      fan_auto_control_start: input_datetime.ac_auto_control_start
 - id: '1677910041263'
   alias: Eli's Room Motion Lights
   description: Set Eli's Room Lights when motion is detected, at least one door is
@@ -4712,13 +4726,13 @@
     - delay: 1
     - repeat:
         for_each:
-        - script.set_recommended_scene_in_dining_room
-        - script.set_recommended_scene_in_living_room
-        - script.set_recommended_scene_in_study_room
+        - dining_room
+        - living_room
+        - study_room
         sequence:
-        - service: script.turn_on
-          target:
-            entity_id: '{{ repeat.item }}'
+        - service: script.set_recommended_scene
+          data:
+            room: '{{ repeat.item }}'
         - delay: 1
     else:
     - service: input_datetime.set_datetime
@@ -4729,13 +4743,13 @@
     - delay: 1
     - repeat:
         for_each:
-        - script.set_recommended_scene_in_dining_room
-        - script.set_recommended_scene_in_living_room
-        - script.set_recommended_scene_in_study_room
+        - dining_room
+        - living_room
+        - study_room
         sequence:
-        - service: script.turn_on
-          target:
-            entity_id: '{{ repeat.item }}'
+        - service: script.set_recommended_scene
+          data:
+            room: '{{ repeat.item }}'
         - delay: 1
   mode: single
 - id: '1681736538604'
@@ -4814,8 +4828,9 @@
       controller_device: 685b4e90d0ee941d65313b1c9118e6a7
       helper_last_controller_event: input_text.zz_parents_headboard_controller_last_event
       action_button_up_short:
-      - service: script.set_recommended_scene_in_parents_room
-        data: {}
+      - service: script.set_recommended_scene
+        data:
+          room: parents_room
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -5174,6 +5189,11 @@
       controller_device: 63ca2b52933039d3f01175d8c06dd220
       helper_last_controller_event: input_text.zz_kitchen_blind_controller_last_event
       action_button_up_short:
+      - service: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          entity_id: automation.kitchen_blind_auto_control
       - if:
         - condition: state
           entity_id: cover.kitchen_blind
@@ -5189,6 +5209,11 @@
           target:
             entity_id: cover.kitchen_blind
       action_button_down_short:
+      - service: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          entity_id: automation.kitchen_blind_auto_control
       - if:
         - condition: state
           entity_id: cover.kitchen_blind
@@ -5596,22 +5621,15 @@
       entity_id: input_boolean.parents_room_next_alarm_dismissed
       state: 'off'
     then:
-    - service: notify.mobile_app_pixel_4a
+    - service: select.select_option
       data:
-        message: command_dnd
-        data:
-          command: 'off'
-      alias: Turn off Do Not Disturb
-    - service: notify.mobile_app_pixel_4a
-      data:
-        title: Good Morning!
-        message: Time to wake up at {{ states('input_datetime.daniels_next_alarm')[-8:-3]
-          }}
-        data:
-          ttl: 0
-          priority: high
-          channel: alarm_stream
-      alias: Trigger a critical alert Daniel's phone
+        option: elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f
+      target:
+        entity_id: select.parents_room_core_ringtone
+    - service: button.press
+      data: {}
+      target:
+        entity_id: button.parents_room_core_play_ringtone
   - delay:
       hours: 0
       minutes: 5
@@ -5635,14 +5653,10 @@
       entity_id: input_boolean.parents_room_next_alarm_dismissed
   mode: single
 - id: '1690718460853'
-  alias: Notify When Daniel's Next Alarm Upcoming
-  description: Send an actionable notification when Daniel's Next Alarm is imminent,
+  alias: Notify When Parents' Room Next Alarm Upcoming
+  description: Send an actionable notification when Parents' Room Next Alarm is imminent,
     allowing dismissal of the alarm.
   trigger:
-  - platform: template
-    value_template: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo)
-      - now() < timedelta(minutes = 15) }}'
-    alias: 15min before Daniel's Next Alarm
   - platform: state
     entity_id:
     - sensor.next_alarm_timings
@@ -5653,8 +5667,8 @@
   action:
   - service: notify.mobile_app_pixel_4a
     data:
-      message: Upcoming alarm at {{ states('input_datetime.daniels_next_alarm')[-8:-3]
-        }}
+      message: Upcoming alarm at {{ state_attr('sensor.next_alarm_timings','parents_room').split('
+        ')[1][:5] }}
       data:
         actions:
         - action: dismiss
@@ -6355,6 +6369,7 @@
   use_blueprint:
     path: danleongjy/bedroom_core.yaml
     input:
+      bedroom: elis_room
       core_left_button: binary_sensor.elis_room_core_left_button
       core_middle_button: binary_sensor.elis_room_core_middle_button
       core_right_button: binary_sensor.elis_room_core_right_button
@@ -6366,7 +6381,6 @@
       fan: fan.elis_room_fan
       ac: climate.elis_room_ac
       recommended_light_level_script: script.recommended_light_level_for_elis_room
-      recommended_scene_script: script.set_recommended_scene_in_elis_room
       motion_timeout_automation: automation.elis_room_motion_timeout
       fan_auto_control_automation: automation.elis_room_fan_auto_control
       ac_auto_control_automation: automation.elis_room_ac_auto_control
@@ -6379,6 +6393,7 @@
   use_blueprint:
     path: danleongjy/bedroom_core.yaml
     input:
+      bedroom: parents_room
       core_left_button: binary_sensor.parents_room_core_left_button
       core_middle_button: binary_sensor.parents_room_core_middle_button
       core_right_button: binary_sensor.parents_room_core_right_button
@@ -6390,7 +6405,6 @@
       fan: fan.parents_room_fan
       ac: climate.parents_room_ac
       recommended_light_level_script: script.recommended_light_level_for_parents_room
-      recommended_scene_script: script.set_recommended_scene_in_parents_room
       motion_timeout_automation: automation.parents_room_motion_timeout
       fan_auto_control_automation: automation.parents_room_fan_auto_control
       ac_auto_control_automation: automation.parents_room_ac_auto_control
@@ -6502,6 +6516,7 @@
   use_blueprint:
     path: danleongjy/bedroom_core.yaml
     input:
+      bedroom: elenas_room
       core_left_button: binary_sensor.elenas_room_core_left_button
       core_middle_button: binary_sensor.elenas_room_core_middle_button
       core_right_button: binary_sensor.elenas_room_core_right_button
@@ -6513,7 +6528,6 @@
       fan: fan.elenas_room_fan
       ac: climate.elenas_room_ac
       recommended_light_level_script: script.recommended_light_level_for_elenas_room
-      recommended_scene_script: script.set_recommended_scene_in_elenas_room
       motion_timeout_automation: automation.elenas_room_motion_timeout
       fan_auto_control_automation: automation.elenas_room_fan_auto_control
       ac_auto_control_automation: automation.elenas_room_ac_auto_control
