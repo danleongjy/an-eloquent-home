@@ -70,12 +70,12 @@
       integration: ZHA
       helper_last_controller_event: input_text.zz_dining_room_lights_controller_2_last_event
       action_button_up_short:
-      - service: script.turn_on
-        data: {}
-        target:
-          entity_id:
-          - script.recommended_light_level_for_dining_room_lights
-          - script.recommended_light_level_for_dining_room_pendant_light
+      - service: script.recommended_light_level
+        data:
+          light: light.dining_room_lights
+      - service: script.recommended_light_level
+        data:
+          light: light.dining_room_pendant_light_entity
       action_button_up_long:
       - service: light.turn_on
         target:
@@ -128,12 +128,12 @@
       controller_device: 867b78e6f7808ffcceb260be52b0c174
       helper_last_controller_event: input_text.zz_playroom_lights_controller_last_event
       action_button_up_short:
-      - service: script.turn_on
-        data: {}
-        target:
-          entity_id:
-          - script.recommended_light_level_for_playroom
-          - script.recommended_light_level_for_yard
+      - service: script.recommended_light_level
+        data:
+          light: light.playroom_lights
+      - service: script.recommended_light_level
+        data:
+          light: light.yard_light_entity
       action_button_up_long:
       - service: light.turn_on
         target:
@@ -332,8 +332,9 @@
       controller_device: 8fd4f8715be89cc0f383c887c3fac892
       helper_last_controller_event: input_text.zz_powder_room_lights_controller_last_event
       action_button_up_short:
-      - service: script.recommended_light_level_for_powder_room
-        data: {}
+      - service: script.recommended_light_level
+        data:
+          light: light.powder_room_pendant_light_entity
       action_button_up_long:
       - service: light.turn_on
         target:
@@ -574,8 +575,9 @@
       controller_device: f084f2e55c0800941585a50dd83e5f47
       helper_last_controller_event: input_text.zz_junior_bathroom_lights_controller_last_event
       action_button_up_short:
-      - service: script.recommended_light_level_for_junior_bathroom
-        data: {}
+      - service: script.recommended_light_level
+        data:
+          light: light.junior_bathroom_lights
       action_button_up_long:
       - service: light.turn_on
         target:
@@ -1273,12 +1275,12 @@
       controller_device: c5d9eb9905ea6ac1a19d209a6dd0965c
       helper_last_controller_event: input_text.zz_living_room_lights_controller_last_event
       action_button_up_short:
-      - service: script.turn_on
-        data: {}
-        target:
-          entity_id:
-          - script.recommended_light_level_for_living_room_lights
-          - script.recommended_light_level_for_living_room_pendant_light
+      - service: script.recommended_light_level
+        data:
+          light: light.living_room_lights
+      - service: script.recommended_light_level
+        data:
+          light: light.living_room_pendant_light_entity
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -1530,8 +1532,9 @@
           target:
             entity_id: light.study_room_lights
         enabled: false
-      - service: script.recommended_light_level_for_study_room
-        data: {}
+      - service: script.recommended_light_level
+        data:
+          light: light.study_room_lights
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -1741,8 +1744,9 @@
       controller_device: 2d7882ce6b51a89dbc5b012417d00c40
       helper_last_controller_event: input_text.zz_parents_room_lights_controller_last_event
       action_button_up_short:
-      - service: script.recommended_light_level_for_parents_room
-        data: {}
+      - service: script.recommended_light_level
+        data:
+          light: light.parents_room_lights
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -1789,12 +1793,12 @@
       controller_device: 75fe391df20feec2911c6bf08707c353
       helper_last_controller_event: input_text.zz_master_bathroom_lights_controller_last_event
       action_button_up_short:
-      - service: script.turn_on
-        data: {}
-        target:
-          entity_id:
-          - script.recommended_light_level_for_master_bathroom_light
-          - script.recommended_light_level_for_master_bathroom_pendant_light
+      - service: script.recommended_light_level
+        data:
+          light: light.master_bathroom_light_entity
+      - service: script.recommended_light_level
+        data:
+          light: light.master_bathroom_pendant_light_entity
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -1828,8 +1832,9 @@
       controller_device: 13c989b42cc6640ec074b9c74df4101c
       helper_last_controller_event: input_text.zz_kitchen_lights_controller_last_event
       action_button_up_short:
-      - service: script.recommended_light_level_for_kitchen
-        data: {}
+      - service: script.recommended_light_level
+        data:
+          light: light.kitchen_lights
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -2186,8 +2191,9 @@
       controller_device: bcfa3b3429c3ad745cc8299a3d74e3d3
       helper_last_controller_event: input_text.zz_elena_s_room_lights_controller_last_event
       action_button_up_short:
-      - service: script.recommended_light_level_for_elenas_room
-        data: {}
+      - service: script.recommended_light_level
+        data:
+          light: light.elenas_room_lights
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -2464,8 +2470,9 @@
           target:
             entity_id: light.elis_room_lights
         else:
-        - service: script.recommended_light_level_for_elis_room
-          data: {}
+        - service: script.recommended_light_level
+          data:
+            light: light.elis_room_lights
       button_left_long_loop: true
       button_left_long_max_loop_repeats: 50
       button_right_long_loop: true
@@ -4070,7 +4077,6 @@
     input:
       lights_list:
       - light.parents_room_lights
-      recommended_light_level_script: script.recommended_light_level_for_parents_room
       motion_sensor: binary_sensor.parents_room_motion
       lux_sensor: sensor.parents_room_lux
       entities_list:
@@ -4125,7 +4131,6 @@
     input:
       lights_list:
       - light.elenas_room_lights
-      recommended_light_level_script: script.recommended_light_level_for_elenas_room
       motion_sensor: binary_sensor.elenas_room_motion
       lux_sensor: sensor.elenas_room_lux
       entities_list:
@@ -4196,7 +4201,6 @@
     input:
       lights_list:
       - light.elis_room_lights
-      recommended_light_level_script: script.recommended_light_level_for_elis_room
       motion_sensor: binary_sensor.elis_room_motion
       lux_sensor: sensor.elis_room_lux
       entities_list:
@@ -4233,7 +4237,6 @@
     input:
       lights_list:
       - light.kitchen_lights
-      recommended_light_level_script: script.recommended_light_level_for_kitchen
       motion_sensor: binary_sensor.kitchen_presence
       lux_sensor: sensor.kitchen_radar_lux_calibrated
       lights_debounce: false
@@ -4263,7 +4266,6 @@
       - light.study_room_bulb_2_entity
       - light.study_room_bulb_3_entity
       - light.study_room_bulb_1_entity
-      recommended_light_level_script: script.recommended_light_level_for_study_walkway
 - id: '1678322492101'
   alias: Study Walkway Motion Timeout
   description: Turn off Study Room Bulb 4 when no motion is detected for a certain
@@ -4288,7 +4290,6 @@
     input:
       lights_list:
       - light.playroom_lights
-      recommended_light_level_script: script.recommended_light_level_for_playroom
       motion_sensor: binary_sensor.playroom_motion
       lux_sensor: sensor.playroom_lux
       lights_debounce: false
@@ -4312,7 +4313,6 @@
     input:
       lights_list:
       - light.yard_light_entity
-      recommended_light_level_script: script.recommended_light_level_for_yard
       motion_sensor: binary_sensor.yard_motion
       lux_sensor: sensor.playroom_lux
       lights_debounce: false
@@ -4337,7 +4337,6 @@
       lights_list:
       - light.living_room_lights
       - light.christmas_tree
-      recommended_light_level_script: script.recommended_light_level_for_living_room_lights
       motion_sensor: binary_sensor.living_room_presence
       lux_sensor: sensor.dining_room_radar_lux
       blackout_hours_start: input_datetime.dim_hours_start
@@ -4351,7 +4350,6 @@
     input:
       lights_list:
       - light.living_room_pendant_light_entity
-      recommended_light_level_script: script.recommended_light_level_for_living_room_pendant_light
       motion_sensor: binary_sensor.living_room_presence
       lux_sensor: sensor.dining_room_radar_lux
 - id: '1679619704393'
@@ -4380,7 +4378,6 @@
     input:
       lights_list:
       - light.dining_room_lights
-      recommended_light_level_script: script.recommended_light_level_for_dining_room_lights
       motion_sensor: binary_sensor.dining_room_presence
       lux_sensor: sensor.dining_room_radar_lux
       blackout_hours_start: input_datetime.dim_hours_start
@@ -4394,7 +4391,6 @@
     input:
       lights_list:
       - light.dining_room_pendant_light_entity
-      recommended_light_level_script: script.recommended_light_level_for_dining_room_pendant_light
       motion_sensor: binary_sensor.dining_room_presence
       lux_sensor: sensor.dining_room_radar_lux
 - id: '1679619971749'
@@ -4697,7 +4693,6 @@
     input:
       lights_list:
       - light.hallway_lights
-      recommended_light_level_script: script.recommended_light_level_for_hallway
       motion_sensor: binary_sensor.hallway_motion
       lux_sensor: sensor.hallway_lux
       lights_debounce: false
@@ -4794,7 +4789,6 @@
     input:
       lights_list:
       - light.study_room_lights
-      recommended_light_level_script: script.recommended_light_level_for_study_room
       motion_sensor: binary_sensor.study_room_presence
       lux_sensor: sensor.study_walkway_lux
       lights_debounce: false
@@ -6285,7 +6279,6 @@
   use_blueprint:
     path: danleongjy/motion_lights.yaml
     input:
-      recommended_light_level_script: script.recommended_light_level_for_junior_bathroom
       motion_sensor: binary_sensor.junior_bathroom_occupancy
       lux_sensor: sensor.junior_shower_lux
       lights_list:
@@ -6311,7 +6304,6 @@
     input:
       lights_list:
       - light.powder_room_pendant_light_entity
-      recommended_light_level_script: script.recommended_light_level_for_powder_room
       motion_sensor: binary_sensor.powder_room_occupancy
       lux_sensor: sensor.powder_room_lux
 - id: '1699177686268'
@@ -6335,7 +6327,6 @@
     input:
       lights_list:
       - light.master_bathroom_light_entity
-      recommended_light_level_script: script.recommended_light_level_for_master_bathroom_light
       motion_sensor: binary_sensor.master_bathroom_motion
       lux_sensor: sensor.master_shower_lux
 - id: '1699233080526'
@@ -6347,7 +6338,6 @@
     input:
       lights_list:
       - light.master_bathroom_pendant_light_entity
-      recommended_light_level_script: script.recommended_light_level_for_master_bathroom_pendant_light
       motion_sensor: binary_sensor.master_shower_motion
       lux_sensor: sensor.master_shower_lux
 - id: '1699233249112'
@@ -6380,7 +6370,6 @@
       auto_control_indicator_light: light.elis_room_bulb_3_entity
       fan: fan.elis_room_fan
       ac: climate.elis_room_ac
-      recommended_light_level_script: script.recommended_light_level_for_elis_room
       motion_timeout_automation: automation.elis_room_motion_timeout
       fan_auto_control_automation: automation.elis_room_fan_auto_control
       ac_auto_control_automation: automation.elis_room_ac_auto_control
@@ -6404,7 +6393,6 @@
       auto_control_indicator_light: light.parents_room_bulb_3_entity
       fan: fan.parents_room_fan
       ac: climate.parents_room_ac
-      recommended_light_level_script: script.recommended_light_level_for_parents_room
       motion_timeout_automation: automation.parents_room_motion_timeout
       fan_auto_control_automation: automation.parents_room_fan_auto_control
       ac_auto_control_automation: automation.parents_room_ac_auto_control
@@ -6527,7 +6515,6 @@
       auto_control_indicator_light: light.elenas_room_bulb_1_entity
       fan: fan.elenas_room_fan
       ac: climate.elenas_room_ac
-      recommended_light_level_script: script.recommended_light_level_for_elenas_room
       motion_timeout_automation: automation.elenas_room_motion_timeout
       fan_auto_control_automation: automation.elenas_room_fan_auto_control
       ac_auto_control_automation: automation.elenas_room_ac_auto_control

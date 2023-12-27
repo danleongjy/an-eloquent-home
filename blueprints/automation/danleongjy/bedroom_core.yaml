@@ -60,7 +60,6 @@ blueprint:
       selector:
         entity:
           domain: light
-          
     auto_control_indicator_light:
       name: Auto Control Indicator Light
       description: The light that should flash when AC/fan auto control is toggled
@@ -79,12 +78,6 @@ blueprint:
       selector:
         entity:
           domain: climate
-    recommended_light_level_script:
-      name: Recommended Light Level Script
-      description: Script providing the recommended brightness for room lights
-      selector:
-        entity:
-          domain: script
     motion_timeout_automation:
       name: Motion Timeout Automation
       description: Automation turning off all room devices upon motion timeout
@@ -232,8 +225,9 @@ action:
                 entity_id: !input core_current_command
                 state: lights_on
             sequence:
-              - service: !input recommended_light_level_script
-                data: {}
+              - service: script.recommended_light_level
+                data:
+                  light: !input lights
           - conditions:
               - condition: state
                 entity_id: !input core_current_command

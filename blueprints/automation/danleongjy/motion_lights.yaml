@@ -10,12 +10,6 @@ blueprint:
         entity:
           domain: light
           multiple: true
-    recommended_light_level_script:
-      name: Recommended Light Level Script
-      description: A script created by the Recommended Light Level blueprint that determines how brightly the light will turn on according to time.
-      selector:
-        entity:
-          domain: script
     motion_sensor:
       name: Motion Sensor
       description: When motion is detected by this sensor, the lights may turn on.
@@ -139,6 +133,11 @@ action:
             entity_id: !input lux_sensor
             below: !input insufficient_lux
         sequence:
-          - service: !input recommended_light_level_script
+          - repeat:
+              for_each: !input lights_list
+              sequence:
+                - service: script.recommended_light_level
+                  data:
+                    light: "{{ repeat.item }}"
 mode: single
 max_exceeded: silent
