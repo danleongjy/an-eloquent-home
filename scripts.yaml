@@ -542,9 +542,9 @@ increment_alarm_day:
           - domain: input_datetime
     off_time_calendars:
       name: Off-time Calendars
-      description: A calendar indicating public holidays, and if applicable, another
-        calendar indicating when the owner of this alarm has no work/school.  Must
-        specify either one or two calendars.
+      description: Calendars indicating public holidays, and if applicable, when the
+        owner of this alarm has no work/school.  Must specify at least the public
+        holiday calendar.
       required: true
       selector:
         entity:
@@ -555,32 +555,15 @@ increment_alarm_day:
     off_time:
       events: []
   sequence:
-  - service: calendar.list_events
+  - service: calendar.get_events
     data:
       duration:
         minutes: 1
       start_date_time: '{{ states(alarm_datetime) }}'
     target:
-      entity_id: '{{ off_time_calendars[0] }}'
-    response_variable: public_holiday
-    alias: List public holidays occurring on next alarm
-  - if:
-    - condition: template
-      value_template: '{{ off_time_calendars | length == 2 }}'
-    then:
-    - service: calendar.list_events
-      data:
-        duration:
-          minutes: 1
-        start_date_time: '{{ states(alarm_datetime) }}'
-      target:
-        entity_id: '{{ off_time_calendars[1] }}'
-      response_variable: off_time
-      alias: List days with no work/school occurring on next alarm
-    else:
-    - variables:
-        off_time:
-          events: []
+      entity_id: '{{ off_time_calendars }}'
+    response_variable: no_alarm_day
+    alias: List public holidays and no work/school days occurring on next alarm
   - repeat:
       while:
       - condition: or
@@ -594,8 +577,9 @@ increment_alarm_day:
             }}'
           alias: Alarm day is not in the future
         - condition: template
-          value_template: '{{ (public_holiday.events + off_time.events) | length >
-            0 }}'
+          value_template: "{% set events = namespace(quantity = 0) %} {% for calendar
+            in no_alarm_day %}\n  {% set events.quantity = events.quantity + no_alarm_day[calendar].events
+            | length %}\n{% endfor %} {{ events.quantity > 0 }}\n"
           alias: Alarm day is on an off day
       sequence:
       - service: input_datetime.set_datetime
@@ -605,32 +589,15 @@ increment_alarm_day:
         target:
           entity_id: '{{ alarm_datetime }}'
         alias: Increment alarm by 1 day
-      - service: calendar.list_events
+      - service: calendar.get_events
         data:
           duration:
             minutes: 1
           start_date_time: '{{ states(alarm_datetime) }}'
         target:
-          entity_id: '{{ off_time_calendars[0] }}'
-        response_variable: public_holiday
-        alias: List public holidays occurring on next alarm
-      - if:
-        - condition: template
-          value_template: '{{ off_time_calendars | length == 2 }}'
-        then:
-        - service: calendar.list_events
-          data:
-            duration:
-              minutes: 1
-            start_date_time: '{{ states(alarm_datetime) }}'
-          target:
-            entity_id: '{{ off_time_calendars[1] }}'
-          response_variable: off_time
-          alias: List days with no work/school occurring on next alarm
-        else:
-        - variables:
-            off_time:
-              events: '{{ [] }}'
+          entity_id: '{{ off_time_calendars }}'
+        response_variable: no_alarm_day
+        alias: List public holidays and no work/school days occurring on next alarm
     alias: Increment alarm by 1 day until it is a future weekday that is not an off
       day
   mode: parallel
