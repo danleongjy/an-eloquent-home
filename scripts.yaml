@@ -291,165 +291,6 @@ turn_off_all:
   mode: single
   alias: Turn Off All
   icon: mdi:home-export-outline
-elis_room_alarm_lights:
-  alias: Eli's Room Alarm Lights
-  sequence:
-  - service: light.turn_off
-    data: {}
-    target:
-      entity_id: light.elis_room_lights
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 5
-      milliseconds: 0
-  - service: light.turn_on
-    data:
-      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
-        }}\n{% else %}\n  100\n{% endif %}\n"
-    target:
-      entity_id: light.elis_room_lights
-  - service: light.turn_on
-    data:
-      rgb_color:
-      - 229
-      - 208
-      - 164
-      effect: Alarm
-    target:
-      entity_id: light.elis_room_core_led_strips
-  - service: light.turn_on
-    data:
-      brightness_pct: 30
-    target:
-      entity_id: light.elis_room_core_display_backlight
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 2
-      milliseconds: 0
-  - repeat:
-      while:
-      - condition: state
-        entity_id: binary_sensor.elis_room_door
-        state: 'off'
-      sequence:
-      - service: light.toggle
-        data:
-          brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
-            }}\n{% else %}\n  100\n{% endif %}\n"
-        target:
-          entity_id:
-          - light.elis_room_lights
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 2
-          milliseconds: 0
-      - if:
-        - condition: template
-          value_template: "{{ now() - state_attr('script.elis_room_alarm_lights','last_triggered')
-            > timedelta(minutes = 5) and\n   now() - state_attr('script.elis_room_alarm_lights','last_triggered')
-            <= timedelta(minutes = 5, seconds = 3) }}"
-        then:
-        - service: button.press
-          data: {}
-          target:
-            entity_id: button.elis_room_core_play_ringtone
-  - service: light.turn_on
-    data:
-      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
-        }}\n{% else %}\n  100\n{% endif %}\n"
-    target:
-      entity_id: light.elis_room_lights
-  - service: light.turn_off
-    data: {}
-    target:
-      entity_id: light.elis_room_core_led_strips
-  mode: single
-  icon: mdi:alarm
-parents_room_alarm_lights:
-  alias: Parents' Room Alarm Lights
-  sequence:
-  - service: light.turn_off
-    data: {}
-    target:
-      entity_id: light.parents_room_lights
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 5
-      milliseconds: 0
-  - service: light.turn_on
-    data:
-      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
-        }}\n{% else %}\n  100\n{% endif %}\n"
-    target:
-      entity_id:
-      - light.parents_room_lights
-  - service: light.turn_on
-    data:
-      rgb_color:
-      - 229
-      - 208
-      - 164
-      effect: Alarm
-    target:
-      entity_id: light.parents_room_core_led_strips
-  - service: light.turn_on
-    data:
-      brightness_pct: 30
-    target:
-      entity_id: light.parents_room_core_display_backlight
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 2
-      milliseconds: 0
-  - repeat:
-      while:
-      - condition: state
-        state: 'off'
-        entity_id: binary_sensor.parents_room_doors
-      sequence:
-      - service: light.toggle
-        data:
-          brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
-            }}\n{% else %}\n  100\n{% endif %}\n"
-        target:
-          entity_id:
-          - light.parents_room_lights
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 2
-          milliseconds: 0
-      - if:
-        - condition: template
-          value_template: '{{ now() - state_attr(''script.parents_room_alarm_lights'',''last_triggered'')
-            > timedelta(minutes = 5) }}'
-        then:
-        - service: select.select_option
-          data:
-            option: beep:d=4,o=5,b=200:8c,4c
-          target:
-            entity_id: select.parents_room_core_ringtone
-        - service: button.press
-          data: {}
-          target:
-            entity_id: button.parents_room_core_play_ringtone
-  - service: light.turn_on
-    data:
-      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
-        }}\n{% else %}\n  100\n{% endif %}\n"
-    target:
-      entity_id: light.parents_room_lights
-  - service: light.turn_off
-    data: {}
-    target:
-      entity_id: light.parents_room_core_led_strips
-  mode: single
-  icon: mdi:alarm
 kitchen_blind_set_position:
   alias: Kitchen Blind Set Position
   fields:
@@ -731,4 +572,79 @@ recommended_light_level:
             domain: light
       name: Light
       description: The light on which to set the recommended level
+      required: true
+alarm_lights:
+  alias: Alarm Lights
+  sequence:
+  - service: light.turn_off
+    target:
+      entity_id: '{{ [''light.'' + bedroom + ''_lights'',''light.'' + bedroom + ''_core_led_strips''
+        ] }}'
+  - delay: 5
+  - service: light.turn_on
+    target:
+      entity_id: '{{ ''light.'' + bedroom + ''_core_display_backlight'' }}'
+    data:
+      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  30\n{% else
+        %}\n  100\n{% endif %}\n"
+  - service: light.turn_on
+    target:
+      entity_id: '{{ ''light.'' + bedroom + ''_lights'' }}'
+    data:
+      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
+        }}\n{% else %}\n  100\n{% endif %}\n"
+  - service: light.turn_on
+    target:
+      entity_id: '{{ ''light.'' + bedroom + ''_core_led_strips'' }}'
+    data:
+      rgb_color:
+      - 229
+      - 208
+      - 164
+      effect: Alarm
+  - service: select.select_option
+    target:
+      entity_id: '{{ ''select.'' + bedroom + ''_core_ringtone'' }}'
+    data:
+      option: elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f
+  - service: button.press
+    target:
+      entity_id: '{{ ''button.'' + bedroom + ''_core_play_ringtone'' }}'
+  - repeat:
+      sequence:
+      - service: light.toggle
+        target:
+          entity_id: '{{ ''light.'' + bedroom + ''_lights'' }}'
+      - delay: 2
+      while:
+      - condition: template
+        value_template: '{{ not ''on'' in states.binary_sensor | selectattr(''attributes.device_class'',
+          ''defined'') | selectattr(''attributes.device_class'', ''eq'', ''door'')
+          | selectattr(''entity_id'',''search'',bedroom) | map(attribute = ''state'')
+          | list }}'
+  - service: light.turn_on
+    data:
+      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
+        }}\n{% else %}\n  100\n{% endif %}\n"
+    target:
+      entity_id: '{{ ''light.'' + bedroom + ''_lights'' }}'
+  - service: light.turn_off
+    target:
+      entity_id: '{{ ''light.'' + bedroom + ''_core_led_strips'' }}'
+  mode: parallel
+  icon: mdi:alarm
+  max: 5
+  fields:
+    bedroom:
+      selector:
+        select:
+          options:
+          - label: Parents' Room
+            value: parents_room
+          - label: Eli's Room
+            value: elis_room
+          - label: Elena's Room
+            value: elenas_room
+      name: Bedroom
+      description: The bedroom to run the alarm in
       required: true

@@ -6,6 +6,7 @@ substitutions:
   next_alarm_timing_entity: sensor.parents_room_next_alarm_time
   next_alarm_imminent_attribute: parents_room_next_alarm_imminent
   next_alarm_dismissable_attribute: parents_room_next_alarm_dismissable
+  volume: "0.005" # 0.005 generally loud enough
 
 esphome:
   name: ${hostname_room}-core
@@ -493,7 +494,7 @@ output:
   - platform: ledc
     pin: 25
     id: core_speaker
-    max_power: 0.005
+    max_power: ${volume}
 
 rtttl:
   output: core_speaker

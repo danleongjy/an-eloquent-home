@@ -66,6 +66,15 @@ trigger:
     id: no_buttons_pressed_recently
 condition: []
 action:
+  - variables:
+      core_display_backlight: "{{ 'light.' + room + '_core_display_backlight' }}"
+      core_current_command: "{{ 'select.' + room + '_core_current_command' }}"
+      lights: "{{ 'light.' + room + '_lights' }}"
+      fan: "{{ 'fan.' + room + '_fan' }}"
+      ac: "{{ 'climate.' + room + '_ac' }}"
+      motion_timeout: "{{ 'automation.' + room + '_motion_timeout' }}"
+      ac_auto_control: "{{ 'automation.' + room + '_ac_auto_control' }}"
+      fan_auto_control: "{{ 'automation.' + room + '_fan_auto_control' }}"
   - choose:
       - conditions:
           - condition: trigger
@@ -74,7 +83,7 @@ action:
         sequence:
           - service: light.turn_off
             target:
-              entity_id: "{{ 'light.' + room + '_core_display_backlight' }}"
+              entity_id: "{{ core_display_backlight }}"
       - conditions:
           - condition: trigger
             id:
@@ -87,7 +96,7 @@ action:
             data:
               brightness_pct: 100
             target:
-              entity_id: "{{ 'light.' + room + '_core_display_backlight' }}"
+              entity_id: "{{ core_display_backlight }}"
       - conditions:
           - condition: trigger
             id:
@@ -102,13 +111,13 @@ action:
                 data:
                   brightness_pct: 100
                 target:
-                  entity_id: "{{ 'light.' + room + '_core_display_backlight' }}"
+                  entity_id: "{{ core_display_backlight }}"
             else:
               - service: light.turn_on
                 data:
                   brightness_pct: 30
                 target:
-                  entity_id: "{{ 'light.' + room + '_core_display_backlight' }}"
+                  entity_id: "{{ core_display_backlight }}"
       - conditions:
           - condition: trigger
             id:
@@ -116,135 +125,135 @@ action:
         sequence:
           - condition: or
             conditions:
-              - "{{ is_state('light.' + room + '_lights','off') and is_state('fan.' + room + '_fan','off') and is_state('climate.' + room + '_ac','off')}}"
+              - "{{ is_state(lights,'off') and is_state(fan,'off') and is_state(ac,'off')}}"
               - condition: time
                 after: !input sleep_hours_start
                 before: !input sleep_hours_end
           - service: light.turn_off
             target:
-              entity_id: "{{ 'light.' + room + '_core_display_backlight' }}"
+              entity_id: "{{ core_display_backlight }}"
     default:
       - choose:
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','lights_on') }}"
+          - conditions: "{{ is_state(core_current_command,'lights_on') }}"
             sequence:
               - service: script.recommended_light_level
                 data:
-                  light: "{{ 'light.' + room + '_lights' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','lights_off') }}"
+                  light: "{{ lights }}"
+          - conditions: "{{ is_state(core_current_command,'lights_off') }}"
             sequence:
               - service: light.turn_off
                 target:
-                  entity_id: "{{ 'light.' + room + '_lights' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','lights_brighten') }}"
+                  entity_id: "{{ lights }}"
+          - conditions: "{{ is_state(core_current_command,'lights_brighten') }}"
             sequence:
               - service: light.turn_on
                 data:
                   brightness_step_pct: "{{ states('input_number.light_brightness_change_step') }}"
                 target:
-                  entity_id: "{{ 'light.' + room + '_lights' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','lights_darken') }}"
+                  entity_id: "{{ lights }}"
+          - conditions: "{{ is_state(core_current_command,'lights_darken') }}"
             sequence:
               - service: light.turn_on
                 data:
                   brightness_step_pct: "-{{ states('input_number.light_brightness_change_step') }}"
                 target:
-                  entity_id: "{{ 'light.' + room + '_lights' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','set_recommended_room_scene') }}"
+                  entity_id: "{{ lights }}"
+          - conditions: "{{ is_state(core_current_command,'set_recommended_room_scene') }}"
             sequence:
               - service: script.set_recommended_scene
                 data:
                   room: "{{ room }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','turn_off_room') }}"
+          - conditions: "{{ is_state(core_current_command,'turn_off_room') }}"
             sequence:
               - service: automation.trigger
                 data:
                   skip_condition: true
                 target:
-                  entity_id: "{{ 'automation.' + room + '_motion_timeout' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','fan_on') }}"
+                  entity_id: "{{ motion_timeout }}"
+          - conditions: "{{ is_state(core_current_command,'fan_on') }}"
             sequence:
               - service: fan.turn_on
                 target:
-                  entity_id: "{{ 'fan.' + room + '_fan' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','fan_off') }}"
+                  entity_id: "{{ fan }}"
+          - conditions: "{{ is_state(core_current_command,'fan_off') }}"
             sequence:
               - service: fan.turn_off
                 target:
-                  entity_id: "{{ 'fan.' + room + '_fan' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','fan_speed_up') }}"
+                  entity_id: "{{ fan }}"
+          - conditions: "{{ is_state(core_current_command,'fan_speed_up') }}"
             sequence:
               - service: fan.increase_speed
                 target:
-                  entity_id: "{{ 'fan.' + room + '_fan' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','fan_slow_down') }}"
+                  entity_id: "{{ fan }}"
+          - conditions: "{{ is_state(core_current_command,'fan_slow_down') }}"
             sequence:
               - if:
                   - condition: template
-                    value_template: "{{ state_attr('fan.' + room + '_fan', 'percentage') | int(0) < 20 }}"
+                    value_template: "{{ state_attr(fan, 'percentage') | int(0) < 20 }}"
                 then:
                   - service: fan.turn_off
                     target:
-                      entity_id: "{{ 'fan.' + room + '_fan' }}"
+                      entity_id: "{{ fan }}"
                 else:
                   - service: fan.decrease_speed
                     target:
-                      entity_id: "{{ 'fan.' + room + '_fan' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','fan_reverse') }}"
+                      entity_id: "{{ fan }}"
+          - conditions: "{{ is_state(core_current_command,'fan_reverse') }}"
             sequence:
               - service: fan.set_direction
                 data:
                   direction: reverse
                 target:
-                  entity_id: "{{ 'fan.' + room + '_fan' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','fan_forward') }}"
+                  entity_id: "{{ fan }}"
+          - conditions: "{{ is_state(core_current_command,'fan_forward') }}"
             sequence:
               - service: fan.set_direction
                 data:
                   direction: forward
                 target:
-                  entity_id: "{{ 'fan.' + room + '_fan' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','ac_on') }}"
+                  entity_id: "{{ fan }}"
+          - conditions: "{{ is_state(core_current_command,'ac_on') }}"
             sequence:
               - service: climate.turn_on
                 target:
-                  entity_id: "{{ 'climate.' + room + '_ac' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','ac_off') }}"
+                  entity_id: "{{ ac }}"
+          - conditions: "{{ is_state(core_current_command,'ac_off') }}"
             sequence:
               - service: climate.turn_off
                 target:
-                  entity_id: "{{ 'climate.' + room + '_ac' }}"
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','ac_warmer') }}"
+                  entity_id: "{{ ac }}"
+          - conditions: "{{ is_state(core_current_command,'ac_warmer') }}"
             sequence:
               - service: climate.set_temperature
                 target:
-                  entity_id: "{{ 'climate.' + room + '_ac' }}"
+                  entity_id: "{{ ac }}"
                 data:
                   temperature: >
-                    {% if state_attr('climate.' + room + '_ac', 'temperature') <
+                    {% if state_attr(ac, 'temperature') <
                     27 %}
-                      {{ state_attr('climate.' + room + '_ac', 'temperature') + 1 }}
+                      {{ state_attr(ac, 'temperature') + 1 }}
                     {% else %}
                       27
                     {% endif %}
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','ac_colder') }}"
+          - conditions: "{{ is_state(core_current_command,'ac_colder') }}"
             sequence:
               - service: climate.set_temperature
                 target:
-                  entity_id: "{{ 'climate.' + room + '_ac' }}"
+                  entity_id: "{{ ac }}"
                 data:
                   temperature: >
-                    {% if state_attr('climate.' + room + '_ac', 'temperature') >
+                    {% if state_attr(ac, 'temperature') >
                     24 %}
-                      {{ state_attr('climate.' + room + '_ac', 'temperature') - 1 }}
+                      {{ state_attr(ac, 'temperature') - 1 }}
                     {% else %}
                       24
                     {% endif %}
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','cooling_auto_control') }}"
+          - conditions: "{{ is_state(core_current_command,'cooling_auto_control') }}"
             sequence:
               - service: automation.turn_on
                 data: {}
                 target:
-                  entity_id: "{{ ['automation.' + room + '_ac_auto_control', 'automation.' + room + '_fan_auto_control'] }}"
+                  entity_id: "{{ [ac_auto_control, fan_auto_control] }}"
               - condition: time
                 after: !input sleep_hours_end
                 before: !input sleep_hours_start
@@ -269,12 +278,12 @@ action:
                       flash: short
                     target:
                       entity_id: !input auto_control_indicator_light
-          - conditions: "{{ is_state('select.' + room + '_core_current_command','cooling_manual_control') }}"
+          - conditions: "{{ is_state(core_current_command,'cooling_manual_control') }}"
             sequence:
               - service: automation.turn_off
                 data: {}
                 target:
-                  entity_id: "{{ ['automation.' + room + '_ac_auto_control', 'automation.' + room + '_fan_auto_control'] }}"
+                  entity_id: "{{ [ac_auto_control, fan_auto_control] }}"
               - condition: time
                 after: !input sleep_hours_end
                 before: !input sleep_hours_start
