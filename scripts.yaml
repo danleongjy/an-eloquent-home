@@ -610,11 +610,20 @@ alarm_lights:
   - service: button.press
     target:
       entity_id: '{{ ''button.'' + bedroom + ''_core_play_ringtone'' }}'
+  - delay: 15
   - repeat:
       sequence:
       - service: light.toggle
         target:
           entity_id: '{{ ''light.'' + bedroom + ''_lights'' }}'
+      - service: select.select_option
+        target:
+          entity_id: '{{ ''select.'' + bedroom + ''_core_ringtone'' }}'
+        data:
+          option: beep:d=4,o=5,b=200:8c,4c
+      - service: button.press
+        target:
+          entity_id: '{{ ''button.'' + bedroom + ''_core_play_ringtone'' }}'
       - delay: 2
       while:
       - condition: template
