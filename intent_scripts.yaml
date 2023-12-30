@@ -1,13 +1,52 @@
-AwayMode:
+AwayModeOn:
   speech: 
     text: >
-      {{ ['Initiating', 'Activating'] | random }} {{ ['Away Mode', 'shutdown sequence'] | random }} in one minute.
+      {{ ['Initiating', 'Activating'] | random }} {{ ['Away Mode', 'shutdown sequence'] | random }}.
   action:
-    - delay: 
-        minutes: 1
     - service: input_boolean.turn_on
       target:
         entity_id: input_boolean.away_mode
+PartyModeOn:
+  speech: 
+    text: >
+      {{ ['Initiating', 'Activating'] | random }} party mode.
+  action:
+    - service: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.party_mode
+PartyModeOff:
+  speech: 
+    text: >
+      {{ ['Turning off', 'Dectivating'] | random }} party mode.
+  action:
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.party_mode
+CommandVacuum:
+  speech:
+    text: >
+      {% if command == 'start' %}
+        {{ ['Starting','Running','Initiating','Activating'] | random }} the vacuum.
+      {% elif command == 'pause' %}
+        Vacuum paused.
+      {% elif command == 'stop' %}
+        {{ ['Stopping','Deactivating'] | random }} the vacuum.
+      {% else %}
+        Returning vacuum to dock.
+      {% endif %}
+  action:
+    - service: 'vacuum.{{ command }}'
+      target:
+        entity_id: vacuum.pikachu
+VacuumStatus:
+  speech:
+    text: >
+      The vacuum is {{ 'in trouble' if states('vacuum.pikachu') == 'error' else states('vacuum.pikachu') }}.
+      {% if as_datetime(states('input_datetime.vacuum_last_run_end')) > as_datetime(states('input_datetime.vacuum_last_run_start')) %}
+        It cleaned {{state_attr('vacuum.pikachu','clean_area') | round(0)}} square metres for {{ states('sensor.vacuum_clean_time').split(':')[0] + ' hours and ' if states('sensor.vacuum_clean_time').split(':')[0] | int(0) > 0 else '' }}{{ states('sensor.vacuum_clean_time').split(':')[1] }} minutes and its last run ended {{ relative_time(as_datetime(states('input_datetime.vacuum_last_run_end'))) }} ago.
+      {% else %}
+        Its last run started {{ states('sensor.vacuum_last_run_started') }} ago
+      {% endif %}
 CookingPreset:
   speech:
     text: >
