@@ -44,7 +44,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 10
 [`select`](https://www.home-assistant.io/components/select) | 60
-[`sensor`](https://www.home-assistant.io/components/sensor) | 531
+[`sensor`](https://www.home-assistant.io/components/sensor) | 533
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 27
@@ -54,7 +54,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1503
+Total | 1505
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -80,6 +80,7 @@ Total | 1503
 - [Template Fan](https://home-assistant.io/integrations/fan.template)
 - [Template Switch](https://home-assistant.io/integrations/switch.template)
 - [Template Weather](https://home-assistant.io/integrations/weather.template)
+- [Time & Date](https://home-assistant.io/integrations/time_date)
 - [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
 ## Extensions
 
