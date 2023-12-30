@@ -488,6 +488,19 @@ set_recommended_scene:
         = ''entity_id'') | list }}
 
         '
+    enabled: false
+  - repeat:
+      sequence:
+        service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: '{{ states.automation | selectattr(''entity_id'', ''search'',
+            repeat.item + ''_motion'') | rejectattr(''entity_id'',''search'',''timeout'')
+            | map(attribute = ''entity_id'') | list }}
+
+            '
+      for_each: '{{ room }}'
   mode: parallel
   icon: mdi:magic-staff
   max: 15
@@ -524,6 +537,7 @@ set_recommended_scene:
             value: elis_room
           - label: Elena's Room
             value: elenas_room
+          multiple: true
       required: true
 recommended_light_level:
   alias: Recommended Light Level
