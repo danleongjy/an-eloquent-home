@@ -2568,26 +2568,37 @@
                             "type": "custom:button-card",
                             "style": {
                               "top": "10%",
-                              "left": "90%",
+                              "left": "91.5%",
                               "height": "19%",
-                              "width": "19.5%"
+                              "width": "16.5%"
                             },
-                            "aspect_ratio": 2,
+                            "aspect_ratio": "33/19",
                             "entity": "sensor.date",
                             "label": "[[[ \n  return (helpers.formatDateWeekdayShort(entity.state) + ' ' + \n          helpers.formatDateShort(entity.state).split(' ')[1] + ' ' + \n          helpers.formatDateShort(entity.state).split(' ')[0] + ' ' + \n          helpers.formatDateYear(entity.state))\n]]]\n",
                             "show_name": false,
                             "show_icon": false,
                             "show_state": true,
                             "show_label": true,
-                            "state_display": "[[[ if (states['calendar.public_holidays'].state == 'on') {return '🎉 ' + states['calendar.public_holidays'].attributes.message} else {return ' '} ]]]",
+                            "state_display": "[[[ \n  if (states['calendar.public_holidays'].state == 'on') {\n    return '🎉 Happy ' + states['calendar.public_holidays'].attributes.message + '!'\n  } else {\n    return ' '\n  } \n]]]\n",
                             "tap_action": {
                               "action": "navigate",
                               "navigation_path": "/lovelace/settings-sleep"
                             },
                             "custom_fields": {
-                              "greeting": "[[[\n  if (parseInt(states['sensor.time'].state.split(':')[0]) < 12) {\n    return 'Good morning 🌅'\n  } else if (parseInt(states['sensor.time'].state.split(':')[0]) < 18) {\n    return 'Good afternoon 🌇'\n  } else {\n    return 'Good evening 🌃'\n    }\n]]]\n"
+                              "greeting": "[[[\n  if (parseInt(states['sensor.time'].state.split(':')[0]) < 12) {\n    return 'Good morning 🌅'\n  } else if (parseInt(states['sensor.time'].state.split(':')[0]) < 18) {\n    return 'Good afternoon 🌇'\n  } else {\n    return 'Good evening 🌃'\n  }\n]]]\n"
                             },
                             "styles": {
+                              "state": [
+                                {
+                                  "white-space": "initial"
+                                },
+                                {
+                                  "text-overflow": "initial"
+                                },
+                                {
+                                  "overflow": "initial"
+                                }
+                              ],
                               "grid": [
                                 {
                                   "grid-template-areas": "\"greeting\" \"l\" \"s\""
@@ -2605,14 +2616,14 @@
                             "type": "custom:button-card",
                             "style": {
                               "top": "10%",
-                              "left": "75%",
+                              "left": "77%",
                               "height": "19%",
-                              "width": "9.5%"
+                              "width": "12%"
                             },
-                            "template": "floorplan_square_cell",
-                            "state_display": "[[[ return states['sensor.time'].state ]]]",
+                            "aspect_ratio": "24/19",
                             "show_icon": false,
-                            "show_state": true,
+                            "show_name": false,
+                            "show_state": false,
                             "entity": "binary_sensor.next_alarm_imminent",
                             "tap_action": {
                               "action": "navigate",
@@ -2628,17 +2639,6 @@
                               "grid": [
                                 {
                                   "position": "relative"
-                                }
-                              ],
-                              "state": [
-                                {
-                                  "font-size": "24pt"
-                                },
-                                {
-                                  "font-weight": "bold"
-                                },
-                                {
-                                  "color": "[[[\n  if (entity.state == 'on') {\n    return '#FFC107'\n  } else {\n    return 'var(--paper-item-icon-color)'\n  }\n]]]\n"
                                 }
                               ],
                               "custom_fields": {
@@ -2711,6 +2711,39 @@
                                   }
                                 ]
                               }
+                            }
+                          },
+                          {
+                            "type": "image",
+                            "style": {
+                              "top": "10%",
+                              "left": "77%",
+                              "height": "19%",
+                              "width": "9.5%"
+                            },
+                            "entity": "binary_sensor.next_alarm_imminent",
+                            "image": "/local/clock_faces/blank_clock_face.png",
+                            "tap_action": {
+                              "action": "navigate",
+                              "navigation_path": "/lovelace/settings-sleep"
+                            },
+                            "state_filter": {
+                              "on": "grayscale(100%) contrast(0%) opacity(50%) drop-shadow(0 0 0 yellow) hue-rotate(330deg) saturate(400%) brightness(130%)",
+                              "off": "grayscale(100%) contrast(0%) opacity(50%) drop-shadow(0 0 0 blue) hue-rotate(330deg) brightness(150%) saturate(60%)"
+                            }
+                          },
+                          {
+                            "type": "image",
+                            "style": {
+                              "top": "10%",
+                              "left": "77%",
+                              "height": "19%",
+                              "width": "9.5%"
+                            },
+                            "entity": "image.clock_face",
+                            "tap_action": {
+                              "action": "navigate",
+                              "navigation_path": "/lovelace/settings-sleep"
                             }
                           },
                           {

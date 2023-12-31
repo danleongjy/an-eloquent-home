@@ -1,7 +1,9 @@
 {% macro data_overlay(presence_sensor, devices_list, lux_sensor, temperature_sensor, humidity_sensor) %}
 
 {% if is_state('input_select.floorplan_data_overlay','Presence') %}
-  {% if is_state(presence_sensor,'on') %}
+  {% if states(presence_sensor) in ['unavailable','unknown'] %}
+    D
+  {% elif is_state(presence_sensor,'on') %}
     C
   {% else %}
     {% set devices = namespace(on = 0) %}
