@@ -381,11 +381,9 @@ increment_alarm_day:
         entity:
           filter:
           - domain: input_datetime
-    off_time_calendars:
-      name: Off-time Calendars
-      description: Calendars indicating public holidays, and if applicable, when the
-        owner of this alarm has no work/school.  Must specify at least the public
-        holiday calendar.
+    calendars:
+      name: Work or School Day Calendars
+      description: Calendars indicating work or school days.
       required: true
       selector:
         entity:
@@ -398,30 +396,26 @@ increment_alarm_day:
   sequence:
   - service: calendar.get_events
     data:
-      duration:
-        minutes: 1
-      start_date_time: '{{ states(alarm_datetime) }}'
+      start_date_time: '{{ as_datetime(states(alarm_datetime)).replace(hour = 0, minute
+        = 0) }}'
+      end_date_time: '{{ as_datetime(states(alarm_datetime)).replace(hour = 0, minute
+        = 0) + timedelta(days = 1) }}'
     target:
-      entity_id: '{{ off_time_calendars }}'
-    response_variable: no_alarm_day
-    alias: List public holidays and no work/school days occurring on next alarm
+      entity_id: '{{ calendars }}'
+    response_variable: work_school_day
+    alias: List work/school days occurring on next alarm day
   - repeat:
       while:
-      - condition: or
-        conditions:
-        - condition: template
-          value_template: '{{ (as_datetime(states(alarm_datetime))).weekday() in range(5,7)
-            }}'
-          alias: Alarm day is on a weekend
+      - or:
         - condition: template
           value_template: '{{ now().date() >= as_datetime(states(alarm_datetime)).date()
             }}'
           alias: Alarm day is not in the future
         - condition: template
           value_template: "{% set events = namespace(quantity = 0) %} {% for calendar
-            in no_alarm_day %}\n  {% set events.quantity = events.quantity + no_alarm_day[calendar].events
-            | length %}\n{% endfor %} {{ events.quantity > 0 }}\n"
-          alias: Alarm day is on an off day
+            in work_school_day %}\n  {% set events.quantity = events.quantity + work_school_day[calendar].events
+            | length %}\n{% endfor %} {{ events.quantity == 0 }}\n"
+          alias: Alarm day is not a work/school day
       sequence:
       - service: input_datetime.set_datetime
         data:
@@ -432,15 +426,15 @@ increment_alarm_day:
         alias: Increment alarm by 1 day
       - service: calendar.get_events
         data:
-          duration:
-            minutes: 1
-          start_date_time: '{{ states(alarm_datetime) }}'
+          start_date_time: '{{ as_datetime(states(alarm_datetime)).replace(hour =
+            0, minute = 0) }}'
+          end_date_time: '{{ as_datetime(states(alarm_datetime)).replace(hour = 0,
+            minute = 0) + timedelta(days = 1) }}'
         target:
-          entity_id: '{{ off_time_calendars }}'
-        response_variable: no_alarm_day
-        alias: List public holidays and no work/school days occurring on next alarm
-    alias: Increment alarm by 1 day until it is a future weekday that is not an off
-      day
+          entity_id: '{{ calendars }}'
+        response_variable: work_school_day
+        alias: List work/school days occurring on next alarm day
+    alias: Increment alarm by 1 day until it is a future day that is not an off day
   mode: parallel
   icon: mdi:alarm
 nea_rain_radar_animation:
@@ -479,16 +473,6 @@ nea_rain_radar_animation:
 set_recommended_scene:
   alias: Set Recommended Scene
   sequence:
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: '{{ states.automation | selectattr(''entity_id'', ''search'', room
-        + ''_motion'') | rejectattr(''entity_id'',''search'',''timeout'') | map(attribute
-        = ''entity_id'') | list }}
-
-        '
-    enabled: false
   - repeat:
       sequence:
         service: automation.trigger
@@ -550,9 +534,10 @@ recommended_light_level:
       dim_end: '{{ ''input_datetime.sleep_hours_end'' if light_room in sleep_hours_end_rooms
         else ''input_datetime.dim_hours_end'' }}'
   - variables:
-      light_brightness: "{% if dim_start != dim_end %}\n  {% if now() > today_at(states(dim_start))
-        and now() <= today_at(states(dim_end)) + timedelta(days = 1) %}\n    {{ states('input_number.night_light_brightness')
-        | float }}\n  {% elif is_state('sun.sun','below_horizon') and state_attr('sun.sun','rising')
+      light_brightness: "{% if states(dim_start) != states(dim_end) %}\n  {% if now()
+        > today_at(states(dim_start)) and now() <= today_at(states(dim_end)) + timedelta(days
+        = 1) %}\n    {{ states('input_number.night_light_brightness') | float }}\n
+        \ {% elif is_state('sun.sun','below_horizon') and state_attr('sun.sun','rising')
         %}\n    {{ states('input_number.morning_light_brightness') | float }}\n  {%
         else %}\n    100\n  {% endif %}\n{% else %}\n  100\n{% endif %}"
   - service: light.turn_on
@@ -603,12 +588,6 @@ alarm_lights:
         %}\n  100\n{% endif %}\n"
   - service: light.turn_on
     target:
-      entity_id: '{{ ''light.'' + bedroom + ''_lights'' }}'
-    data:
-      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
-        }}\n{% else %}\n  100\n{% endif %}\n"
-  - service: light.turn_on
-    target:
       entity_id: '{{ ''light.'' + bedroom + ''_core_led_strips'' }}'
     data:
       rgb_color:
@@ -625,26 +604,31 @@ alarm_lights:
     target:
       entity_id: '{{ ''button.'' + bedroom + ''_core_play_ringtone'' }}'
   - delay: 15
-  - repeat:
-      sequence:
-      - service: light.toggle
-        target:
-          entity_id: '{{ ''light.'' + bedroom + ''_lights'' }}'
-      - service: select.select_option
-        target:
-          entity_id: '{{ ''select.'' + bedroom + ''_core_ringtone'' }}'
-        data:
-          option: beep:d=4,o=5,b=200:8c,4c
-      - service: button.press
-        target:
-          entity_id: '{{ ''button.'' + bedroom + ''_core_play_ringtone'' }}'
-      - delay: 2
-      while:
-      - condition: template
-        value_template: '{{ not ''on'' in states.binary_sensor | selectattr(''attributes.device_class'',
-          ''defined'') | selectattr(''attributes.device_class'', ''eq'', ''door'')
-          | selectattr(''entity_id'',''search'',bedroom) | map(attribute = ''state'')
-          | list }}'
+  - if:
+    - condition: template
+      value_template: '{{ is_state(''input_boolean.'' + bedroom + ''_next_alarm_dismissed'',
+        ''off'') }}'
+    then:
+    - repeat:
+        sequence:
+        - service: light.toggle
+          target:
+            entity_id: '{{ ''light.'' + bedroom + ''_lights'' }}'
+        - service: select.select_option
+          target:
+            entity_id: '{{ ''select.'' + bedroom + ''_core_ringtone'' }}'
+          data:
+            option: beep:d=4,o=5,b=200:8c,4c
+        - service: button.press
+          target:
+            entity_id: '{{ ''button.'' + bedroom + ''_core_play_ringtone'' }}'
+        - delay: 2
+        while:
+        - condition: template
+          value_template: '{{ not ''on'' in states.binary_sensor | selectattr(''attributes.device_class'',
+            ''defined'') | selectattr(''attributes.device_class'', ''eq'', ''door'')
+            | selectattr(''entity_id'',''search'',bedroom) | map(attribute = ''state'')
+            | list }}'
   - service: light.turn_on
     data:
       brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')

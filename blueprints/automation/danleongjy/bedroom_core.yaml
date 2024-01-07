@@ -64,6 +64,9 @@ trigger:
       states['binary_sensor.' + room + '_core_right_button'].last_changed] | max >
       timedelta(minutes = 1) }}
     id: no_buttons_pressed_recently
+  - platform: time
+    at: !input sleep_hours_start
+    id: sleep
 condition: []
 action:
   - variables:
@@ -77,9 +80,13 @@ action:
       fan_auto_control: "{{ 'automation.' + room + '_fan_auto_control' }}"
   - choose:
       - conditions:
-          - condition: trigger
-            id:
-              - all_off
+          - or:
+              - condition: trigger
+                id:
+                  - all_off
+              - condition: trigger
+                id: 
+                  - sleep
         sequence:
           - service: light.turn_off
             target:
