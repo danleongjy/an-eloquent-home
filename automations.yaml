@@ -5614,6 +5614,13 @@
           target:
             entity_id: input_datetime.graces_next_alarm
           alias: Set Grace's Next Alarm to Eli's School Day Alarm
+        - service: input_datetime.set_datetime
+          data:
+            datetime: '{{ as_datetime(states(''input_datetime.graces_next_alarm''))
+              - timedelta(minutes = 5) }}'
+          target:
+            entity_id: input_datetime.graces_next_alarm
+          alias: Set Grace's Next Alarm 5min before Eli's alarm
         else:
         - service: input_datetime.set_datetime
           data:
@@ -5621,6 +5628,13 @@
           target:
             entity_id: input_datetime.graces_next_alarm
           alias: Set Grace's Next Alarm to ECA Day Alarm
+        - service: input_datetime.set_datetime
+          data:
+            datetime: '{{ as_datetime(states(''input_datetime.graces_next_alarm''))
+              - timedelta(minutes = 10) }}'
+          target:
+            entity_id: input_datetime.graces_next_alarm
+          alias: Set Grace's Next Alarm 10min before kids' alarm
     - conditions:
       - alias: If Daniel did not have a late work night
         condition: template
@@ -5647,6 +5661,13 @@
           target:
             entity_id: input_datetime.graces_next_alarm
           alias: Set Grace's Next Alarm to Elena's School Day Alarm
+        - service: input_datetime.set_datetime
+          data:
+            datetime: '{{ as_datetime(states(''input_datetime.graces_next_alarm''))
+              - timedelta(minutes = 10) }}'
+          target:
+            entity_id: input_datetime.graces_next_alarm
+          alias: Set Grace's Next Alarm 10min before Elena's alarm
         else:
         - service: input_datetime.set_datetime
           data:
@@ -5654,6 +5675,13 @@
           target:
             entity_id: input_datetime.graces_next_alarm
           alias: Set Grace's Next Alarm to ECA Day Alarm
+        - service: input_datetime.set_datetime
+          data:
+            datetime: '{{ as_datetime(states(''input_datetime.graces_next_alarm''))
+              - timedelta(minutes = 10) }}'
+          target:
+            entity_id: input_datetime.graces_next_alarm
+          alias: Set Grace's Next Alarm 10min before kids' alarm
     default:
     - service: input_datetime.set_datetime
       data:
@@ -5662,6 +5690,7 @@
         entity_id: input_datetime.graces_next_alarm
       alias: Set Grace's Next Alarm to Grace's Work Day Alarm
   mode: single
+  max_exceeded: silent
 - id: '1690717352582'
   alias: Daniel's Alarm
   description: Wake up Daniel at his next alarm
@@ -5963,6 +5992,13 @@
           target:
             entity_id: input_datetime.daniels_next_alarm
           alias: Set Daniel's Next Alarm to Elena's School Day Alarm
+        - service: input_datetime.set_datetime
+          data:
+            datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
+              - timedelta(minutes = 10) }}'
+          target:
+            entity_id: input_datetime.daniels_next_alarm
+          alias: Set Daniel's Next Alarm 10min before Elena's alarm
         else:
         - service: input_datetime.set_datetime
           data:
@@ -5970,6 +6006,13 @@
           target:
             entity_id: input_datetime.daniels_next_alarm
           alias: Set Daniel's Next Alarm to ECA Day Alarm
+        - service: input_datetime.set_datetime
+          data:
+            datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
+              - timedelta(minutes = 10) }}'
+          target:
+            entity_id: input_datetime.daniels_next_alarm
+          alias: Set Daniel's Next Alarm 10min before kids' alarm
     - conditions:
       - alias: If Daniel did not have a late work night
         condition: template
@@ -5996,6 +6039,13 @@
           target:
             entity_id: input_datetime.daniels_next_alarm
           alias: Set Daniel's Next Alarm to Eli's School Day Alarm
+        - service: input_datetime.set_datetime
+          data:
+            datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
+              - timedelta(minutes = 5) }}'
+          target:
+            entity_id: input_datetime.daniels_next_alarm
+          alias: Set Daniel's Next Alarm 5min before Eli's alarm
         else:
         - service: input_datetime.set_datetime
           data:
@@ -6003,6 +6053,13 @@
           target:
             entity_id: input_datetime.daniels_next_alarm
           alias: Set Daniel's Next Alarm to ECA Day Alarm
+        - service: input_datetime.set_datetime
+          data:
+            datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
+              - timedelta(minutes = 10) }}'
+          target:
+            entity_id: input_datetime.daniels_next_alarm
+          alias: Set Daniel's Next Alarm 10min before kids' alarm
     default:
     - service: input_datetime.set_datetime
       data:
@@ -6010,14 +6067,8 @@
       target:
         entity_id: input_datetime.daniels_next_alarm
       alias: Set Daniel's Next Alarm to Daniel's Work Day Alarm
-  - service: input_datetime.set_datetime
-    data:
-      datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')) - timedelta(minutes
-        = 5) }}'
-    target:
-      entity_id: input_datetime.daniels_next_alarm
-    alias: Set Daniel's Next Alarm 5min before the kids' alarms
   mode: single
+  max_exceeded: silent
 - id: '1690814237442'
   alias: Eli's Next Alarm
   description: Set Eli's Next Alarm to the next day where he has school
@@ -6066,6 +6117,7 @@
       target:
         entity_id: input_datetime.elis_next_alarm
   mode: single
+  max_exceeded: silent
 - id: '1690814722057'
   alias: Elena's Next Alarm
   description: Set Elena's Next Alarm to the next day where she has school
@@ -6114,6 +6166,7 @@
       target:
         entity_id: input_datetime.eca_day_alarm
   mode: single
+  max_exceeded: silent
 - id: '1690850022345'
   alias: Grace's Alarm
   description: Wake up Grace at her next alarm
@@ -6660,3 +6713,24 @@
       auto_control_indicator_light: light.elenas_room_bulb_1_entity
       sleep_hours_start: input_datetime.sleep_hours_start
       sleep_hours_end: input_datetime.sleep_hours_end
+- id: '1704838438827'
+  alias: Elena's Alarm
+  description: Wake up Elena at her next alarm
+  trigger:
+  - platform: time
+    at: input_datetime.elenas_next_alarm
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: input_boolean.elenas_room_next_alarm_dismissed
+      state: 'off'
+    then:
+    - service: script.alarm_lights
+      data:
+        bedroom: elenas_room
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.elenas_room_next_alarm_dismissed
+  mode: single
