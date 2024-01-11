@@ -45,8 +45,12 @@ downloader:
 shell_command:
   removeoldrainradar: 'find /config/www/rain_radar/frames/* -mtime 1 -exec rm {} \;'
   removeoldrainradaranimation: 'find /config/www/rain_radar/rain_radar_animation_*.gif -type f -mmin +60 -exec rm {} \;'
+  sshsetup: |-
+    eval "$(ssh-agent -s)"
+    ssh-add .ssh/id_rsa
   gitadd: 'git add .'
-  gitcommit: 'git commit -m "Autosync on {{ now().day }}/{{ now().month }}/{{ now().year }} {{ now().hour }}:{{ now().minute }}"'
+  gitcommit: |-
+    git commit -m "{{ states('input_text.git_commit_message') }}"
   gitpush: 'git push -u origin master'
 
 zha:
