@@ -8814,27 +8814,54 @@
                   "type": "tile",
                   "entity": "vacuum.roborock_s7",
                   "show_entity_picture": false,
-                  "tap_action": {
-                    "action": "more-info"
-                  },
                   "icon_tap_action": {
                     "action": "more-info"
-                  }
+                  },
+                  "state_content": [
+                    "state",
+                    "fan_speed"
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "entity": "select.roborock_s7_mop_intensity",
+                      "name": "Mop Intensity",
+                      "icon": "mdi:arm-flex",
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "select.select_next",
+                        "target": {
+                          "entity_id": "select.roborock_s7_mop_intensity"
+                        },
+                        "data": {
+                          "cycle": true
+                        }
+                      }
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "select.roborock_s7_mop_mode",
+                      "name": "Mop Mode",
+                      "icon": "mdi:layers",
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "select.select_next",
+                        "target": {
+                          "entity_id": "select.roborock_s7_mop_mode"
+                        },
+                        "data": {
+                          "cycle": true
+                        }
+                      }
+                    }
+                  ]
                 },
                 {
                   "type": "vertical-stack",
                   "cards": [
-                    {
-                      "type": "tile",
-                      "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                      "name": "Warn if vacuum may get wet",
-                      "tap_action": {
-                        "action": "toggle"
-                      },
-                      "icon_tap_action": {
-                        "action": "more-info"
-                      }
-                    },
                     {
                       "type": "conditional",
                       "conditions": [
@@ -8852,47 +8879,13 @@
                       "type": "conditional",
                       "conditions": [
                         {
-                          "entity": "binary_sensor.vacuum_running_with_doors_open",
-                          "state": "on"
-                        },
-                        {
-                          "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                          "state": "on"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">Please close bathroom doors. Otherwise, vacuum will pause at  {{ ((now() + timedelta(minutes = 1)).time() | string)[:5] }}.</ha-alert>"
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "entity": "binary_sensor.vacuum_running_with_doors_open",
-                          "state": "on"
-                        },
-                        {
-                          "entity": "automation.notify_when_vacuum_running_with_doors_open",
-                          "state": "off"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">Vacuum may get wet as it is running with bathroom doors open.</ha-alert>"
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
                           "entity": "vacuum.roborock_s7",
                           "state": "error"
                         }
                       ],
                       "card": {
                         "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">{{ state_attr('vacuum.roborock_s7', 'status') }}</ha-alert>"
+                        "content": "<ha-alert alert-type=\"error\">{{ states('sensor.roborock_s7_vacuum_error') }}</ha-alert>"
                       }
                     }
                   ]
