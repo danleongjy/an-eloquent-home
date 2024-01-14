@@ -37,15 +37,15 @@ CommandVacuum:
   action:
     - service: 'vacuum.{{ command }}'
       target:
-        entity_id: vacuum.pikachu
+        entity_id: vacuum.roborock_s7
 VacuumStatus:
   speech:
     text: >
-      The vacuum is {{ 'in trouble' if states('vacuum.pikachu') == 'error' else states('vacuum.pikachu') }}.
-      {% if as_datetime(states('input_datetime.vacuum_last_run_end')) > as_datetime(states('input_datetime.vacuum_last_run_start')) %}
-        It cleaned {{state_attr('vacuum.pikachu','clean_area') | round(0)}} square metres for {{ states('sensor.vacuum_clean_time').split(':')[0] + ' hours and ' if states('sensor.vacuum_clean_time').split(':')[0] | int(0) > 0 else '' }}{{ states('sensor.vacuum_clean_time').split(':')[1] }} minutes and its last run ended {{ relative_time(as_datetime(states('input_datetime.vacuum_last_run_end'))) }} ago.
+      The vacuum is {{ 'in trouble' if states('vacuum.roborock_s7') == 'error' else states('vacuum.roborock_s7') }}.
+      {% if as_datetime(states('sensor.roborock_s7_last_clean_end')) > as_datetime(states('sensor.roborock_s7_last_clean_begin')) %}
+        It cleaned {{states('sensor.roborock_s7_cleaning_area')) | float(0) | round(0)}} square metres for {{ states('sensor.roborock_s7_cleaning_time').split(':')[0] + ' hours and ' if states('sensor.roborock_s7_cleaning_time').split(':')[0] | int(0) > 0 else '' }}{{ states('sensor.roborock_s7_cleaning_time').split(':')[1] }} minutes and its last run ended {{ relative_time(as_datetime(states('sensor.roborock_s7_last_clean_end'))) }} ago.
       {% else %}
-        Its last run started {{ states('sensor.vacuum_last_run_started') }} ago
+        Its last run started {{ states('sensor.roborock_s7_last_clean_begin') }} ago
       {% endif %}
 CookingPreset:
   speech:

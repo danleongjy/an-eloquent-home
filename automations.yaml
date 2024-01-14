@@ -691,11 +691,13 @@
     dismiss it when it stops being idle
   trigger:
   - platform: state
-    entity_id: vacuum.pikachu
+    entity_id:
+    - vacuum.roborock_s7
     id: idle
     to: idle
   - platform: state
-    entity_id: vacuum.pikachu
+    entity_id:
+    - vacuum.roborock_s7
     id: not_idle
     from: idle
   condition: []
@@ -816,102 +818,6 @@
         data:
           tag: washer_load_clean
   mode: single
-- id: '1648699866610'
-  alias: Notify When Vacuum Running with Doors Open
-  description: Send a notification if the vacuum is cleaning when bathroom or main
-    doors are open, pause the vacuum after 1min if doors are still open, and dismiss
-    the notification when vacuum stops cleaning or bathroom doors are closed. If all
-    doors are closed again while vacuum is paused, resume cleaning.
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.vacuum_running_with_doors_open
-    id: error_state
-    to: 'on'
-  - platform: state
-    entity_id:
-    - binary_sensor.vacuum_running_with_doors_open
-    id: error_cleared
-    to: 'off'
-  - platform: state
-    entity_id:
-    - binary_sensor.junior_bathroom_door
-    - binary_sensor.powder_room_door
-    - binary_sensor.master_bathroom_door
-    - binary_sensor.main_door
-    from: 'on'
-    to: 'off'
-    id: door_closed
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: error_cleared
-      sequence:
-      - service: notify.mobile_app_pixel_4a
-        data:
-          message: clear_notification
-          data:
-            tag: vacuum_running_with_bathroom_doors_open
-      - service: notify.mobile_app_grace
-        data:
-          message: clear_notification
-          data:
-            tag: vacuum_running_with_bathroom_doors_open
-    - conditions:
-      - condition: trigger
-        id: error_state
-      sequence:
-      - service: notify.mobile_app_pixel_4a
-        data:
-          message: Otherwise, vacuum will pause at {{ ((now() + timedelta(minutes
-            = 1)).time() | string)[:5] }}.
-          title: Please close bathroom/main doors
-          data:
-            tag: vacuum_running_with_bathroom_doors_open
-      - service: notify.mobile_app_grace
-        data:
-          message: Otherwise, vacuum will pause at {{ ((now() + timedelta(minutes
-            = 1)).time() | string)[:5] }}.
-          title: Please close bathroom/main doors
-          data:
-            tag: vacuum_running_with_bathroom_doors_open
-      - delay:
-          hours: 0
-          minutes: 1
-          seconds: 0
-          milliseconds: 0
-      - condition: state
-        entity_id: binary_sensor.vacuum_running_with_doors_open
-        state: 'on'
-        for:
-          hours: 0
-          minutes: 0
-          seconds: 0
-      - service: vacuum.pause
-        data: {}
-        target:
-          entity_id: vacuum.pikachu
-    - conditions:
-      - condition: trigger
-        id: door_closed
-      sequence:
-      - condition: state
-        entity_id:
-        - binary_sensor.junior_bathroom_door
-        - binary_sensor.powder_room_door
-        - binary_sensor.main_door
-        - binary_sensor.master_bathroom_door
-        state: 'off'
-      - condition: state
-        entity_id: vacuum.pikachu
-        state: paused
-      - service: vacuum.start
-        data: {}
-        target:
-          entity_id: vacuum.pikachu
-  mode: parallel
 - id: '1648784734226'
   alias: Notify When Dishwasher Cooldown Completed
   description: Send a persistent notification when dishwasher load is clean, and clear
@@ -2789,43 +2695,6 @@
         - automation.motion_timeouts
         - automation.kitchen_blind_auto_control
   mode: single
-- id: '1670833166536'
-  alias: Vacuum Last Use
-  description: Track the start and end times of the last run of the vacuum
-  trigger:
-  - platform: state
-    entity_id:
-    - vacuum.pikachu
-    from:
-    - docked
-    - idle
-    to: cleaning
-    id: start
-  - platform: state
-    entity_id:
-    - vacuum.pikachu
-    from:
-    - cleaning
-    not_to: paused
-    id: stop
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: start
-    then:
-    - service: input_datetime.set_datetime
-      data:
-        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
-      target:
-        entity_id: input_datetime.vacuum_last_run_start
-    else:
-    - service: input_datetime.set_datetime
-      data:
-        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
-      target:
-        entity_id: input_datetime.vacuum_last_run_end
-  mode: single
 - id: '1670838907474'
   alias: Housekeeping
   description: Daily housekeeping tasks executed at 2am, including generating Watchman
@@ -2848,7 +2717,6 @@
       entity_id:
       - automation.south_facing_blinds_auto_control
       - automation.kitchen_blind_auto_control
-      - automation.notify_when_vacuum_running_with_doors_open
       - automation.dining_room_motion_timeout
       - automation.elenas_room_motion_timeout
       - automation.elis_room_motion_timeout
@@ -6709,4 +6577,28 @@
     target:
       entity_id: light.study_room_standing_lamp
     data: {}
+  mode: single
+- id: '1705228748219'
+  alias: Notify 15min Before Wind Down
+  description: Play a TTS notification 15min before wind down
+  trigger:
+  - platform: template
+    value_template: '{{ now() >= today_at(states(''input_datetime.wind_down'')) -
+      timedelta(minutes = 15) }}'
+    alias: 15min before wind down
+  condition:
+  - condition: state
+    entity_id: input_boolean.party_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.away_mode
+    state: 'off'
+  action:
+  - service: tts.speak
+    target:
+      entity_id: tts.piper
+    data:
+      cache: true
+      media_player_entity_id: media_player.all_speakers
+      message: Winding down in 15 minutes
   mode: single
