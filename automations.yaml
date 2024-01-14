@@ -1297,7 +1297,6 @@
           entity_id:
           - light.living_room_lights
           - light.living_room_pendant_light_entity
-          - light.christmas_tree
       action_button_down_long:
       - service: light.turn_on
         data:
@@ -1496,43 +1495,6 @@
       controller_device: d6563b3c30e24806da5ef8823f3fcd03
       helper_last_controller_event: input_text.zz_study_room_lights_controller_last_event
       action_button_up_short:
-      - choose:
-        - conditions:
-          - condition: time
-            after: input_datetime.wind_down
-            before: input_datetime.sleep_hours_end
-            weekday:
-            - mon
-            - tue
-            - wed
-            - fri
-            - thu
-            - sat
-            - sun
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-            target:
-              entity_id: light.study_room_lights
-        - conditions:
-          - condition: sun
-            before: sunrise
-          sequence:
-          - service: light.turn_on
-            data:
-              brightness_pct: '{{ states(''input_number.morning_light_brightness'')
-                }}'
-            target:
-              entity_id: light.study_room_lights
-        default:
-        - service: light.turn_on
-          data:
-            brightness_pct: 100
-          target:
-            entity_id: light.study_room_lights
-        enabled: false
       - service: script.recommended_light_level
         data:
           light: light.study_room_lights
@@ -1547,7 +1509,8 @@
       - service: light.turn_off
         data: {}
         target:
-          entity_id: light.study_room_lights
+          entity_id:
+          - light.study_room_lights
       action_button_down_long:
       - service: light.turn_on
         data:
@@ -3565,15 +3528,6 @@
         - delay: 2
   - if:
     - condition: state
-      entity_id: light.christmas_tree
-      state: 'on'
-    then:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id: light.christmas_tree
-  - if:
-    - condition: state
       entity_id: light.living_room_pendant_light_entity
       state: 'on'
     then:
@@ -4330,7 +4284,6 @@
     input:
       lights_list:
       - light.living_room_lights
-      - light.christmas_tree
       motion_sensor: binary_sensor.living_room_presence
       lux_sensor: sensor.dining_room_radar_lux
       blackout_hours_start: input_datetime.dim_hours_start
@@ -4356,14 +4309,14 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.living_room_presence
+      motion_sensor:
+      - binary_sensor.living_room_presence
       number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.living_room_lights
       - light.living_room_pendant_light_entity
       - fan.living_room_fan
       - automation.living_room_fan_auto_control
-      - light.christmas_tree
       entities_list:
       - input_boolean.party_mode
 - id: '1679619826696'
@@ -4800,7 +4753,8 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.study_room_presence
+      motion_sensor:
+      - binary_sensor.study_room_presence
       number_of_minutes: input_number.motion_timeout_presence
       entities_list:
       - input_boolean.party_mode
@@ -5759,11 +5713,6 @@
           title: Dismiss Alarm
         - action: continue
           title: Continue Alarm
-  - service: light.turn_on
-    data:
-      brightness_pct: 30
-    target:
-      entity_id: light.parents_room_core_display_backlight
   - wait_for_trigger:
     - platform: event
       event_type: mobile_app_notification_action
@@ -6744,5 +6693,20 @@
   action:
   - delay: 10
   - service: shell_command.sshsetup
+    data: {}
+  mode: single
+- id: '1705195396455'
+  alias: Study Room Standing Lamp
+  description: Sync Study Room Standing Lamp state to Study Room Bulb 1 state
+  trigger:
+  - platform: state
+    entity_id:
+    - light.study_room_bulb_1_entity
+  condition: []
+  action:
+  - service: light.turn_{{ states('light.study_room_bulb_1_entity') if states('light.study_room_bulb_1_entity')
+      in ['on','off'] else 'off' }}
+    target:
+      entity_id: light.study_room_standing_lamp
     data: {}
   mode: single
