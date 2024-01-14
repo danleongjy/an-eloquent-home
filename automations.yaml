@@ -2696,17 +2696,20 @@
         - automation.kitchen_blind_auto_control
   mode: single
 - id: '1670838907474'
-  alias: Housekeeping
-  description: Daily housekeeping tasks executed at 2am, including generating Watchman
-    report and README.md
+  alias: System Housekeeping
+  description: Daily housekeeping tasks executed at 2350h
   trigger:
   - platform: time
     at: '23:50:00'
   condition: []
   action:
-  - service: watchman.report
-    data: {}
-  - service: readme.generate
+  - service: input_text.set_value
+    target:
+      entity_id: input_text.git_commit_message
+    data:
+      value: Autocommit on {{ now().day }}/{{ now().month }}/ {{ now().year }} {{
+        now().hour }}:{{ now().minute }}
+  - service: script.git_push
     data: {}
   - condition: state
     entity_id: input_boolean.away_mode
@@ -2724,14 +2727,6 @@
       - automation.parents_room_motion_timeout
       - automation.study_walkway_motion_timeout
       - automation.study_room_motion_timeout
-  - service: input_text.set_value
-    target:
-      entity_id: input_text.git_commit_message
-    data:
-      value: Autocommit on {{ now().day }}/{{ now().month }}/ {{ now().year }} {{
-        now().hour }}:{{ now().minute }}
-  - service: shell_command.gitpush
-    data: {}
   mode: single
 - id: '1672302011128'
   alias: South-Facing Blinds Auto Control

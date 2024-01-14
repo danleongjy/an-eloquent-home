@@ -658,6 +658,15 @@ alarm_lights:
 git_push:
   alias: Git Push
   sequence:
+  - service: watchman.report
+    data:
+      create_file: true
+      send_notification: false
+      parse_config: false
+      chunk_size: false
+  - service: readme.generate
+    data: {}
+  - delay: 5
   - service: shell_command.gitadd
     data: {}
   - service: shell_command.gitcommit
