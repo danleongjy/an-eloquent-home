@@ -2701,7 +2701,7 @@
     report and README.md
   trigger:
   - platform: time
-    at: 01:50:00
+    at: '23:50:00'
   condition: []
   action:
   - service: watchman.report
@@ -2724,6 +2724,14 @@
       - automation.parents_room_motion_timeout
       - automation.study_walkway_motion_timeout
       - automation.study_room_motion_timeout
+  - service: input_text.set_value
+    target:
+      entity_id: input_text.git_commit_message
+    data:
+      value: Autocommit on {{ now().day }}/{{ now().month }}/ {{ now().year }} {{
+        now().hour }}:{{ now().minute }}
+  - service: shell_command.gitpush
+    data: {}
   mode: single
 - id: '1672302011128'
   alias: South-Facing Blinds Auto Control
