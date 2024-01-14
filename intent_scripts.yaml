@@ -43,7 +43,7 @@ VacuumStatus:
     text: >
       The vacuum is {{ 'in trouble' if states('vacuum.roborock_s7') == 'error' else states('vacuum.roborock_s7') }}.
       {% if as_datetime(states('sensor.roborock_s7_last_clean_end')) > as_datetime(states('sensor.roborock_s7_last_clean_begin')) %}
-        It cleaned {{states('sensor.roborock_s7_cleaning_area')) | float(0) | round(0)}} square metres for {{ states('sensor.roborock_s7_cleaning_time').split(':')[0] + ' hours and ' if states('sensor.roborock_s7_cleaning_time').split(':')[0] | int(0) > 0 else '' }}{{ states('sensor.roborock_s7_cleaning_time').split(':')[1] }} minutes and its last run ended {{ relative_time(as_datetime(states('sensor.roborock_s7_last_clean_end'))) }} ago.
+        It cleaned {{states('sensor.roborock_s7_cleaning_area') | float(0) | round(0)}} square metres for {{ states('sensor.roborock_s7_cleaning_time').split(':')[0] + ' hours and ' if states('sensor.roborock_s7_cleaning_time').split(':')[0] | int(0) > 0 else '' }}{{ states('sensor.roborock_s7_cleaning_time').split(':')[1] }} minutes and its last run ended {{ relative_time(as_datetime(states('sensor.roborock_s7_last_clean_end'))) }} ago.
       {% else %}
         Its last run started {{ states('sensor.roborock_s7_last_clean_begin') }} ago
       {% endif %}
