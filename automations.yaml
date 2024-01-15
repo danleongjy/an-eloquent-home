@@ -6605,3 +6605,63 @@
       media_player_entity_id: media_player.all_speakers
       message: Winding down in 15 minutes
   mode: single
+- id: '1705277866413'
+  alias: Vacuum Configuration
+  description: Set vacuum status light, volume and Do Not Disturb according to sleep
+    hours
+  trigger:
+  - platform: state
+    entity_id:
+    - input_datetime.sleep_hours_start
+    - input_datetime.sleep_hours_end
+    id: sleep_hours_changed
+  - platform: time
+    at: input_datetime.sleep_hours_start
+    id: sleep_hours_start
+  - platform: time
+    at: input_datetime.sleep_hours_end
+    id: sleep_hours_end
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - sleep_hours_start
+      sequence:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.roborock_s7_status_indicator_light
+        data: {}
+      - service: number.set_value
+        target:
+          entity_id: number.roborock_s7_volume
+        data:
+          value: '0'
+    - conditions:
+      - condition: trigger
+        id:
+        - sleep_hours_end
+      sequence:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.roborock_s7_status_indicator_light
+        data: {}
+      - service: number.set_value
+        target:
+          entity_id: number.roborock_s7_volume
+        data:
+          value: '66'
+    default:
+    - service: time.set_value
+      target:
+        entity_id: time.roborock_s7_do_not_disturb_begin
+      data:
+        time: '{{ states(''input_datetime.sleep_hours_start'') }}'
+    - service: time.set_value
+      target:
+        entity_id: time.roborock_s7_do_not_disturb_end
+      data:
+        time: '{{ states(''input_datetime.sleep_hours_end'') }}'
+  mode: queued
+  max: 5
