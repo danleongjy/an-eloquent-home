@@ -46,7 +46,7 @@ VacuumStatus:
       The vacuum is {{ 'in trouble' if states('vacuum.roborock_s7') == 'error' else states('vacuum.roborock_s7') }}.
       It cleaned {{states('sensor.roborock_s7_cleaning_area') | int(0) }} square metres over {{ clean_time.hours | string + ' hour' if clean_time.hours > 0 }}{{ 's' if clean_time.hours > 1 }}{{ ' and ' if clean_time.hours > 0 and clean_time.minutes > 0 }}{{ clean_time.minutes | string + ' minute' if clean_time.minutes > 0 }}{{ 's' if clean_time.minutes > 1 }}.
       {% if states('vacuum.roborock_s7') in ['docked','idle'] %}
-        Its last run started {{ relative_time(as_datetime(states('sensor.roborock_s7_last_clean_end'))) }} ago.
+        Its last run ended {{ relative_time(as_datetime(states('sensor.roborock_s7_last_clean_end'))) }} ago.
       {% endif %}
 CookingPreset:
   speech:
