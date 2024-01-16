@@ -8823,113 +8823,200 @@
                   "type": "horizontal-stack",
                   "cards": [
                     {
-                      "type": "tile",
-                      "entity": "select.roborock_s7_mop_intensity",
-                      "name": "Mop Intensity",
-                      "icon": "mdi:arm-flex",
+                      "show_state": false,
+                      "show_name": false,
+                      "camera_view": "auto",
+                      "type": "picture-entity",
+                      "entity": "image.roborock_s7",
+                      "name": "Cleaning Map",
                       "tap_action": {
-                        "action": "call-service",
-                        "service": "select.select_next",
-                        "target": {
-                          "entity_id": "select.roborock_s7_mop_intensity"
-                        },
-                        "data": {
-                          "cycle": true
-                        }
+                        "action": "none"
+                      },
+                      "hold_action": {
+                        "action": "none"
                       }
                     },
                     {
-                      "type": "tile",
-                      "entity": "select.roborock_s7_mop_mode",
-                      "name": "Mop Mode",
-                      "icon": "mdi:layers",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "select.select_next",
-                        "target": {
-                          "entity_id": "select.roborock_s7_mop_mode"
-                        },
-                        "data": {
-                          "cycle": true
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "vertical-stack",
-                  "cards": [
-                    {
-                      "type": "conditional",
-                      "conditions": [
+                      "type": "vertical-stack",
+                      "cards": [
                         {
-                          "entity": "vacuum.roborock_s7",
-                          "state": "idle"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">Vacuum not docked properly</ha-alert>"
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
+                          "type": "vertical-stack",
+                          "cards": [
+                            {
+                              "type": "tile",
+                              "entity": "sensor.roborock_s7_battery",
+                              "name": " "
+                            },
+                            {
+                              "type": "conditional",
+                              "conditions": [
+                                {
+                                  "condition": "state",
+                                  "entity": "vacuum.roborock_s7",
+                                  "state": "docked"
+                                }
+                              ],
+                              "card": {
+                                "type": "tile",
+                                "entity": "sensor.roborock_s7_last_clean_begin",
+                                "name": " "
+                              }
+                            },
+                            {
+                              "type": "tile",
+                              "entity": "sensor.roborock_s7_cleaning_time",
+                              "name": " "
+                            },
+                            {
+                              "type": "tile",
+                              "entity": "sensor.roborock_s7_cleaning_area",
+                              "name": " "
+                            }
+                          ]
+                        },
                         {
-                          "entity": "vacuum.roborock_s7",
-                          "state": "error"
+                          "type": "conditional",
+                          "conditions": [
+                            {
+                              "condition": "or",
+                              "conditions": [
+                                {
+                                  "condition": "state",
+                                  "entity": "binary_sensor.roborock_s7_mop_attached",
+                                  "state": "off"
+                                },
+                                {
+                                  "condition": "state",
+                                  "entity": "binary_sensor.roborock_s7_water_box_attached",
+                                  "state": "off"
+                                }
+                              ]
+                            }
+                          ],
+                          "card": {
+                            "type": "vertical-stack",
+                            "cards": [
+                              {
+                                "type": "tile",
+                                "entity": "binary_sensor.roborock_s7_mop_attached",
+                                "icon": "",
+                                "tap_action": {
+                                  "action": "call-service",
+                                  "service": "select.select_next",
+                                  "target": {
+                                    "entity_id": "select.roborock_s7_mop_intensity"
+                                  },
+                                  "data": {
+                                    "cycle": true
+                                  }
+                                },
+                                "name": " "
+                              },
+                              {
+                                "type": "tile",
+                                "entity": "binary_sensor.roborock_s7_water_box_attached",
+                                "name": " ",
+                                "icon": "",
+                                "tap_action": {
+                                  "action": "call-service",
+                                  "service": "select.select_next",
+                                  "target": {
+                                    "entity_id": "select.roborock_s7_mop_mode"
+                                  },
+                                  "data": {
+                                    "cycle": true
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "type": "conditional",
+                          "conditions": [
+                            {
+                              "condition": "state",
+                              "entity": "binary_sensor.roborock_s7_mop_attached",
+                              "state": "on"
+                            },
+                            {
+                              "condition": "state",
+                              "entity": "binary_sensor.roborock_s7_water_box_attached",
+                              "state": "on"
+                            }
+                          ],
+                          "card": {
+                            "type": "vertical-stack",
+                            "cards": [
+                              {
+                                "type": "tile",
+                                "entity": "select.roborock_s7_mop_intensity",
+                                "name": " ",
+                                "icon": "mdi:vibrate",
+                                "tap_action": {
+                                  "action": "call-service",
+                                  "service": "select.select_next",
+                                  "target": {
+                                    "entity_id": "select.roborock_s7_mop_intensity"
+                                  },
+                                  "data": {
+                                    "cycle": true
+                                  }
+                                }
+                              },
+                              {
+                                "type": "tile",
+                                "entity": "select.roborock_s7_mop_mode",
+                                "name": " ",
+                                "icon": "mdi:layers",
+                                "tap_action": {
+                                  "action": "call-service",
+                                  "service": "select.select_next",
+                                  "target": {
+                                    "entity_id": "select.roborock_s7_mop_mode"
+                                  },
+                                  "data": {
+                                    "cycle": true
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "type": "vertical-stack",
+                          "cards": [
+                            {
+                              "type": "conditional",
+                              "conditions": [
+                                {
+                                  "entity": "vacuum.roborock_s7",
+                                  "state": "idle"
+                                }
+                              ],
+                              "card": {
+                                "type": "markdown",
+                                "content": "<ha-alert alert-type=\"error\">Vacuum not docked properly</ha-alert>"
+                              }
+                            },
+                            {
+                              "type": "conditional",
+                              "conditions": [
+                                {
+                                  "entity": "vacuum.roborock_s7",
+                                  "state": "error"
+                                }
+                              ],
+                              "card": {
+                                "type": "markdown",
+                                "content": "<ha-alert alert-type=\"error\">{{ states('sensor.roborock_s7_vacuum_error') }}</ha-alert>"
+                              }
+                            }
+                          ]
                         }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">{{ states('sensor.roborock_s7_vacuum_error') }}</ha-alert>"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "show_state": true,
-                  "show_name": false,
-                  "camera_view": "auto",
-                  "type": "picture-entity",
-                  "entity": "image.roborock_s7",
-                  "name": "Cleaning Map",
-                  "tap_action": {
-                    "action": "none"
-                  },
-                  "hold_action": {
-                    "action": "none"
-                  }
-                },
-                {
-                  "type": "entity-filter",
-                  "entities": [
-                    {
-                      "entity": "sensor.roborock_s7_battery",
-                      "name": "Battery"
-                    },
-                    {
-                      "entity": "sensor.roborock_s7_cleaning_time",
-                      "name": "Cleaning Time"
-                    },
-                    {
-                      "entity": "sensor.roborock_s7_cleaning_area",
-                      "name": "Cleaned Area"
-                    }
-                  ],
-                  "state_filter": [
-                    {
-                      "operator": "not in",
-                      "value": [
-                        "unavailable",
-                        "unknown"
                       ]
                     }
-                  ],
-                  "card": {
-                    "type": "entities",
-                    "state_color": true
-                  }
+                  ]
                 }
               ]
             }
