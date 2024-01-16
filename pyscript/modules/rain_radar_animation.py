@@ -16,4 +16,4 @@ def rain_radar_animation(ms_per_frame = 500, basemap_file = '/config/www/rain_ra
 #        basemap_text.text((0,0), frame.filename[23:31] + ' at ' + frame.filename[31:35], fill = (255,255,255))
         overlaid_frames.append(basemap)
     overlaid_frames[0].save(output_folder + '/rain_radar_animation_' + frames[-1].filename[42:54] + '.gif', format = 'GIF', append_images = overlaid_frames, save_all = True, duration = 200, loop = 0)
-# .  overlaid_frames[0].save(output_folder + '/rain_radar_animation.gif', format = 'GIF', append_images = overlaid_frames, save_all = True, duration = 200, loop = 0)
+#    overlaid_frames[0].save(output_folder + '/rain_radar_animation.gif', format = 'GIF', append_images = overlaid_frames, save_all = True, duration = 200, loop = 0)
