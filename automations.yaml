@@ -5529,6 +5529,12 @@
       entity_id: input_boolean.parents_room_next_alarm_dismissed
       state: 'off'
     then:
+    - service: light.turn_on
+      target:
+        entity_id: light.parents_room_core_display_backlight
+      data:
+        brightness_pct: '{{ 30 if is_state(''sun.sun'',''below_horizon'') else 100
+          }}'
     - service: select.select_option
       data:
         option: elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f
@@ -6000,6 +6006,12 @@
       entity_id: input_boolean.parents_room_next_alarm_dismissed
       state: 'off'
     then:
+    - service: light.turn_on
+      target:
+        entity_id: light.parents_room_core_display_backlight
+      data:
+        brightness_pct: '{{ 30 if is_state(''sun.sun'',''below_horizon'') else 100
+          }}'
     - service: select.select_option
       data:
         option: elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f

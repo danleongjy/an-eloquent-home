@@ -584,8 +584,7 @@ alarm_lights:
     target:
       entity_id: '{{ ''light.'' + bedroom + ''_core_display_backlight'' }}'
     data:
-      brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  30\n{% else
-        %}\n  100\n{% endif %}\n"
+      brightness_pct: '{{ 30 if is_state(''sun.sun'',''below_horizon'') else 100 }}'
   - service: light.turn_on
     target:
       entity_id: '{{ ''light.'' + bedroom + ''_core_led_strips'' }}'
