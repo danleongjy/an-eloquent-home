@@ -8952,7 +8952,7 @@
                                 "type": "tile",
                                 "entity": "select.roborock_s7_mop_intensity",
                                 "name": " ",
-                                "icon": "mdi:vibrate",
+                                "icon": "",
                                 "tap_action": {
                                   "action": "call-service",
                                   "service": "select.select_next",
@@ -8968,7 +8968,7 @@
                                 "type": "tile",
                                 "entity": "select.roborock_s7_mop_mode",
                                 "name": " ",
-                                "icon": "mdi:layers",
+                                "icon": "",
                                 "tap_action": {
                                   "action": "call-service",
                                   "service": "select.select_next",
@@ -8979,42 +8979,47 @@
                                     "cycle": true
                                   }
                                 }
+                              },
+                              {
+                                "type": "tile",
+                                "entity": "binary_sensor.roborock_s7_water_shortage",
+                                "name": " "
                               }
                             ]
                           }
-                        },
-                        {
-                          "type": "vertical-stack",
-                          "cards": [
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "vacuum.roborock_s7",
-                                  "state": "idle"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">Vacuum not docked properly</ha-alert>"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "entity": "vacuum.roborock_s7",
-                                  "state": "error"
-                                }
-                              ],
-                              "card": {
-                                "type": "markdown",
-                                "content": "<ha-alert alert-type=\"error\">{{ states('sensor.roborock_s7_vacuum_error') }}</ha-alert>"
-                              }
-                            }
-                          ]
                         }
                       ]
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "vacuum.roborock_s7",
+                      "state": "idle"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Vacuum not docked properly</ha-alert>"
+                  }
+                },
+                {
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "entity": "vacuum.roborock_s7",
+                          "state": "error"
+                        }
+                      ],
+                      "card": {
+                        "type": "markdown",
+                        "content": "<ha-alert alert-type=\"error\">{{ states('sensor.roborock_s7_vacuum_error') }}</ha-alert>"
+                      }
                     }
                   ]
                 }
