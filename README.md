@@ -109,7 +109,6 @@ Total | 1530
 - [Apexcharts Card](https://github.com/RomRider/apexcharts-card)
 - [Button Card](https://github.com/custom-cards/button-card)
 - [Decluttering Card](https://github.com/custom-cards/decluttering-card)
-- [Simple Weather Card](https://github.com/kalkih/simple-weather-card)
 - [Slider Button Card](https://github.com/custom-cards/slider-button-card)
 - [State Switch](https://github.com/thomasloven/lovelace-state-switch)
 
