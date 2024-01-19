@@ -98,14 +98,19 @@ sensor:
     entity_id: climate.${core_room}_ac
     attribute: temperature
   - platform: homeassistant
-    id: room_temp
-    entity_id: sensor.${core_room}_temperature
-  - platform: homeassistant
-    id: room_hum
-    entity_id: sensor.${core_room}_humidity
-  - platform: homeassistant
     id: room_lux
     entity_id: sensor.${core_room}_lux
+  - platform: sht3xd
+    temperature:
+      name: Temperature
+      id: room_temp
+    humidity:
+      name: Humidity
+      id: room_hum
+  - platform: qmp6988
+    pressure:
+      name: Pressure
+      id: pressure
 
 binary_sensor:
   - platform: homeassistant

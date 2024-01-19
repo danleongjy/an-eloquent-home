@@ -607,7 +607,7 @@
     unique_id: sensor.floorplan_yard_status
     state: >
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
-      {{ data_overlay('binary_sensor.yard_motion', ['light.yard_light_entity'], 'sensor.playroom_lux', 'none', 'none') }}
+      {{ data_overlay('binary_sensor.yard_motion', ['light.yard_light_entity'], 'sensor.playroom_lux', 'sensor.playroom_temperature', 'sensor.playroom_humidity') }}
     attributes:
       presence: "{{ states('binary_sensor.yard_motion') }}"
       lux: "{{ states('sensor.playroom_lux') }}"
@@ -617,7 +617,7 @@
     unique_id: sensor.floorplan_playroom_status
     state: >
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
-      {{ data_overlay('binary_sensor.playroom_motion', ['light.playroom_lights'], 'sensor.playroom_lux', 'none', 'none') }}
+      {{ data_overlay('binary_sensor.playroom_motion', ['light.playroom_lights'], 'sensor.playroom_lux', 'sensor.playroom_temperature', 'sensor.playroom_humidity') }}
     attributes:
       presence: "{{ states('binary_sensor.playroom_motion') }}"
       lux: "{{ states('sensor.playroom_lux') }}"
@@ -668,13 +668,13 @@
       {{ data_overlay('binary_sensor.elis_room_motion', 
                       ['light.elis_room_lights','fan.elis_room_fan','climate.elis_room_ac'], 
                       'sensor.elis_room_lux',
-                      'sensor.elis_room_temperature', 
-                      'sensor.elis_room_humidity') }}
+                      'sensor.elis_room_core_temperature', 
+                      'sensor.elis_room_core_humidity') }}
     attributes:
       presence: "{{ states('binary_sensor.elis_room_motion') }}"
       lux: "{{ states('sensor.elis_room_lux') }}"
-      temperature: "{{ states('sensor.elis_room_temperature') }}"
-      humidity: "{{ states('sensor.elis_room_humidity') }}"
+      temperature: "{{ states('sensor.elis_room_core_temperature') }}"
+      humidity: "{{ states('sensor.elis_room_core_humidity') }}"
       elis_room_lights: "{{ states('light.elis_room_lights') }}"
       elis_room_fan: "{{ states('fan.elis_room_fan') }}"
       elis_room_ac: "{{ states('climate.elis_room_ac') }}"
