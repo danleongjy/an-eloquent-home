@@ -26,7 +26,7 @@
           }
         },
         "top_row": {
-          "aspect_ratio": "1.05/1",
+          "template": "square_cell",
           "show_name": false,
           "styles": {
             "card": [
@@ -83,7 +83,7 @@
           }
         },
         "vacuum_more_info": {
-          "template": "square_cell",
+          "template": "top_row",
           "tap_action": {
             "action": "navigate",
             "navigation_path": "/lovelace/vacuum"
@@ -1896,190 +1896,24 @@
                         "type": "custom:button-card",
                         "style": {
                           "top": "5%",
-                          "left": "10%",
+                          "left": "2.5%",
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "icon": "mdi:tshirt-crew",
-                        "template": "square_cell",
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "script.set_recommended_scene",
-                          "data": {
-                            "room": [
-                              "yard"
-                            ]
-                          }
-                        },
+                        "entity": "input_boolean.away_mode",
+                        "template": "top_row",
                         "double_tap_action": {
-                          "action": "call-service",
-                          "service": "automation.trigger",
-                          "service_data": {
-                            "entity_id": "automation.yard_motion_timeout"
-                          }
+                          "action": "toggle"
                         },
-                        "hold_action": {
-                          "action": "navigate",
-                          "navigation_path": "/lovelace/playroom"
-                        },
-                        "styles": {
-                          "card": [
-                            {
-                              "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_window_open_at_yard'].state == 'on')\n    return '#9e110d';\n  else if (states['sensor.raining_with_yard_windows_open'].state == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_yard_windows_open'].state == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                            }
-                          ]
-                        }
-                      },
-                      {
-                        "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
-                        "variables": [
-                          {
-                            "slider_entity": "light.yard_light_entity"
-                          }
-                        ],
-                        "style": {
-                          "top": "5%",
-                          "left": "15%",
-                          "height": "9%",
-                          "width": "4.5%"
-                        }
-                      },
-                      {
-                        "type": "custom:decluttering-card",
-                        "template": "floorplan_slider_light_icon",
-                        "variables": [
-                          {
-                            "light_entity": "light.yard_light_entity"
-                          }
-                        ],
-                        "style": {
-                          "top": "5%",
-                          "left": "15%",
-                          "height": "5%",
-                          "width": "2.5%"
+                        "tap_action": {
+                          "action": "more-info"
                         }
                       },
                       {
                         "type": "custom:state-switch",
                         "style": {
                           "top": "5%",
-                          "left": "20%",
-                          "height": "9%",
-                          "width": "4.5%"
-                        },
-                        "entity": "sensor.washer_status",
-                        "default": "disabled",
-                        "states": {
-                          "disabled": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "error"
-                          },
-                          "Off": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "color": "rgb(68,115,158)",
-                            "template": "washer_more_info",
-                            "styles": {
-                              "card": [
-                                {
-                                  "background-color": "[[[\n  if (states['input_boolean.washer_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                                }
-                              ]
-                            }
-                          },
-                          "Standby": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info"
-                          },
-                          "Detecting": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "...",
-                            "show_label": true
-                          },
-                          "Delay Set": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                            "show_label": true
-                          },
-                          "Washing": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                            "show_label": true
-                          },
-                          "Rinsing": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                            "show_label": true
-                          },
-                          "Spinning": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                            "show_label": true
-                          },
-                          "Finished": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "Done!",
-                            "show_label": true
-                          },
-                          "Paused": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "Paused",
-                            "show_label": true,
-                            "color": "rgb(68,115,158)",
-                            "styles": {
-                              "label": [
-                                {
-                                  "color": "var(--primary-background-color)"
-                                },
-                                {
-                                  "animation": "blink 2s ease infinite"
-                                }
-                              ]
-                            }
-                          },
-                          "Error": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "Error",
-                            "show_label": true,
-                            "styles": {
-                              "card": [
-                                {
-                                  "background-color": "#9e110d"
-                                }
-                              ],
-                              "label": [
-                                {
-                                  "animation": "blink 2s ease infinite"
-                                }
-                              ]
-                            }
-                          }
-                        }
-                      },
-                      {
-                        "type": "custom:state-switch",
-                        "style": {
-                          "top": "5%",
-                          "left": "25%",
+                          "left": "7.5%",
                           "height": "9%",
                           "width": "4.5%"
                         },
@@ -2194,6 +2028,189 @@
                             "entity": "vacuum.roborock_s7",
                             "template": "vacuum_more_info",
                             "label": "[[[ return entity.attributes.battery_level + '%']]]",
+                            "show_label": true,
+                            "styles": {
+                              "card": [
+                                {
+                                  "background-color": "#9e110d"
+                                }
+                              ],
+                              "label": [
+                                {
+                                  "animation": "blink 2s ease infinite"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "custom:button-card",
+                        "style": {
+                          "top": "5%",
+                          "left": "15%",
+                          "height": "9%",
+                          "width": "4.5%"
+                        },
+                        "icon": "mdi:tshirt-crew",
+                        "template": "square_cell",
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "script.set_recommended_scene",
+                          "data": {
+                            "room": [
+                              "yard"
+                            ]
+                          }
+                        },
+                        "double_tap_action": {
+                          "action": "call-service",
+                          "service": "automation.trigger",
+                          "service_data": {
+                            "entity_id": "automation.yard_motion_timeout"
+                          }
+                        },
+                        "hold_action": {
+                          "action": "navigate",
+                          "navigation_path": "/lovelace/playroom"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_window_open_at_yard'].state == 'on')\n    return '#9e110d';\n  else if (states['sensor.raining_with_yard_windows_open'].state == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_yard_windows_open'].state == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "type": "custom:decluttering-card",
+                        "template": "floorplan_slider",
+                        "variables": [
+                          {
+                            "slider_entity": "light.yard_light_entity"
+                          }
+                        ],
+                        "style": {
+                          "top": "5%",
+                          "left": "20%",
+                          "height": "9%",
+                          "width": "4.5%"
+                        }
+                      },
+                      {
+                        "type": "custom:decluttering-card",
+                        "template": "floorplan_slider_light_icon",
+                        "variables": [
+                          {
+                            "light_entity": "light.yard_light_entity"
+                          }
+                        ],
+                        "style": {
+                          "top": "5%",
+                          "left": "20%",
+                          "height": "5%",
+                          "width": "2.5%"
+                        }
+                      },
+                      {
+                        "type": "custom:state-switch",
+                        "style": {
+                          "top": "5%",
+                          "left": "25%",
+                          "height": "9%",
+                          "width": "4.5%"
+                        },
+                        "entity": "sensor.washer_status",
+                        "default": "disabled",
+                        "states": {
+                          "disabled": {
+                            "type": "custom:button-card",
+                            "entity": "switch.washer_power",
+                            "template": "error"
+                          },
+                          "Off": {
+                            "type": "custom:button-card",
+                            "entity": "switch.washer_power",
+                            "color": "rgb(68,115,158)",
+                            "template": "washer_more_info",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background-color": "[[[\n  if (states['input_boolean.washer_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                                }
+                              ]
+                            }
+                          },
+                          "Standby": {
+                            "type": "custom:button-card",
+                            "entity": "switch.washer_power",
+                            "template": "washer_more_info"
+                          },
+                          "Detecting": {
+                            "type": "custom:button-card",
+                            "entity": "switch.washer_power",
+                            "template": "washer_more_info",
+                            "label": "...",
+                            "show_label": true
+                          },
+                          "Delay Set": {
+                            "type": "custom:button-card",
+                            "entity": "switch.washer_power",
+                            "template": "washer_more_info",
+                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                            "show_label": true
+                          },
+                          "Washing": {
+                            "type": "custom:button-card",
+                            "entity": "switch.washer_power",
+                            "template": "washer_more_info",
+                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                            "show_label": true
+                          },
+                          "Rinsing": {
+                            "type": "custom:button-card",
+                            "entity": "switch.washer_power",
+                            "template": "washer_more_info",
+                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                            "show_label": true
+                          },
+                          "Spinning": {
+                            "type": "custom:button-card",
+                            "entity": "switch.washer_power",
+                            "template": "washer_more_info",
+                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                            "show_label": true
+                          },
+                          "Finished": {
+                            "type": "custom:button-card",
+                            "entity": "switch.washer_power",
+                            "template": "washer_more_info",
+                            "label": "Done!",
+                            "show_label": true
+                          },
+                          "Paused": {
+                            "type": "custom:button-card",
+                            "entity": "switch.washer_power",
+                            "template": "washer_more_info",
+                            "label": "Paused",
+                            "show_label": true,
+                            "color": "rgb(68,115,158)",
+                            "styles": {
+                              "label": [
+                                {
+                                  "color": "var(--primary-background-color)"
+                                },
+                                {
+                                  "animation": "blink 2s ease infinite"
+                                }
+                              ]
+                            }
+                          },
+                          "Error": {
+                            "type": "custom:button-card",
+                            "entity": "switch.washer_power",
+                            "template": "washer_more_info",
+                            "label": "Error",
                             "show_label": true,
                             "styles": {
                               "card": [
@@ -4762,26 +4779,9 @@
                             "ac_auto_control_automation": "automation.parents_room_ac_auto_control"
                           }
                         ]
-                      },
-                      {
-                        "type": "custom:button-card",
-                        "style": {
-                          "top": "95%",
-                          "left": "97.5%",
-                          "height": "9%",
-                          "width": "4.5%"
-                        },
-                        "entity": "input_boolean.away_mode",
-                        "template": "top_row",
-                        "double_tap_action": {
-                          "action": "toggle"
-                        },
-                        "tap_action": {
-                          "action": "more-info"
-                        }
                       }
                     ],
-                    "image": "/local/floorplan/floorplan_pointers_boxes_20240114.png"
+                    "image": "/local/floorplan/floorplan_pointers_boxes_20240120.png"
                   }
                 },
                 {
@@ -5058,10 +5058,6 @@
                           },
                           {
                             "type": "custom:button-card",
-                            "color_type": "blank-card"
-                          },
-                          {
-                            "type": "custom:button-card",
                             "entity": "binary_sensor.sims_drive_market_bus_stop",
                             "template": "top_row",
                             "label": "[[[ if (entity.state == 'on') { return entity.attributes.next_buses[0].ServiceNo } else { return '' } ]]]",
@@ -5076,186 +5072,6 @@
                             "tap_action": {
                               "action": "navigate",
                               "navigation_path": "/lovelace/transit"
-                            }
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "entity": "input_boolean.away_mode",
-                            "template": "top_row",
-                            "double_tap_action": {
-                              "action": "toggle"
-                            },
-                            "tap_action": {
-                              "action": "more-info"
-                            }
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "icon": "mdi:teddy-bear",
-                            "template": "square_cell",
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "script.set_recommended_scene",
-                              "data": {
-                                "room": [
-                                  "playroom",
-                                  "yard"
-                                ]
-                              }
-                            },
-                            "double_tap_action": {
-                              "action": "call-service",
-                              "service": "automation.trigger",
-                              "service_data": {
-                                "entity_id": [
-                                  "automation.yard_motion_timeout",
-                                  "automation.playroom_motion_timeout"
-                                ]
-                              }
-                            },
-                            "hold_action": {
-                              "action": "navigate",
-                              "navigation_path": "/lovelace/playroom"
-                            },
-                            "styles": {
-                              "card": [
-                                {
-                                  "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_window_open_at_yard'].state == 'on')\n    return '#9e110d';\n  else if (states['sensor.raining_with_yard_windows_open'].state == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_yard_windows_open'].state == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "type": "custom:decluttering-card",
-                            "template": "light",
-                            "variables": [
-                              {
-                                "light_entity": "light.playroom_lights"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "custom:decluttering-card",
-                            "template": "light",
-                            "variables": [
-                              {
-                                "light_entity": "light.yard_light_entity"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "color_type": "blank-card"
-                          },
-                          {
-                            "type": "custom:state-switch",
-                            "entity": "sensor.washer_status",
-                            "default": "disabled",
-                            "states": {
-                              "disabled": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "error"
-                              },
-                              "Off": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "color": "rgb(68,115,158)",
-                                "styles": {
-                                  "card": [
-                                    {
-                                      "background-color": "[[[\n  if (states['input_boolean.washer_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                                    }
-                                  ]
-                                }
-                              },
-                              "Standby": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "...",
-                                "show_label": true
-                              },
-                              "Detecting": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "...",
-                                "show_label": true
-                              },
-                              "Delay Set": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                                "show_label": true
-                              },
-                              "Washing": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                                "show_label": true
-                              },
-                              "Rinsing": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                                "show_label": true
-                              },
-                              "Spinning": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                                "show_label": true
-                              },
-                              "Finished": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "Done!",
-                                "show_label": true
-                              },
-                              "Paused": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "Paused",
-                                "show_label": true,
-                                "color": "rgb(68,115,158)",
-                                "styles": {
-                                  "label": [
-                                    {
-                                      "color": "var(--primary-background-color)"
-                                    },
-                                    {
-                                      "animation": "blink 2s ease infinite"
-                                    }
-                                  ]
-                                }
-                              },
-                              "Error": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "Error",
-                                "show_label": true,
-                                "styles": {
-                                  "card": [
-                                    {
-                                      "background-color": "#9e110d"
-                                    }
-                                  ],
-                                  "label": [
-                                    {
-                                      "animation": "blink 2s ease infinite"
-                                    }
-                                  ]
-                                }
-                              }
                             }
                           },
                           {
@@ -5371,6 +5187,190 @@
                                 "entity": "vacuum.roborock_s7",
                                 "template": "vacuum_more_info",
                                 "label": "[[[ return entity.attributes.battery_level + '%']]]",
+                                "show_label": true,
+                                "styles": {
+                                  "card": [
+                                    {
+                                      "background-color": "#9e110d"
+                                    }
+                                  ],
+                                  "label": [
+                                    {
+                                      "animation": "blink 2s ease infinite"
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "entity": "input_boolean.away_mode",
+                            "template": "top_row",
+                            "double_tap_action": {
+                              "action": "toggle"
+                            },
+                            "tap_action": {
+                              "action": "more-info"
+                            }
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "icon": "mdi:teddy-bear",
+                            "template": "square_cell",
+                            "tap_action": {
+                              "action": "call-service",
+                              "service": "script.set_recommended_scene",
+                              "data": {
+                                "room": [
+                                  "playroom",
+                                  "yard"
+                                ]
+                              }
+                            },
+                            "double_tap_action": {
+                              "action": "call-service",
+                              "service": "automation.trigger",
+                              "service_data": {
+                                "entity_id": [
+                                  "automation.yard_motion_timeout",
+                                  "automation.playroom_motion_timeout"
+                                ]
+                              }
+                            },
+                            "hold_action": {
+                              "action": "navigate",
+                              "navigation_path": "/lovelace/playroom"
+                            },
+                            "styles": {
+                              "card": [
+                                {
+                                  "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_window_open_at_yard'].state == 'on')\n    return '#9e110d';\n  else if (states['sensor.raining_with_yard_windows_open'].state == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_yard_windows_open'].state == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "custom:decluttering-card",
+                            "template": "light",
+                            "variables": [
+                              {
+                                "light_entity": "light.playroom_lights"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "custom:decluttering-card",
+                            "template": "light",
+                            "variables": [
+                              {
+                                "light_entity": "light.yard_light_entity"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "color_type": "blank-card"
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "color_type": "blank-card"
+                          },
+                          {
+                            "type": "custom:state-switch",
+                            "entity": "sensor.washer_status",
+                            "default": "disabled",
+                            "states": {
+                              "disabled": {
+                                "type": "custom:button-card",
+                                "entity": "switch.washer_power",
+                                "template": "error"
+                              },
+                              "Off": {
+                                "type": "custom:button-card",
+                                "entity": "switch.washer_power",
+                                "template": "washer_more_info",
+                                "color": "rgb(68,115,158)",
+                                "styles": {
+                                  "card": [
+                                    {
+                                      "background-color": "[[[\n  if (states['input_boolean.washer_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                                    }
+                                  ]
+                                }
+                              },
+                              "Standby": {
+                                "type": "custom:button-card",
+                                "entity": "switch.washer_power",
+                                "template": "washer_more_info",
+                                "label": "...",
+                                "show_label": true
+                              },
+                              "Detecting": {
+                                "type": "custom:button-card",
+                                "entity": "switch.washer_power",
+                                "template": "washer_more_info",
+                                "label": "...",
+                                "show_label": true
+                              },
+                              "Delay Set": {
+                                "type": "custom:button-card",
+                                "entity": "switch.washer_power",
+                                "template": "washer_more_info",
+                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                                "show_label": true
+                              },
+                              "Washing": {
+                                "type": "custom:button-card",
+                                "entity": "switch.washer_power",
+                                "template": "washer_more_info",
+                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                                "show_label": true
+                              },
+                              "Rinsing": {
+                                "type": "custom:button-card",
+                                "entity": "switch.washer_power",
+                                "template": "washer_more_info",
+                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                                "show_label": true
+                              },
+                              "Spinning": {
+                                "type": "custom:button-card",
+                                "entity": "switch.washer_power",
+                                "template": "washer_more_info",
+                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                                "show_label": true
+                              },
+                              "Finished": {
+                                "type": "custom:button-card",
+                                "entity": "switch.washer_power",
+                                "template": "washer_more_info",
+                                "label": "Done!",
+                                "show_label": true
+                              },
+                              "Paused": {
+                                "type": "custom:button-card",
+                                "entity": "switch.washer_power",
+                                "template": "washer_more_info",
+                                "label": "Paused",
+                                "show_label": true,
+                                "color": "rgb(68,115,158)",
+                                "styles": {
+                                  "label": [
+                                    {
+                                      "color": "var(--primary-background-color)"
+                                    },
+                                    {
+                                      "animation": "blink 2s ease infinite"
+                                    }
+                                  ]
+                                }
+                              },
+                              "Error": {
+                                "type": "custom:button-card",
+                                "entity": "switch.washer_power",
+                                "template": "washer_more_info",
+                                "label": "Error",
                                 "show_label": true,
                                 "styles": {
                                   "card": [
