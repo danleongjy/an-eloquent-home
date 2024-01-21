@@ -6633,6 +6633,11 @@
   - platform: time
     at: input_datetime.sleep_hours_end
     id: sleep_hours_end
+  - platform: state
+    entity_id:
+    - binary_sensor.roborock_s7_water_box_attached
+    - binary_sensor.roborock_s7_mop_attached
+    id: mop
   condition: []
   action:
   - choose:
@@ -6664,16 +6669,45 @@
           entity_id: number.roborock_s7_volume
         data:
           value: '66'
-    default:
-    - service: time.set_value
-      target:
-        entity_id: time.roborock_s7_do_not_disturb_begin
-      data:
-        time: '{{ states(''input_datetime.sleep_hours_start'') }}'
-    - service: time.set_value
-      target:
-        entity_id: time.roborock_s7_do_not_disturb_end
-      data:
-        time: '{{ states(''input_datetime.sleep_hours_end'') }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - sleep_hours_changed
+      sequence:
+      - service: time.set_value
+        target:
+          entity_id: time.roborock_s7_do_not_disturb_begin
+        data:
+          time: '{{ states(''input_datetime.sleep_hours_start'') }}'
+      - service: time.set_value
+        target:
+          entity_id: time.roborock_s7_do_not_disturb_end
+        data:
+          time: '{{ states(''input_datetime.sleep_hours_end'') }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - mop
+      sequence:
+      - if:
+        - condition: state
+          entity_id: binary_sensor.roborock_s7_water_box_attached
+          state: 'on'
+        - condition: state
+          entity_id: binary_sensor.roborock_s7_mop_attached
+          state: 'on'
+        then:
+        - service: select.select_option
+          target:
+            entity_id: select.roborock_s7_mop_intensity
+          data:
+            option: intense
+        else:
+        - service: select.select_option
+          target:
+            entity_id: select.roborock_s7_mop_intensity
+          data:
+            option: 'off'
+    default: []
   mode: queued
   max: 5
