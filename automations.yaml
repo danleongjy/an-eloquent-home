@@ -6697,12 +6697,22 @@
           entity_id: binary_sensor.roborock_s7_mop_attached
           state: 'on'
         then:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: select.roborock_s7_mop_intensity
+            state: intense
         - service: select.select_option
           target:
             entity_id: select.roborock_s7_mop_intensity
           data:
             option: intense
         else:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: select.roborock_s7_mop_intensity
+            state: 'off'
         - service: select.select_option
           target:
             entity_id: select.roborock_s7_mop_intensity
