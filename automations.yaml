@@ -6638,6 +6638,16 @@
     - binary_sensor.roborock_s7_water_box_attached
     - binary_sensor.roborock_s7_mop_attached
     id: mop
+  - platform: state
+    entity_id:
+    - vacuum.roborock_s7
+    from: returning
+    to: docked
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    id: finished
   condition: []
   action:
   - choose:
@@ -6718,6 +6728,14 @@
             entity_id: select.roborock_s7_mop_intensity
           data:
             option: 'off'
+    - conditions:
+      - condition: trigger
+        id:
+        - finished
+      sequence:
+      - service: homeassistant.reload_config_entry
+        data:
+          device_id: e53c4142b0a58065e2dedda56a576eff
     default: []
   mode: queued
   max: 5
