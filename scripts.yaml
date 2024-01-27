@@ -534,10 +534,10 @@ recommended_light_level:
       dim_end: '{{ ''input_datetime.sleep_hours_end'' if light_room in sleep_hours_end_rooms
         else ''input_datetime.dim_hours_end'' }}'
   - variables:
-      light_brightness: "{% if states(dim_start) != states(dim_end) %}\n  {% if now()
-        > today_at(states(dim_start)) and now() <= today_at(states(dim_end)) + timedelta(days
-        = 1) %}\n    {{ states('input_number.night_light_brightness') | float }}\n
-        \ {% elif is_state('sun.sun','below_horizon') and state_attr('sun.sun','rising')
+      light_brightness: "{% if states(dim_start) != states(dim_end) %}\n  {% if (now()
+        > today_at(states(dim_start)) and now() <= today_at('23:59')) or (now() >=
+        today_at('00:00') and now() <= today_at(states(dim_end))) %}\n    {{ states('input_number.night_light_brightness')
+        | float }}\n  {% elif is_state('sun.sun','below_horizon') and state_attr('sun.sun','rising')
         %}\n    {{ states('input_number.morning_light_brightness') | float }}\n  {%
         else %}\n    100\n  {% endif %}\n{% else %}\n  100\n{% endif %}"
   - service: light.turn_on
