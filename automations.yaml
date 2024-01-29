@@ -3357,9 +3357,6 @@
           - delay: 2
     - if:
       - condition: state
-        entity_id: light.study_room_lights
-        state: 'on'
-      - condition: state
         entity_id: binary_sensor.study_room_ethernet_connection
         state: 'off'
       then:
@@ -3370,14 +3367,18 @@
           - light.study_room_bulb_3_entity
           - light.study_room_bulb_4_entity
           sequence:
-          - service: light.turn_on
-            target:
-              entity_id: '{{ repeat.item }}'
-            data:
-              transition: 10
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-          - delay: 2
+          - if:
+            - condition: template
+              value_template: '{{ is_state(repeat.item, ''on'') }}'
+            then:
+            - service: light.turn_on
+              target:
+                entity_id: '{{ repeat.item }}'
+              data:
+                transition: 10
+                brightness_pct: '{{ states(''input_number.night_light_brightness'')
+                  }}'
+            - delay: 2
   - if:
     - condition: state
       entity_id: light.living_room_lights
