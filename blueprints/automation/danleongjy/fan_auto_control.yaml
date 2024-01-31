@@ -61,13 +61,15 @@ condition:
     state: "on"
 action:
   - variables:
+      temperature_sensor: !input temp_sensor
       low_fan_speed: !input low_speed
       high_fan_speed: !input high_speed
+      low_temperature: !input low_temp
+      high_temperature: !input high_temp
   - choose:
       - conditions:
-          - condition: numeric_state
-            entity_id: !input temp_sensor
-            below: !input low_temp
+          - condition: template
+            value_template: "{{ states(temperature_sensor) | int(30) < low_temperature }}"
         sequence:
           - if:
               - condition: not
@@ -95,10 +97,8 @@ action:
                 target:
                   entity_id: !input fan
       - conditions:
-          - condition: numeric_state
-            entity_id: !input temp_sensor
-            above: !input low_temp
-            below: !input high_temp
+          - condition: template
+            value_template: "{{ states(temperature_sensor) | int(30) >= low_temperature and states(temperature_sensor) | int(30) < high_temperature }}"
         sequence:
           - if:
               - condition: not
