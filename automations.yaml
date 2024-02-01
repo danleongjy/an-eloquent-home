@@ -3314,19 +3314,19 @@
         brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
       target:
         entity_id: light.yard_light_entity
+      continue_on_error: true
     - delay: 2
   - parallel:
-    - if:
-      - condition: state
-        entity_id: light.playroom_lights
-        state: 'on'
-      then:
-      - repeat:
-          for_each:
-          - light.playroom_bulb_1_entity
-          - light.playroom_bulb_2_entity
-          - light.playroom_bulb_3_entity
-          sequence:
+    - repeat:
+        for_each:
+        - light.playroom_bulb_1_entity
+        - light.playroom_bulb_2_entity
+        - light.playroom_bulb_3_entity
+        sequence:
+        - if:
+          - condition: template
+            value_template: '{{ is_state(repeat.item, ''on'') }}'
+          then:
           - service: light.turn_on
             target:
               entity_id: '{{ repeat.item }}'
@@ -3334,19 +3334,19 @@
               transition: 10
               brightness_pct: '{{ states(''input_number.night_light_brightness'')
                 }}'
+            continue_on_error: true
           - delay: 2
-    - if:
-      - condition: state
-        entity_id: light.kitchen_lights
-        state: 'on'
-      then:
-      - repeat:
-          for_each:
-          - light.kitchen_ceiling_light_entity
-          - light.kitchen_bulb_1_entity
-          - light.kitchen_bulb_2_entity
-          - light.kitchen_bulb_3_entity
-          sequence:
+    - repeat:
+        for_each:
+        - light.kitchen_ceiling_light_entity
+        - light.kitchen_bulb_1_entity
+        - light.kitchen_bulb_2_entity
+        - light.kitchen_bulb_3_entity
+        sequence:
+        - if:
+          - condition: template
+            value_template: '{{ is_state(repeat.item, ''on'') }}'
+          then:
           - service: light.turn_on
             target:
               entity_id: '{{ repeat.item }}'
@@ -3354,6 +3354,7 @@
               transition: 10
               brightness_pct: '{{ states(''input_number.night_light_brightness'')
                 }}'
+            continue_on_error: true
           - delay: 2
     - if:
       - condition: state
@@ -3378,25 +3379,26 @@
                 transition: 10
                 brightness_pct: '{{ states(''input_number.night_light_brightness'')
                   }}'
+              continue_on_error: true
             - delay: 2
-  - if:
-    - condition: state
-      entity_id: light.living_room_lights
-      state: 'on'
-    then:
-    - repeat:
-        for_each:
-        - light.living_room_bulb_1_entity
-        - light.living_room_bulb_2_entity
-        - light.living_room_bulb_3_entity
-        - light.living_room_bulb_4_entity
-        - light.living_room_bulb_5_entity
-        sequence:
+  - repeat:
+      for_each:
+      - light.living_room_bulb_1_entity
+      - light.living_room_bulb_2_entity
+      - light.living_room_bulb_3_entity
+      - light.living_room_bulb_4_entity
+      - light.living_room_bulb_5_entity
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ is_state(repeat.item, ''on'') }}'
+        then:
         - service: light.turn_off
           target:
             entity_id: '{{ repeat.item }}'
           data:
             transition: 10
+          continue_on_error: true
         - delay: 2
   - if:
     - condition: state
@@ -3409,21 +3411,24 @@
         transition: 10
       target:
         entity_id: light.living_room_pendant_light_entity
-  - if:
-    - condition: state
-      entity_id: light.dining_room_lights
-      state: 'on'
-    then:
-    - repeat:
-        for_each:
-        - light.dining_room_bulb_1_entity
-        - light.dining_room_bulb_2_entity
-        - light.dining_room_bulb_3_entity
-        - light.dining_room_bulb_4_entity
-        sequence:
+      continue_on_error: true
+  - repeat:
+      for_each:
+      - light.dining_room_bulb_1_entity
+      - light.dining_room_bulb_2_entity
+      - light.dining_room_bulb_3_entity
+      - light.dining_room_bulb_4_entity
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ is_state(repeat.item, ''on'') }}'
+        then:
         - service: light.turn_off
           target:
             entity_id: '{{ repeat.item }}'
+          data:
+            transition: 10
+          continue_on_error: true
         - delay: 2
   - if:
     - condition: state
@@ -3436,22 +3441,23 @@
         brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
       target:
         entity_id: light.dining_room_pendant_light_entity
-  - if:
-    - condition: state
-      entity_id: light.hallway_lights
-      state: 'on'
-    then:
-    - repeat:
-        for_each:
-        - light.hallway_bulb_1_entity
-        - light.hallway_bulb_2_entity
-        sequence:
+      continue_on_error: true
+  - repeat:
+      for_each:
+      - light.hallway_bulb_1_entity
+      - light.hallway_bulb_2_entity
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ is_state(repeat.item, ''on'') }}'
+        then:
         - service: light.turn_on
           target:
             entity_id: '{{ repeat.item }}'
           data:
             transition: 10
             brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+          continue_on_error: true
         - delay: 2
   - parallel:
     - if:
@@ -3465,16 +3471,16 @@
           brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
         target:
           entity_id: light.powder_room_pendant_light_entity
-    - if:
-      - condition: state
-        entity_id: light.junior_bathroom_lights
-        state: 'on'
-      then:
-      - repeat:
-          for_each:
-          - light.junior_bathroom_ceiling_light_entity
-          - light.junior_bathroom_pendant_light_entity
-          sequence:
+        continue_on_error: true
+    - repeat:
+        for_each:
+        - light.junior_bathroom_ceiling_light_entity
+        - light.junior_bathroom_pendant_light_entity
+        sequence:
+        - if:
+          - condition: template
+            value_template: '{{ is_state(repeat.item, ''on'') }}'
+          then:
           - service: light.turn_on
             target:
               entity_id: '{{ repeat.item }}'
@@ -3482,6 +3488,7 @@
               transition: 10
               brightness_pct: '{{ states(''input_number.night_light_brightness'')
                 }}'
+            continue_on_error: true
           - delay: 2
   mode: single
 - id: '1674045954399'
@@ -3492,41 +3499,43 @@
     at: input_datetime.sleep_hours_start
   condition: []
   action:
-  - if:
-    - condition: state
-      entity_id: light.elis_room_lights
-      state: 'on'
-    then:
-    - repeat:
-        for_each:
-        - light.elis_room_bulb_1_entity
-        - light.elis_room_bulb_2_entity
-        - light.elis_room_bulb_3_entity
-        sequence:
+  - repeat:
+      for_each:
+      - light.elis_room_bulb_1_entity
+      - light.elis_room_bulb_2_entity
+      - light.elis_room_bulb_3_entity
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ is_state(repeat.item, ''on'') }}'
+        then:
         - service: light.turn_on
           target:
             entity_id: '{{ repeat.item }}'
           data:
             transition: 10
-            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') |
+              int }}'
+          continue_on_error: true
         - delay: 2
-  - if:
-    - condition: state
-      entity_id: light.elenas_room_lights
-      state: 'on'
-    then:
-    - repeat:
-        for_each:
-        - light.elenas_room_bulb_1_entity
-        - light.elenas_room_bulb_2_entity
-        - light.elenas_room_bulb_3_entity
-        sequence:
+  - repeat:
+      for_each:
+      - light.elenas_room_bulb_1_entity
+      - light.elenas_room_bulb_2_entity
+      - light.elenas_room_bulb_3_entity
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ is_state(repeat.item, ''on'') }}'
+        then:
         - service: light.turn_on
           target:
             entity_id: '{{ repeat.item }}'
           data:
             transition: 10
-            brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') |
+              int }}'
+          continue_on_error: true
         - delay: 2
   mode: single
 - id: '1675045598043'
