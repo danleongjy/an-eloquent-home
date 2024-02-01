@@ -8024,10 +8024,11 @@
                   "content": "## Proxmox"
                 },
                 {
-                  "type": "vertical-stack",
+                  "type": "horizontal-stack",
                   "cards": [
                     {
-                      "type": "horizontal-stack",
+                      "type": "grid",
+                      "columns": 1,
                       "cards": [
                         {
                           "type": "custom:button-card",
@@ -8040,23 +8041,13 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "icon": "mdi:cpu-64-bit",
-                          "template": "square_cell"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "icon": "mdi:memory",
-                          "template": "square_cell"
-                        },
-                        {
-                          "type": "custom:button-card",
                           "icon": "mdi:harddisk",
                           "template": "square_cell"
                         }
                       ]
                     },
                     {
-                      "type": "horizontal-stack",
+                      "type": "vertical-stack",
                       "cards": [
                         {
                           "type": "custom:button-card",
@@ -8072,22 +8063,6 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.node_proxmox_cpu_used",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.node_proxmox_memory_used_percentage",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
                           "entity": "sensor.node_proxmox_disk_used_percentage",
                           "template": "square_cell",
                           "show_icon": false,
@@ -8097,7 +8072,7 @@
                       ]
                     },
                     {
-                      "type": "horizontal-stack",
+                      "type": "vertical-stack",
                       "cards": [
                         {
                           "type": "custom:button-card",
@@ -8113,22 +8088,6 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.qemu_pfsense_100_cpu_used",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.qemu_pfsense_100_memory_used_percentage",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
                           "entity": "sensor.pfsense_filesystem_used_percentage_slash",
                           "template": "square_cell",
                           "show_icon": false,
@@ -8138,7 +8097,7 @@
                       ]
                     },
                     {
-                      "type": "horizontal-stack",
+                      "type": "vertical-stack",
                       "cards": [
                         {
                           "type": "custom:button-card",
@@ -8154,22 +8113,6 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.qemu_eloquent_house_101_cpu_used",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.qemu_eloquent_house_101_memory_used_percentage",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
                           "entity": "sensor.disk_use_percent",
                           "template": "square_cell",
                           "show_icon": false,
@@ -8179,7 +8122,7 @@
                       ]
                     },
                     {
-                      "type": "horizontal-stack",
+                      "type": "vertical-stack",
                       "cards": [
                         {
                           "type": "custom:button-card",
@@ -8195,25 +8138,59 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.qemu_docker_102_cpu_used",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.qemu_docker_102_memory_used_percentage",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
                           "color_type": "blank-card"
                         }
                       ]
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "CPU Use"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.node_proxmox_cpu_used",
+                      "name": "Proxmox"
+                    },
+                    {
+                      "entity": "sensor.qemu_pfsense_100_cpu_used",
+                      "name": "pfSense"
+                    },
+                    {
+                      "entity": "sensor.qemu_eloquent_house_101_cpu_used",
+                      "name": "Home Assistant"
+                    },
+                    {
+                      "entity": "sensor.qemu_docker_102_cpu_used",
+                      "name": "Docker"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Memory Use"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.node_proxmox_memory_used_percentage",
+                      "name": "Proxmox"
+                    },
+                    {
+                      "entity": "sensor.qemu_pfsense_100_memory_used_percentage",
+                      "name": "pfSense"
+                    },
+                    {
+                      "entity": "sensor.qemu_eloquent_house_101_memory_used_percentage",
+                      "name": "Home Assistant"
+                    },
+                    {
+                      "entity": "sensor.qemu_docker_102_memory_used_percentage",
+                      "name": "Docker"
                     }
                   ]
                 },
