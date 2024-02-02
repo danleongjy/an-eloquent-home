@@ -8041,6 +8041,11 @@
                         },
                         {
                           "type": "custom:button-card",
+                          "icon": "mdi:memory",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
                           "icon": "mdi:harddisk",
                           "template": "square_cell"
                         }
@@ -8060,6 +8065,14 @@
                           "template": "square_cell",
                           "show_icon": false,
                           "show_state": true
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.node_proxmox_memory_used_percentage",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
                         },
                         {
                           "type": "custom:button-card",
@@ -8088,6 +8101,14 @@
                         },
                         {
                           "type": "custom:button-card",
+                          "entity": "sensor.qemu_pfsense_100_memory_used_percentage",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
+                        },
+                        {
+                          "type": "custom:button-card",
                           "entity": "sensor.pfsense_filesystem_used_percentage_slash",
                           "template": "square_cell",
                           "show_icon": false,
@@ -8113,6 +8134,14 @@
                         },
                         {
                           "type": "custom:button-card",
+                          "entity": "sensor.qemu_eloquent_house_101_memory_used_percentage",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
+                        },
+                        {
+                          "type": "custom:button-card",
                           "entity": "sensor.disk_use_percent",
                           "template": "square_cell",
                           "show_icon": false,
@@ -8135,6 +8164,14 @@
                           "template": "square_cell",
                           "show_icon": false,
                           "show_state": true
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.qemu_docker_102_memory_used_percentage",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
                         },
                         {
                           "type": "custom:button-card",
@@ -8165,31 +8202,6 @@
                     },
                     {
                       "entity": "sensor.qemu_docker_102_cpu_used",
-                      "name": "Docker"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "Memory Use"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.node_proxmox_memory_used_percentage",
-                      "name": "Proxmox"
-                    },
-                    {
-                      "entity": "sensor.pfsense_memory_used_percentage",
-                      "name": "pfSense"
-                    },
-                    {
-                      "entity": "sensor.qemu_eloquent_house_101_memory_used_percentage",
-                      "name": "Home Assistant"
-                    },
-                    {
-                      "entity": "sensor.qemu_docker_102_memory_used_percentage",
                       "name": "Docker"
                     }
                   ]
@@ -9032,7 +9044,7 @@
                       ],
                       "card": {
                         "type": "markdown",
-                        "content": "<ha-alert alert-type=\"error\">{{ states('sensor.roborock_s7_vacuum_error') }}</ha-alert>"
+                        "content": "<ha-alert alert-type=\"error\">{{ states('sensor.roborock_s7_vacuum_error').capitalize().replace('_', ' ') + '.' }}</ha-alert>"
                       }
                     }
                   ]
