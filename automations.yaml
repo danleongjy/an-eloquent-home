@@ -5425,15 +5425,10 @@
     alias: List school days occurring on Grace's Next Alarm
   - choose:
     - conditions:
-      - or:
-        - alias: If Daniel had a late work night
-          condition: template
-          value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
-            | length > 0 }}'
-        - condition: template
-          value_template: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).weekday()
-            == 4 }}'
-          alias: Alarm is on a Friday
+      - alias: If Daniel had a late work night
+        condition: template
+        value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
+          | length > 0 }}'
       - alias: If Eli has school
         condition: template
         value_template: '{{ school_days[''calendar.eli_school_days''].events | length
@@ -5477,10 +5472,6 @@
         condition: template
         value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
           | length == 0 }}'
-      - condition: template
-        value_template: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).weekday()
-          != 4 }}'
-        alias: Alarm is not on a Friday
       - alias: If Elena has school
         condition: template
         value_template: '{{ school_days[''calendar.elena_school_days''].events | length
@@ -5804,15 +5795,10 @@
     alias: List school days occurring on Daniel's Next Alarm
   - choose:
     - conditions:
-      - or:
-        - alias: If Daniel had a late work night
-          condition: template
-          value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
-            | length > 0 }}'
-        - condition: template
-          value_template: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).weekday()
-            == 4 }}'
-          alias: Alarm is on a Friday
+      - alias: If Daniel had a late work night
+        condition: template
+        value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
+          | length > 0 }}'
       - alias: If Elena has school
         condition: template
         value_template: '{{ school_days[''calendar.elena_school_days''].events | length
@@ -5856,10 +5842,6 @@
         condition: template
         value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
           | length == 0 }}'
-      - condition: template
-        value_template: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).weekday()
-          != 4 }}'
-        alias: Alarm is not on a Friday
       - alias: If Eli has school
         condition: template
         value_template: '{{ school_days[''calendar.eli_school_days''].events | length
