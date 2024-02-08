@@ -6733,3 +6733,43 @@
     default: []
   mode: queued
   max: 5
+- id: '1707352533395'
+  alias: Notify When Server Load High
+  description: Send a notification when server load has been persistently high
+  trigger:
+  - platform: numeric_state
+    entity_id:
+    - sensor.node_proxmox_cpu_used
+    for:
+      hours: 1
+      minutes: 0
+      seconds: 0
+    above: 20
+    id: high
+  - platform: numeric_state
+    entity_id:
+    - sensor.node_proxmox_cpu_used
+    below: 20
+    id: low
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id:
+      - high
+    then:
+    - service: notify.mobile_app_pixel_4a
+      metadata: {}
+      data:
+        message: CPU load exceeded 20% for at least 1h
+        title: Check server
+        data:
+          tag: high
+    else:
+    - service: notify.mobile_app_pixel_4a
+      metadata: {}
+      data:
+        message: clear_notification
+        data:
+          tag: high
+  mode: single
