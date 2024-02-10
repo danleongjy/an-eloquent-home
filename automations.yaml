@@ -3744,7 +3744,7 @@
     input:
       ac: climate.dining_room_ac
       vent: binary_sensor.dining_room_ac_vent
-      resync_delay: input_number.ac_resync_delay
+      resync_delay: input_number.resync_delay
 - id: '1676871017133'
   alias: Living Room AC Set State
   description: Set the Living Room AC power and temperature
@@ -3753,7 +3753,7 @@
     input:
       ac: climate.living_room_ac
       vent: binary_sensor.living_room_ac_vent
-      resync_delay: input_number.ac_resync_delay
+      resync_delay: input_number.resync_delay
 - id: '1676871038656'
   alias: Study Room AC Set State
   description: Set the Study Room AC power and temperature
@@ -3762,7 +3762,7 @@
     input:
       ac: climate.study_room_ac
       vent: binary_sensor.study_room_ac_vent
-      resync_delay: input_number.ac_resync_delay
+      resync_delay: input_number.resync_delay
 - id: '1676871060575'
   alias: Parents' Room AC Set State
   description: Set the Parents' Room AC power and temperature
@@ -3771,7 +3771,7 @@
     input:
       ac: climate.parents_room_ac
       vent: binary_sensor.parents_room_ac_vent
-      resync_delay: input_number.ac_resync_delay
+      resync_delay: input_number.resync_delay
 - id: '1676871171509'
   alias: Elena's Room AC Set State
   description: Set Elena's Room AC power and temperature
@@ -3779,7 +3779,7 @@
     path: danleongjy/ac_set_state.yaml
     input:
       vent: binary_sensor.elenas_room_ac_vent
-      resync_delay: input_number.ac_resync_delay
+      resync_delay: input_number.resync_delay
       ac: climate.elenas_room_ac
 - id: '1676871202756'
   alias: Eli's Room AC Set State
@@ -3789,7 +3789,7 @@
     input:
       ac: climate.elis_room_ac
       vent: binary_sensor.elis_room_ac_vent
-      resync_delay: input_number.ac_resync_delay
+      resync_delay: input_number.resync_delay
 - id: '1676873827127'
   alias: Elena's Room AC Auto Control
   description: Automatically turn on or off Elena's Room AC to keep Elena's Room Temperature
@@ -5181,10 +5181,19 @@
           - switch.rice_cooker
           state: 'on'
       sequence:
-      - service: cover.close_cover
-        data: {}
-        target:
-          entity_id: cover.kitchen_blind
+      - repeat:
+          sequence:
+          - service: cover.close_cover
+            data: {}
+            target:
+              entity_id: cover.kitchen_blind
+          - delay: '{{ states(''input_number.resync_delay'') | int }}'
+          while:
+          - condition: not
+            conditions:
+            - condition: state
+              entity_id: cover.kitchen_blind
+              state: closed
     - conditions:
       - condition: numeric_state
         entity_id: sensor.sun_solar_elevation
@@ -5199,11 +5208,21 @@
         value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed >
           timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
           | int(0)) }}'
-      - service: cover.set_cover_position
-        data:
-          position: 15
-        target:
-          entity_id: cover.kitchen_blind
+      - repeat:
+          sequence:
+          - service: cover.set_cover_position
+            data:
+              position: 15
+            target:
+              entity_id: cover.kitchen_blind
+          - delay: '{{ states(''input_number.resync_delay'') | int }}'
+          while:
+          - condition: not
+            conditions:
+            - condition: state
+              entity_id: cover.kitchen_blind
+              attribute: current_position
+              state: 15
     default:
     - condition: and
       conditions:
@@ -5250,10 +5269,19 @@
     - condition: template
       value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed > timedelta(minutes
         = states(''input_number.blinds_auto_control_debounce'') | int(0)) }}'
-    - service: cover.open_cover
-      data: {}
-      target:
-        entity_id: cover.kitchen_blind
+    - repeat:
+        sequence:
+        - service: cover.open_cover
+          data: {}
+          target:
+            entity_id: cover.kitchen_blind
+        - delay: '{{ states(''input_number.resync_delay'') | int }}'
+        while:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: cover.kitchen_blind
+            state: open
   mode: single
   max_exceeded: silent
 - id: '1690715091749'
