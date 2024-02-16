@@ -750,16 +750,16 @@
           "card": {
             "type": "custom:state-switch",
             "entity": "[[cover_position_sensor]]",
-            "default": "not_fully_open",
+            "default": "not_fully_closed",
             "states": {
-              "100": {
+              "0": {
                 "type": "custom:button-card",
                 "entity": "[[cover_entity]]",
                 "template": "turn_on",
                 "color": "rgb(68,115,158)",
                 "tap_action": {
                   "action": "call-service",
-                  "service": "cover.close_cover",
+                  "service": "cover.open_cover",
                   "service_data": {
                     "entity_id": "[[cover_entity]]"
                   }
@@ -770,18 +770,18 @@
                 "entity": "[[cover_entity]]",
                 "template": "error"
               },
-              "not_fully_open": {
+              "not_fully_closed": {
                 "type": "custom:slider-button-card",
                 "entity": "[[cover_entity]]",
                 "slider": {
-                  "direction": "top-bottom",
+                  "direction": "bottom-top",
                   "background": "solid",
                   "use_state_color": false,
                   "use_percentage_bg_opacity": false,
                   "toggle_on_click": false,
                   "show_track": false,
                   "force_square": true,
-                  "invert": true
+                  "invert": false
                 },
                 "show_name": false,
                 "show_state": false,
@@ -856,42 +856,8 @@
               "use_percentage_bg_opacity": false,
               "show_track": false,
               "toggle_on_click": false,
-              "force_square": true
-            },
-            "show_name": false,
-            "show_state": false,
-            "compact": true,
-            "icon": {
-              "show": false,
-              "use_state_color": true,
-              "tap_action": {
-                "action": "more-info"
-              },
-              "icon": ""
-            },
-            "action_button": {
-              "mode": "toggle",
-              "icon": "mdi:power",
-              "show": false,
-              "show_spinner": true,
-              "tap_action": {
-                "action": null
-              }
-            }
-          }
-        },
-        "floorplan_slider_cover": {
-          "card": {
-            "type": "custom:slider-button-card",
-            "entity": "[[cover_entity]]",
-            "slider": {
-              "direction": "top-bottom",
-              "background": "solid",
-              "use_state_color": false,
-              "use_percentage_bg_opacity": false,
-              "show_track": false,
-              "toggle_on_click": false,
-              "force_square": true
+              "force_square": true,
+              "invert": false
             },
             "show_name": false,
             "show_state": false,
@@ -1211,7 +1177,7 @@
                     "styles": {
                       "icon": [
                         {
-                          "color": "[[[\n  if (entity.attributes.current_position == 100)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
+                          "color": "[[[\n  if (entity.attributes.current_position == 0)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
                         }
                       ]
                     },
@@ -1267,7 +1233,7 @@
                       },
                       "icon": [
                         {
-                          "color": "[[[\n  if (entity.attributes.current_position == 100)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
+                          "color": "[[[\n  if (entity.attributes.current_position == 0)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
                         }
                       ]
                     },
@@ -2418,10 +2384,10 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider_cover",
+                        "template": "floorplan_slider",
                         "variables": [
                           {
-                            "cover_entity": "cover.kitchen_blind"
+                            "slider_entity": "cover.kitchen_blind"
                           }
                         ],
                         "style": {
@@ -3590,10 +3556,10 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider_cover",
+                        "template": "floorplan_slider",
                         "variables": [
                           {
-                            "cover_entity": "cover.dining_room_blinds"
+                            "slider_entity": "cover.dining_room_blinds"
                           }
                         ],
                         "style": {
@@ -3813,10 +3779,10 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider_cover",
+                        "template": "floorplan_slider",
                         "variables": [
                           {
-                            "cover_entity": "cover.living_room_blinds"
+                            "slider_entity": "cover.living_room_blinds"
                           }
                         ],
                         "style": {
@@ -3944,10 +3910,10 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider_cover",
+                        "template": "floorplan_slider",
                         "variables": [
                           {
-                            "cover_entity": "cover.master_bathroom_blind"
+                            "slider_entity": "cover.master_bathroom_blind"
                           }
                         ],
                         "style": {
@@ -4614,10 +4580,10 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider_cover",
+                        "template": "floorplan_slider",
                         "variables": [
                           {
-                            "cover_entity": "cover.study_room_blinds"
+                            "slider_entity": "cover.study_room_blinds"
                           }
                         ],
                         "style": {
