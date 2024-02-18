@@ -616,18 +616,28 @@
         {% endif %}
       {% endfor %}
       {{ batteries_with_low_charge.batteries }}
+    unit_of_measurement: count
     attributes:
-      batteries: >
+      batteries_flat: >
         {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
-        {% set batteries_with_low_charge = namespace(batteries = []) %}
+        {% set batteries = namespace(names = []) %}
         {% for battery in zha_batteries %}
           {% if states(battery) in ['unavailable','unknown'] %}
-            {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + [battery] %}
-          {% elif states(battery) | int(0) <= states('input_number.battery_threshold_low') | int %}
-            {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + [battery] %}
+            {% set batteries.names = batteries.names + [battery] %}
+          {% elif states(battery) | int(0) == 0 %}
+            {% set batteries.names = batteries.names + [battery] %}
           {% endif %}
         {% endfor %}
-        {{ batteries_with_low_charge.batteries }}
+        {{ batteries.names }}
+      batteries_low: >
+        {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
+        {% set batteries = namespace(names = []) %}
+        {% for battery in zha_batteries %}
+          {% if  states(battery) | int(0) <= states('input_number.battery_threshold_low') | int(10) and states(battery) | int(0) > 0 %}
+            {% set batteries.names = batteries.names + [battery] %}
+          {% endif %}
+        {% endfor %}
+        {{ batteries.names }}
 
   - name: Floorplan Yard Status
     unique_id: sensor.floorplan_yard_status

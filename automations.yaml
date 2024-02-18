@@ -6808,6 +6808,7 @@
         message: clear_notification
         data:
           tag: batts_low
+    - delay: 1
     - service: notify.mobile_app_pixel_4a
       metadata: {}
       data:
@@ -6815,8 +6816,10 @@
         data:
           tag: batts_low
         message: "{% set message = namespace(text = 'Check ') %} {% for battery in
-          state_attr('sensor.zha_batteries_with_low_charge','batteries') %}\n  {%
-          set message.text = message.text + device_attr(device_id(battery),'name_by_user')
+          state_attr('sensor.zha_batteries_with_low_charge','batteries_flat') %}\n
+          \ {% set message.text = message.text + device_attr(device_id(battery),'name_by_user')
+          + ', ' %}\n{% endfor %} {% for battery in state_attr('sensor.zha_batteries_with_low_charge','batteries_low')
+          %}\n  {% set message.text = message.text + device_attr(device_id(battery),'name_by_user')
           + ', ' %}\n{% endfor %} {{ message.text[:-2] + '.' }}"
     else:
     - service: notify.mobile_app_pixel_4a
