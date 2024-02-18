@@ -611,7 +611,7 @@
       {% for battery in zha_batteries %}
         {% if states(battery) == 'unavailable' %}
           {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
-        {% elif states(battery) | int(0) < states('input_number.battery_threshold_low') | int %}
+        {% elif states(battery) | int(0) <= states('input_number.battery_threshold_low') | int %}
           {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
         {% endif %}
       {% endfor %}
@@ -623,7 +623,7 @@
         {% for battery in zha_batteries %}
           {% if states(battery) in ['unavailable','unknown'] %}
             {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + [battery] %}
-          {% elif states(battery) | int(0) < states('input_number.battery_threshold_low') | int %}
+          {% elif states(battery) | int(0) <= states('input_number.battery_threshold_low') | int %}
             {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + [battery] %}
           {% endif %}
         {% endfor %}
