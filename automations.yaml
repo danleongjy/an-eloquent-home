@@ -6788,3 +6788,41 @@
         data:
           tag: high
   mode: single
+- id: '1708242484217'
+  alias: Notify When Zigbee Devices have Low Batteries
+  description: Send a notification listing the Zigbee devices with low batteries
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.zha_batteries_with_low_charge
+  condition: []
+  action:
+  - if:
+    - condition: numeric_state
+      entity_id: sensor.zha_batteries_with_low_charge
+      above: 0
+    then:
+    - service: notify.mobile_app_pixel_4a
+      metadata: {}
+      data:
+        message: clear_notification
+        data:
+          tag: batts_low
+    - service: notify.mobile_app_pixel_4a
+      metadata: {}
+      data:
+        title: Zigbee Devices with Low Batteries
+        data:
+          tag: batts_low
+        message: "{% set message = namespace(text = 'Check ') %} {% for battery in
+          state_attr('sensor.zha_batteries_with_low_charge','batteries') %}\n  {%
+          set message.text = message.text + device_attr(device_id(battery),'name_by_user')
+          + ', ' %}\n{% endfor %} {{ message.text[:-2] + '.' }}"
+    else:
+    - service: notify.mobile_app_pixel_4a
+      metadata: {}
+      data:
+        message: clear_notification
+        data:
+          tag: batts_low
+  mode: restart

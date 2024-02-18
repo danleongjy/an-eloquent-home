@@ -603,6 +603,32 @@
     state: "{{ state_attr('cover.study_room_blinds','current_position') | int(100) }}"
     availability: "{{ states('cover.study_room_blinds') not in ['unavailable','unknown'] }}"
     
+  - name: ZHA Batteries with Low Charge
+    unique_id: sensor.zha_batteries_with_low_charge
+    state: >
+      {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
+      {% set batteries_with_low_charge = namespace(batteries = 0) %}
+      {% for battery in zha_batteries %}
+        {% if states(battery) == 'unavailable' %}
+          {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
+        {% elif states(battery) | int(0) < states('input_number.battery_threshold_low') | int %}
+          {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
+        {% endif %}
+      {% endfor %}
+      {{ batteries_with_low_charge.batteries }}
+    attributes:
+      batteries: >
+        {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
+        {% set batteries_with_low_charge = namespace(batteries = []) %}
+        {% for battery in zha_batteries %}
+          {% if states(battery) in ['unavailable','unknown'] %}
+            {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + [battery] %}
+          {% elif states(battery) | int(0) < states('input_number.battery_threshold_low') | int %}
+            {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + [battery] %}
+          {% endif %}
+        {% endfor %}
+        {{ batteries_with_low_charge.batteries }}
+
   - name: Floorplan Yard Status
     unique_id: sensor.floorplan_yard_status
     state: >
