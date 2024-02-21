@@ -7703,8 +7703,18 @@
                   ]
                 },
                 {
-                  "type": "markdown",
-                  "content": "{% if state_attr('sensor.zha_device_issues','disconnected') | length > 0 %}\n  <ha-alert alert-type=\"error\">Disconnected: {{ (state_attr('sensor.zha_device_issues','disconnected') | replace(',','') | replace(\"'\",''))[1:-1] }}</ha-alert>\n{% endif %}\n{% if state_attr('sensor.zha_device_issues','batteries_low') | length > 0 %}\n  <ha-alert alert-type=\"warning\">Batteries low: {{ (state_attr('sensor.zha_device_issues','batteries_low') | replace(',','') | replace(\"'\",''))[1:-1] }}</ha-alert>\n{% endif %}"
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "sensor.zha_device_issues",
+                      "above": 0
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "{% if state_attr('sensor.zha_device_issues','disconnected') | length > 0 %}\n    {% set message = namespace(text = \"\") %} {% if\n    state_attr('sensor.zha_device_issues','disconnected') | length > 0 %}\n      {% set message.text = message.text + 'Disconnected: ' %}\n      {% for battery in state_attr('sensor.zha_device_issues','disconnected') %}\n        {% set message.text = message.text + device_attr(device_id(battery),'name_by_user') + ', ' %}\n      {% endfor %}\n      {% set message.text = message.text[:-2] %}\n    {% endif %}\n  <ha-alert alert-type=\"error\">{{ message.text }}</ha-alert>\n{% endif %}\n{% if state_attr('sensor.zha_device_issues','batteries_low') | length > 0 %}\n    {% set message = namespace(text = \"\") %} {% if\n    state_attr('sensor.zha_device_issues','batteries_low') | length > 0 %}\n      {% set message.text = message.text + 'Batteries low: ' %}\n      {% for battery in state_attr('sensor.zha_device_issues','batteries_low') %}\n        {% set message.text = message.text + device_attr(device_id(battery),'name_by_user') + ', ' %}\n      {% endfor %}\n      {% set message.text = message.text[:-2] %}\n    {% endif %}  \n  <ha-alert alert-type=\"warning\">Batteries low: {{ message.text }}</ha-alert>\n{% endif %}"
+                  }
                 }
               ]
             }

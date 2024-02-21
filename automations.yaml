@@ -6800,22 +6800,22 @@
     - sensor.zha_device_issues
   condition: []
   action:
+  - service: notify.mobile_app_pixel_4a
+    metadata: {}
+    data:
+      message: clear_notification
+      data:
+        tag: batts_low
   - if:
     - condition: numeric_state
       entity_id: sensor.zha_device_issues
       above: 0
     then:
-    - service: notify.mobile_app_pixel_4a
-      metadata: {}
-      data:
-        message: clear_notification
-        data:
-          tag: batts_low
     - delay: 1
     - service: notify.mobile_app_pixel_4a
       metadata: {}
       data:
-        title: Zigbee Devices with Low Batteries
+        title: Check Zigbee Devices
         data:
           tag: batts_low
         message: "{% set message = namespace(text = \"\") %} {% if state_attr('sensor.zha_device_issues','disconnected')
@@ -6829,11 +6829,4 @@
           %}\n    {% set message.text = message.text + device_attr(device_id(battery),'name_by_user')
           + ', ' %}\n  {% endfor %}\n  {% set message.text = message.text[:-2] %}\n{%
           endif %} {{ message.text }}"
-    else:
-    - service: notify.mobile_app_pixel_4a
-      metadata: {}
-      data:
-        message: clear_notification
-        data:
-          tag: batts_low
   mode: restart
