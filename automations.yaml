@@ -6789,17 +6789,20 @@
           tag: high
   mode: single
 - id: '1708242484217'
-  alias: Notify When Zigbee Devices have Low Batteries
-  description: Send a notification listing the Zigbee devices with low batteries
+  alias: Notify When Zigbee Devices Have Issues
+  description: Send a notification listing the Zigbee devices with low batteries or
+    connection issues
   trigger:
+  - platform: time
+    at: input_datetime.sleep_hours_end
   - platform: state
     entity_id:
-    - sensor.zha_batteries_with_low_charge
+    - sensor.zha_device_issues
   condition: []
   action:
   - if:
     - condition: numeric_state
-      entity_id: sensor.zha_batteries_with_low_charge
+      entity_id: sensor.zha_device_issues
       above: 0
     then:
     - service: notify.mobile_app_pixel_4a
@@ -6815,12 +6818,17 @@
         title: Zigbee Devices with Low Batteries
         data:
           tag: batts_low
-        message: "{% set message = namespace(text = 'Check ') %} {% for battery in
-          state_attr('sensor.zha_batteries_with_low_charge','batteries_flat') %}\n
-          \ {% set message.text = message.text + device_attr(device_id(battery),'name_by_user')
-          + ', ' %}\n{% endfor %} {% for battery in state_attr('sensor.zha_batteries_with_low_charge','batteries_low')
-          %}\n  {% set message.text = message.text + device_attr(device_id(battery),'name_by_user')
-          + ', ' %}\n{% endfor %} {{ message.text[:-2] + '.' }}"
+        message: "{% set message = namespace(text = \"\") %} {% if state_attr('sensor.zha_device_issues','disconnected')
+          | length > 0 %}\n  {% set message.text = message.text + 'Disconnected: '
+          %}\n  {% for battery in state_attr('sensor.zha_device_issues','disconnected')
+          %}\n    {% set message.text = message.text + device_attr(device_id(battery),'name_by_user')
+          + ', ' %}\n  {% endfor %}\n  {% set message.text = message.text[:-2] %}\n{%
+          endif %} {% if state_attr('sensor.zha_device_issues','batteries_low') |
+          length > 0 %}\n  {% set message.text = message.text + '\\nLow Battery: '
+          %}\n  {% for battery in state_attr('sensor.zha_device_issues','batteries_low')
+          %}\n    {% set message.text = message.text + device_attr(device_id(battery),'name_by_user')
+          + ', ' %}\n  {% endfor %}\n  {% set message.text = message.text[:-2] %}\n{%
+          endif %} {{ message.text }}"
     else:
     - service: notify.mobile_app_pixel_4a
       metadata: {}

@@ -603,8 +603,8 @@
     state: "{{ state_attr('cover.study_room_blinds','current_position') | int(100) }}"
     availability: "{{ states('cover.study_room_blinds') not in ['unavailable','unknown'] }}"
     
-  - name: ZHA Batteries with Low Charge
-    unique_id: sensor.zha_batteries_with_low_charge
+  - name: ZHA Device Issues
+    unique_id: sensor.zha_device_issues
     state: >
       {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
       {% set batteries_with_low_charge = namespace(batteries = 0) %}
@@ -618,7 +618,7 @@
       {{ batteries_with_low_charge.batteries }}
     unit_of_measurement: count
     attributes:
-      batteries_flat: >
+      disconnected: >
         {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
         {% set batteries = namespace(names = []) %}
         {% for battery in zha_batteries %}
