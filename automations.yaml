@@ -6830,3 +6830,80 @@
           + ', ' %}\n  {% endfor %}\n  {% set message.text = message.text[:-2] %}\n{%
           endif %} {{ message.text }}"
   mode: restart
+- id: '1708558912067'
+  alias: Daniel's Phone Sleep Mode
+  description: Set screen brightness and Do Not Disturb for sleep before next alarm
+  trigger:
+  - platform: template
+    value_template: '{{ now() == (states(''input_datetime.daniels_next_alarm'') |
+      as_datetime - timedelta(minutes = 5)).astimezone(now().tzinfo) }}'
+    id: before_wakeup
+    alias: Before wakeup alarm
+  - platform: template
+    value_template: '{{ now() == (states(''input_datetime.daniels_next_alarm'') |
+      as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
+      | float)).astimezone(now().tzinfo) }}'
+    id: sleep_time
+    alias: At sleep time
+  - platform: template
+    value_template: '{{ now() == (states(''input_datetime.daniels_next_alarm'') |
+      as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
+      | float, minutes = 15)).astimezone(now().tzinfo) }}'
+    id: before_sleep_time
+    alias: 15min before sleep time
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - before_sleep_time
+      sequence:
+      - service: notify.mobile_app_pixel_4a
+        metadata: {}
+        data:
+          title: Prepare for bed
+          message: Bedtime starting at {{ (states('input_datetime.daniels_next_alarm')
+            | as_datetime - timedelta(hours = states('input_number.minimum_sleep_hours')
+            | float)).strftime('%H:%M') }}.
+    - conditions:
+      - condition: trigger
+        id:
+        - sleep_time
+      sequence:
+      - service: notify.mobile_app_pixel_4a
+        metadata: {}
+        data:
+          message: command_dnd
+          data:
+            command: alarms_only
+      - service: notify.mobile_app_pixel_4a
+        metadata: {}
+        data:
+          message: command_auto_screen_brightness
+          data:
+            command: turn_off
+      - service: notify.mobile_app_pixel_4a
+        metadata: {}
+        data:
+          message: command_screen_brightness_level
+          data:
+            command: 5
+    - conditions:
+      - condition: trigger
+        id:
+        - before_wakeup
+      sequence:
+      - service: notify.mobile_app_pixel_4a
+        metadata: {}
+        data:
+          message: command_dnd
+          data:
+            command: 'off'
+      - service: notify.mobile_app_pixel_4a
+        metadata: {}
+        data:
+          message: command_auto_screen_brightness
+          data:
+            command: turn_on
+  mode: single
