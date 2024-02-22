@@ -6833,21 +6833,21 @@
   trigger:
   - alias: Before wakeup alarm
     platform: template
-    value_template: '{{ now() == (states(''input_datetime.daniels_next_alarm'') |
+    value_template: '{{ now() >= (states(''input_datetime.daniels_next_alarm'') |
       as_datetime - timedelta(minutes = 1)).astimezone(now().tzinfo) }}'
     id: before_wakeup
-  - platform: template
-    value_template: '{{ now() == (states(''input_datetime.daniels_next_alarm'') |
+  - alias: At sleep time
+    platform: template
+    value_template: '{{ now() >= (states(''input_datetime.daniels_next_alarm'') |
       as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
       | float)).astimezone(now().tzinfo) }}'
     id: sleep_time
-    alias: At sleep time
-  - platform: template
-    value_template: '{{ now() == (states(''input_datetime.daniels_next_alarm'') |
+  - alias: 15min before sleep time
+    platform: template
+    value_template: '{{ now() >= (states(''input_datetime.daniels_next_alarm'') |
       as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
       | float, minutes = 15)).astimezone(now().tzinfo) }}'
     id: before_sleep_time
-    alias: 15min before sleep time
   condition: []
   action:
   - choose:
@@ -6874,18 +6874,20 @@
           message: command_dnd
           data:
             command: alarms_only
+      - delay: 1
       - service: notify.mobile_app_pixel_4a
         metadata: {}
         data:
           message: command_auto_screen_brightness
           data:
             command: turn_off
+      - delay: 1
       - service: notify.mobile_app_pixel_4a
         metadata: {}
         data:
           message: command_screen_brightness_level
           data:
-            command: 5
+            command: 1
     - conditions:
       - condition: trigger
         id:
@@ -6897,12 +6899,14 @@
           message: command_dnd
           data:
             command: 'off'
+      - delay: 1
       - service: notify.mobile_app_pixel_4a
         metadata: {}
         data:
           message: command_auto_screen_brightness
           data:
             command: turn_on
+      - delay: 1
       - service: notify.mobile_app_pixel_4a
         metadata: {}
         data:
