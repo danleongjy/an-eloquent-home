@@ -6834,19 +6834,24 @@
   - alias: Before wakeup alarm
     platform: template
     value_template: '{{ now() >= (states(''input_datetime.daniels_next_alarm'') |
-      as_datetime - timedelta(minutes = 1)).astimezone(now().tzinfo) }}'
+      as_datetime - timedelta(minutes = 1)).astimezone(now().tzinfo) and now() < (states(''input_datetime.daniels_next_alarm'')
+      | as_datetime).astimezone(now().tzinfo) }}'
     id: before_wakeup
   - alias: At sleep time
     platform: template
     value_template: '{{ now() >= (states(''input_datetime.daniels_next_alarm'') |
       as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
-      | float)).astimezone(now().tzinfo) }}'
+      | float)).astimezone(now().tzinfo) and now() < (states(''input_datetime.daniels_next_alarm'')
+      | as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
+      | float - 0.01)).astimezone(now().tzinfo)}}'
     id: sleep_time
   - alias: 15min before sleep time
     platform: template
-    value_template: '{{ now() >= (states(''input_datetime.daniels_next_alarm'') |
-      as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
-      | float, minutes = 15)).astimezone(now().tzinfo) }}'
+    value_template: "{{ now() >= (states('input_datetime.daniels_next_alarm') | as_datetime
+      - timedelta(hours = states('input_number.minimum_sleep_hours') | float, minutes
+      = 15)).astimezone(now().tzinfo) and \nnow() < (states('input_datetime.daniels_next_alarm')
+      | as_datetime - timedelta(hours = states('input_number.minimum_sleep_hours')
+      | float, minutes = 14)).astimezone(now().tzinfo) }}"
     id: before_sleep_time
   condition: []
   action:
