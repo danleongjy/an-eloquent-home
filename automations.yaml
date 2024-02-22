@@ -6834,11 +6834,11 @@
   alias: Daniel's Phone Sleep Mode
   description: Set screen brightness and Do Not Disturb for sleep before next alarm
   trigger:
-  - platform: template
+  - alias: Before wakeup alarm
+    platform: template
     value_template: '{{ now() == (states(''input_datetime.daniels_next_alarm'') |
-      as_datetime - timedelta(minutes = 5)).astimezone(now().tzinfo) }}'
+      as_datetime - timedelta(minutes = 1)).astimezone(now().tzinfo) }}'
     id: before_wakeup
-    alias: Before wakeup alarm
   - platform: template
     value_template: '{{ now() == (states(''input_datetime.daniels_next_alarm'') |
       as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
@@ -6906,4 +6906,10 @@
           message: command_auto_screen_brightness
           data:
             command: turn_on
+      - service: notify.mobile_app_pixel_4a
+        metadata: {}
+        data:
+          message: command_screen_brightness_level
+          data:
+            command: 40
   mode: single
