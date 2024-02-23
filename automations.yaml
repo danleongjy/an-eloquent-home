@@ -5555,7 +5555,7 @@
           if is_state(''sun.sun'',''below_horizon'') else 100 }}'
     - service: select.select_option
       data:
-        option: elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f
+        option: Eli's Song
       target:
         entity_id: select.parents_room_core_ringtone
     - service: button.press
@@ -5580,6 +5580,7 @@
     - service: script.alarm_lights
       data:
         bedroom: parents_room
+        ringtone: Eli's Song
   - service: input_boolean.turn_off
     data: {}
     target:
@@ -6023,7 +6024,7 @@
           if is_state(''sun.sun'',''below_horizon'') else 100 }}'
     - service: select.select_option
       data:
-        option: elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f
+        option: Eli's Song
       target:
         entity_id: select.parents_room_core_ringtone
     - service: button.press
@@ -6039,6 +6040,7 @@
     - service: script.alarm_lights
       data:
         bedroom: parents_room
+        ringtone: Eli's Song
   - service: input_boolean.turn_off
     data: {}
     target:
@@ -6060,6 +6062,7 @@
     - service: script.alarm_lights
       data:
         bedroom: elis_room
+        ringtone: Mario
   - service: input_boolean.turn_off
     data: {}
     target:
@@ -6570,6 +6573,7 @@
     - service: script.alarm_lights
       data:
         bedroom: elenas_room
+        ringtone: Eli's Song
   - service: input_boolean.turn_off
     data: {}
     target:
@@ -6795,6 +6799,10 @@
   trigger:
   - platform: time
     at: input_datetime.sleep_hours_end
+  - platform: numeric_state
+    entity_id:
+    - sensor.zha_device_issues
+    above: 10
   condition: []
   action:
   - service: notify.mobile_app_pixel_4a

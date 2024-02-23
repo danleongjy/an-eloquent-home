@@ -65,12 +65,17 @@ select:
     icon: "mdi:music"
     optimistic: true
     options:
-      - 'elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f'
-      - 'beep:d=4,o=5,b=200:8c,4c'
-      - 'positive_beep:d=4,o=5,b=200:4c4,8c,4c'
-      - 'negative_beep:d=4,o=5,b=200:8c,4c,2c4'
-    initial_option: 'elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f'
-
+      - "Eli's Song"
+      - Beep
+      - Positive Beep
+      - Negative Beep
+      - Mario
+    initial_option: "Eli's Song"
+    on_value:
+      - text_sensor.template.publish:
+          id: rtttl_string
+          state: !lambda 'return id(ringtone).state;'
+          
 text_sensor:
   - platform: homeassistant
     id: fan_direction
@@ -83,6 +88,15 @@ text_sensor:
     id: next_alarm_timing
     entity_id: binary_sensor.next_alarm_imminent
     attribute: ${core_room}_next_alarm_time
+  - platform: template
+    id: rtttl_string
+    filters:
+      - map:
+        - "Eli's Song -> elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f"
+        - 'Beep -> beep:d=4,o=5,b=200:8c,4c'
+        - 'Positive Beep -> positive_beep:d=4,o=5,b=200:4c4,8c,4c'
+        - 'Negative Beep -> negative_beep:d=4,o=5,b=200:8c,4c,2c4'
+        - 'Mario -> mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6,8p,8g,8p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,16p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16c7,16p,16c7,16c7,p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16d#6,8p,16d6,8p,16c6'
 
 sensor:
   - platform: homeassistant
@@ -438,7 +452,7 @@ button:
     icon: "mdi:timer"
     on_press:
       then:
-        - rtttl.play: !lambda 'return id(ringtone).state;'
+        - rtttl.play: !lambda 'return id(rtttl_string).state;'
 
 i2c:
   sda: 21

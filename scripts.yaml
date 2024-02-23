@@ -599,11 +599,11 @@ alarm_lights:
     target:
       entity_id: '{{ ''select.'' + bedroom + ''_core_ringtone'' }}'
     data:
-      option: elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f
+      option: '{{ ringtone }}'
   - service: button.press
     target:
       entity_id: '{{ ''button.'' + bedroom + ''_core_play_ringtone'' }}'
-  - delay: 15
+  - delay: 25
   - if:
     - condition: template
       value_template: '{{ is_state(''input_boolean.'' + bedroom + ''_next_alarm_dismissed'',
@@ -618,7 +618,7 @@ alarm_lights:
           target:
             entity_id: '{{ ''select.'' + bedroom + ''_core_ringtone'' }}'
           data:
-            option: beep:d=4,o=5,b=200:8c,4c
+            option: Beep
         - service: button.press
           target:
             entity_id: '{{ ''button.'' + bedroom + ''_core_play_ringtone'' }}'
@@ -655,6 +655,19 @@ alarm_lights:
       name: Bedroom
       description: The bedroom to run the alarm in
       required: true
+    ringtone:
+      selector:
+        select:
+          options:
+          - Eli's Song
+          - Beep
+          - Positive Beep
+          - Negative Beep
+          - Mario
+      name: Ringtone
+      description: Ringtone to play for the alarm
+      required: true
+      default: Eli's Song
 git_push:
   alias: Git Push
   sequence:
