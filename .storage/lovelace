@@ -2470,13 +2470,89 @@
                             "custom_fields": {
                               "weather": {
                                 "card": {
-                                  "type": "weather-forecast",
-                                  "show_current": true,
-                                  "show_forecast": false,
+                                  "type": "custom:button-card",
                                   "entity": "weather.local_weather",
-                                  "secondary_info_attribute": "humidity",
-                                  "name": "NEA, data.gov.sg",
-                                  "forecast_type": "daily",
+                                  "show_name": false,
+                                  "show_state": false,
+                                  "custom_fields": {
+                                    "temp": "[[[ return states[\"weather.local_weather\"].attributes.temperature + states[\"weather.local_weather\"].attributes.temperature_unit]]]",
+                                    "pressure": "[[[ return `<ha-icon icon=\"mdi:gauge\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.pressure + states[\"weather.local_weather\"].attributes.pressure_unit ]]]",
+                                    "humidity": "[[[ return `<ha-icon icon=\"mdi:water-percent\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.humidity + \"%\"]]]",
+                                    "windspeed": "[[[ return `<ha-icon icon=\"mdi:weather-windy\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.wind_speed + states[\"weather.local_weather\"].attributes.wind_speed_unit ]]]"
+                                  },
+                                  "styles": {
+                                    "grid": [
+                                      {
+                                        "grid-template-areas": "\"i temp humidity\" \"i temp pressure\" \"i temp windspeed\""
+                                      },
+                                      {
+                                        "grid-template-rows": "min-content min-content min-content"
+                                      },
+                                      {
+                                        "grid-template-columns": "0.5fr 1fr min-content"
+                                      }
+                                    ],
+                                    "icon": [
+                                      {
+                                        "height": "50px"
+                                      },
+                                      {
+                                        "width": "50px"
+                                      }
+                                    ],
+                                    "custom_fields": {
+                                      "temp": [
+                                        {
+                                          "font-weight": "bold"
+                                        },
+                                        {
+                                          "font-size": "36px"
+                                        }
+                                      ],
+                                      "pressure": [
+                                        {
+                                          "color": "#777777"
+                                        },
+                                        {
+                                          "font-size": "12px"
+                                        },
+                                        {
+                                          "align-self": "middle"
+                                        },
+                                        {
+                                          "justify-self": "start"
+                                        }
+                                      ],
+                                      "humidity": [
+                                        {
+                                          "color": "#777777"
+                                        },
+                                        {
+                                          "font-size": "12px"
+                                        },
+                                        {
+                                          "align-self": "middle"
+                                        },
+                                        {
+                                          "justify-self": "start"
+                                        }
+                                      ],
+                                      "windspeed": [
+                                        {
+                                          "color": "#777777"
+                                        },
+                                        {
+                                          "font-size": "12px"
+                                        },
+                                        {
+                                          "align-self": "middle"
+                                        },
+                                        {
+                                          "justify-self": "start"
+                                        }
+                                      ]
+                                    }
+                                  },
                                   "tap_action": {
                                     "action": "navigate",
                                     "navigation_path": "/lovelace/weather"

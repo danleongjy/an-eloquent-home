@@ -63,6 +63,39 @@
   scan_interval: 600
 
 - platform: rest
+  resource: https://api.data.gov.sg/v1/environment/wind-speed
+  name: Local Wind Speed
+  value_template: >
+    {% set ns = namespace(total_speed = 0) %}
+    {% set readings = value_json['items'][0]['readings'] %}
+    {# mean of Kim Chuan Rd and Scotts Rd #}
+    {% for reading in readings %}
+      {% if reading['station_id'] in ['S43','S111'] %}
+        {% set ns.total_speed = ns.total_speed + reading['value'] %}
+      {% endif %}
+    {% endfor %}
+    {# convert from knots to km/h #}
+    {{ ns.total_speed * 1.852 / 2 }}
+  unit_of_measurement: km/h
+  scan_interval: 600
+
+- platform: rest
+  resource: https://api.data.gov.sg/v1/environment/wind-direction
+  name: Local Wind Bearing
+  value_template: >
+    {% set ns = namespace(total_degrees = 0) %}
+    {% set readings = value_json['items'][0]['readings'] %}
+    {# mean of Kim Chuan Rd and Scotts Rd #}
+    {% for reading in readings %}
+      {% if reading['station_id'] in ['S43','S111'] %}
+        {% set ns.total_degrees = ns.total_degrees + reading['value'] %}
+      {% endif %}
+    {% endfor %}
+    {{ ns.total_degrees / 2 }}
+  unit_of_measurement: deg
+  scan_interval: 600
+
+- platform: rest
   resource: https://api.data.gov.sg/v1/environment/2-hour-weather-forecast
   name: Local Two Hour Forecast
   value_template: >
