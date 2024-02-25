@@ -1334,6 +1334,11 @@
                 {
                   "grid-template-columns": "1fr 1fr"
                 }
+              ],
+              "card": [
+                {
+                  "padding": "3px"
+                }
               ]
             }
           }
@@ -2473,23 +2478,21 @@
                                   "type": "custom:button-card",
                                   "entity": "weather.local_weather",
                                   "show_name": false,
-                                  "show_state": false,
+                                  "show_state": true,
                                   "custom_fields": {
                                     "temp": "[[[ return states[\"weather.local_weather\"].attributes.temperature + states[\"weather.local_weather\"].attributes.temperature_unit]]]",
-                                    "pressure": "[[[ return `<ha-icon icon=\"mdi:gauge\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.pressure + states[\"weather.local_weather\"].attributes.pressure_unit ]]]",
-                                    "humidity": "[[[ return `<ha-icon icon=\"mdi:water-percent\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.humidity + \"%\"]]]",
-                                    "windspeed": "[[[ return `<ha-icon icon=\"mdi:weather-windy\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.wind_speed + states[\"weather.local_weather\"].attributes.wind_speed_unit ]]]"
+                                    "otherdata": "[[[ return `<ha-icon icon=\"mdi:gauge\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.pressure + states[\"weather.local_weather\"].attributes.pressure_unit + '<br>' + `<ha-icon icon=\"mdi:water-percent\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.humidity + \"%\" + \"<br>\" + `<ha-icon icon=\"mdi:weather-windy\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.wind_speed + states[\"weather.local_weather\"].attributes.wind_speed_unit +  `<ha-icon icon=\"mdi:navigation-variant\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.wind_bearing + '°' ]]]"
                                   },
                                   "styles": {
                                     "grid": [
                                       {
-                                        "grid-template-areas": "\"i temp humidity\" \"i temp pressure\" \"i temp windspeed\""
+                                        "grid-template-areas": "\"i temp otherdata\" \"i s otherdata\""
                                       },
                                       {
                                         "grid-template-rows": "min-content min-content min-content"
                                       },
                                       {
-                                        "grid-template-columns": "0.5fr 1fr min-content"
+                                        "grid-template-columns": "0.7fr 1.3fr 1fr"
                                       }
                                     ],
                                     "icon": [
@@ -2500,55 +2503,32 @@
                                         "width": "50px"
                                       }
                                     ],
+                                    "state": [
+                                      {
+                                        "justify-self": "start"
+                                      }
+                                    ],
                                     "custom_fields": {
                                       "temp": [
                                         {
-                                          "font-weight": "bold"
-                                        },
-                                        {
                                           "font-size": "36px"
-                                        }
-                                      ],
-                                      "pressure": [
-                                        {
-                                          "color": "#777777"
                                         },
                                         {
+                                          "text-align": "left"
+                                        }
+                                      ],
+                                      "otherdata": [
+                                        {
                                           "font-size": "12px"
+                                        },
+                                        {
+                                          "color": "#777777"
                                         },
                                         {
                                           "align-self": "middle"
                                         },
                                         {
-                                          "justify-self": "start"
-                                        }
-                                      ],
-                                      "humidity": [
-                                        {
-                                          "color": "#777777"
-                                        },
-                                        {
-                                          "font-size": "12px"
-                                        },
-                                        {
-                                          "align-self": "middle"
-                                        },
-                                        {
-                                          "justify-self": "start"
-                                        }
-                                      ],
-                                      "windspeed": [
-                                        {
-                                          "color": "#777777"
-                                        },
-                                        {
-                                          "font-size": "12px"
-                                        },
-                                        {
-                                          "align-self": "middle"
-                                        },
-                                        {
-                                          "justify-self": "start"
+                                          "text-align": "right"
                                         }
                                       ]
                                     }
