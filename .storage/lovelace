@@ -2475,8 +2475,8 @@
                                   "show_name": false,
                                   "show_state": true,
                                   "custom_fields": {
-                                    "temp": "[[[ return states[\"weather.local_weather\"].attributes.temperature + states[\"weather.local_weather\"].attributes.temperature_unit]]]",
-                                    "otherdata": "[[[ return `<ha-icon icon=\"mdi:gauge\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.pressure + states[\"weather.local_weather\"].attributes.pressure_unit + '<br>' + `<ha-icon icon=\"mdi:water-percent\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.humidity + \"%\" + \"<br>\" + `<ha-icon icon=\"mdi:weather-windy\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.wind_speed + states[\"weather.local_weather\"].attributes.wind_speed_unit +  `<ha-icon icon=\"mdi:navigation-variant\" style=\"width: 12px; height: 12px;\"></ha-icon>` + states[\"weather.local_weather\"].attributes.wind_bearing + '°' ]]]"
+                                    "temp": "[[[ return states[\"sensor.local_outdoor_temperature\"].state + states[\"sensor.local_outdoor_temperature\"].attributes.unit_of_measurement]]]",
+                                    "otherdata": "[[[ return `<ha-icon icon=\"mdi:gauge\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.parents_room_core_pressure\"].state).toFixed(0).toString() + states[\"sensor.parents_room_core_pressure\"].attributes.unit_of_measurement + '<br>' + `<ha-icon icon=\"mdi:water-percent\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_outdoor_humidity\"].state).toFixed(0).toString() + \"%\" + \"<br>\" + `<ha-icon icon=\"mdi:weather-windy\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_wind_speed\"].state).toFixed(0).toString() + states[\"sensor.local_wind_speed\"].attributes.unit_of_measurement +  `<ha-icon icon=\"mdi:navigation-variant\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_wind_bearing\"].state).toFixed(0).toString() + '°' ]]]"
                                   },
                                   "styles": {
                                     "grid": [
@@ -2536,8 +2536,16 @@
                               },
                               "forecast1": {
                                 "card": {
-                                  "type": "custom:button-card",
-                                  "name": "Forecasts:"
+                                  "type": "custom:decluttering-card",
+                                  "template": "floorplan_weather_forecast",
+                                  "variables": [
+                                    {
+                                      "icon_template": "entity.attributes.forecast[0].condition"
+                                    },
+                                    {
+                                      "date_template": "entity.attributes.forecast[0].datetime"
+                                    }
+                                  ]
                                 }
                               },
                               "forecast2": {
@@ -2595,7 +2603,7 @@
                                   "grid-template-rows": "min-content min-content"
                                 },
                                 {
-                                  "grid-template-columns": "1fr 0.8fr 0.8fr 0.8fr"
+                                  "grid-template-columns": "1fr 1fr 1fr 1fr"
                                 }
                               ],
                               "card": [
