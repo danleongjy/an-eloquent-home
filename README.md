@@ -49,12 +49,12 @@ Domain | Quantity
 [`switch`](https://www.home-assistant.io/components/switch) | 32
 [`time`](https://www.home-assistant.io/components/time) | 2
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 121
+[`update`](https://www.home-assistant.io/components/update) | 122
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1644
+Total | 1645
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
