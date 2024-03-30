@@ -7708,15 +7708,15 @@
           ]
         },
         {
-          "theme": "no_border",
-          "subview": true,
           "title": "Settings - Sleep",
           "path": "settings-sleep",
           "icon": "mdi:sleep",
-          "badges": [],
-          "cards": [
+          "theme": "no_border",
+          "type": "sections",
+          "subview": true,
+          "sections": [
             {
-              "type": "vertical-stack",
+              "type": "grid",
               "cards": [
                 {
                   "type": "vertical-stack",
@@ -7738,7 +7738,12 @@
                       "entity": "input_datetime.elenas_next_alarm"
                     }
                   ]
-                },
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "entities",
                   "entities": [
@@ -7756,7 +7761,12 @@
                       "name": "Minimum Sleep"
                     }
                   ]
-                },
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "entities",
                   "entities": [
@@ -7774,7 +7784,17 @@
                     },
                     {
                       "entity": "input_datetime.eca_day_alarm"
-                    },
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
                     {
                       "entity": "input_boolean.parents_room_next_alarm_dismissed"
                     },
@@ -7788,7 +7808,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "cards": []
         },
         {
           "theme": "Backend-selected",
@@ -7938,450 +7959,6 @@
                 },
                 {
                   "entity": "input_boolean.party_mode"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "title": "Diagnostic Thresholds",
-          "path": "diagnostics",
-          "icon": "mdi:arrow-expand-vertical",
-          "subview": true,
-          "theme": "no_border",
-          "badges": [],
-          "cards": [
-            {
-              "type": "entities",
-              "entities": [
-                {
-                  "entity": "input_number.battery_threshold_low",
-                  "name": "Battery - Low"
-                },
-                {
-                  "entity": "input_number.temperature_threshold_cold",
-                  "name": "Temperature - Cold"
-                },
-                {
-                  "entity": "input_number.temperature_threshold_warm",
-                  "name": "Temperature - Hot"
-                },
-                {
-                  "entity": "input_number.humidity_threshold_low",
-                  "name": "Humidity - Low"
-                },
-                {
-                  "entity": "input_number.humidity_threshold_high",
-                  "name": "Humidity - High"
-                },
-                {
-                  "entity": "input_number.zigbee_lqi_threshold_poor",
-                  "name": "Zigbee LQI - Low"
-                },
-                {
-                  "entity": "input_number.zigbee_lqi_threshold_moderate",
-                  "name": "Zigbee LQI - High"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "theme": "no_border",
-          "title": "Network",
-          "path": "network",
-          "icon": "mdi:server-security",
-          "subview": true,
-          "visible": [
-            {
-              "user": "ad2bcce775894550affb6dfef93a2a36"
-            },
-            {
-              "user": "2651cb9042dd41acb0b54327457a9a14"
-            },
-            {
-              "user": "3f55c30534f747c8a0ccb6714fd8b594"
-            }
-          ],
-          "badges": [],
-          "cards": [
-            {
-              "type": "vertical-stack",
-              "cards": [
-                {
-                  "type": "markdown",
-                  "content": "## Proxmox"
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "grid",
-                      "columns": 1,
-                      "cards": [
-                        {
-                          "type": "custom:button-card",
-                          "color_type": "blank-card"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "icon": "mdi:clock-start",
-                          "template": "square_cell"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "icon": "mdi:memory",
-                          "template": "square_cell"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "icon": "mdi:harddisk",
-                          "template": "square_cell"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "vertical-stack",
-                      "cards": [
-                        {
-                          "type": "custom:button-card",
-                          "icon": "mdi:server",
-                          "template": "square_cell"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.proxmox_last_boot",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.node_proxmox_memory_used_percentage",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.node_proxmox_disk_used_percentage",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "vertical-stack",
-                      "cards": [
-                        {
-                          "type": "custom:button-card",
-                          "icon": "mdi:router-wireless",
-                          "template": "square_cell"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.pfsense_last_boot",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.qemu_pfsense_100_memory_used_percentage",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.pfsense_filesystem_used_percentage_slash",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "vertical-stack",
-                      "cards": [
-                        {
-                          "type": "custom:button-card",
-                          "icon": "mdi:home-assistant",
-                          "template": "square_cell"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.home_assistant_last_boot",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.qemu_eloquent_house_101_memory_used_percentage",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.disk_use_percent",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "vertical-stack",
-                      "cards": [
-                        {
-                          "type": "custom:button-card",
-                          "icon": "mdi:docker",
-                          "template": "square_cell"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.docker_last_boot",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "entity": "sensor.qemu_docker_102_memory_used_percentage",
-                          "template": "square_cell",
-                          "show_icon": false,
-                          "show_state": true,
-                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "color_type": "blank-card"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "CPU Use"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.node_proxmox_cpu_used",
-                      "name": "Proxmox"
-                    },
-                    {
-                      "entity": "sensor.qemu_pfsense_100_cpu_used",
-                      "name": "pfSense"
-                    },
-                    {
-                      "entity": "sensor.qemu_eloquent_house_101_cpu_used",
-                      "name": "Home Assistant"
-                    },
-                    {
-                      "entity": "sensor.qemu_docker_102_cpu_used",
-                      "name": "Docker"
-                    }
-                  ]
-                },
-                {
-                  "type": "markdown",
-                  "content": "## pfSense"
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.pfsense_pf_state_table_used",
-                      "show_name": false,
-                      "show_state": true,
-                      "layout": "icon_state",
-                      "state_display": "[[[ return entity.state + ' states']]]"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.pfsense_dhcp_leases_online",
-                      "show_name": false,
-                      "show_state": true,
-                      "layout": "icon_state"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "Network Traffic"
-                  },
-                  "all_series_config": {
-                    "curve": "smooth"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.pfsense_mb_in_within_1min",
-                      "name": "pfSense inbound"
-                    },
-                    {
-                      "entity": "sensor.pfsense_mb_out_within_1min",
-                      "name": "pfSense outbound"
-                    },
-                    {
-                      "entity": "sensor.home_assistant_mb_in_within_1min",
-                      "name": "HA inbound"
-                    },
-                    {
-                      "entity": "sensor.home_assistant_mb_out_within_1min",
-                      "name": "HA outbound"
-                    }
-                  ]
-                },
-                {
-                  "type": "markdown",
-                  "content": "## AdGuard"
-                },
-                {
-                  "square": true,
-                  "columns": 4,
-                  "type": "grid",
-                  "cards": [
-                    {
-                      "show_name": true,
-                      "show_icon": true,
-                      "type": "button",
-                      "tap_action": {
-                        "action": "toggle"
-                      },
-                      "entity": "switch.adguard_home_filtering",
-                      "name": "DNS Filtering"
-                    },
-                    {
-                      "show_name": true,
-                      "show_icon": true,
-                      "type": "button",
-                      "tap_action": {
-                        "action": "toggle"
-                      },
-                      "entity": "switch.adguard_home_safe_browsing",
-                      "name": "Safe Browsing"
-                    },
-                    {
-                      "show_name": true,
-                      "show_icon": true,
-                      "type": "button",
-                      "tap_action": {
-                        "action": "toggle"
-                      },
-                      "entity": "switch.adguard_home_safe_search",
-                      "name": "Safe Search"
-                    },
-                    {
-                      "show_name": true,
-                      "show_icon": true,
-                      "type": "button",
-                      "tap_action": {
-                        "action": "toggle"
-                      },
-                      "entity": "switch.adguard_home_parental_control",
-                      "name": "Parental Controls"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "AdGuard DNS Processing Speed"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.adguard_home_average_processing_speed",
-                      "name": " ",
-                      "stroke_width": 2,
-                      "curve": "smooth"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "AdGuard DNS Queries"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.dns_queries_within_5min",
-                      "type": "column",
-                      "name": "requested within 5min",
-                      "yaxis_id": "count",
-                      "color": "teal"
-                    },
-                    {
-                      "entity": "sensor.dns_queries_blocked_by_filters_within_5min",
-                      "name": "blocked within 5min",
-                      "type": "column",
-                      "yaxis_id": "count",
-                      "color": "red"
-                    },
-                    {
-                      "entity": "sensor.dns_query_filter_block_rate_within_5min",
-                      "name": "requests blocked within 5min",
-                      "yaxis_id": "percent",
-                      "color": "orange"
-                    }
-                  ],
-                  "yaxis": [
-                    {
-                      "id": "count",
-                      "decimals": 0
-                    },
-                    {
-                      "id": "percent",
-                      "decimals": 0,
-                      "opposite": true
-                    }
-                  ]
-                },
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "sensor.adguard_home_dns_queries",
-                      "name": "DNS Queries"
-                    },
-                    {
-                      "entity": "sensor.adguard_home_dns_queries_blocked",
-                      "name": "Blocked by Filters"
-                    },
-                    {
-                      "entity": "sensor.adguard_home_dns_queries_blocked_ratio",
-                      "name": "% Blocked by Filters"
-                    },
-                    {
-                      "entity": "sensor.adguard_home_safe_browsing_blocked",
-                      "name": "Blocked by Safe Browsing"
-                    },
-                    {
-                      "entity": "sensor.adguard_home_parental_control_blocked",
-                      "name": "Blocked by Parental Controls"
-                    },
-                    {
-                      "entity": "sensor.adguard_home_safe_searches_enforced",
-                      "name": "Safe Searches Enforced"
-                    }
-                  ],
-                  "title": "30-Day Stats"
                 }
               ]
             }
@@ -8787,12 +8364,446 @@
           ]
         },
         {
+          "title": "Network",
+          "path": "network",
+          "icon": "mdi:server-security",
+          "theme": "no_border",
+          "type": "sections",
+          "subview": true,
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "grid",
+                      "columns": 1,
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:clock-start",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:memory",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:harddisk",
+                          "template": "square_cell"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:server",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.proxmox_last_boot",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.node_proxmox_memory_used_percentage",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.node_proxmox_disk_used_percentage",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:router-wireless",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.pfsense_last_boot",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.qemu_pfsense_100_memory_used_percentage",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.pfsense_filesystem_used_percentage_slash",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:home-assistant",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.home_assistant_last_boot",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.qemu_eloquent_house_101_memory_used_percentage",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.disk_use_percent",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:docker",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.docker_last_boot",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.qemu_docker_102_memory_used_percentage",
+                          "template": "square_cell",
+                          "show_icon": false,
+                          "show_state": true,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "CPU Use"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.node_proxmox_cpu_used",
+                      "name": "Proxmox"
+                    },
+                    {
+                      "entity": "sensor.qemu_pfsense_100_cpu_used",
+                      "name": "pfSense"
+                    },
+                    {
+                      "entity": "sensor.qemu_eloquent_house_101_cpu_used",
+                      "name": "Home Assistant"
+                    },
+                    {
+                      "entity": "sensor.qemu_docker_102_cpu_used",
+                      "name": "Docker"
+                    }
+                  ]
+                }
+              ],
+              "title": "Proxmox"
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.pfsense_pf_state_table_used",
+                      "show_name": false,
+                      "show_state": true,
+                      "layout": "icon_state",
+                      "state_display": "[[[ return entity.state + ' states']]]"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.pfsense_dhcp_leases_online",
+                      "show_name": false,
+                      "show_state": true,
+                      "layout": "icon_state"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Network Traffic"
+                  },
+                  "all_series_config": {
+                    "curve": "smooth"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.pfsense_mb_in_within_1min",
+                      "name": "pfSense inbound"
+                    },
+                    {
+                      "entity": "sensor.pfsense_mb_out_within_1min",
+                      "name": "pfSense outbound"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_mb_in_within_1min",
+                      "name": "HA inbound"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_mb_out_within_1min",
+                      "name": "HA outbound"
+                    }
+                  ]
+                }
+              ],
+              "title": "pfSense"
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "square": true,
+                  "columns": 4,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "tap_action": {
+                        "action": "toggle"
+                      },
+                      "entity": "switch.adguard_home_filtering",
+                      "name": "DNS Filtering"
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "tap_action": {
+                        "action": "toggle"
+                      },
+                      "entity": "switch.adguard_home_safe_browsing",
+                      "name": "Safe Browsing"
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "tap_action": {
+                        "action": "toggle"
+                      },
+                      "entity": "switch.adguard_home_safe_search",
+                      "name": "Safe Search"
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "tap_action": {
+                        "action": "toggle"
+                      },
+                      "entity": "switch.adguard_home_parental_control",
+                      "name": "Parental Controls"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "AdGuard DNS Processing Speed"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.adguard_home_average_processing_speed",
+                      "name": " ",
+                      "stroke_width": 2,
+                      "curve": "smooth"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "AdGuard DNS Queries"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.dns_queries_within_5min",
+                      "type": "column",
+                      "name": "requested within 5min",
+                      "yaxis_id": "count",
+                      "color": "teal"
+                    },
+                    {
+                      "entity": "sensor.dns_queries_blocked_by_filters_within_5min",
+                      "name": "blocked within 5min",
+                      "type": "column",
+                      "yaxis_id": "count",
+                      "color": "red"
+                    },
+                    {
+                      "entity": "sensor.dns_query_filter_block_rate_within_5min",
+                      "name": "requests blocked within 5min",
+                      "yaxis_id": "percent",
+                      "color": "orange"
+                    }
+                  ],
+                  "yaxis": [
+                    {
+                      "id": "count",
+                      "decimals": 0
+                    },
+                    {
+                      "id": "percent",
+                      "decimals": 0,
+                      "opposite": true
+                    }
+                  ]
+                },
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.adguard_home_dns_queries",
+                      "name": "DNS Queries"
+                    },
+                    {
+                      "entity": "sensor.adguard_home_dns_queries_blocked",
+                      "name": "Blocked by Filters"
+                    },
+                    {
+                      "entity": "sensor.adguard_home_dns_queries_blocked_ratio",
+                      "name": "% Blocked by Filters"
+                    },
+                    {
+                      "entity": "sensor.adguard_home_safe_browsing_blocked",
+                      "name": "Blocked by Safe Browsing"
+                    },
+                    {
+                      "entity": "sensor.adguard_home_parental_control_blocked",
+                      "name": "Blocked by Parental Controls"
+                    },
+                    {
+                      "entity": "sensor.adguard_home_safe_searches_enforced",
+                      "name": "Safe Searches Enforced"
+                    }
+                  ],
+                  "title": "30-Day Stats"
+                }
+              ],
+              "title": "Adguard"
+            }
+          ],
+          "cards": []
+        },
+        {
+          "title": "Diagnostic Thresholds",
+          "path": "diagnostics",
+          "icon": "mdi:arrow-expand-vertical",
+          "subview": true,
+          "theme": "no_border",
+          "badges": [],
+          "cards": [
+            {
+              "type": "entities",
+              "entities": [
+                {
+                  "entity": "input_number.battery_threshold_low",
+                  "name": "Battery - Low"
+                },
+                {
+                  "entity": "input_number.temperature_threshold_cold",
+                  "name": "Temperature - Cold"
+                },
+                {
+                  "entity": "input_number.temperature_threshold_warm",
+                  "name": "Temperature - Hot"
+                },
+                {
+                  "entity": "input_number.humidity_threshold_low",
+                  "name": "Humidity - Low"
+                },
+                {
+                  "entity": "input_number.humidity_threshold_high",
+                  "name": "Humidity - High"
+                },
+                {
+                  "entity": "input_number.zigbee_lqi_threshold_poor",
+                  "name": "Zigbee LQI - Low"
+                },
+                {
+                  "entity": "input_number.zigbee_lqi_threshold_moderate",
+                  "name": "Zigbee LQI - High"
+                }
+              ]
+            }
+          ]
+        },
+        {
           "title": "Vacuum",
           "path": "vacuum",
-          "icon": "mdi:robot-vacuum-variant",
+          "icon": "mdi:robot-vacuum",
           "theme": "no_border",
           "subview": true,
-          "badges": [],
           "cards": [
             {
               "type": "vertical-stack",
