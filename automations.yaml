@@ -2703,14 +2703,10 @@
     at: '23:50:00'
   condition: []
   action:
-  - service: input_text.set_value
-    target:
-      entity_id: input_text.git_commit_message
-    data:
-      value: Autocommit on {{ now().day }}/{{ now().month }}/{{ now().year }} {{ now().hour
-        }}:{{ now().minute }}
   - service: script.git_push
-    data: {}
+    data:
+      commit_message: Autocommit on {{ now().day }}/{{ now().month }}/{{ now().year
+        }} {{ now().hour }}:{{ now().minute }}
   - condition: state
     entity_id: input_boolean.away_mode
     state: 'off'

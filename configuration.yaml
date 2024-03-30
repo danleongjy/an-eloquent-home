@@ -42,14 +42,7 @@ intent_script: !include intent_scripts.yaml
 downloader:
   download_dir: www/rain_radar/frames
 
-shell_command:
-  removeoldrainradar: 'find /config/www/rain_radar/frames/* -mtime 1 -exec rm {} \;'
-  removeoldrainradaranimation: 'find /config/www/rain_radar/rain_radar_animation_*.gif -type f -mmin +60 -exec rm {} \;'
-  sshsetup: /bin/bash shellscripts/sshsetup.sh
-  gitadd: 'git add .'
-  gitcommit: |-
-    git commit -m "{{ states('input_text.git_commit_message') }}"
-  gitpush: /bin/bash shellscripts/gitpush.sh
+shell_command: !include shell-commands.yaml
 
 zha:
   zigpy_config:

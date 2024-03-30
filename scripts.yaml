@@ -670,6 +670,13 @@ alarm_lights:
       default: Eli's Song
 git_push:
   alias: Git Push
+  fields:
+    commit_message:
+      name: Commit Message
+      description: Message to attach to the Git commit
+      selector:
+        text:
+      required: true
   sequence:
   - service: watchman.report
     data:
@@ -683,7 +690,8 @@ git_push:
   - service: shell_command.gitadd
     data: {}
   - service: shell_command.gitcommit
-    data: {}
+    data:
+      commit_message: '{{ commit_message }}'
   - service: shell_command.gitpush
     data: {}
     enabled: true
