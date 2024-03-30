@@ -41,6 +41,9 @@
         },
         "turn_on": {
           "template": "square_cell",
+          "tap_action": {
+            "action": "toggle"
+          },
           "hold_action": {
             "action": "more-info"
           }
@@ -277,6 +280,12 @@
                 "width": "80%"
               }
             ]
+          }
+        },
+        "floorplan_turn_on": {
+          "template": "floorplan_slider_icon",
+          "tap_action": {
+            "action": "toggle"
           }
         },
         "floorplan_sensor_diag": {
@@ -631,13 +640,6 @@
                         "entity_id": "[[fan_auto_control_automation]]"
                       }
                     },
-                    "tap_action": {
-                      "action": "call-service",
-                      "service": "[[[\n  if (entity.state == 'off')\n    return \"fan.turn_on\";\n  else\n    return \"fan.turn_off\";\n]]]\n",
-                      "service_data": {
-                        "entity_id": "[[fan_entity]]"
-                      }
-                    },
                     "styles": {
                       "icon": [
                         {
@@ -678,26 +680,12 @@
                   "service_data": {
                     "entity_id": "[[ac_auto_control_automation]]"
                   }
-                },
-                "tap_action": {
-                  "action": "call-service",
-                  "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
-                  "service_data": {
-                    "entity_id": "[[climate_entity]]"
-                  }
                 }
               },
               "off": {
                 "type": "custom:button-card",
                 "entity": "[[climate_entity]]",
                 "template": "turn_on",
-                "tap_action": {
-                  "action": "call-service",
-                  "service": "climate.turn_on",
-                  "service_data": {
-                    "entity_id": "[[climate_entity]]"
-                  }
-                },
                 "double_tap_action": {
                   "action": "call-service",
                   "service": "automation.turn_on",
@@ -814,38 +802,117 @@
         },
         "media_player": {
           "card": {
-            "type": "custom:slider-button-card",
+            "type": "custom:state-switch",
             "entity": "[[media_player_entity]]",
-            "icon": {
-              "show": true,
-              "use_state_color": true,
-              "tap_action": {
-                "action": "call-service",
-                "service": "media_player.media_play_pause",
-                "service_data": {
-                  "entity_id": "[[media_player_entity]]"
+            "default": "not_playing_paused",
+            "states": {
+              "not_playing_paused": {
+                "type": "custom:slider-button-card",
+                "entity": "[[media_player_entity]]",
+                "icon": {
+                  "show": true,
+                  "use_state_color": true,
+                  "tap_action": {
+                    "action": "call-service",
+                    "service": "media_player.turn_off",
+                    "service_data": {
+                      "entity_id": "[[media_player_entity]]"
+                    }
+                  }
+                },
+                "slider": {
+                  "direction": "bottom-top",
+                  "background": "solid",
+                  "use_state_color": false,
+                  "use_percentage_bg_opacity": false,
+                  "show_track": false,
+                  "toggle_on_click": false,
+                  "force_square": true
+                },
+                "show_name": false,
+                "show_state": false,
+                "compact": true,
+                "action_button": {
+                  "mode": "toggle",
+                  "icon": "mdi:power",
+                  "show": false,
+                  "show_spinner": true,
+                  "tap_action": {
+                    "action": "toggle"
+                  }
                 }
-              }
-            },
-            "slider": {
-              "direction": "bottom-top",
-              "background": "solid",
-              "use_state_color": false,
-              "use_percentage_bg_opacity": false,
-              "show_track": false,
-              "toggle_on_click": false,
-              "force_square": true
-            },
-            "show_name": false,
-            "show_state": false,
-            "compact": true,
-            "action_button": {
-              "mode": "toggle",
-              "icon": "mdi:power",
-              "show": false,
-              "show_spinner": true,
-              "tap_action": {
-                "action": "toggle"
+              },
+              "playing": {
+                "type": "custom:slider-button-card",
+                "entity": "[[media_player_entity]]",
+                "icon": {
+                  "show": true,
+                  "use_state_color": true,
+                  "tap_action": {
+                    "action": "call-service",
+                    "service": "media_player.media_play_pause",
+                    "service_data": {
+                      "entity_id": "[[media_player_entity]]"
+                    }
+                  }
+                },
+                "slider": {
+                  "direction": "bottom-top",
+                  "background": "solid",
+                  "use_state_color": false,
+                  "use_percentage_bg_opacity": false,
+                  "show_track": false,
+                  "toggle_on_click": false,
+                  "force_square": true
+                },
+                "show_name": false,
+                "show_state": false,
+                "compact": true,
+                "action_button": {
+                  "mode": "toggle",
+                  "icon": "mdi:power",
+                  "show": false,
+                  "show_spinner": true,
+                  "tap_action": {
+                    "action": "toggle"
+                  }
+                }
+              },
+              "paused": {
+                "type": "custom:slider-button-card",
+                "entity": "[[media_player_entity]]",
+                "icon": {
+                  "show": true,
+                  "use_state_color": true,
+                  "tap_action": {
+                    "action": "call-service",
+                    "service": "media_player.media_play_pause",
+                    "service_data": {
+                      "entity_id": "[[media_player_entity]]"
+                    }
+                  }
+                },
+                "slider": {
+                  "direction": "bottom-top",
+                  "background": "solid",
+                  "use_state_color": false,
+                  "use_percentage_bg_opacity": false,
+                  "show_track": false,
+                  "toggle_on_click": false,
+                  "force_square": true
+                },
+                "show_name": false,
+                "show_state": false,
+                "compact": true,
+                "action_button": {
+                  "mode": "toggle",
+                  "icon": "mdi:power",
+                  "show": false,
+                  "show_spinner": true,
+                  "tap_action": {
+                    "action": "toggle"
+                  }
+                }
               }
             }
           }
@@ -918,7 +985,7 @@
               "off": {
                 "type": "custom:button-card",
                 "entity": "[[light_entity]]",
-                "template": "floorplan_slider_icon",
+                "template": "floorplan_turn_on",
                 "tap_action": {
                   "action": "call-service",
                   "service": "script.recommended_light_level",
@@ -930,10 +997,7 @@
               "on": {
                 "type": "custom:button-card",
                 "entity": "[[light_entity]]",
-                "template": "floorplan_slider_icon",
-                "tap_action": {
-                  "action": "toggle"
-                }
+                "template": "floorplan_turn_on"
               }
             }
           }
@@ -970,7 +1034,7 @@
                   "off": {
                     "type": "custom:button-card",
                     "entity": "[[fan_entity]]",
-                    "template": "floorplan_slider_icon",
+                    "template": "floorplan_turn_on",
                     "icon": "[[[ \n  if (entity.attributes.direction == 'forward') \n    return 'mdi:fan-chevron-down'; \n  else \n    return 'mdi:fan-chevron-up';\n]]]",
                     "styles": {
                       "icon": [
@@ -990,7 +1054,7 @@
                   "on": {
                     "type": "custom:button-card",
                     "entity": "[[fan_entity]]",
-                    "template": "floorplan_slider_icon",
+                    "template": "floorplan_turn_on",
                     "icon": "[[[ \n  if (entity.attributes.direction == 'forward') \n    return 'mdi:fan-chevron-down'; \n  else \n    return 'mdi:fan-chevron-up';\n]]]",
                     "custom_fields": {
                       "auto_control": "A"
@@ -1074,14 +1138,7 @@
                   "off": {
                     "type": "custom:button-card",
                     "entity": "[[ac_entity]]",
-                    "template": "floorplan_slider_icon",
-                    "tap_action": {
-                      "action": "call-service",
-                      "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
-                      "service_data": {
-                        "entity_id": "[[ac_entity]]"
-                      }
-                    },
+                    "template": "floorplan_turn_on",
                     "double_tap_action": {
                       "action": "call-service",
                       "service": "automation.toggle",
@@ -1093,7 +1150,7 @@
                   "on": {
                     "type": "custom:button-card",
                     "entity": "[[ac_entity]]",
-                    "template": "floorplan_slider_icon",
+                    "template": "floorplan_turn_on",
                     "custom_fields": {
                       "auto_control": "A"
                     },
@@ -1124,13 +1181,6 @@
                             "top": "-5%"
                           }
                         ]
-                      }
-                    },
-                    "tap_action": {
-                      "action": "call-service",
-                      "service": "[[[\n  if (entity.state == 'off')\n    return \"climate.turn_on\";\n  else\n    return \"climate.turn_off\";\n]]]\n",
-                      "service_data": {
-                        "entity_id": "[[ac_entity]]"
                       }
                     },
                     "double_tap_action": {
@@ -1289,20 +1339,17 @@
               "off": {
                 "type": "custom:button-card",
                 "entity": "[[media_player_entity]]",
-                "template": "floorplan_slider_icon",
-                "tap_action": {
-                  "action": "toggle"
-                }
+                "template": "floorplan_turn_on"
               },
               "not_off": {
                 "type": "custom:button-card",
                 "entity": "[[media_player_entity]]",
-                "template": "floorplan_slider_icon",
+                "template": "floorplan_turn_on",
                 "entity_picture": "[[[ return entity.attributes.entity_picture ]]]",
                 "show_entity_picture": true,
                 "tap_action": {
                   "action": "call-service",
-                  "service": "media_player.media_play_pause",
+                  "service": "[[[\n  if (['playing','paused'].includes(entity.state)) {\n    return 'media_player.media_play_pause'\n  } else {\n    return 'media_player.turn_off'\n  }\n]]]\n",
                   "service_data": {
                     "entity_id": "[[media_player_entity]]"
                   }
@@ -4924,8 +4971,8 @@
                               },
                               "unknown": {
                                 "type": "custom:button-card",
-                                "icon": "mdi:music-off",
-                                "template": "top_row"
+                                "entity": "media_player.all_speakers",
+                                "template": "error"
                               },
                               "off": {
                                 "type": "custom:button-card",
