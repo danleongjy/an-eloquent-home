@@ -609,7 +609,7 @@
       {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
       {% set batteries_with_low_charge = namespace(batteries = 0) %}
       {% for battery in zha_batteries %}
-        {% if states(battery) == 'unavailable' %}
+        {% if states(battery in ['unavailable','unknown'] %}
           {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
         {% elif states(battery) | int(0) <= states('input_number.battery_threshold_low') | int %}
           {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
