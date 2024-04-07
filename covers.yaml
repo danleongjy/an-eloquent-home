@@ -36,19 +36,19 @@
       unique_id: cover.dining_room_blinds
       device_class: blind
       position_template: >
-        {{ (state_attr('cover.dining_room_left_middle_blind','current_position') + 
-            state_attr('cover.dining_room_right_middle_blind','current_position') + 
+        {{ (state_attr('cover.dining_room_left_blind','current_position') + 
+            state_attr('cover.dining_room_middle_blind','current_position') + 
             state_attr('cover.dining_room_right_blind','current_position')) / 3 }}
       availability_template: >
-        {{ states('cover.dining_room_left_middle_blind') not in ['unavailable', 'unknown'] and 
-           states('cover.dining_room_right_middle_blind') not in ['unavailable', 'unknown'] and 
+        {{ states('cover.dining_room_left_blind') not in ['unavailable', 'unknown'] and 
+           states('cover.dining_room_middle_blind') not in ['unavailable', 'unknown'] and 
            states('cover.dining_room_right_blind') not in ['unavailable', 'unknown'] }}
       open_cover:
         repeat:
           for_each:
             - cover.dining_room_right_blind
-            - cover.dining_room_right_middle_blind
-            - cover.dining_room_left_middle_blind
+            - cover.dining_room_middle_blind
+            - cover.dining_room_left_blind
           sequence:
             - service: cover.open_cover
               target:
@@ -59,8 +59,8 @@
         repeat:
           for_each:
             - cover.dining_room_right_blind
-            - cover.dining_room_right_middle_blind
-            - cover.dining_room_left_middle_blind
+            - cover.dining_room_middle_blind
+            - cover.dining_room_left_blind
           sequence:
             - service: cover.close_cover
               target:
@@ -71,8 +71,8 @@
         repeat:
           for_each:
             - cover.dining_room_right_blind
-            - cover.dining_room_right_middle_blind
-            - cover.dining_room_left_middle_blind
+            - cover.dining_room_middle_blind
+            - cover.dining_room_left_blind
           sequence:
             - service: cover.stop_cover
               target:
@@ -83,8 +83,8 @@
         repeat:
           for_each:
             - cover.dining_room_right_blind
-            - cover.dining_room_right_middle_blind
-            - cover.dining_room_left_middle_blind
+            - cover.dining_room_middle_blind
+            - cover.dining_room_left_blind
           sequence:
             - service: cover.set_cover_position
               target:
