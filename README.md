@@ -36,7 +36,7 @@ Domain | Quantity
 [`input_number`](https://www.home-assistant.io/components/input_number) | 33
 [`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 31
-[`light`](https://www.home-assistant.io/components/light) | 58
+[`light`](https://www.home-assistant.io/components/light) | 57
 [`media_player`](https://www.home-assistant.io/components/media_player) | 3
 [`number`](https://www.home-assistant.io/components/number) | 189
 [`person`](https://www.home-assistant.io/components/person) | 3
@@ -46,7 +46,7 @@ Domain | Quantity
 [`sensor`](https://www.home-assistant.io/components/sensor) | 544
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 33
+[`switch`](https://www.home-assistant.io/components/switch) | 32
 [`time`](https://www.home-assistant.io/components/time) | 2
 [`tts`](https://www.home-assistant.io/components/tts) | 1
 [`update`](https://www.home-assistant.io/components/update) | 121
@@ -54,7 +54,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1639
+Total | 1637
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
