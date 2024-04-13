@@ -3,10 +3,14 @@ substitutions:
   hostname_room: elis-room
   capitalised_room_name: Eli's Room
   display_rotation: 270°
-  next_alarm_imminent_attribute: eli_next_alarm_imminent
-  next_alarm_dismissable_attribute: eli_next_alarm_dismissable
+  alarm_room: elis_room
   volume: "0.002"
   
+esp32:
+  board: m5stack-fire
+  framework:
+    type: arduino
+
 esphome:
   name: ${hostname_room}-core
   friendly_name: ${capitalised_room_name} Core
@@ -39,7 +43,7 @@ wifi:
 captive_portal:
     
 packages:
-  core: !include bedroom_core/core.yaml
+  core: !include room_core/core.yaml
   
 sensor:
   - platform: sht3xd

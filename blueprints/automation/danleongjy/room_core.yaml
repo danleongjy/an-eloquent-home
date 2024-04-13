@@ -1,11 +1,11 @@
 blueprint:
-  name: Bedroom Core
-  description: Interface between bedroom devices and Home Assistant via ESPHome and M5Stack Fire
+  name: Room Core
+  description: Interface between room devices and Home Assistant via ESPHome and M5Stack Fire/Basic
   domain: automation
   input:
-    bedroom:
-      name: Bedroom
-      description: The bedroom that the M5Stack Fire is in
+    core_room:
+      name: Room
+      description: The room that the M5Stack Fire/Basic is in
       selector:
         select:
           options:
@@ -15,6 +15,8 @@ blueprint:
               value: elis_room
             - label: Elena's Room
               value: elenas_room
+            - label: Study Room
+              value: study_room
     auto_control_indicator_light:
       name: Auto Control Indicator Light
       description: The light that should flash when AC/fan auto control is toggled
@@ -34,7 +36,7 @@ blueprint:
         entity:
           domain: input_datetime
 trigger_variables:
-  room: !input bedroom
+  room: !input core_room
 trigger:
   - platform: template
     value_template: "{{ not is_state('select.' + room + '_core_current_command','none') }}"

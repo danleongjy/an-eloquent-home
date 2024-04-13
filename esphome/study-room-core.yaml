@@ -1,16 +1,16 @@
 substitutions:
-  core_room: elenas_room
-  hostname_room: elenas-room
-  capitalised_room_name: Elena's Room
+  core_room: study_room
+  hostname_room: study-room
+  capitalised_room_name: Study Room
   display_rotation: 270°
-  alarm_room: elenas_room
-  volume: "0.002"
-
+  alarm_room: parents_room
+  volume: "0.003" # 0.005 generally loud enough
+  
 esp32:
-  board: m5stack-fire
+  board: esp32dev
   framework:
     type: arduino
-
+    
 esphome:
   name: ${hostname_room}-core
   friendly_name: ${capitalised_room_name} Core
@@ -21,24 +21,24 @@ logger:
 # Enable Home Assistant API
 api:
   encryption:
-    key: "HMj6W7HEsF81jSVqVepKHYg5OGiNSN7sDyzrZXgDbFE="
+    key: "zWKpL7mXSOOs0IxjaQyLT6LqlNd8GpZtk6+HWvY2f6U="
 
 ota:
-  password: "e821a668f82480297e18b6eb9e33ed9e"
+  password: "0db07cbca96c027ecaa08d3bab77a931"
 
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
 
   manual_ip:
-    static_ip: 192.168.18.16
+    static_ip: 192.168.18.17
     gateway: 192.168.18.1
     subnet: 255.255.255.0
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "${hostname_room}-core"
-    password: "nzd0tQHzwagh"
+    ssid: "Study-Room-Core Fallback Hotspot"
+    password: "wgvG2Ifd6sZp"
 
 captive_portal:
 
@@ -52,3 +52,8 @@ sensor:
   - platform: homeassistant
     id: room_hum
     entity_id: sensor.${core_room}_humidity
+
+light:
+  - id: !remove led_strips
+
+i2c: !remove

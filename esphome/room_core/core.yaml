@@ -1,8 +1,3 @@
-esp32:
-  board: m5stack-fire
-  framework:
-    type: arduino
-
 time:
   - platform: homeassistant
     id: homeassistant_time
@@ -87,7 +82,7 @@ text_sensor:
   - platform: homeassistant
     id: next_alarm_timing
     entity_id: binary_sensor.next_alarm_imminent
-    attribute: ${core_room}_next_alarm_time
+    attribute: ${alarm_room}_next_alarm_time
   - platform: template
     id: rtttl_string
     filters:
@@ -97,6 +92,7 @@ text_sensor:
         - 'Positive Beep -> positive_beep:d=4,o=5,b=200:4c4,8c,4c'
         - 'Negative Beep -> negative_beep:d=4,o=5,b=200:8c,4c,2c4'
         - 'Mario -> mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6,8p,8g,8p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,16p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16c7,16p,16c7,16c7,p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16d#6,8p,16d6,8p,16c6'
+
 
 sensor:
   - platform: homeassistant
@@ -131,14 +127,14 @@ binary_sensor:
   - platform: homeassistant
     id: room_next_alarm_imminent
     entity_id: sensor.next_alarm_timings
-    attribute: ${next_alarm_imminent_attribute}
+    attribute: ${alarm_room}_next_alarm_imminent
   - platform: homeassistant
     id: room_next_alarm_dismissable
     entity_id: sensor.next_alarm_timings
-    attribute: ${next_alarm_dismissable_attribute}
+    attribute: ${alarm_room}_next_alarm_dismissable
   - platform: homeassistant
     id: room_next_alarm_dismissed
-    entity_id: input_boolean.${core_room}_next_alarm_dismissed
+    entity_id: input_boolean.${alarm_room}_next_alarm_dismissed
   - platform: gpio
     pin: 39
     name: 'Left Button'
@@ -170,7 +166,7 @@ binary_sensor:
                             - homeassistant.service:
                                 service: input_boolean.turn_off
                                 data:
-                                  entity_id: input_boolean.${core_room}_next_alarm_dismissed
+                                  entity_id: input_boolean.${alarm_room}_next_alarm_dismissed
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
@@ -325,7 +321,7 @@ binary_sensor:
                             - homeassistant.service:
                                 service: input_boolean.turn_on
                                 data:
-                                  entity_id: input_boolean.${core_room}_next_alarm_dismissed
+                                  entity_id: input_boolean.${alarm_room}_next_alarm_dismissed
                           else:
                             - light.turn_off: backlight
                 - if:

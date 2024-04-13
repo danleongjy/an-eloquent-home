@@ -2,10 +2,14 @@ substitutions:
   core_room: parents_room
   hostname_room: parents-room
   capitalised_room_name: Parents' Room
+  alarm_room: parents_room
   display_rotation: 270°
-  next_alarm_imminent_attribute: parents_room_next_alarm_imminent
-  next_alarm_dismissable_attribute: parents_room_next_alarm_dismissable
   volume: "0.001" # 0.005 generally loud enough
+
+esp32:
+  board: m5stack-fire
+  framework:
+    type: arduino
 
 esphome:
   name: ${hostname_room}-core
@@ -39,7 +43,7 @@ wifi:
 captive_portal:
     
 packages:
-  core: !include bedroom_core/core.yaml
+  core: !include room_core/core.yaml
   
 sensor:
   - platform: sht3xd
