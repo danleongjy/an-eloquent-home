@@ -83,6 +83,9 @@ text_sensor:
     id: next_alarm_timing
     entity_id: binary_sensor.next_alarm_imminent
     attribute: ${alarm_room}_next_alarm_time
+  - platform: homeassistant
+    id: blinds_state
+    entity_id: ${blinds_entity}
   - platform: template
     id: rtttl_string
     filters:
@@ -92,7 +95,6 @@ text_sensor:
         - 'Positive Beep -> positive_beep:d=4,o=5,b=200:4c4,8c,4c'
         - 'Negative Beep -> negative_beep:d=4,o=5,b=200:8c,4c,2c4'
         - 'Mario -> mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6,8p,8g,8p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,16p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16c7,16p,16c7,16c7,p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16d#6,8p,16d6,8p,16c6'
-
 
 sensor:
   - platform: homeassistant
@@ -188,6 +190,21 @@ binary_sensor:
                       - select.set:
                           id: current_command
                           option: ac_on
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "blinds";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(blinds_state).state == "closing";'
+                          then:
+                            - select.set:
+                                id: current_command
+                                option: blinds_stop
+                          else:
+                            - select.set:
+                                id: current_command
+                                option: blinds_open
       - timing:
           - ON for at least 1.5s
         then:
@@ -272,6 +289,13 @@ binary_sensor:
                       - select.set:
                           id: current_command
                           option: cooling_auto_control
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "blinds";'
+                    then:
+                      - select.set:
+                          id: current_command
+                          option: blinds_auto_control
   - platform: gpio
     pin: 38
     name: 'Middle Button'
@@ -345,6 +369,21 @@ binary_sensor:
                       - select.set:
                           id: current_command
                           option: ac_off
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "blinds";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(blinds_state).state == "opening";'
+                          then:
+                            - select.set:
+                                id: current_command
+                                option: blinds_stop
+                          else:
+                            - select.set:
+                                id: current_command
+                                option: blinds_close
       - timing:
           - ON for at least 1.5s
         then:
@@ -429,6 +468,13 @@ binary_sensor:
                       - select.set:
                           id: current_command
                           option: cooling_manual_control
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "blinds";'
+                    then:
+                      - select.set:
+                          id: current_command
+                          option: blinds_manual_control
 
 button:
   - platform: template
@@ -521,6 +567,9 @@ image:
   - file: mdi:snowflake
     id: tab_ac
     resize: 30x30
+  - file: mdi:blinds
+    id: tab_blinds
+    resize: 30x30
   - file: mdi:alarm
     id: main_alarm
     resize: 30x30
@@ -538,6 +587,9 @@ image:
     resize: 160x160
   - file: mdi:snowflake
     id: main_ac
+    resize: 160x160
+  - file: mdi:blinds
+    id: main_blinds
     resize: 160x160
 
 spi:
