@@ -618,3 +618,75 @@ git_push:
     enabled: true
   mode: single
   icon: mdi:git
+automation_on_off_indicator_light:
+  alias: Automation On/Off Indicator Light
+  fields:
+    flash_once:
+      name: Flash Once for On
+      description: Set to True to flash once for On, or False to flash twice for Off
+      default: true
+      selector:
+        boolean:
+      required: true
+    indicator_light:
+      name: Indicator Light
+      description: The light to flash when the automation turns on or off
+      selector:
+        entity:
+          filter:
+          - domain:
+            - light
+      required: true
+  sequence:
+  - if:
+    - condition: template
+      value_template: '{{ flash_once }}'
+    then:
+    - if:
+      - condition: template
+        value_template: '{{ is_state(indicator_light, ''on'') }}'
+      then:
+      - service: light.turn_on
+        data:
+          flash: short
+        target:
+          entity_id: '{{ indicator_light }}'
+      else:
+      - service: light.turn_on
+        data:
+          flash: short
+        target:
+          entity_id: '{{ indicator_light }}'
+      - delay: 1
+      - service: light.turn_off
+        target:
+          entity_id: '{{ indicator_light }}'
+    else:
+    - if:
+      - condition: template
+        value_template: '{{ is_state(indicator_light, ''on'') }}'
+      then:
+      - repeat:
+          count: 2
+          sequence:
+          - service: light.turn_on
+            data:
+              flash: short
+            target:
+              entity_id: '{{ indicator_light }}'
+          - delay: 1
+      else:
+      - repeat:
+          count: 2
+          sequence:
+          - service: light.turn_on
+            data:
+              flash: short
+            target:
+              entity_id: '{{ indicator_light }}'
+          - delay: 1
+      - service: light.turn_off
+        target:
+          entity_id: '{{ indicator_light }}'
+  mode: parallel
+  icon: mdi:lightbulb-on
