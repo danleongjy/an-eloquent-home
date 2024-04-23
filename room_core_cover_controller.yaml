@@ -1,0 +1,112 @@
+blueprint:
+  name: Room Core Cover Controller
+  description: Control a cover via ESPHome and a room core
+  domain: automation
+  input:
+    cover:
+      name: Cover
+      description: The cover to control
+      selector:
+        entity:
+          filter:
+            - domain: cover
+    core_current_command:
+      name: Room Core Current Command
+      description: The select entity showing the current command from the room core
+      selector:
+        entity:
+          filter:
+            - domain: select
+            - integration: esphome
+    cover_auto_control:
+      name: Auto control automation
+      description: The automation that sets the cover state
+      selector:
+        entity:
+          filter:
+            - domain: automation
+    auto_control_indicator_light:
+      name: Auto control indicator light
+      description: A light to flash to indicate when the auto control automation is turned on or off
+      selector:
+        entity:
+          filter:
+            - domain: light
+    core_command_close:
+      name: Close Command
+      description: The command reflected in the room core to close the cover
+    core_command_open:
+      name: Open Command
+      description: The command reflected in the room core to open the cover
+    core_command_stop:
+      name: Stop Command
+      description: The command reflected in the room core to stop the cover
+    core_command_auto_control:
+      name: Auto Control Command
+      description: The command reflected in the room core to turn on auto control for the cover
+    core_command_manual_control:
+      name: Manual Control Command
+      description: The command reflected in the room core to turn off auto control for the cover
+trigger:
+  - platform: state
+    entity_id: !input core_current_command
+    to:
+      - !input core_command_open
+      - !input core_command_close
+      - !input core_command_stop
+      - !input core_command_auto_control
+      - !input core_command_manual_control
+action:
+  - choose:
+      - conditions:
+          - condition: state
+            state: !input core_command_open
+            entity_id: !input core_current_command
+        sequence:
+          - service: cover.open_cover
+            target:
+              entity_id: !input cover
+      - conditions:
+          - condition: state
+            state: !input core_command_close
+            entity_id: !input core_current_command
+        sequence:
+          - service: cover.close_cover
+            target:
+              entity_id: !input cover
+      - conditions:
+          - condition: state
+            state: !input core_command_stop
+            entity_id: !input core_current_command
+        sequence:
+          - service: cover.stop_cover
+            target:
+              entity_id: !input cover
+      - conditions:
+          - condition: state
+            state: !input core_command_auto_control
+            entity_id: !input core_current_command
+        sequence:
+          - service: automation.turn_on
+            target:
+              entity_id: !input cover_auto_control
+          - service: script.automation_on_off_indicator_light
+            data:
+              flash_once: true
+              indicator_light: !input auto_control_indicator_light
+      - conditions:
+          - condition: state
+            state: !input core_command_manual_control
+            entity_id: !input core_current_command
+        sequence:
+          - service: automation.turn_off
+            metadata: {}
+            data:
+              stop_actions: true
+            target:
+              entity_id: !input cover_auto_control
+          - service: script.automation_on_off_indicator_light
+            data:
+              flash_once: false
+              indicator_light: !input auto_control_indicator_light
+mode: parallel

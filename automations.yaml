@@ -6458,198 +6458,33 @@
       auto_control_indicator_light: light.study_room_bulb_4_entity
       sleep_hours_start: input_datetime.sleep_hours_start
       sleep_hours_end: input_datetime.sleep_hours_end
-- id: '1713576560264'
+- id: '1713833337393'
   alias: Study Room Core Blinds Controller
   description: Control the Study Room Blinds with the Study Room Core
-  trigger:
-  - platform: state
-    entity_id:
-    - select.study_room_core_current_command
-    to:
-    - blinds_open
-    - blinds_close
-    - blinds_stop
-    - blinds_auto_control
-    - blinds_manual_control
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: select.study_room_core_current_command
-        state: blinds_open
-      sequence:
-      - service: cover.open_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id: cover.study_room_blinds
-    - conditions:
-      - condition: state
-        entity_id: select.study_room_core_current_command
-        state: blinds_close
-      sequence:
-      - service: cover.close_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id: cover.study_room_blinds
-    - conditions:
-      - condition: state
-        entity_id: select.study_room_core_current_command
-        state: blinds_stop
-      sequence:
-      - service: cover.stop_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id: cover.study_room_blinds
-    - conditions:
-      - condition: state
-        entity_id: select.study_room_core_current_command
-        state: blinds_auto_control
-      sequence:
-      - service: automation.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: automation.south_facing_blinds_auto_control
-      - service: script.automation_on_off_indicator_light
-        metadata: {}
-        data:
-          flash_once: true
-          indicator_light: light.study_room_bulb_3_entity
-    - conditions:
-      - condition: state
-        entity_id: select.study_room_core_current_command
-        state: blinds_manual_control
-      sequence:
-      - service: automation.turn_off
-        metadata: {}
-        data:
-          stop_actions: true
-        target:
-          entity_id: automation.south_facing_blinds_auto_control
-      - service: script.automation_on_off_indicator_light
-        metadata: {}
-        data:
-          flash_once: false
-          indicator_light: light.study_room_bulb_3_entity
-  mode: single
-- id: '1713577254386'
+  use_blueprint:
+    path: danleongjy/room_core_cover_controller.yaml
+    input:
+      cover: cover.study_room_blinds
+      core_current_command: select.study_room_core_current_command
+      cover_auto_control: automation.south_facing_blinds_auto_control
+      auto_control_indicator_light: light.study_room_bulb_3_entity
+      core_command_close: blinds_close
+      core_command_open: blinds_open
+      core_command_stop: blinds_stop
+      core_command_auto_control: blinds_auto_control
+      core_command_manual_control: blinds_manual_control
+- id: '1713833596391'
   alias: Parents' Room Core Blinds Controller
   description: Control the Master Bathroom Blind with the Parents' Room Core
-  trigger:
-  - platform: state
-    entity_id:
-    - select.parents_room_core_current_command
-    to:
-    - blinds_open
-    - blinds_close
-    - blinds_stop
-    - blinds_auto_control
-    - blinds_manual_control
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: state
-        state: blinds_open
-        entity_id: select.parents_room_core_current_command
-      sequence:
-      - service: cover.open_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id: cover.master_bathroom_blind
-    - conditions:
-      - condition: state
-        entity_id: select.parents_room_core_current_command
-        state: blinds_close
-      sequence:
-      - service: cover.close_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id: cover.master_bathroom_blind
-    - conditions:
-      - condition: state
-        entity_id: select.parents_room_core_current_command
-        state: blinds_stop
-      sequence:
-      - service: cover.stop_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id: cover.master_bathroom_blind
-    - conditions:
-      - condition: state
-        entity_id: select.parents_room_core_current_command
-        state: blinds_auto_control
-      sequence:
-      - service: automation.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: automation.master_bathroom_blind_auto_control
-      - if:
-        - condition: state
-          state: 'off'
-          entity_id: light.master_bathroom_pendant_light_entity
-        then:
-        - service: light.turn_on
-          data:
-            flash: short
-          target:
-            entity_id: light.master_bathroom_pendant_light_entity
-        - delay: 1
-        - service: light.turn_off
-          data: {}
-          target:
-            entity_id: light.master_bathroom_pendant_light_entity
-        else:
-        - service: light.turn_on
-          data:
-            flash: short
-          target:
-            entity_id: light.master_bathroom_pendant_light_entity
-    - conditions:
-      - condition: state
-        entity_id: select.parents_room_core_current_command
-        state: blinds_manual_control
-      sequence:
-      - service: automation.turn_off
-        metadata: {}
-        data:
-          stop_actions: true
-        target:
-          entity_id: automation.master_bathroom_blind_auto_control
-      - if:
-        - condition: state
-          state: 'off'
-          entity_id: light.master_bathroom_pendant_light_entity
-        then:
-        - repeat:
-            count: 2
-            sequence:
-            - service: light.turn_on
-              data:
-                flash: short
-              target:
-                entity_id: light.master_bathroom_pendant_light_entity
-            - delay: 1
-        - service: light.turn_off
-          data: {}
-          target:
-            entity_id: light.master_bathroom_pendant_light_entity
-        else:
-        - repeat:
-            count: 2
-            sequence:
-            - service: light.turn_on
-              data:
-                flash: short
-              target:
-                entity_id: light.master_bathroom_pendant_light_entity
-            - delay: 1
-  mode: single
+  use_blueprint:
+    path: danleongjy/room_core_cover_controller.yaml
+    input:
+      cover: cover.master_bathroom_blind
+      core_current_command: select.parents_room_core_current_command
+      cover_auto_control: automation.master_bathroom_blind_auto_control
+      auto_control_indicator_light: light.master_bathroom_pendant_light_entity
+      core_command_close: blinds_close
+      core_command_open: blinds_open
+      core_command_stop: blinds_stop
+      core_command_auto_control: blinds_auto_control
+      core_command_manual_control: blinds_manual_control
