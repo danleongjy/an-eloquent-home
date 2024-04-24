@@ -4704,11 +4704,6 @@
     not_to:
     - unavailable
     - unknown
-  - platform: template
-    value_template: "{{ not ((states('sensor.local_rainfall') | int(0) > 1)\n        or
-      ('Thunder' in states('sensor.local_two_hour_forecast'))\n        or ('Rain'
-      in states('sensor.local_two_hour_forecast'))\n        or ('Wind' in states('sensor.local_two_hour_forecast')))
-      }}"
   - platform: state
     entity_id:
     - sensor.kitchen_radar_lux_calibrated
@@ -4720,6 +4715,11 @@
     entity_id: sensor.sun_solar_elevation
   - platform: state
     entity_id: sensor.sun_solar_azimuth
+  - platform: state
+    entity_id:
+    - sun.sun
+    attribute: rising
+    to: false
   condition: []
   action:
   - choose:
