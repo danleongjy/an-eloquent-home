@@ -154,17 +154,11 @@ SetCookerPowerTimer:
       data:
         option: '{{ side }}'
       target:
-        entity_id: select.stove_current_burner
-    - service: select.select_option
+        entity_id: select.stove_current_burner    
+    - service: script.stove_presets
       data:
-        option: '{{ power }}'
-      target:
-        entity_id: select.stove_current_burner_power
-    - service: number.set_value
-      data:
-        value: '{{ time }}'
-      target:
-        entity_id: number.stove_current_burner_timer
+        current_burner_power: '{{ power }}'
+        current_burner_timer: '{{ time }}'
 TurnOffCooker:
   speech:
     text: >
