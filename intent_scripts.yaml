@@ -59,16 +59,16 @@ CookingPreset:
   action:
     - variables:
         presets_power:
-          'boil water': '7'
-          'cook rice': '1'
-          'stir fry': '4'
-          'simmer': '1'
-          'steam fish': '3'
+          'boil water': 7
+          'cook rice': 1
+          'stir fry': 4
+          'simmer': 1
+          'steam fish': 3
         presets_time:
           'boil water': 6
           'cook rice': 16
           'stir fry': 0
-          'simmer': 0
+          'simmer': 60
           'steam fish': 16
     - condition: state
       entity_id: switch.stove_main_power
@@ -78,16 +78,10 @@ CookingPreset:
         option: '{{ side }}'
       target:
         entity_id: select.stove_current_burner
-    - service: select.select_option
+    - service: script.stove_presets
       data:
-        option: '{{ presets_power[cooking_preset] }}'
-      target:
-        entity_id: select.stove_current_burner_power
-    - service: number.set_value
-      data:
-        value: '{{ presets_time[cooking_preset] }}'
-      target:
-        entity_id: number.stove_current_burner_timer
+        current_burner_power: '{{ presets_power[cooking_preset] }}'
+        current_burner_timer: '{{ presets_time[cooking_preset] }}'
 SetCookerPower:
   speech:
     text: >

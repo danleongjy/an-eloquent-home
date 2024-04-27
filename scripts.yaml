@@ -690,3 +690,37 @@ automation_on_off_indicator_light:
           entity_id: '{{ indicator_light }}'
   mode: parallel
   icon: mdi:lightbulb-on
+stove_presets:
+  alias: Stove Presets
+  sequence:
+  - service: select.select_option
+    data:
+      option: '{{ current_burner_power }}'
+    target:
+      entity_id: select.stove_current_burner_power
+  - service: number.set_value
+    data:
+      value: '{{ current_burner_timer }}'
+    target:
+      entity_id: number.stove_current_burner_timer
+  mode: queued
+  icon: mdi:stove
+  fields:
+    current_burner_power:
+      selector:
+        number:
+          min: 0
+          max: 9
+          step: 1
+      name: Current Burner Power
+      description: Power level to set the current burner
+      required: true
+    current_burner_timer:
+      selector:
+        number:
+          min: 0
+          max: 99
+          step: 1
+      name: Current Burner Timer
+      description: Number of minutes to turn on the current burner at current settings
+      required: true
