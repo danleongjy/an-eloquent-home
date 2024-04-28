@@ -78,7 +78,7 @@ CookingPreset:
         option: '{{ side }}'
       target:
         entity_id: select.stove_current_burner
-    - service: script.stove_presets
+    - service: script.stove_settings
       data:
         current_burner_power: '{{ presets_power[cooking_preset] }}'
         current_burner_timer: '{{ presets_time[cooking_preset] }}'
@@ -99,11 +99,9 @@ SetCookerPower:
         option: '{{ side }}'
       target:
         entity_id: select.stove_current_burner
-    - service: select.select_option
+    - service: script.stove_presets
       data:
-        option: '{{ power }}'
-      target:
-        entity_id: select.stove_current_burner_power
+        current_burner_power: '{{ power }}'
 SetCookerTimer:
   speech:
     text: >
@@ -125,11 +123,9 @@ SetCookerTimer:
         option: '{{ side }}'
       target:
         entity_id: select.stove_current_burner
-    - service: number.set_value
+    - service: script.stove_presets
       data:
-        value: '{{ time }}'
-      target:
-        entity_id: number.stove_current_burner_timer
+        current_burner_timer: '{{ time }}'
 SetCookerPowerTimer:
   speech:
     text: >
