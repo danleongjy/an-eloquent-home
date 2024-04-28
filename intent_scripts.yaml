@@ -99,7 +99,7 @@ SetCookerPower:
         option: '{{ side }}'
       target:
         entity_id: select.stove_current_burner
-    - service: script.stove_presets
+    - service: script.stove_settings
       data:
         current_burner_power: '{{ power }}'
 SetCookerTimer:
@@ -123,7 +123,7 @@ SetCookerTimer:
         option: '{{ side }}'
       target:
         entity_id: select.stove_current_burner
-    - service: script.stove_presets
+    - service: script.stove_settings
       data:
         current_burner_timer: '{{ time }}'
 SetCookerPowerTimer:
@@ -151,7 +151,7 @@ SetCookerPowerTimer:
         option: '{{ side }}'
       target:
         entity_id: select.stove_current_burner    
-    - service: script.stove_presets
+    - service: script.stove_settings
       data:
         current_burner_power: '{{ power }}'
         current_burner_timer: '{{ time }}'
@@ -172,11 +172,9 @@ TurnOffCooker:
         option: '{{ side }}'
       target:
         entity_id: select.stove_current_burner
-    - service: select.select_option
+    - service: script.stove_settings
       data:
-        option: '0'
-      target:
-        entity_id: select.stove_current_burner_power
+        current_burner_power: 0
 CookerStatus:
   action:
     - condition: state
