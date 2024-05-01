@@ -78,9 +78,54 @@ action:
       doors: !input doors_list
       auto_control_start: !input ac_auto_control_start
       auto_control_end: !input ac_auto_control_end
+      rooms:
+        climate.elenas_room_ac: "Elena's Room"
+        climate.elis_room_ac: "Eli's Room"
+        climate.dining_room_ac: 'Dining Room'
+        climate.living_room_ac: 'Living Room'
+        climate.study_room_ac: 'Study Room'
+        climate.parents_room_ac: "Parents' Room"
   - if:
       - condition: template
-        value_template: "{{ doors | length == 0 or not 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
+        value_template: >
+          {% set openings = {'binary_sensor.junior_bathroom_door': ['Junior Bathroom','Dining Room','Living Room'],
+                             'binary_sensor.powder_room_door': ['Powder Room','Dining Room','Living Room'],
+                             'binary_sensor.elis_room_door': ["Eli's Room",'Dining Room','Living Room'],
+                             'binary_sensor.elenas_room_door': ["Elena's Room",'Dining Room','Living Room'],
+                             'binary_sensor.main_door': ['Dining Room','Outdoors'],
+                             'binary_sensor.parents_room_door': ['Study Room',"Parents' Room"],
+                             'binary_sensor.master_bathroom_door': ["Parents' Room",'Master Bathroom'],
+                             'binary_sensor.yard_window': ['Dining Room','Living Room','Outdoors'],
+                             'binary_sensor.kitchen_window': ['Dining Room','Living Room','Outdoors']} %}
+          {% set acs = {'Dining Room': 'climate.dining_room_ac', 
+                        'Living Room': 'climate.living_room_ac', 
+                        'Study Room': 'climate.study_room_ac',
+                        "Eli's Room": 'climate.elis_room_ac',
+                        "Elena's Room": 'climate.elenas_room_ac', 
+                        "Parents' Room": 'climate.parents_room_ac'} %}
+          {% set ac_on = namespace(room = rooms[target_ac],
+                                   openings = [],
+                                   recommend_turn_off = 0) %}
+          {% for opening in openings.keys() %}
+            {% if ac_on.room in openings[opening] %}
+              {% set ac_on.openings = ac_on.openings + [opening] %}
+            {% endif %}
+          {% endfor %}
+          {% for opening in ac_on.openings %}
+            {% if is_state(opening, 'on') %}
+              {% for room in openings[opening] %}
+                {% if room != ac_on.room %}
+                  {% if room not in acs.keys() %}
+                    {% set ac_on.recommend_turn_off = ac_on.recommend_turn_off + 1 %}
+                  {% elif is_state(acs[room], 'off') %}
+                    {% set ac_on.recommend_turn_off = ac_on.recommend_turn_off + 1 %}
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+          
+          {{ ac_on.recommend_turn_off == 0 }}
     then:
       - service: automation.trigger
         target:
