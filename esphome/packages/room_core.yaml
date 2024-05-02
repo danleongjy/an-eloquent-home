@@ -14,7 +14,15 @@ script:
                 id: current_command
                 option: 'none'
     mode: queued
-
+  - id: reset_view
+    mode: restart
+    then:
+      - delay: 120s
+      - display.page.show: current_time
+      - select.set:
+          id: current_view
+          option: current_time
+          
 select:
   - platform: template
     name: 'Current View'
@@ -148,6 +156,7 @@ binary_sensor:
           - ON for at most 1s
           - OFF for at least 0.5s
         then:
+          - script.execute: reset_view
           - if:
               condition:
                 rtttl.is_playing
@@ -208,6 +217,7 @@ binary_sensor:
       - timing:
           - ON for at least 1.5s
         then:
+          - script.execute: reset_view
           - if:
               condition:
                 rtttl.is_playing
@@ -259,6 +269,7 @@ binary_sensor:
           - ON for at most 1s
           - OFF for at least 0.5s
         then:
+          - script.execute: reset_view
           - if:
               condition:
                 rtttl.is_playing
@@ -303,6 +314,7 @@ binary_sensor:
       - invert:
     on_click:
       then:
+        - script.execute: reset_view
         - if:
             condition:
               rtttl.is_playing
@@ -325,6 +337,7 @@ binary_sensor:
           - ON for at most 1s
           - OFF for at least 0.5s
         then:
+          - script.execute: reset_view
           - if:
               condition:
                 rtttl.is_playing
@@ -387,6 +400,7 @@ binary_sensor:
       - timing:
           - ON for at least 1.5s
         then:
+          - script.execute: reset_view
           - if:
               condition:
                 rtttl.is_playing
@@ -438,6 +452,7 @@ binary_sensor:
           - ON for at most 1s
           - OFF for at least 0.5s
         then:
+          - script.execute: reset_view
           - if:
               condition:
                 rtttl.is_playing
