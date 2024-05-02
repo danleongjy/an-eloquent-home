@@ -1,3 +1,8 @@
+wifi:
+  on_connect:
+    - lambda: 'id(current_view).publish_state("current_time");'
+    - lambda: 'id(current_command).publish_state("none");'
+    
 time:
   - platform: homeassistant
     id: homeassistant_time
@@ -10,58 +15,15 @@ script:
           condition:
             lambda: 'return id(current_command).state != "none";'
           then:
-            - select.set:
-                id: current_command
-                option: 'none'
+            - lambda: 'id(current_command).publish_state("none");'
     mode: queued
   - id: reset_view
     mode: restart
     then:
       - delay: 120s
       - display.page.show: current_time
-      - select.set:
-          id: current_view
-          option: current_time
-          
+
 select:
-  - platform: template
-    name: 'Current View'
-    id: current_view
-    options:
-      - current_time
-      - lights
-      - fan
-      - ac
-    initial_option: current_time
-    optimistic: true
-  - platform: template
-    name: 'Current Command'
-    id: current_command
-    options:
-      - 'none'
-      - lights_on
-      - lights_off
-      - lights_brighten
-      - lights_darken
-      - set_recommended_room_scene
-      - turn_off_room
-      - fan_on
-      - fan_off
-      - fan_speed_up
-      - fan_slow_down
-      - fan_reverse
-      - fan_forward
-      - ac_on
-      - ac_off
-      - ac_warmer
-      - ac_colder
-      - cooling_auto_control
-      - cooling_manual_control
-    initial_option: 'none'
-    optimistic: true
-    on_value:
-      - script.execute: 
-          id: reset_command
   - platform: template
     name: Ringtone
     id: ringtone
@@ -94,6 +56,15 @@ text_sensor:
   - platform: homeassistant
     id: blinds_state
     entity_id: ${blinds_entity}
+  - platform: template
+    id: current_view
+    name: 'Current View'
+  - platform: template
+    id: current_command
+    name: 'Current Command'
+    on_value:
+      - script.execute: 
+          id: reset_command
   - platform: template
     id: rtttl_string
     filters:
@@ -182,23 +153,17 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: lights_on
+                      - lambda: 'id(current_command).publish_state("lights_on");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "fan";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: fan_on
+                      - lambda: 'id(current_command).publish_state("fan_on");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "ac";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: ac_on
+                      - lambda: 'id(current_command).publish_state("ac_on");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "blinds";'
@@ -207,13 +172,9 @@ binary_sensor:
                           condition:
                             lambda: 'return id(blinds_state).state == "closing";'
                           then:
-                            - select.set:
-                                id: current_command
-                                option: blinds_stop
+                            - lambda: 'id(current_command).publish_state("blinds_stop");'
                           else:
-                            - select.set:
-                                id: current_command
-                                option: blinds_open
+                            - lambda: 'id(current_command).publish_state("blinds_open");'
       - timing:
           - ON for at least 1.5s
         then:
@@ -235,9 +196,7 @@ binary_sensor:
                           condition:
                             binary_sensor.is_on: left_button
                           then:
-                            - select.set:
-                                id: current_command
-                                option: lights_brighten
+                            - lambda: 'id(current_command).publish_state("lights_brighten");'
                             - delay: 1.5s
                 - if:
                     condition:
@@ -247,9 +206,7 @@ binary_sensor:
                           condition:
                             binary_sensor.is_on: left_button
                           then:
-                            - select.set:
-                                id: current_command
-                                option: fan_speed_up
+                            - lambda: 'id(current_command).publish_state("fan_speed_up");'
                             - delay: 1.5s
                 - if:
                     condition:
@@ -259,9 +216,7 @@ binary_sensor:
                           condition:
                             binary_sensor.is_on: left_button
                           then:
-                            - select.set:
-                                id: current_command
-                                option: ac_warmer
+                            - lambda: 'id(current_command).publish_state("ac_warmer");'
                             - delay: 1.5s
       - timing:
           - ON for at most 1s
@@ -283,30 +238,22 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: set_recommended_room_scene
+                      - lambda: 'id(current_command).publish_state("set_recommended_room_scene");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "fan";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: fan_reverse
+                      - lambda: 'id(current_command).publish_state("fan_reverse");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "ac";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: cooling_auto_control
+                      - lambda: 'id(current_command).publish_state("cooling_auto_control");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "blinds";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: blinds_auto_control
+                      - lambda: 'id(current_command).publish_state("blinds_auto_control");'
   - platform: gpio
     pin: 38
     name: 'Middle Button'
@@ -324,7 +271,6 @@ binary_sensor:
             condition:
               light.is_on: backlight
             then:
-              - select.next: current_view
               - display.page.show_next: interface_display
   - platform: gpio
     pin: 37
@@ -365,23 +311,17 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: lights_off
+                      - lambda: 'id(current_command).publish_state("lights_off");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "fan";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: fan_off
+                      - lambda: 'id(current_command).publish_state("fan_off");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "ac";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: ac_off
+                      - lambda: 'id(current_command).publish_state("ac_off");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "blinds";'
@@ -390,13 +330,9 @@ binary_sensor:
                           condition:
                             lambda: 'return id(blinds_state).state == "opening";'
                           then:
-                            - select.set:
-                                id: current_command
-                                option: blinds_stop
+                            - lambda: 'id(current_command).publish_state("blinds_stop");'
                           else:
-                            - select.set:
-                                id: current_command
-                                option: blinds_close
+                            - lambda: 'id(current_command).publish_state("blinds_close");'
       - timing:
           - ON for at least 1.5s
         then:
@@ -418,9 +354,7 @@ binary_sensor:
                           condition:
                             binary_sensor.is_on: right_button
                           then:
-                            - select.set:
-                                id: current_command
-                                option: lights_darken
+                            - lambda: 'id(current_command).publish_state("lights_darken");'
                             - delay: 1.5s
                 - if:
                     condition:
@@ -430,9 +364,7 @@ binary_sensor:
                           condition:
                             binary_sensor.is_on: right_button
                           then:
-                            - select.set:
-                                id: current_command
-                                option: fan_slow_down
+                            - lambda: 'id(current_command).publish_state("fan_slow_down");'
                             - delay: 1.5s
                 - if:
                     condition:
@@ -442,9 +374,7 @@ binary_sensor:
                           condition:
                             binary_sensor.is_on: right_button
                           then:
-                            - select.set:
-                                id: current_command
-                                option: ac_colder
+                            - lambda: 'id(current_command).publish_state("ac_colder");'
                             - delay: 1.5s
       - timing:
           - ON for at most 1s
@@ -466,30 +396,22 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: turn_off_room
+                      - lambda: 'id(current_command).publish_state("turn_off_room");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "fan";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: fan_forward
+                      - lambda: 'id(current_command).publish_state("fan_forward");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "ac";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: cooling_manual_control
+                      - lambda: 'id(current_command).publish_state("cooling_manual_control");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "blinds";'
                     then:
-                      - select.set:
-                          id: current_command
-                          option: blinds_manual_control
+                      - lambda: 'id(current_command).publish_state("blinds_manual_control");'
 
 button:
   - platform: template
@@ -620,9 +542,6 @@ light:
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_off:
       - display.page.show: current_time
-      - select.set:
-          id: current_view
-          option: current_time
   - platform: neopixelbus
     type: GRB
     variant: SK6812
@@ -674,6 +593,19 @@ display:
     reset_pin: 33
     cs_pin: 14
     rotation: ${display_rotation}
+    on_page_change:
+      - to: current_time
+        then:
+          lambda: 'id(current_view).publish_state("current_time");'
+      - to: lights
+        then:
+          lambda: 'id(current_view).publish_state("lights");'
+      - to: fan
+        then:
+          lambda: 'id(current_view).publish_state("fan");'
+      - to: ac
+        then:
+          lambda: 'id(current_view).publish_state("ac");'
     pages:
       - id: current_time
         lambda: |-

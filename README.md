@@ -42,8 +42,8 @@ Domain | Quantity
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 12
-[`select`](https://www.home-assistant.io/components/select) | 67
-[`sensor`](https://www.home-assistant.io/components/sensor) | 545
+[`select`](https://www.home-assistant.io/components/select) | 59
+[`sensor`](https://www.home-assistant.io/components/sensor) | 553
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 35

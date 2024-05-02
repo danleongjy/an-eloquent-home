@@ -62,18 +62,6 @@ sensor:
     id: blinds_position
     entity_id: ${blinds_entity}
     attribute: current_position
-
-select:
-  - id: !extend current_view
-    options:
-      - blinds
-  - id: !extend current_command
-    options:
-      - blinds_open
-      - blinds_close
-      - blinds_stop
-      - blinds_auto_control
-      - blinds_manual_control
       
 binary_sensor:
   - platform: homeassistant
@@ -82,6 +70,10 @@ binary_sensor:
 
 display:
   - id: !extend interface_display
+    on_page_change:
+      - to: blinds
+        then:
+          lambda: 'id(current_view).publish_state("blinds");'
     pages:
       - id: !extend lights
         lambda: |-

@@ -39,7 +39,7 @@ trigger_variables:
   room: !input core_room
 trigger:
   - platform: template
-    value_template: "{{ not is_state('select.' + room + '_core_current_command','none') }}"
+    value_template: "{{ not is_state('sensor.' + room + '_core_current_command','none') }}"
     id: new_command
   - platform: template
     value_template: >-
@@ -73,7 +73,7 @@ condition: []
 action:
   - variables:
       core_display_backlight: "{{ 'light.' + room + '_core_display_backlight' }}"
-      core_current_command: "{{ 'select.' + room + '_core_current_command' }}"
+      core_current_command: "{{ 'sensor.' + room + '_core_current_command' }}"
       lights: "{{ 'light.' + room + '_lights' }}"
       fan: "{{ 'fan.' + room + '_fan' }}"
       ac: "{{ 'climate.' + room + '_ac' }}"
