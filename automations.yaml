@@ -4501,8 +4501,21 @@
           skip_condition: true
         target:
           entity_id:
-          - automation.study_room_motion_timeout
           - automation.master_bathroom_motion_timeout
+      - if:
+        - condition: state
+          entity_id: binary_sensor.study_room_radar
+          state: 'off'
+        - condition: state
+          entity_id: binary_sensor.study_room_ethernet_connection
+          state: 'off'
+        then:
+        - service: automation.trigger
+          metadata: {}
+          data:
+            skip_condition: true
+          target:
+            entity_id: automation.study_room_motion_timeout
       button_down_double_press: true
       button_up_long_loop: true
       button_down_long_loop: true
