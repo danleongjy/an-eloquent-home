@@ -3316,13 +3316,26 @@
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: automation.trigger
-        data:
-          skip_condition: true
-        target:
-          entity_id:
-          - automation.elis_room_motion_timeout
-          - automation.elenas_room_motion_timeout
+      - if:
+        - condition: state
+          entity_id: binary_sensor.elenas_room_door
+          state: 'on'
+        then:
+        - service: automation.trigger
+          data:
+            skip_condition: true
+          target:
+            entity_id: automation.elenas_room_motion_timeout
+      - if:
+        - condition: state
+          entity_id: binary_sensor.elis_room_door
+          state: 'on'
+        then:
+        - service: automation.trigger
+          data:
+            skip_condition: true
+          target:
+            entity_id: automation.elis_room_motion_timeout
       - delay:
           hours: 0
           minutes: 0
@@ -3347,8 +3360,22 @@
         target:
           entity_id:
           - automation.kitchen_motion_timeout
-          - automation.parents_room_motion_timeout
           - automation.master_bathroom_motion_timeout
+      - if:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.parents_room_door
+            state: 'on'
+          - condition: state
+            entity_id: binary_sensor.master_bathroom_door
+            state: 'on'
+        then:
+        - service: automation.trigger
+          data:
+            skip_condition: true
+          target:
+            entity_id: automation.parents_room_motion_timeout
       - delay:
           hours: 0
           minutes: 0
@@ -4418,13 +4445,26 @@
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: automation.trigger
-        data:
-          skip_condition: true
-        target:
-          entity_id:
-          - automation.elenas_room_motion_timeout
-          - automation.elis_room_motion_timeout
+      - if:
+        - condition: state
+          entity_id: binary_sensor.elenas_room_door
+          state: 'on'
+        then:
+        - service: automation.trigger
+          data:
+            skip_condition: true
+          target:
+            entity_id: automation.elenas_room_motion_timeout
+      - if:
+        - condition: state
+          entity_id: binary_sensor.elis_room_door
+          state: 'on'
+        then:
+        - service: automation.trigger
+          data:
+            skip_condition: true
+          target:
+            entity_id: automation.elis_room_motion_timeout
       - delay:
           hours: 0
           minutes: 0
