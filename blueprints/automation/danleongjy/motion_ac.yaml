@@ -43,6 +43,15 @@ blueprint:
         entity:
           multiple: true
       default: []
+    windows_list:
+      name: Windows to Track
+      description: A list of windows.  If the AC's state should change when any of these windows are opened or closed, specify them here.  Otherwise, leave blank.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: window
+          multiple: true
+      default: []
     respect_closed_doors:
       name: Respect Closed Doors
       description: Set to true if the AC's state should not change when all the doors are closed even if motion is detected (useful in bedrooms when someone is sleeping).  Otherwise, set to false.
@@ -57,11 +66,16 @@ trigger:
     entity_id: !input motion_sensor
     from: "off"
     to: "on"
+  - platform: state
+    entity_id: !input windows_list
+    to:
+      - "off"
+      - "on"
 condition:
   - condition: template
     value_template: "{{ not respect_doors }}"
-  - condition: template
-    value_template: "{{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}"
+#  - condition: template
+#    value_template: "{{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}"
 action:
   - variables:
       target_ac: !input ac
@@ -76,6 +90,8 @@ action:
         climate.parents_room_ac: "Parents' Room"
   - if:
       - condition: template
+        value_template: "{{ state_attr(target_ac, 'current_temperature') >= state_attr(target_ac, 'temperature') }}"
+      - condition: template
         value_template: >
           {% set openings = {'binary_sensor.junior_bathroom_door': ['Junior Bathroom','Dining Room','Living Room','Study Room'],
                              'binary_sensor.powder_room_door': ['Powder Room','Dining Room','Living Room','Study Room'],
@@ -83,6 +99,7 @@ action:
                              'binary_sensor.elenas_room_door': ["Elena's Room",'Dining Room','Living Room','Study Room'],
                              'binary_sensor.main_door': ['Dining Room','Living Room','Outdoors','Study Room'],
                              'binary_sensor.parents_room_door': ['Study Room','Dining Room','Living Room',"Parents' Room"],
+                             'binary_sensor.parents_room_windows': ["Parents' Room",'Outdoors'],
                              'binary_sensor.master_bathroom_door': ["Parents' Room",'Master Bathroom'],
                              'binary_sensor.yard_window': ['Dining Room','Living Room','Outdoors','Study Room'],
                              'binary_sensor.kitchen_window': ['Dining Room','Living Room','Study Room','Outdoors']} %}
