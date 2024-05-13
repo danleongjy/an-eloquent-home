@@ -4638,7 +4638,7 @@
                         "styles": {
                           "card": [
                             {
-                              "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_doors_open_at_parents_room'].state == 'on')\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                              "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_doors_open_at_parents_room'].state == 'on'\n      || states['binary_sensor.ac_on_with_windows_open_at_parents_room'].state == 'on')\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
                             }
                           ]
                         }
@@ -5917,7 +5917,7 @@
                             "styles": {
                               "card": [
                                 {
-                                  "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_doors_open_at_parents_room'].state == 'on')\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                                  "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_doors_open_at_parents_room'].state == 'on'\n      || states['binary_sensor.ac_on_with_windows_open_at_parents_room'].state == 'on')\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
                                 }
                               ]
                             }
@@ -10473,6 +10473,20 @@
                   "card": {
                     "type": "markdown",
                     "content": "<ha-alert alert-type=\"error\">AC on with doors open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "binary_sensor.ac_on_with_windows_open_at_parents_room",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with windows open</ha-alert>"
                   }
                 }
               ]
