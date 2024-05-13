@@ -31,6 +31,18 @@
     attributes:
       kitchen_blind: "{{ states('cover.kitchen_blind') }}"
 
+  - name: Parents' Room Windows
+    unique_id: binary_sensor.parents_room_windows
+    device_class: window
+    state: >
+      {{ is_state('binary_sensor.parents_room_left_window', 'on') or 
+         is_state('binary_sensor.parents_room_right_window','on') }}
+    attributes:
+      total_panes_open: "{{ is_state('binary_sensor.parents_room_left_window','on') + is_state('binary_sensor.parents_room_right_window','on') }}/2"
+      total_panes: 2
+      parents_room_left_window: "{{ states('binary_sensor.parents_room_left_window') }}"
+      parents_room_right_window: "{{ states('binary_sensor.parents_room_right_window') }}"
+
   - name: Dining Room Presence
     unique_id: binary_sensor.dining_room_presence
     device_class: occupancy
