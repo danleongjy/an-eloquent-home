@@ -91,6 +91,9 @@ action:
   - if:
       - condition: template
         value_template: "{{ state_attr(target_ac, 'current_temperature') >= state_attr(target_ac, 'temperature') }}"
+      - condition: state
+        entity_id: !input motion_sensor
+        state: "on"
       - condition: template
         value_template: >
           {% set openings = {'binary_sensor.junior_bathroom_door': ['Junior Bathroom','Dining Room','Living Room','Study Room'],
