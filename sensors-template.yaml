@@ -31,18 +31,6 @@
     attributes:
       kitchen_blind: "{{ states('cover.kitchen_blind') }}"
 
-  - name: Parents' Room Windows
-    unique_id: binary_sensor.parents_room_windows
-    device_class: window
-    state: >
-      {{ is_state('binary_sensor.parents_room_left_window', 'on') or 
-         is_state('binary_sensor.parents_room_right_window','on') }}
-    attributes:
-      total_panes_open: "{{ is_state('binary_sensor.parents_room_left_window','on') + is_state('binary_sensor.parents_room_right_window','on') }}/2"
-      total_panes: 2
-      parents_room_left_window: "{{ states('binary_sensor.parents_room_left_window') }}"
-      parents_room_right_window: "{{ states('binary_sensor.parents_room_right_window') }}"
-
   - name: Dining Room Presence
     unique_id: binary_sensor.dining_room_presence
     device_class: occupancy
@@ -207,9 +195,9 @@
     unique_id: binary_sensor.ac_on_with_windows_open_at_parents_room
     state: >
       {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.parents_room_windows', ['climate.parents_room_ac']) }}
+      {{ ac_on_with_opening_open('binary_sensor.parents_room_left_window', ['climate.parents_room_ac']) }}
     attributes:
-      parents_room_windows: "{{ states('binary_sensor.parents_room_windows') }}"
+      parents_room_left_window: "{{ states('binary_sensor.parents_room_left_window') }}"
       parents_room_ac: " {{ states('climate.parents_room_ac') }}"
 
   - name: AC On With Window Open at Kitchen
@@ -242,7 +230,7 @@
       main_door: "{{ states('binary_sensor.main_door') }}"
       yard_window: "{{ states('binary_sensor.yard_window') }}"
       parents_room_door: "{{ states('binary_sensor.parents_room_door') }}"
-      parents_room_windows: "{{ states('binary_sensor.parents_room_windows') }}"
+      parents_room_left_window: "{{ states('binary_sensor.parents_room_left_window') }}"
       master_bathroom_door: "{{ states('binary_sensor.master_bathroom_door') }}"
       kitchen_window: "{{ states('binary_sensor.kitchen_window') }}"
       elenas_room_ac: "{{ states('climate.elenas_room_ac') }}"
