@@ -133,6 +133,15 @@
       elenas_room_ac: "{{ states('climate.elenas_room_ac') }}"
       dining_room_ac: "{{ states('climate.dining_room_ac') }}"
 
+  - name: AC On With Windows Open at Elena's Room
+    unique_id: binary_sensor.ac_on_with_windows_open_at_elenas_room
+    state: >
+      {% from 'ac.jinja' import ac_on_with_opening_open %}
+      {{ ac_on_with_opening_open('binary_sensor.elenas_room_left_window', ['climate.elenas_room_ac']) }}
+    attributes:
+      elenas_room_left_window: "{{ states('binary_sensor.elenas_room_left_window') }}"
+      elenas_room_ac: " {{ states('climate.elenas_room_ac') }}"
+
   - name: AC On With Door Open at Eli's Room
     unique_id: binary_sensor.ac_on_with_door_open_at_elis_room
     state: >
@@ -142,6 +151,15 @@
       elis_room_door: "{{ states('binary_sensor.elis_room_door') }}"
       elis_room_ac: "{{ states('climate.elis_room_ac') }}"
       dining_room_ac: "{{ states('climate.dining_room_ac') }}"
+
+  - name: AC On With Windows Open at Eli's Room
+    unique_id: binary_sensor.ac_on_with_windows_open_at_elis_room
+    state: >
+      {% from 'ac.jinja' import ac_on_with_opening_open %}
+      {{ ac_on_with_opening_open('binary_sensor.elis_room_right_window', ['climate.elis_room_ac']) }}
+    attributes:
+      elis_room_right_window: "{{ states('binary_sensor.elis_room_right_window') }}"
+      elis_room_ac: " {{ states('climate.elis_room_ac') }}"
 
   - name: AC On With Doors Open at Hallway
     unique_id: binary_sensor.ac_on_with_doors_open_at_hallway
@@ -514,6 +532,36 @@
       {{ raining_with_window_open('binary_sensor.kitchen_window') }}
     attributes:
       yard_window: "{{ states('binary_sensor.kitchen_window') }}"
+      local_rainfall: "{{ states('sensor.local_rainfall') }}"
+      local_two_hour_forecast: "{{ states('sensor.local_two_hour_forecast') }}"
+
+  - name: Raining With Elena's Room Windows Open
+    unique_id: sensor.raining_with_elenas_room_windows_open
+    state: >
+      {% from 'weather.jinja' import raining_with_window_open %}
+      {{ raining_with_window_open('binary_sensor.elenas_room_left_window') }}
+    attributes:
+      elenas_room_left_window: "{{ states('binary_sensor.elenas_room_left_window') }}"
+      local_rainfall: "{{ states('sensor.local_rainfall') }}"
+      local_two_hour_forecast: "{{ states('sensor.local_two_hour_forecast') }}"
+
+  - name: Raining With Eli's Room Windows Open
+    unique_id: sensor.raining_with_elis_room_windows_open
+    state: >
+      {% from 'weather.jinja' import raining_with_window_open %}
+      {{ raining_with_window_open('binary_sensor.elis_room_right_window') }}
+    attributes:
+      elis_room_right_window: "{{ states('binary_sensor.elis_room_right_window') }}"
+      local_rainfall: "{{ states('sensor.local_rainfall') }}"
+      local_two_hour_forecast: "{{ states('sensor.local_two_hour_forecast') }}"
+
+  - name: Raining With Parents' Room Windows Open
+    unique_id: sensor.raining_with_parents_room_windows_open
+    state: >
+      {% from 'weather.jinja' import raining_with_window_open %}
+      {{ raining_with_window_open('binary_sensor.parents_room_left_window') }}
+    attributes:
+      parents_room_left_window: "{{ states('binary_sensor.parents_room_left_window') }}"
       local_rainfall: "{{ states('sensor.local_rainfall') }}"
       local_two_hour_forecast: "{{ states('sensor.local_two_hour_forecast') }}"
 

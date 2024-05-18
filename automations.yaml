@@ -6523,10 +6523,22 @@
     - binary_sensor.parents_room_left_window
     from:
     to:
+    id: parents_room
+  - platform: state
+    entity_id:
+    - binary_sensor.elis_room_right_window
+    from:
+    to:
+    id: elis_room
+  - platform: state
+    entity_id:
+    - binary_sensor.elenas_room_left_window
+    from:
+    to:
+    id: elenas_room
   condition: []
   action:
   - service: script.set_recommended_scene
     data:
-      room:
-      - parents_room
+      room: '{{ [trigger.id] }}'
   mode: single
