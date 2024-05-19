@@ -6397,7 +6397,7 @@
       as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
       | float)).astimezone(now().tzinfo) and now() < (states(''input_datetime.daniels_next_alarm'')
       | as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
-      | float - 0.01)).astimezone(now().tzinfo)}}'
+      | float - 0.01)).astimezone(now().tzinfo) }}'
     id: sleep_time
   - alias: 15min before sleep time
     platform: template
@@ -6407,6 +6407,22 @@
       | as_datetime - timedelta(hours = states('input_number.minimum_sleep_hours')
       | float, minutes = 14)).astimezone(now().tzinfo) }}"
     id: before_sleep_time
+  - platform: state
+    entity_id:
+    - sensor.pixel_4a_battery_state
+    from: discharging
+    to:
+    - charging
+    - full
+    id: phone_charging
+  - platform: state
+    entity_id:
+    - sensor.pixel_4a_battery_state
+    from:
+    - charging
+    - full
+    to: discharging
+    id: phone_discharging
   condition: []
   action:
   - choose:
@@ -6426,7 +6442,14 @@
       - condition: trigger
         id:
         - sleep_time
+        - phone_charging
       sequence:
+      - condition: template
+        value_template: '{{ now() >= (states(''input_datetime.daniels_next_alarm'')
+          | as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
+          | float)).astimezone(now().tzinfo) and now() < (states(''input_datetime.daniels_next_alarm'')
+          | as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
+          | float - 0.01)).astimezone(now().tzinfo) }}'
       - service: notify.mobile_app_pixel_4a
         metadata: {}
         data:
@@ -6451,6 +6474,7 @@
       - condition: trigger
         id:
         - before_wakeup
+        - phone_discharging
       sequence:
       - service: notify.mobile_app_pixel_4a
         metadata: {}
@@ -6465,13 +6489,6 @@
           message: command_auto_screen_brightness
           data:
             command: turn_on
-      - delay: 1
-      - service: notify.mobile_app_pixel_4a
-        metadata: {}
-        data:
-          message: command_screen_brightness_level
-          data:
-            command: 40
   mode: single
 - id: '1712999157282'
   alias: Study Room Core
