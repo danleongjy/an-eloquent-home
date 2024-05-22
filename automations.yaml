@@ -6530,8 +6530,8 @@
       core_command_auto_control: blinds_auto_control
       core_command_manual_control: blinds_manual_control
 - id: '1715733470037'
-  alias: Windows
-  description: Set recommended scene when windows are opened or closed
+  alias: Windows Set AC
+  description: Set AC state when windows are opened or closed
   trigger:
   - platform: state
     entity_id:
@@ -6553,7 +6553,9 @@
     id: elenas_room
   condition: []
   action:
-  - service: script.set_recommended_scene
+  - service: automation.trigger
+    target:
+      entity_id: automation.{{ trigger.id }}_motion_ac
     data:
-      room: '{{ [trigger.id] }}'
+      skip_condition: true
   mode: single
