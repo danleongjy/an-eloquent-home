@@ -733,3 +733,53 @@ stove_settings:
       description: Number of minutes to turn on the current burner at current settings
       required: false
   max: 10
+vacuum_selected_rooms:
+  alias: Vacuum Selected Rooms
+  sequence:
+  - service: vacuum.send_command
+    metadata: {}
+    data:
+      command: app_segment_clean
+      params:
+      - segments: '{{ rooms | map(''int'') | list }}'
+    target:
+      entity_id: vacuum.roborock_s7
+  mode: single
+  icon: mdi:home-plus-outline
+  fields:
+    rooms:
+      selector:
+        select:
+          options:
+          - label: Elena's Room
+            value: '28'
+          - label: Eli's Room
+            value: '23'
+          - label: Hallway
+            value: '25'
+          - label: Dining Room
+            value: '24'
+          - label: Playroom
+            value: '19'
+          - label: Parents' Room
+            value: '20'
+          - label: Study Room
+            value: '22'
+          - label: Kitchen
+            value: '21'
+          - label: Living Room
+            value: '30'
+          multiple: true
+      name: Rooms
+      description: The rooms to clean in the intended cleaning order
+      required: true
+      default:
+      - '28'
+      - '23'
+      - '25'
+      - '24'
+      - '19'
+      - '20'
+      - '22'
+      - '21'
+      - '30'
