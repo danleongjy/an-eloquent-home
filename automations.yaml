@@ -6205,6 +6205,12 @@
     - binary_sensor.roborock_s7_water_box_attached
     - binary_sensor.roborock_s7_mop_attached
     id: mop
+    from:
+    - 'on'
+    - 'off'
+    to:
+    - 'on'
+    - 'off'
   - platform: state
     entity_id:
     - vacuum.roborock_s7
@@ -6215,6 +6221,12 @@
       minutes: 1
       seconds: 0
     id: finished
+  - platform: state
+    entity_id:
+    - input_select.vacuum_fan_speed
+    from:
+    to:
+    id: fan_speed
   condition: []
   action:
   - choose:
@@ -6295,6 +6307,17 @@
       - service: homeassistant.reload_config_entry
         data:
           device_id: e53c4142b0a58065e2dedda56a576eff
+    - conditions:
+      - condition: trigger
+        id:
+        - fan_speed
+      sequence:
+      - service: vacuum.set_fan_speed
+        metadata: {}
+        data:
+          fan_speed: '{{ states(''input_select.vacuum_fan_speed'') | lower }}'
+        target:
+          entity_id: vacuum.roborock_s7
     default: []
   mode: queued
   max: 5

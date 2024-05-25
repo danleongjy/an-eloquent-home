@@ -8907,16 +8907,6 @@
               "type": "vertical-stack",
               "cards": [
                 {
-                  "features": [
-                    {
-                      "type": "vacuum-commands",
-                      "commands": [
-                        "start_pause",
-                        "stop",
-                        "return_home"
-                      ]
-                    }
-                  ],
                   "type": "tile",
                   "entity": "vacuum.roborock_s7",
                   "show_entity_picture": false,
@@ -8926,6 +8916,334 @@
                   "state_content": [
                     "state",
                     "fan_speed"
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.roborock_s7",
+                          "state": "cleaning"
+                        }
+                      ],
+                      "card": {
+                        "show_name": false,
+                        "show_icon": true,
+                        "type": "button",
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "vacuum.pause",
+                          "target": {
+                            "entity_id": "vacuum.roborock_s7"
+                          }
+                        },
+                        "icon": "mdi:pause",
+                        "hold_action": {
+                          "action": "none"
+                        },
+                        "icon_height": "30px"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.roborock_s7",
+                          "state": "cleaning"
+                        }
+                      ],
+                      "card": {
+                        "show_name": false,
+                        "show_icon": true,
+                        "type": "button",
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "vacuum.stop",
+                          "target": {
+                            "entity_id": [
+                              "vacuum.roborock_s7"
+                            ]
+                          }
+                        },
+                        "icon": "mdi:stop",
+                        "hold_action": {
+                          "action": "none"
+                        },
+                        "icon_height": "30px"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.roborock_s7",
+                          "state_not": "error"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.roborock_s7",
+                          "state_not": "unavailable"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.roborock_s7",
+                          "state_not": "unknown"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.roborock_s7",
+                          "state_not": "cleaning"
+                        }
+                      ],
+                      "card": {
+                        "show_name": false,
+                        "show_icon": true,
+                        "type": "button",
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "vacuum.start",
+                          "target": {
+                            "entity_id": [
+                              "vacuum.roborock_s7"
+                            ]
+                          }
+                        },
+                        "icon": "mdi:play",
+                        "hold_action": {
+                          "action": "none"
+                        },
+                        "icon_height": "30px"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.roborock_s7",
+                          "state_not": "error"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.roborock_s7",
+                          "state_not": "unavailable"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.roborock_s7",
+                          "state_not": "unknown"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.roborock_s7",
+                          "state_not": "cleaning"
+                        }
+                      ],
+                      "card": {
+                        "show_name": false,
+                        "show_icon": true,
+                        "type": "button",
+                        "tap_action": {
+                          "action": "more-info"
+                        },
+                        "icon": "",
+                        "hold_action": {
+                          "action": "none"
+                        },
+                        "entity": "script.vacuum_selected_rooms",
+                        "icon_height": "30px"
+                      }
+                    },
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "vacuum.return_to_base",
+                        "target": {
+                          "entity_id": [
+                            "vacuum.roborock_s7"
+                          ]
+                        }
+                      },
+                      "icon": "mdi:home-import-outline",
+                      "hold_action": {
+                        "action": "none"
+                      },
+                      "icon_height": "30px"
+                    }
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "show_name": false,
+                      "show_icon": true,
+                      "type": "button",
+                      "entity": "input_select.vacuum_fan_speed",
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "input_select.select_next",
+                        "target": {
+                          "entity_id": "input_select.vacuum_fan_speed"
+                        },
+                        "data": {
+                          "cycle": true
+                        }
+                      },
+                      "show_state": true,
+                      "icon_height": "30px"
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "binary_sensor.roborock_s7_mop_attached",
+                          "state": "on"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "binary_sensor.roborock_s7_water_box_attached",
+                          "state": "on"
+                        }
+                      ],
+                      "card": {
+                        "show_name": false,
+                        "show_icon": true,
+                        "type": "button",
+                        "entity": "select.roborock_s7_mop_intensity",
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "select.select_next",
+                          "target": {
+                            "entity_id": "select.roborock_s7_mop_intensity"
+                          },
+                          "data": {
+                            "cycle": true
+                          }
+                        },
+                        "show_state": true,
+                        "icon_height": "30px"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "binary_sensor.roborock_s7_mop_attached",
+                          "state": "on"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "binary_sensor.roborock_s7_water_box_attached",
+                          "state": "on"
+                        }
+                      ],
+                      "card": {
+                        "show_name": false,
+                        "show_icon": true,
+                        "type": "button",
+                        "entity": "select.roborock_s7_mop_mode",
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "select.select_next",
+                          "target": {
+                            "entity_id": "select.roborock_s7_mop_intensity"
+                          },
+                          "data": {
+                            "cycle": true
+                          }
+                        },
+                        "show_state": true,
+                        "icon_height": "30px"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "or",
+                          "conditions": [
+                            {
+                              "condition": "state",
+                              "entity": "binary_sensor.roborock_s7_mop_attached",
+                              "state": "off"
+                            },
+                            {
+                              "condition": "state",
+                              "entity": "binary_sensor.roborock_s7_water_box_attached",
+                              "state": "off"
+                            }
+                          ]
+                        }
+                      ],
+                      "card": {
+                        "show_name": false,
+                        "show_icon": true,
+                        "type": "button",
+                        "entity": "binary_sensor.roborock_s7_mop_attached",
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "select.select_next",
+                          "target": {
+                            "entity_id": "select.roborock_s7_mop_intensity"
+                          },
+                          "data": {
+                            "cycle": true
+                          }
+                        },
+                        "show_state": true,
+                        "icon_height": "30px"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "or",
+                          "conditions": [
+                            {
+                              "condition": "state",
+                              "entity": "binary_sensor.roborock_s7_mop_attached",
+                              "state": "off"
+                            },
+                            {
+                              "condition": "state",
+                              "entity": "binary_sensor.roborock_s7_water_box_attached",
+                              "state": "off"
+                            }
+                          ]
+                        }
+                      ],
+                      "card": {
+                        "show_name": false,
+                        "show_icon": true,
+                        "type": "button",
+                        "entity": "binary_sensor.roborock_s7_water_box_attached",
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "select.select_next",
+                          "target": {
+                            "entity_id": "select.roborock_s7_mop_intensity"
+                          },
+                          "data": {
+                            "cycle": true
+                          }
+                        },
+                        "show_state": true,
+                        "icon_height": "30px"
+                      }
+                    }
                   ]
                 },
                 {
@@ -8943,7 +9261,7 @@
                     }
                   ],
                   "card": {
-                    "type": "horizontal-stack",
+                    "type": "vertical-stack",
                     "cards": [
                       {
                         "type": "custom:button-card",
@@ -8956,19 +9274,19 @@
                         "styles": {
                           "icon": [
                             {
-                              "margin-top": "-100px"
+                              "margin-top": "-50%"
                             },
                             {
-                              "margin-left": "-50px"
+                              "margin-left": "-40%"
                             },
                             {
-                              "height": "500px"
+                              "height": "1000px"
                             },
                             {
-                              "width": "250px"
+                              "width": "500px"
                             },
                             {
-                              "clip-path": "inset(110px 0px 0px 70px)"
+                              "clip-path": "inset(220px 0px 30px 160px)"
                             }
                           ]
                         }
@@ -8977,12 +9295,14 @@
                         "type": "vertical-stack",
                         "cards": [
                           {
-                            "type": "vertical-stack",
+                            "square": false,
+                            "type": "grid",
+                            "columns": 2,
                             "cards": [
                               {
+                                "name": " ",
                                 "type": "tile",
-                                "entity": "sensor.roborock_s7_battery",
-                                "name": " "
+                                "entity": "sensor.roborock_s7_battery"
                               },
                               {
                                 "type": "conditional",
@@ -8994,136 +9314,42 @@
                                   }
                                 ],
                                 "card": {
+                                  "name": " ",
                                   "type": "tile",
-                                  "entity": "sensor.roborock_s7_last_clean_begin",
-                                  "name": " "
+                                  "entity": "sensor.roborock_s7_last_clean_begin"
                                 }
                               },
                               {
+                                "name": " ",
                                 "type": "tile",
-                                "entity": "sensor.roborock_s7_cleaning_time",
-                                "name": " "
+                                "entity": "sensor.roborock_s7_cleaning_time"
                               },
                               {
+                                "name": " ",
                                 "type": "tile",
-                                "entity": "sensor.roborock_s7_cleaning_area",
-                                "name": " "
-                              }
-                            ]
-                          },
-                          {
-                            "type": "conditional",
-                            "conditions": [
+                                "entity": "sensor.roborock_s7_cleaning_area"
+                              },
                               {
-                                "condition": "or",
+                                "type": "conditional",
                                 "conditions": [
                                   {
                                     "condition": "state",
                                     "entity": "binary_sensor.roborock_s7_mop_attached",
-                                    "state": "off"
+                                    "state": "on"
                                   },
                                   {
                                     "condition": "state",
                                     "entity": "binary_sensor.roborock_s7_water_box_attached",
-                                    "state": "off"
+                                    "state": "on"
                                   }
-                                ]
-                              }
-                            ],
-                            "card": {
-                              "type": "vertical-stack",
-                              "cards": [
-                                {
-                                  "type": "tile",
-                                  "entity": "binary_sensor.roborock_s7_mop_attached",
-                                  "icon": "",
-                                  "tap_action": {
-                                    "action": "call-service",
-                                    "service": "select.select_next",
-                                    "target": {
-                                      "entity_id": "select.roborock_s7_mop_intensity"
-                                    },
-                                    "data": {
-                                      "cycle": true
-                                    }
-                                  },
-                                  "name": " "
-                                },
-                                {
-                                  "type": "tile",
-                                  "entity": "binary_sensor.roborock_s7_water_box_attached",
+                                ],
+                                "card": {
                                   "name": " ",
-                                  "icon": "",
-                                  "tap_action": {
-                                    "action": "call-service",
-                                    "service": "select.select_next",
-                                    "target": {
-                                      "entity_id": "select.roborock_s7_mop_mode"
-                                    },
-                                    "data": {
-                                      "cycle": true
-                                    }
-                                  }
+                                  "type": "tile",
+                                  "entity": "binary_sensor.roborock_s7_water_supply"
                                 }
-                              ]
-                            }
-                          },
-                          {
-                            "type": "conditional",
-                            "conditions": [
-                              {
-                                "condition": "state",
-                                "entity": "binary_sensor.roborock_s7_mop_attached",
-                                "state": "on"
-                              },
-                              {
-                                "condition": "state",
-                                "entity": "binary_sensor.roborock_s7_water_box_attached",
-                                "state": "on"
                               }
-                            ],
-                            "card": {
-                              "type": "vertical-stack",
-                              "cards": [
-                                {
-                                  "type": "tile",
-                                  "entity": "select.roborock_s7_mop_intensity",
-                                  "name": " ",
-                                  "icon": "",
-                                  "tap_action": {
-                                    "action": "call-service",
-                                    "service": "select.select_next",
-                                    "target": {
-                                      "entity_id": "select.roborock_s7_mop_intensity"
-                                    },
-                                    "data": {
-                                      "cycle": true
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "tile",
-                                  "entity": "select.roborock_s7_mop_mode",
-                                  "name": " ",
-                                  "icon": "",
-                                  "tap_action": {
-                                    "action": "call-service",
-                                    "service": "select.select_next",
-                                    "target": {
-                                      "entity_id": "select.roborock_s7_mop_mode"
-                                    },
-                                    "data": {
-                                      "cycle": true
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "tile",
-                                  "entity": "binary_sensor.roborock_s7_water_supply",
-                                  "name": " "
-                                }
-                              ]
-                            }
+                            ]
                           }
                         ]
                       }
