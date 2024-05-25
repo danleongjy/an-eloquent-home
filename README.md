@@ -14,8 +14,8 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [12.2](https://github.com/home-assistant/operating-system/releases/tag/12.3) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core 2024.4.4](https://github.com/home-assistant/core/releases/tag/2024.4.4)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [12.3](https://github.com/home-assistant/operating-system/releases/tag/12.3) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Core 2024.5.5](https://github.com/home-assistant/core/releases/tag/2024.5.5)
 * 4 cores, 4GB RAM, 32GB storage
 
 ## Entities
@@ -27,6 +27,7 @@ Domain | Quantity
 [`button`](https://www.home-assistant.io/components/button) | 152
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`climate`](https://www.home-assistant.io/components/climate) | 6
+[`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 13
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 6
 [`fan`](https://www.home-assistant.io/components/fan) | 6
@@ -54,7 +55,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1676
+Total | 1677
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
