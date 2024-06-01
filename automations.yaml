@@ -6620,3 +6620,43 @@
     data:
       skip_condition: true
   mode: single
+- id: '1717226840220'
+  alias: Notify When Vacuum Mop Needs Cleaning
+  description: Send a notification when the vacuum has finished a mopping run and
+    mop needs to be removed for cleaning
+  trigger:
+  - platform: state
+    entity_id:
+    - vacuum.roborock_s7
+    from: returning
+    to: docked
+    id: cleaning_finished
+  - platform: state
+    entity_id:
+    - binary_sensor.roborock_s7_mop_attached
+    from: 'on'
+    to: 'off'
+    id: mop_removed
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id:
+      - cleaning_finished
+    then:
+    - condition: state
+      entity_id: binary_sensor.roborock_s7_mop_attached
+      state: 'on'
+    - service: notify.mobile_app_pixel_4a
+      data:
+        title: Please clean vacuum mop
+        message: Vacuum completed mopping at {{ (now() | string)[11:16] }}
+        data:
+          tag: mop_unclean
+    else:
+    - service: notify.mobile_app_pixel_4a
+      data:
+        message: clear_notification
+        data:
+          tag: mop_unclean
+  mode: single
