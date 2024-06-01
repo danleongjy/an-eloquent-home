@@ -5617,42 +5617,64 @@
   trigger:
   - platform: time
     at: input_datetime.graces_next_alarm
+    id: alarm
+  - platform: state
+    entity_id:
+    - binary_sensor.parents_room_doors
+    from: 'off'
+    to: 'on'
+    id: dismiss_alarm
   condition: []
   action:
   - if:
-    - condition: state
-      entity_id: input_boolean.parents_room_next_alarm_dismissed
-      state: 'off'
+    - condition: trigger
+      id:
+      - alarm
     then:
-    - service: light.turn_on
-      target:
-        entity_id: light.parents_room_core_display_backlight
-      data:
-        brightness_pct: '{{ states(''input_number.morning_light_brightness'') | int
-          if is_state(''sun.sun'',''below_horizon'') else 100 }}'
-    - service: select.select_option
-      data:
-        option: Eli's Song
-      target:
-        entity_id: select.parents_room_core_ringtone
-    - service: button.press
+    - if:
+      - condition: state
+        entity_id: input_boolean.parents_room_next_alarm_dismissed
+        state: 'off'
+      then:
+      - service: light.turn_on
+        target:
+          entity_id: light.parents_room_core_display_backlight
+        data:
+          brightness_pct: '{{ states(''input_number.morning_light_brightness'') |
+            int if is_state(''sun.sun'',''below_horizon'') else 100 }}'
+      - service: select.select_option
+        data:
+          option: Eli's Song
+        target:
+          entity_id: select.parents_room_core_ringtone
+      - service: button.press
+        data: {}
+        target:
+          entity_id: button.parents_room_core_play_ringtone
+    - delay: 60
+    - if:
+      - condition: state
+        entity_id: input_boolean.parents_room_next_alarm_dismissed
+        state: 'off'
+      then:
+      - service: script.alarm_lights
+        data:
+          bedroom: parents_room
+          ringtone: Eli's Song
+    - service: input_boolean.turn_off
       data: {}
       target:
-        entity_id: button.parents_room_core_play_ringtone
-  - delay: 60
-  - if:
+        entity_id: input_boolean.parents_room_next_alarm_dismissed
+    else:
     - condition: state
-      entity_id: input_boolean.parents_room_next_alarm_dismissed
-      state: 'off'
-    then:
-    - service: script.alarm_lights
-      data:
-        bedroom: parents_room
-        ringtone: Eli's Song
-  - service: input_boolean.turn_off
-    data: {}
-    target:
-      entity_id: input_boolean.parents_room_next_alarm_dismissed
+      entity_id: sensor.next_alarm_timings
+      attribute: grace_next_alarm_dismissable
+      state: true
+    - service: input_boolean.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.parents_room_next_alarm_dismissed
   mode: single
 - id: '1690850158819'
   alias: Eli's Alarm
