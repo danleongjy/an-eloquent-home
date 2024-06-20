@@ -66,6 +66,7 @@ condition:
     value_template: >
       {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
 action:
+  - delay: 0.05
   - repeat:
       for_each: !input turnoff_entities_list
       sequence:
