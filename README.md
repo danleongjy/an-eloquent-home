@@ -50,12 +50,12 @@ Domain | Quantity
 [`switch`](https://www.home-assistant.io/components/switch) | 37
 [`time`](https://www.home-assistant.io/components/time) | 2
 [`tts`](https://www.home-assistant.io/components/tts) | 2
-[`update`](https://www.home-assistant.io/components/update) | 124
+[`update`](https://www.home-assistant.io/components/update) | 123
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1677
+Total | 1676
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -86,7 +86,6 @@ Total | 1677
 ## Extensions
 
 ### Add-ons
-- Advanced SSH & Web Terminal
 - Assist Microphone
 - ESPHome
 - File editor
