@@ -139,18 +139,6 @@ binary_sensor:
               then:
                 - if:
                     condition:
-                      lambda: 'return id(current_view).state == "current_time";'
-                    then:
-                      - if:
-                          condition:
-                            lambda: 'return id(room_next_alarm_dismissable).state;'
-                          then:
-                            - homeassistant.service:
-                                service: input_boolean.turn_off
-                                data:
-                                  entity_id: input_boolean.${alarm_room}_next_alarm_dismissed
-                - if:
-                    condition:
                       lambda: 'return id(current_view).state == "lights";'
                     then:
                       - lambda: 'id(current_command).publish_state("lights_on");'
@@ -236,6 +224,18 @@ binary_sensor:
               then:
                 - if:
                     condition:
+                      lambda: 'return id(current_view).state == "current_time";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(room_next_alarm_dismissable).state;'
+                          then:
+                            - homeassistant.service:
+                                service: input_boolean.turn_off
+                                data:
+                                  entity_id: input_boolean.${alarm_room}_next_alarm_dismissed
+                - if:
+                    condition:
                       lambda: 'return id(current_view).state == "lights";'
                     then:
                       - lambda: 'id(current_command).publish_state("set_recommended_room_scene");'
@@ -297,16 +297,7 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "current_time";'
                     then:
-                      - if:
-                          condition:
-                            lambda: 'return id(room_next_alarm_dismissable).state && !id(room_next_alarm_dismissed).state;'
-                          then:
-                            - homeassistant.service:
-                                service: input_boolean.turn_on
-                                data:
-                                  entity_id: input_boolean.${alarm_room}_next_alarm_dismissed
-                          else:
-                            - light.turn_off: backlight
+                      - light.turn_off: backlight
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
@@ -392,6 +383,18 @@ binary_sensor:
               condition:
                 light.is_on: backlight
               then:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "current_time";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(room_next_alarm_dismissable).state && !id(room_next_alarm_dismissed).state;'
+                          then:
+                            - homeassistant.service:
+                                service: input_boolean.turn_off
+                                data:
+                                  entity_id: input_boolean.${alarm_room}_next_alarm_dismissed
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
