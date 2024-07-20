@@ -535,7 +535,6 @@ image:
 spi:
   clk_pin: 18
   mosi_pin: 23
-  miso_pin: 19
 
 light:
   - platform: monochromatic
@@ -545,12 +544,13 @@ light:
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_off:
       - display.page.show: current_time
-  - platform: neopixelbus
-    type: GRB
-    variant: SK6812
+  - platform: esp32_rmt_led_strip
+    rgb_order: GRB
+    chipset: SK6812
     pin: GPIO15
     num_leds: 10
     name: "LED Strips"
+    rmt_channel: 0
     id: led_strips
     effects:
       - pulse:
