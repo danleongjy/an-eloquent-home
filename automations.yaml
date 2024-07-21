@@ -531,9 +531,19 @@
   - platform: time
     id: start
     at: input_datetime.ac_auto_control_start
-  - platform: time
-    at: input_datetime.ac_auto_control_end
-    id: end
+  - platform: template
+    value_template: '{{ now() > [[as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo),
+      as_datetime(states(''input_datetime.graces_next_alarm'')).astimezone(now().tzinfo)]
+      | max, today_at(states(''input_datetime.ac_auto_control_end''))] | min }}'
+    id: parents_room
+  - platform: template
+    value_template: '{{ now() > [as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo),
+      today_at(states(''input_datetime.ac_auto_control_end''))] | min }}'
+    id: elis_room
+  - platform: template
+    value_template: '{{ now() > [as_datetime(states(''input_datetime.elenas_next_alarm'')).astimezone(now().tzinfo),
+      today_at(states(''input_datetime.ac_auto_control_end''))] | min }}'
+    id: elenas_room
   condition: []
   action:
   - if:
@@ -590,22 +600,15 @@
           - automation.parents_room_fan_auto_control
     else:
     - service: automation.turn_off
-      data: {}
+      data:
+        stop_actions: true
       target:
         entity_id:
-        - automation.elenas_room_ac_auto_control
-        - automation.elenas_room_fan_auto_control
-        - automation.elis_room_ac_auto_control
-        - automation.elis_room_fan_auto_control
-        - automation.parents_room_ac_auto_control
-        - automation.parents_room_fan_auto_control
+        - automation.{{ trigger.id }}_ac_auto_control
+        - automation.{{ trigger.id }}_fan_auto_control
     - service: climate.turn_off
-      data: {}
       target:
-        entity_id:
-        - climate.elenas_room_ac
-        - climate.elis_room_ac
-        - climate.parents_room_ac
+        entity_id: climate.{{ trigger.id }}_ac
   mode: single
 - id: '1643973685368'
   alias: Notify When Vacuum Undocked
@@ -3545,7 +3548,7 @@
       motion_fan_automation: automation.parents_room_motion_fan
 - id: '1676891386490'
   alias: Parents' Room AC Auto Control
-  description: Automatically turn of or off Parents' Room AC to keep Parents' Room
+  description: Automatically turn on or off Parents' Room AC to keep Parents' Room
     Temperature within +1.2 and +0.2 degC of the AC target temperature
   use_blueprint:
     path: danleongjy/ac_auto_control.yaml
