@@ -380,17 +380,27 @@
       {% set alarms = namespace({ 'Daniel': as_datetime(states('input_datetime.daniels_next_alarm')).astimezone(now().tzinfo),
                                   'Grace': as_datetime(states('input_datetime.graces_next_alarm')).astimezone(now().tzinfo),
                                   'Eli': as_datetime(states('input_datetime.elis_next_alarm')).astimezone(now().tzinfo),
-                                  'Elena': as_datetime(states('input_datetime.elenas_next_alarm')).astimezone(now().tzinfo)}) %}
+                                  'Elena': as_datetime(states('input_datetime.elenas_next_alarm')).astimezone(now().tzinfo) }) %}
+      {% set alarms_dismissed = namespace({ 'Daniel': alarms['Daniel'] <= alarms['Grace'] and is_state('input_boolean.parents_room_next_alarm_dismissed', 'on'),
+                                            'Grace': alarms['Grace'] <= alarms['Daniel'] and is_state('input_boolean.parents_room_next_alarm_dismissed', 'on'),
+                                            'Eli': is_state('input_boolean.elis_room_next_alarm_dismissed', 'on'),
+                                            'Elena': is_state('input_boolean.elenas_room_next_alarm_dismissed', 'on') }) %}
       {% set alarm_timings = namespace(output = '') %}
       {% for person in ['Daniel','Grace','Eli','Elena'] %}
         {% if alarms[person] - now() > timedelta(hours = 12) %}
           {% set alarm_timings.output = alarm_timings.output + 'A' %}
-        {% elif (alarms[person] - alarms['Eli']) <= timedelta(minutes = 10) and (alarms['Eli'] - alarms[person]) <= timedelta(minutes = 10) %}
-          {% set alarm_timings.output = alarm_timings.output + 'B' %}
-        {% elif (alarms[person] - alarms['Elena']) <= timedelta(minutes = 10) and (alarms['Elena'] - alarms[person]) <= timedelta(minutes = 10) %}
-          {% set alarm_timings.output = alarm_timings.output + 'C' %}
         {% else %}
-          {% set alarm_timings.output = alarm_timings.output + 'D' %}
+          {% if alarms_dismissed[person] %}
+            {% set alarm_timings.output = alarm_timings.output + 'E' %}
+          {% else %}
+            {% if (alarms[person] - alarms['Eli']) <= timedelta(minutes = 10) and (alarms['Eli'] - alarms[person]) <= timedelta(minutes = 10) %}
+              {% set alarm_timings.output = alarm_timings.output + 'B' %}
+            {% elif (alarms[person] - alarms['Elena']) <= timedelta(minutes = 10) and (alarms['Elena'] - alarms[person]) <= timedelta(minutes = 10) %}
+              {% set alarm_timings.output = alarm_timings.output + 'C' %}
+            {% else %}
+              {% set alarm_timings.output = alarm_timings.output + 'D' %}
+            {% endif %}
+          {% endif %}
         {% endif %}
       {% endfor %}
       {% for person in ['Daniel','Grace','Eli','Elena'] %}
@@ -405,18 +415,22 @@
       Daniel: "{{ states('input_datetime.daniels_next_alarm') }}"
       daniel_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[0] != 'A' }}"
       daniel_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[4] == 'T' }}"
+      daniel_next_alarm_dismissed: "{{ states('sensor.next_alarm_timings')[0] == 'E' }}"
       Grace: "{{ states('input_datetime.graces_next_alarm') }}"
       grace_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[1] != 'A' }}"
       grace_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[5] == 'T' }}"
+      grace_next_alarm_dismissed: "{{ states('sensor.next_alarm_timings')[1] == 'E' }}"
       parents_room: "{{ [states('input_datetime.daniels_next_alarm') | as_datetime, states('input_datetime.graces_next_alarm') | as_datetime] | min }}"
       parents_room_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[0] != 'A' or states('sensor.next_alarm_timings')[1] != 'A' }}"
       parents_room_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[4] == 'T' or states('sensor.next_alarm_timings')[5] == 'T' }}"
       Eli: "{{ states('input_datetime.elis_next_alarm') }}"
       elis_room_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[2] != 'A' }}"
       elis_room_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[6] == 'T' }}"
+      eli_next_alarm_dismissed: "{{ states('sensor.next_alarm_timings')[2] == 'E' }}"
       Elena: "{{ states('input_datetime.elenas_next_alarm') }}"
       elenas_room_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[3] != 'A' }}"
       elenas_room_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[7] == 'T' }}"
+      elena_next_alarm_dismissed: "{{ states('sensor.next_alarm_timings')[3] == 'E' }}"
 
   - name: Washer Status
     unique_id: sensor.washer_status
