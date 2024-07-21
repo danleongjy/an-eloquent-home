@@ -532,17 +532,20 @@
     id: start
     at: input_datetime.ac_auto_control_start
   - platform: template
-    value_template: '{{ now() > [[as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo),
-      as_datetime(states(''input_datetime.graces_next_alarm'')).astimezone(now().tzinfo)]
-      | max, today_at(states(''input_datetime.ac_auto_control_end''))] | min }}'
+    value_template: '{{ now() > [[as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo)
+      - timedelta(minutes = 30), as_datetime(states(''input_datetime.graces_next_alarm'')).astimezone(now().tzinfo)
+      - timedelta(minutes = 30)] | max, today_at(states(''input_datetime.ac_auto_control_end''))]
+      | min }}'
     id: parents_room
   - platform: template
-    value_template: '{{ now() > [as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo),
-      today_at(states(''input_datetime.ac_auto_control_end''))] | min }}'
+    value_template: '{{ now() > [as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo)
+      - timedelta(minutes = 30), today_at(states(''input_datetime.ac_auto_control_end''))]
+      | min }}'
     id: elis_room
   - platform: template
-    value_template: '{{ now() > [as_datetime(states(''input_datetime.elenas_next_alarm'')).astimezone(now().tzinfo),
-      today_at(states(''input_datetime.ac_auto_control_end''))] | min }}'
+    value_template: '{{ now() > [as_datetime(states(''input_datetime.elenas_next_alarm'')).astimezone(now().tzinfo)
+      - timedelta(minutes = 30), today_at(states(''input_datetime.ac_auto_control_end''))]
+      | min }}'
     id: elenas_room
   condition: []
   action:
