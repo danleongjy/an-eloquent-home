@@ -1,6 +1,12 @@
+substitutions:
+  core_room: kitchen
+  hostname_room: kitchen
+  capitalised_room_name: Kitchen
+  blinds_entity: cover.kitchen_blind
+
 esphome:
-  name: kitchen-core
-  friendly_name: Kitchen Core
+  name: ${hostname_room}-core
+  friendly_name: ${capitalised_room_name} Core
 
 esp32:
   board: esp32dev
@@ -25,7 +31,7 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Kitchen-Core Fallback Hotspot"
+    ssid: "${hostname_room}-core"
     password: "kv5wL8sE7d18"
   
   manual_ip:
@@ -35,6 +41,26 @@ wifi:
 
 captive_portal:
 
+external_components:
+  - source: github://airy10/esphome-m5stickC/
+    components: ['axp192']
+
+script:
+  - id: reset_view
+    mode: restart
+    then:
+      - delay: 120s
+      - display.page.show: current_time
+  - id: activate_screensaver
+    mode: restart
+    then:
+      - delay: 600s
+      - display.page.show: screensaver
+
+spi:
+  - clk_pin: 13
+    mosi_pin: 15
+
 i2c:
   - id: i2c_internal
     sda: 21
@@ -43,16 +69,332 @@ i2c:
     sda: 0
     scl: 26
   
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+select:
+  - platform: template
+    id: env_value_display
+    options:
+      - temperature
+      - humidity
+      - lux
+    optimistic: True
+    on_value: 
+      then:
+        - delay: 5s
+        - select.next: env_value_display
+
+text_sensor:
+  - platform: template
+    id: current_view
+    name: 'Current View'
+
 binary_sensor:
+  - platform: homeassistant
+    id: lights_power
+    entity_id: light.${core_room}_lights
+  - platform: homeassistant
+    id: blinds_auto_control
+    entity_id: automation.kitchen_blind_auto_control
+  - platform: homeassistant
+    id: kitchen_presence
+    entity_id: binary_sensor.kitchen_presence
+    on_state:
+      then:
+        if:
+          condition:
+            binary_sensor.is_on: kitchen_presence
+          then:
+            display.page.show: current_time
+          else:
+            script.execute: activate_screensaver
   - platform: gpio
     pin: 37
     name: Front Button
     id: front_button
     filters: 
       - invert:
+    on_click: 
+      then:
+        - if:
+            condition:
+              display.is_displaying_page: blinds
+            then:
+              - script.execute: reset_view
+              - display.page.show: current_time
+            else:
+              - script.execute: reset_view
+              - display.page.show_next: interface_display
   - platform: gpio
     pin: 39
     name: Side Button
     id: side_button
     filters: 
       - invert:
+  - platform: gpio
+    pin: 33
+    name: Blue Button
+    id: blue_button
+    filters: 
+      - invert:
+    setup_priority: 490
+  - platform: gpio
+    pin: 32
+    name: Red Button
+    id: red_button
+    filters: 
+      - invert:
+    setup_priority: 490
+
+sensor:
+  - platform: axp192
+    id: pmu
+    address: 0x34
+    i2c_id: i2c_internal
+    update_interval: 30s
+    battery_level:
+      name: "Battery"
+      id: "battery"
+    brightness: 1
+  - platform: homeassistant
+    id: lights_brightness
+    entity_id: light.${core_room}_lights
+    attribute: brightness
+  - platform: homeassistant
+    id: room_temp
+    entity_id: sensor.${core_room}_temperature
+  - platform: homeassistant
+    id: room_hum
+    entity_id: sensor.${core_room}_humidity
+  - platform: homeassistant
+    id: room_lux
+    entity_id: sensor.${core_room}_radar_lux_calibrated
+  - platform: homeassistant
+    id: blinds_position
+    entity_id: ${blinds_entity}
+    attribute: current_position
+
+color:
+  - id: border
+    red: 50%
+    green: 50%
+    blue: 50%
+  - id: device_on
+    hex: FFC107
+  - id: device_off
+    hex: 4D729D
+  - id: slider
+    hex: 41A7F2
+  - id: auto_control
+    hex: F2900F
+
+font:
+  - file: 
+      type: gfonts
+      family: Roboto
+      weight: bold
+    id: main_time
+    size: 80
+  - file: 
+      type: gfonts
+      family: Roboto
+    id: small_time
+    size: 30
+  - file: 
+      type: gfonts
+      family: Roboto
+      weight: light
+    id: status_bar
+    size: 20
+  - file: 
+      type: gfonts
+      family: Roboto
+      weight: bold
+    id: auto_control_indicator
+    size: 50
+
+image:
+  - file: mdi:thermometer
+    id: status_temp
+    resize: 20x20
+  - file: mdi:water-percent
+    id: status_hum
+    resize: 20x20
+  - file: mdi:brightness-5
+    id: status_lux
+    resize: 20x20
+  - file: mdi:clock-outline
+    id: tab_current_time
+    resize: 30x30
+  - file: mdi:lightbulb-group
+    id: tab_lights
+    resize: 30x30
+  - file: mdi:roller-shade
+    id: tab_blinds
+    resize: 30x30
+  - file: mdi:lightbulb-group
+    id: main_lights
+    resize: 120x120
+  - file: mdi:roller-shade
+    id: main_blinds
+    resize: 120x120
+
+display:
+  - platform: ili9xxx
+    id: interface_display
+    model: ST7789V
+    dc_pin: 23
+    reset_pin: 18
+    cs_pin: 5
+    invert_colors: True
+    dimensions:
+      height: 240
+      width: 135
+      offset_height: 40
+      offset_width: 52
+    on_page_change: 
+      - to: current_time
+        then:
+          lambda: 'id(current_view).publish_state("current_time");'
+      - to: lights
+        then:
+          lambda: 'id(current_view).publish_state("lights");'
+      - to: blinds
+        then:
+          lambda: 'id(current_view).publish_state("blinds");'
+      - to: screensaver
+        then:
+          lambda: 'id(current_view).publish_state("screensaver");'
+    pages:
+      - id: current_time
+        lambda: |-
+          int width = it.get_width();
+          int height = it.get_height();
+
+          // tabs
+          it.image(width * 0.5, height * 0.8, id(tab_lights), ImageAlign::CENTER);
+          it.image(width * 0.8333, height * 0.8, id(tab_blinds), ImageAlign::CENTER);
+
+          // borders
+          it.rectangle(0, 0, width, height, id(border));
+          it.line(width * 0.3333, height * 0.7, width * 0.3333, height * 0.9, id(border));
+          it.line(width * 0.6667, height * 0.7, width * 0.6667, height * 0.9, id(border));
+          it.line(width * 0.3333, height * 0.7, width, height * 0.7, id(border));
+          it.line(0, height * 0.9, width, height * 0.9, id(border));
+
+          // bottom status bar
+          if (id(env_value_display).state == "temperature") {
+            it.image(0,height * 0.92, id(status_temp));
+            it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
+          } else if (id(env_value_display).state == "humidity") {
+            it.image(0,height * 0.92, id(status_hum));
+            it.printf(20, height * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
+          } else if (id(env_value_display).state == "lux") {
+            it.image(0, height * 0.92,id(status_lux));
+            it.printf(20, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
+          }
+
+          // display time
+          it.strftime(width * 0.5, height * 0.175, id(main_time), TextAlign::CENTER, "%H", id(homeassistant_time).now());
+          it.strftime(width * 0.5, height * 0.525, id(main_time), TextAlign::CENTER, "%M", id(homeassistant_time).now());
+          if (id(homeassistant_time).now().second % 2 == 0) {
+            it.print(width * 0.5, height * 0.26, id(main_time), TextAlign::CENTER, "..");
+          }
+
+          // Update display brightness
+          id(pmu).set_brightness(1);
+          id(pmu).update();
+      - id: lights
+        lambda: |-
+          int width = it.get_width();
+          int height = it.get_height();
+
+          // tabs
+          if (id(lights_power).state) {
+            it.filled_rectangle(0, height * 0.7, width * 0.3333, height * 0.2, id(slider));
+            it.line(0, height * 0.7, width * 0.3333, height * 0.7, id(slider));
+          }
+          it.image(width * 0.5, height * 0.8, id(tab_blinds), ImageAlign::CENTER);
+          it.image(width * 0.8333, height * 0.8, id(tab_current_time), ImageAlign::CENTER);
+
+          // borders
+          it.rectangle(0, 0, width, height, id(border));
+          it.line(width * 0.3333, height * 0.7, width * 0.3333, height * 0.9, id(border));
+          it.line(width * 0.6667, height * 0.7, width * 0.6667, height * 0.9, id(border));
+          it.line(width * 0.3333, height * 0.7, width, height * 0.7, id(border));
+          it.line(0, height * 0.9, width, height * 0.9, id(border));
+
+          // bottom status bar
+          if (id(env_value_display).state == "temperature") {
+            it.image(0,height * 0.92, id(status_temp));
+            it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
+          } else if (id(env_value_display).state == "humidity") {
+            it.image(0,height * 0.92, id(status_hum));
+            it.printf(20, height * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
+          } else if (id(env_value_display).state == "lux") {
+            it.image(0, height * 0.92,id(status_lux));
+            it.printf(20, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
+          }
+
+          // main display
+          if (id(lights_power).state) {
+            it.filled_rectangle(0, height * (0.7 - (0.7 * (id(lights_brightness).state) / 255)), width, height * (0.7 * (id(lights_brightness).state) / 255), id(slider));
+            it.image(width * 0.5, height * 0.35, id(main_lights), ImageAlign::CENTER, id(device_on));
+          } else {
+            it.image(width * 0.5, height * 0.35, id(main_lights), ImageAlign::CENTER, id(device_off));
+          }
+          // Update display brightness
+          id(pmu).set_brightness(1);
+          id(pmu).update();
+      - id: blinds
+        lambda: |-
+          int width = it.get_width();
+          int height = it.get_height();
+
+          // tabs
+          if (id(blinds_position).state > 0) {
+            it.filled_rectangle(0, height * 0.7, width * 0.3333, height * 0.2, id(slider));
+            it.line(0, height * 0.7, width * 0.3333, height * 0.7, id(slider));
+          }
+          it.image(width * 0.5, height * 0.8, id(tab_current_time), ImageAlign::CENTER);
+          it.image(width * 0.8333, height * 0.8, id(tab_lights), ImageAlign::CENTER);
+
+          // borders
+          it.rectangle(0, 0, width, height, id(border));
+          it.line(width * 0.3333, height * 0.7, width * 0.3333, height * 0.9, id(border));
+          it.line(width * 0.6667, height * 0.7, width * 0.6667, height * 0.9, id(border));
+          it.line(width * 0.3333, height * 0.7, width, height * 0.7, id(border));
+          it.line(0, height * 0.9, width, height * 0.9, id(border));
+
+          // bottom status bar
+          if (id(env_value_display).state == "temperature") {
+            it.image(0,height * 0.92, id(status_temp));
+            it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
+          } else if (id(env_value_display).state == "humidity") {
+            it.image(0,height * 0.92, id(status_hum));
+            it.printf(20, height * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
+          } else if (id(env_value_display).state == "lux") {
+            it.image(0, height * 0.92,id(status_lux));
+            it.printf(20, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
+          }
+
+          // main display
+          if (id(blinds_position).state > 0) {
+            it.filled_rectangle(0, height * (0.7 - (0.7 * id(blinds_position).state) / 100), width, height * (0.7 * id(blinds_position).state / 100), id(slider));
+            it.image(width * 0.5, height * 0.35, id(main_blinds), ImageAlign::CENTER, id(device_on));
+          } else {
+            it.image(width * 0.5, height * 0.35, id(main_blinds), ImageAlign::CENTER, id(device_off));
+          }
+          if (id(blinds_auto_control).state) {
+            it.print(width * 0.85, height * 0.2, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
+          }
+          // Update display brightness
+          id(pmu).set_brightness(1);
+          id(pmu).update();
+      - id: screensaver
+        lambda: |-
+          // Update display brightness
+          id(pmu).set_brightness(0);
+          id(pmu).update();
