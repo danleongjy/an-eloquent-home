@@ -6668,3 +6668,72 @@
         data:
           tag: mop_unclean
   mode: single
+- id: '1722233345556'
+  alias: Kitchen Core
+  description: Interface between Kitchen devices and Home Assistant via ESPHome and
+    M5StickC Plus
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.kitchen_core_current_command
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: sensor.kitchen_core_current_command
+        state: lights_on
+      sequence:
+      - service: script.recommended_light_level
+        data:
+          light: light.kitchen_lights
+    - conditions:
+      - condition: state
+        entity_id: sensor.kitchen_core_current_command
+        state: lights_off
+      sequence:
+      - service: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.kitchen_lights
+    - conditions:
+      - condition: state
+        entity_id: sensor.kitchen_core_current_command
+        state: lights_brighten
+      sequence:
+      - service: light.turn_on
+        metadata: {}
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id: light.kitchen_lights
+    - conditions:
+      - condition: state
+        entity_id: sensor.kitchen_core_current_command
+        state: lights_darken
+      sequence:
+      - service: light.turn_on
+        metadata: {}
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+        target:
+          entity_id: light.kitchen_lights
+  mode: single
+- id: '1722234123190'
+  alias: Kitchen Core Blinds Controller
+  description: Control the Master Bathroom Blind with the Parents' Room Core
+  use_blueprint:
+    path: danleongjy/room_core_cover_controller.yaml
+    input:
+      cover: cover.kitchen_blind
+      core_current_command: sensor.kitchen_core_current_command
+      cover_auto_control: automation.kitchen_blind_auto_control
+      auto_control_indicator_light: light.kitchen_ceiling_light_entity
+      core_command_close: blinds_close
+      core_command_open: blinds_open
+      core_command_stop: blinds_stop
+      core_command_auto_control: blinds_auto_control
+      core_command_manual_control: blinds_manual_control

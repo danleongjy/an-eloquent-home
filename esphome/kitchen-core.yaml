@@ -39,6 +39,10 @@ wifi:
     gateway: 192.168.18.1
     subnet: 255.255.255.0
 
+  on_connect:
+    - lambda: 'id(current_view).publish_state("current_time");'
+    - lambda: 'id(current_command).publish_state("none");'
+    
 captive_portal:
 
 external_components:
@@ -51,6 +55,15 @@ script:
     then:
       - delay: 120s
       - display.page.show: current_time
+  - id: reset_command
+    then:
+      - delay: 1s
+      - if:
+          condition:
+            lambda: 'return id(current_command).state != "none";'
+          then:
+            - lambda: 'id(current_command).publish_state("none");'
+    mode: queued
   - id: activate_screensaver
     mode: restart
     then:
@@ -90,6 +103,15 @@ text_sensor:
   - platform: template
     id: current_view
     name: 'Current View'
+  - platform: template
+    id: current_command
+    name: 'Current Command'
+    on_value: 
+      then:
+        script.execute: reset_command
+  - platform: homeassistant
+    id: blinds_state
+    entity_id: ${blinds_entity}
 
 binary_sensor:
   - platform: homeassistant
@@ -134,19 +156,166 @@ binary_sensor:
     filters: 
       - invert:
   - platform: gpio
-    pin: 33
-    name: Blue Button
-    id: blue_button
-    filters: 
-      - invert:
-    setup_priority: 490
-  - platform: gpio
     pin: 32
     name: Red Button
     id: red_button
     filters: 
       - invert:
     setup_priority: 490
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                display.is_displaying_page: screensaver
+              then:
+                display.page.show: current_time
+              else:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("lights_on");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "blinds";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(blinds_state).state == "closing";'
+                          then:
+                            - lambda: 'id(current_command).publish_state("blinds_stop");'
+                          else:
+                            - lambda: 'id(current_command).publish_state("blinds_open");'
+      - timing:
+          - ON for at least 1.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                display.is_displaying_page: screensaver
+              then:
+                display.page.show: current_time
+              else:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: red_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("lights_brighten");'
+                            - delay: 1.5s
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                display.is_displaying_page: screensaver
+              then:
+                display.page.show: current_time
+              else:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("lights_on");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "blinds";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("blinds_auto_control");'
+  - platform: gpio
+    pin: 33
+    name: Blue Button
+    id: blue_button
+    filters: 
+      - invert:
+    setup_priority: 490
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                display.is_displaying_page: screensaver
+              then:
+                display.page.show: current_time
+              else:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "current_time";'
+                    then:
+                      display.page.show: screensaver
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("lights_off");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "blinds";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(blinds_state).state == "opening";'
+                          then:
+                            - lambda: 'id(current_command).publish_state("blinds_stop");'
+                          else:
+                            - lambda: 'id(current_command).publish_state("blinds_close");'
+      - timing:
+          - ON for at least 1.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                display.is_displaying_page: screensaver
+              then:
+                display.page.show: current_time
+              else:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: blue_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("lights_darken");'
+                            - delay: 1.5s
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                display.is_displaying_page: screensaver
+              then:
+                display.page.show: current_time
+              else:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("lights_off");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "blinds";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("blinds_manual_control");'
 
 sensor:
   - platform: axp192
