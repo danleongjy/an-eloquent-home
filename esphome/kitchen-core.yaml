@@ -100,8 +100,7 @@ i2c:
 esp_adf:
 
 i2s_audio:
-  - i2s_lrclk_pin: 26
-    i2s_bclk_pin: 0
+  - i2s_lrclk_pin: 0
 
 microphone:
   - platform: i2s_audio
@@ -230,17 +229,16 @@ binary_sensor:
     id: front_button
     filters: 
       - invert:
-    on_click: 
-      then:
-        - if:
-            condition:
-              display.is_displaying_page: blinds
-            then:
-              - script.execute: reset_view
-              - display.page.show: current_time
-            else:
-              - script.execute: reset_view
-              - display.page.show_next: interface_display
+    on_click:
+      - if:
+          condition:
+            display.is_displaying_page: blinds
+          then:
+            - script.execute: reset_view
+            - display.page.show: current_time
+          else:
+            - script.execute: reset_view
+            - display.page.show_next: interface_display
   - platform: gpio
     pin: 39
     name: Side Button
@@ -248,9 +246,9 @@ binary_sensor:
     filters: 
       - invert:
   - platform: gpio
-    pin: 32
-    name: Red Button
-    id: red_button
+    pin: 33
+    name: Blue Button
+    id: blue_button
     filters: 
       - invert:
     setup_priority: 490
@@ -326,9 +324,9 @@ binary_sensor:
                     then:
                       - lambda: 'id(current_command).publish_state("blinds_auto_control");'
   - platform: gpio
-    pin: 33
-    name: Blue Button
-    id: blue_button
+    pin: 32
+    name: Red Button
+    id: red_button
     filters: 
       - invert:
     setup_priority: 490
@@ -415,9 +413,6 @@ sensor:
     address: 0x34
     i2c_id: i2c_internal
     update_interval: 30s
-    battery_level:
-      name: "Battery"
-      id: "battery"
     brightness: 1
   - platform: homeassistant
     id: lights_brightness
@@ -451,14 +446,14 @@ light:
     effects:
       - pulse:
           name: "Slow Pulse"
-          transition_length: 2500ms
-          update_interval: 2500ms
+          transition_length: 1000ms
+          update_interval: 1000ms
           min_brightness: 50%
           max_brightness: 100%
       - pulse:
           name: "Fast Pulse"
-          transition_length: 500ms
-          update_interval: 500ms
+          transition_length: 250ms
+          update_interval: 250ms
           min_brightness: 50%
           max_brightness: 100%
 
