@@ -47,7 +47,12 @@ captive_portal:
 
 external_components:
   - source: github://airy10/esphome-m5stickC/
-    components: ['axp192']
+    components: 
+      - axp192
+  - source: github://pr#5230
+    components:
+      - esp_adf
+    refresh: 0s
 
 script:
   - id: reset_view
@@ -69,6 +74,19 @@ script:
     then:
       - delay: 600s
       - display.page.show: screensaver
+  - id: reset_led
+    then:
+      - if:
+          condition:
+            - switch.is_on: use_wake_word
+            - switch.is_on: use_listen_light
+          then:
+            - light.turn_on:
+                id: led
+                brightness: 60%
+                effect: none
+          else:
+            - light.turn_off: led
 
 spi:
   - clk_pin: 13
@@ -78,10 +96,84 @@ i2c:
   - id: i2c_internal
     sda: 21
     scl: 22
-  - id: i2c_hat
-    sda: 0
-    scl: 26
   
+esp_adf:
+
+i2s_audio:
+  - i2s_lrclk_pin: 26
+    i2s_bclk_pin: 0
+
+microphone:
+  - platform: i2s_audio
+    id: mic
+    i2s_din_pin: 34
+    adc_type: external
+    pdm: True
+
+voice_assistant:
+  id: va
+  microphone: mic
+  noise_suppression_level: 2
+  auto_gain: 31dBFS
+  volume_multiplier: 2.0
+  vad_threshold: 3
+  on_listening:
+    - homeassistant.service:
+        service: media_player.play_media
+        data:
+          media_content_id: media-source://media_source/local/1_start.wav
+          media_content_type: music
+          entity_id: media_player.kitchen_speaker
+    - light.turn_on:
+        id: led
+        effect: "Slow Pulse"
+  on_stt_vad_end:
+    - homeassistant.service:
+        service: media_player.play_media
+        data:
+          media_content_id: media-source://media_source/local/1_ok.wav
+          media_content_type: music
+          entity_id: media_player.kitchen_speaker
+    - light.turn_on:
+        id: led
+        effect: "Fast Pulse"
+  on_tts_start:
+    - light.turn_on:
+        id: led
+        brightness: 100%
+        effect: none
+  on_tts_end:
+    - homeassistant.service:
+        service: media_player.play_media
+        data:
+          media_content_id: !lambda 'return x;'
+          media_content_type: audio/mpeg
+          entity_id: media_player.kitchen_speaker
+  on_end:
+    - delay: 100ms
+    - script.execute: reset_led
+  on_error:
+    - light.turn_on:
+        id: led
+        brightness: 100%
+        effect: none
+    - delay: 1s
+    - script.execute: reset_led
+  on_client_connected:
+    - if:
+        condition:
+          switch.is_on: use_wake_word
+        then:
+          - voice_assistant.start_continuous:
+          - script.execute: reset_led
+  on_client_disconnected:
+    - if:
+        condition:
+          switch.is_on: use_wake_word
+        then:
+          - voice_assistant.stop:
+          - light.turn_off: led
+
 time:
   - platform: homeassistant
     id: homeassistant_time
@@ -344,6 +436,62 @@ sensor:
     id: blinds_position
     entity_id: ${blinds_entity}
     attribute: current_position
+
+output:
+  - platform: ledc
+    pin: 10
+    inverted: true
+    id: led_output
+
+light:
+  - platform: monochromatic
+    output:  led_output
+    name: ${capitalised_room_name} Core LED
+    id: led
+    effects:
+      - pulse:
+          name: "Slow Pulse"
+          transition_length: 2500ms
+          update_interval: 2500ms
+          min_brightness: 50%
+          max_brightness: 100%
+      - pulse:
+          name: "Fast Pulse"
+          transition_length: 500ms
+          update_interval: 500ms
+          min_brightness: 50%
+          max_brightness: 100%
+
+switch:
+  - platform: template
+    name: Use wake word
+    id: use_wake_word
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    entity_category: config
+    on_turn_on:
+      - lambda: id(va).set_use_wake_word(true);
+      - if:
+          condition:
+            not:
+              - voice_assistant.is_running
+          then:
+            - voice_assistant.start_continuous
+      - script.execute: reset_led
+    on_turn_off:
+      - voice_assistant.stop
+      - lambda: id(va).set_use_wake_word(false);
+      - script.execute: reset_led
+  - platform: template
+    name: Use Listen Light
+    id: use_listen_light
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    entity_category: config
+    on_turn_on:
+      - script.execute: reset_led
+    on_turn_off:
+      - script.execute: reset_led
 
 color:
   - id: border
