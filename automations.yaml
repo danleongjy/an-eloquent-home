@@ -6070,12 +6070,14 @@
     - service: switch.turn_on
       data: {}
       target:
-        entity_id: switch.kitchen_voice_assistant_use_wake_word
+        entity_id:
+        - switch.kitchen_core_use_wake_word
     else:
     - service: switch.turn_off
       data: {}
       target:
-        entity_id: switch.kitchen_voice_assistant_use_wake_word
+        entity_id:
+        - switch.kitchen_core_use_wake_word
   mode: single
   max_exceeded: silent
 - id: '1702652712056'
@@ -6085,8 +6087,6 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.kitchen_presence
-    - binary_sensor.study_room_presence
     - binary_sensor.dining_room_presence
     - binary_sensor.living_room_presence
     to: 'on'
@@ -6096,8 +6096,6 @@
     - input_boolean.away_mode
   - platform: state
     entity_id:
-    - binary_sensor.kitchen_presence
-    - binary_sensor.study_room_presence
     - binary_sensor.dining_room_presence
     - binary_sensor.living_room_presence
     to: 'off'
@@ -6737,3 +6735,34 @@
       core_command_stop: blinds_stop
       core_command_auto_control: blinds_auto_control
       core_command_manual_control: blinds_manual_control
+- id: '1722382955872'
+  alias: Study Room Voice Assistant Listening for Wake Word
+  description: Turn on wake word listening on Study Room Voice Assistant when presence
+    detected in Study Room and nothing is connected to Ethernet
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.study_room_ethernet_connection
+    - binary_sensor.study_room_motion
+  condition: []
+  action:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.study_room_ethernet_connection
+      state: 'off'
+    - condition: state
+      entity_id: binary_sensor.study_room_motion
+      state: 'on'
+    then:
+    - service: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.study_room_voice_assistant_use_wake_word
+    else:
+    - service: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.study_room_voice_assistant_use_wake_word
+  mode: single

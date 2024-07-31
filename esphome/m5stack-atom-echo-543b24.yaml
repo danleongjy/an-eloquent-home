@@ -1,6 +1,6 @@
 substitutions:
-  name: kitchen_voice_assistant
-  friendly_name: Kitchen Voice Assistant
+  name: study_room_voice_assistant
+  friendly_name: Study Room Voice Assistant
 esphome:
   name: ${name}
   name_add_mac_suffix: false
@@ -43,19 +43,9 @@ microphone:
     adc_type: external
     pdm: true
 
-speaker:
-  - platform: i2s_audio
-    id: echo_speaker
-#    i2s_dout_pin: GPIO22
-#    dac_type: external
-#    mode: mono
-    dac_type: internal # wrong config to mute speaker
-    mode: left # wrong config to mute speaker
-
 voice_assistant:
   id: va
   microphone: echo_microphone
-  speaker: echo_speaker
   noise_suppression_level: 2
   auto_gain: 31dBFS
   volume_multiplier: 2.0
@@ -66,7 +56,7 @@ voice_assistant:
         data:
           media_content_id: media-source://media_source/local/1_start.wav
           media_content_type: music
-          entity_id: media_player.kitchen_speaker
+          entity_id: media_player.study_room_speaker
     - light.turn_on:
         id: led
         blue: 100%
@@ -79,7 +69,7 @@ voice_assistant:
         data:
           media_content_id: media-source://media_source/local/1_ok.wav
           media_content_type: music
-          entity_id: media_player.kitchen_speaker
+          entity_id: media_player.study_room_speaker
     - light.turn_on:
         id: led
         blue: 100%
@@ -100,12 +90,9 @@ voice_assistant:
         data:
           media_content_id: !lambda 'return x;'
           media_content_type: audio/mpeg
-          entity_id: media_player.kitchen_speaker
+          entity_id: media_player.study_room_speaker
   on_end:
     - delay: 100ms
-    - wait_until:
-        not:
-          speaker.is_playing:
     - script.execute: reset_led
   on_error:
     - light.turn_on:
