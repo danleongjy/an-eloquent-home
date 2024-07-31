@@ -72,7 +72,7 @@ script:
   - id: activate_screensaver
     mode: restart
     then:
-      - delay: 600s
+      - delay: 300s
       - display.page.show: screensaver
   - id: reset_led
     then:
@@ -220,7 +220,8 @@ binary_sensor:
           condition:
             binary_sensor.is_on: kitchen_presence
           then:
-            display.page.show: current_time
+            - script.stop: activate_screensaver
+            - display.page.show: current_time
           else:
             script.execute: activate_screensaver
   - platform: gpio
