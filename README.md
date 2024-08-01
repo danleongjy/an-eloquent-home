@@ -15,7 +15,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
 * [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [12.4](https://github.com/home-assistant/operating-system/releases/tag/12.4) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core 2024.7.3](https://github.com/home-assistant/core/releases/tag/2024.7.3)
+* [Home Assistant Core 2024.7.4](https://github.com/home-assistant/core/releases/tag/2024.7.4)
 * 4 cores, 4GB RAM, 32GB storage
 
 ## Entities
@@ -50,12 +50,12 @@ Domain | Quantity
 [`switch`](https://www.home-assistant.io/components/switch) | 39
 [`time`](https://www.home-assistant.io/components/time) | 2
 [`tts`](https://www.home-assistant.io/components/tts) | 2
-[`update`](https://www.home-assistant.io/components/update) | 122
+[`update`](https://www.home-assistant.io/components/update) | 121
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1695
+Total | 1694
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)

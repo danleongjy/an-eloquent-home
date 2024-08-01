@@ -266,18 +266,17 @@ binary_sensor:
     filters:
       - invert:
     on_click:
-      then:
-        - script.execute: reset_view
-        - if:
-            condition:
-              rtttl.is_playing
-            then:
-              - rtttl.stop
-        - if:
-            condition:
-              light.is_on: backlight
-            then:
-              - display.page.show_next: interface_display
+      - script.execute: reset_view
+      - if:
+          condition:
+            rtttl.is_playing
+          then:
+            - rtttl.stop
+      - if:
+          condition:
+            light.is_on: backlight
+          then:
+            - display.page.show_next: interface_display
   - platform: gpio
     pin: 37
     name: 'Right Button'
@@ -553,7 +552,7 @@ light:
   - platform: neopixelbus
     type: GRB
     variant: SK6812
-    pin: GPIO15
+    pin: 15
     num_leds: 10
     name: "LED Strips"
     id: led_strips
