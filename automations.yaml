@@ -6766,3 +6766,140 @@
       target:
         entity_id: switch.study_room_voice_assistant_use_wake_word
   mode: single
+- id: '1722555368988'
+  alias: Doorbell
+  description: Chime on speakers when doorbell is pressed
+  use_blueprint:
+    path: EPMatt/ikea_e1766.yaml
+    input:
+      integration: ZHA
+      helper_last_controller_event: input_text.zz_doorbell_last_event
+      controller_device: 192b4e9c8aa753c4e58fc37ee65137a8
+      action_button_up_short:
+      - service: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: 0.5
+        target:
+          entity_id:
+          - media_player.kitchen_speaker
+          - media_player.study_room_speaker
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 500
+      - service: media_player.play_media
+        target:
+          entity_id: media_player.all_speakers
+        data:
+          media_content_id: https://an-eloquent-home.duckdns.org/media/local/doorbell.mp3
+          media_content_type: music
+        metadata: {}
+      - if:
+        - condition: state
+          entity_id: binary_sensor.parents_room_doors
+          state: 'on'
+        then:
+        - service: select.select_option
+          metadata: {}
+          data:
+            option: Doorbell
+          target:
+            entity_id: select.parents_room_core_ringtone
+        - service: button.press
+          metadata: {}
+          data: {}
+          target:
+            entity_id: button.parents_room_core_play_ringtone
+      - if:
+        - condition: state
+          entity_id: binary_sensor.elis_room_door
+          state: 'on'
+        then:
+        - service: select.select_option
+          metadata: {}
+          data:
+            option: Doorbell
+          target:
+            entity_id: select.elis_room_core_ringtone
+        - service: button.press
+          metadata: {}
+          data: {}
+          target:
+            entity_id: button.elis_room_core_play_ringtone
+      - if:
+        - condition: state
+          entity_id: binary_sensor.elenas_room_door
+          state: 'on'
+        then:
+        - service: select.select_option
+          metadata: {}
+          data:
+            option: Doorbell
+          target:
+            entity_id: select.elenas_room_core_ringtone
+        - service: button.press
+          metadata: {}
+          data: {}
+          target:
+            entity_id: button.elenas_room_core_play_ringtone
+      action_button_down_short:
+      - service: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: 0.5
+        target:
+          entity_id:
+          - media_player.kitchen_speaker
+          - media_player.study_room_speaker
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 500
+      - service: media_player.play_media
+        target:
+          entity_id: media_player.all_speakers
+        data:
+          media_content_id: https://an-eloquent-home.duckdns.org/media/local/doorbell.mp3
+          media_content_type: music
+        metadata: {}
+      - if:
+        - condition: state
+          entity_id: binary_sensor.parents_room_doors
+          state: 'on'
+        then:
+        - service: select.select_option
+          metadata: {}
+          data:
+            option: Doorbell
+          target:
+            entity_id: select.parents_room_core_ringtone
+        - service: button.press
+          metadata: {}
+          data: {}
+          target:
+            entity_id: button.parents_room_core_play_ringtone
+      - if:
+        - condition: state
+          entity_id: binary_sensor.elis_room_door
+          state: 'on'
+        then:
+        - service: select.select_option
+          metadata: {}
+          data:
+            option: Doorbell
+          target:
+            entity_id: select.elis_room_core_ringtone
+        - service: button.press
+          metadata: {}
+          data: {}
+          target:
+            entity_id: button.elis_room_core_play_ringtone
+      - service: select.select_option
+        metadata: {}
+        data:
+          option: Doorbell
+        target:
+          entity_id: select.elenas_room_core_ringtone
