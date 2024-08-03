@@ -23,7 +23,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 Domain | Quantity
 -- | --
 [`automation`](https://www.home-assistant.io/components/automation) | 160
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 152
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 153
 [`button`](https://www.home-assistant.io/components/button) | 153
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`climate`](https://www.home-assistant.io/components/climate) | 6
@@ -44,7 +44,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 14
 [`select`](https://www.home-assistant.io/components/select) | 61
-[`sensor`](https://www.home-assistant.io/components/sensor) | 570
+[`sensor`](https://www.home-assistant.io/components/sensor) | 575
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 39
@@ -55,7 +55,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1699
+Total | 1705
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
