@@ -49,7 +49,6 @@ script:
           id(interface_display).image(160,id(height) * 0.92,id(status_lux));
           id(interface_display).printf(183, id(height) * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
 
-
 select:
   - platform: template
     name: Ringtone
@@ -84,9 +83,6 @@ text_sensor:
     id: next_alarm_timing
     entity_id: binary_sensor.next_alarm_imminent
     attribute: ${alarm_room}_next_alarm_time
-  - platform: homeassistant
-    id: blinds_state
-    entity_id: ${blinds_entity}
   - platform: template
     id: current_view
     name: 'Current View'
@@ -191,13 +187,7 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "blinds";'
                     then:
-                      - if:
-                          condition:
-                            lambda: 'return id(blinds_state).state == "closing";'
-                          then:
-                            - lambda: 'id(current_command).publish_state("blinds_stop");'
-                          else:
-                            - lambda: 'id(current_command).publish_state("blinds_open");'
+                      - lambda: 'id(current_command).publish_state("blinds_up");'
       - timing:
           - ON for at least 1.5s
         then:
@@ -351,13 +341,7 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "blinds";'
                     then:
-                      - if:
-                          condition:
-                            lambda: 'return id(blinds_state).state == "opening";'
-                          then:
-                            - lambda: 'id(current_command).publish_state("blinds_stop");'
-                          else:
-                            - lambda: 'id(current_command).publish_state("blinds_close");'
+                      - lambda: 'id(current_command).publish_state("blinds_down");'
       - timing:
           - ON for at least 1.5s
         then:

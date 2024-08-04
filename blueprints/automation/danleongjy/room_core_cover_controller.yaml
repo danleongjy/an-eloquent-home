@@ -38,9 +38,6 @@ blueprint:
     core_command_open:
       name: Open Command
       description: The command reflected in the room core to open the cover
-    core_command_stop:
-      name: Stop Command
-      description: The command reflected in the room core to stop the cover
     core_command_auto_control:
       name: Auto Control Command
       description: The command reflected in the room core to turn on auto control for the cover
@@ -53,7 +50,6 @@ trigger:
     to:
       - !input core_command_open
       - !input core_command_close
-      - !input core_command_stop
       - !input core_command_auto_control
       - !input core_command_manual_control
 action:
@@ -63,25 +59,35 @@ action:
             state: !input core_command_open
             entity_id: !input core_current_command
         sequence:
-          - service: cover.open_cover
-            target:
-              entity_id: !input cover
+          - if:
+              - condition: state
+                entity_id: !input cover
+                state: closing
+            then:
+              - service: cover.stop_cover
+                target:
+                  entity_id: !input cover
+            else:
+              - service: cover.open_cover
+                target:
+                  entity_id: !input cover
       - conditions:
           - condition: state
             state: !input core_command_close
             entity_id: !input core_current_command
         sequence:
-          - service: cover.close_cover
-            target:
-              entity_id: !input cover
-      - conditions:
-          - condition: state
-            state: !input core_command_stop
-            entity_id: !input core_current_command
-        sequence:
-          - service: cover.stop_cover
-            target:
-              entity_id: !input cover
+          - if:
+              - condition: state
+                entity_id: !input cover
+                state: opening
+            then:
+              - service: cover.stop_cover
+                target:
+                  entity_id: !input cover
+            else:
+              - service: cover.close_cover
+                target:
+                  entity_id: !input cover
       - conditions:
           - condition: state
             state: !input core_command_auto_control
