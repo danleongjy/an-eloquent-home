@@ -7,6 +7,14 @@ time:
   - platform: homeassistant
     id: homeassistant_time
 
+globals:
+  - id: height
+    type: int
+    initial_value: '320'
+  - id: width
+    type: int
+    initial_value: '240'
+
 script:
   - id: reset_command
     then:
@@ -22,6 +30,25 @@ script:
     then:
       - delay: 120s
       - display.page.show: current_time
+  - id: draw_display_borders
+    then:
+      - lambda: |
+          id(interface_display).rectangle(0, 0, id(width), id(height), id(border));
+          id(interface_display).line(id(width) * 0.25, id(height) * 0.75, id(width) * 0.25, id(height) * 0.9, id(border));
+          id(interface_display).line(id(width) * 0.5, id(height) * 0.75, id(width) * 0.5, id(height) * 0.9, id(border));
+          id(interface_display).line(id(width) * 0.75, id(height) * 0.75, id(width) * 0.75, id(height) * 0.9, id(border));
+          id(interface_display).line(id(width) * 0.25, id(height) * 0.75, id(width), id(height) * 0.75, id(border));
+  - id: draw_display_bottom_status_bar
+    then:
+      - lambda: |
+          id(interface_display).line(0, id(height) * 0.9, id(width), id(height) * 0.9, id(border));
+          id(interface_display).image(0,id(height) * 0.92, id(status_temp));
+          id(interface_display).printf(20, id(height) * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
+          id(interface_display).image(80,id(height) * 0.92,id(status_hum));
+          id(interface_display).printf(100, id(height) * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
+          id(interface_display).image(160,id(height) * 0.92,id(status_lux));
+          id(interface_display).printf(183, id(height) * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
+
 
 select:
   - platform: template
@@ -618,179 +645,115 @@ display:
     pages:
       - id: current_time
         lambda: |-
-          int width = it.get_width();
-          int height = it.get_height();
-
           // tabs
-          it.image(width * 0.375, height * 0.825, id(tab_lights), ImageAlign::CENTER);
-          it.image(width * 0.625, height * 0.825, id(tab_fan), ImageAlign::CENTER);
-          it.image(width * 0.875, height * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.line(width * 0.25, height * 0.75, width, height * 0.75, id(border));
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
 
-          // borders
-          it.rectangle(0, 0, width, height, id(border));
-          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, id(border));
-          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, id(border));
-          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, id(border));
-          
-          // bottom status bar
-          it.line(0, height * 0.9, width, height * 0.9, id(border));
-          it.image(0,height * 0.92, id(status_temp));
-          it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
-          it.image(80,height * 0.92,id(status_hum));
-          it.printf(100, height * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
-          it.image(160,height * 0.92,id(status_lux));
-          it.printf(183, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
+          id(draw_display_borders).execute();
+          id(draw_display_bottom_status_bar).execute();
 
           // display alarm
           if (id(room_next_alarm_imminent).state) {
             if (id(room_next_alarm_dismissable).state) {
               if (id(room_next_alarm_dismissed).state) {
-                it.image(width * 0.325, height * 0.125, id(main_alarm_off), ImageAlign::CENTER);            
-                it.printf(width * 0.575, height * 0.125, id(small_time), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
+                it.image(id(width) * 0.325, id(height) * 0.125, id(main_alarm_off), ImageAlign::CENTER);            
+                it.printf(id(width) * 0.575, id(height) * 0.125, id(small_time), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
               } else {
                 if (id(homeassistant_time).now().second % 2 == 0) {
-                  it.image(width * 0.325, height * 0.125, id(main_alarm), ImageAlign::CENTER, id(alarm_dismissable));
+                  it.image(id(width) * 0.325, id(height) * 0.125, id(main_alarm), ImageAlign::CENTER, id(alarm_dismissable));
                 }
-                it.printf(width * 0.575, height * 0.125, id(small_time), id(alarm_dismissable), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
+                it.printf(id(width) * 0.575, id(height) * 0.125, id(small_time), id(alarm_dismissable), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
               }
             } else {
-              it.image(width * 0.325, height * 0.125, id(main_alarm), ImageAlign::CENTER);            
-              it.printf(width * 0.575, height * 0.125, id(small_time), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
+              it.image(id(width) * 0.325, id(height) * 0.125, id(main_alarm), ImageAlign::CENTER);            
+              it.printf(id(width) * 0.575, id(height) * 0.125, id(small_time), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
             }
           }
 
           // display time
-          it.strftime(width * 0.25, height * 0.35, id(main_time), TextAlign::CENTER, "%H", id(homeassistant_time).now());
-          it.strftime(width * 0.75, height * 0.35, id(main_time), TextAlign::CENTER, "%M", id(homeassistant_time).now());
+          it.strftime(id(width) * 0.25, id(height) * 0.35, id(main_time), TextAlign::CENTER, "%H", id(homeassistant_time).now());
+          it.strftime(id(width) * 0.75, id(height) * 0.35, id(main_time), TextAlign::CENTER, "%M", id(homeassistant_time).now());
           if (id(homeassistant_time).now().second % 2 == 0) {
-            it.print(width * 0.5, height * 0.325, id(main_time), TextAlign::CENTER, ":");
+            it.print(id(width) * 0.5, id(height) * 0.325, id(main_time), TextAlign::CENTER, ":");
           }
 
           // display date
-          it.strftime(width * 0.5, height * 0.6, id(small_time), TextAlign::CENTER, "%a %d %b %Y", id(homeassistant_time).now());
+          it.strftime(id(width) * 0.5, id(height) * 0.6, id(small_time), TextAlign::CENTER, "%a %d %b %Y", id(homeassistant_time).now());
       - id: lights
         lambda: |-
-          int width = it.get_width();
-          int height = it.get_height();
-
           // tabs
           if (id(lights_power).state) {
-            it.filled_rectangle(0, height * 0.75, width * 0.25, height * 0.15, id(slider));
-            it.line(0, height * 0.75, width * 0.25, height * 0.75, id(slider));
+            it.filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            it.line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
           }
-          it.image(width * 0.375, height * 0.825, id(tab_fan), ImageAlign::CENTER);
-          it.image(width * 0.625, height * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.image(width * 0.875, height * 0.825, id(tab_current_time), ImageAlign::CENTER);
-          it.line(width * 0.25, height * 0.75, width, height * 0.75, id(border));
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
 
-          // borders
-          it.rectangle(0, 0, width, height, id(border));
-          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, id(border));
-          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, id(border));
-          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, id(border));
-
-          // bottom status bar
-          it.line(0, height * 0.9, width, height * 0.9, id(border));
-          it.image(0,height * 0.92, id(status_temp));
-          it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
-          it.image(80,height * 0.92,id(status_hum));
-          it.printf(100, height * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
-          it.image(160,height * 0.92,id(status_lux));
-          it.printf(183, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
+          id(draw_display_borders).execute();
+          id(draw_display_bottom_status_bar).execute();
 
           // main display
           if (id(lights_power).state) {
-            it.filled_rectangle(0, height * (0.75 - (0.75 * (id(lights_brightness).state) / 255)), width, height * (0.75 * (id(lights_brightness).state) / 255), id(slider));
-            it.image(width * 0.5, height * 0.375, id(main_lights), ImageAlign::CENTER, id(device_on));
+            it.filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(lights_brightness).state) / 255)), id(width), id(height) * (0.75 * (id(lights_brightness).state) / 255), id(slider));
+            it.image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_on));
           } else {
-            it.image(width * 0.5, height * 0.375, id(main_lights), ImageAlign::CENTER, id(device_off));
+            it.image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_off));
           }
       - id: fan
         lambda: |-
-          int width = it.get_width();
-          int height = it.get_height();
-
           // tabs
           if (id(fan_power).state) {
-            it.filled_rectangle(0, height * 0.75, width * 0.25, height * 0.15, id(slider));
-            it.line(0, height * 0.75, width * 0.25, height * 0.75, id(slider));
+            it.filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            it.line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
           }
-          it.image(width * 0.375, height * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.image(width * 0.625, height * 0.825, id(tab_current_time), ImageAlign::CENTER);
-          it.image(width * 0.875, height * 0.825, id(tab_lights), ImageAlign::CENTER);
-          it.line(width * 0.25, height * 0.75, width, height * 0.75, id(border));
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
 
-          // borders
-          it.rectangle(0, 0, width, height, id(border));
-          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, id(border));
-          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, id(border));
-          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, id(border));
-
-          // bottom status bar
-          it.line(0, height * 0.9, width, height * 0.9, id(border));
-          it.image(0,height * 0.92, id(status_temp));
-          it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
-          it.image(80,height * 0.92,id(status_hum));
-          it.printf(100, height * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
-          it.image(160,height * 0.92,id(status_lux));
-          it.printf(183, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
+          id(draw_display_borders).execute();
+          id(draw_display_bottom_status_bar).execute();
 
           // main display
           if (id(fan_power).state) {
-            it.filled_rectangle(0, height * (0.75 - (0.75 * id(fan_speed).state / 100)), width, height * (0.75 * id(fan_speed).state / 100), id(slider));
+            it.filled_rectangle(0, id(height) * (0.75 - (0.75 * id(fan_speed).state / 100)), id(width), id(height) * (0.75 * id(fan_speed).state / 100), id(slider));
             if (id(fan_direction).state == "forward") {
-              it.image(width * 0.5, height * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_on));
+              it.image(id(width) * 0.5, id(height) * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_on));
             } else {
-              it.image(width * 0.5, height * 0.375, id(main_fan_reverse), ImageAlign::CENTER, id(device_on));
+              it.image(id(width) * 0.5, id(height) * 0.375, id(main_fan_reverse), ImageAlign::CENTER, id(device_on));
             }
           } else {
             if (id(fan_direction).state == "forward") {
-              it.image(width * 0.5, height * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_off));
+              it.image(id(width) * 0.5, id(height) * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_off));
             } else {
-              it.image(width * 0.5, height * 0.375, id(main_fan_reverse), ImageAlign::CENTER, id(device_off));
+              it.image(id(width) * 0.5, id(height) * 0.375, id(main_fan_reverse), ImageAlign::CENTER, id(device_off));
             }
           }
           if (id(fan_auto_control).state) {
-            it.print(width * 0.85, height * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
+            it.print(id(width) * 0.85, id(height) * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
           }
       - id: ac
         lambda: |-
-          int width = it.get_width();
-          int height = it.get_height();
-
           // tabs
           if (id(ac_mode).state == "cool") {
-            it.filled_rectangle(0, height * 0.75, width * 0.25, height * 0.15, id(slider));
-            it.line(0, height * 0.75, width * 0.25, height * 0.75, id(slider));
+            it.filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            it.line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
           }
-          it.image(width * 0.375, height * 0.825, id(tab_current_time), ImageAlign::CENTER);
-          it.image(width * 0.625, height * 0.825, id(tab_lights), ImageAlign::CENTER);
-          it.image(width * 0.875, height * 0.825, id(tab_fan), ImageAlign::CENTER);
-          it.line(width * 0.25, height * 0.75, width, height * 0.75, id(border));
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
 
-          // borders
-          it.rectangle(0, 0, width, height, id(border));
-          it.line(width * 0.25, height * 0.75, width * 0.25, height * 0.9, id(border));
-          it.line(width * 0.5, height * 0.75, width * 0.5, height * 0.9, id(border));
-          it.line(width * 0.75, height * 0.75, width * 0.75, height * 0.9, id(border));
-
-          // bottom status bar
-          it.line(0, height * 0.9, width, height * 0.9, id(border));
-          it.image(0,height * 0.92, id(status_temp));
-          it.printf(20, height * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
-          it.image(80,height * 0.92,id(status_hum));
-          it.printf(100, height * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
-          it.image(160,height * 0.92,id(status_lux));
-          it.printf(183, height * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
+          id(draw_display_borders).execute();
+          id(draw_display_bottom_status_bar).execute();
 
           // main display
           if (id(ac_mode).state == "cool") {
-            it.filled_rectangle(0, height * (0.75 - (0.75 * (id(ac_temp).state - 23) / 4)), width, height * (0.75 * (id(ac_temp).state - 23) / 4), id(slider));
-            it.image(width * 0.5, height * 0.375, id(main_ac), ImageAlign::CENTER, id(device_on));
+            it.filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(ac_temp).state - 23) / 4)), id(width), id(height) * (0.75 * (id(ac_temp).state - 23) / 4), id(slider));
+            it.image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_on));
           } else {
-            it.image(width * 0.5, height * 0.375, id(main_ac), ImageAlign::CENTER, id(device_off));
+            it.image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_off));
           }
           if (id(ac_auto_control).state) {
-            it.print(width * 0.85, height * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
+            it.print(id(width) * 0.85, id(height) * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
           }
