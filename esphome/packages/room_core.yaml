@@ -38,16 +38,11 @@ script:
           id(interface_display).line(id(width) * 0.5, id(height) * 0.75, id(width) * 0.5, id(height) * 0.9, id(border));
           id(interface_display).line(id(width) * 0.75, id(height) * 0.75, id(width) * 0.75, id(height) * 0.9, id(border));
           id(interface_display).line(id(width) * 0.25, id(height) * 0.75, id(width), id(height) * 0.75, id(border));
+          id(interface_display).line(0, id(height) * 0.9, id(width), id(height) * 0.9, id(border));
   - id: draw_display_bottom_status_bar
     then:
       - lambda: |
-          id(interface_display).line(0, id(height) * 0.9, id(width), id(height) * 0.9, id(border));
-          id(interface_display).image(0,id(height) * 0.92, id(status_temp));
-          id(interface_display).printf(20, id(height) * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
-          id(interface_display).image(80,id(height) * 0.92,id(status_hum));
-          id(interface_display).printf(100, id(height) * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
-          id(interface_display).image(160,id(height) * 0.92,id(status_lux));
-          id(interface_display).printf(183, id(height) * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
+          id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000e846 %1.f°C \U0000f164 %.1f%% \U0000f7e8 %.0flx", id(room_temp).state, id(room_hum).state, id(room_lux).state);
 
 select:
   - platform: template
@@ -490,37 +485,26 @@ font:
       family: Roboto
     id: small_time
     size: 30
+    extras:
+      - file: "gfonts://Material+Symbols+Outlined"
+        glyphs: ["\U0000e425"] # mdi-timer
   - file: 
       type: gfonts
       family: Roboto
       weight: light
     id: status_bar
     size: 20
+    extras:
+      - file: "gfonts://Material+Symbols+Outlined"
+        glyphs: ["\U0000e846","\U0000f164","\U0000f7e8"] #mdi-thermometer, mdi-humidity, mdi-brightness
   - file: 
       type: gfonts
       family: Roboto
       weight: bold
     id: auto_control_indicator
     size: 50
-  - file: "gfonts://Material+Symbols+Outlined"
-    id: icons_30
-    size: 30
-    glyphs: ["\U0000e425"] # mdi-timer
-  - file: "gfonts://Material+Symbols+Outlined"
-    id: icons_20
-    size: 20
-    glyphs: ["\U0000e846","\U0000f164","\U0000f7e8"] #mdi-thermometer, mdi-humidity, mdi-brightness
 
 image:
-  - file: mdi:thermometer
-    id: status_temp
-    resize: 20x20
-  - file: mdi:water-percent
-    id: status_hum
-    resize: 20x20
-  - file: mdi:brightness-5
-    id: status_lux
-    resize: 20x20
   - file: mdi:clock-outline
     id: tab_current_time
     resize: 30x30

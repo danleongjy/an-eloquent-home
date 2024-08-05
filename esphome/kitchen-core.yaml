@@ -96,16 +96,12 @@ script:
     then:
       - lambda: |
           if (id(env_value_display).state == "temperature") {
-            id(interface_display).image(0,id(height) * 0.92, id(status_temp));
-            id(interface_display).printf(20, id(height) * 0.92, id(status_bar), "%.1f°C", id(room_temp).state);
+            id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000e846 %.1f°C", id(room_temp).state);
           } else if (id(env_value_display).state == "humidity") {
-            id(interface_display).image(0,id(height) * 0.92, id(status_hum));
-            id(interface_display).printf(20, id(height) * 0.92, id(status_bar), "%.1f%%", id(room_hum).state);
+            id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000f164 %.1f%%", id(room_hum).state);
           } else if (id(env_value_display).state == "lux") {
-            id(interface_display).image(0, id(height) * 0.92,id(status_lux));
-            id(interface_display).printf(20, id(height) * 0.92, id(status_bar), "%.0flx", id(room_lux).state);
+            id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000f7e8 %.0flx", id(room_lux).state);
           }
-
 
 spi:
   - clk_pin: 13
@@ -415,12 +411,18 @@ font:
       family: Roboto
     id: small_time
     size: 30
+    extras:
+      - file: "gfonts://Material+Symbols+Outlined"
+        glyphs: ["\U0000e425"] # mdi-timer
   - file: 
       type: gfonts
       family: Roboto
       weight: light
     id: status_bar
     size: 20
+    extras:
+      - file: "gfonts://Material+Symbols+Outlined"
+        glyphs: ["\U0000e846","\U0000f164","\U0000f7e8"] #mdi-thermometer, mdi-humidity, mdi-brightness
   - file: 
       type: gfonts
       family: Roboto
@@ -429,15 +431,6 @@ font:
     size: 50
 
 image:
-  - file: mdi:thermometer
-    id: status_temp
-    resize: 20x20
-  - file: mdi:water-percent
-    id: status_hum
-    resize: 20x20
-  - file: mdi:brightness-5
-    id: status_lux
-    resize: 20x20
   - file: mdi:clock-outline
     id: tab_current_time
     resize: 30x30
