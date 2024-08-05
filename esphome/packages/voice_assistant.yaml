@@ -20,6 +20,45 @@ script:
                 effect: none
           else:
             - light.turn_off: led
+  - id: check_timers
+    then:
+      - lambda: |
+          const auto timers = id(va).get_timers();
+          id(timers_running).publish_state(timers.size());
+          
+          if (timers.size() > 0) {
+            const auto timers = id(va).get_timers();
+            auto output_timer = timers.begin()->second;
+            for (auto &iterable_timer : timers) {
+              if (iterable_timer.second.seconds_left <= output_timer.seconds_left) {
+                output_timer = iterable_timer.second;
+              }
+            }
+            id(first_timer_seconds_left).publish_state(output_timer.seconds_left);
+            id(first_timer_total_seconds).publish_state(output_timer.total_seconds);
+          } else {
+            id(first_timer_seconds_left).publish_state(0);
+            id(first_timer_total_seconds).publish_state(0);
+          }
+
+sensor:
+  - platform: template
+    name: Timers Running
+    id: timers_running
+    unit_of_measurement: timers
+    accuracy_decimals: 0
+  - platform: template
+    name: First Timer Seconds Left
+    id: first_timer_seconds_left
+    unit_of_measurement: s
+    device_class: duration
+    accuracy_decimals: 0
+  - platform: template
+    name: First Timer Total Seconds
+    id: first_timer_total_seconds
+    unit_of_measurement: s
+    device_class: duration
+    accuracy_decimals: 0
 
 switch:
   - platform: template
@@ -108,36 +147,34 @@ voice_assistant:
         effect: none
     - delay: 1s
     - script.execute: reset_led
+  on_timer_tick:
+    - script.execute: check_timers
+    - if:
+        condition:
+          lambda: 'return id(timers_running).state > 0;'
+        then:
+          - if:
+              condition:
+                lambda: 'return id(first_timer_seconds_left).state <= 3 && id(first_timer_seconds_left).state > 0;'
+              then:
+                - homeassistant.service:
+                    service: media_player.play_media
+                    data:
+                      media_content_id: media-source://media_source/local/1_start.wav
+                      media_content_type: music
+                      entity_id: ${voice_assistant_media_player}
   on_timer_finished:
-    - delay: 1s
-    - homeassistant.service:
-        service: media_player.play_media
-        data:
-          media_content_id: media-source://media_source/local/1_start.wav
-          media_content_type: music
-          entity_id: ${voice_assistant_media_player}
-    - delay: 1s
-    - homeassistant.service:
-        service: media_player.play_media
-        data:
-          media_content_id: media-source://media_source/local/1_start.wav
-          media_content_type: music
-          entity_id: ${voice_assistant_media_player}
-    - delay: 1s
-    - homeassistant.service:
-        service: media_player.play_media
-        data:
-          media_content_id: media-source://media_source/local/1_start.wav
-          media_content_type: music
-          entity_id: ${voice_assistant_media_player}
-    - delay: 1s
+    - script.execute: check_timers
     - homeassistant.service:
         service: media_player.play_media
         data:
           media_content_id: media-source://media_source/local/1_end.wav
           media_content_type: music
           entity_id: ${voice_assistant_media_player}
+    - delay: 1s
+    - script.execute: check_timers
   on_client_connected:
+    - script.execute: check_timers
     - if:
         condition:
           switch.is_on: use_wake_word
