@@ -146,9 +146,6 @@ text_sensor:
     on_value: 
       then:
         script.execute: reset_command
-  - platform: homeassistant
-    id: blinds_state
-    entity_id: ${blinds_entity}
 
 binary_sensor:
   - platform: homeassistant
@@ -220,13 +217,7 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "blinds";'
                     then:
-                      - if:
-                          condition:
-                            lambda: 'return id(blinds_state).state == "closing";'
-                          then:
-                            - lambda: 'id(current_command).publish_state("blinds_stop");'
-                          else:
-                            - lambda: 'id(current_command).publish_state("blinds_open");'
+                      - lambda: 'id(current_command).publish_state("blinds_up");'
       - timing:
           - ON for at least 1.5s
         then:
@@ -303,13 +294,7 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "blinds";'
                     then:
-                      - if:
-                          condition:
-                            lambda: 'return id(blinds_state).state == "opening";'
-                          then:
-                            - lambda: 'id(current_command).publish_state("blinds_stop");'
-                          else:
-                            - lambda: 'id(current_command).publish_state("blinds_close");'
+                      - lambda: 'id(current_command).publish_state("blinds_down");'
       - timing:
           - ON for at least 1.5s
         then:
