@@ -1,0 +1,30 @@
+script:
+  - id: draw_display_main_blinds
+    then:
+      - lambda: |
+          // tab
+          if (id(blinds_position).state > 0) {
+            id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
+          }
+          // main display
+          if (id(blinds_position).state > 0) {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * id(blinds_position).state) / 100), id(width), id(height) * (0.75 * id(blinds_position).state / 100), id(slider));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_blinds), ImageAlign::CENTER, id(device_on));
+          } else {
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_blinds), ImageAlign::CENTER, id(device_off));
+          }
+          if (id(blinds_auto_control).state) {
+            id(interface_display).print(id(width) * 0.85, id(height) * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
+          }
+
+sensor:
+  - platform: homeassistant
+    id: blinds_position
+    entity_id: ${blinds_entity}
+    attribute: current_position
+      
+binary_sensor:
+  - platform: homeassistant
+    id: blinds_auto_control
+    entity_id: ${blinds_auto_control_automation}

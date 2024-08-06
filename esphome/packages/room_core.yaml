@@ -30,6 +30,65 @@ script:
     then:
       - delay: 120s
       - display.page.show: current_time
+  - id: draw_display_main_lights
+    then:
+      - lambda: |
+          // tab
+          if (id(lights_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
+          }
+          // main display
+          if (id(lights_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(lights_brightness).state) / 255)), id(width), id(height) * (0.75 * (id(lights_brightness).state) / 255), id(slider));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_on));
+          } else {
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_off));
+          }
+  - id: draw_display_main_fan
+    then:
+      - lambda: |
+          // tab
+          if (id(fan_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
+          }
+          // main display
+          if (id(fan_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * id(fan_speed).state / 100)), id(width), id(height) * (0.75 * id(fan_speed).state / 100), id(slider));
+            if (id(fan_direction).state == "forward") {
+              id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_on));
+            } else {
+              id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_fan_reverse), ImageAlign::CENTER, id(device_on));
+            }
+          } else {
+            if (id(fan_direction).state == "forward") {
+              id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_off));
+            } else {
+              id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_fan_reverse), ImageAlign::CENTER, id(device_off));
+            }
+          }
+          if (id(fan_auto_control).state) {
+            id(interface_display).print(id(width) * 0.85, id(height) * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
+          }
+  - id: draw_display_main_ac
+    then:
+      - lambda: |
+          // tab
+          if (id(ac_mode).state == "cool") {
+            id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
+          }
+          // main display
+          if (id(ac_mode).state == "cool") {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(ac_temp).state - 23) / 4)), id(width), id(height) * (0.75 * (id(ac_temp).state - 23) / 4), id(slider));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_on));
+          } else {
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_off));
+          }
+          if (id(ac_auto_control).state) {
+            id(interface_display).print(id(width) * 0.85, id(height) * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
+          }
   - id: draw_display_borders
     then:
       - lambda: |
@@ -659,77 +718,30 @@ display:
       - id: lights
         lambda: |-
           // tabs
-          if (id(lights_power).state) {
-            it.filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
-            it.line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
-          }
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
           it.image(id(width) * 0.875, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
 
           id(draw_display_borders).execute();
           id(draw_display_bottom_status_bar).execute();
-
-          // main display
-          if (id(lights_power).state) {
-            it.filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(lights_brightness).state) / 255)), id(width), id(height) * (0.75 * (id(lights_brightness).state) / 255), id(slider));
-            it.image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_on));
-          } else {
-            it.image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_off));
-          }
+          id(draw_display_main_lights).execute();
       - id: fan
         lambda: |-
           // tabs
-          if (id(fan_power).state) {
-            it.filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
-            it.line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
-          }
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
           it.image(id(width) * 0.875, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
 
           id(draw_display_borders).execute();
           id(draw_display_bottom_status_bar).execute();
-
-          // main display
-          if (id(fan_power).state) {
-            it.filled_rectangle(0, id(height) * (0.75 - (0.75 * id(fan_speed).state / 100)), id(width), id(height) * (0.75 * id(fan_speed).state / 100), id(slider));
-            if (id(fan_direction).state == "forward") {
-              it.image(id(width) * 0.5, id(height) * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_on));
-            } else {
-              it.image(id(width) * 0.5, id(height) * 0.375, id(main_fan_reverse), ImageAlign::CENTER, id(device_on));
-            }
-          } else {
-            if (id(fan_direction).state == "forward") {
-              it.image(id(width) * 0.5, id(height) * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_off));
-            } else {
-              it.image(id(width) * 0.5, id(height) * 0.375, id(main_fan_reverse), ImageAlign::CENTER, id(device_off));
-            }
-          }
-          if (id(fan_auto_control).state) {
-            it.print(id(width) * 0.85, id(height) * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
-          }
+          id(draw_display_main_fan).execute();
       - id: ac
         lambda: |-
           // tabs
-          if (id(ac_mode).state == "cool") {
-            it.filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
-            it.line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
-          }
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
           it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
 
           id(draw_display_borders).execute();
           id(draw_display_bottom_status_bar).execute();
-
-          // main display
-          if (id(ac_mode).state == "cool") {
-            it.filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(ac_temp).state - 23) / 4)), id(width), id(height) * (0.75 * (id(ac_temp).state - 23) / 4), id(slider));
-            it.image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_on));
-          } else {
-            it.image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_off));
-          }
-          if (id(ac_auto_control).state) {
-            it.print(id(width) * 0.85, id(height) * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
-          }
+          id(draw_display_main_ac).execute();
