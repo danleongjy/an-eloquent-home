@@ -61,6 +61,15 @@ sensor:
   - platform: homeassistant
     id: room_hum
     entity_id: sensor.${core_room}_humidity
+  - platform: homeassistant
+    id: va_timers_running
+    entity_id: sensor.study_room_voice_assistant_timers_running
+  - platform: homeassistant
+    id: va_first_timer_seconds_left
+    entity_id: sensor.study_room_voice_assistant_first_timer_seconds_left
+  - platform: homeassistant
+    id: va_first_timer_total_seconds
+    entity_id: sensor.study_room_voice_assistant_first_timer_total_seconds
   - id: !extend room_lux
     entity_id: sensor.study_room_radar_lux_calibrated
 
@@ -71,6 +80,38 @@ display:
         then:
           lambda: 'id(current_view).publish_state("blinds");'
     pages:
+      - id: !extend current_time
+        lambda: |-
+          // tabs
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
+
+          id(draw_display_borders).execute();
+          id(draw_display_bottom_status_bar).execute();
+
+          if (id(va_timers_running).state > 0){
+            // display timer
+            if (id(va_first_timer_seconds_left).state > 15 * 60) {
+              id(interface_display).printf(id(width) * 0.5, id(height) * 0.6, id(small_time), TextAlign::CENTER, "\U0000e425 x %.0f", id(va_timers_running).state);
+            }  else {
+              // display timer progress
+              id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(device_off));
+              id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(device_off));
+              id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(va_first_timer_seconds_left).state) / id(va_first_timer_total_seconds).state)), id(width), id(height) * (0.75 * (id(va_first_timer_seconds_left).state) / id(va_first_timer_total_seconds).state), id(slider));
+
+              int minutes_left = floor(id(va_first_timer_seconds_left).state / 60);
+              int seconds_left = id(va_first_timer_seconds_left).state - minutes_left * 60 ;
+              auto display_minutes = (minutes_left < 10 ? "0" : "") + std::to_string(minutes_left);
+              auto display_seconds = (seconds_left  < 10 ? "0" : "") + std::to_string(seconds_left) ;
+
+              id(interface_display).printf(id(width) * 0.5, id(height) * 0.6, id(small_time), TextAlign::CENTER, "%s:%s \U0000e425 x %.0f", display_minutes.c_str(), display_seconds.c_str(), id(va_timers_running).state);
+            }
+          } else {
+            // display date
+            id(interface_display).strftime(id(width) * 0.5, id(height) * 0.6, id(small_time), TextAlign::CENTER, "%a %d %b %Y", id(homeassistant_time).now());
+          }
+          id(draw_display_main_time).execute();
       - id: !extend lights
         lambda: |-
           // tabs

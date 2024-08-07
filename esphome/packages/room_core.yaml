@@ -30,6 +30,33 @@ script:
     then:
       - delay: 120s
       - display.page.show: current_time
+  - id: draw_display_main_time
+    then:
+      - lambda: |
+          // display alarm
+          if (id(room_next_alarm_imminent).state) {
+            if (id(room_next_alarm_dismissable).state) {
+              if (id(room_next_alarm_dismissed).state) {
+                id(interface_display).image(id(width) * 0.325, id(height) * 0.125, id(main_alarm_off), ImageAlign::CENTER);            
+                id(interface_display).printf(id(width) * 0.575, id(height) * 0.125, id(small_time), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
+              } else {
+                if (id(homeassistant_time).now().second % 2 == 0) {
+                  id(interface_display).image(id(width) * 0.325, id(height) * 0.125, id(main_alarm), ImageAlign::CENTER, id(alarm_dismissable));
+                }
+                id(interface_display).printf(id(width) * 0.575, id(height) * 0.125, id(small_time), id(alarm_dismissable), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
+              }
+            } else {
+              id(interface_display).image(id(width) * 0.325, id(height) * 0.125, id(main_alarm), ImageAlign::CENTER);            
+              id(interface_display).printf(id(width) * 0.575, id(height) * 0.125, id(small_time), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
+            }
+          }
+
+          // display time
+          id(interface_display).strftime(id(width) * 0.25, id(height) * 0.35, id(main_time), TextAlign::CENTER, "%H", id(homeassistant_time).now());
+          id(interface_display).strftime(id(width) * 0.75, id(height) * 0.35, id(main_time), TextAlign::CENTER, "%M", id(homeassistant_time).now());
+          if (id(homeassistant_time).now().second % 2 == 0) {
+            id(interface_display).print(id(width) * 0.5, id(height) * 0.325, id(main_time), TextAlign::CENTER, ":");
+          }
   - id: draw_display_main_lights
     then:
       - lambda: |
@@ -526,7 +553,7 @@ color:
   - id: device_off
     hex: 4D729D
   - id: slider
-    hex: 41A7F2
+    hex: 4D729D #41A7F2
   - id: auto_control
     hex: F2900F
   - id: alarm_dismissable
@@ -687,34 +714,10 @@ display:
 
           id(draw_display_borders).execute();
           id(draw_display_bottom_status_bar).execute();
-
-          // display alarm
-          if (id(room_next_alarm_imminent).state) {
-            if (id(room_next_alarm_dismissable).state) {
-              if (id(room_next_alarm_dismissed).state) {
-                it.image(id(width) * 0.325, id(height) * 0.125, id(main_alarm_off), ImageAlign::CENTER);            
-                it.printf(id(width) * 0.575, id(height) * 0.125, id(small_time), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
-              } else {
-                if (id(homeassistant_time).now().second % 2 == 0) {
-                  it.image(id(width) * 0.325, id(height) * 0.125, id(main_alarm), ImageAlign::CENTER, id(alarm_dismissable));
-                }
-                it.printf(id(width) * 0.575, id(height) * 0.125, id(small_time), id(alarm_dismissable), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
-              }
-            } else {
-              it.image(id(width) * 0.325, id(height) * 0.125, id(main_alarm), ImageAlign::CENTER);            
-              it.printf(id(width) * 0.575, id(height) * 0.125, id(small_time), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
-            }
-          }
-
-          // display time
-          it.strftime(id(width) * 0.25, id(height) * 0.35, id(main_time), TextAlign::CENTER, "%H", id(homeassistant_time).now());
-          it.strftime(id(width) * 0.75, id(height) * 0.35, id(main_time), TextAlign::CENTER, "%M", id(homeassistant_time).now());
-          if (id(homeassistant_time).now().second % 2 == 0) {
-            it.print(id(width) * 0.5, id(height) * 0.325, id(main_time), TextAlign::CENTER, ":");
-          }
+          id(draw_display_main_time).execute();
 
           // display date
-          it.strftime(id(width) * 0.5, id(height) * 0.6, id(small_time), TextAlign::CENTER, "%a %d %b %Y", id(homeassistant_time).now());
+          id(interface_display).strftime(id(width) * 0.5, id(height) * 0.6, id(small_time), TextAlign::CENTER, "%a %d %b %Y", id(homeassistant_time).now());
       - id: lights
         lambda: |-
           // tabs
