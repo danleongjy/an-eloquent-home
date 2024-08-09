@@ -106,12 +106,16 @@ voice_assistant:
   volume_multiplier: 2.0
   vad_threshold: 3
   on_listening:
+    - microphone.stop_capture:
+    - delay: 0.3s
     - homeassistant.service:
         service: media_player.play_media
         data:
           media_content_id: media-source://media_source/local/1_start.wav
           media_content_type: music
           entity_id: ${voice_assistant_media_player}
+    - delay: 1s
+    - microphone.capture:
     - light.turn_on:
         id: led
         effect: "Slow Pulse"
