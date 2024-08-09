@@ -878,38 +878,78 @@ doorbell:
       media_content_id: https://an-eloquent-home.duckdns.org/media/local/doorbell.mp3
       media_content_type: music
     metadata: {}
-  - repeat:
-      sequence:
+  - parallel:
+    - sequence:
+      - variables:
+          room: elis_room
       - if:
         - condition: template
-          value_template: '{{ is_state(doors[repeat.item], ''on'') }}'
+          value_template: '{{ is_state(doors[room], ''on'') }}'
         then:
         - service: select.select_option
-          metadata: {}
           data:
             option: Doorbell
           target:
-            entity_id: '{{ ''select.'' + repeat.item + ''_core_ringtone'' }}'
+            entity_id: '{{ ''select.'' + room + ''_core_ringtone'' }}'
         - service: button.press
-          metadata: {}
-          data: {}
           target:
-            entity_id: '{{ ''button.'' + repeat.item + ''_core_play_ringtone'' }}'
+            entity_id: '{{ ''button.'' + room + ''_core_play_ringtone'' }}'
         - service: light.turn_on
-          metadata: {}
           data:
             effect: Doorbell
           target:
-            entity_id: '{{ ''light.'' + repeat.item + ''_core_led_strips'' }}'
+            entity_id: '{{ ''light.'' + room + ''_core_led_strips'' }}'
         - delay: 10
         - service: light.turn_off
-          metadata: {}
-          data: {}
           target:
-            entity_id: '{{ ''light.'' + repeat.item + ''_core_led_strips'' }}'
-      for_each:
-      - elis_room
-      - elenas_room
-      - parents_room
+            entity_id: '{{ ''light.'' + room + ''_core_led_strips'' }}'
+    - sequence:
+      - variables:
+          room: elenas_room
+      - if:
+        - condition: template
+          value_template: '{{ is_state(doors[room], ''on'') }}'
+        then:
+        - service: select.select_option
+          data:
+            option: Doorbell
+          target:
+            entity_id: '{{ ''select.'' + room + ''_core_ringtone'' }}'
+        - service: button.press
+          target:
+            entity_id: '{{ ''button.'' + room + ''_core_play_ringtone'' }}'
+        - service: light.turn_on
+          data:
+            effect: Doorbell
+          target:
+            entity_id: '{{ ''light.'' + room + ''_core_led_strips'' }}'
+        - delay: 10
+        - service: light.turn_off
+          target:
+            entity_id: '{{ ''light.'' + room + ''_core_led_strips'' }}'
+    - sequence:
+      - variables:
+          room: parents_room
+      - if:
+        - condition: template
+          value_template: '{{ is_state(doors[room], ''on'') }}'
+        then:
+        - service: select.select_option
+          data:
+            option: Doorbell
+          target:
+            entity_id: '{{ ''select.'' + room + ''_core_ringtone'' }}'
+        - service: button.press
+          target:
+            entity_id: '{{ ''button.'' + room + ''_core_play_ringtone'' }}'
+        - service: light.turn_on
+          data:
+            effect: Doorbell
+          target:
+            entity_id: '{{ ''light.'' + room + ''_core_led_strips'' }}'
+        - delay: 10
+        - service: light.turn_off
+          target:
+            entity_id: '{{ ''light.'' + room + ''_core_led_strips'' }}'
   description: Play doorbell tones and flash Room Core lights
   icon: mdi:bell-ring-outline
