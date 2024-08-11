@@ -711,6 +711,53 @@
           {% endif %}
         {% endfor %}
         {{ batteries.names }}
+        
+  - name: Voice Assistants First Timer Seconds Left
+    unique_id: sensor.voice_assistants_first_timer_seconds_left
+    state: >
+      {% if states('sensor.kitchen_core_timers_running') | int(0) > 0 %}
+        {% if states('sensor.study_room_voice_assistant_timers_running') | int(0) > 0 %}
+          {{ min([states('sensor.kitchen_core_first_timer_seconds_left') | int(0), states('sensor.study_room_voice_assistant_first_timer_seconds_left') | int(0)]) }}
+        {% else %}
+          {{ states('sensor.kitchen_core_first_timer_seconds_left') }}
+        {% endif %}
+      {% elif states('sensor.study_room_voice_assistant_timers_running') | int(0) > 0 %}
+        {{ states('sensor.study_room_voice_assistant_first_timer_seconds_left') }}
+      {% else %}
+        0
+      {% endif %}
+    attributes:
+      kitchen_core: "{{ states('sensor.kitchen_core_first_timer_seconds_left') }}"
+      study_room_voice_assistant: "{{ states('sensor.study_room_voice_assistant_first_timer_seconds_left') }}"
+
+  - name: Voice Assistants First Timer Total Seconds
+    unique_id: sensor.voice_assistants_first_timer_total_seconds
+    state: >
+      {% if states('sensor.kitchen_core_timers_running') | int(0) > 0 %}
+        {% if states('sensor.study_room_voice_assistant_timers_running') | int(0) > 0 %}
+          {% if states('sensor.kitchen_core_first_timer_seconds_left') | int(0) < states('sensor.study_room_voice_assistant_first_timer_seconds_left') | int(0) %}
+            {{ states('sensor.kitchen_core_first_timer_total_seconds') }}
+          {% else %}
+            {{ states('sensor.study_room_voice_assistant_first_timer_total_seconds') }}
+          {% endif %}
+        {% else %}
+          {{ states('sensor.kitchen_core_first_timer_total_seconds') }}
+        {% endif %}
+      {% elif states('sensor.study_room_voice_assistant_timers_running') | int(0) > 0 %}
+        {{ states('sensor.study_room_voice_assistant_first_timer_total_seconds') }}
+      {% else %}
+        0
+      {% endif %}
+    attributes:
+      kitchen_core: "{{ states('sensor.kitchen_core_first_timer_total_seconds') }}"
+      study_room_voice_assistant: "{{ states('sensor.study_room_voice_assistant_first_timer_total_seconds') }}"
+      
+  - name: Voice Assistants Total Timers Running
+    unique_id: sensor.voice_assistants_total_timers_running
+    state: "{{ states('sensor.kitchen_core_timers_running') | int(0) + states('sensor.study_room_voice_assistant_timers_running') | int(0) }}"
+    attributes:
+      kitchen_core: "{{ states('sensor.kitchen_core_timers_running') }}"
+      study_room_voice_assistant: "{{ states('sensor.study_room_voice_assistant_timers_running') }}"
 
   - name: Floorplan Yard Status
     unique_id: sensor.floorplan_yard_status

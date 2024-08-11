@@ -359,6 +359,15 @@ sensor:
     id: blinds_position
     entity_id: ${blinds_entity}
     attribute: current_position
+  - platform: homeassistant
+    id: vas_timers_running
+    entity_id: sensor.voice_assistants_total_timers_running
+  - platform: homeassistant
+    id: vas_first_timer_seconds_left
+    entity_id: sensor.voice_assistants_first_timer_seconds_left
+  - platform: homeassistant
+    id: vas_first_timer_total_seconds
+    entity_id: sensor.voice_assistants_first_timer_total_seconds
 
 output:
   - platform: ledc
@@ -483,7 +492,7 @@ display:
           id(draw_display_borders).execute();
           id(draw_display_bottom_status_bar).execute();
 
-          if (id(timers_running).state == 0 || id(first_timer_seconds_left).state > 15 * 60) {
+          if (id(vas_timers_running).state == 0 || id(vas_first_timer_seconds_left).state > 15 * 60) {
             // display time
             it.strftime(id(width) * 0.5, id(height) * 0.175, id(main_time), TextAlign::CENTER, "%H", id(homeassistant_time).now());
             it.strftime(id(width) * 0.5, id(height) * 0.525, id(main_time), TextAlign::CENTER, "%M", id(homeassistant_time).now());
@@ -494,11 +503,11 @@ display:
             // display timer progress
             it.filled_rectangle(0, id(height) * 0.7, id(width) * 0.3333, id(height) * 0.2, id(slider));
             it.line(0, id(height) * 0.7, id(width) * 0.3333, id(height) * 0.7, id(slider));
-            it.filled_rectangle(0, id(height) * (0.7 - (0.7 * (id(first_timer_seconds_left).state) / id(first_timer_total_seconds).state)), id(width), id(height) * (0.7 * (id(first_timer_seconds_left).state) / id(first_timer_total_seconds).state), id(slider));
+            it.filled_rectangle(0, id(height) * (0.7 - (0.7 * (id(vas_first_timer_seconds_left).state) / id(vas_first_timer_total_seconds).state)), id(width), id(height) * (0.7 * (id(vas_first_timer_seconds_left).state) / id(vas_first_timer_total_seconds).state), id(slider));
 
             // display timer
-            int minutes_left = floor(id(first_timer_seconds_left).state / 60);
-            int seconds_left = id(first_timer_seconds_left).state - minutes_left * 60 ;
+            int minutes_left = floor(id(vas_first_timer_seconds_left).state / 60);
+            int seconds_left = id(vas_first_timer_seconds_left).state - minutes_left * 60 ;
             auto display_minutes = (minutes_left < 10 ? "0" : "") + std::to_string(minutes_left);
             auto display_seconds = (seconds_left  < 10 ? "0" : "") + std::to_string(seconds_left);
 
