@@ -917,6 +917,362 @@
             }
           }
         },
+        "vacuum": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "vacuum.roborock_s7",
+            "default": "disabled",
+            "states": {
+              "disabled": {
+                "type": "custom:button-card",
+                "entity": "vacuum.roborock_s7",
+                "template": "error",
+                "icon": "mdi:robot-vacuum",
+                "tap_action": {
+                  "action": "navigate",
+                  "navigation_path": "/lovelace/vacuum"
+                }
+              },
+              "error": {
+                "type": "custom:button-card",
+                "entity": "vacuum.roborock_s7",
+                "template": "vacuum_more_info",
+                "icon": "mdi:robot-vacuum-alert",
+                "styles": {
+                  "card": [
+                    {
+                      "background-color": "#9e110d"
+                    }
+                  ],
+                  "icon": [
+                    {
+                      "animation": "blink 2s ease infinite"
+                    },
+                    {
+                      "color": "#FFFFFF"
+                    }
+                  ]
+                }
+              },
+              "docked": {
+                "type": "custom:button-card",
+                "entity": "vacuum.roborock_s7",
+                "template": "vacuum_more_info",
+                "label": "[[[ \n  if (parseInt(entity.attributes.battery_level) <= 99)\n    return entity.attributes.battery_level + '%';\n  else\n    return ''\n]]]\n",
+                "show_label": true,
+                "color": "rgb(68,115,158)",
+                "double_tap_action": {
+                  "action": "call-service",
+                  "service": "vacuum.start",
+                  "service_data": {
+                    "entity_id": "vacuum.roborock_s7"
+                  }
+                }
+              },
+              "cleaning": {
+                "type": "custom:button-card",
+                "entity": "vacuum.roborock_s7",
+                "template": "vacuum_more_info",
+                "label": "[[[ return entity.attributes.battery_level + '%']]]",
+                "show_label": true,
+                "color": "rgb(253,216,53)",
+                "tap_action": {
+                  "action": "call-service",
+                  "service": "vacuum.pause",
+                  "service_data": {
+                    "entity_id": "vacuum.roborock_s7"
+                  }
+                }
+              },
+              "returning": {
+                "type": "custom:button-card",
+                "entity": "vacuum.roborock_s7",
+                "template": "vacuum_more_info",
+                "label": "[[[ return entity.attributes.battery_level + '%']]]",
+                "show_label": true,
+                "color": "rgb(253,216,53)",
+                "tap_action": {
+                  "action": "call-service",
+                  "service": "vacuum.pause",
+                  "service_data": {
+                    "entity_id": "vacuum.roborock_s7"
+                  }
+                }
+              },
+              "paused": {
+                "type": "custom:button-card",
+                "entity": "vacuum.roborock_s7",
+                "template": "vacuum_more_info",
+                "color": "rgb(68,115,158)",
+                "label": "[[[ return entity.attributes.battery_level + '%']]]",
+                "show_label": true,
+                "tap_action": {
+                  "action": "call-service",
+                  "service": "vacuum.start",
+                  "service_data": {
+                    "entity_id": "vacuum.roborock_s7"
+                  }
+                },
+                "styles": {
+                  "card": [
+                    {
+                      "background-color": "#f2900f"
+                    }
+                  ],
+                  "label": [
+                    {
+                      "animation": "blink 2s ease infinite"
+                    }
+                  ]
+                }
+              },
+              "idle": {
+                "type": "custom:button-card",
+                "entity": "vacuum.roborock_s7",
+                "template": "vacuum_more_info",
+                "label": "[[[ return entity.attributes.battery_level + '%']]]",
+                "show_label": true,
+                "styles": {
+                  "card": [
+                    {
+                      "background-color": "#9e110d"
+                    }
+                  ],
+                  "label": [
+                    {
+                      "animation": "blink 2s ease infinite"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "washer": {
+          "card": {
+            "type": "custom:state-switch",
+            "style": {
+              "top": "5%",
+              "left": "25%",
+              "height": "9%",
+              "width": "4.5%"
+            },
+            "entity": "sensor.washer_status",
+            "default": "disabled",
+            "states": {
+              "disabled": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "template": "error"
+              },
+              "Off": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "color": "rgb(68,115,158)",
+                "template": "washer_more_info",
+                "styles": {
+                  "card": [
+                    {
+                      "background-color": "[[[\n  if (states['input_boolean.washer_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                    }
+                  ]
+                }
+              },
+              "Standby": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "template": "washer_more_info"
+              },
+              "Detecting": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "template": "washer_more_info",
+                "label": "...",
+                "show_label": true
+              },
+              "Delay Set": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "template": "washer_more_info",
+                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                "show_label": true
+              },
+              "Washing": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "template": "washer_more_info",
+                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                "show_label": true
+              },
+              "Rinsing": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "template": "washer_more_info",
+                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                "show_label": true
+              },
+              "Spinning": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "template": "washer_more_info",
+                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
+                "show_label": true
+              },
+              "Finished": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "template": "washer_more_info",
+                "label": "Done!",
+                "show_label": true
+              },
+              "Paused": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "template": "washer_more_info",
+                "label": "Paused",
+                "show_label": true,
+                "color": "rgb(68,115,158)",
+                "styles": {
+                  "label": [
+                    {
+                      "color": "var(--primary-background-color)"
+                    },
+                    {
+                      "animation": "blink 2s ease infinite"
+                    }
+                  ]
+                }
+              },
+              "Error": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "template": "washer_more_info",
+                "label": "Error",
+                "show_label": true,
+                "styles": {
+                  "card": [
+                    {
+                      "background-color": "#9e110d"
+                    }
+                  ],
+                  "label": [
+                    {
+                      "animation": "blink 2s ease infinite"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "rice_cooker": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "input_select.rice_cooker_status",
+            "default": "disabled",
+            "states": {
+              "disabled": {
+                "type": "custom:button-card",
+                "entity": "binary_sensor.rice_cooker",
+                "template": "error"
+              },
+              "Off": {
+                "type": "custom:button-card",
+                "entity": "switch.rice_cooker",
+                "template": "rice_cooker_more_info"
+              },
+              "Cooking": {
+                "type": "custom:button-card",
+                "entity": "binary_sensor.rice_cooker",
+                "template": "rice_cooker_more_info",
+                "label": "Cook",
+                "show_label": true
+              },
+              "Warming": {
+                "type": "custom:button-card",
+                "entity": "binary_sensor.rice_cooker",
+                "template": "rice_cooker_more_info",
+                "label": "Warm",
+                "show_label": true
+              },
+              "Standby": {
+                "type": "custom:button-card",
+                "entity": "switch.rice_cooker",
+                "template": "rice_cooker_more_info",
+                "label": "...",
+                "show_label": true
+              }
+            }
+          }
+        },
+        "stove": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "switch.stove_main_power",
+            "default": "disabled",
+            "states": {
+              "disabled": {
+                "type": "custom:button-card",
+                "entity": "switch.stove_main_power",
+                "template": "error"
+              },
+              "on": {
+                "type": "custom:button-card",
+                "entity": "switch.stove_main_power",
+                "template": "stove_more_info",
+                "icon": "[[[ return 'mdi:chevron-' + states['select.stove_current_burner'].state + '-circle-outline' ]]]",
+                "label": "[[[ \n  if (parseInt(states['number.stove_current_burner_timer'].state) >= 70)\n    return states['select.stove_current_burner_power'].state + '|1:' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 60)\n    return states['select.stove_current_burner_power'].state + '|1:0' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 10)\n    return states['select.stove_current_burner_power'].state + '|0:' +\n      states['number.stove_current_burner_timer'].state\n  else if (parseInt(states['number.stove_current_burner_timer'].state) > 0)\n    return states['select.stove_current_burner_power'].state + '|0:0' +\n      states['number.stove_current_burner_timer'].state\n  else\n    return states['select.stove_current_burner_power'].state\n]]]",
+                "show_label": true,
+                "tap_action": {
+                  "action": "call-service",
+                  "service": "select.select_option",
+                  "service_data": {
+                    "entity_id": "select.stove_current_burner",
+                    "option": "[[[\n  if (states['select.stove_current_burner'].state == 'right')\n    return 'left'\n  else\n    return 'right'\n]]]"
+                  }
+                }
+              },
+              "off": {
+                "type": "custom:button-card",
+                "entity": "switch.stove_main_power",
+                "template": "stove_more_info"
+              }
+            }
+          }
+        },
+        "dishwasher": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "switch.dishwasher",
+            "default": "disabled",
+            "states": {
+              "disabled": {
+                "type": "custom:button-card",
+                "entity": "switch.dishwasher",
+                "template": "error"
+              },
+              "off": {
+                "type": "custom:button-card",
+                "entity": "switch.dishwasher",
+                "template": "dishwasher_more_info",
+                "styles": {
+                  "card": [
+                    {
+                      "background-color": "[[[\n  if (states['input_boolean.dishwasher_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                    }
+                  ]
+                }
+              },
+              "on": {
+                "type": "custom:button-card",
+                "entity": "switch.dishwasher",
+                "template": "dishwasher_more_info",
+                "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
+                "show_label": true
+              }
+            }
+          }
+        },
         "floorplan_slider": {
           "card": {
             "type": "custom:slider-button-card",
@@ -1947,139 +2303,14 @@
                         }
                       },
                       {
-                        "type": "custom:state-switch",
+                        "type": "custom:decluttering-card",
                         "style": {
                           "top": "5%",
                           "left": "7.5%",
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "entity": "vacuum.roborock_s7",
-                        "default": "disabled",
-                        "states": {
-                          "disabled": {
-                            "type": "custom:button-card",
-                            "entity": "vacuum.roborock_s7",
-                            "template": "error",
-                            "icon": "mdi:robot-vacuum",
-                            "tap_action": {
-                              "action": "navigate",
-                              "navigation_path": "/lovelace/vacuum"
-                            }
-                          },
-                          "error": {
-                            "type": "custom:button-card",
-                            "entity": "vacuum.roborock_s7",
-                            "template": "vacuum_more_info",
-                            "icon": "mdi:robot-vacuum-alert",
-                            "styles": {
-                              "card": [
-                                {
-                                  "background-color": "#9e110d"
-                                }
-                              ],
-                              "icon": [
-                                {
-                                  "animation": "blink 2s ease infinite"
-                                },
-                                {
-                                  "color": "#FFFFFF"
-                                }
-                              ]
-                            }
-                          },
-                          "docked": {
-                            "type": "custom:button-card",
-                            "entity": "vacuum.roborock_s7",
-                            "template": "vacuum_more_info",
-                            "label": "[[[ \n  if (parseInt(entity.attributes.battery_level) <= 99)\n    return entity.attributes.battery_level + '%';\n  else\n    return ''\n]]]\n",
-                            "show_label": true,
-                            "color": "rgb(68,115,158)",
-                            "double_tap_action": {
-                              "action": "call-service",
-                              "service": "vacuum.start",
-                              "service_data": {
-                                "entity_id": "vacuum.roborock_s7"
-                              }
-                            }
-                          },
-                          "cleaning": {
-                            "type": "custom:button-card",
-                            "entity": "vacuum.roborock_s7",
-                            "template": "vacuum_more_info",
-                            "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                            "show_label": true,
-                            "color": "rgb(253,216,53)",
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "vacuum.pause",
-                              "service_data": {
-                                "entity_id": "vacuum.roborock_s7"
-                              }
-                            }
-                          },
-                          "returning": {
-                            "type": "custom:button-card",
-                            "entity": "vacuum.roborock_s7",
-                            "template": "vacuum_more_info",
-                            "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                            "show_label": true,
-                            "color": "rgb(253,216,53)",
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "vacuum.pause",
-                              "service_data": {
-                                "entity_id": "vacuum.roborock_s7"
-                              }
-                            }
-                          },
-                          "paused": {
-                            "type": "custom:button-card",
-                            "entity": "vacuum.roborock_s7",
-                            "template": "vacuum_more_info",
-                            "color": "rgb(68,115,158)",
-                            "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                            "show_label": true,
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "vacuum.start",
-                              "service_data": {
-                                "entity_id": "vacuum.roborock_s7"
-                              }
-                            },
-                            "styles": {
-                              "card": [
-                                {
-                                  "background-color": "#f2900f"
-                                }
-                              ],
-                              "label": [
-                                {
-                                  "animation": "blink 2s ease infinite"
-                                }
-                              ]
-                            }
-                          },
-                          "idle": {
-                            "type": "custom:button-card",
-                            "entity": "vacuum.roborock_s7",
-                            "template": "vacuum_more_info",
-                            "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                            "show_label": true,
-                            "styles": {
-                              "card": [
-                                {
-                                  "background-color": "#9e110d"
-                                }
-                              ],
-                              "label": [
-                                {
-                                  "animation": "blink 2s ease infinite"
-                                }
-                              ]
-                            }
-                          }
-                        }
+                        "template": "vacuum"
                       },
                       {
                         "type": "custom:button-card",
@@ -2150,119 +2381,14 @@
                         }
                       },
                       {
-                        "type": "custom:state-switch",
+                        "type": "custom:decluttering-card",
                         "style": {
                           "top": "5%",
                           "left": "25%",
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "entity": "sensor.washer_status",
-                        "default": "disabled",
-                        "states": {
-                          "disabled": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "error"
-                          },
-                          "Off": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "color": "rgb(68,115,158)",
-                            "template": "washer_more_info",
-                            "styles": {
-                              "card": [
-                                {
-                                  "background-color": "[[[\n  if (states['input_boolean.washer_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                                }
-                              ]
-                            }
-                          },
-                          "Standby": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info"
-                          },
-                          "Detecting": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "...",
-                            "show_label": true
-                          },
-                          "Delay Set": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                            "show_label": true
-                          },
-                          "Washing": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                            "show_label": true
-                          },
-                          "Rinsing": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                            "show_label": true
-                          },
-                          "Spinning": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                            "show_label": true
-                          },
-                          "Finished": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "Done!",
-                            "show_label": true
-                          },
-                          "Paused": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "Paused",
-                            "show_label": true,
-                            "color": "rgb(68,115,158)",
-                            "styles": {
-                              "label": [
-                                {
-                                  "color": "var(--primary-background-color)"
-                                },
-                                {
-                                  "animation": "blink 2s ease infinite"
-                                }
-                              ]
-                            }
-                          },
-                          "Error": {
-                            "type": "custom:button-card",
-                            "entity": "switch.washer_power",
-                            "template": "washer_more_info",
-                            "label": "Error",
-                            "show_label": true,
-                            "styles": {
-                              "card": [
-                                {
-                                  "background-color": "#9e110d"
-                                }
-                              ],
-                              "label": [
-                                {
-                                  "animation": "blink 2s ease infinite"
-                                }
-                              ]
-                            }
-                          }
-                        }
+                        "template": "washer"
                       },
                       {
                         "type": "custom:button-card",
@@ -2333,124 +2459,34 @@
                         }
                       },
                       {
-                        "type": "custom:state-switch",
+                        "type": "custom:decluttering-card",
+                        "template": "rice_cooker",
                         "style": {
                           "top": "5%",
                           "left": "42.5%",
                           "height": "9%",
                           "width": "4.5%"
-                        },
-                        "entity": "input_select.rice_cooker_status",
-                        "default": "disabled",
-                        "states": {
-                          "disabled": {
-                            "type": "custom:button-card",
-                            "entity": "binary_sensor.rice_cooker",
-                            "template": "error"
-                          },
-                          "Off": {
-                            "type": "custom:button-card",
-                            "entity": "switch.rice_cooker",
-                            "template": "rice_cooker_more_info"
-                          },
-                          "Cooking": {
-                            "type": "custom:button-card",
-                            "entity": "binary_sensor.rice_cooker",
-                            "template": "rice_cooker_more_info",
-                            "label": "Cook",
-                            "show_label": true
-                          },
-                          "Warming": {
-                            "type": "custom:button-card",
-                            "entity": "binary_sensor.rice_cooker",
-                            "template": "rice_cooker_more_info",
-                            "label": "Warm",
-                            "show_label": true
-                          },
-                          "Standby": {
-                            "type": "custom:button-card",
-                            "entity": "switch.rice_cooker",
-                            "template": "rice_cooker_more_info",
-                            "label": "...",
-                            "show_label": true
-                          }
                         }
                       },
                       {
-                        "type": "custom:state-switch",
+                        "type": "custom:decluttering-card",
                         "style": {
                           "top": "5%",
                           "left": "47.5%",
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "entity": "switch.stove_main_power",
-                        "default": "disabled",
-                        "states": {
-                          "disabled": {
-                            "type": "custom:button-card",
-                            "entity": "switch.stove_main_power",
-                            "template": "error"
-                          },
-                          "on": {
-                            "type": "custom:button-card",
-                            "entity": "switch.stove_main_power",
-                            "template": "stove_more_info",
-                            "icon": "[[[ return 'mdi:chevron-' + states['select.stove_current_burner'].state + '-circle-outline' ]]]",
-                            "label": "[[[ \n  if (parseInt(states['number.stove_current_burner_timer'].state) >= 70)\n    return states['select.stove_current_burner_power'].state + '|1:' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 60)\n    return states['select.stove_current_burner_power'].state + '|1:0' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 10)\n    return states['select.stove_current_burner_power'].state + '|0:' +\n      states['number.stove_current_burner_timer'].state\n  else if (parseInt(states['number.stove_current_burner_timer'].state) > 0)\n    return states['select.stove_current_burner_power'].state + '|0:0' +\n      states['number.stove_current_burner_timer'].state\n  else\n    return states['select.stove_current_burner_power'].state\n]]]",
-                            "show_label": true,
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "select.select_option",
-                              "service_data": {
-                                "entity_id": "select.stove_current_burner",
-                                "option": "[[[\n  if (states['select.stove_current_burner'].state == 'right')\n    return 'left'\n  else\n    return 'right'\n]]]"
-                              }
-                            }
-                          },
-                          "off": {
-                            "type": "custom:button-card",
-                            "entity": "switch.stove_main_power",
-                            "template": "stove_more_info"
-                          }
-                        }
+                        "template": "stove"
                       },
                       {
-                        "type": "custom:state-switch",
+                        "type": "custom:decluttering-card",
                         "style": {
                           "top": "5%",
                           "left": "52.5%",
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "entity": "switch.dishwasher",
-                        "default": "disabled",
-                        "states": {
-                          "disabled": {
-                            "type": "custom:button-card",
-                            "entity": "switch.dishwasher",
-                            "template": "error"
-                          },
-                          "off": {
-                            "type": "custom:button-card",
-                            "entity": "switch.dishwasher",
-                            "template": "dishwasher_more_info",
-                            "styles": {
-                              "card": [
-                                {
-                                  "background-color": "[[[\n  if (states['input_boolean.dishwasher_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                                }
-                              ]
-                            }
-                          },
-                          "on": {
-                            "type": "custom:button-card",
-                            "entity": "switch.dishwasher",
-                            "template": "dishwasher_more_info",
-                            "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
-                            "show_label": true
-                          }
-                        }
+                        "template": "dishwasher"
                       },
                       {
                         "type": "custom:decluttering-card",
@@ -5061,133 +5097,8 @@
                             }
                           },
                           {
-                            "type": "custom:state-switch",
-                            "entity": "vacuum.roborock_s7",
-                            "default": "disabled",
-                            "states": {
-                              "disabled": {
-                                "type": "custom:button-card",
-                                "entity": "vacuum.roborock_s7",
-                                "template": "error",
-                                "icon": "mdi:robot-vacuum-alert",
-                                "tap_action": {
-                                  "action": "navigate",
-                                  "navigation_path": "/lovelace/vacuum"
-                                }
-                              },
-                              "error": {
-                                "type": "custom:button-card",
-                                "entity": "vacuum.roborock_s7",
-                                "template": "vacuum_more_info",
-                                "icon": "mdi:robot-vacuum-alert",
-                                "styles": {
-                                  "card": [
-                                    {
-                                      "background-color": "#9e110d"
-                                    }
-                                  ],
-                                  "icon": [
-                                    {
-                                      "animation": "blink 2s ease infinite"
-                                    },
-                                    {
-                                      "color": "#FFFFFF"
-                                    }
-                                  ]
-                                }
-                              },
-                              "docked": {
-                                "type": "custom:button-card",
-                                "entity": "vacuum.roborock_s7",
-                                "template": "vacuum_more_info",
-                                "label": "[[[ \n  if (parseInt(entity.attributes.battery_level) <= 99)\n    return entity.attributes.battery_level + '%';\n  else\n    return ''\n]]]\n",
-                                "show_label": true,
-                                "color": "rgb(68,115,158)",
-                                "double_tap_action": {
-                                  "action": "call-service",
-                                  "service": "vacuum.start",
-                                  "service_data": {
-                                    "entity_id": "vacuum.roborock_s7"
-                                  }
-                                }
-                              },
-                              "cleaning": {
-                                "type": "custom:button-card",
-                                "entity": "vacuum.roborock_s7",
-                                "template": "vacuum_more_info",
-                                "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                                "show_label": true,
-                                "color": "rgb(253,216,53)",
-                                "double_tap_action": {
-                                  "action": "call-service",
-                                  "service": "vacuum.pause",
-                                  "service_data": {
-                                    "entity_id": "vacuum.roborock_s7"
-                                  }
-                                }
-                              },
-                              "returning": {
-                                "type": "custom:button-card",
-                                "entity": "vacuum.roborock_s7",
-                                "template": "vacuum_more_info",
-                                "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                                "show_label": true,
-                                "color": "rgb(253,216,53)",
-                                "double_tap_action": {
-                                  "action": "call-service",
-                                  "service": "vacuum.pause",
-                                  "service_data": {
-                                    "entity_id": "vacuum.roborock_s7"
-                                  }
-                                }
-                              },
-                              "paused": {
-                                "type": "custom:button-card",
-                                "entity": "vacuum.roborock_s7",
-                                "template": "vacuum_more_info",
-                                "color": "rgb(68,115,158)",
-                                "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                                "show_label": true,
-                                "double_tap_action": {
-                                  "action": "call-service",
-                                  "service": "vacuum.start",
-                                  "service_data": {
-                                    "entity_id": "vacuum.roborock_s7"
-                                  }
-                                },
-                                "styles": {
-                                  "card": [
-                                    {
-                                      "background-color": "#f2900f"
-                                    }
-                                  ],
-                                  "label": [
-                                    {
-                                      "animation": "blink 2s ease infinite"
-                                    }
-                                  ]
-                                }
-                              },
-                              "idle": {
-                                "type": "custom:button-card",
-                                "entity": "vacuum.roborock_s7",
-                                "template": "vacuum_more_info",
-                                "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                                "show_label": true,
-                                "styles": {
-                                  "card": [
-                                    {
-                                      "background-color": "#9e110d"
-                                    }
-                                  ],
-                                  "label": [
-                                    {
-                                      "animation": "blink 2s ease infinite"
-                                    }
-                                  ]
-                                }
-                              }
-                            }
+                            "type": "custom:decluttering-card",
+                            "template": "vacuum"
                           },
                           {
                             "type": "custom:button-card",
@@ -5281,115 +5192,8 @@
                             "color_type": "blank-card"
                           },
                           {
-                            "type": "custom:state-switch",
-                            "entity": "sensor.washer_status",
-                            "default": "disabled",
-                            "states": {
-                              "disabled": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "error"
-                              },
-                              "Off": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "color": "rgb(68,115,158)",
-                                "styles": {
-                                  "card": [
-                                    {
-                                      "background-color": "[[[\n  if (states['input_boolean.washer_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                                    }
-                                  ]
-                                }
-                              },
-                              "Standby": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "...",
-                                "show_label": true
-                              },
-                              "Detecting": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "...",
-                                "show_label": true
-                              },
-                              "Delay Set": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                                "show_label": true
-                              },
-                              "Washing": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                                "show_label": true
-                              },
-                              "Rinsing": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                                "show_label": true
-                              },
-                              "Spinning": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "[[[\n  return (states['sensor.washer_countdown'].state);\n]]]\n",
-                                "show_label": true
-                              },
-                              "Finished": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "Done!",
-                                "show_label": true
-                              },
-                              "Paused": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "Paused",
-                                "show_label": true,
-                                "color": "rgb(68,115,158)",
-                                "styles": {
-                                  "label": [
-                                    {
-                                      "color": "var(--primary-background-color)"
-                                    },
-                                    {
-                                      "animation": "blink 2s ease infinite"
-                                    }
-                                  ]
-                                }
-                              },
-                              "Error": {
-                                "type": "custom:button-card",
-                                "entity": "switch.washer_power",
-                                "template": "washer_more_info",
-                                "label": "Error",
-                                "show_label": true,
-                                "styles": {
-                                  "card": [
-                                    {
-                                      "background-color": "#9e110d"
-                                    }
-                                  ],
-                                  "label": [
-                                    {
-                                      "animation": "blink 2s ease infinite"
-                                    }
-                                  ]
-                                }
-                              }
-                            }
+                            "type": "custom:decluttering-card",
+                            "template": "washer"
                           },
                           {
                             "type": "custom:button-card",
@@ -6126,106 +5930,16 @@
                             ]
                           },
                           {
-                            "type": "custom:state-switch",
-                            "entity": "input_select.rice_cooker_status",
-                            "default": "disabled",
-                            "states": {
-                              "disabled": {
-                                "type": "custom:button-card",
-                                "entity": "binary_sensor.rice_cooker",
-                                "template": "error"
-                              },
-                              "Off": {
-                                "type": "custom:button-card",
-                                "entity": "switch.rice_cooker",
-                                "template": "rice_cooker_more_info"
-                              },
-                              "Cooking": {
-                                "type": "custom:button-card",
-                                "entity": "binary_sensor.rice_cooker",
-                                "template": "rice_cooker_more_info",
-                                "label": "Cook",
-                                "show_label": true
-                              },
-                              "Warming": {
-                                "type": "custom:button-card",
-                                "entity": "binary_sensor.rice_cooker",
-                                "template": "rice_cooker_more_info",
-                                "label": "Warm",
-                                "show_label": true
-                              },
-                              "Standby": {
-                                "type": "custom:button-card",
-                                "entity": "switch.rice_cooker",
-                                "template": "rice_cooker_more_info",
-                                "label": "...",
-                                "show_label": true
-                              }
-                            }
+                            "type": "custom:decluttering-card",
+                            "template": "rice_cooker"
                           },
                           {
-                            "type": "custom:state-switch",
-                            "entity": "switch.stove_main_power",
-                            "default": "disabled",
-                            "states": {
-                              "disabled": {
-                                "type": "custom:button-card",
-                                "entity": "switch.stove_main_power",
-                                "template": "error"
-                              },
-                              "on": {
-                                "type": "custom:button-card",
-                                "entity": "switch.stove_main_power",
-                                "template": "stove_more_info",
-                                "icon": "[[[ return 'mdi:chevron-' + states['select.stove_current_burner'].state + '-circle-outline' ]]]",
-                                "label": "[[[ \n  if (parseInt(states['number.stove_current_burner_timer'].state) >= 70)\n    return states['select.stove_current_burner_power'].state + '|1:' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 60)\n    return states['select.stove_current_burner_power'].state + '|1:0' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 10)\n    return states['select.stove_current_burner_power'].state + '|0:' +\n      states['number.stove_current_burner_timer'].state\n  else if (parseInt(states['number.stove_current_burner_timer'].state) > 0)\n    return states['select.stove_current_burner_power'].state + '|0:0' +\n      states['number.stove_current_burner_timer'].state\n  else\n    return states['select.stove_current_burner_power'].state\n]]]",
-                                "show_label": true,
-                                "tap_action": {
-                                  "action": "call-service",
-                                  "service": "select.select_option",
-                                  "service_data": {
-                                    "entity_id": "select.stove_current_burner",
-                                    "option": "[[[\n  if (states['select.stove_current_burner'].state == 'right')\n    return 'left'\n  else\n    return 'right'\n]]]"
-                                  }
-                                }
-                              },
-                              "off": {
-                                "type": "custom:button-card",
-                                "entity": "switch.stove_main_power",
-                                "template": "stove_more_info"
-                              }
-                            }
+                            "type": "custom:decluttering-card",
+                            "template": "stove"
                           },
                           {
-                            "type": "custom:state-switch",
-                            "entity": "switch.dishwasher",
-                            "default": "disabled",
-                            "states": {
-                              "disabled": {
-                                "type": "custom:button-card",
-                                "entity": "switch.dishwasher",
-                                "template": "error"
-                              },
-                              "off": {
-                                "type": "custom:button-card",
-                                "entity": "switch.dishwasher",
-                                "template": "dishwasher_more_info",
-                                "styles": {
-                                  "card": [
-                                    {
-                                      "background-color": "[[[\n  if (states['input_boolean.dishwasher_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
-                                    }
-                                  ]
-                                }
-                              },
-                              "on": {
-                                "type": "custom:button-card",
-                                "entity": "switch.dishwasher",
-                                "template": "dishwasher_more_info",
-                                "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
-                                "show_label": true
-                              }
-                            }
+                            "type": "custom:decluttering-card",
+                            "template": "dishwasher"
                           },
                           {
                             "type": "custom:decluttering-card",
