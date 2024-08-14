@@ -432,10 +432,14 @@
             ]
           }
         },
+        "sensor_view": {
+          "aspect_ratio": "1.1/1",
+          "show_name": false
+        },
         "sensor_diag": {
-          "template": "square_cell",
-          "color_type": "card",
+          "template": "sensor_view",
           "show_icon": false,
+          "color_type": "card",
           "tap_action": {
             "action": "more-info"
           }
@@ -5661,547 +5665,1072 @@
               "user": "361884c4dcb94d5f9d7e583d64844264"
             }
           ],
-          "badges": [],
           "cards": [
             {
               "type": "vertical-stack",
               "cards": [
                 {
-                  "type": "horizontal-stack",
+                  "type": "vertical-stack",
                   "cards": [
                     {
-                      "type": "custom:button-card",
-                      "template": "top_row",
-                      "icon": "mdi:information-outline",
-                      "styles": {
-                        "card": [
-                          {
-                            "border-radius": "50%"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "template": "top_row",
+                          "icon": "mdi:information-outline",
+                          "styles": {
+                            "card": [
+                              {
+                                "border-radius": "50%"
+                              }
+                            ]
+                          },
+                          "tap_action": {
+                            "action": "navigate",
+                            "navigation_path": "/lovelace/sensors-legend"
                           }
-                        ]
-                      },
-                      "tap_action": {
-                        "action": "navigate",
-                        "navigation_path": "/lovelace/sensors-legend"
-                      }
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:motion-sensor",
+                          "label": "min",
+                          "show_label": true,
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:door-open",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:window-open",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:thermometer",
+                          "label": "°C",
+                          "show_label": true,
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:water-percent",
+                          "label": "%",
+                          "show_label": true,
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:brightness-5",
+                          "label": "lux",
+                          "show_label": true,
+                          "template": "square_cell"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "icon": "mdi:motion-sensor",
-                      "label": "min",
-                      "show_label": true,
-                      "template": "square_cell"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:teddy-bear",
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.playroom_motion_sensors",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.yard_window",
+                          "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
+                          "show_label": true,
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.playroom_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.playroom_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.playroom_lux",
+                          "template": "sensor_lux"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "icon": "mdi:door-open",
-                      "template": "square_cell"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:shower-head",
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "input_boolean.junior_bathroom_occupancy",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.junior_bathroom_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.junior_shower_lux",
+                          "template": "sensor_lux"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "icon": "mdi:window-open",
-                      "template": "square_cell"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:toilet",
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "input_boolean.powder_room_occupancy",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.powder_room_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.powder_room_lux",
+                          "template": "sensor_lux"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "icon": "mdi:thermometer",
-                      "label": "°C",
-                      "show_label": true,
-                      "template": "square_cell"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "label": "Elena",
+                          "show_label": true,
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elenas_room_motion",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elenas_room_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elenas_room_left_window",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elenas_room_core_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elenas_room_core_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elenas_room_lux",
+                          "template": "sensor_lux"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "icon": "mdi:water-percent",
-                      "label": "%",
-                      "show_label": true,
-                      "template": "square_cell"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "label": "Eli",
+                          "show_label": true,
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elis_room_motion",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elis_room_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elis_room_right_window",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elis_room_core_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elis_room_core_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elis_room_lux",
+                          "template": "sensor_lux"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "icon": "mdi:brightness-5",
-                      "label": "lux",
-                      "show_label": true,
-                      "template": "square_cell"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:swap-horizontal-circle-outline",
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.hallway_motion",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.hallway_doors",
+                          "label": "[[[ \n  if (entity.attributes.total_doors_open == \"0/4\")\n    return ''\n  else\n    return entity.attributes.total_doors_open\n]]]\n",
+                          "show_label": true,
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.hallway_lux",
+                          "template": "sensor_lux"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:pasta",
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.dining_room_presence",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.main_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.dining_room_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.dining_room_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.dining_room_radar_lux",
+                          "template": "sensor_lux"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:sofa",
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.living_room_presence",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.living_room_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.living_room_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.living_room_radar_lux_calibrated",
+                          "template": "sensor_lux"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bookshelf",
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.study_room_motion",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.parents_room_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.study_room_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.study_room_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.study_walkway_lux",
+                          "template": "sensor_lux"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "label": "D&G",
+                          "show_label": true,
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.parents_room_motion",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.parents_room_doors",
+                          "label": "[[[ \n  if (entity.attributes.total_doors_open == '0/2')\n    return ''\n  else\n    return entity.attributes.total_doors_open\n]]]\n",
+                          "show_label": true,
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.parents_room_left_window",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.parents_room_core_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.parents_room_core_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.parents_room_lux",
+                          "template": "sensor_lux"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bathtub",
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "input_boolean.master_bathroom_occupancy",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.master_bathroom_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.master_bathroom_lux",
+                          "template": "sensor_lux"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:pot-steam",
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.kitchen_presence",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.kitchen_window",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.kitchen_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.kitchen_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.kitchen_radar_lux_calibrated",
+                          "template": "sensor_lux"
+                        }
+                      ]
+                    }
+                  ],
+                  "visibility": [
+                    {
+                      "condition": "screen",
+                      "media_query": "(min-width: 0px) and (max-width: 1023px)"
                     }
                   ]
                 },
                 {
-                  "type": "horizontal-stack",
+                  "type": "vertical-stack",
                   "cards": [
                     {
-                      "type": "custom:button-card",
-                      "icon": "mdi:teddy-bear",
-                      "template": "square_cell"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "template": "top_row",
+                          "icon": "mdi:information-outline",
+                          "styles": {
+                            "card": [
+                              {
+                                "border-radius": "50%"
+                              }
+                            ]
+                          },
+                          "tap_action": {
+                            "action": "navigate",
+                            "navigation_path": "/lovelace/sensors-legend"
+                          }
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:teddy-bear",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:shower-head",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:toilet",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "label": "Elena",
+                          "show_label": true,
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "label": "Eli",
+                          "show_label": true,
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:swap-horizontal-circle-outline",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:pasta",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:sofa",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bookshelf",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "label": "D&G",
+                          "show_label": true,
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bathtub",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:pot-steam",
+                          "template": "square_cell"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.playroom_motion_sensors",
-                      "template": "sensor_motion"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:motion-sensor",
+                          "label": "min",
+                          "show_label": true,
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.playroom_motion_sensors",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "input_boolean.junior_bathroom_occupancy",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "input_boolean.powder_room_occupancy",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elenas_room_motion",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elis_room_motion",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.hallway_motion",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.dining_room_presence",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.living_room_presence",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.study_room_motion",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.parents_room_motion",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "input_boolean.master_bathroom_occupancy",
+                          "template": "sensor_motion"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.kitchen_presence",
+                          "template": "sensor_motion"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:door-open",
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.junior_bathroom_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.powder_room_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elenas_room_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elis_room_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.hallway_doors",
+                          "label": "[[[ \n  if (entity.attributes.total_doors_open == \"0/4\")\n    return ''\n  else\n    return entity.attributes.total_doors_open\n]]]\n",
+                          "show_label": true,
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.main_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.parents_room_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.parents_room_doors",
+                          "label": "[[[ \n  if (entity.attributes.total_doors_open == '0/2')\n    return ''\n  else\n    return entity.attributes.total_doors_open\n]]]\n",
+                          "show_label": true,
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.master_bathroom_door",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.yard_window",
-                      "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
-                      "show_label": true,
-                      "template": "sensor_binary"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:window-open",
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.yard_window",
+                          "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
+                          "show_label": true,
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elenas_room_left_window",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elis_room_right_window",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.parents_room_left_window",
+                          "template": "sensor_binary"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.kitchen_window",
+                          "template": "sensor_binary"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "entity": "sensor.playroom_temperature",
-                      "template": "sensor_temperature"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:thermometer",
+                          "label": "°C",
+                          "show_label": true,
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.playroom_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elenas_room_core_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elis_room_core_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.dining_room_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.living_room_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.study_room_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.parents_room_core_temperature",
+                          "template": "sensor_temperature"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.kitchen_temperature",
+                          "template": "sensor_temperature"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "entity": "sensor.playroom_humidity",
-                      "template": "sensor_humidity"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:water-percent",
+                          "label": "%",
+                          "show_label": true,
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.playroom_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elenas_room_core_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elis_room_core_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.dining_room_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.living_room_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.study_room_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.parents_room_core_humidity",
+                          "template": "sensor_humidity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.kitchen_humidity",
+                          "template": "sensor_humidity"
+                        }
+                      ]
                     },
                     {
-                      "type": "custom:button-card",
-                      "entity": "sensor.playroom_lux",
-                      "template": "sensor_lux"
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:brightness-5",
+                          "label": "lux",
+                          "show_label": true,
+                          "template": "sensor_view"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.playroom_lux",
+                          "template": "sensor_lux"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.junior_shower_lux",
+                          "template": "sensor_lux"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.powder_room_lux",
+                          "template": "sensor_lux"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elenas_room_lux",
+                          "template": "sensor_lux"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elis_room_lux",
+                          "template": "sensor_lux"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.hallway_lux",
+                          "template": "sensor_lux"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.dining_room_radar_lux",
+                          "template": "sensor_lux"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.living_room_radar_lux_calibrated",
+                          "template": "sensor_lux"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.study_walkway_lux",
+                          "template": "sensor_lux"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.parents_room_lux",
+                          "template": "sensor_lux"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.master_bathroom_lux",
+                          "template": "sensor_lux"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.kitchen_radar_lux_calibrated",
+                          "template": "sensor_lux"
+                        }
+                      ]
                     }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "icon": "mdi:shower-head",
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "input_boolean.junior_bathroom_occupancy",
-                      "template": "sensor_motion"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.junior_bathroom_door",
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.junior_shower_lux",
-                      "template": "sensor_lux"
-                    }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "icon": "mdi:toilet",
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "input_boolean.powder_room_occupancy",
-                      "template": "sensor_motion"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.powder_room_door",
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.powder_room_lux",
-                      "template": "sensor_lux"
-                    }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "icon": "mdi:bed",
-                      "label": "Elena",
-                      "show_label": true,
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.elenas_room_motion",
-                      "template": "sensor_motion"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.elenas_room_door",
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.elenas_room_left_window",
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.elenas_room_core_temperature",
-                      "template": "sensor_temperature"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.elenas_room_core_humidity",
-                      "template": "sensor_humidity"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.elenas_room_lux",
-                      "template": "sensor_lux"
-                    }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "icon": "mdi:bed",
-                      "label": "Eli",
-                      "show_label": true,
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.elis_room_motion",
-                      "template": "sensor_motion"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.elis_room_door",
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.elis_room_right_window",
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.elis_room_core_temperature",
-                      "template": "sensor_temperature"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.elis_room_core_humidity",
-                      "template": "sensor_humidity"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.elis_room_lux",
-                      "template": "sensor_lux"
-                    }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "icon": "mdi:swap-horizontal-circle-outline",
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.hallway_motion",
-                      "template": "sensor_motion"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.hallway_doors",
-                      "label": "[[[ \n  if (entity.attributes.total_doors_open == \"0/4\")\n    return ''\n  else\n    return entity.attributes.total_doors_open\n]]]\n",
-                      "show_label": true,
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.hallway_lux",
-                      "template": "sensor_lux"
-                    }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "icon": "mdi:pasta",
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.dining_room_presence",
-                      "template": "sensor_motion"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.main_door",
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.dining_room_temperature",
-                      "template": "sensor_temperature"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.dining_room_humidity",
-                      "template": "sensor_humidity"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.dining_room_radar_lux",
-                      "template": "sensor_lux"
-                    }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "icon": "mdi:sofa",
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.living_room_presence",
-                      "template": "sensor_motion"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.living_room_temperature",
-                      "template": "sensor_temperature"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.living_room_humidity",
-                      "template": "sensor_humidity"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.living_room_radar_lux_calibrated",
-                      "template": "sensor_lux"
-                    }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "icon": "mdi:bookshelf",
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.study_room_motion",
-                      "template": "sensor_motion"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.parents_room_door",
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.study_room_temperature",
-                      "template": "sensor_temperature"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.study_room_humidity",
-                      "template": "sensor_humidity"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.study_walkway_lux",
-                      "template": "sensor_lux"
-                    }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "icon": "mdi:bed",
-                      "label": "D&G",
-                      "show_label": true,
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.parents_room_motion",
-                      "template": "sensor_motion"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.parents_room_doors",
-                      "label": "[[[ \n  if (entity.attributes.total_doors_open == '0/2')\n    return ''\n  else\n    return entity.attributes.total_doors_open\n]]]\n",
-                      "show_label": true,
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.parents_room_left_window",
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.parents_room_core_temperature",
-                      "template": "sensor_temperature"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.parents_room_core_humidity",
-                      "template": "sensor_humidity"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.parents_room_lux",
-                      "template": "sensor_lux"
-                    }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "icon": "mdi:bathtub",
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "input_boolean.master_bathroom_occupancy",
-                      "template": "sensor_motion"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.master_bathroom_door",
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.master_bathroom_lux",
-                      "template": "sensor_lux"
-                    }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "icon": "mdi:pot-steam",
-                      "template": "square_cell"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.kitchen_presence",
-                      "template": "sensor_motion"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "color_type": "blank-card"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "binary_sensor.kitchen_window",
-                      "template": "sensor_binary"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.kitchen_temperature",
-                      "template": "sensor_temperature"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.kitchen_humidity",
-                      "template": "sensor_humidity"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.kitchen_radar_lux_calibrated",
-                      "template": "sensor_lux"
+                  ],
+                  "visibility": [
+                    {
+                      "condition": "screen",
+                      "media_query": "(min-width: 1024px)"
                     }
                   ]
                 }
               ]
             }
-          ]
+          ],
+          "type": "panel"
         },
         {
           "theme": "no_border",
