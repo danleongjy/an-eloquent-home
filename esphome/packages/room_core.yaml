@@ -30,6 +30,17 @@ script:
     then:
       - delay: 120s
       - display.page.show: current_time
+  - id: doorbell
+    then:
+      - select.set:
+          id: ringtone
+          option: Doorbell
+      - button.press: play_ringtone
+      - light.turn_on:
+          id: led_strips
+          effect: Doorbell
+      - delay: 10s
+      - light.turn_off: led_strips
   - id: draw_display_main_time
     then:
       - lambda: |
@@ -523,6 +534,13 @@ button:
     on_press:
       then:
         - rtttl.play: !lambda 'return id(rtttl_string).state;'
+  - platform: template
+    name: Ring Doorbell
+    id: ring_doorbell
+    icon: "mdi:bell-ring-outline"
+    on_press:
+      then:
+        - script.execute: doorbell
 
 i2c:
   sda: 21
