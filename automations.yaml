@@ -6649,7 +6649,9 @@
   - platform: state
     entity_id:
     - vacuum.roborock_s7
-    from: returning
+    from:
+    - returning
+    - cleaning
     to: docked
     id: cleaning_finished
   - platform: state
@@ -6668,6 +6670,11 @@
     - condition: state
       entity_id: binary_sensor.roborock_s7_mop_attached
       state: 'on'
+    - service: input_boolean.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.vacuum_mop_unclean
     - service: notify.mobile_app_pixel_4a
       data:
         title: Please clean vacuum mop
@@ -6675,6 +6682,11 @@
         data:
           tag: mop_unclean
     else:
+    - service: input_boolean.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: input_boolean.vacuum_mop_unclean
     - service: notify.mobile_app_pixel_4a
       data:
         message: clear_notification
