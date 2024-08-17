@@ -2410,6 +2410,9 @@
         - automation.study_room_motion_fan
         - automation.study_room_motion_lights
         - automation.doorbell
+        - automation.study_room_voice_assistant_listening_for_wake_word
+        - automation.kitchen_voice_assistant_listening_for_wake_word
+        - automation.living_room_voice_assistant_listening_for_wake_word
       enabled: true
     - service: cover.open_cover
       data: {}
@@ -2440,6 +2443,16 @@
             minutes: 0
             seconds: 2
             milliseconds: 0
+    - service: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id:
+        - switch.study_room_voice_assistant_use_wake_word
+        - switch.kitchen_core_use_wake_word
+    - service: hassio.addon_stop
+      data:
+        addon: 47701997_assist_microphone
     else:
     - service: automation.turn_on
       data: {}
@@ -2486,6 +2499,9 @@
         - automation.study_room_motion_fan
         - automation.study_room_motion_lights
         - automation.doorbell
+        - automation.study_room_voice_assistant_listening_for_wake_word
+        - automation.kitchen_voice_assistant_listening_for_wake_word
+        - automation.living_room_voice_assistant_listening_for_wake_word
     - service: automation.trigger
       data:
         skip_condition: false
@@ -2494,6 +2510,9 @@
         - automation.south_facing_blinds_auto_control
         - automation.motion_timeouts
         - automation.kitchen_blind_auto_control
+    - service: hassio.addon_start
+      data:
+        addon: 47701997_assist_microphone
   mode: single
 - id: '1670838907474'
   alias: System Housekeeping
