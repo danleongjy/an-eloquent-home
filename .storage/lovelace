@@ -2172,8 +2172,21 @@
                   },
                   "conditions": [
                     {
-                      "condition": "screen",
-                      "media_query": "(min-width: 1024px)"
+                      "condition": "or",
+                      "conditions": [
+                        {
+                          "condition": "screen",
+                          "media_query": "(min-width: 1024px) and (max-width: 1279px)"
+                        },
+                        {
+                          "condition": "screen",
+                          "media_query": "(min-width: 1280px)"
+                        },
+                        {
+                          "condition": "screen",
+                          "media_query": "(min-width: 768px) and (max-width: 1023px)"
+                        }
+                      ]
                     }
                   ],
                   "card": {
@@ -4835,98 +4848,13 @@
                   "cards": [
                     {
                       "type": "conditional",
-                      "conditions": [
-                        {
-                          "condition": "screen",
-                          "media_query": "(min-width: 768px) and (max-width: 1023px)"
-                        }
-                      ],
-                      "card": {
-                        "type": "vertical-stack",
-                        "cards": [
-                          {
-                            "type": "picture",
-                            "tap_action": {
-                              "action": "call-service",
-                              "service": "script.nea_rain_radar_animation",
-                              "target": {}
-                            },
-                            "hold_action": {
-                              "action": "none"
-                            },
-                            "image_entity": "image.rain_radar_animation"
-                          },
-                          {
-                            "type": "picture-elements",
-                            "elements": [
-                              {
-                                "type": "custom:button-card",
-                                "style": {
-                                  "top": "16.666%",
-                                  "left": "16.666%",
-                                  "height": "33.333%",
-                                  "width": "33%"
-                                },
-                                "template": "floorplan_nextbus",
-                                "entity": "binary_sensor.sims_drive_market_bus_stop"
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "style": {
-                                  "top": "16.666%",
-                                  "left": "50%",
-                                  "height": "33.333%",
-                                  "width": "33%"
-                                },
-                                "template": "floorplan_nextbus",
-                                "entity": "binary_sensor.opposite_aljunied_station_bus_stop",
-                                "variables": {
-                                  "stop_no": 2
-                                }
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "style": {
-                                  "top": "16.666%",
-                                  "left": "83.333%",
-                                  "height": "33.333%",
-                                  "width": "33%"
-                                },
-                                "template": "floorplan_nextbus",
-                                "entity": "binary_sensor.aljunied_station_bus_stop",
-                                "variables": {
-                                  "stop_no": 3
-                                }
-                              },
-                              {
-                                "type": "custom:button-card",
-                                "style": {
-                                  "top": "83.333%",
-                                  "left": "83.333%",
-                                  "height": "33.333%",
-                                  "width": "33%"
-                                },
-                                "template": "floorplan_nextbus",
-                                "entity": "binary_sensor.before_lorong_23_geylang_bus_stop",
-                                "variables": {
-                                  "stop_no": 4
-                                }
-                              }
-                            ],
-                            "image": "/local/floorplan/transit_basemap_numbered.png"
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "conditional",
                       "view_layout": {
                         "position": "main"
                       },
                       "conditions": [
                         {
                           "condition": "screen",
-                          "media_query": "(min-width: 0px) and (max-width: 1023px)"
+                          "media_query": "(min-width: 0px) and (max-width: 767px)"
                         }
                       ],
                       "card": {
@@ -10053,13 +9981,18 @@
                   "yaxis": [
                     {
                       "id": "states",
-                      "decimals": 0
+                      "align_to": 10,
+                      "apex_config": {
+                        "tickAmount": 5
+                      }
                     },
                     {
                       "id": "dhcp",
-                      "decimals": 0,
                       "opposite": true,
-                      "min": 10
+                      "align_to": 10,
+                      "apex_config": {
+                        "tickAmount": 5
+                      }
                     }
                   ]
                 }
@@ -10235,11 +10168,14 @@
                   "yaxis": [
                     {
                       "id": "count",
-                      "decimals": 0
+                      "align_to": 10,
+                      "decimals": 0,
+                      "apex_config": {
+                        "tickAmount": 5
+                      }
                     },
                     {
                       "id": "percent",
-                      "decimals": 0,
                       "opposite": true
                     }
                   ]
@@ -10680,6 +10616,26 @@
                               "conditions": [
                                 {
                                   "condition": "state",
+                                  "entity": "binary_sensor.roborock_s7_mop_attached",
+                                  "state": "on"
+                                },
+                                {
+                                  "condition": "state",
+                                  "entity": "binary_sensor.roborock_s7_water_box_attached",
+                                  "state": "on"
+                                }
+                              ],
+                              "card": {
+                                "name": " ",
+                                "type": "tile",
+                                "entity": "binary_sensor.roborock_s7_water_supply"
+                              }
+                            },
+                            {
+                              "type": "conditional",
+                              "conditions": [
+                                {
+                                  "condition": "state",
                                   "entity": "vacuum.roborock_s7",
                                   "state": "docked"
                                 }
@@ -10699,26 +10655,6 @@
                               "name": " ",
                               "type": "tile",
                               "entity": "sensor.roborock_s7_cleaning_area"
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "condition": "state",
-                                  "entity": "binary_sensor.roborock_s7_mop_attached",
-                                  "state": "on"
-                                },
-                                {
-                                  "condition": "state",
-                                  "entity": "binary_sensor.roborock_s7_water_box_attached",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "name": " ",
-                                "type": "tile",
-                                "entity": "binary_sensor.roborock_s7_water_supply"
-                              }
                             }
                           ]
                         }
@@ -11344,6 +11280,26 @@
                                     "conditions": [
                                       {
                                         "condition": "state",
+                                        "entity": "binary_sensor.roborock_s7_mop_attached",
+                                        "state": "on"
+                                      },
+                                      {
+                                        "condition": "state",
+                                        "entity": "binary_sensor.roborock_s7_water_box_attached",
+                                        "state": "on"
+                                      }
+                                    ],
+                                    "card": {
+                                      "name": " ",
+                                      "type": "tile",
+                                      "entity": "binary_sensor.roborock_s7_water_supply"
+                                    }
+                                  },
+                                  {
+                                    "type": "conditional",
+                                    "conditions": [
+                                      {
+                                        "condition": "state",
                                         "entity": "vacuum.roborock_s7",
                                         "state": "docked"
                                       }
@@ -11363,26 +11319,6 @@
                                     "name": " ",
                                     "type": "tile",
                                     "entity": "sensor.roborock_s7_cleaning_area"
-                                  },
-                                  {
-                                    "type": "conditional",
-                                    "conditions": [
-                                      {
-                                        "condition": "state",
-                                        "entity": "binary_sensor.roborock_s7_mop_attached",
-                                        "state": "on"
-                                      },
-                                      {
-                                        "condition": "state",
-                                        "entity": "binary_sensor.roborock_s7_water_box_attached",
-                                        "state": "on"
-                                      }
-                                    ],
-                                    "card": {
-                                      "name": " ",
-                                      "type": "tile",
-                                      "entity": "binary_sensor.roborock_s7_water_supply"
-                                    }
                                   }
                                 ]
                               }
