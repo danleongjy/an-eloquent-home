@@ -641,6 +641,7 @@
         title: Please manually dock vacuum
         data:
           tag: vacuum_undocked
+          clickAction: /lovelace/vacuum
     - service: notify.mobile_app_grace
       data:
         message: Vacuum not docked properly
@@ -729,6 +730,7 @@
         message: Wash completed at {{ (now() | string)[11:16] }}
         data:
           tag: washer_load_clean
+          clickAction: /lovelace/washer
     - service: notify.mobile_app_grace
       data:
         title: Please unload laundry
@@ -768,6 +770,7 @@
         title: Please open dishwasher
         data:
           tag: dishwasher_load_clean
+          clickAction: /lovelace/dishwasher
     - service: notify.mobile_app_grace
       data:
         title: Please open dishwasher
@@ -2522,6 +2525,9 @@
     at: '23:50:00'
   condition: []
   action:
+  - service: shell_command.removeoldmaindoorcamerasnapshots
+    metadata: {}
+    data: {}
   - service: script.git_push
     data:
       commit_message: Autocommit on {{ now().day }}/{{ now().month }}/{{ now().year
@@ -5247,6 +5253,7 @@
       message: Upcoming alarm at {{ state_attr('sensor.next_alarm_timings','parents_room').split('
         ')[1][:5] }}
       data:
+        clickAction: /lovelace/settings-sleep
         actions:
         - action: dismiss
           title: Dismiss Alarm
@@ -6421,6 +6428,7 @@
         title: Check server
         data:
           tag: high
+          clickAction: /lovelace/network
     else:
     - service: notify.mobile_app_pixel_4a
       metadata: {}
@@ -6460,6 +6468,7 @@
         title: Check Zigbee Devices
         data:
           tag: batts_low
+          clickAction: /lovelace/zigbee-diagnostics
         message: "{% set message = namespace(text = \"\") %} {% if state_attr('sensor.zha_device_issues','disconnected')
           | length > 0 %}\n  {% set message.text = message.text + 'Disconnected: '
           %}\n  {% for battery in state_attr('sensor.zha_device_issues','disconnected')
@@ -6700,6 +6709,7 @@
         message: Vacuum completed mopping at {{ (now() | string)[11:16] }}
         data:
           tag: mop_unclean
+          clickAction: /lovelace/vacuum
     else:
     - service: input_boolean.turn_off
       metadata: {}
@@ -6827,3 +6837,32 @@
       action_button_down_short:
       - service: script.doorbell
         data: {}
+- id: '1724106276332'
+  alias: Notify When Main Door Motion Detected
+  description: Take a snapshot and send it in a notification when motion detected
+    at main door
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.main_door_motion
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - service: camera.snapshot
+    metadata: {}
+    data:
+      filename: /media/main_door_camera/snapshot_{{ now().strftime('%Y%m%d_%H%M%S')
+        }}.png
+    target:
+      entity_id: camera.main_door_camera
+  - service: notify.mobile_app_pixel_4a
+    metadata: {}
+    data:
+      message: 'Snapshot:'
+      title: Motion Detected at Main Door
+      data:
+        image: /media/local/{{ state_attr('sensor.main_door_camera', 'file_list')[-1][7:]
+          }}
+        clickAction: /lovelace/dining_room
+  mode: single

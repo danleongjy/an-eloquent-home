@@ -22,7 +22,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 Domain | Quantity
 -- | --
-[`automation`](https://www.home-assistant.io/components/automation) | 160
+[`automation`](https://www.home-assistant.io/components/automation) | 161
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 153
 [`button`](https://www.home-assistant.io/components/button) | 158
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
@@ -45,7 +45,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 15
 [`select`](https://www.home-assistant.io/components/select) | 61
-[`sensor`](https://www.home-assistant.io/components/sensor) | 581
+[`sensor`](https://www.home-assistant.io/components/sensor) | 582
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 39
@@ -56,7 +56,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1719
+Total | 1721
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
