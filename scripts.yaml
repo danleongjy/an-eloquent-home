@@ -867,6 +867,13 @@ doorbell:
         parents_room:
           door: binary_sensor.parents_room_doors
           button: button.parents_room_core_ring_doorbell
+  - service: camera.snapshot
+    target:
+      entity_id:
+      - camera.main_door_camera
+    data:
+      filename: /config/www/main_door_camera/snapshot_{{ now().strftime('%Y%m%d-%H%M%S')
+        }}.jpg
   - service: media_player.volume_set
     metadata: {}
     data:
