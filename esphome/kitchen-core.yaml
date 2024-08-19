@@ -84,6 +84,11 @@ script:
     then:
       - delay: 300s
       - display.page.show: screensaver
+  - id: doorbell
+    then:
+      - display.page.show: main_door_camera
+      - delay: 10s
+      - display.page.show: current_time
   - id: draw_display_borders
     then:
       - lambda: |
@@ -102,6 +107,15 @@ script:
           } else if (id(env_value_display).state == "lux") {
             id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000f7e8 %.0flx", id(room_lux).state);
           }
+
+button:
+  - platform: template
+    name: Ring Doorbell
+    id: ring_doorbell
+    icon: "mdi:bell-ring-outline"
+    on_press:
+      then:
+        - script.execute: doorbell
 
 spi:
   - clk_pin: 13
@@ -440,6 +454,10 @@ image:
   - file: mdi:roller-shade
     id: main_blinds
     resize: 120x120
+  - file: https://an-eloquent-home.duckdns.org/local/main_door_camera/snapshot.jpg
+    id: main_door_camera_snapshot
+    resize: 135x102
+    type: RGB24
 
 display:
   - platform: ili9xxx
@@ -559,4 +577,17 @@ display:
         lambda: |-
           // Update display brightness
           id(pmu).set_brightness(0);
+          id(pmu).update();
+      - id: main_door_camera
+        lambda: |-
+          // tabs
+          it.image(id(width) * 0.5, id(height) * 0.8, id(tab_lights), ImageAlign::CENTER);
+          it.image(id(width) * 0.8333, id(height) * 0.8, id(tab_blinds), ImageAlign::CENTER);
+
+          id(draw_display_borders).execute();
+          id(draw_display_bottom_status_bar).execute();
+          it.image(id(width) * 0.5, id(height) * 0.35, id(main_door_camera_snapshot), ImageAlign::CENTER);
+
+          // Update display brightness
+          id(pmu).set_brightness(1);
           id(pmu).update();

@@ -51,9 +51,15 @@ packages:
 
 script:
   - id: !remove doorbell
-
-button:
-  - id: !remove ring_doorbell
+  - id: doorbell
+    then:
+      - select.set:
+          id: ringtone
+          option: Doorbell
+      - button.press: play_ringtone
+      - display.page.show: main_door_camera
+      - delay: 10s
+      - display.page.show: current_time
 
 light:
   - id: !remove led_strips

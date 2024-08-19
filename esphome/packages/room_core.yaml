@@ -36,11 +36,13 @@ script:
           id: ringtone
           option: Doorbell
       - button.press: play_ringtone
+      - display.page.show: main_door_camera
       - light.turn_on:
           id: led_strips
           effect: Doorbell
       - delay: 10s
       - light.turn_off: led_strips
+      - display.page.show: current_time
   - id: draw_display_main_time
     then:
       - lambda: |
@@ -127,6 +129,10 @@ script:
           if (id(ac_auto_control).state) {
             id(interface_display).print(id(width) * 0.85, id(height) * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
           }
+  - id: draw_main_door_camera_snapshot
+    then:
+      - lambda: |
+          id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_door_camera_snapshot), ImageAlign::CENTER);
   - id: draw_display_borders
     then:
       - lambda: |
@@ -387,7 +393,13 @@ binary_sensor:
           condition:
             light.is_on: backlight
           then:
-            - display.page.show_next: interface_display
+            - if:
+                condition:
+                  display.is_displaying_page: current_time
+                then:
+                  display.page.show: lights
+                else:
+                  display.page.show_next: interface_display
   - platform: gpio
     pin: 37
     name: 'Right Button'
@@ -645,6 +657,10 @@ image:
   - file: mdi:roller-shade
     id: main_blinds
     resize: 160x160
+  - file: https://an-eloquent-home.duckdns.org/local/main_door_camera/snapshot.jpg
+    id: main_door_camera_snapshot
+    resize: 240x180
+    type: RGB24
 
 spi:
   clk_pin: 18
@@ -725,6 +741,16 @@ display:
 
           // display date
           id(interface_display).strftime(id(width) * 0.5, id(height) * 0.6, id(small_time), TextAlign::CENTER, "%a %d %b %Y", id(homeassistant_time).now());
+      - id: main_door_camera
+        lambda: |-
+          // tabs
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
+
+          id(draw_display_borders).execute();
+          id(draw_display_bottom_status_bar).execute();
+          id(draw_main_door_camera_snapshot).execute();
       - id: lights
         lambda: |-
           // tabs
