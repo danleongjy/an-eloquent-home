@@ -6847,6 +6847,10 @@
     - binary_sensor.main_door_motion
     from: 'off'
     to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
   condition: []
   action:
   - service: camera.snapshot
@@ -6856,13 +6860,19 @@
         }}.png
     target:
       entity_id: camera.main_door_camera
+  - wait_for_trigger:
+    - platform: state
+      entity_id:
+      - sensor.main_door_camera
+    continue_on_timeout: false
+    timeout: 60
   - service: notify.mobile_app_pixel_4a
     metadata: {}
     data:
       message: 'Snapshot:'
       title: Motion Detected at Main Door
       data:
-        image: /media/local/{{ state_attr('sensor.main_door_camera', 'file_list')[-1][7:]
-          }}
+        image: /media/local/{{ (state_attr('sensor.main_door_camera', 'file_list')
+          | sort)[-1][7:] }}
         clickAction: /lovelace/dining_room
   mode: single
