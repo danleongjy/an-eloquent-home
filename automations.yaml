@@ -6875,4 +6875,19 @@
         image: /media/local/{{ (state_attr('sensor.main_door_camera', 'file_list')
           | sort)[-1][7:] }}
         clickAction: /lovelace/dining_room
+  - service: local_file.update_file_path
+    data:
+      entity_id: camera.recent_main_door_snapshot_1
+      file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list') |   sort)[-1][7:]
+        }}
+  - service: local_file.update_file_path
+    data:
+      entity_id: camera.recent_main_door_snapshot_2
+      file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list') |   sort)[-2][7:]
+        }}
+  - service: local_file.update_file_path
+    data:
+      entity_id: camera.recent_main_door_snapshot_3
+      file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list') |   sort)[-3][7:]
+        }}
   mode: single
