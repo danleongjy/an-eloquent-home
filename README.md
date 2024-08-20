@@ -72,6 +72,7 @@ Total | 1724
 - [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [Intent Script](https://home-assistant.io/integrations/intent_script)
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
+- [Local File Camera](https://home-assistant.io/integrations/local_file)
 - [RESTful](https://home-assistant.io/integrations/rest)
 - [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [Roborock](https://home-assistant.io/integrations/roborock)
