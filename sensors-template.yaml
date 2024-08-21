@@ -726,9 +726,9 @@
     unique_id: sensor.floorplan_playroom_status
     state: >
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
-      {{ data_overlay('binary_sensor.playroom_radar_motion', ['light.playroom_lights'], 'sensor.playroom_radar_lux', 'sensor.playroom_temperature', 'sensor.playroom_humidity') }}
+      {{ data_overlay('binary_sensor.playroom_radar_occupancy', ['light.playroom_lights'], 'sensor.playroom_radar_lux', 'sensor.playroom_temperature', 'sensor.playroom_humidity') }}
     attributes:
-      presence: "{{ states('binary_sensor.playroom_motion') }}"
+      presence: "{{ states('binary_sensor.playroom_radar_occupancy') }}"
       lux: "{{ states('sensor.playroom_radar_lux') }}"
       playroom_lights: "{{ states('light.playroom_lights') }}"
 

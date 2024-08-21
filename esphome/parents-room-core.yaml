@@ -17,18 +17,18 @@ esp32:
 esphome:
   name: ${hostname_room}-core
   friendly_name: ${capitalised_room_name} Core
-
+ 
 # Enable logging
 logger:
 
 # Enable Home Assistant API
 api:
   encryption:
-    key: "3NQFmL4Y0QyJt7MFvqt9s3Wjq5nLpHTSIcG6mdgFYOM="
+    key: !secret parents_room_core_api_key
 
 ota:
   - platform: esphome
-    password: "1aaafe04f74a3080a6d01d10b4280023"
+    password: !secret parents_room_core_ota_password
 
 wifi:
   ssid: !secret wifi_ssid
@@ -42,7 +42,7 @@ wifi:
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: "${hostname_room}-core"
-    password: "IyN9nZcVuCzJ"
+    password: !secret ap_password
 
 captive_portal:
     
