@@ -716,20 +716,20 @@
     unique_id: sensor.floorplan_yard_status
     state: >
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
-      {{ data_overlay('binary_sensor.yard_motion', ['light.yard_light_entity'], 'sensor.playroom_lux', 'sensor.playroom_temperature', 'sensor.playroom_humidity') }}
+      {{ data_overlay('binary_sensor.yard_motion', ['light.yard_light_entity'], 'sensor.playroom_radar_lux', 'sensor.playroom_temperature', 'sensor.playroom_humidity') }}
     attributes:
       presence: "{{ states('binary_sensor.yard_motion') }}"
-      lux: "{{ states('sensor.playroom_lux') }}"
+      lux: "{{ states('sensor.playroom_radar_lux') }}"
       yard_light: "{{ states('light.yard_light_entity') }}"
 
   - name: Floorplan Playroom Status
     unique_id: sensor.floorplan_playroom_status
     state: >
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
-      {{ data_overlay('binary_sensor.playroom_motion', ['light.playroom_lights'], 'sensor.playroom_lux', 'sensor.playroom_temperature', 'sensor.playroom_humidity') }}
+      {{ data_overlay('binary_sensor.playroom_radar_motion', ['light.playroom_lights'], 'sensor.playroom_radar_lux', 'sensor.playroom_temperature', 'sensor.playroom_humidity') }}
     attributes:
       presence: "{{ states('binary_sensor.playroom_motion') }}"
-      lux: "{{ states('sensor.playroom_lux') }}"
+      lux: "{{ states('sensor.playroom_radar_lux') }}"
       playroom_lights: "{{ states('light.playroom_lights') }}"
 
   - name: Floorplan Junior Bathroom Status
@@ -804,12 +804,12 @@
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
       {{ data_overlay('binary_sensor.dining_room_presence', 
                       ['light.dining_room_lights','light.dining_room_pendant_light_entity','fan.dining_room_fan','climate.dining_room_ac'], 
-                      'sensor.dining_room_radar_lux',
+                      'sensor.dining_room_lux',
                       'sensor.dining_room_temperature', 
                       'sensor.dining_room_humidity') }}
     attributes:
       presence: "{{ states('binary_sensor.dining_room_presence') }}"
-      lux: "{{ states('sensor.dining_room_radar_lux') }}"
+      lux: "{{ states('sensor.dining_room_lux') }}"
       temperature: "{{ states('sensor.dining_room_temperature') }}"
       humidity: "{{ states('sensor.dining_room_humidity') }}"
       dining_room_lights: "{{ states('light.dining_room_lights') }}"

@@ -2934,11 +2934,12 @@
     id: elis_room
     above: input_number.comfortable_lux
   - platform: numeric_state
-    entity_id: sensor.playroom_lux
+    entity_id: sensor.playroom_radar_lux
     id: playroom
     above: input_number.comfortable_lux
   - platform: numeric_state
-    entity_id: sensor.dining_room_radar_lux
+    entity_id:
+    - sensor.dining_room_lux
     id: dining_room
     above: input_number.comfortable_lux
   - platform: numeric_state
@@ -3873,8 +3874,8 @@
     input:
       lights_list:
       - light.playroom_lights
-      motion_sensor: binary_sensor.playroom_motion
-      lux_sensor: sensor.playroom_lux
+      motion_sensor: binary_sensor.playroom_radar_occupancy
+      lux_sensor: sensor.playroom_radar_lux
       lights_debounce: false
 - id: '1678323081528'
   alias: Playroom Motion Timeout
@@ -3884,7 +3885,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor:
-      - binary_sensor.playroom_motion
+      - binary_sensor.playroom_radar_motion
       number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.playroom_lights
@@ -3898,7 +3899,7 @@
       lights_list:
       - light.yard_light_entity
       motion_sensor: binary_sensor.yard_motion
-      lux_sensor: sensor.playroom_lux
+      lux_sensor: sensor.playroom_radar_lux
       lights_debounce: false
 - id: '1678323253914'
   alias: Yard Motion Timeout
@@ -3921,7 +3922,7 @@
       lights_list:
       - light.living_room_lights
       motion_sensor: binary_sensor.living_room_presence
-      lux_sensor: sensor.dining_room_radar_lux
+      lux_sensor: sensor.dining_room_lux
       blackout_hours_start: input_datetime.dim_hours_start
       lights_debounce: false
 - id: '1679619511575'
@@ -3934,7 +3935,7 @@
       lights_list:
       - light.living_room_pendant_light_entity
       motion_sensor: binary_sensor.living_room_presence
-      lux_sensor: sensor.dining_room_radar_lux
+      lux_sensor: sensor.dining_room_lux
       blackout_hours_start: input_datetime.dim_hours_end
       doors_list: []
       lights_debounce: true
@@ -3965,7 +3966,7 @@
       lights_list:
       - light.dining_room_lights
       motion_sensor: binary_sensor.dining_room_presence
-      lux_sensor: sensor.dining_room_radar_lux
+      lux_sensor: sensor.dining_room_lux
       blackout_hours_start: input_datetime.dim_hours_start
       lights_debounce: false
 - id: '1679619906548'
@@ -3978,7 +3979,7 @@
       lights_list:
       - light.dining_room_pendant_light_entity
       motion_sensor: binary_sensor.dining_room_presence
-      lux_sensor: sensor.dining_room_radar_lux
+      lux_sensor: sensor.dining_room_lux
       doors_list: []
       blackout_hours_start: input_datetime.dim_hours_end
 - id: '1679619971749'
@@ -6850,7 +6851,7 @@
     for:
       hours: 0
       minutes: 0
-      seconds: 10
+      seconds: 5
   condition: []
   action:
   - service: camera.snapshot
