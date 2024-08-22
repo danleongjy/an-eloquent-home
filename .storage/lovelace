@@ -836,6 +836,36 @@
         }
       },
       "decluttering_templates": {
+        "main_door": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "input_boolean.away_mode",
+            "default": "off",
+            "states": {
+              "on": {
+                "type": "custom:button-card",
+                "entity": "input_boolean.away_mode",
+                "template": "top_row",
+                "double_tap_action": {
+                  "action": "toggle"
+                },
+                "tap_action": {
+                  "action": "navigate",
+                  "navigation_path": "/lovelace/main-door"
+                }
+              },
+              "off": {
+                "type": "custom:button-card",
+                "entity": "binary_sensor.main_door",
+                "template": "top_row",
+                "tap_action": {
+                  "action": "navigate",
+                  "navigation_path": "/lovelace/main-door"
+                }
+              }
+            }
+          }
+        },
         "light": {
           "card": {
             "type": "custom:state-switch",
@@ -2235,6 +2265,58 @@
                         ]
                       },
                       {
+                        "type": "conditional",
+                        "conditions": [
+                          {
+                            "entity": "input_select.floorplan_panel_view",
+                            "state": "main-door"
+                          }
+                        ],
+                        "elements": [
+                          {
+                            "type": "image",
+                            "camera_image": "camera.recent_main_door_snapshot_1",
+                            "style": {
+                              "top": "27.5%",
+                              "left": "75%",
+                              "height": "14.5%",
+                              "width": "9.5%"
+                            }
+                          },
+                          {
+                            "type": "image",
+                            "camera_image": "camera.recent_main_door_snapshot_2",
+                            "style": {
+                              "top": "27.5%",
+                              "left": "85%",
+                              "height": "14.5%",
+                              "width": "9.5%"
+                            }
+                          },
+                          {
+                            "type": "image",
+                            "camera_image": "camera.recent_main_door_snapshot_3",
+                            "style": {
+                              "top": "27.5%",
+                              "left": "95%",
+                              "height": "14.5%",
+                              "width": "9.5%"
+                            }
+                          },
+                          {
+                            "type": "image",
+                            "camera_image": "camera.main_door_camera",
+                            "camera_view": "live",
+                            "style": {
+                              "top": "57.5%",
+                              "left": "85%",
+                              "height": "43.25%",
+                              "width": "29.5%"
+                            }
+                          }
+                        ]
+                      },
+                      {
                         "type": "image",
                         "style": {
                           "top": "50%",
@@ -2702,21 +2784,14 @@
                         }
                       },
                       {
-                        "type": "custom:button-card",
+                        "type": "custom:decluttering-card",
                         "style": {
                           "top": "5%",
                           "left": "2.5%",
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "entity": "input_boolean.away_mode",
-                        "template": "top_row",
-                        "double_tap_action": {
-                          "action": "toggle"
-                        },
-                        "tap_action": {
-                          "action": "more-info"
-                        }
+                        "template": "main_door"
                       },
                       {
                         "type": "custom:decluttering-card",
@@ -3027,6 +3102,70 @@
                           {
                             "type": "custom:button-card",
                             "style": {
+                              "top": "30%",
+                              "left": "75%",
+                              "height": "19%",
+                              "width": "9.5%"
+                            },
+                            "template": "floorplan_nextbus",
+                            "entity": "binary_sensor.sims_drive_market_bus_stop"
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "style": {
+                              "top": "30%",
+                              "left": "85%",
+                              "height": "19%",
+                              "width": "9.5%"
+                            },
+                            "template": "floorplan_nextbus",
+                            "entity": "binary_sensor.opposite_aljunied_station_bus_stop",
+                            "variables": {
+                              "stop_no": 2
+                            }
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "style": {
+                              "top": "30%",
+                              "left": "95%",
+                              "height": "19%",
+                              "width": "9.5%"
+                            },
+                            "template": "floorplan_nextbus",
+                            "entity": "binary_sensor.aljunied_station_bus_stop",
+                            "variables": {
+                              "stop_no": 3
+                            }
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "style": {
+                              "top": "70%",
+                              "left": "95%",
+                              "height": "19%",
+                              "width": "9.5%"
+                            },
+                            "template": "floorplan_nextbus",
+                            "entity": "binary_sensor.before_lorong_23_geylang_bus_stop",
+                            "variables": {
+                              "stop_no": 4
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "conditional",
+                        "conditions": [
+                          {
+                            "entity": "input_select.floorplan_panel_view",
+                            "state_not": "weather"
+                          }
+                        ],
+                        "elements": [
+                          {
+                            "type": "custom:button-card",
+                            "style": {
                               "top": "10%",
                               "left": "91.5%",
                               "height": "19%",
@@ -3117,59 +3256,6 @@
                             "tap_action": {
                               "action": "navigate",
                               "navigation_path": "/lovelace/settings-sleep"
-                            }
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "style": {
-                              "top": "30%",
-                              "left": "75%",
-                              "height": "19%",
-                              "width": "9.5%"
-                            },
-                            "template": "floorplan_nextbus",
-                            "entity": "binary_sensor.sims_drive_market_bus_stop"
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "style": {
-                              "top": "30%",
-                              "left": "85%",
-                              "height": "19%",
-                              "width": "9.5%"
-                            },
-                            "template": "floorplan_nextbus",
-                            "entity": "binary_sensor.opposite_aljunied_station_bus_stop",
-                            "variables": {
-                              "stop_no": 2
-                            }
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "style": {
-                              "top": "30%",
-                              "left": "95%",
-                              "height": "19%",
-                              "width": "9.5%"
-                            },
-                            "template": "floorplan_nextbus",
-                            "entity": "binary_sensor.aljunied_station_bus_stop",
-                            "variables": {
-                              "stop_no": 3
-                            }
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "style": {
-                              "top": "70%",
-                              "left": "95%",
-                              "height": "19%",
-                              "width": "9.5%"
-                            },
-                            "template": "floorplan_nextbus",
-                            "entity": "binary_sensor.before_lorong_23_geylang_bus_stop",
-                            "variables": {
-                              "stop_no": 4
                             }
                           }
                         ]
@@ -4968,15 +5054,8 @@
                             }
                           },
                           {
-                            "type": "custom:button-card",
-                            "entity": "input_boolean.away_mode",
-                            "template": "top_row",
-                            "double_tap_action": {
-                              "action": "toggle"
-                            },
-                            "tap_action": {
-                              "action": "more-info"
-                            }
+                            "type": "custom:decluttering-card",
+                            "template": "main_door"
                           },
                           {
                             "type": "custom:button-card",
@@ -9108,6 +9187,25 @@
                   "type": "entities",
                   "entities": [
                     {
+                      "entity": "input_boolean.parents_room_next_alarm_dismissed"
+                    },
+                    {
+                      "entity": "input_boolean.elis_room_next_alarm_dismissed"
+                    },
+                    {
+                      "entity": "input_boolean.elenas_room_next_alarm_dismissed"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
                       "entity": "input_datetime.wind_down"
                     },
                     {
@@ -9144,25 +9242,6 @@
                     },
                     {
                       "entity": "input_datetime.eca_day_alarm"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "input_boolean.parents_room_next_alarm_dismissed"
-                    },
-                    {
-                      "entity": "input_boolean.elis_room_next_alarm_dismissed"
-                    },
-                    {
-                      "entity": "input_boolean.elenas_room_next_alarm_dismissed"
                     }
                   ]
                 }
@@ -12644,51 +12723,6 @@
                     "type": "markdown",
                     "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
                   }
-                },
-                {
-                  "show_state": true,
-                  "show_name": true,
-                  "camera_view": "live",
-                  "type": "picture-entity",
-                  "camera_image": "camera.main_door_camera",
-                  "entity": "binary_sensor.main_door_motion",
-                  "tap_action": {
-                    "action": "more-info"
-                  },
-                  "hold_action": {
-                    "action": "more-info"
-                  },
-                  "aspect_ratio": "4:3"
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "show_state": false,
-                      "show_name": false,
-                      "camera_view": "auto",
-                      "type": "picture-entity",
-                      "entity": "camera.recent_main_door_snapshot_1",
-                      "camera_image": "camera.recent_main_door_snapshot_1"
-                    },
-                    {
-                      "show_state": false,
-                      "show_name": false,
-                      "camera_view": "auto",
-                      "type": "picture-entity",
-                      "entity": "camera.recent_main_door_snapshot_2",
-                      "camera_image": "camera.recent_main_door_snapshot_2"
-                    },
-                    {
-                      "show_state": false,
-                      "show_name": false,
-                      "camera_view": "auto",
-                      "type": "picture-entity",
-                      "entity": "camera.recent_main_door_snapshot_3",
-                      "camera_image": "camera.recent_main_door_snapshot_3"
-                    }
-                  ],
-                  "title": "Recent Snapshots"
                 }
               ]
             }
@@ -13686,6 +13720,76 @@
               ]
             }
           ]
+        },
+        {
+          "title": "Main Door",
+          "path": "main-door",
+          "icon": "mdi:cctv",
+          "theme": "no_border",
+          "type": "sections",
+          "max_columns": 1,
+          "subview": true,
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "show_state": true,
+                  "show_name": true,
+                  "camera_view": "live",
+                  "type": "picture-entity",
+                  "camera_image": "camera.main_door_camera",
+                  "entity": "binary_sensor.main_door_motion",
+                  "tap_action": {
+                    "action": "more-info"
+                  },
+                  "hold_action": {
+                    "action": "more-info"
+                  },
+                  "aspect_ratio": "4:3"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "show_state": false,
+                      "show_name": false,
+                      "camera_view": "auto",
+                      "type": "picture-entity",
+                      "entity": "camera.recent_main_door_snapshot_1",
+                      "camera_image": "camera.recent_main_door_snapshot_1",
+                      "aspect_ratio": "4:3"
+                    },
+                    {
+                      "show_state": false,
+                      "show_name": false,
+                      "camera_view": "auto",
+                      "type": "picture-entity",
+                      "entity": "camera.recent_main_door_snapshot_2",
+                      "camera_image": "camera.recent_main_door_snapshot_2",
+                      "aspect_ratio": "4:3"
+                    },
+                    {
+                      "show_state": false,
+                      "show_name": false,
+                      "camera_view": "auto",
+                      "type": "picture-entity",
+                      "entity": "camera.recent_main_door_snapshot_3",
+                      "camera_image": "camera.recent_main_door_snapshot_3",
+                      "aspect_ratio": "4:3"
+                    }
+                  ]
+                }
+              ],
+              "title": "Recent Snapshots"
+            }
+          ],
+          "cards": []
         }
       ]
     }
