@@ -52,10 +52,10 @@
     device_class: motion
     state: >
       {{ is_state('binary_sensor.study_walkway_motion', 'on') or
-         is_state('binary_sensor.study_room_presence', 'on') }}
+         is_state('binary_sensor.study_room_radar_occupancy', 'on') }}
     attributes:
       study_walkway_motion: "{{ states('binary_sensor.study_walkway_motion') }}"
-      study_room_presence: "{{ states('binary_sensor.study_room_presence') }}"
+      study_room_presence: "{{ states('binary_sensor.study_room_radar_occupancy') }}"
 
   - name: Hallway Doors
     unique_id: binary_sensor.hallway_doors
@@ -887,9 +887,9 @@
     unique_id: sensor.floorplan_kitchen_status
     state: >
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
-      {{ data_overlay('binary_sensor.kitchen_presence', ['light.kitchen_lights'], 'sensor.kitchen_radar_lux', 'sensor.kitchen_temperature', 'sensor.kitchen_humidity') }}
+      {{ data_overlay('binary_sensor.kitchen_motion_sensors', ['light.kitchen_lights'], 'sensor.kitchen_radar_lux', 'sensor.kitchen_temperature', 'sensor.kitchen_humidity') }}
     attributes:
-      presence: "{{ states('binary_sensor.kitchen_presence') }}"
+      presence: "{{ states('binary_sensor.kitchen_motion_sensors') }}"
       lux: "{{ states('sensor.kitchen_radar_lux') }}"
       kitchen_lights: "{{ states('light.kitchen_lights') }}"
 

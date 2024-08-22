@@ -911,3 +911,27 @@ doorbell:
       - button.study_room_core_ring_doorbell
   description: Play doorbell tones and flash Room Core lights
   icon: mdi:bell-ring-outline
+batch_update_esphome_nodes:
+  alias: Batch Update ESPHome Nodes
+  sequence:
+  - repeat:
+      sequence:
+      - service: update.install
+        target:
+          entity_id: '{{ repeat.item }}'
+        continue_on_error: true
+      - wait_for_trigger:
+        - platform: state
+          entity_id:
+          - update.parents_room_core_firmware
+          attribute: in_progress
+          to: false
+        timeout: 10
+      - delay: 0.5
+      for_each: '{{ states.update | selectattr(''attributes.title'', ''eq'', ''ESPHome'')
+        | selectattr(''state'', ''eq'', ''on'') | map(attribute = ''entity_id'') |
+        list }}
+
+        '
+  description: Update ESPHome nodes in sequence
+  icon: mdi:update

@@ -3880,8 +3880,7 @@
                           "height": "4%",
                           "width": "2%"
                         },
-                        "icon": "mdi:chevron-right-circle-outline",
-                        "template": "square_cell_background",
+                        "icon": "[[[\n  if (states['input_select.floorplan_panel_view'].state == 'weather') {\n    return 'mdi:bus'\n  } else if (states['input_select.floorplan_panel_view'].state == 'transit') {\n    return 'mdi:cctv'\n  } else {\n    return 'mdi:weather-cloudy'\n  }\n]]]\n",
                         "tap_action": {
                           "action": "call-service",
                           "service": "input_select.select_next",
@@ -3896,11 +3895,6 @@
                             },
                             {
                               "width": "100%"
-                            }
-                          ],
-                          "card": [
-                            {
-                              "background-color": "rgba(0,0,0,0.0)"
                             }
                           ]
                         }
@@ -6118,7 +6112,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.kitchen_presence",
+                          "entity": "binary_sensor.kitchen_motion_sensors",
                           "template": "sensor_motion"
                         },
                         {
@@ -6312,7 +6306,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.kitchen_presence",
+                          "entity": "binary_sensor.kitchen_motion_sensors",
                           "template": "sensor_motion"
                         }
                       ]
@@ -6810,9 +6804,22 @@
                 }
               ],
               "card": {
-                "type": "tile",
-                "entity": "script.git_push",
-                "hide_state": true
+                "type": "vertical-stack",
+                "cards": [
+                  {
+                    "type": "tile",
+                    "entity": "script.git_push",
+                    "hide_state": true
+                  },
+                  {
+                    "type": "tile",
+                    "entity": "script.batch_update_esphome_nodes",
+                    "hide_state": true,
+                    "tap_action": {
+                      "action": "toggle"
+                    }
+                  }
+                ]
               }
             }
           ]
@@ -12199,7 +12206,7 @@
                   "cards": [
                     {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.playroom_motion",
+                      "entity": "binary_sensor.playroom_radar_occupancy",
                       "template": "square_cell_background",
                       "label": "Play",
                       "show_label": true
@@ -12798,7 +12805,7 @@
                     },
                     {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.study_room_presence",
+                      "entity": "binary_sensor.study_room_radar_occupancy",
                       "template": "square_cell_background",
                       "label": "Desk",
                       "show_label": true
@@ -13044,7 +13051,7 @@
                   "cards": [
                     {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.kitchen_presence",
+                      "entity": "binary_sensor.kitchen_radar_occupancy",
                       "template": "square_cell_background",
                       "label": "Sink",
                       "show_label": true
@@ -13422,6 +13429,76 @@
           ]
         },
         {
+          "title": "Main Door",
+          "path": "main-door",
+          "icon": "mdi:cctv",
+          "theme": "no_border",
+          "type": "sections",
+          "max_columns": 1,
+          "subview": true,
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "show_state": true,
+                  "show_name": true,
+                  "camera_view": "live",
+                  "type": "picture-entity",
+                  "camera_image": "camera.main_door_camera",
+                  "entity": "binary_sensor.main_door_motion",
+                  "tap_action": {
+                    "action": "more-info"
+                  },
+                  "hold_action": {
+                    "action": "more-info"
+                  },
+                  "aspect_ratio": "4:3"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "show_state": false,
+                      "show_name": false,
+                      "camera_view": "auto",
+                      "type": "picture-entity",
+                      "entity": "camera.recent_main_door_snapshot_1",
+                      "camera_image": "camera.recent_main_door_snapshot_1",
+                      "aspect_ratio": "4:3"
+                    },
+                    {
+                      "show_state": false,
+                      "show_name": false,
+                      "camera_view": "auto",
+                      "type": "picture-entity",
+                      "entity": "camera.recent_main_door_snapshot_2",
+                      "camera_image": "camera.recent_main_door_snapshot_2",
+                      "aspect_ratio": "4:3"
+                    },
+                    {
+                      "show_state": false,
+                      "show_name": false,
+                      "camera_view": "auto",
+                      "type": "picture-entity",
+                      "entity": "camera.recent_main_door_snapshot_3",
+                      "camera_image": "camera.recent_main_door_snapshot_3",
+                      "aspect_ratio": "4:3"
+                    }
+                  ]
+                }
+              ],
+              "title": "Recent Snapshots"
+            }
+          ],
+          "cards": []
+        },
+        {
           "title": "Legend",
           "path": "sensors-legend",
           "icon": "mdi:information-outline",
@@ -13720,76 +13797,6 @@
               ]
             }
           ]
-        },
-        {
-          "title": "Main Door",
-          "path": "main-door",
-          "icon": "mdi:cctv",
-          "theme": "no_border",
-          "type": "sections",
-          "max_columns": 1,
-          "subview": true,
-          "sections": [
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "show_state": true,
-                  "show_name": true,
-                  "camera_view": "live",
-                  "type": "picture-entity",
-                  "camera_image": "camera.main_door_camera",
-                  "entity": "binary_sensor.main_door_motion",
-                  "tap_action": {
-                    "action": "more-info"
-                  },
-                  "hold_action": {
-                    "action": "more-info"
-                  },
-                  "aspect_ratio": "4:3"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "show_state": false,
-                      "show_name": false,
-                      "camera_view": "auto",
-                      "type": "picture-entity",
-                      "entity": "camera.recent_main_door_snapshot_1",
-                      "camera_image": "camera.recent_main_door_snapshot_1",
-                      "aspect_ratio": "4:3"
-                    },
-                    {
-                      "show_state": false,
-                      "show_name": false,
-                      "camera_view": "auto",
-                      "type": "picture-entity",
-                      "entity": "camera.recent_main_door_snapshot_2",
-                      "camera_image": "camera.recent_main_door_snapshot_2",
-                      "aspect_ratio": "4:3"
-                    },
-                    {
-                      "show_state": false,
-                      "show_name": false,
-                      "camera_view": "auto",
-                      "type": "picture-entity",
-                      "entity": "camera.recent_main_door_snapshot_3",
-                      "camera_image": "camera.recent_main_door_snapshot_3",
-                      "aspect_ratio": "4:3"
-                    }
-                  ]
-                }
-              ],
-              "title": "Recent Snapshots"
-            }
-          ],
-          "cards": []
         }
       ]
     }

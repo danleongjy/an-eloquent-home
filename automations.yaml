@@ -3822,7 +3822,7 @@
     input:
       lights_list:
       - light.kitchen_lights
-      motion_sensor: binary_sensor.kitchen_presence
+      motion_sensor: binary_sensor.kitchen_motion_sensors
       lux_sensor: sensor.kitchen_radar_lux
       lights_debounce: false
 - id: '1677927981807'
@@ -3832,7 +3832,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.kitchen_presence
+      motion_sensor: binary_sensor.kitchen_motion_sensors
       number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.kitchen_lights
@@ -4250,7 +4250,7 @@
   use_blueprint:
     path: danleongjy/motion_fan.yaml
     input:
-      motion_sensor: binary_sensor.study_room_presence
+      motion_sensor: binary_sensor.study_room_radar_occupancy
       fan: fan.study_room_fan
       fan_auto_control: automation.study_room_fan_auto_control
       entities_list:
@@ -4347,7 +4347,7 @@
   use_blueprint:
     path: danleongjy/motion_ac.yaml
     input:
-      motion_sensor: binary_sensor.study_room_presence
+      motion_sensor: binary_sensor.study_room_radar_occupancy
       ac: climate.study_room_ac
       ac_auto_control: automation.study_room_ac_auto_control
       ac_auto_control_start: input_datetime.ac_auto_control_end
@@ -4367,7 +4367,7 @@
     input:
       lights_list:
       - light.study_room_lights
-      motion_sensor: binary_sensor.study_room_presence
+      motion_sensor: binary_sensor.study_room_radar_occupancy
       lux_sensor: sensor.study_walkway_lux
       lights_debounce: false
       entities_list:
@@ -4380,7 +4380,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor:
-      - binary_sensor.study_room_presence
+      - binary_sensor.study_room_radar_occupancy
       number_of_minutes: input_number.motion_timeout_presence
       entities_list:
       - input_boolean.party_mode
@@ -4528,7 +4528,7 @@
           - automation.master_bathroom_motion_timeout
       - if:
         - condition: state
-          entity_id: binary_sensor.study_room_radar
+          entity_id: binary_sensor.study_room_radar_occupancy
           state: 'off'
         - condition: state
           entity_id: binary_sensor.study_room_ethernet_connection
@@ -4785,7 +4785,7 @@
     - sensor.kitchen_radar_lux
   - platform: state
     entity_id:
-    - binary_sensor.kitchen_presence
+    - binary_sensor.kitchen_motion_sensors
     to: 'on'
   - platform: state
     entity_id: sensor.sun_solar_elevation
@@ -6089,7 +6089,7 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.kitchen_presence
+    - binary_sensor.kitchen_motion_sensors
   - platform: state
     entity_id:
     - input_boolean.away_mode
@@ -6097,7 +6097,7 @@
   action:
   - if:
     - condition: state
-      entity_id: binary_sensor.kitchen_presence
+      entity_id: binary_sensor.kitchen_motion_sensors
       state: 'on'
     - condition: state
       entity_id: input_boolean.away_mode
@@ -6145,10 +6145,10 @@
       conditions:
       - condition: state
         entity_id:
-        - binary_sensor.kitchen_presence
+        - binary_sensor.kitchen_motion_sensors
         - binary_sensor.dining_room_presence
         - binary_sensor.living_room_presence
-        - binary_sensor.study_room_presence
+        - binary_sensor.study_room_radar_occupancy
         state: 'off'
         for:
           minutes: '{{ states(''input_number.motion_timeout_presence'') | int(5) }}'
@@ -6163,10 +6163,10 @@
     - condition: or
       conditions:
       - condition: state
-        entity_id: binary_sensor.kitchen_presence
+        entity_id: binary_sensor.kitchen_motion_sensors
         state: 'on'
       - condition: state
-        entity_id: binary_sensor.study_room_presence
+        entity_id: binary_sensor.study_room_radar_occupancy
         state: 'on'
       - condition: state
         entity_id: binary_sensor.dining_room_presence
