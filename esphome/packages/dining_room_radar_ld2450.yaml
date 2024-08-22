@@ -6,15 +6,6 @@ esphome:
       - binary_sensor.template.publish:
           id: zone1_occupancy
           state: false 
-      - binary_sensor.template.publish:
-          id: zone2_occupancy
-          state: false 
-      - binary_sensor.template.publish:
-          id: zone3_occupancy
-          state: false 
-      - binary_sensor.template.publish:
-          id: zone4_occupancy
-          state: false
 
 globals:
   - id: mmwave_update_time
@@ -145,27 +136,6 @@ binary_sensor:
     filters:
       - delayed_off: !lambda return (id(zone_1_off_delay).state * 1000);
   - platform: template
-    name: "Zone 2 Occupancy"
-    device_class: occupancy
-    id: zone2_occupancy
-    filters:
-      - delayed_off: !lambda return (id(zone_2_off_delay).state * 1000);
-    disabled_by_default: true
-  - platform: template
-    name: "Zone 3 Occupancy"
-    device_class: occupancy
-    id: zone3_occupancy
-    filters:
-      - delayed_off: !lambda return (id(zone_3_off_delay).state * 1000);
-    disabled_by_default: true
-  - platform: template
-    name: "Zone 4 Occupancy"
-    device_class: occupancy
-    id: zone4_occupancy
-    filters:
-      - delayed_off: !lambda return (id(zone_4_off_delay).state * 1000);
-    disabled_by_default: true
-  - platform: template
     name: "Target 1 Active"
     id: target1_active
     lambda: |-
@@ -181,32 +151,29 @@ binary_sensor:
     lambda: |-
       return id(target3_distance).state != 0;
   - platform: template
-    name: Target 1 is Dining Room Pendant Light
-    id: target1_is_dining_room_pendant_light
+    name: Ignore Target 1
+    id: ignore_target1
     lambda: |-
-      if (id(target1_distance).state >= 1400 && id(target1_distance).state <= 1600 && id(target1_x).state >= 200 && id(target1_x).state <= 350 && id(target1_y).state >= 1400 && id(target1_y).state <= 1550 && id(target1_angle).state >= -15 && id(target1_angle).state <= 10) {
-        return true;
-      } else {
-        return false;
-      }
+      return (id(target1_distance).state >= id(ignore_target_min_distance).state && id(target1_distance).state <= id(ignore_target_max_distance).state && 
+              id(target1_x).state >= id(ignore_target_begin_x).state && id(target1_x).state <= id(ignore_target_end_x).state && 
+              id(target1_y).state >= id(ignore_target_begin_y).state && id(target1_y).state <= id(ignore_target_end_y).state && 
+              id(target1_angle).state >= id(ignore_target_min_angle).state && id(target1_angle).state <= id(ignore_target_max_angle).state);
   - platform: template
-    name: Target 2 is Dining Room Pendant Light
-    id: target2_is_dining_room_pendant_light
+    name: Ignore Target 2
+    id: ignore_target2
     lambda: |-
-      if (id(target2_distance).state >= 1400 && id(target2_distance).state <= 1600 && id(target2_x).state >= 200 && id(target2_x).state <= 350 && id(target2_y).state >= 1400 && id(target2_y).state <= 1550 && id(target2_angle).state >= -15 && id(target2_angle).state <= 10) {
-        return true;
-      } else {
-        return false;
-      }
+      return (id(target2_distance).state >= id(ignore_target_min_distance).state && id(target2_distance).state <= id(ignore_target_max_distance).state && 
+              id(target2_x).state >= id(ignore_target_begin_x).state && id(target2_x).state <= id(ignore_target_end_x).state && 
+              id(target2_y).state >= id(ignore_target_begin_y).state && id(target2_y).state <= id(ignore_target_end_y).state && 
+              id(target2_angle).state >= id(ignore_target_min_angle).state && id(target2_angle).state <= id(ignore_target_max_angle).state);
   - platform: template
-    name: Target 3 is Dining Room Pendant Light
-    id: target3_is_dining_room_pendant_light
+    name: Ignore Target 3
+    id: ignore_target3
     lambda: |-
-      if (id(target3_distance).state >= 1400 && id(target3_distance).state <= 1600 && id(target3_x).state >= 200 && id(target3_x).state <= 350 && id(target3_y).state >= 1400 && id(target3_y).state <= 1550 && id(target3_angle).state >= -15 && id(target3_angle).state <= 10) {
-        return true;
-      } else {
-        return false;
-      }
+      return (id(target3_distance).state >= id(ignore_target_min_distance).state && id(target3_distance).state <= id(ignore_target_max_distance).state && 
+              id(target3_x).state >= id(ignore_target_begin_x).state && id(target3_x).state <= id(ignore_target_end_x).state && 
+              id(target3_y).state >= id(ignore_target_begin_y).state && id(target3_y).state <= id(ignore_target_end_y).state && 
+              id(target3_angle).state >= id(ignore_target_min_angle).state && id(target3_angle).state <= id(ignore_target_max_angle).state);
       
 
 number:
@@ -283,160 +250,81 @@ number:
     initial_value: 15
 
   - platform: template
-    name: "Zone 2 Begin X"
-    id: zone2_begin_x
+    name: "Ignore Target Begin X"
+    id: ignore_target_begin_x
     max_value: 4000
     min_value: -4000
     unit_of_measurement: "mm"
     step: 10
     optimistic: True
     restore_value: True
-    disabled_by_default: true
   - platform: template
-    name: "Zone 2 End X"
-    id: zone2_end_x
+    name: "Ignore Target End X"
+    id: ignore_target_end_x
     max_value: 4000
     min_value: -4000
     unit_of_measurement: "mm"
     step: 10
     optimistic: True
     restore_value: True
-    disabled_by_default: true
   - platform: template
-    name: "Zone 2 Begin Y"
-    id: zone2_begin_y
+    name: "Ignore Target Begin Y"
+    id: ignore_target_begin_y
     max_value: 6000
     min_value: 0
     unit_of_measurement: "mm"
     step: 10
     optimistic: True
     restore_value: True
-    disabled_by_default: true
   - platform: template
-    name: "Zone 2 End Y"
-    id: zone2_end_y
+    name: "Ignore Target End Y"
+    id: ignore_target_end_y
     max_value: 6000
     min_value: 0
     unit_of_measurement: "mm"
     step: 10
     optimistic: True
     restore_value: True
-    disabled_by_default: true
   - platform: template
-    name: "Zone 2 Occupancy Off Delay"
-    id: zone_2_off_delay
-    max_value: 600
-    min_value: 0
+    name: "Ignore Target Max Angle"
+    id: ignore_target_max_angle
+    max_value: 90
+    min_value: -90
     step: 1
     optimistic: True
     restore_value: True
-    unit_of_measurement: "s"
-    initial_value: 15
-    disabled_by_default: true
-
+    unit_of_measurement: "°"
+    initial_value: 0
   - platform: template
-    name: "Zone 3 Begin X"
-    id: zone3_begin_x
-    max_value: 4000
-    min_value: -4000
-    unit_of_measurement: "mm"
-    step: 10
-    optimistic: True
-    restore_value: True
-    disabled_by_default: true
-  - platform: template
-    name: "Zone 3 End X"
-    id: zone3_end_x
-    max_value: 4000
-    min_value: -4000
-    unit_of_measurement: "mm"
-    step: 10
-    optimistic: True
-    restore_value: True
-    disabled_by_default: true
-  - platform: template
-    name: "Zone 3 Begin Y"
-    id: zone3_begin_y
-    max_value: 6000
-    min_value: 0
-    unit_of_measurement: "mm"
-    step: 10
-    optimistic: True
-    restore_value: True
-    disabled_by_default: true
-  - platform: template
-    name: "Zone 3 End Y"
-    id: zone3_end_y
-    max_value: 6000
-    min_value: 0
-    unit_of_measurement: "mm"
-    step: 10
-    optimistic: True
-    restore_value: True
-    disabled_by_default: true
-  - platform: template
-    name: "Zone 3 Occupancy Off Delay"
-    id: zone_3_off_delay
-    max_value: 600
-    min_value: 0
+    name: "Ignore Target Min Angle"
+    id: ignore_target_min_angle
+    max_value: 90
+    min_value: -90
     step: 1
     optimistic: True
     restore_value: True
-    unit_of_measurement: "s"
-    initial_value: 15
-    disabled_by_default: true
-
+    unit_of_measurement: "°"
+    initial_value: 0
   - platform: template
-    name: "Zone 4 Begin X"
-    id: zone4_begin_x
-    max_value: 4000
-    min_value: -4000
-    unit_of_measurement: "mm"
-    step: 10
-    optimistic: True
-    restore_value: True
-    disabled_by_default: true
-  - platform: template
-    name: "Zone 4 End X"
-    id: zone4_end_x
-    max_value: 4000
-    min_value: -4000
-    unit_of_measurement: "mm"
-    step: 10
-    optimistic: True
-    restore_value: True
-    disabled_by_default: true
-  - platform: template
-    name: "Zone 4 Begin Y"
-    id: zone4_begin_y
+    name: "Ignore Target Max Distance"
+    id: ignore_target_max_distance
     max_value: 6000
     min_value: 0
-    unit_of_measurement: "mm"
     step: 10
     optimistic: True
     restore_value: True
-    disabled_by_default: true
+    unit_of_measurement: "mm"
+    initial_value: 0
   - platform: template
-    name: "Zone 4 End Y"
-    id: zone4_end_y
+    name: "Ignore Target Min Distance"
+    id: ignore_target_min_distance
     max_value: 6000
     min_value: 0
-    unit_of_measurement: "mm"
     step: 10
     optimistic: True
     restore_value: True
-    disabled_by_default: true
-  - platform: template
-    name: "Zone 4 Occupancy Off Delay"
-    id: zone_4_off_delay
-    max_value: 600
-    min_value: 0
-    step: 1
-    optimistic: True
-    restore_value: True
-    unit_of_measurement: "s"
-    initial_value: 15
-    disabled_by_default: true
+    unit_of_measurement: "mm"
+    initial_value: 0
 
 sensor:
   - platform: template
@@ -574,11 +462,6 @@ sensor:
   - platform: template
     name: "Zone 3 Target Count"
     id: zone3_target_count
-    accuracy_decimals: 0
-    disabled_by_default: true
-  - platform: template
-    name: "Zone 4 Target Count"
-    id: zone4_target_count
     accuracy_decimals: 0
     disabled_by_default: true
 
@@ -782,7 +665,7 @@ uart:
           if (id(target1_active).state == true ) {
               if ((id(target1_x).state >= id(zone1_begin_x).state && id(target1_x).state <= id(zone1_end_x).state) &&
                   (id(target1_y).state >= id(zone1_begin_y).state && id(target1_y).state <= id(zone1_end_y).state) && 
-                  not id(target1_is_dining_room_pendant_light).state) {
+                  not id(ignore_target1).state) {
                   zone1_count++;
               }
           }
@@ -790,7 +673,7 @@ uart:
           if (id(target2_active).state == true ) {
               if ((id(target2_x).state >= id(zone1_begin_x).state && id(target2_x).state <= id(zone1_end_x).state) &&
                   (id(target2_y).state >= id(zone1_begin_y).state && id(target2_y).state <= id(zone1_end_y).state) && 
-                  not id(target2_is_dining_room_pendant_light).state) {
+                  not id(ignore_target2).state) {
                   zone1_count++;
               }
           }
@@ -798,7 +681,7 @@ uart:
           if (id(target3_active).state == true ) {
               if ((id(target3_x).state >= id(zone1_begin_x).state && id(target3_x).state <= id(zone1_end_x).state) &&
                   (id(target3_y).state >= id(zone1_begin_y).state && id(target3_y).state <= id(zone1_end_y).state) && 
-                  not id(target3_is_dining_room_pendant_light).state) {
+                  not id(ignore_target3).state) {
                   zone1_count++;
               }
           }
@@ -811,91 +694,4 @@ uart:
             id(zone1_occupancy).publish_state(false);
             if (id(zone1_target_count).state != 0)
               id(zone1_target_count).publish_state(0);
-          }
-
-          int zone2_count = 0;
-          if (id(target1_active).state == true ) {
-              if ((id(target1_x).state >= id(zone2_begin_x).state && id(target1_x).state <= id(zone2_end_x).state) &&
-                  (id(target1_y).state >= id(zone2_begin_y).state && id(target1_y).state <= id(zone2_end_y).state)) {
-                  zone2_count++;
-              }
-          }
-          if (id(target2_active).state == true ) {
-              if ((id(target2_x).state >= id(zone2_begin_x).state && id(target2_x).state <= id(zone2_end_x).state) &&
-                  (id(target2_y).state >= id(zone2_begin_y).state && id(target2_y).state <= id(zone2_end_y).state)) {
-                  zone2_count++;
-              }
-          }
-          if (id(target3_active).state == true ) {
-              if ((id(target3_x).state >= id(zone2_begin_x).state && id(target3_x).state <= id(zone2_end_x).state) &&
-                  (id(target3_y).state >= id(zone2_begin_y).state && id(target3_y).state <= id(zone2_end_y).state)) {
-                  zone2_count++;
-              }
-          }
-          if (zone2_count > 0) {
-            id(zone2_occupancy).publish_state(true);
-            if (id(zone2_target_count).state != zone2_count)
-              id(zone2_target_count).publish_state(zone2_count);
-          } else {
-            id(zone2_occupancy).publish_state(false);
-            if (id(zone2_target_count).state != 0)
-              id(zone2_target_count).publish_state(0);
-          }
-
-          int zone3_count = 0;
-          if (id(target1_active).state == true ) {
-              if ((id(target1_x).state >= id(zone3_begin_x).state && id(target1_x).state <= id(zone3_end_x).state) &&
-                  (id(target1_y).state >= id(zone3_begin_y).state && id(target1_y).state <= id(zone3_end_y).state)) {
-                  zone3_count++;
-              }
-          }
-          if (id(target2_active).state == true ) {
-              if ((id(target2_x).state >= id(zone3_begin_x).state && id(target2_x).state <= id(zone3_end_x).state) &&
-                  (id(target2_y).state >= id(zone3_begin_y).state && id(target2_y).state <= id(zone3_end_y).state)) {
-                  zone3_count++;
-              }
-          }
-          if (id(target3_active).state == true ) {
-              if ((id(target3_x).state >= id(zone3_begin_x).state && id(target3_x).state <= id(zone3_end_x).state) &&
-                  (id(target3_y).state >= id(zone3_begin_y).state && id(target3_y).state <= id(zone3_end_y).state)) {
-                  zone3_count++;
-              }
-          }
-          if (zone3_count > 0) {
-            id(zone3_occupancy).publish_state(true);
-            if (id(zone3_target_count).state != zone3_count)
-              id(zone3_target_count).publish_state(zone3_count);
-          } else {
-            id(zone3_occupancy).publish_state(false);
-            if (id(zone3_target_count).state != 0)
-              id(zone3_target_count).publish_state(0);
-          }
-
-          int zone4_count = 0;
-          if (id(target1_active).state == true ) {
-              if ((id(target1_x).state >= id(zone4_begin_x).state && id(target1_x).state <= id(zone4_end_x).state) &&
-                  (id(target1_y).state >= id(zone4_begin_y).state && id(target1_y).state <= id(zone4_end_y).state)) {
-                  zone4_count++;
-              }
-          }
-          if (id(target2_active).state == true ) {
-              if ((id(target2_x).state >= id(zone4_begin_x).state && id(target2_x).state <= id(zone4_end_x).state) &&
-                  (id(target2_y).state >= id(zone4_begin_y).state && id(target2_y).state <= id(zone4_end_y).state)) {
-                  zone4_count++;
-              }
-          }
-          if (id(target3_active).state == true ) {
-              if ((id(target3_x).state >= id(zone4_begin_x).state && id(target3_x).state <= id(zone4_end_x).state) &&
-                  (id(target3_y).state >= id(zone4_begin_y).state && id(target3_y).state <= id(zone4_end_y).state)) {
-                  zone4_count++;
-              }
-          }
-          if (zone4_count > 0) {
-            id(zone4_occupancy).publish_state(true);
-            if (id(zone4_target_count).state != zone4_count)
-              id(zone4_target_count).publish_state(zone4_count);
-          } else {
-            id(zone4_occupancy).publish_state(false);
-            if (id(zone4_target_count).state != 0)
-              id(zone4_target_count).publish_state(0);
           }
