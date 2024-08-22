@@ -643,14 +643,14 @@
     attributes:
       raw: "{{ states('sensor.study_room_radar_lux') }}"
 
-  - name: Kitchen Radar Lux Calibrated
-    unique_id: sensor.kitchen_radar_lux_calibrated
-    state: "{{ e**(0.19167503 + 1.126223229 * log(states('sensor.kitchen_radar_lux') | float(0) + 1)) }}"
-    device_class: illuminance
-    unit_of_measurement: lx
-    availability: "{{ states('sensor.kitchen_radar_lux') not in ['unavailable','unknown'] }}"
-    attributes:
-      raw: "{{ states('sensor.kitchen_radar_lux') }}"
+#  - name: Kitchen Radar Lux Calibrated
+#    unique_id: sensor.kitchen_radar_lux_calibrated
+#    state: "{{ e**(0.19167503 + 1.126223229 * log(states('sensor.kitchen_radar_lux') | float(0) + 1)) }}"
+#    device_class: illuminance
+#    unit_of_measurement: lx
+#    availability: "{{ states('sensor.kitchen_radar_lux') not in ['unavailable','unknown'] }}"
+#    attributes:
+#     raw: "{{ states('sensor.kitchen_radar_lux') }}"
 
   - name: Kitchen Blind Position
     unique_id: sensor.kitchen_blind_position
@@ -887,10 +887,10 @@
     unique_id: sensor.floorplan_kitchen_status
     state: >
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
-      {{ data_overlay('binary_sensor.kitchen_presence', ['light.kitchen_lights'], 'sensor.kitchen_radar_lux_calibrated', 'sensor.kitchen_temperature', 'sensor.kitchen_humidity') }}
+      {{ data_overlay('binary_sensor.kitchen_presence', ['light.kitchen_lights'], 'sensor.kitchen_radar_lux', 'sensor.kitchen_temperature', 'sensor.kitchen_humidity') }}
     attributes:
       presence: "{{ states('binary_sensor.kitchen_presence') }}"
-      lux: "{{ states('sensor.kitchen_radar_lux_calibrated') }}"
+      lux: "{{ states('sensor.kitchen_radar_lux') }}"
       kitchen_lights: "{{ states('light.kitchen_lights') }}"
 
 - image:
