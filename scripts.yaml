@@ -897,6 +897,7 @@ doorbell:
         timeout: 60
         continue_on_timeout: false
       - service: shell_command.copylatestmaindoorcamerasnapshot
+        data: {}
       - delay: 5
       - repeat:
           for_each:
@@ -916,8 +917,19 @@ doorbell:
           entity_id:
           - button.kitchen_core_ring_doorbell
           - button.study_room_core_ring_doorbell
+        data: {}
       - delay: 60
       - service: shell_command.deletelatestmaindoorcamerasnapshot
+        data: {}
+      - service: notify.mobile_app_pixel_4a
+        metadata: {}
+        data:
+          message: Doorbell rung at {{ now().strftime('%H:%M') }}.
+          title: Please Check the Door
+          data:
+            image: /media/local/{{ (state_attr('sensor.main_door_camera', 'file_list')
+              | sort)[-1][7:] }}
+            clickAction: /lovelace/dining_room
   description: Play doorbell tones and flash Room Core lights
   icon: mdi:bell-ring-outline
 batch_update_esphome_nodes:
