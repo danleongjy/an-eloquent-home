@@ -2,7 +2,10 @@ wifi:
   on_connect:
     - lambda: 'id(current_view).publish_state("current_time");'
     - lambda: 'id(current_command).publish_state("none");'
-    
+
+http_request:
+  verify_ssl: false
+
 time:
   - platform: homeassistant
     id: homeassistant_time
@@ -31,7 +34,9 @@ script:
       - delay: 120s
       - display.page.show: current_time
   - id: doorbell
+    mode: restart
     then:
+      - component.update: snapshot
       - select.set:
           id: ringtone
           option: Doorbell
@@ -40,9 +45,10 @@ script:
       - light.turn_on:
           id: led_strips
           effect: Doorbell
-      - delay: 10s
+      - delay: 60s
       - light.turn_off: led_strips
       - display.page.show: current_time
+      - online_image.release: snapshot
   - id: draw_display_main_time
     then:
       - lambda: |
@@ -129,10 +135,10 @@ script:
           if (id(ac_auto_control).state) {
             id(interface_display).print(id(width) * 0.85, id(height) * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
           }
-  - id: draw_main_door_camera_snapshot
+  - id: draw_display_main_door_camera_snapshot
     then:
       - lambda: |
-          id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_door_camera_snapshot), ImageAlign::CENTER, id(device_on));
+          id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(snapshot), ImageAlign::CENTER);
   - id: draw_display_borders
     then:
       - lambda: |
@@ -658,8 +664,18 @@ image:
     id: main_blinds
     resize: 160x160
   - file: mdi:bell-ring-outline
-    id: main_door_camera_snapshot
+    id: snapshot_placeholder
     resize: 160x160
+
+online_image:
+  - url: https://an-eloquent-home.duckdns.org/local/snapshot.png
+    format: png
+    id: snapshot
+    resize: 240x180
+    placeholder: snapshot_placeholder
+    type: RGB24
+    on_download_finished:
+      component.update: interface_display
 
 spi:
   clk_pin: 18
@@ -749,7 +765,7 @@ display:
 
           id(draw_display_borders).execute();
           id(draw_display_bottom_status_bar).execute();
-          id(draw_main_door_camera_snapshot).execute();
+          id(draw_display_main_door_camera_snapshot).execute();
       - id: lights
         lambda: |-
           // tabs

@@ -56,6 +56,8 @@ external_components:
     components: 
       - axp192
 
+http_request:
+
 globals:
   - id: height
     type: int
@@ -86,9 +88,11 @@ script:
       - display.page.show: screensaver
   - id: doorbell
     then:
+      - component.update: snapshot
       - display.page.show: main_door_camera
-      - delay: 10s
+      - delay: 60s
       - display.page.show: current_time
+      - online_image.release: snapshot
   - id: draw_display_borders
     then:
       - lambda: |
@@ -455,8 +459,18 @@ image:
     id: main_blinds
     resize: 120x120
   - file: mdi:bell-ring-outline
-    id: main_door_camera_snapshot
+    id: snapshot_placeholder
     resize: 120x120
+
+online_image:
+  - url: https://an-eloquent-home.duckdns.org/local/snapshot.png
+    format: png
+    id: snapshot
+    resize: 135x102
+    placeholder: snapshot_placeholder
+    type: RGB24
+    on_download_finished:
+      component.update: interface_display
 
 display:
   - platform: ili9xxx
@@ -585,7 +599,7 @@ display:
 
           id(draw_display_borders).execute();
           id(draw_display_bottom_status_bar).execute();
-          it.image(id(width) * 0.5, id(height) * 0.35, id(main_door_camera_snapshot), ImageAlign::CENTER, id(device_on));
+          it.image(id(width) * 0.5, id(height) * 0.35, id(snapshot), ImageAlign::CENTER);
 
           // Update display brightness
           id(pmu).set_brightness(1);

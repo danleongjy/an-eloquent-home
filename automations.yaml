@@ -6840,9 +6840,8 @@
       - service: script.doorbell
         data: {}
 - id: '1724106276332'
-  alias: Notify When Main Door Motion Detected
-  description: Take a snapshot and send it in a notification when motion detected
-    at main door
+  alias: Main Door Camera Snapshots
+  description: Take a snapshot and when motion detected at main door
   trigger:
   - platform: state
     entity_id:
@@ -6868,15 +6867,6 @@
       - sensor.main_door_camera
     continue_on_timeout: false
     timeout: 60
-  - service: notify.mobile_app_pixel_4a
-    metadata: {}
-    data:
-      message: 'Snapshot:'
-      title: Motion Detected at Main Door
-      data:
-        image: /media/local/{{ (state_attr('sensor.main_door_camera', 'file_list')
-          | sort)[-1][7:] }}
-        clickAction: /lovelace/dining_room
   - service: local_file.update_file_path
     data:
       entity_id: camera.recent_main_door_snapshot_1

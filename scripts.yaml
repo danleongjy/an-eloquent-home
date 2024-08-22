@@ -868,47 +868,56 @@ doorbell:
           door: binary_sensor.parents_room_doors
           button: button.parents_room_core_ring_doorbell
   - service: automation.trigger
-    metadata: {}
     data:
       skip_condition: true
     target:
-      entity_id: automation.notify_when_main_door_motion_detected
-  - service: media_player.volume_set
-    metadata: {}
-    data:
-      volume_level: 0.5
-    target:
-      entity_id:
-      - media_player.kitchen_speaker
-      - media_player.study_room_speaker
-  - delay: 1
-  - service: media_player.play_media
-    target:
-      entity_id: media_player.all_speakers
-    data:
-      media_content_id: https://an-eloquent-home.duckdns.org/media/local/doorbell.mp3
-      media_content_type: music
-    metadata: {}
-  - repeat:
-      for_each:
-      - elis_room
-      - elenas_room
-      - parents_room
-      sequence:
-        if:
-        - condition: template
-          value_template: '{{ is_state(rooms[repeat.item][''door''], ''on'') }}'
-        then:
-        - service: button.press
-          target:
-            entity_id: '{{ rooms[repeat.item][''button''] }}'
-  - service: button.press
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - button.kitchen_core_ring_doorbell
-      - button.study_room_core_ring_doorbell
+      entity_id: automation.main_door_camera_snapshots
+  - parallel:
+    - sequence:
+      - service: media_player.volume_set
+        data:
+          volume_level: 0.5
+        target:
+          entity_id:
+          - media_player.kitchen_speaker
+          - media_player.study_room_speaker
+      - delay: 1
+      - service: media_player.play_media
+        target:
+          entity_id: media_player.all_speakers
+        data:
+          media_content_id: https://an-eloquent-home.duckdns.org/media/local/doorbell.mp3
+          media_content_type: music
+    - sequence:
+      - wait_for_trigger:
+        - platform: state
+          entity_id:
+          - sensor.main_door_camera
+          attribute: file_list
+        timeout: 60
+        continue_on_timeout: false
+      - service: shell_command.copylatestmaindoorcamerasnapshot
+      - delay: 5
+      - repeat:
+          for_each:
+          - elis_room
+          - elenas_room
+          - parents_room
+          sequence:
+            if:
+            - condition: template
+              value_template: '{{ is_state(rooms[repeat.item][''door''], ''on'') }}'
+            then:
+            - service: button.press
+              target:
+                entity_id: '{{ rooms[repeat.item][''button''] }}'
+      - service: button.press
+        target:
+          entity_id:
+          - button.kitchen_core_ring_doorbell
+          - button.study_room_core_ring_doorbell
+      - delay: 60
+      - service: shell_command.deletelatestmaindoorcamerasnapshot
   description: Play doorbell tones and flash Room Core lights
   icon: mdi:bell-ring-outline
 batch_update_esphome_nodes:
