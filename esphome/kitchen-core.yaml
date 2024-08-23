@@ -44,7 +44,7 @@ wifi:
   on_connect:
     - lambda: 'id(current_view).publish_state("current_time");'
     - lambda: 'id(current_command).publish_state("none");'
-    
+
 captive_portal:
 
 packages:
@@ -55,8 +55,6 @@ external_components:
   - source: github://airy10/esphome-m5stickC/
     components: 
       - axp192
-
-http_request:
 
 globals:
   - id: height
@@ -88,11 +86,9 @@ script:
       - display.page.show: screensaver
   - id: doorbell
     then:
-      - component.update: snapshot
-      - display.page.show: main_door_camera
+      - display.page.show: main_door
       - delay: 60s
       - display.page.show: current_time
-      - online_image.release: snapshot
   - id: draw_display_borders
     then:
       - lambda: |
@@ -459,18 +455,8 @@ image:
     id: main_blinds
     resize: 120x120
   - file: mdi:bell-ring-outline
-    id: snapshot_placeholder
+    id: main_doorbell
     resize: 120x120
-
-online_image:
-  - url: https://an-eloquent-home.duckdns.org/local/snapshot.png
-    format: png
-    id: snapshot
-    resize: 135x102
-    placeholder: snapshot_placeholder
-    type: RGB24
-    on_download_finished:
-      component.update: interface_display
 
 display:
   - platform: ili9xxx
@@ -533,7 +519,7 @@ display:
           if (id(homeassistant_time).now().second % 2 == 0) {
             it.print(id(width) * 0.5, id(height) * 0.26, id(main_time), TextAlign::CENTER, "..");
           }
-
+          
           // Update display brightness
           id(pmu).set_brightness(1);
           id(pmu).update();
@@ -591,7 +577,7 @@ display:
           // Update display brightness
           id(pmu).set_brightness(0);
           id(pmu).update();
-      - id: main_door_camera
+      - id: main_door
         lambda: |-
           // tabs
           it.image(id(width) * 0.5, id(height) * 0.8, id(tab_lights), ImageAlign::CENTER);
@@ -599,7 +585,7 @@ display:
 
           id(draw_display_borders).execute();
           id(draw_display_bottom_status_bar).execute();
-          it.image(id(width) * 0.5, id(height) * 0.35, id(snapshot), ImageAlign::CENTER);
+          it.image(id(width) * 0.5, id(height) * 0.35, id(main_doorbell), ImageAlign::CENTER);
 
           // Update display brightness
           id(pmu).set_brightness(1);

@@ -867,12 +867,29 @@ doorbell:
         parents_room:
           door: binary_sensor.parents_room_doors
           button: button.parents_room_core_ring_doorbell
-  - service: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.main_door_camera_snapshots
   - parallel:
+    - sequence:
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: automation.main_door_camera_snapshots
+      - wait_for_trigger:
+        - platform: state
+          entity_id:
+          - sensor.main_door_camera
+          attribute: file_list
+        timeout: 60
+      - service: notify.mobile_app_pixel_4a
+        metadata: {}
+        data:
+          message: Doorbell rung at {{ now().strftime('%H:%M') }}.
+          title: Please Check the Door
+          data:
+            image: '/media/local/{{ (state_attr(''sensor.main_door_camera'',
+
+              ''file_list'') | sort)[-1][7:] }}'
+            clickAction: /lovelace/dining_room
     - sequence:
       - service: media_player.volume_set
         data:
@@ -888,17 +905,6 @@ doorbell:
         data:
           media_content_id: https://an-eloquent-home.duckdns.org/media/local/doorbell.mp3
           media_content_type: music
-    - sequence:
-      - wait_for_trigger:
-        - platform: state
-          entity_id:
-          - sensor.main_door_camera
-          attribute: file_list
-        timeout: 60
-        continue_on_timeout: false
-      - service: shell_command.copylatestmaindoorcamerasnapshot
-        data: {}
-      - delay: 5
       - repeat:
           for_each:
           - elis_room
@@ -917,19 +923,6 @@ doorbell:
           entity_id:
           - button.kitchen_core_ring_doorbell
           - button.study_room_core_ring_doorbell
-        data: {}
-      - delay: 60
-      - service: shell_command.deletelatestmaindoorcamerasnapshot
-        data: {}
-      - service: notify.mobile_app_pixel_4a
-        metadata: {}
-        data:
-          message: Doorbell rung at {{ now().strftime('%H:%M') }}.
-          title: Please Check the Door
-          data:
-            image: /media/local/{{ (state_attr('sensor.main_door_camera', 'file_list')
-              | sort)[-1][7:] }}
-            clickAction: /lovelace/dining_room
   description: Play doorbell tones and flash Room Core lights
   icon: mdi:bell-ring-outline
 batch_update_esphome_nodes:
