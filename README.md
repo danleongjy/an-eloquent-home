@@ -37,7 +37,7 @@ Domain | Quantity
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 24
 [`input_number`](https://www.home-assistant.io/components/input_number) | 30
 [`input_select`](https://www.home-assistant.io/components/input_select) | 8
-[`input_text`](https://www.home-assistant.io/components/input_text) | 32
+[`input_text`](https://www.home-assistant.io/components/input_text) | 33
 [`light`](https://www.home-assistant.io/components/light) | 64
 [`media_player`](https://www.home-assistant.io/components/media_player) | 3
 [`number`](https://www.home-assistant.io/components/number) | 229
@@ -56,7 +56,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1867
+Total | 1868
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)

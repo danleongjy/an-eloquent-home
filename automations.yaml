@@ -6854,11 +6854,17 @@
       seconds: 5
   condition: []
   action:
+  - service: input_text.set_value
+    metadata: {}
+    data:
+      value: snapshot_{{ now().strftime('%Y%m%d_%H%M%S') }}.png
+    target:
+      entity_id: input_text.newest_main_door_camera_snapshot_filename
   - service: camera.snapshot
     metadata: {}
     data:
-      filename: /media/main_door_camera/snapshot_{{ now().strftime('%Y%m%d_%H%M%S')
-        }}.png
+      filename: /media/main_door_camera/{{ states('input_text.newest_main_door_camera_snapshot_filename')
+        }}
     target:
       entity_id: camera.main_door_camera
   - wait_for_trigger:
@@ -6882,4 +6888,4 @@
       entity_id: camera.recent_main_door_snapshot_3
       file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list') |   sort)[-3][7:]
         }}
-  mode: single
+  mode: restart

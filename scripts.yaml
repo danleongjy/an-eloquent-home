@@ -868,27 +868,21 @@ doorbell:
           door: binary_sensor.parents_room_doors
           button: button.parents_room_core_ring_doorbell
   - parallel:
+    - service: automation.trigger
+      data:
+        skip_condition: true
+      target:
+        entity_id: automation.main_door_camera_snapshots
     - sequence:
-      - service: automation.trigger
-        data:
-          skip_condition: true
-        target:
-          entity_id: automation.main_door_camera_snapshots
-      - wait_for_trigger:
-        - platform: state
-          entity_id:
-          - sensor.main_door_camera
-          attribute: file_list
-        timeout: 60
+      - delay: 10
       - service: notify.mobile_app_pixel_4a
         metadata: {}
         data:
           message: Doorbell rung at {{ now().strftime('%H:%M') }}.
           title: Please Check the Door
           data:
-            image: '/media/local/{{ (state_attr(''sensor.main_door_camera'',
-
-              ''file_list'') | sort)[-1][7:] }}'
+            image: /media/local/{{ states('input_text.newest_main_door_camera_snapshot_filename')
+              }}
             clickAction: /lovelace/dining_room
     - sequence:
       - service: media_player.volume_set
@@ -923,8 +917,10 @@ doorbell:
           entity_id:
           - button.kitchen_core_ring_doorbell
           - button.study_room_core_ring_doorbell
+        data: {}
   description: Play doorbell tones and flash Room Core lights
   icon: mdi:bell-ring-outline
+  mode: restart
 batch_update_esphome_nodes:
   alias: Batch Update ESPHome Nodes
   sequence:
