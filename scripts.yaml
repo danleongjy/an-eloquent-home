@@ -868,22 +868,6 @@ doorbell:
           door: binary_sensor.parents_room_doors
           button: button.parents_room_core_ring_doorbell
   - parallel:
-    - service: automation.trigger
-      data:
-        skip_condition: true
-      target:
-        entity_id: automation.main_door_camera_snapshots
-    - sequence:
-      - delay: 2
-      - service: notify.mobile_app_pixel_4a
-        metadata: {}
-        data:
-          message: Doorbell rung at {{ now().strftime('%H:%M') }}.
-          title: Please Check the Door
-          data:
-            image: /media/local/main_door_camera/{{ states('input_text.newest_main_door_camera_snapshot_filename')
-              }}
-            clickAction: /lovelace/dining_room
     - sequence:
       - service: media_player.volume_set
         data:
@@ -918,6 +902,23 @@ doorbell:
           - button.kitchen_core_ring_doorbell
           - button.study_room_core_ring_doorbell
         data: {}
+    - sequence:
+      - delay: 5
+      - service: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: automation.main_door_camera_snapshots
+      - delay: 2
+      - service: notify.mobile_app_pixel_4a
+        metadata: {}
+        data:
+          message: Doorbell rung at {{ now().strftime('%H:%M') }}.
+          title: Please Check the Door
+          data:
+            image: /media/local/main_door_camera/{{ states('input_text.newest_main_door_camera_snapshot_filename')
+              }}
+            clickAction: /lovelace/dining_room
   description: Play doorbell tones and flash Room Core lights
   icon: mdi:bell-ring-outline
   mode: restart
