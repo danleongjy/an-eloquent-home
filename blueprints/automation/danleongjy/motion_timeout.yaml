@@ -21,7 +21,7 @@ blueprint:
           domain: input_number
     entities_list:
       name: Entities to Track
-      description: A list of entities.  If the lights' state should not change when any of these entities are on even if motion is cleared, specify them here.  Otherwise, leave blank.
+      description: A list of entities.  If the entities' state should not change when any of these entities are on even if motion is cleared, specify them here.  Otherwise, leave blank.
       selector:
         entity:
           multiple: true
@@ -51,9 +51,7 @@ trigger:
     from: "on"
     to: "off"
     for:
-      hours: 0
       minutes: "{{ states(minutes_input_number) | int(15) }}"
-      seconds: 0
 condition:
   - condition: state
     entity_id: !input motion_sensor
