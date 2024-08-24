@@ -126,9 +126,9 @@ binary_sensor:
     filters:
       - delayed_off: !lambda return (id(off_delay).state * 1000);
     lambda: |-
-      return (id(target1_distance).state != 0
-        || id(target2_distance).state != 0
-        || id(target3_distance).state != 0);
+      return ((id(target1_distance).state != 0  && not id(ignore_target1).state)
+        || (id(target2_distance).state != 0 && not id(ignore_target2).state)
+        || (id(target3_distance).state != 0 && not id(ignore_target3).state));
   - platform: template
     name: "Zone 1 Occupancy"
     device_class: occupancy
