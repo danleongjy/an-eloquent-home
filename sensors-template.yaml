@@ -31,22 +31,6 @@
     attributes:
       kitchen_blind: "{{ states('cover.kitchen_blind') }}"
 
-  - name: Dining Room Presence
-    unique_id: binary_sensor.dining_room_presence
-    device_class: occupancy
-    state: "{{ is_state('binary_sensor.dining_room_radar_occupancy', 'on') or is_state('binary_sensor.dining_room_motion', 'on') }}"
-    attributes:
-      dining_room_radar_occupancy: "{{ states('binary_sensor.dining_room_radar_occupancy') }}"
-      dining_room_motion: "{{ states('binary_sensor.dining_room_motion') }}"
-
-  - name: Living Room Presence
-    unique_id: binary_sensor.living_room_presence
-    device_class: occupancy
-    state: "{{ is_state('binary_sensor.living_room_radar_occupancy', 'on') or is_state('binary_sensor.living_room_motion', 'on') }}"
-    attributes:
-      living_room_radar_occupancy: "{{ states('binary_sensor.living_room_radar_occupancy') }}"
-      living_room_motion: "{{ states('binary_sensor.living_room_motion') }}"
-
   - name: Study Room Motion
     unique_id: binary_sensor.study_room_motion
     device_class: motion
@@ -756,13 +740,13 @@
     unique_id: sensor.floorplan_elenas_room_status
     state: >
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
-      {{ data_overlay('binary_sensor.elenas_room_motion', 
+      {{ data_overlay('binary_sensor.elenas_room_presence', 
                       ['light.elenas_room_lights','fan.elenas_room_fan','climate.elenas_room_ac'], 
                       'sensor.elenas_room_lux',
                       'sensor.elenas_room_core_temperature', 
                       'sensor.elenas_room_core_humidity') }}
     attributes:
-      presence: "{{ states('binary_sensor.elenas_room_motion') }}"
+      presence: "{{ states('binary_sensor.elenas_room_presence') }}"
       lux: "{{ states('sensor.elenas_room_lux') }}"
       temperature: "{{ states('sensor.elenas_room_core_temperature') }}"
       humidity: "{{ states('sensor.elenas_room_core_humidity') }}"
@@ -774,13 +758,13 @@
     unique_id: sensor.floorplan_elis_room_status
     state: >
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
-      {{ data_overlay('binary_sensor.elis_room_motion', 
+      {{ data_overlay('binary_sensor.elis_room_presence', 
                       ['light.elis_room_lights','fan.elis_room_fan','climate.elis_room_ac'], 
                       'sensor.elis_room_lux',
                       'sensor.elis_room_core_temperature', 
                       'sensor.elis_room_core_humidity') }}
     attributes:
-      presence: "{{ states('binary_sensor.elis_room_motion') }}"
+      presence: "{{ states('binary_sensor.elis_room_presence') }}"
       lux: "{{ states('sensor.elis_room_lux') }}"
       temperature: "{{ states('sensor.elis_room_core_temperature') }}"
       humidity: "{{ states('sensor.elis_room_core_humidity') }}"
@@ -858,13 +842,13 @@
     unique_id: sensor.floorplan_parents_room_status
     state: >
       {% from 'floorplan_data_overlay.jinja' import data_overlay %}
-      {{ data_overlay('binary_sensor.parents_room_motion', 
+      {{ data_overlay('binary_sensor.parents_room_presence', 
                       ['light.parents_room_lights','fan.parents_room_fan','climate.parents_room_ac'], 
                       'sensor.parents_room_lux',
                       'sensor.parents_room_core_temperature', 
                       'sensor.parents_room_core_humidity') }}
     attributes:
-      presence: "{{ states('binary_sensor.parents_room_motion') }}"
+      presence: "{{ states('binary_sensor.parents_room_presence') }}"
       lux: "{{ states('sensor.parents_room_lux') }}"
       temperature: "{{ states('sensor.parents_room_core_temperature') }}"
       humidity: "{{ states('sensor.parents_room_core_humidity') }}"
@@ -900,6 +884,116 @@
   - url: https://an-eloquent-home.duckdns.org/local/clock_faces/{{ '0' + (states('sensor.time').split(':')[0] | int(0) % 12) | string if states('sensor.time').split(':')[0] | int(0) % 12 < 10 else states('sensor.time').split(':')[0] | int(0) % 12 }}_{{ states('sensor.time').split(':')[1] }}.png
     name: Clock Face
     unique_id: image.clock_face
+
+- trigger:
+    - platform: state
+      entity_id: binary_sensor.elenas_room_motion
+    - platform: state
+      entity_id: binary_sensor.elenas_room_radar_occupancy
+      from: 'off'
+      to: 'on'
+      for:
+        seconds: "{{ states('input_number.radar_occupancy_on_delay') | int(10) }}"
+    - platform: state
+      entity_id: binary_sensor.elenas_room_radar_occupancy
+      from: 'on'
+      to: 'off'
+  binary_sensor:
+    - name: Elena's Room Presence
+      unique_id: binary_sensor.elenas_room_presence
+      device_class: occupancy
+      state: "{{ is_state('binary_sensor.elenas_room_radar_occupancy', 'on') or is_state('binary_sensor.elenas_room_motion', 'on') }}"
+      attributes:
+        elenas_room_radar_occupancy: "{{ states('binary_sensor.elenas_room_radar_occupancy') }}"
+        elenas_room_motion: "{{ states('binary_sensor.elenas_room_motion') }}"
+
+- trigger:
+    - platform: state
+      entity_id: binary_sensor.elis_room_motion
+    - platform: state
+      entity_id: binary_sensor.elis_room_radar_occupancy
+      from: 'off'
+      to: 'on'
+      for:
+        seconds: "{{ states('input_number.radar_occupancy_on_delay') | int(10) }}"
+    - platform: state
+      entity_id: binary_sensor.elis_room_radar_occupancy
+      from: 'on'
+      to: 'off'
+  binary_sensor:
+    - name: Eli's Room Presence
+      unique_id: binary_sensor.elis_room_presence
+      device_class: occupancy
+      state: "{{ is_state('binary_sensor.elis_room_radar_occupancy', 'on') or is_state('binary_sensor.elis_room_motion', 'on') }}"
+      attributes:
+        elis_room_radar_occupancy: "{{ states('binary_sensor.elis_room_radar_occupancy') }}"
+        elis_room_motion: "{{ states('binary_sensor.elis_room_motion') }}"
+
+- trigger:
+    - platform: state
+      entity_id: binary_sensor.dining_room_motion
+    - platform: state
+      entity_id: binary_sensor.dining_room_radar_occupancy
+      from: 'off'
+      to: 'on'
+      for:
+        seconds: "{{ states('input_number.radar_occupancy_on_delay') | int(10) }}"
+    - platform: state
+      entity_id: binary_sensor.dining_room_radar_occupancy
+      from: 'on'
+      to: 'off'
+  binary_sensor:
+    - name: Dining Room Presence
+      unique_id: binary_sensor.dining_room_presence
+      device_class: occupancy
+      state: "{{ is_state('binary_sensor.dining_room_radar_occupancy', 'on') or is_state('binary_sensor.dining_room_motion', 'on') }}"
+      attributes:
+        dining_room_radar_occupancy: "{{ states('binary_sensor.dining_room_radar_occupancy') }}"
+        dining_room_motion: "{{ states('binary_sensor.dining_room_motion') }}"
+
+- trigger:
+    - platform: state
+      entity_id: binary_sensor.living_room_motion
+    - platform: state
+      entity_id: binary_sensor.living_room_radar_occupancy
+      from: 'off'
+      to: 'on'
+      for:
+        seconds: "{{ states('input_number.radar_occupancy_on_delay') | int(10) }}"
+    - platform: state
+      entity_id: binary_sensor.living_room_radar_occupancy
+      from: 'on'
+      to: 'off'
+  binary_sensor:
+    - name: Living Room Presence
+      unique_id: binary_sensor.living_room_presence
+      device_class: occupancy
+      state: "{{ is_state('binary_sensor.living_room_radar_occupancy', 'on') or is_state('binary_sensor.living_room_motion', 'on') }}"
+      attributes:
+        living_room_radar_occupancy: "{{ states('binary_sensor.living_room_radar_occupancy') }}"
+        living_room_motion: "{{ states('binary_sensor.living_room_motion') }}"
+
+- trigger:
+    - platform: state
+      entity_id: binary_sensor.parents_room_motion
+    - platform: state
+      entity_id: binary_sensor.parents_room_radar_occupancy
+      from: 'off'
+      to: 'on'
+      for:
+        seconds: "{{ states('input_number.radar_occupancy_on_delay') | int(10) }}"
+    - platform: state
+      entity_id: binary_sensor.parents_room_radar_occupancy
+      from: 'on'
+      to: 'off'
+  binary_sensor:
+    - name: Parents' Room Presence
+      unique_id: binary_sensor.parents_room_presence
+      device_class: occupancy
+      state: "{{ is_state('binary_sensor.parents_room_radar_occupancy', 'on') or is_state('binary_sensor.parents_room_motion', 'on') }}"
+      attributes:
+        parents_room_radar_occupancy: "{{ states('binary_sensor.parents_room_radar_occupancy') }}"
+        parents_room_motion: "{{ states('binary_sensor.parents_room_motion') }}"
 
 - trigger:
   - platform: time_pattern
