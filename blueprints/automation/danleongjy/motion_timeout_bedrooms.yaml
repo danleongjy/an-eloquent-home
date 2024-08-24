@@ -21,16 +21,10 @@ blueprint:
           domain: input_number
     number_of_minutes_doors_open:
       name: Number of Minutes - Doors Open
-      description: Number helper indicating the number of minutes for the motion timeout when doors are open. If Doors to Track below is blank, specify the same number helper as Number of Minutes - Doors Closed.
+      description: Number helper indicating the number of minutes for the motion timeout when doors are open. If doors are closed at this point in time, the automation will skip turning off the entities. Set to the same as Number of Minutes - Doors Closed if Doors to Track below is blank.
       selector:
         entity:
           domain: input_number
-    timeout_timer:
-      name: Timeout Timer
-      description: Timer helper that will count down the timeout.
-      selector:
-        entity:
-          domain: timer
     entities_list:
       name: Entities to Track
       description: A list of entities.  If the entities' state should not change when any of these entities are on even if motion is cleared, specify them here.  Otherwise, leave blank.
@@ -40,7 +34,7 @@ blueprint:
       default: []
     doors_list:
       name: Doors to Track
-      description: A list of doors or door groups.  If the entities should turn off after different times depending on whether all the doors are closed when  motion is cleared (useful in bedrooms when someone is sleeping), specify the doors here.  Otherwise, leave blank.
+      description: A list of doors or door groups.  If the entities should turn off after different times depending on whether all the doors are closed when motion is cleared (useful in bedrooms when someone is sleeping), specify the doors here.  Otherwise, leave blank.
       selector:
         entity:
           domain: binary_sensor
@@ -61,12 +55,18 @@ trigger_variables:
 trigger:
   - platform: state
     entity_id: !input motion_sensor
-    id: motion
-  - platform: event
-    event_type: timer.finished
-    event_data:
-      entity_id: !input timeout_timer
-    id: timeout
+    from: 'on'
+    to: 'off'
+    for:
+      minutes: "{{ states(minutes_doors_open) | int }}"
+    id: timeout_doors_open
+  - platform: state
+    entity_id: !input motion_sensor
+    from: 'on'
+    to: 'off'
+    for:
+      minutes: "{{ states(minutes_doors_closed) | int }}"
+    id: timeout_doors_closed
 condition:
   - condition: template
     value_template: >
@@ -74,22 +74,21 @@ condition:
 action:
   - if:
       - condition: trigger
-        id: motion
+        id: timeout_doors_open
     then:
-      - if:
-          - condition: state
-            entity_id: !input motion_sensor
-            state: 'on'
-        then:
-          - service: timer.cancel
-            target:
-              entity_id: !input timeout_timer
-        else:
-          - service: timer.start
-            target:
-              entity_id: !input timeout_timer
-            data:
-              duration: "{{ states(minutes_doors_closed) | int * 60 if states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list == ['off'] * doors | length else states(minutes_doors_open) | int * 60 }}"
+      - delay: 0.05
+      - condition: template
+        value_template: "{{ 'on' in states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
+      - repeat:
+          for_each: !input turnoff_entities_list
+          sequence:
+            - if:
+              - condition: template
+                value_template: "{{ states(repeat.item) != 'off' }}"
+              then:
+              - service: homeassistant.turn_off
+                target:
+                  entity_id: "{{ repeat.item }}"
     else:
       - delay: 0.05
       - repeat:
