@@ -3998,10 +3998,13 @@
   description: Turn off lights, fan and AC in the Dining Room when no motion is detected
     for the long timeout.
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
-      motion_sensor: binary_sensor.dining_room_presence
-      number_of_minutes: input_number.motion_timeout_presence
+      motion_sensor:
+      - binary_sensor.dining_room_presence
+      number_of_minutes_doors_closed: input_number.motion_timeout_presence
+      number_of_minutes_doors_open: input_number.motion_timeout_presence
+      timeout_timer: timer.motion_timeout_dining_room
       turnoff_entities_list:
       - light.dining_room_lights
       - light.dining_room_pendant_light_entity
