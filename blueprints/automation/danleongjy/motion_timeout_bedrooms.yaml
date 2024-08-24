@@ -78,7 +78,7 @@ action:
     then:
       - delay: 0.05
       - condition: template
-        value_template: "{{ 'on' in states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
+        value_template: "{{ doors | length == 0 or 'on' in states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
       - repeat:
           for_each: !input turnoff_entities_list
           sequence:
