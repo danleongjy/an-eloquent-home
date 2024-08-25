@@ -2578,37 +2578,6 @@
   action:
   - choose:
     - conditions:
-      - condition: numeric_state
-        entity_id: sensor.dining_room_lux
-        above: input_number.maximum_lux
-      - condition: template
-        value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
-          ''cover.living_room_blinds'']) | map(attribute = ''last_changed'') | list
-          | sort)[-1] >= timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
-          | int(0)) }}'
-      sequence:
-      - condition: state
-        entity_id: sun.sun
-        attribute: rising
-        state: true
-      - repeat:
-          for_each:
-          - cover.dining_room_right_blind
-          - cover.dining_room_middle_blind
-          - cover.dining_room_left_blind
-          - cover.living_room_right_blind
-          - cover.living_room_middle_blind
-          - cover.living_room_left_blind
-          - cover.study_room_right_blind
-          - cover.study_room_left_blind
-          sequence:
-          - service: cover.close_cover
-            target:
-              entity_id: '{{ repeat.item }}'
-            continue_on_error: true
-          - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
-              }}'
-    - conditions:
       - condition: or
         conditions:
         - condition: state
@@ -2636,6 +2605,37 @@
           - cover.study_room_left_blind
           sequence:
           - service: cover.open_cover
+            target:
+              entity_id: '{{ repeat.item }}'
+            continue_on_error: true
+          - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
+              }}'
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.dining_room_lux
+        above: input_number.maximum_lux
+      - condition: template
+        value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
+          ''cover.living_room_blinds'']) | map(attribute = ''last_changed'') | list
+          | sort)[-1] >= timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
+          | int(0)) }}'
+      sequence:
+      - condition: state
+        entity_id: sun.sun
+        attribute: rising
+        state: true
+      - repeat:
+          for_each:
+          - cover.dining_room_right_blind
+          - cover.dining_room_middle_blind
+          - cover.dining_room_left_blind
+          - cover.living_room_right_blind
+          - cover.living_room_middle_blind
+          - cover.living_room_left_blind
+          - cover.study_room_right_blind
+          - cover.study_room_left_blind
+          sequence:
+          - service: cover.close_cover
             target:
               entity_id: '{{ repeat.item }}'
             continue_on_error: true
@@ -4079,13 +4079,12 @@
         before: input_datetime.sleep_hours_end
         after: input_datetime.sleep_hours_start
       sequence:
-      - service: input_number.set_value
-        data:
+      - data:
           value: 15
         target:
           entity_id: input_number.motion_timeout_bedrooms
-      - service: automation.turn_off
-        data:
+        action: input_number.set_value
+      - data:
           stop_actions: true
         target:
           entity_id:
@@ -4093,6 +4092,7 @@
           - automation.living_room_motion_fan
           - automation.living_room_motion_ac
           - automation.dining_room_motion_ac
+        action: automation.turn_off
       - if:
         - condition: state
           entity_id:
@@ -4100,13 +4100,13 @@
           - automation.living_room_motion_timeout
           state: 'on'
         then:
-        - service: automation.trigger
-          data:
+        - data:
             skip_condition: false
           target:
             entity_id:
             - automation.dining_room_motion_timeout
             - automation.living_room_motion_timeout
+          action: automation.trigger
     - conditions:
       - condition: time
         before: '12:00:00'
@@ -4124,19 +4124,19 @@
         - calendar.public_holidays
         state: 'off'
       sequence:
-      - service: input_number.set_value
-        data:
+      - data:
           value: 5
         target:
           entity_id: input_number.motion_timeout_bedrooms
-      - service: automation.turn_on
-        data: {}
+        action: input_number.set_value
+      - data: {}
         target:
           entity_id:
           - automation.dining_room_motion_ac
           - automation.dining_room_motion_fan
           - automation.living_room_motion_ac
           - automation.living_room_motion_fan
+        action: automation.turn_on
       - if:
         - condition: state
           entity_id:
@@ -4144,13 +4144,13 @@
           - automation.living_room_motion_timeout
           state: 'on'
         then:
-        - service: automation.trigger
-          data:
+        - data:
             skip_condition: false
           target:
             entity_id:
             - automation.dining_room_motion_timeout
             - automation.living_room_motion_timeout
+          action: automation.trigger
       - if:
         - condition: state
           entity_id:
@@ -4159,28 +4159,28 @@
           - automation.parents_room_motion_timeout
           state: 'on'
         then:
-        - service: automation.trigger
-          data:
+        - data:
             skip_condition: false
           target:
             entity_id:
             - automation.elis_room_motion_timeout
             - automation.elenas_room_motion_timeout
             - automation.parents_room_motion_timeout
+          action: automation.trigger
     default:
-    - service: input_number.set_value
-      data:
-        value: 15
+    - data:
+        value: 30
       target:
         entity_id: input_number.motion_timeout_bedrooms
-    - service: automation.turn_on
-      data: {}
+      action: input_number.set_value
+    - data: {}
       target:
         entity_id:
         - automation.dining_room_motion_fan
         - automation.living_room_motion_fan
         - automation.living_room_motion_ac
         - automation.dining_room_motion_ac
+      action: automation.turn_on
   mode: single
 - id: '1679732114538'
   alias: Dishwasher Auto Control

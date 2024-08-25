@@ -1,12 +1,25 @@
 substitutions:
   name: everything-presence-lite-5c0698
   friendly_name: Elena's Room Radar
+  illuminance_update_interval: "2s"
+  log_level: DEBUG
+
 packages:
-  EverythingSmartTechnology.Everything_Presence_Lite: github://everythingsmarthome/everything-presence-lite/everything-presence-lite-ha.yaml@main
+  EverythingSmartTechnology.Everything_Presence_Lite.device_base: github://everythingsmarthome/everything-presence-lite/common/everything-presence-lite-base.yaml@main
+  dining_room_radar_ld2450: !include packages/dining_room_radar_ld2450.yaml
+  EverythingSmartTechnology.Everything_Presence_Lite.bluetooth_base: github://everythingsmarthome/everything-presence-lite/common/bluetooth-base.yaml@main
+
 esphome:
   name: ${name}
   name_add_mac_suffix: false
   friendly_name: ${friendly_name}
+  project: !remove
+
+http_request: !remove
+improv_serial: !remove
+ota:
+  - id: !remove ota_http_request
+
 api:
   encryption:
     key: !secret elenas_room_radar_api_key
