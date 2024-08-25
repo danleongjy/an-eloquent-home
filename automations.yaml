@@ -2563,13 +2563,13 @@
     entity_id: sensor.sun_solar_elevation
     above: 65
   - platform: numeric_state
-    entity_id: sensor.dining_room_radar_lux
+    entity_id: sensor.dining_room_lux
     below: input_number.comfortable_lux
     for:
       minutes: '{{ states(''input_number.blinds_auto_control_debounce'') | int(5)
         }}'
   - platform: numeric_state
-    entity_id: sensor.dining_room_radar_lux
+    entity_id: sensor.dining_room_lux
     above: input_number.maximum_lux
     for:
       minutes: '{{ states(''input_number.blinds_auto_control_debounce'') | int(5)
@@ -2578,11 +2578,9 @@
   action:
   - choose:
     - conditions:
-      - condition: or
-        conditions:
-        - condition: numeric_state
-          entity_id: sensor.dining_room_radar_lux
-          above: input_number.maximum_lux
+      - condition: numeric_state
+        entity_id: sensor.dining_room_lux
+        above: input_number.maximum_lux
       - condition: template
         value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
           ''cover.living_room_blinds'']) | map(attribute = ''last_changed'') | list
@@ -2618,7 +2616,7 @@
           attribute: rising
           state: false
         - condition: numeric_state
-          entity_id: sensor.dining_room_radar_lux
+          entity_id: sensor.dining_room_lux
           below: 300
       - condition: template
         value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
