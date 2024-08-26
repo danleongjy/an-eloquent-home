@@ -64,11 +64,11 @@ action:
                 entity_id: !input cover
                 state: closing
             then:
-              - service: cover.stop_cover
+              - action: cover.stop_cover
                 target:
                   entity_id: !input cover
             else:
-              - service: cover.open_cover
+              - action: cover.open_cover
                 target:
                   entity_id: !input cover
       - conditions:
@@ -81,11 +81,11 @@ action:
                 entity_id: !input cover
                 state: opening
             then:
-              - service: cover.stop_cover
+              - action: cover.stop_cover
                 target:
                   entity_id: !input cover
             else:
-              - service: cover.close_cover
+              - action: cover.close_cover
                 target:
                   entity_id: !input cover
       - conditions:
@@ -93,10 +93,10 @@ action:
             state: !input core_command_auto_control
             entity_id: !input core_current_command
         sequence:
-          - service: automation.turn_on
+          - action: automation.turn_on
             target:
               entity_id: !input cover_auto_control
-          - service: script.automation_on_off_indicator_light
+          - action: script.automation_on_off_indicator_light
             data:
               flash_once: true
               indicator_light: !input auto_control_indicator_light
@@ -105,13 +105,13 @@ action:
             state: !input core_command_manual_control
             entity_id: !input core_current_command
         sequence:
-          - service: automation.turn_off
+          - action: automation.turn_off
             metadata: {}
             data:
               stop_actions: true
             target:
               entity_id: !input cover_auto_control
-          - service: script.automation_on_off_indicator_light
+          - action: script.automation_on_off_indicator_light
             data:
               flash_once: false
               indicator_light: !input auto_control_indicator_light

@@ -62,7 +62,7 @@ action:
         sequence:
           - repeat:
               sequence:
-                - service: script.ac_set_state
+                - action: script.ac_set_state
                   data:
                     target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
                     target_ac_temp: "{{ state_attr(target_ac, 'temperature') }}"
@@ -83,7 +83,7 @@ action:
         sequence:
           - repeat:
               sequence:
-                - service: script.ac_set_state
+                - action: script.ac_set_state
                   data:
                     target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
                     target_ac_power: false
@@ -106,18 +106,18 @@ action:
               - condition: template
                 value_template: "{{ state_attr(target_ac, 'temperature') | float(24) < (state_attr(target_ac, 'min_temp') | float(23) + 1) }}"
             then:
-              - service: climate.set_temperature
+              - action: climate.set_temperature
                 data:
                   temperature: !input default_temp
                 target:
                   entity_id: !input ac
-              - service: climate.turn_off
+              - action: climate.turn_off
                 data: {}
                 target:
                   entity_id: !input ac
               - repeat:
                   sequence:
-                    - service: script.ac_set_state
+                    - action: script.ac_set_state
                       data:
                         target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
                         target_ac_power: false
@@ -133,13 +133,13 @@ action:
                               entity_id: !input vent
                               state: 'on'
             else:
-              - service: climate.turn_on
+              - action: climate.turn_on
                 data: {}
                 target:
                   entity_id: !input ac
               - repeat:
                   sequence:
-                    - service: script.ac_set_state
+                    - action: script.ac_set_state
                       data:
                         target_ac: "{{ state_attr(target_ac, 'friendly_name') }}"
                         target_ac_temp: "{{ state_attr(target_ac, 'temperature') }}"

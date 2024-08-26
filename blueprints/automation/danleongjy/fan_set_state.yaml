@@ -44,11 +44,11 @@ action:
                 attribute: percentage
                 below: "10"
             then:
-              - service: fan.turn_off
+              - action: fan.turn_off
                 data: {}
                 target:
                   entity_id: !input fan
-              - service: script.fan_set_state
+              - action: script.fan_set_state
                 data:
                   target_fan: "{{ state_attr(target_fan,'friendly_name') }}"
                   target_fan_power: false
@@ -56,7 +56,7 @@ action:
               - condition: state
                 entity_id: !input fan
                 state: "on"
-              - service: script.fan_set_state
+              - action: script.fan_set_state
                 data:
                   target_fan: "{{ state_attr(target_fan,'friendly_name') }}"
                   target_fan_speed: "{{ state_attr(target_fan, 'percentage') | int }}"
@@ -64,11 +64,11 @@ action:
           - condition: trigger
             id: power_on
         sequence:
-          - service: automation.trigger
+          - action: automation.trigger
             target:
               entity_id: !input motion_fan_automation
           - delay: 0.1
-          - service: script.fan_set_state
+          - action: script.fan_set_state
             data:
               target_fan: "{{ state_attr(target_fan,'friendly_name') }}"
               target_fan_speed: "{{ state_attr(target_fan, 'percentage') | int }}"
@@ -77,7 +77,7 @@ action:
           - condition: trigger
             id: power_off
         sequence:
-          - service: script.fan_set_state
+          - action: script.fan_set_state
             data:
               target_fan: "{{ state_attr(target_fan,'friendly_name') }}"
               target_fan_power: false

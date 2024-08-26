@@ -137,7 +137,7 @@ action:
           
           {{ ac_on.recommend_turn_off == 0 }}
     then:
-      - service: automation.trigger
+      - action: automation.trigger
         target:
           entity_id: !input ac_auto_control
       - condition: template
@@ -147,22 +147,22 @@ action:
             after: !input ac_auto_control_start
             before: !input ac_auto_control_end
         then:
-          - service: automation.turn_on
+          - action: automation.turn_on
             data: {}
             target:
               entity_id: !input ac_auto_control
         else:
-          - service: automation.turn_off
+          - action: automation.turn_off
             data:
               stop_actions: true
             target:
               entity_id: !input ac_auto_control
     else:
-      - service: climate.turn_off
+      - action: climate.turn_off
         data: {}
         target:
           entity_id: !input ac
-      - service: automation.turn_off
+      - action: automation.turn_off
         data:
           stop_actions: true
         target:

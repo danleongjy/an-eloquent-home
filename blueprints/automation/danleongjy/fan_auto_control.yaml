@@ -79,7 +79,7 @@ action:
                     attribute: percentage
                     state: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
             then:
-              - service: fan.set_percentage
+              - action: fan.set_percentage
                 data:
                   percentage: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
                 target:
@@ -91,7 +91,7 @@ action:
                 attribute: direction
                 state: forward
             then:
-              - service: fan.set_direction
+              - action: fan.set_direction
                 data:
                   direction: reverse
                 target:
@@ -108,7 +108,7 @@ action:
                     attribute: percentage
                     state: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
             then:
-              - service: fan.set_percentage
+              - action: fan.set_percentage
                 data:
                   percentage: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
                 target:
@@ -120,7 +120,7 @@ action:
                 attribute: direction
                 state: reverse
             then:
-              - service: fan.set_direction
+              - action: fan.set_direction
                 data:
                   direction: forward
                 target:
@@ -134,7 +134,7 @@ action:
                 attribute: percentage
                 state: "{{ (states(high_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
         then:
-          - service: fan.set_percentage
+          - action: fan.set_percentage
             data:
               percentage: "{{ (states(high_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
             target:
@@ -146,7 +146,7 @@ action:
             attribute: direction
             state: reverse
         then:
-          - service: fan.set_direction
+          - action: fan.set_direction
             data:
               direction: forward
             target:

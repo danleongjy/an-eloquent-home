@@ -126,7 +126,7 @@ action:
                 entity_id: !input lux_sensor
                 above: !input sufficient_lux
         sequence:
-          - service: light.turn_off
+          - action: light.turn_off
             target:
               entity_id: !input lights_list
       - conditions:
@@ -137,7 +137,7 @@ action:
           - repeat:
               for_each: !input lights_list
               sequence:
-                - service: script.recommended_light_level
+                - action: script.recommended_light_level
                   data:
                     light: "{{ repeat.item }}"
 mode: single

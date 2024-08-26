@@ -76,7 +76,7 @@ action:
     - condition: trigger
       id: motion
     sequence:
-    - service: input_datetime.set_datetime
+    - action: input_datetime.set_datetime
       data:
         timestamp: '{{ as_timestamp(now()) }}'
       target:
@@ -86,7 +86,7 @@ action:
         entity_id: !input occupancy_helper
         state: 'off'
       then:
-      - service: input_boolean.turn_on
+      - action: input_boolean.turn_on
         data: {}
         target:
           entity_id: !input occupancy_helper
@@ -118,7 +118,7 @@ action:
           entity_id: !input motion_sensor
           state: 'off'
     sequence:
-    - service: input_boolean.turn_off
+    - action: input_boolean.turn_off
       data: {}
       target:
         entity_id: !input occupancy_helper

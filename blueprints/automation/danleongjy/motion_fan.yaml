@@ -96,7 +96,7 @@ action:
   - condition: time
     after: !input off_hours_end
     before: !input off_hours_start
-  - service: automation.trigger
+  - action: automation.trigger
     target:
       entity_id: !input fan_auto_control
   - condition: template
@@ -106,12 +106,12 @@ action:
         after: !input fan_auto_control_start
         before: !input fan_auto_control_end
     then:
-      - service: automation.turn_on
+      - action: automation.turn_on
         data: {}
         target:
           entity_id: !input fan_auto_control
     else:
-      - service: automation.turn_off
+      - action: automation.turn_off
         data:
           stop_actions: true
         target:
