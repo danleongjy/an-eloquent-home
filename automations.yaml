@@ -187,56 +187,41 @@
       controller_device: 6e3bab771f635d9d237ea94a56bbf115
       helper_last_controller_event: input_text.zz_dining_room_ac_controller_last_event
       action_button_up_short:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.dining_room_ac
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.dining_room_ac
+          command: ac_on
       action_button_up_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.dining_room_ac
+      - action: script.ac_controller
+        metadata: {}
         data:
-          temperature: "{% if state_attr('climate.dining_room_ac', 'temperature')
-            < 27 %}\n  {{ state_attr('climate.dining_room_ac', 'temperature') + 1
-            }}\n{% else %}\n  27\n{% endif %}\n"
+          ac: climate.dining_room_ac
+          command: ac_warmer
       action_button_down_short:
-      - service: climate.turn_off
-        data: {}
-        target:
-          entity_id: climate.dining_room_ac
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.dining_room_ac
+          command: ac_off
       action_button_down_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.dining_room_ac
+      - action: script.ac_controller
+        metadata: {}
         data:
-          temperature: "{% if state_attr('climate.dining_room_ac', 'temperature')
-            > 24 %}\n  {{ state_attr('climate.dining_room_ac', 'temperature') - 1
-            }}\n{% else %}\n  24\n{% endif %}\n"
+          ac: climate.dining_room_ac
+          command: ac_colder
       action_button_up_double:
-      - service: automation.turn_on
-        data: {}
-        target:
-          entity_id:
-          - automation.dining_room_ac_auto_control
-          - automation.dining_room_fan_auto_control
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: true
-          indicator_light: light.dining_room_bulb_4_entity
+          ac: climate.dining_room_ac
+          command: cooling_auto_control
       action_button_down_double:
-      - service: automation.turn_off
-        data:
-          stop_actions: true
-        target:
-          entity_id:
-          - automation.dining_room_ac_auto_control
-          - automation.dining_room_fan_auto_control
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: false
-          indicator_light: light.dining_room_bulb_4_entity
+          ac: climate.dining_room_ac
+          command: cooling_manual_control
       button_up_long_loop: false
       button_up_double_press: true
       button_down_double_press: true
@@ -387,62 +372,41 @@
       integration: ZHA
       controller_device: 729379c869fac5a454929998eba2f3d2
       action_button_up_short:
-      - service: climate.turn_on
-        target:
-          entity_id: climate.elis_room_ac
-        data: {}
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.elis_room_ac
+          command: ac_on
       action_button_up_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.elis_room_ac
+      - action: script.ac_controller
+        metadata: {}
         data:
-          temperature: "{% if state_attr('climate.elis_room_ac', 'temperature') <
-            27 %}\n  {{ state_attr('climate.elis_room_ac', 'temperature') + 1 }}\n{%
-            else %}\n  27\n{% endif %}\n"
+          ac: climate.elis_room_ac
+          command: ac_warmer
       action_button_down_short:
-      - service: climate.turn_off
-        target:
-          entity_id: climate.elis_room_ac
-        data: {}
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.elis_room_ac
+          command: ac_off
       action_button_down_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.elis_room_ac
+      - action: script.ac_controller
+        metadata: {}
         data:
-          temperature: "{% if state_attr('climate.elis_room_ac', 'temperature') >
-            24 %}\n  {{ state_attr('climate.elis_room_ac', 'temperature') - 1 }}\n{%
-            else %}\n  24\n{% endif %}\n"
-      helper_last_controller_event: input_text.zz_eli_s_room_ac_controller_last_event
+          ac: climate.elis_room_ac
+          command: ac_colder
       action_button_up_double:
-      - service: automation.turn_on
-        data: {}
-        target:
-          entity_id:
-          - automation.elis_room_ac_auto_control
-          - automation.elis_room_fan_auto_control
-      - condition: time
-        after: input_datetime.sleep_hours_end
-        before: input_datetime.sleep_hours_start
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: true
-          indicator_light: light.elis_room_bulb_3_entity
+          ac: climate.elis_room_ac
+          command: cooling_auto_control
       action_button_down_double:
-      - service: automation.turn_off
-        data: {}
-        target:
-          entity_id:
-          - automation.elis_room_ac_auto_control
-          - automation.elis_room_fan_auto_control
-      - condition: time
-        after: input_datetime.sleep_hours_end
-        before: input_datetime.sleep_hours_start
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: false
-          indicator_light: light.elis_room_bulb_3_entity
+          ac: climate.elis_room_ac
+          command: cooling_manual_control
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 700
@@ -966,56 +930,41 @@
       controller_device: 4bce962ebfba9e2195a00baa98aeec85
       helper_last_controller_event: input_text.zz_living_room_ac_controller_last_event
       action_button_up_short:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.living_room_ac
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.living_room_ac
+          command: ac_on
       action_button_up_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.living_room_ac
+      - action: script.ac_controller
+        metadata: {}
         data:
-          temperature: "{% if state_attr('climate.living_room_ac', 'temperature')
-            < 27 %}\n  {{ state_attr('climate.living_room_ac', 'temperature') + 1
-            }}\n{% else %}\n  27\n{% endif %}\n"
+          ac: climate.living_room_ac
+          command: ac_warmer
       action_button_down_short:
-      - service: climate.turn_off
-        data: {}
-        target:
-          entity_id: climate.living_room_ac
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.living_room_ac
+          command: ac_off
       action_button_down_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.living_room_ac
+      - action: script.ac_controller
+        metadata: {}
         data:
-          temperature: "{% if state_attr('climate.living_room_ac', 'temperature')
-            > 24 %}\n  {{ state_attr('climate.living_room_ac', 'temperature') - 1
-            }}\n{% else %}\n  24\n{% endif %}\n"
+          ac: climate.living_room_ac
+          command: ac_colder
       action_button_up_double:
-      - service: automation.turn_on
-        data: {}
-        target:
-          entity_id:
-          - automation.living_room_ac_auto_control
-          - automation.living_room_fan_auto_control
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: true
-          indicator_light: light.living_room_bulb_2_entity
+          ac: climate.living_room_ac
+          command: cooling_auto_control
       action_button_down_double:
-      - service: automation.turn_off
-        data:
-          stop_actions: true
-        target:
-          entity_id:
-          - automation.living_room_ac_auto_control
-          - automation.living_room_fan_auto_control
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: false
-          indicator_light: light.living_room_bulb_2_entity
+          ac: climate.living_room_ac
+          command: cooling_manual_control
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 700
@@ -1141,59 +1090,41 @@
       controller_device: 0cc8a08d95a93a8b8053d4fa4abd5233
       helper_last_controller_event: input_text.zz_study_room_ac_controller_last_event
       action_button_up_short:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.study_room_ac
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.study_room_ac
+          command: ac_on
       action_button_up_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.study_room_ac
+      - action: script.ac_controller
+        metadata: {}
         data:
-          temperature: "{% if state_attr('climate.study_room_ac', 'temperature') <
-            27 %}\n  {{ state_attr('climate.study_room_ac', 'temperature') + 1 }}\n{%
-            else %}\n  27\n{% endif %}\n"
+          ac: climate.study_room_ac
+          command: ac_warmer
       action_button_down_short:
-      - service: climate.turn_off
-        data: {}
-        target:
-          entity_id: climate.study_room_ac
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.study_room_ac
+          command: ac_off
       action_button_down_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.study_room_ac
-        data:
-          temperature: "{% if state_attr('climate.study_room_ac', 'temperature') >
-            24 %}\n  {{ state_attr('climate.study_room_ac', 'temperature') - 1 }}\n{%
-            else %}\n  24\n{% endif %}\n"
-      action_button_up_release: []
-      action_button_down_release: []
-      action_button_down_double:
-      - service: automation.turn_off
-        data:
-          stop_actions: true
-        target:
-          entity_id:
-          - automation.study_room_ac_auto_control
-          - automation.study_room_fan_auto_control
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: false
-          indicator_light: light.study_room_bulb_4_entity
+          ac: climate.study_room_ac
+          command: ac_colder
       action_button_up_double:
-      - service: automation.turn_on
-        data: {}
-        target:
-          entity_id:
-          - automation.study_room_ac_auto_control
-          - automation.study_room_fan_auto_control
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: true
-          indicator_light: light.study_room_bulb_4_entity
-      button_down_long_loop: false
+          ac: climate.study_room_ac
+          command: cooling_auto_control
+      action_button_down_double:
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.study_room_ac
+          command: cooling_manual_control
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 700
@@ -1313,61 +1244,41 @@
       controller_device: 11472f5eb794fb176a43d64968632bd2
       helper_last_controller_event: input_text.zz_parents_room_ac_controller_last_event
       action_button_up_short:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.parents_room_ac
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.parents_room_ac
+          command: ac_on
       action_button_up_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.parents_room_ac
+      - action: script.ac_controller
+        metadata: {}
         data:
-          temperature: "{% if state_attr('climate.parents_room_ac', 'temperature')
-            < 27 %}\n  {{ state_attr('climate.parents_room_ac', 'temperature') + 1
-            }}\n{% else %}\n  27\n{% endif %}\n"
+          ac: climate.parents_room_ac
+          command: ac_warmer
       action_button_down_short:
-      - service: climate.turn_off
-        data: {}
-        target:
-          entity_id: climate.parents_room_ac
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.parents_room_ac
+          command: ac_off
       action_button_down_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.parents_room_ac
+      - action: script.ac_controller
+        metadata: {}
         data:
-          temperature: "{% if state_attr('climate.parents_room_ac', 'temperature')
-            > 24 %}\n  {{ state_attr('climate.parents_room_ac', 'temperature') - 1
-            }}\n{% else %}\n  24\n{% endif %}\n"
+          ac: climate.parents_room_ac
+          command: ac_colder
       action_button_up_double:
-      - service: automation.turn_on
-        data: {}
-        target:
-          entity_id:
-          - automation.parents_room_ac_auto_control
-          - automation.parents_room_fan_auto_control
-      - condition: time
-        after: input_datetime.sleep_hours_end
-        before: input_datetime.sleep_hours_start
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: true
-          indicator_light: light.parents_room_bulb_3_entity
+          ac: climate.parents_room_ac
+          command: cooling_auto_control
       action_button_down_double:
-      - service: automation.turn_off
-        data: {}
-        target:
-          entity_id:
-          - automation.parents_room_ac_auto_control
-          - automation.parents_room_fan_auto_control
-      - condition: time
-        after: input_datetime.sleep_hours_end
-        before: input_datetime.sleep_hours_start
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: false
-          indicator_light: light.parents_room_bulb_3_entity
+          ac: climate.parents_room_ac
+          command: cooling_manual_control
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 700
@@ -1568,62 +1479,41 @@
       integration: ZHA
       controller_device: 4992a43f1eecbf448ac02a3c2601ab36
       action_button_up_short:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.elenas_room_ac
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.elenas_room_ac
+          command: ac_on
       action_button_up_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.elenas_room_ac
+      - action: script.ac_controller
+        metadata: {}
         data:
-          temperature: "{% if state_attr('climate.elenas_room_ac', 'temperature')
-            < 27 %}\n  {{ state_attr('climate.elenas_room_ac', 'temperature') + 1
-            }}\n{% else %}\n  27\n{% endif %}\n"
+          ac: climate.elenas_room_ac
+          command: ac_warmer
       action_button_down_short:
-      - service: climate.turn_off
-        data: {}
-        target:
-          entity_id: climate.elenas_room_ac
+      - action: script.ac_controller
+        metadata: {}
+        data:
+          ac: climate.elenas_room_ac
+          command: ac_off
       action_button_down_long:
-      - service: climate.set_temperature
-        target:
-          entity_id: climate.elenas_room_ac
+      - action: script.ac_controller
+        metadata: {}
         data:
-          temperature: "{% if state_attr('climate.elenas_room_ac', 'temperature')
-            > 24 %}\n  {{ state_attr('climate.elenas_room_ac', 'temperature') - 1
-            }}\n{% else %}\n  24\n{% endif %}\n"
-      helper_last_controller_event: input_text.zz_elena_s_room_ac_controller_last_event
+          ac: climate.elenas_room_ac
+          command: ac_colder
       action_button_up_double:
-      - service: automation.turn_on
-        data: {}
-        target:
-          entity_id:
-          - automation.elenas_room_ac_auto_control
-          - automation.elenas_room_fan_auto_control
-      - condition: time
-        after: input_datetime.sleep_hours_end
-        before: input_datetime.sleep_hours_start
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: true
-          indicator_light: light.elenas_room_bulb_1_entity
+          ac: climate.elenas_room_ac
+          command: cooling_auto_control
       action_button_down_double:
-      - service: automation.turn_off
-        data: {}
-        target:
-          entity_id:
-          - automation.elenas_room_ac_auto_control
-          - automation.elenas_room_fan_auto_control
-      - condition: time
-        after: input_datetime.sleep_hours_end
-        before: input_datetime.sleep_hours_start
-      - service: script.automation_on_off_indicator_light
+      - action: script.ac_controller
         metadata: {}
         data:
-          flash_once: false
-          indicator_light: light.elenas_room_bulb_1_entity
+          ac: climate.elenas_room_ac
+          command: cooling_manual_control
       button_up_double_press: true
       button_down_double_press: true
       helper_double_press_delay: 700

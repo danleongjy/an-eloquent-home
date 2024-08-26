@@ -648,21 +648,21 @@ automation_on_off_indicator_light:
       - condition: template
         value_template: '{{ is_state(indicator_light, ''on'') }}'
       then:
-      - service: light.turn_on
-        data:
+      - data:
           flash: short
         target:
           entity_id: '{{ indicator_light }}'
+        action: light.turn_on
       else:
-      - service: light.turn_on
-        data:
+      - data:
           flash: short
         target:
           entity_id: '{{ indicator_light }}'
+        action: light.turn_on
       - delay: 1
-      - service: light.turn_off
-        target:
+      - target:
           entity_id: '{{ indicator_light }}'
+        action: light.turn_off
     else:
     - if:
       - condition: template
@@ -671,25 +671,25 @@ automation_on_off_indicator_light:
       - repeat:
           count: 2
           sequence:
-          - service: light.turn_on
-            data:
+          - data:
               flash: short
             target:
               entity_id: '{{ indicator_light }}'
+            action: light.turn_on
           - delay: 1
       else:
       - repeat:
           count: 2
           sequence:
-          - service: light.turn_on
-            data:
+          - data:
               flash: short
             target:
               entity_id: '{{ indicator_light }}'
+            action: light.turn_on
           - delay: 1
-      - service: light.turn_off
-        target:
+      - target:
           entity_id: '{{ indicator_light }}'
+        action: light.turn_off
   mode: parallel
   icon: mdi:lightbulb-on
 stove_settings:
@@ -1147,3 +1147,138 @@ lights_controller:
   icon: mdi:lightbulb-group
   mode: parallel
   max: 12
+ac_controller:
+  alias: AC Controller
+  sequence:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''ac_on'' }}'
+      sequence:
+      - action: climate.turn_on
+        target:
+          entity_id: '{{ ac }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''ac_off'' }}'
+      sequence:
+      - action: climate.turn_off
+        target:
+          entity_id: '{{ ac }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''ac_warmer'' }}'
+      sequence:
+      - action: climate.set_temperature
+        target:
+          entity_id: '{{ ac }}'
+        data:
+          temperature: "{% if state_attr(ac, 'temperature') < 27 %}\n  {{ state_attr(ac,
+            'temperature') + 1 }}\n{% else %}\n  27\n{% endif %}\n"
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''ac_colder'' }}'
+      sequence:
+      - action: climate.set_temperature
+        target:
+          entity_id: '{{ ac }}'
+        data:
+          temperature: "{% if state_attr(ac, 'temperature') > 24 %}\n  {{ state_attr(ac,
+            'temperature') - 1 }}\n{% else %}\n  24\n{% endif %}\n"
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''cooling_auto_control'' }}'
+      sequence:
+      - action: automation.turn_on
+        target:
+          entity_id: "{% set cooling_automations = {'climate.elenas_room_ac': ['automation.elenas_room_fan_auto_control',
+            'automation.elenas_room_ac_auto_control'],\n                              'climate.elis_room_ac':
+            ['automation.elis_room_fan_auto_control', 'automation.elis_room_ac_auto_control'],\n
+            \                             'climate.dining_room_ac': ['automation.dining_room_fan_auto_control',
+            'automation.dining_room_ac_auto_control'],\n                              'climate.living_room_ac':
+            ['automation.living_room_fan_auto_control', 'automation.living_room_ac_auto_control'],\n
+            \                             'climate.parents_room_ac': ['automation.parents_room_fan_auto_control',
+            'automation.parents_room_ac_auto_control'],\n                              'climate.study_room_ac':
+            ['automation.study_room_fan_auto_control', 'automation.study_room_ac_auto_control']}
+            %}\n{{ cooling_automations[ac] }}\n"
+      - condition: or
+        conditions:
+        - condition: time
+          before: input_datetime.sleep_hours_start
+          after: input_datetime.sleep_hours_end
+        - condition: template
+          value_template: '{{ ac in [''climate.dining_room_ac'',''climate.living_room_ac'',''climate.study_room_ac'']
+            }}'
+      - action: script.automation_on_off_indicator_light
+        data:
+          indicator_light: "{% set indicator_lights = {'climate.elenas_room_ac': 'light.elenas_room_bulb_1_entity',\n
+            \                             'climate.elis_room_ac': 'light.elis_room_bulb_3_entity',\n
+            \                             'climate.dining_room_ac': 'light.dining_room_bulb_4_entity',\n
+            \                             'climate.living_room_ac': 'light.living_room_bulb_2_entity',\n
+            \                             'climate.parents_room_ac': 'light.parents_room_bulb_3_entity',\n
+            \                             'climate.study_room_ac': 'light.study_room_bulb_4_entity'}
+            %}\n{{ indicator_lights[ac] }}\n"
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''cooling_manual_control'' }}'
+      sequence:
+      - action: automation.turn_off
+        target:
+          entity_id: "{% set cooling_automations = {'climate.elenas_room_ac': ['automation.elenas_room_fan_auto_control',
+            'automation.elenas_room_ac_auto_control'],\n                              'climate.elis_room_ac':
+            ['automation.elis_room_fan_auto_control', 'automation.elis_room_ac_auto_control'],\n
+            \                             'climate.dining_room_ac': ['automation.dining_room_fan_auto_control',
+            'automation.dining_room_ac_auto_control'],\n                              'climate.living_room_ac':
+            ['automation.living_room_fan_auto_control', 'automation.living_room_ac_auto_control'],\n
+            \                             'climate.parents_room_ac': ['automation.parents_room_fan_auto_control',
+            'automation.parents_room_ac_auto_control'],\n                              'climate.study_room_ac':
+            ['automation.study_room_fan_auto_control', 'automation.study_room_ac_auto_control']}
+            %}\n{{ cooling_automations[ac] }}\n"
+      - condition: or
+        conditions:
+        - condition: time
+          before: input_datetime.sleep_hours_start
+          after: input_datetime.sleep_hours_end
+        - condition: template
+          value_template: '{{ ac in [''climate.dining_room_ac'',''climate.living_room_ac'',''climate.study_room_ac'']
+            }}'
+      - action: script.automation_on_off_indicator_light
+        data:
+          flash_once: false
+          indicator_light: "{% set indicator_lights = {'climate.elenas_room_ac': 'light.elenas_room_bulb_1_entity',\n
+            \                             'climate.elis_room_ac': 'light.elis_room_bulb_3_entity',\n
+            \                             'climate.dining_room_ac': 'light.dining_room_bulb_4_entity',\n
+            \                             'climate.living_room_ac': 'light.living_room_bulb_2_entity',\n
+            \                             'climate.parents_room_ac': 'light.parents_room_bulb_3_entity',\n
+            \                             'climate.study_room_ac': 'light.study_room_bulb_4_entity'}
+            %}\n{{ indicator_lights[ac] }}\n"
+  fields:
+    ac:
+      selector:
+        entity:
+          filter:
+          - domain: climate
+      name: AC
+      description: The AC to control
+      required: true
+    command:
+      selector:
+        select:
+          options:
+          - label: Turn On
+            value: ac_on
+          - label: Turn Off
+            value: ac_off
+          - label: Warmer
+            value: ac_warmer
+          - label: Colder
+            value: ac_colder
+          - label: Cooling Auto Control
+            value: cooling_auto_control
+          - label: Cooling Manual Control
+            value: cooling_manual_control
+      name: Command
+      description: The command for the AC to execute
+      required: true
+  description: Set AC state with physical controls
+  icon: mdi:snowflake
