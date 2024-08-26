@@ -4029,6 +4029,7 @@
       - binary_sensor.powder_room_door
       - binary_sensor.main_door
       respect_closed_doors: false
+      off_hours_start: input_datetime.sleep_hours_start
 - id: '1679620425571'
   alias: Dining Room Motion Fan
   description: Control the Dining Room Fan when motion is detected, depending on whether
@@ -4052,136 +4053,7 @@
       - climate.dining_room_ac
       - fan.dining_room_fan
       respect_closed_doors: false
-- id: '1679668817982'
-  alias: Motion Timeouts
-  description: Set motion timeouts for different areas depending on time of day and
-    whether it is a holiday.
-  trigger:
-  - platform: time
-    at: input_datetime.sleep_hours_start
-  - platform: time
-    at: input_datetime.sleep_hours_end
-  - platform: time
-    at: '10:00:00'
-  - platform: time
-    at: '12:00:00'
-  - platform: state
-    entity_id:
-    - calendar.elena_no_school
-    - calendar.eli_no_school
-    - calendar.public_holidays
-    to: 'on'
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: time
-        before: input_datetime.sleep_hours_end
-        after: input_datetime.sleep_hours_start
-      sequence:
-      - data:
-          value: 15
-        target:
-          entity_id: input_number.motion_timeout_bedrooms
-        action: input_number.set_value
-      - data:
-          stop_actions: true
-        target:
-          entity_id:
-          - automation.dining_room_motion_fan
-          - automation.living_room_motion_fan
-          - automation.living_room_motion_ac
-          - automation.dining_room_motion_ac
-        action: automation.turn_off
-      - if:
-        - condition: state
-          entity_id:
-          - automation.dining_room_motion_timeout
-          - automation.living_room_motion_timeout
-          state: 'on'
-        then:
-        - data:
-            skip_condition: false
-          target:
-            entity_id:
-            - automation.dining_room_motion_timeout
-            - automation.living_room_motion_timeout
-          action: automation.trigger
-    - conditions:
-      - condition: time
-        before: '12:00:00'
-        weekday:
-        - mon
-        - tue
-        - wed
-        - thu
-        - fri
-        after: '10:00:00'
-      - condition: state
-        entity_id:
-        - calendar.elena_no_school
-        - calendar.eli_no_school
-        - calendar.public_holidays
-        state: 'off'
-      sequence:
-      - data:
-          value: 5
-        target:
-          entity_id: input_number.motion_timeout_bedrooms
-        action: input_number.set_value
-      - data: {}
-        target:
-          entity_id:
-          - automation.dining_room_motion_ac
-          - automation.dining_room_motion_fan
-          - automation.living_room_motion_ac
-          - automation.living_room_motion_fan
-        action: automation.turn_on
-      - if:
-        - condition: state
-          entity_id:
-          - automation.dining_room_motion_timeout
-          - automation.living_room_motion_timeout
-          state: 'on'
-        then:
-        - data:
-            skip_condition: false
-          target:
-            entity_id:
-            - automation.dining_room_motion_timeout
-            - automation.living_room_motion_timeout
-          action: automation.trigger
-      - if:
-        - condition: state
-          entity_id:
-          - automation.elis_room_motion_timeout
-          - automation.elenas_room_motion_timeout
-          - automation.parents_room_motion_timeout
-          state: 'on'
-        then:
-        - data:
-            skip_condition: false
-          target:
-            entity_id:
-            - automation.elis_room_motion_timeout
-            - automation.elenas_room_motion_timeout
-            - automation.parents_room_motion_timeout
-          action: automation.trigger
-    default:
-    - data:
-        value: 30
-      target:
-        entity_id: input_number.motion_timeout_bedrooms
-      action: input_number.set_value
-    - data: {}
-      target:
-        entity_id:
-        - automation.dining_room_motion_fan
-        - automation.living_room_motion_fan
-        - automation.living_room_motion_ac
-        - automation.dining_room_motion_ac
-      action: automation.turn_on
-  mode: single
+      off_hours_start: input_datetime.sleep_hours_start
 - id: '1679732114538'
   alias: Dishwasher Auto Control
   description: Turn on or off the dishwasher based on door state and idle time
@@ -4233,6 +4105,7 @@
       - climate.dining_room_ac
       - light.dining_room_pendant_light_entity
       respect_closed_doors: false
+      off_hours_start: input_datetime.sleep_hours_start
 - id: '1679820093028'
   alias: Living Room Motion AC
   description: Control the Living Room AC when motion is detected, depending on whether
@@ -4251,6 +4124,7 @@
       - fan.living_room_fan
       - climate.living_room_ac
       respect_closed_doors: false
+      off_hours_start: input_datetime.sleep_hours_start
 - id: '1681034852325'
   alias: Study Room Motion Fan
   description: Control the Study Room Fan when motion is detected
