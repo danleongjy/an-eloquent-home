@@ -946,3 +946,91 @@ batch_update_esphome_nodes:
         '
   description: Update ESPHome nodes in sequence
   icon: mdi:update
+fan_controller:
+  alias: Fan Controller
+  fields:
+    fan:
+      name: Fan
+      description: The fan to control
+      selector:
+        entity:
+          filter:
+          - domain: fan
+    command:
+      name: Command
+      description: The command for the fan to execute
+      selector:
+        select:
+          options:
+          - label: Turn On
+            value: fan_on
+          - label: Turn Off
+            value: fan_off
+          - label: Speed Up
+            value: fan_speed_up
+          - label: Slow Down
+            value: fan_slow_down
+          - label: Reverse
+            value: fan_reverse
+          - label: Forward
+            value: fan_forward
+  sequence:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''fan_on'' }}'
+      sequence:
+      - action: fan.turn_on
+        target:
+          entity_id: '{{ fan }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''fan_off'' }}'
+      sequence:
+      - action: fan.turn_off
+        target:
+          entity_id: '{{ fan }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''fan_speed_up'' }}'
+      sequence:
+      - action: fan.increase_speed
+        target:
+          entity_id: '{{ fan }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''fan_slow_down'' }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ state_attr(fan, ''percentage'') | int(0) < 20 }}'
+        then:
+        - action: fan.turn_off
+          target:
+            entity_id: '{{ fan }}'
+        else:
+        - action: fan.decrease_speed
+          target:
+            entity_id: '{{ fan }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''fan_reverse'' }}'
+      sequence:
+      - action: fan.set_direction
+        data:
+          direction: reverse
+        target:
+          entity_id: '{{ fan }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''fan_forward'' }}'
+      sequence:
+      - action: fan.set_direction
+        data:
+          direction: forward
+        target:
+          entity_id: '{{ fan }}'
+  description: Set fan state with physical controls
+  icon: mdi:fan
+  mode: parallel
+  max: 6
