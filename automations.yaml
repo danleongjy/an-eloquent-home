@@ -3613,7 +3613,6 @@
     input:
       motion_sensor:
       - binary_sensor.parents_room_presence
-      number_of_minutes_doors_open: input_number.motion_timeout_presence
       number_of_minutes_doors_closed: input_number.motion_timeout_bedrooms
       doors_list:
       - binary_sensor.parents_room_door
@@ -3737,7 +3736,6 @@
     input:
       motion_sensor:
       - binary_sensor.elenas_room_presence
-      number_of_minutes_doors_open: input_number.motion_timeout_presence
       number_of_minutes_doors_closed: input_number.motion_timeout_bedrooms
       doors_list:
       - binary_sensor.elenas_room_door
@@ -3807,7 +3805,6 @@
     input:
       motion_sensor:
       - binary_sensor.elis_room_presence
-      number_of_minutes_doors_open: input_number.motion_timeout_presence
       number_of_minutes_doors_closed: input_number.motion_timeout_bedrooms
       doors_list:
       - binary_sensor.elis_room_door
@@ -3834,11 +3831,10 @@
   description: Turn off Kitchen Lights when no motion is detected for a certain amount
     of time.
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
       motion_sensor:
       - binary_sensor.kitchen_presence
-      number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.kitchen_lights
 - id: '1678321703771'
@@ -3861,10 +3857,10 @@
   description: Turn off Study Room Bulb 4 when no motion is detected for a certain
     amount of time.
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
-      motion_sensor: binary_sensor.study_walkway_motion
-      number_of_minutes: input_number.motion_timeout_walking_areas
+      motion_sensor:
+      - binary_sensor.study_walkway_motion
       entities_list:
       - light.study_room_bulb_2_entity
       - light.study_room_bulb_3_entity
@@ -3888,11 +3884,10 @@
   description: Turn off Playroom Lights when no motion is detected for a certain amount
     of time.
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
       motion_sensor:
       - binary_sensor.playroom_presence
-      number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.playroom_lights
 - id: '1678323204367'
@@ -3912,10 +3907,10 @@
   description: Turn off the Yard Light when no motion is detected for a certain amount
     of time.
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
-      motion_sensor: binary_sensor.yard_motion
-      number_of_minutes: input_number.motion_timeout_walking_areas
+      motion_sensor:
+      - binary_sensor.yard_motion
       turnoff_entities_list:
       - light.yard_light_entity
 - id: '1679619343225'
@@ -3950,11 +3945,10 @@
   description: Turn off lights, fan and AC in the Living Room when no motion is detected
     for the long timeout.
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
       motion_sensor:
       - binary_sensor.living_room_presence
-      number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.living_room_lights
       - light.living_room_pendant_light_entity
@@ -3997,8 +3991,6 @@
     input:
       motion_sensor:
       - binary_sensor.dining_room_presence
-      number_of_minutes_doors_closed: input_number.motion_timeout_presence
-      number_of_minutes_doors_open: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.dining_room_lights
       - light.dining_room_pendant_light_entity
@@ -4215,9 +4207,10 @@
   description: Turn off Hallway Lights when no motion is detected for a certain amount
     of time.
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
-      motion_sensor: binary_sensor.hallway_motion
+      motion_sensor:
+      - binary_sensor.hallway_motion
       number_of_minutes: input_number.motion_timeout_walking_areas
       turnoff_entities_list:
       - light.hallway_lights
@@ -4258,11 +4251,10 @@
   description: Turn off Study Room Lights, Fan and AC when no motion is detected for
     a certain amount of time.
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
       motion_sensor:
       - binary_sensor.study_room_presence
-      number_of_minutes: input_number.motion_timeout_presence
       entities_list:
       - input_boolean.party_mode
       turnoff_entities_list:
@@ -5788,12 +5780,11 @@
   description: Turn off the Dining and Living Room ACs if no motion is detected in
     both rooms
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
       motion_sensor:
       - binary_sensor.dining_room_presence
       - binary_sensor.living_room_presence
-      number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - climate.dining_room_ac
       - automation.dining_room_ac_auto_control
@@ -5877,11 +5868,10 @@
   description: Turn off Junior Bathroom Lights when no motion is detected for a certain
     amount of time.
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
       motion_sensor:
       - binary_sensor.junior_bathroom_occupancy
-      number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.junior_bathroom_lights
 - id: '1699177618893'
@@ -5900,11 +5890,10 @@
   description: Turn off Powder Room Pendant Light when no motion is detected for a
     certain amount of time.
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
       motion_sensor:
       - binary_sensor.powder_room_occupancy
-      number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.powder_room_pendant_light_entity
 - id: '1699233038725'
@@ -5934,11 +5923,10 @@
   description: Turn off Master Bathroom Lights when no motion is detected for a certain
     amount of time.
   use_blueprint:
-    path: danleongjy/motion_timeout.yaml
+    path: danleongjy/motion_timeout_bedrooms.yaml
     input:
       motion_sensor:
       - binary_sensor.master_bathroom_occupancy
-      number_of_minutes: input_number.motion_timeout_presence
       turnoff_entities_list:
       - light.master_bathroom_lights
 - id: '1702255296989'
