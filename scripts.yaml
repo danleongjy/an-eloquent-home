@@ -956,6 +956,7 @@ fan_controller:
         entity:
           filter:
           - domain: fan
+      required: true
     command:
       name: Command
       description: The command for the fan to execute
@@ -974,6 +975,7 @@ fan_controller:
             value: fan_reverse
           - label: Forward
             value: fan_forward
+      required: true
   sequence:
   - choose:
     - conditions:
@@ -1034,3 +1036,114 @@ fan_controller:
   icon: mdi:fan
   mode: parallel
   max: 6
+lights_controller:
+  alias: Lights Controller
+  sequence:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''lights_on'' }}'
+      sequence:
+      - repeat:
+          for_each: '{{ lights }}'
+          sequence:
+          - action: script.recommended_light_level
+            data:
+              light: '{{ repeat.item }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''lights_off'' }}'
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: '{{ lights }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''lights_brighten'' }}'
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id: '{{ lights }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''lights_darken'' }}'
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+        target:
+          entity_id: '{{ lights }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''set_recommended_room_scene'' }}'
+      sequence:
+      - action: script.set_recommended_scene
+        data:
+          room: "{% set turnoff_entities = namespace(areas = []) %} {% for light in
+            lights %}\n  {% set turnoff_entities.areas = turnoff_entities.areas +
+            [area_name(light).lower().replace(' ','_').replace(\"'\",'')] %}\n{% endfor
+            %} {{ turnoff_entities.areas | unique | list }}\n"
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''turn_off_room'' }}'
+      sequence:
+      - action: automation.trigger
+        data:
+          skip_condition: true
+        target:
+          entity_id: "{% set motion_timeout_automations = {'Yard': ['automation.yard_motion_timeout'],\n
+            \                                   'Playroom': ['automation.playroom_motion_timeout'],\n
+            \                                   'Junior Bathroom': ['automation.junior_bathroom_motion_timeout'],\n
+            \                                   'Powder Room': ['automation.powder_room_motion_timeout'],\n
+            \                                   \"Elena's Room\": ['automation.elenas_room_motion_timeout'],\n
+            \                                   \"Eli's Room\": ['automation.elis_room_motion_timeout'],\n
+            \                                   'Hallway': ['automation.hallway_motion_timeout'],\n
+            \                                   'Dining Room': ['automation.dining_room_motion_timeout','automation.dining_and_living_room_ac_motion_timeout'],\n
+            \                                   'Living Room': ['automation.living_room_motion_timeout','automation.dining_and_living_room_ac_motion_timeout'],\n
+            \                                   'Study Room': ['automation.study_room_motion_timeout'],\n
+            \                                   \"Parents' Room\": ['automation.parents_room_motion_timeout'],\n
+            \                                   'Master Bathroom': ['automation.master_bathroom_motion_timeout'],\n
+            \                                   'Kitchen': ['automation.kitchen_motion_timeout']}
+            %}\n{% set turnoff_entities = namespace(areas = [], automations = [])
+            %} {% for light in lights %}\n  {% set turnoff_entities.areas = turnoff_entities.areas
+            + [area_name(light)] %}\n{% endfor %} {% for area in turnoff_entities.areas
+            %}\n  {% set turnoff_entities.automations = turnoff_entities.automations
+            + motion_timeout_automations[area] %}\n{% endfor %} {{ turnoff_entities.automations
+            | unique | list }}\n"
+  fields:
+    lights:
+      name: Lights
+      description: The lights to control
+      selector:
+        entity:
+          filter:
+          - domain: light
+          multiple: true
+      required: true
+    command:
+      name: Command
+      description: The command for the lights to execute
+      selector:
+        select:
+          options:
+          - label: Turn On
+            value: lights_on
+          - label: Turn Off
+            value: lights_off
+          - label: Brighten
+            value: lights_brighten
+          - label: Darken
+            value: lights_darken
+          - label: Set Recommended Room Scene
+            value: set_recommended_room_scene
+          - label: Turn Off Room
+            value: turn_off_room
+      required: true
+  description: Set lights state with physical controls
+  icon: mdi:lightbulb-group
+  mode: parallel
+  max: 12
