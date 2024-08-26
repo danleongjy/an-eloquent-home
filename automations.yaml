@@ -5859,7 +5859,6 @@
     path: danleongjy/room_core.yaml
     input:
       core_room: elis_room
-      auto_control_indicator_light: light.elis_room_bulb_3_entity
       sleep_hours_start: input_datetime.sleep_hours_start
       sleep_hours_end: input_datetime.sleep_hours_end
 - id: '1702256763571'
@@ -5870,7 +5869,6 @@
     path: danleongjy/room_core.yaml
     input:
       core_room: parents_room
-      auto_control_indicator_light: light.parents_room_bulb_3_entity
       sleep_hours_start: input_datetime.sleep_hours_start
       sleep_hours_end: input_datetime.sleep_hours_end
 - id: '1702652446399'
@@ -5978,7 +5976,6 @@
     path: danleongjy/room_core.yaml
     input:
       core_room: elenas_room
-      auto_control_indicator_light: light.elenas_room_bulb_1_entity
       sleep_hours_start: input_datetime.sleep_hours_start
       sleep_hours_end: input_datetime.sleep_hours_end
 - id: '1704838438827'
@@ -6389,7 +6386,6 @@
     path: danleongjy/room_core.yaml
     input:
       core_room: study_room
-      auto_control_indicator_light: light.study_room_bulb_4_entity
       sleep_hours_start: input_datetime.sleep_hours_start
       sleep_hours_end: input_datetime.sleep_hours_end
 - id: '1713833337393'
@@ -6523,51 +6519,15 @@
   - platform: state
     entity_id:
     - sensor.kitchen_core_current_command
-  condition: []
+  condition:
+  - condition: template
+    value_template: '{{ states(''sensor.kitchen_core_current_command'') in [''lights_on'',''lights_off'',''lights_brighten'',''lights_darken'']
+      }}'
   action:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: sensor.kitchen_core_current_command
-        state: lights_on
-      sequence:
-      - service: script.recommended_light_level
-        data:
-          light: light.kitchen_lights
-    - conditions:
-      - condition: state
-        entity_id: sensor.kitchen_core_current_command
-        state: lights_off
-      sequence:
-      - service: light.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.kitchen_lights
-    - conditions:
-      - condition: state
-        entity_id: sensor.kitchen_core_current_command
-        state: lights_brighten
-      sequence:
-      - service: light.turn_on
-        metadata: {}
-        data:
-          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
-            }}'
-        target:
-          entity_id: light.kitchen_lights
-    - conditions:
-      - condition: state
-        entity_id: sensor.kitchen_core_current_command
-        state: lights_darken
-      sequence:
-      - service: light.turn_on
-        metadata: {}
-        data:
-          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
-            }}
-        target:
-          entity_id: light.kitchen_lights
+  - action: script.lights_controller
+    data:
+      lights: light.kitchen_lights
+      command: '{{ states(''sensor.kitchen_core_current_command'') }}'
   mode: single
 - id: '1722234123190'
   alias: Kitchen Core Blinds Controller
