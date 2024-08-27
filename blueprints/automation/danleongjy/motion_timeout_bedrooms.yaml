@@ -5,7 +5,7 @@ blueprint:
   input:
     motion_sensor:
       name: Motion Sensor
-      description: When no motion is detected by this sensor for the Number of Minutes below, the entities listed will be turned off.
+      description: When no motion is detected by all these sensors for the Number of Minutes below, the entities listed will be turned off.
       selector:
         entity:
           domain: binary_sensor
@@ -70,6 +70,11 @@ trigger:
       minutes: "{{ states(minutes_doors_closed) | int }}"
     id: timeout_doors_closed
 condition:
+  - condition: state
+    entity_id: !input motion_sensor
+    state: "off"
+    for: 
+      minutes: "{{ states(minutes_input_number) | int(15) }}"
   - condition: template
     value_template: >
       {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
