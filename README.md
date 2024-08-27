@@ -73,6 +73,7 @@ Total | 1871
 - [Intent Script](https://home-assistant.io/integrations/intent_script)
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
 - [Local File Camera](https://home-assistant.io/integrations/local_file)
+- [MJPEG IP Camera](https://home-assistant.io/integrations/mjpeg)
 - [RESTful](https://home-assistant.io/integrations/rest)
 - [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [Roborock](https://home-assistant.io/integrations/roborock)
