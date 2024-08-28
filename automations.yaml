@@ -4508,10 +4508,10 @@
       sequence:
       - repeat:
           sequence:
-          - service: cover.close_cover
-            data: {}
+          - data: {}
             target:
               entity_id: cover.kitchen_blind
+            action: cover.close_cover
           - delay: '{{ states(''input_number.resync_delay'') | int * 60 }}'
           while:
           - condition: not
@@ -4535,11 +4535,11 @@
           | int(0)) }}'
       - repeat:
           sequence:
-          - service: cover.set_cover_position
-            data:
+          - data:
               position: 15
             target:
               entity_id: cover.kitchen_blind
+            action: cover.set_cover_position
           - delay: '{{ states(''input_number.resync_delay'') | int * 60 }}'
           while:
           - condition: not
@@ -4596,17 +4596,18 @@
         = states(''input_number.blinds_auto_control_debounce'') | int(0)) }}'
     - repeat:
         sequence:
-        - service: cover.open_cover
-          data: {}
+        - data: {}
           target:
             entity_id: cover.kitchen_blind
+          action: cover.open_cover
         - delay: '{{ states(''input_number.resync_delay'') | int * 60 }}'
         while:
         - condition: not
           conditions:
           - condition: state
             entity_id: cover.kitchen_blind
-            state: open
+            state: 100
+            attribute: current_position
   mode: single
   max_exceeded: silent
 - id: '1690715091749'
