@@ -474,13 +474,22 @@ display:
     on_page_change: 
       - to: current_time
         then:
-          lambda: 'id(current_view).publish_state("current_time");'
+          lambda: |-
+            id(current_view).publish_state("current_time");
+            id(pmu).set_brightness(1);
+            id(pmu).update();
       - to: lights
         then:
-          lambda: 'id(current_view).publish_state("lights");'
+          lambda: |-
+            id(current_view).publish_state("lights");
+            id(pmu).set_brightness(1);
+            id(pmu).update();
       - to: blinds
         then:
-          lambda: 'id(current_view).publish_state("blinds");'
+          lambda: |-
+            id(current_view).publish_state("blinds");
+            id(pmu).set_brightness(1);
+            id(pmu).update();
       - to: screensaver
         then:
           lambda: 'id(current_view).publish_state("screensaver");'
@@ -519,10 +528,6 @@ display:
           if (id(homeassistant_time).now().second % 2 == 0) {
             it.print(id(width) * 0.5, id(height) * 0.26, id(main_time), TextAlign::CENTER, "..");
           }
-          
-          // Update display brightness
-          id(pmu).set_brightness(1);
-          id(pmu).update();
       - id: lights
         lambda: |-
           // tabs
@@ -543,9 +548,6 @@ display:
           } else {
             it.image(id(width) * 0.5, id(height) * 0.35, id(main_lights), ImageAlign::CENTER, id(device_off));
           }
-          // Update display brightness
-          id(pmu).set_brightness(1);
-          id(pmu).update();
       - id: blinds
         lambda: |-
           // tabs
@@ -569,9 +571,6 @@ display:
           if (id(blinds_auto_control).state) {
             it.print(id(width) * 0.85, id(height) * 0.2, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
           }
-          // Update display brightness
-          id(pmu).set_brightness(1);
-          id(pmu).update();
       - id: screensaver
         lambda: |-
           // Update display brightness
@@ -586,7 +585,3 @@ display:
           id(draw_display_borders).execute();
           id(draw_display_bottom_status_bar).execute();
           it.image(id(width) * 0.5, id(height) * 0.35, id(main_doorbell), ImageAlign::CENTER);
-
-          // Update display brightness
-          id(pmu).set_brightness(1);
-          id(pmu).update();
