@@ -879,20 +879,25 @@ doorbell:
           button: button.parents_room_core_ring_doorbell
   - parallel:
     - sequence:
-      - service: media_player.volume_set
+      - action: media_player.volume_set
+        metadata: {}
         data:
           volume_level: 0.5
         target:
-          entity_id:
-          - media_player.kitchen_speaker
-          - media_player.study_room_speaker
+          entity_id: media_player.all_speakers
       - delay: 1
-      - service: media_player.play_media
-        target:
+      - target:
           entity_id: media_player.all_speakers
         data:
-          media_content_id: https://an-eloquent-home.duckdns.org/media/local/doorbell.mp3
+          media_content_id: "https://an-eloquent-home.duckdns.org/media/local/doorbells/{{
+            ['JR DDG Final Osaka Loop', \n                                                               'JR
+            DDG nDS e231 Door Chime',\n                                                               'JR
+            Station Notification 2',\n                                                               'JR
+            Sunny Spot V1',\n                                                               'JR
+            Cosmos V1',\n                                                               'JR
+            Susuki Heights V2'] | random }}.mp3\n"
           media_content_type: music
+        action: media_player.play_media
       - repeat:
           for_each:
           - elis_room
@@ -903,25 +908,24 @@ doorbell:
             - condition: template
               value_template: '{{ is_state(rooms[repeat.item][''door''], ''on'') }}'
             then:
-            - service: button.press
-              target:
+            - target:
                 entity_id: '{{ rooms[repeat.item][''button''] }}'
-      - service: button.press
-        target:
+              action: button.press
+      - target:
           entity_id:
           - button.kitchen_core_ring_doorbell
           - button.study_room_core_ring_doorbell
         data: {}
+        action: button.press
     - sequence:
       - delay: 5
-      - service: automation.trigger
-        data:
+      - data:
           skip_condition: true
         target:
           entity_id: automation.main_door_camera_snapshots
+        action: automation.trigger
       - delay: 2
-      - service: notify.mobile_app_pixel_4a
-        metadata: {}
+      - metadata: {}
         data:
           message: Doorbell rung at {{ now().strftime('%H:%M') }}.
           title: Please Check the Door
@@ -929,6 +933,7 @@ doorbell:
             image: /media/local/main_door_camera/{{ states('input_text.newest_main_door_camera_snapshot_filename')
               }}
             clickAction: /lovelace/dining_room
+        action: notify.mobile_app_pixel_4a
   description: Play doorbell tones and flash Room Core lights
   icon: mdi:bell-ring-outline
   mode: restart
