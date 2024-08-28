@@ -1,6 +1,6 @@
 substitutions:
-  name: everything-presence-lite-a9f940
-  friendly_name: Eli's Room Radar
+  name: parents_room_radar
+  friendly_name: Parents' Room Radar
 packages:
   EverythingSmartTechnology.Everything_Presence_Lite: github://everythingsmarthome/everything-presence-lite/everything-presence-lite-ha.yaml@main
 esphome:
@@ -9,13 +9,19 @@ esphome:
   friendly_name: ${friendly_name}
 api:
   encryption:
-    key: !secret elis_room_radar_api_key
+    key: !secret parents_room_radar_api_key
 
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
 
   manual_ip:
-    static_ip: 192.168.18.54
+    static_ip: 192.168.18.55
     gateway: 192.168.18.1
     subnet: 255.255.255.0
+
+sensor:
+  - id: !extend illuminance_sensor
+    name: Lux
+    filters:
+      - lambda: "return 2 * x + id(illuminance_offset_ui).state;"
