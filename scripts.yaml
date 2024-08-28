@@ -496,19 +496,18 @@ recommended_light_level:
 alarm_lights:
   alias: Alarm Lights
   sequence:
-  - service: light.turn_off
-    target:
+  - target:
       entity_id: '{{ [''light.'' + bedroom + ''_lights'',''light.'' + bedroom + ''_core_led_strips''
         ] }}'
+    action: light.turn_off
   - delay: 5
-  - service: light.turn_on
-    target:
+  - target:
       entity_id: '{{ ''light.'' + bedroom + ''_core_display_backlight'' }}'
     data:
       brightness_pct: '{{ states(''input_number.morning_light_brightness'') | int
         if is_state(''sun.sun'',''below_horizon'') else 100 }}'
-  - service: light.turn_on
-    target:
+    action: light.turn_on
+  - target:
       entity_id: '{{ ''light.'' + bedroom + ''_core_led_strips'' }}'
     data:
       rgb_color:
@@ -516,33 +515,44 @@ alarm_lights:
       - 208
       - 164
       effect: Alarm
-  - service: select.select_option
-    target:
+    action: light.turn_on
+  - target:
       entity_id: '{{ ''select.'' + bedroom + ''_core_ringtone'' }}'
     data:
       option: '{{ ringtone }}'
-  - service: button.press
+    action: select.select_option
+  - action: number.set_value
     target:
+      entity_id: '{{ ''number.'' + bedroom + ''_core_speaker_volume'' }}'
+    data:
+      value: 10
+  - target:
       entity_id: '{{ ''button.'' + bedroom + ''_core_play_ringtone'' }}'
+    action: button.press
   - delay: 25
   - if:
     - condition: template
       value_template: '{{ is_state(''input_boolean.'' + bedroom + ''_next_alarm_dismissed'',
         ''off'') }}'
     then:
+    - target:
+        entity_id: '{{ ''select.'' + bedroom + ''_core_ringtone'' }}'
+      data:
+        option: Beep
+      action: select.select_option
+    - action: number.set_value
+      target:
+        entity_id: '{{ ''number.'' + bedroom + ''_core_speaker_volume'' }}'
+      data:
+        value: 10
     - repeat:
         sequence:
-        - service: light.toggle
-          target:
+        - target:
             entity_id: '{{ ''light.'' + bedroom + ''_lights'' }}'
-        - service: select.select_option
-          target:
-            entity_id: '{{ ''select.'' + bedroom + ''_core_ringtone'' }}'
-          data:
-            option: Beep
-        - service: button.press
-          target:
+          action: light.toggle
+        - target:
             entity_id: '{{ ''button.'' + bedroom + ''_core_play_ringtone'' }}'
+          action: button.press
         - delay: 2
         while:
         - condition: template
@@ -550,15 +560,15 @@ alarm_lights:
             ''defined'') | selectattr(''attributes.device_class'', ''eq'', ''door'')
             | selectattr(''entity_id'',''search'',bedroom) | map(attribute = ''state'')
             | list }}'
-  - service: light.turn_on
-    data:
+  - data:
       brightness_pct: "{% if is_state('sun.sun', 'below_horizon') %}\n  {{ states('input_number.morning_light_brightness')
         }}\n{% else %}\n  100\n{% endif %}\n"
     target:
       entity_id: '{{ ''light.'' + bedroom + ''_lights'' }}'
-  - service: light.turn_off
-    target:
+    action: light.turn_on
+  - target:
       entity_id: '{{ ''light.'' + bedroom + ''_core_led_strips'' }}'
+    action: light.turn_off
   mode: parallel
   icon: mdi:alarm
   max: 5

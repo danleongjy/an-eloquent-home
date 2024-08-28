@@ -4885,21 +4885,26 @@
       entity_id: input_boolean.parents_room_next_alarm_dismissed
       state: 'off'
     then:
-    - service: light.turn_on
-      target:
+    - target:
         entity_id: light.parents_room_core_display_backlight
       data:
         brightness_pct: '{{ states(''input_number.morning_light_brightness'') | int
           if is_state(''sun.sun'',''below_horizon'') else 100 }}'
-    - service: select.select_option
-      data:
+      action: light.turn_on
+    - data:
         option: Eli's Song
       target:
         entity_id: select.parents_room_core_ringtone
-    - service: button.press
-      data: {}
+      action: select.select_option
+    - action: number.set_value
+      target:
+        entity_id: '{{ ''number.'' + bedroom + ''_core_speaker_volume'' }}'
+      data:
+        value: 10
+    - data: {}
       target:
         entity_id: button.parents_room_core_play_ringtone
+      action: button.press
   - delay:
       hours: 0
       minutes: 5
@@ -4915,15 +4920,15 @@
       state:
       - charging
       - full
-      enabled: false
-    - service: script.alarm_lights
-      data:
+      enabled: true
+    - data:
         bedroom: parents_room
         ringtone: Eli's Song
-  - service: input_boolean.turn_off
-    data: {}
+      action: script.alarm_lights
+  - data: {}
     target:
       entity_id: input_boolean.parents_room_next_alarm_dismissed
+    action: input_boolean.turn_off
   mode: single
 - id: '1690718460853'
   alias: Notify When Parents' Room Next Alarm Upcoming
@@ -5368,45 +5373,50 @@
         entity_id: input_boolean.parents_room_next_alarm_dismissed
         state: 'off'
       then:
-      - service: light.turn_on
-        target:
+      - target:
           entity_id: light.parents_room_core_display_backlight
         data:
           brightness_pct: '{{ states(''input_number.morning_light_brightness'') |
             int if is_state(''sun.sun'',''below_horizon'') else 100 }}'
-      - service: select.select_option
-        data:
+        action: light.turn_on
+      - data:
           option: Take On Me
         target:
           entity_id: select.parents_room_core_ringtone
-      - service: button.press
-        data: {}
+        action: select.select_option
+      - action: number.set_value
+        target:
+          entity_id: '{{ ''number.'' + bedroom + ''_core_speaker_volume'' }}'
+        data:
+          value: 10
+      - data: {}
         target:
           entity_id: button.parents_room_core_play_ringtone
+        action: button.press
     - delay: 60
     - if:
       - condition: state
         entity_id: input_boolean.parents_room_next_alarm_dismissed
         state: 'off'
       then:
-      - service: script.alarm_lights
-        data:
+      - data:
           bedroom: parents_room
-          ringtone: Eli's Song
-    - service: input_boolean.turn_off
-      data: {}
+          ringtone: Take On Me
+        action: script.alarm_lights
+    - data: {}
       target:
         entity_id: input_boolean.parents_room_next_alarm_dismissed
+      action: input_boolean.turn_off
     else:
     - condition: state
       entity_id: sensor.next_alarm_timings
       attribute: grace_next_alarm_dismissable
       state: true
-    - service: input_boolean.turn_on
-      metadata: {}
+    - metadata: {}
       data: {}
       target:
         entity_id: input_boolean.parents_room_next_alarm_dismissed
+      action: input_boolean.turn_on
   mode: single
 - id: '1690850158819'
   alias: Eli's Alarm

@@ -14,6 +14,9 @@ globals:
   - id: width
     type: int
     initial_value: '240'
+  - id: initial_volume
+    type: double
+    initial_value: ${volume}
 
 script:
   - id: reset_command
@@ -33,6 +36,9 @@ script:
   - id: doorbell
     mode: restart
     then:
+      - number.set:
+          id: speaker_volume
+          value: 100
       - select.set:
           id: ringtone
           option: Doorbell
@@ -41,7 +47,11 @@ script:
       - light.turn_on:
           id: led_strips
           effect: Doorbell
-      - delay: 60s
+      - delay: 5s
+      - number.set:
+          id: speaker_volume
+          value: 10
+      - delay: 5s
       - light.turn_off: led_strips
       - display.page.show: current_time
   - id: draw_display_main_time
@@ -538,6 +548,21 @@ binary_sensor:
                       lambda: 'return id(current_view).state == "blinds";'
                     then:
                       - lambda: 'id(current_command).publish_state("blinds_manual_control");'
+
+number:
+  - platform: template
+    id: speaker_volume
+    name: Speaker Volume
+    icon: mdi:volume-high
+    unit_of_measurement: '%'
+    min_value: 0
+    max_value: 100
+    step: 1
+    optimistic: true
+    initial_value: 10
+    on_value:
+      then:
+        lambda: "return id(core_speaker).set_max_power(id(initial_volume) * x / 10);"
 
 button:
   - platform: template
