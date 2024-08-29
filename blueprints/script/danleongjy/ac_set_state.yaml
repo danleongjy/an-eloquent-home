@@ -1,0 +1,81 @@
+blueprint:
+  name: AC Set State
+  description: Turn on or off the AC
+  domain: script
+  input:
+    air_conditioner:
+      name: Air Conditioner
+      description: Air conditioner unit to turn on or off
+      selector:
+        select:
+          options:
+            - label: Parents' Room AC
+              value: switch.parents_room_ac_switch
+            - label: Study Room AC
+              value: switch.study_room_ac_switch
+            - label: Living Room AC
+              value: switch.living_room_ac_switch
+            - label: Dining Room AC
+              value: switch.dining_room_ac_switch
+            - label: Eli's Room AC
+              value: switch.elis_room_ac_switch
+            - label: Elena's Room AC
+              value: switch.elenas_room_ac_switch
+fields:
+  switch_on:
+    selector:
+      boolean: {}
+    name: Switch On
+    description: Switch on or off the AC
+    required: true
+variables:
+  ac: !input air_conditioner
+  ac_remote_vent:
+    switch.parents_room_ac_switch:
+      remote: remote.parents_room_universal_remote
+      device: Parents' Room AC
+      vent: binary_sensor.parents_room_ac_vent
+    switch.study_room_ac_switch:
+      remote: remote.study_room_universal_remote
+      device: Study Room AC
+      vent: binary_sensor.study_room_ac_vent
+    switch.living_room_ac_switch:
+      remote: remote.living_room_universal_remote
+      device: Living Room AC
+      vent: binary_sensor.living_room_ac_vent
+    switch.dining_room_ac_switch:
+      remote: remote.living_room_universal_remote
+      device: Dining Room AC
+      vent: binary_sensor.dining_room_ac_vent
+    switch.elis_room_ac_switch:
+      remote: remote.elis_room_universal_remote
+      device: Eli's Room AC
+      vent: binary_sensor.elis_room_ac_vent
+    switch.elenas_room_ac_switch:
+      remote: remote.elenas_room_universal_remote
+      device: Elena's Room AC
+      vent: binary_sensor.elenas_room_ac_vent
+sequence:
+  - action: remote.send_command
+    target:
+      entity_id: "{{ ac_remote_vent[ac]['remote'] }}"
+    data:
+      device: "{{ ac_remote_vent[ac]['device'] }}"
+      command: "{{ 24 if switch_on else 'Off' }}"
+  - delay: 20
+  - repeat:
+      sequence:
+        - delay: "{{ states('input_number.resync_delay') | int(1) * 60 }}"
+        - action: remote.send_command
+          target:
+            entity_id: "{{ ac_remote_vent[ac]['remote'] }}"
+          data:
+            device: "{{ ac_remote_vent[ac]['device'] }}"
+            command: "{{ 24 if switch_on else 'Off' }}"
+      while:
+        - condition: template
+          value_template: >-
+            {{ is_state(ac_remote_vent[ac]['vent'], 'off' if switch_on else
+            'on') }}
+mode: queued
+max: 10

@@ -543,7 +543,6 @@
         data: {}
         target:
           entity_id:
-          - automation.elenas_room_ac_auto_control
           - automation.elenas_room_fan_auto_control
     - if:
       - condition: or
@@ -559,7 +558,6 @@
         data: {}
         target:
           entity_id:
-          - automation.elis_room_ac_auto_control
           - automation.elis_room_fan_auto_control
     - if:
       - condition: or
@@ -575,7 +573,6 @@
         data: {}
         target:
           entity_id:
-          - automation.parents_room_ac_auto_control
           - automation.parents_room_fan_auto_control
     else:
     - service: automation.turn_off
@@ -583,7 +580,6 @@
         stop_actions: true
       target:
         entity_id:
-        - automation.{{ trigger.id }}_ac_auto_control
         - automation.{{ trigger.id }}_fan_auto_control
     - service: climate.turn_off
       target:
@@ -2248,23 +2244,16 @@
       entity_id: input_boolean.away_mode
       state: 'on'
     then:
-    - service: automation.turn_off
-      data:
+    - data:
         stop_actions: true
       target:
         entity_id:
         - automation.auto_cooling_at_night
-        - automation.elenas_room_ac_auto_control
         - automation.elenas_room_fan_auto_control
-        - automation.elis_room_ac_auto_control
         - automation.elis_room_fan_auto_control
-        - automation.parents_room_ac_auto_control
         - automation.parents_room_fan_auto_control
-        - automation.dining_room_ac_auto_control
         - automation.dining_room_fan_auto_control
-        - automation.living_room_ac_auto_control
         - automation.living_room_fan_auto_control
-        - automation.study_room_ac_auto_control
         - automation.study_room_fan_auto_control
         - automation.hallway_motion_lights
         - automation.junior_bathroom_motion_lights
@@ -2309,16 +2298,17 @@
         - automation.kitchen_voice_assistant_listening_for_wake_word
         - automation.living_room_voice_assistant_listening_for_wake_word
       enabled: true
-    - service: cover.open_cover
-      data: {}
+      action: automation.turn_off
+    - data: {}
       target:
         entity_id: cover.master_bathroom_blind
-    - service: cover.close_cover
-      data: {}
+      action: cover.open_cover
+    - data: {}
       target:
         entity_id: cover.kitchen_blind
-    - service: script.turn_off_all
-      data: {}
+      action: cover.close_cover
+    - data: {}
+      action: script.turn_off_all
     - repeat:
         for_each:
         - cover.dining_room_right_blind
@@ -2330,27 +2320,26 @@
         - cover.study_room_right_blind
         - cover.study_room_left_blind
         sequence:
-        - service: cover.close_cover
-          target:
+        - target:
             entity_id: '{{ repeat.item }}'
+          action: cover.close_cover
         - delay:
             hours: 0
             minutes: 0
             seconds: 2
             milliseconds: 0
-    - service: switch.turn_off
-      metadata: {}
+    - metadata: {}
       data: {}
       target:
         entity_id:
         - switch.study_room_voice_assistant_use_wake_word
         - switch.kitchen_core_use_wake_word
-    - service: hassio.addon_stop
-      data:
+      action: switch.turn_off
+    - data:
         addon: 47701997_assist_microphone
+      action: hassio.addon_stop
     else:
-    - service: automation.turn_on
-      data: {}
+    - data: {}
       target:
         entity_id:
         - automation.auto_cooling_at_night
@@ -2396,16 +2385,17 @@
         - automation.study_room_voice_assistant_listening_for_wake_word
         - automation.kitchen_voice_assistant_listening_for_wake_word
         - automation.living_room_voice_assistant_listening_for_wake_word
-    - service: automation.trigger
-      data:
+      action: automation.turn_on
+    - data:
         skip_condition: false
       target:
         entity_id:
         - automation.south_facing_blinds_auto_control
         - automation.kitchen_blind_auto_control
-    - service: hassio.addon_start
-      data:
+      action: automation.trigger
+    - data:
         addon: 47701997_assist_microphone
+      action: hassio.addon_start
   mode: single
 - id: '1670838907474'
   alias: System Housekeeping
@@ -3330,83 +3320,6 @@
         ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(trigger.id,''message'')
         }}.'
   mode: parallel
-- id: '1676870988942'
-  alias: Dining Room AC Set State
-  description: Set the Dining Room AC power and temperature
-  use_blueprint:
-    path: danleongjy/ac_set_state.yaml
-    input:
-      ac: climate.dining_room_ac
-      vent: binary_sensor.dining_room_ac_vent
-      resync_delay: input_number.resync_delay
-- id: '1676871017133'
-  alias: Living Room AC Set State
-  description: Set the Living Room AC power and temperature
-  use_blueprint:
-    path: danleongjy/ac_set_state.yaml
-    input:
-      ac: climate.living_room_ac
-      vent: binary_sensor.living_room_ac_vent
-      resync_delay: input_number.resync_delay
-- id: '1676871038656'
-  alias: Study Room AC Set State
-  description: Set the Study Room AC power and temperature
-  use_blueprint:
-    path: danleongjy/ac_set_state.yaml
-    input:
-      ac: climate.study_room_ac
-      vent: binary_sensor.study_room_ac_vent
-      resync_delay: input_number.resync_delay
-- id: '1676871060575'
-  alias: Parents' Room AC Set State
-  description: Set the Parents' Room AC power and temperature
-  use_blueprint:
-    path: danleongjy/ac_set_state.yaml
-    input:
-      ac: climate.parents_room_ac
-      vent: binary_sensor.parents_room_ac_vent
-      resync_delay: input_number.resync_delay
-      default_temp: 26
-- id: '1676871171509'
-  alias: Elena's Room AC Set State
-  description: Set Elena's Room AC power and temperature
-  use_blueprint:
-    path: danleongjy/ac_set_state.yaml
-    input:
-      vent: binary_sensor.elenas_room_ac_vent
-      resync_delay: input_number.resync_delay
-      ac: climate.elenas_room_ac
-      resync: true
-- id: '1676871202756'
-  alias: Eli's Room AC Set State
-  description: Set Eli's Room AC power and temperature
-  use_blueprint:
-    path: danleongjy/ac_set_state.yaml
-    input:
-      ac: climate.elis_room_ac
-      vent: binary_sensor.elis_room_ac_vent
-      resync_delay: input_number.resync_delay
-      resync: true
-- id: '1676873827127'
-  alias: Elena's Room AC Auto Control
-  description: Automatically turn on or off Elena's Room AC to keep Elena's Room Temperature
-    within +0.7 and +0 degC of the AC target temperature
-  use_blueprint:
-    path: danleongjy/ac_auto_control.yaml
-    input:
-      ac: climate.elenas_room_ac
-      temp_sensor: sensor.elenas_room_core_temperature
-- id: '1676873914630'
-  alias: Eli's Room AC Auto Control
-  description: Automatically turn on or off Eli's Room AC to keep Eli's Room Temperature
-    within +1.2 and +0.2 degC of the AC target temperature
-  use_blueprint:
-    path: danleongjy/ac_auto_control.yaml
-    input:
-      ac: climate.elis_room_ac
-      temp_sensor: sensor.elis_room_core_temperature
-      min_temp_offset: 0.2
-      max_temp_offset: 1.2
 - id: '1676891156966'
   alias: Parents' Room Fan Set State
   description: Set the Parents' Room Fan speed and power
@@ -3415,17 +3328,6 @@
     input:
       fan: fan.parents_room_fan
       motion_fan_automation: automation.parents_room_motion_fan
-- id: '1676891386490'
-  alias: Parents' Room AC Auto Control
-  description: Automatically turn on or off Parents' Room AC to keep Parents' Room
-    Temperature within +1.2 and +0.2 degC of the AC target temperature
-  use_blueprint:
-    path: danleongjy/ac_auto_control.yaml
-    input:
-      ac: climate.parents_room_ac
-      temp_sensor: sensor.parents_room_core_temperature
-      min_temp_offset: 0.7
-      max_temp_offset: 1.2
 - id: '1676891528260'
   alias: Elena's Room Fan Set State
   description: Set Elena's Room Fan speed and power
@@ -3459,7 +3361,6 @@
       - light.parents_room_lights
       - fan.parents_room_fan
       - climate.parents_room_ac
-      - automation.parents_room_ac_auto_control
       - automation.parents_room_fan_auto_control
 - id: '1677899246051'
   alias: Parents' Room Motion Fan
@@ -3487,9 +3388,6 @@
     input:
       motion_sensor: binary_sensor.parents_room_presence
       ac: climate.parents_room_ac
-      ac_auto_control: automation.parents_room_ac_auto_control
-      ac_auto_control_start: input_datetime.ac_auto_control_start
-      ac_auto_control_end: input_datetime.ac_auto_control_end
       entities_list:
       - light.parents_room_lights
       - fan.parents_room_fan
@@ -3523,9 +3421,6 @@
     input:
       motion_sensor: binary_sensor.elenas_room_presence
       ac: climate.elenas_room_ac
-      ac_auto_control: automation.elenas_room_ac_auto_control
-      ac_auto_control_start: input_datetime.ac_auto_control_start
-      ac_auto_control_end: input_datetime.ac_auto_control_end
       entities_list:
       - light.elenas_room_lights
       - fan.elenas_room_fan
@@ -3581,7 +3476,6 @@
       - light.elenas_room_lights
       - fan.elenas_room_fan
       - climate.elenas_room_ac
-      - automation.elenas_room_ac_auto_control
       - automation.elenas_room_fan_auto_control
 - id: '1677909834890'
   alias: Eli's Room Motion AC
@@ -3592,9 +3486,6 @@
     input:
       motion_sensor: binary_sensor.elis_room_presence
       ac: climate.elis_room_ac
-      ac_auto_control: automation.elis_room_ac_auto_control
-      ac_auto_control_start: input_datetime.ac_auto_control_start
-      ac_auto_control_end: input_datetime.ac_auto_control_end
       entities_list:
       - light.elis_room_lights
       - fan.elis_room_fan
@@ -3650,7 +3541,6 @@
       - light.elis_room_lights
       - fan.elis_room_fan
       - climate.elis_room_ac
-      - automation.elis_room_ac_auto_control
       - automation.elis_room_fan_auto_control
 - id: '1677927683160'
   alias: Kitchen Motion Lights
@@ -3926,9 +3816,6 @@
     input:
       motion_sensor: binary_sensor.dining_room_presence
       ac: climate.dining_room_ac
-      ac_auto_control: automation.dining_room_ac_auto_control
-      ac_auto_control_start: input_datetime.ac_auto_control_end
-      ac_auto_control_end: input_datetime.ac_auto_control_end
       entities_list:
       - light.dining_room_lights
       - fan.dining_room_fan
@@ -3945,9 +3832,6 @@
     input:
       motion_sensor: binary_sensor.living_room_presence
       ac: climate.living_room_ac
-      ac_auto_control: automation.living_room_ac_auto_control
-      ac_auto_control_start: input_datetime.ac_auto_control_end
-      ac_auto_control_end: input_datetime.ac_auto_control_end
       entities_list:
       - light.living_room_lights
       - light.living_room_pendant_light_entity
@@ -4061,9 +3945,6 @@
     input:
       motion_sensor: binary_sensor.study_room_presence
       ac: climate.study_room_ac
-      ac_auto_control: automation.study_room_ac_auto_control
-      ac_auto_control_start: input_datetime.ac_auto_control_end
-      ac_auto_control_end: input_datetime.ac_auto_control_end
       entities_list:
       - fan.study_room_fan
       - climate.study_room_ac
@@ -4099,7 +3980,6 @@
       - light.study_room_lights
       - fan.study_room_fan
       - climate.study_room_ac
-      - automation.study_room_ac_auto_control
       - automation.study_room_fan_auto_control
 - id: '1683854614010'
   alias: Parents' Headboard Controller
@@ -4143,7 +4023,6 @@
         data: {}
         target:
           entity_id:
-          - automation.parents_room_ac_auto_control
           - automation.parents_room_fan_auto_control
       - service: light.turn_off
         metadata: {}
@@ -4316,33 +4195,6 @@
       temp_sensor: sensor.study_room_temperature
       low_speed: input_number.sitting_rooms_fan_speed_when_cool
       high_speed: input_number.sitting_rooms_fan_speed_when_warm
-- id: '1684483829124'
-  alias: Dining Room AC Auto Control
-  description: Depending on the room temperature, automatically turn on or off the
-    Dining Room AC to maintain the temperature in a preset range.
-  use_blueprint:
-    path: danleongjy/ac_auto_control.yaml
-    input:
-      ac: climate.dining_room_ac
-      temp_sensor: sensor.dining_room_temperature
-- id: '1684483910863'
-  alias: Living Room AC Auto Control
-  description: Depending on the room temperature, automatically turn on or off the
-    Living Room AC to maintain the temperature in a preset range.
-  use_blueprint:
-    path: danleongjy/ac_auto_control.yaml
-    input:
-      ac: climate.living_room_ac
-      temp_sensor: sensor.living_room_temperature
-- id: '1684483944757'
-  alias: Study Room AC Auto Control
-  description: Depending on the room temperature, automatically turn on or off the
-    Study Room AC to maintain the temperature in a preset range.
-  use_blueprint:
-    path: danleongjy/ac_auto_control.yaml
-    input:
-      ac: climate.study_room_ac
-      temp_sensor: sensor.study_room_temperature
 - id: '1685098214703'
   alias: Notify When Kitchen Appliances On while Away
   description: Send a notification if the Rice Cooker or Stove is on when Away Mode
@@ -5610,9 +5462,7 @@
       - binary_sensor.living_room_presence
       turnoff_entities_list:
       - climate.dining_room_ac
-      - automation.dining_room_ac_auto_control
       - climate.living_room_ac
-      - automation.living_room_ac_auto_control
 - id: '1697937786035'
   alias: Study Room Blinds Controller
   description: Control the Study Room Blinds
@@ -6531,3 +6381,31 @@
       file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list') |   sort)[-3][7:]
         }}
   mode: restart
+- id: '1724902259555'
+  alias: Turn Off AC Upon Low Temperature
+  description: Turn off the AC when specified target temperature is below 23.5°C.
+  trigger:
+  - platform: numeric_state
+    entity_id:
+    - climate.elenas_room_ac
+    - climate.elis_room_ac
+    - climate.dining_room_ac
+    - climate.living_room_ac
+    - climate.study_room_ac
+    - climate.parents_room_ac
+    attribute: temperature
+    below: 23.5
+  condition: []
+  action:
+  - action: climate.set_temperature
+    metadata: {}
+    data:
+      temperature: 27
+    target:
+      entity_id: '{{ trigger.entity_id }}'
+  - action: climate.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: '{{ trigger.entity_id }}'
+  mode: single

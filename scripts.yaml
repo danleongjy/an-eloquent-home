@@ -1,68 +1,3 @@
-ac_set_state:
-  alias: AC Set State
-  fields:
-    target_ac:
-      name: Target AC
-      description: The AC for which to set the state
-      selector:
-        select:
-          options:
-          - Parents' Room AC
-          - Study Room AC
-          - Living Room AC
-          - Dining Room AC
-          - Eli's Room AC
-          - Elena's Room AC
-      required: true
-      default: Dining Room AC
-    target_ac_power:
-      name: Target AC Power
-      description: Whether the AC is on or off
-      selector:
-        boolean:
-      required: true
-      default: true
-    target_ac_temp:
-      name: Target AC Temperature
-      description: The temperature of the AC
-      selector:
-        number:
-          min: 24
-          max: 27
-          step: 1
-          unit_of_measurement: °C
-          mode: slider
-      required: true
-      default: 27
-  variables:
-    universal_remote:
-      Elena's Room AC: remote.elenas_room_universal_remote
-      Eli's Room AC: remote.elis_room_universal_remote
-      Dining Room AC: remote.living_room_universal_remote
-      Living Room AC: remote.living_room_universal_remote
-      Study Room AC: remote.study_room_universal_remote
-      Parents' Room AC: remote.parents_room_universal_remote
-  sequence:
-  - if:
-    - condition: template
-      value_template: '{{ target_ac_power == false }}'
-    then:
-    - service: remote.send_command
-      target:
-        entity_id: '{{ universal_remote[target_ac] }}'
-      data:
-        device: '{{ target_ac }}'
-        command: 'Off'
-    else:
-    - service: remote.send_command
-      target:
-        entity_id: '{{ universal_remote[target_ac] }}'
-      data:
-        device: '{{ target_ac }}'
-        command: '{{ target_ac_temp | int }}'
-  mode: parallel
-  icon: mdi:snowflake
-  max: 10
 fan_set_state:
   alias: Fan Set State
   fields:
@@ -1206,15 +1141,12 @@ ac_controller:
       sequence:
       - action: automation.turn_on
         target:
-          entity_id: "{% set cooling_automations = {'climate.elenas_room_ac': ['automation.elenas_room_fan_auto_control',
-            'automation.elenas_room_ac_auto_control'],\n                              'climate.elis_room_ac':
-            ['automation.elis_room_fan_auto_control', 'automation.elis_room_ac_auto_control'],\n
-            \                             'climate.dining_room_ac': ['automation.dining_room_fan_auto_control',
-            'automation.dining_room_ac_auto_control'],\n                              'climate.living_room_ac':
-            ['automation.living_room_fan_auto_control', 'automation.living_room_ac_auto_control'],\n
-            \                             'climate.parents_room_ac': ['automation.parents_room_fan_auto_control',
-            'automation.parents_room_ac_auto_control'],\n                              'climate.study_room_ac':
-            ['automation.study_room_fan_auto_control', 'automation.study_room_ac_auto_control']}
+          entity_id: "{% set cooling_automations = {'climate.elenas_room_ac': 'automation.elenas_room_fan_auto_control',\n
+            \                             'climate.elis_room_ac': 'automation.elis_room_fan_auto_control',\n
+            \                             'climate.dining_room_ac': 'automation.dining_room_fan_auto_control',\n
+            \                             'climate.living_room_ac': 'automation.living_room_fan_auto_control',\n
+            \                             'climate.parents_room_ac': 'automation.parents_room_fan_auto_control',\n
+            \                             'climate.study_room_ac': 'automation.study_room_fan_auto_control'}
             %}\n{{ cooling_automations[ac] }}\n"
       - condition: or
         conditions:
@@ -1240,15 +1172,12 @@ ac_controller:
       sequence:
       - action: automation.turn_off
         target:
-          entity_id: "{% set cooling_automations = {'climate.elenas_room_ac': ['automation.elenas_room_fan_auto_control',
-            'automation.elenas_room_ac_auto_control'],\n                              'climate.elis_room_ac':
-            ['automation.elis_room_fan_auto_control', 'automation.elis_room_ac_auto_control'],\n
-            \                             'climate.dining_room_ac': ['automation.dining_room_fan_auto_control',
-            'automation.dining_room_ac_auto_control'],\n                              'climate.living_room_ac':
-            ['automation.living_room_fan_auto_control', 'automation.living_room_ac_auto_control'],\n
-            \                             'climate.parents_room_ac': ['automation.parents_room_fan_auto_control',
-            'automation.parents_room_ac_auto_control'],\n                              'climate.study_room_ac':
-            ['automation.study_room_fan_auto_control', 'automation.study_room_ac_auto_control']}
+          entity_id: "{% set cooling_automations = {'climate.elenas_room_ac': 'automation.elenas_room_fan_auto_control',\n
+            \                             'climate.elis_room_ac': 'automation.elis_room_fan_auto_control',\n
+            \                             'climate.dining_room_ac': 'automation.dining_room_fan_auto_control',\n
+            \                             'climate.living_room_ac': 'automation.living_room_fan_auto_control',\n
+            \                             'climate.parents_room_ac': 'automation.parents_room_fan_auto_control',\n
+            \                             'climate.study_room_ac': 'automation.study_room_fan_auto_control'}
             %}\n{{ cooling_automations[ac] }}\n"
       - condition: or
         conditions:
@@ -1407,3 +1336,51 @@ cover_controller:
   icon: mdi:blinds
   mode: parallel
   max: 8
+parents_room_ac_set_state:
+  alias: Parents' Room AC Set State
+  use_blueprint:
+    path: danleongjy/ac_set_state.yaml
+    input:
+      air_conditioner: switch.parents_room_ac_switch
+  description: Turn on or off the Parents' Room AC
+  icon: mdi:head-snowflake
+study_room_ac_set_state:
+  alias: Study Room AC Set State
+  use_blueprint:
+    path: danleongjy/ac_set_state.yaml
+    input:
+      air_conditioner: switch.study_room_ac_switch
+  description: Turn on or off the Study Room AC
+  icon: mdi:snowflake
+living_room_ac_set_state:
+  alias: Living Room AC Set State
+  use_blueprint:
+    path: danleongjy/ac_set_state.yaml
+    input:
+      air_conditioner: switch.living_room_ac_switch
+  description: Turn on or off the Living Room AC
+  icon: mdi:snowflake
+dining_room_ac_set_state:
+  alias: Dining Room AC Set State
+  use_blueprint:
+    path: danleongjy/ac_set_state.yaml
+    input:
+      air_conditioner: switch.dining_room_ac_switch
+  description: Turn on or off the Dining Room AC
+  icon: mdi:snowflake
+elis_room_ac_set_state:
+  alias: Eli's Room AC Set State
+  use_blueprint:
+    path: danleongjy/ac_set_state.yaml
+    input:
+      air_conditioner: switch.elis_room_ac_switch
+  description: Turn on or off Eli's Room AC
+  icon: mdi:snowflake
+elenas_room_ac_set_state:
+  alias: Elena's Room AC Set State
+  use_blueprint:
+    path: danleongjy/ac_set_state.yaml
+    input:
+      air_conditioner: switch.elenas_room_ac_switch
+  description: Turn on or off Elena's Room AC
+  icon: mdi:snowflake

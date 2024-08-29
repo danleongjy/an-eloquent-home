@@ -1084,7 +1084,7 @@
         "ac": {
           "card": {
             "type": "custom:state-switch",
-            "entity": "[[ac_status_sensor]]",
+            "entity": "[[climate_entity]]",
             "default": "disabled",
             "states": {
               "disabled": {
@@ -1092,35 +1092,10 @@
                 "entity": "[[climate_entity]]",
                 "template": "error"
               },
-              "auto": {
-                "type": "custom:button-card",
-                "entity": "[[climate_entity]]",
-                "template": "turn_on",
-                "label": "[[[ return entity.attributes.current_temperature + '°C';]]]",
-                "show_label": true,
-                "hold_action": {
-                  "action": "more-info",
-                  "entity": "[[climate_entity]]"
-                },
-                "double_tap_action": {
-                  "action": "call-service",
-                  "service": "automation.turn_off",
-                  "service_data": {
-                    "entity_id": "[[ac_auto_control_automation]]"
-                  }
-                }
-              },
               "off": {
                 "type": "custom:button-card",
                 "entity": "[[climate_entity]]",
-                "template": "turn_on",
-                "double_tap_action": {
-                  "action": "call-service",
-                  "service": "automation.turn_on",
-                  "service_data": {
-                    "entity_id": "[[ac_auto_control_automation]]"
-                  }
-                }
+                "template": "turn_on"
               },
               "cool": {
                 "type": "custom:slider-button-card",
@@ -1139,15 +1114,7 @@
                 "compact": true,
                 "icon": {
                   "show": true,
-                  "use_state_color": true,
-                  "tap_action": {
-                    "action": "call-service",
-                    "service": "automation.turn_on",
-                    "service_data": {
-                      "entity_id": "[[ac_auto_control_automation]]"
-                    }
-                  },
-                  "icon": ""
+                  "use_state_color": true
                 },
                 "action_button": {
                   "mode": "toggle",
@@ -1927,67 +1894,9 @@
                 ]
               },
               "available": {
-                "type": "custom:state-switch",
-                "entity": "[[ac_auto_control_automation]]",
-                "default": "off",
-                "states": {
-                  "off": {
-                    "type": "custom:button-card",
-                    "entity": "[[ac_entity]]",
-                    "template": "floorplan_turn_on",
-                    "double_tap_action": {
-                      "action": "call-service",
-                      "service": "automation.toggle",
-                      "service_data": {
-                        "entity_id": "[[ac_auto_control_automation]]"
-                      }
-                    }
-                  },
-                  "on": {
-                    "type": "custom:button-card",
-                    "entity": "[[ac_entity]]",
-                    "template": "floorplan_turn_on",
-                    "custom_fields": {
-                      "auto_control": "A"
-                    },
-                    "styles": {
-                      "grid": [
-                        {
-                          "position": "relative"
-                        }
-                      ],
-                      "custom_fields": {
-                        "auto_control": [
-                          {
-                            "color": "#f2900f"
-                          },
-                          {
-                            "font-size": "10px"
-                          },
-                          {
-                            "font-weight": "bold"
-                          },
-                          {
-                            "position": "absolute"
-                          },
-                          {
-                            "right": "5%"
-                          },
-                          {
-                            "top": "-5%"
-                          }
-                        ]
-                      }
-                    },
-                    "double_tap_action": {
-                      "action": "call-service",
-                      "service": "automation.toggle",
-                      "service_data": {
-                        "entity_id": "[[ac_auto_control_automation]]"
-                      }
-                    }
-                  }
-                }
+                "type": "custom:button-card",
+                "entity": "[[ac_entity]]",
+                "template": "floorplan_turn_on"
               }
             }
           }
@@ -3598,9 +3507,6 @@
                         "variables": [
                           {
                             "ac_entity": "climate.elenas_room_ac"
-                          },
-                          {
-                            "ac_auto_control_automation": "automation.elenas_room_ac_auto_control"
                           }
                         ]
                       },
@@ -3704,9 +3610,6 @@
                         "variables": [
                           {
                             "ac_entity": "climate.elis_room_ac"
-                          },
-                          {
-                            "ac_auto_control_automation": "automation.elis_room_ac_auto_control"
                           }
                         ]
                       },
@@ -3840,9 +3743,6 @@
                         "variables": [
                           {
                             "ac_entity": "climate.dining_room_ac"
-                          },
-                          {
-                            "ac_auto_control_automation": "automation.dining_room_ac_auto_control"
                           }
                         ]
                       },
@@ -4036,9 +3936,6 @@
                         "variables": [
                           {
                             "ac_entity": "climate.living_room_ac"
-                          },
-                          {
-                            "ac_auto_control_automation": "automation.living_room_ac_auto_control"
                           }
                         ]
                       },
@@ -4751,9 +4648,6 @@
                         "variables": [
                           {
                             "ac_entity": "climate.study_room_ac"
-                          },
-                          {
-                            "ac_auto_control_automation": "automation.study_room_ac_auto_control"
                           }
                         ]
                       },
@@ -4920,9 +4814,6 @@
                         "variables": [
                           {
                             "ac_entity": "climate.parents_room_ac"
-                          },
-                          {
-                            "ac_auto_control_automation": "automation.parents_room_ac_auto_control"
                           }
                         ]
                       }
@@ -5157,12 +5048,6 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.elenas_room_ac"
-                              },
-                              {
-                                "ac_status_sensor": "sensor.elenas_room_ac_status"
-                              },
-                              {
-                                "ac_auto_control_automation": "automation.elenas_room_ac_auto_control"
                               }
                             ]
                           },
@@ -5208,12 +5093,6 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.elis_room_ac"
-                              },
-                              {
-                                "ac_status_sensor": "sensor.elis_room_ac_status"
-                              },
-                              {
-                                "ac_auto_control_automation": "automation.elis_room_ac_auto_control"
                               }
                             ]
                           },
@@ -5303,12 +5182,6 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.dining_room_ac"
-                              },
-                              {
-                                "ac_status_sensor": "sensor.dining_room_ac_status"
-                              },
-                              {
-                                "ac_auto_control_automation": "automation.dining_room_ac_auto_control"
                               }
                             ]
                           },
@@ -5367,12 +5240,6 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.living_room_ac"
-                              },
-                              {
-                                "ac_status_sensor": "sensor.living_room_ac_status"
-                              },
-                              {
-                                "ac_auto_control_automation": "automation.living_room_ac_auto_control"
                               }
                             ]
                           },
@@ -5426,12 +5293,6 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.study_room_ac"
-                              },
-                              {
-                                "ac_status_sensor": "sensor.study_room_ac_status"
-                              },
-                              {
-                                "ac_auto_control_automation": "automation.study_room_ac_auto_control"
                               }
                             ]
                           },
@@ -5485,12 +5346,6 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.parents_room_ac"
-                              },
-                              {
-                                "ac_status_sensor": "sensor.parents_room_ac_status"
-                              },
-                              {
-                                "ac_auto_control_automation": "automation.parents_room_ac_auto_control"
                               }
                             ]
                           },

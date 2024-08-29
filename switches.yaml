@@ -1,79 +1,79 @@
 - platform: template
   switches:
-    dining_room_ac_switch:
-      unique_id: switch.dining_room_ac_switch
-      value_template: "{{ is_state('input_boolean.dining_room_ac_power','on') }}"
-      availability_template: "{{ states('input_boolean.dining_room_ac_power') in ['on','off'] }}"
-      turn_on:
-        service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.dining_room_ac_power
-      turn_off:
-        service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.dining_room_ac_power
-    
-    elis_room_ac_switch:
-      unique_id: switch.elis_room_ac_switch
-      value_template: "{{ is_state('input_boolean.elis_room_ac_power','on') }}"
-      availability_template: "{{ states('input_boolean.elis_room_ac_power') in ['on','off'] }}"
-      turn_on:
-        service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.elis_room_ac_power
-      turn_off:
-        service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.elis_room_ac_power
-
     elenas_room_ac_switch:
       unique_id: switch.elenas_room_ac_switch
-      value_template: "{{ is_state('input_boolean.elenas_room_ac_power','on') }}"
-      availability_template: "{{ states('input_boolean.elenas_room_ac_power') in ['on','off'] }}"
+      value_template: "{{ is_state('binary_sensor.elenas_room_ac_vent', 'on') }}"
+      availability_template: "{{ states('binary_sensor.elenas_room_ac_vent') in ['on','off'] }}"
       turn_on:
-        service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.elenas_room_ac_power
+        - action: script.elenas_room_ac_set_state
+          data:
+            switch_on: true
       turn_off:
-        service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.elenas_room_ac_power
+        - action: script.elenas_room_ac_set_state
+          data:
+            switch_on: false
 
+    elis_room_ac_switch:
+      unique_id: switch.elis_room_ac_switch
+      value_template: "{{ is_state('binary_sensor.elis_room_ac_vent', 'on') }}"
+      availability_template: "{{ states('binary_sensor.elis_room_ac_vent') in ['on','off'] }}"
+      turn_on:
+        - action: script.elis_room_ac_set_state
+          data:
+            switch_on: true
+      turn_off:
+        - action: script.elis_room_ac_set_state
+          data:
+            switch_on: false
+
+    dining_room_ac_switch:
+      unique_id: switch.dining_room_ac_switch
+      value_template: "{{ is_state('binary_sensor.dining_room_ac_vent', 'on') }}"
+      availability_template: "{{ states('binary_sensor.dining_room_ac_vent') in ['on','off'] }}"
+      turn_on:
+        - action: script.dining_room_ac_set_state
+          data:
+            switch_on: true
+      turn_off:
+        - action: script.dining_room_ac_set_state
+          data:
+            switch_on: false
+    
     living_room_ac_switch:
       unique_id: switch.living_room_ac_switch
-      value_template: "{{ is_state('input_boolean.living_room_ac_power','on') }}"
-      availability_template: "{{ states('input_boolean.living_room_ac_power') in ['on','off'] }}"
+      value_template: "{{ is_state('binary_sensor.living_room_ac_vent', 'on') }}"
+      availability_template: "{{ states('binary_sensor.living_room_ac_vent') in ['on','off'] }}"
       turn_on:
-        service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.living_room_ac_power
+        - action: script.living_room_ac_set_state
+          data:
+            switch_on: true
       turn_off:
-        service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.living_room_ac_power
+        - action: script.living_room_ac_set_state
+          data:
+            switch_on: false
           
     study_room_ac_switch:
       unique_id: switch.study_room_ac_switch
-      value_template: "{{ is_state('input_boolean.study_room_ac_power','on') }}"
-      availability_template: "{{ states('input_boolean.study_room_ac_power') in ['on','off'] }}"
+      value_template: "{{ is_state('binary_sensor.study_room_ac_vent', 'on') }}"
+      availability_template: "{{ states('binary_sensor.study_room_ac_vent') in ['on','off'] }}"
       turn_on:
-        service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.study_room_ac_power
+        - action: script.study_room_ac_set_state
+          data:
+            switch_on: true
       turn_off:
-        service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.study_room_ac_power
+        - action: script.study_room_ac_set_state
+          data:
+            switch_on: false
 
     parents_room_ac_switch:
       unique_id: switch.parents_room_ac_switch
-      value_template: "{{ is_state('input_boolean.parents_room_ac_power','on') }}"
-      availability_template: "{{ states('input_boolean.parents_room_ac_power') in ['on','off'] }}"
+      value_template: "{{ is_state('binary_sensor.parents_room_ac_vent', 'on') }}"
+      availability_template: "{{ states('binary_sensor.parents_room_ac_vent') in ['on','off'] }}"
       turn_on:
-        service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.parents_room_ac_power
+        - action: script.parents_room_ac_set_state
+          data:
+            switch_on: true
       turn_off:
-        service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.parents_room_ac_power
+        - action: script.parents_room_ac_set_state
+          data:
+            switch_on: false

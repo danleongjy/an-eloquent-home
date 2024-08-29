@@ -1,6 +1,6 @@
 blueprint:
   name: Motion AC
-  description: Control the AC when motion is detected, depending on whether the doors are closed.  Also enable or disable AC auto control based on time.
+  description: Control the AC when motion is detected, depending on whether the doors are closed.
   domain: automation
   input:
     motion_sensor:
@@ -18,24 +18,6 @@ blueprint:
       selector:
         entity:
           domain: climate
-    ac_auto_control:
-      name: AC Auto Control
-      description: Automation to automatically control the AC based on temperature.
-      selector:
-        entity:
-          domain: automation
-    ac_auto_control_start:
-      name: AC Auto Control Start
-      description: Time helper indicating when AC auto control should be turned on.  If AC auto control never needs to turn on, set this to the same as AC Auto Control End.
-      selector:
-        entity:
-          domain: input_datetime
-    ac_auto_control_end:
-      name: AC Auto Control End
-      description: Time helper indicating when AC auto control should be turned off.
-      selector:
-        entity:
-          domain: input_datetime
     off_hours_start:
       name: Off Hours Start
       description: A time helper indicating when the AC should be off.  If the AC never needs to be off, set this to the same time as Off Hours End.
@@ -79,8 +61,6 @@ condition:
 action:
   - variables:
       target_ac: !input ac
-      auto_control_start: !input ac_auto_control_start
-      auto_control_end: !input ac_auto_control_end
       rooms:
         climate.elenas_room_ac: "Elena's Room"
         climate.elis_room_ac: "Eli's Room"
@@ -137,35 +117,12 @@ action:
           
           {{ ac_on.recommend_turn_off == 0 }}
     then:
-      - action: automation.trigger
-        target:
-          entity_id: !input ac_auto_control
-      - condition: template
-        value_template: "{{ states(auto_control_start) != states(auto_control_end) }}"
-      - if:
-          - condition: time
-            after: !input ac_auto_control_start
-            before: !input ac_auto_control_end
-        then:
-          - action: automation.turn_on
-            data: {}
-            target:
-              entity_id: !input ac_auto_control
-        else:
-          - action: automation.turn_off
-            data:
-              stop_actions: true
-            target:
-              entity_id: !input ac_auto_control
-    else:
-      - action: climate.turn_off
-        data: {}
+      - action: climate.turn_on
         target:
           entity_id: !input ac
-      - action: automation.turn_off
-        data:
-          stop_actions: true
+    else:
+      - action: climate.turn_off
         target:
-          entity_id: !input ac_auto_control
+          entity_id: !input ac
 mode: single
 max_exceeded: silent
