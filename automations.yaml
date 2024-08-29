@@ -502,25 +502,25 @@
       button_down_long_max_loop_repeats: 50
 - id: '1643721003621'
   alias: Auto Cooling at Night
-  description: Turn on AC and Fan Auto Control at night in bedrooms
+  description: Turn on Fan Auto Control at night in bedrooms
   trigger:
   - platform: time
     id: start
-    at: input_datetime.ac_auto_control_start
+    at: input_datetime.fan_auto_control_start
   - platform: template
     value_template: '{{ now() > [[as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo)
       - timedelta(minutes = 30), as_datetime(states(''input_datetime.graces_next_alarm'')).astimezone(now().tzinfo)
-      - timedelta(minutes = 30)] | max, today_at(states(''input_datetime.ac_auto_control_end''))]
+      - timedelta(minutes = 30)] | max, today_at(states(''input_datetime.fan_auto_control_end''))]
       | min }}'
     id: parents_room
   - platform: template
     value_template: '{{ now() > [as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo)
-      - timedelta(minutes = 30), today_at(states(''input_datetime.ac_auto_control_end''))]
+      - timedelta(minutes = 30), today_at(states(''input_datetime.fan_auto_control_end''))]
       | min }}'
     id: elis_room
   - platform: template
     value_template: '{{ now() > [as_datetime(states(''input_datetime.elenas_next_alarm'')).astimezone(now().tzinfo)
-      - timedelta(minutes = 30), today_at(states(''input_datetime.ac_auto_control_end''))]
+      - timedelta(minutes = 30), today_at(states(''input_datetime.fan_auto_control_end''))]
       | min }}'
     id: elenas_room
   condition: []
@@ -3378,7 +3378,7 @@
       doors_list:
       - binary_sensor.parents_room_door
       - binary_sensor.master_bathroom_door
-      fan_auto_control_start: input_datetime.ac_auto_control_start
+      fan_auto_control_start: input_datetime.fan_auto_control_start
 - id: '1677902645887'
   alias: Parents' Room Motion AC
   description: Control the Parents' Room AC when motion is detected depending on whether
@@ -3440,7 +3440,7 @@
       - climate.elenas_room_ac
       doors_list:
       - binary_sensor.elenas_room_door
-      fan_auto_control_start: input_datetime.ac_auto_control_start
+      fan_auto_control_start: input_datetime.fan_auto_control_start
 - id: '1677909588511'
   alias: Elena's Room Motion Lights
   description: Set Elena's Room Lights when motion is detected, at least one door
@@ -3505,7 +3505,7 @@
       - climate.elis_room_ac
       doors_list:
       - binary_sensor.elis_room_door
-      fan_auto_control_start: input_datetime.ac_auto_control_start
+      fan_auto_control_start: input_datetime.fan_auto_control_start
 - id: '1677910041263'
   alias: Eli's Room Motion Lights
   description: Set Eli's Room Lights when motion is detected, at least one door is
