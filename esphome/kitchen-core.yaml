@@ -87,7 +87,7 @@ script:
   - id: doorbell
     then:
       - display.page.show: main_door
-      - delay: 60s
+      - delay: 10s
       - display.page.show: current_time
   - id: draw_display_borders
     then:
@@ -186,7 +186,9 @@ binary_sensor:
     on_click:
       - if:
           condition:
-            display.is_displaying_page: blinds
+            or:
+              - display.is_displaying_page: blinds
+              - display.is_displaying_page: screensaver
           then:
             - script.execute: reset_view
             - display.page.show: current_time
