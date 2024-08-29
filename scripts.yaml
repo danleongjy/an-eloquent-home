@@ -750,22 +750,22 @@ botc_day_night_toggle:
             - condition: template
               value_template: '{{ set_day }}'
             then:
-            - service: light.turn_on
-              metadata: {}
+            - metadata: {}
               data:
                 transition: 10
                 brightness_pct: 100
               target:
                 entity_id: '{{ repeat.item.light }}'
+              action: light.turn_on
             - delay: 10
             else:
-            - service: light.turn_on
-              metadata: {}
+            - metadata: {}
               data:
                 transition: 10
                 brightness_pct: 10
               target:
                 entity_id: '{{ repeat.item.light }}'
+              action: light.turn_on
             - delay: 10
       for_each:
       - light: light.elenas_room_lights
@@ -786,6 +786,21 @@ botc_day_night_toggle:
         door: binary_sensor.parents_room_door
       - light: light.study_room_lights
         door: none
+  - condition: template
+    value_template: '{{ set_day }}'
+  - action: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.8
+    target:
+      entity_id: media_player.all_speakers
+  - action: media_player.play_media
+    metadata: {}
+    data:
+      media_content_id: https://an-eloquent-home.duckdns.org/media/local/clocktower.mp3
+      media_content_type: music
+    target:
+      entity_id: media_player.all_speakers
   description: Set lights to day or night mode for BotC games
   icon: mdi:theme-light-dark
   fields:

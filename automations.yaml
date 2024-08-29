@@ -3139,10 +3139,20 @@
       controller_device: 448d76f832cedfc3db1d670ff3636ac2
       helper_last_controller_event: input_text.zz_study_table_controller_last_event
       action_button_up_short:
-      - service: script.set_recommended_scene
-        data:
-          room:
-          - study_room
+      - if:
+        - condition: state
+          entity_id: input_boolean.party_mode
+          state: 'off'
+        then:
+        - action: script.set_recommended_scene
+          data:
+            room:
+            - study_room
+        else:
+        - action: script.botc_day_night_toggle
+          metadata: {}
+          data:
+            set_day: true
       action_button_up_long:
       - service: light.turn_on
         data:
@@ -3151,11 +3161,21 @@
         target:
           entity_id: light.study_room_lights
       action_button_down_short:
-      - service: automation.trigger
-        data:
-          skip_condition: true
-        target:
-          entity_id: automation.study_room_motion_timeout
+      - if:
+        - condition: state
+          entity_id: input_boolean.party_mode
+          state: 'off'
+        then:
+        - data:
+            skip_condition: true
+          target:
+            entity_id: automation.study_room_motion_timeout
+          action: automation.trigger
+        else:
+        - action: script.botc_day_night_toggle
+          metadata: {}
+          data:
+            set_day: false
       action_button_down_long:
       - service: light.turn_on
         data:
@@ -3166,13 +3186,16 @@
         target:
           entity_id: light.study_room_lights
       action_button_down_double:
-      - service: automation.trigger
-        data:
+      - condition: state
+        entity_id: input_boolean.party_mode
+        state: 'off'
+      - data:
           skip_condition: true
         target:
           entity_id:
           - automation.junior_bathroom_motion_timeout
           - automation.powder_room_motion_timeout
+        action: automation.trigger
       - delay:
           hours: 0
           minutes: 0
@@ -3183,46 +3206,46 @@
           entity_id: binary_sensor.elenas_room_door
           state: 'on'
         then:
-        - service: automation.trigger
-          data:
+        - data:
             skip_condition: true
           target:
             entity_id: automation.elenas_room_motion_timeout
+          action: automation.trigger
       - if:
         - condition: state
           entity_id: binary_sensor.elis_room_door
           state: 'on'
         then:
-        - service: automation.trigger
-          data:
+        - data:
             skip_condition: true
           target:
             entity_id: automation.elis_room_motion_timeout
+          action: automation.trigger
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: automation.trigger
-        data:
+      - data:
           skip_condition: true
         target:
           entity_id:
           - automation.yard_motion_timeout
           - automation.playroom_motion_timeout
           - automation.hallway_motion_timeout
+        action: automation.trigger
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: automation.trigger
-        data:
+      - data:
           skip_condition: true
         target:
           entity_id:
           - automation.kitchen_motion_timeout
           - automation.master_bathroom_motion_timeout
+        action: automation.trigger
       - if:
         - condition: or
           conditions:
@@ -3233,23 +3256,23 @@
             entity_id: binary_sensor.master_bathroom_door
             state: 'on'
         then:
-        - service: automation.trigger
-          data:
+        - data:
             skip_condition: true
           target:
             entity_id: automation.parents_room_motion_timeout
+          action: automation.trigger
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: automation.trigger
-        data:
+      - data:
           skip_condition: true
         target:
           entity_id:
           - automation.dining_room_motion_timeout
           - automation.living_room_motion_timeout
+        action: automation.trigger
       button_up_long_loop: true
       button_up_long_max_loop_repeats: 20
       button_down_long_loop: true
