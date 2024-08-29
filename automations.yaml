@@ -5374,7 +5374,8 @@
   trigger:
   - platform: template
     value_template: '{{ states(''climate.dining_room_ac'') != states(''climate.living_room_ac'')
-      or state_attr(''climate.dining_room_ac'',''temperature'') != state_attr(''climate.living_room_ac'',''temperature'')
+      or (is_state(''climate.dining_room_ac'',''cool'') and is_state(''climate.living_room_ac'',''cool'')
+      and state_attr(''climate.dining_room_ac'',''temperature'') != state_attr(''climate.living_room_ac'',''temperature''))
       }}'
     for:
       hours: 0
@@ -5392,62 +5393,62 @@
         entity_id: climate.dining_room_ac
         state: 'off'
       then:
-      - service: climate.turn_off
-        data: {}
+      - data: {}
         target:
           entity_id: climate.living_room_ac
+        action: climate.turn_off
       else:
       - if:
         - condition: template
           value_template: '{{ states(''climate.living_room_ac'') != states(''climate.dining_room_ac'')
             }}'
         then:
-        - service: climate.turn_on
-          data: {}
+        - data: {}
           target:
             entity_id: climate.living_room_ac
+          action: climate.turn_on
       - if:
         - condition: template
           value_template: '{{ state_attr(''climate.living_room_ac'',''temperature'')
             != state_attr(''climate.dining_room_ac'',''temperature'') }}'
         then:
-        - service: climate.set_temperature
-          data:
+        - data:
             temperature: '{{ state_attr(''climate.dining_room_ac'',''temperature'')
               }}'
           target:
             entity_id: climate.living_room_ac
+          action: climate.set_temperature
     else:
     - if:
       - condition: state
         entity_id: climate.living_room_ac
         state: 'off'
       then:
-      - service: climate.turn_off
-        data: {}
+      - data: {}
         target:
           entity_id: climate.dining_room_ac
+        action: climate.turn_off
       else:
       - if:
         - condition: template
           value_template: '{{ states(''climate.living_room_ac'') != states(''climate.dining_room_ac'')
             }}'
         then:
-        - service: climate.turn_on
-          data: {}
+        - data: {}
           target:
             entity_id: climate.dining_room_ac
+          action: climate.turn_on
       - if:
         - condition: template
           value_template: '{{ state_attr(''climate.living_room_ac'',''temperature'')
             != state_attr(''climate.dining_room_ac'',''temperature'') }}'
         then:
-        - service: climate.set_temperature
-          data:
+        - data:
             temperature: '{{ state_attr(''climate.living_room_ac'',''temperature'')
               }}'
           target:
             entity_id: climate.dining_room_ac
+          action: climate.set_temperature
   mode: single
   max_exceeded: silent
 - id: '1697806604813'
@@ -6395,7 +6396,9 @@
     - climate.study_room_ac
     - climate.parents_room_ac
     attribute: temperature
-  condition: []
+  condition:
+  - condition: template
+    value_template: '{{ is_state(trigger.entity_id, ''cool'') }}'
   action:
   - if:
     - condition: template
@@ -6425,5 +6428,6 @@
           resync: false
       target:
         entity_id: script.{{ trigger.entity_id.split('.')[1] }}_set_state
-  mode: single
+  mode: parallel
   max_exceeded: silent
+  max: 6

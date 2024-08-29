@@ -35,40 +35,34 @@ fields:
     name: Resync AC State
     description: Whether to resync the AC state to the target state based on the AC vent sensor
     required: true
-    default: false
+    default: true
 variables:
   ac: !input air_conditioner
   ac_remote_vent:
     switch.parents_room_ac_switch:
       remote: remote.parents_room_universal_remote
-      device: Parents' Room AC
       vent: binary_sensor.parents_room_ac_vent
     switch.study_room_ac_switch:
       remote: remote.study_room_universal_remote
-      device: Study Room AC
       vent: binary_sensor.study_room_ac_vent
     switch.living_room_ac_switch:
       remote: remote.living_room_universal_remote
-      device: Living Room AC
       vent: binary_sensor.living_room_ac_vent
     switch.dining_room_ac_switch:
       remote: remote.living_room_universal_remote
-      device: Dining Room AC
       vent: binary_sensor.dining_room_ac_vent
     switch.elis_room_ac_switch:
       remote: remote.elis_room_universal_remote
-      device: Eli's Room AC
       vent: binary_sensor.elis_room_ac_vent
     switch.elenas_room_ac_switch:
       remote: remote.elenas_room_universal_remote
-      device: Elena's Room AC
       vent: binary_sensor.elenas_room_ac_vent
 sequence:
   - action: remote.send_command
     target:
       entity_id: "{{ ac_remote_vent[ac]['remote'] }}"
     data:
-      device: "{{ ac_remote_vent[ac]['device'] }}"
+      device: AC
       command: "{{ 24 if switch_on else 'Off' }}"
   - condition: template
     value_template: "{{ resync }}"
@@ -80,7 +74,7 @@ sequence:
           target:
             entity_id: "{{ ac_remote_vent[ac]['remote'] }}"
           data:
-            device: "{{ ac_remote_vent[ac]['device'] }}"
+            device: AC
             command: "{{ 24 if switch_on else 'Off' }}"
       while:
         - condition: template
