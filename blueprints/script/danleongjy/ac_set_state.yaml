@@ -24,10 +24,18 @@ blueprint:
 fields:
   switch_on:
     selector:
-      boolean: {}
+      boolean:
     name: Switch On
     description: Switch on or off the AC
     required: true
+    default: false
+  resync:
+    selector:
+      boolean:
+    name: Resync AC State
+    description: Whether to resync the AC state to the target state based on the AC vent sensor
+    required: true
+    default: false
 variables:
   ac: !input air_conditioner
   ac_remote_vent:
@@ -62,6 +70,8 @@ sequence:
     data:
       device: "{{ ac_remote_vent[ac]['device'] }}"
       command: "{{ 24 if switch_on else 'Off' }}"
+  - condition: template
+    value_template: "{{ resync }}"
   - delay: 20
   - repeat:
       sequence:

@@ -6382,10 +6382,11 @@
         }}
   mode: restart
 - id: '1724902259555'
-  alias: Turn Off AC Upon Low Temperature
-  description: Turn off the AC when specified target temperature is below 23.5°C.
+  alias: AC Change Temperature
+  description: Beep the AC when a new target temperature is set, and turn off the
+    AC when specified target temperature is below 23.5°C.
   trigger:
-  - platform: numeric_state
+  - platform: state
     entity_id:
     - climate.elenas_room_ac
     - climate.elis_room_ac
@@ -6394,18 +6395,35 @@
     - climate.study_room_ac
     - climate.parents_room_ac
     attribute: temperature
-    below: 23.5
   condition: []
   action:
-  - action: climate.set_temperature
-    metadata: {}
-    data:
-      temperature: 27
-    target:
-      entity_id: '{{ trigger.entity_id }}'
-  - action: climate.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: '{{ trigger.entity_id }}'
+  - if:
+    - condition: template
+      value_template: '{{ state_attr(trigger.entity_id, ''temperature'') < 23.5 }}'
+    then:
+    - action: climate.set_temperature
+      metadata: {}
+      data:
+        temperature: 27
+      target:
+        entity_id: '{{ trigger.entity_id }}'
+    - action: climate.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: '{{ trigger.entity_id }}'
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 200
+    else:
+    - action: script.turn_on
+      data:
+        variables:
+          switch_on: true
+          resync: false
+      target:
+        entity_id: script.{{ trigger.entity_id.split('.')[1] }}_set_state
   mode: single
+  max_exceeded: silent
