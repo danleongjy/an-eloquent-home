@@ -137,8 +137,8 @@ script:
           } else {
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_off));
           }
-          if (id(ac_auto_control).state) {
-            id(interface_display).print(id(width) * 0.85, id(height) * 0.23, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
+          if (id(fan_auto_control).state) {
+            id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(fan_auto), ImageAlign::CENTER, id(auto_control));
           }
   - id: draw_display_main_doorbell
     then:
@@ -242,9 +242,6 @@ binary_sensor:
   - platform: homeassistant
     id: fan_auto_control
     entity_id: automation.${core_room}_fan_auto_control
-  - platform: homeassistant
-    id: ac_auto_control
-    entity_id: automation.${core_room}_ac_auto_control
   - platform: homeassistant
     id: room_next_alarm_imminent
     entity_id: sensor.next_alarm_timings
@@ -662,6 +659,9 @@ image:
   - file: mdi:roller-shade
     id: tab_blinds
     resize: 30x30
+  - file: mdi:fan-auto
+    id: fan_auto
+    resize: 50x50
   - file: mdi:alarm
     id: main_alarm
     resize: 30x30
