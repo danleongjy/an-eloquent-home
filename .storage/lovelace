@@ -1135,6 +1135,13 @@
                   "service_data": {
                     "entity_id": "[[cover_entity]]"
                   }
+                },
+                "double_tap_action": {
+                  "action": "call-service",
+                  "service": "automation.toggle",
+                  "service_data": {
+                    "entity_id": "[[cover_auto_control_entity]]"
+                  }
                 }
               },
               "unavailable": {
@@ -1143,36 +1150,85 @@
                 "template": "error"
               },
               "not_fully_closed": {
-                "type": "custom:slider-button-card",
-                "entity": "[[cover_entity]]",
-                "slider": {
-                  "direction": "bottom-top",
-                  "background": "solid",
-                  "use_state_color": false,
-                  "use_percentage_bg_opacity": false,
-                  "toggle_on_click": false,
-                  "show_track": false,
-                  "force_square": true,
-                  "invert": false
-                },
-                "show_name": false,
-                "show_state": false,
-                "compact": true,
-                "icon": {
-                  "show": true,
-                  "use_state_color": true,
-                  "tap_action": {
-                    "action": "more-info"
+                "type": "custom:state-switch",
+                "entity": "[[cover_auto_control_entity]]",
+                "default": "off",
+                "states": {
+                  "on": {
+                    "type": "custom:slider-button-card",
+                    "entity": "[[cover_entity]]",
+                    "slider": {
+                      "direction": "bottom-top",
+                      "background": "solid",
+                      "use_state_color": false,
+                      "use_percentage_bg_opacity": false,
+                      "toggle_on_click": false,
+                      "show_track": false,
+                      "force_square": true,
+                      "invert": false
+                    },
+                    "show_name": false,
+                    "show_state": false,
+                    "compact": true,
+                    "icon": {
+                      "show": true,
+                      "use_state_color": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": "[[cover_auto_control_entity]]"
+                        }
+                      },
+                      "icon": "[[cover_icon]]"
+                    },
+                    "action_button": {
+                      "mode": "toggle",
+                      "icon": "mdi:power",
+                      "show": false,
+                      "show_spinner": true,
+                      "tap_action": {
+                        "action": "toggle"
+                      }
+                    }
                   },
-                  "icon": "[[cover_icon]]"
-                },
-                "action_button": {
-                  "mode": "toggle",
-                  "icon": "mdi:power",
-                  "show": false,
-                  "show_spinner": true,
-                  "tap_action": {
-                    "action": "toggle"
+                  "off": {
+                    "type": "custom:slider-button-card",
+                    "entity": "[[cover_entity]]",
+                    "slider": {
+                      "direction": "bottom-top",
+                      "background": "striped",
+                      "use_state_color": false,
+                      "use_percentage_bg_opacity": false,
+                      "toggle_on_click": false,
+                      "show_track": false,
+                      "force_square": true,
+                      "invert": false
+                    },
+                    "show_name": false,
+                    "show_state": false,
+                    "compact": true,
+                    "icon": {
+                      "show": true,
+                      "use_state_color": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": "[[cover_auto_control_entity]]"
+                        }
+                      },
+                      "icon": "[[cover_icon]]"
+                    },
+                    "action_button": {
+                      "mode": "toggle",
+                      "icon": "mdi:power",
+                      "show": false,
+                      "show_spinner": true,
+                      "tap_action": {
+                        "action": "toggle"
+                      }
+                    }
                   }
                 }
               }
@@ -1930,91 +1986,28 @@
                 ]
               },
               "enabled": {
-                "type": "custom:state-switch",
-                "entity": "[[cover_auto_control_automation]]",
-                "default": "off",
-                "states": {
-                  "off": {
-                    "type": "custom:button-card",
-                    "entity": "[[cover_entity]]",
-                    "template": "floorplan_slider_icon",
-                    "styles": {
-                      "icon": [
-                        {
-                          "color": "[[[\n  if (entity.attributes.current_position == 0)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
-                        }
-                      ]
-                    },
-                    "tap_action": {
-                      "action": "call-service",
-                      "service": "[[[\n  if (entity.attributes.current_position == 100)\n    return \"cover.close_cover\";\n  else\n    return \"cover.open_cover\";\n]]]\n",
-                      "service_data": {
-                        "entity_id": "[[cover_entity]]"
-                      }
-                    },
-                    "double_tap_action": {
-                      "action": "call-service",
-                      "service": "automation.toggle",
-                      "service_data": {
-                        "entity_id": "[[cover_auto_control_automation]]"
-                      }
+                "type": "custom:button-card",
+                "entity": "[[cover_entity]]",
+                "template": "floorplan_slider_icon",
+                "styles": {
+                  "icon": [
+                    {
+                      "color": "[[[\n  if (entity.attributes.current_position == 0)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
                     }
-                  },
-                  "on": {
-                    "type": "custom:button-card",
-                    "entity": "[[cover_entity]]",
-                    "template": "floorplan_slider_icon",
-                    "custom_fields": {
-                      "auto_control": "A"
-                    },
-                    "styles": {
-                      "grid": [
-                        {
-                          "position": "relative"
-                        }
-                      ],
-                      "custom_fields": {
-                        "auto_control": [
-                          {
-                            "color": "#f2900f"
-                          },
-                          {
-                            "font-size": "10px"
-                          },
-                          {
-                            "font-weight": "bold"
-                          },
-                          {
-                            "position": "absolute"
-                          },
-                          {
-                            "right": "5%"
-                          },
-                          {
-                            "top": "-5%"
-                          }
-                        ]
-                      },
-                      "icon": [
-                        {
-                          "color": "[[[\n  if (entity.attributes.current_position == 0)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
-                        }
-                      ]
-                    },
-                    "tap_action": {
-                      "action": "call-service",
-                      "service": "[[[\n  if (entity.attributes.current_position == 100)\n    return \"cover.close_cover\";\n  else\n    return \"cover.open_cover\";\n]]]\n",
-                      "service_data": {
-                        "entity_id": "[[cover_entity]]"
-                      }
-                    },
-                    "double_tap_action": {
-                      "action": "call-service",
-                      "service": "automation.toggle",
-                      "service_data": {
-                        "entity_id": "[[cover_auto_control_automation]]"
-                      }
-                    }
+                  ]
+                },
+                "tap_action": {
+                  "action": "call-service",
+                  "service": "[[[\n  if (entity.attributes.current_position == 100)\n    return \"cover.close_cover\";\n  else\n    return \"cover.open_cover\";\n]]]\n",
+                  "service_data": {
+                    "entity_id": "[[cover_entity]]"
+                  }
+                },
+                "double_tap_action": {
+                  "action": "call-service",
+                  "service": "automation.toggle",
+                  "service_data": {
+                    "entity_id": "[[cover_auto_control_automation]]"
                   }
                 }
               }
@@ -2868,10 +2861,13 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "cover.kitchen_blind"
+                          },
+                          {
+                            "auto_control_entity": "automation.kitchen_blind_auto_control"
                           }
                         ],
                         "style": {
@@ -3761,10 +3757,13 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "cover.dining_room_blinds"
+                          },
+                          {
+                            "auto_control_entity": "automation.south_facing_blinds_auto_control"
                           }
                         ],
                         "style": {
@@ -3957,10 +3956,13 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "cover.living_room_blinds"
+                          },
+                          {
+                            "auto_control_entity": "automation.south_facing_blinds_auto_control"
                           }
                         ],
                         "style": {
@@ -4060,10 +4062,13 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "cover.master_bathroom_blind"
+                          },
+                          {
+                            "auto_control_entity": "automation.master_bathroom_blind_auto_control"
                           }
                         ],
                         "style": {
@@ -4702,10 +4707,13 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "cover.study_room_blinds"
+                          },
+                          {
+                            "auto_control_entity": "automation.south_facing_blinds_auto_control"
                           }
                         ],
                         "style": {
@@ -5282,6 +5290,9 @@
                               },
                               {
                                 "cover_entity": "cover.dining_room_blinds"
+                              },
+                              {
+                                "cover_auto_control_entity": "automation.south_facing_blinds_auto_control"
                               }
                             ]
                           },
@@ -5362,6 +5373,9 @@
                               },
                               {
                                 "cover_entity": "cover.living_room_blinds"
+                              },
+                              {
+                                "cover_auto_control_entity": "automation.south_facing_blinds_auto_control"
                               }
                             ]
                           },
@@ -5437,6 +5451,9 @@
                               },
                               {
                                 "cover_entity": "cover.study_room_blinds"
+                              },
+                              {
+                                "cover_auto_control_entity": "automation.south_facing_blinds_auto_control"
                               }
                             ]
                           },
@@ -5546,6 +5563,9 @@
                               },
                               {
                                 "cover_entity": "cover.master_bathroom_blind"
+                              },
+                              {
+                                "cover_auto_control_entity": "automation.master_bathroom_blind_auto_control"
                               }
                             ]
                           },
@@ -5583,6 +5603,9 @@
                               },
                               {
                                 "cover_entity": "cover.kitchen_blind"
+                              },
+                              {
+                                "cover_auto_control_entity": "automation.kitchen_blind_auto_control"
                               },
                               {
                                 "cover_icon": "mdi:window-shutter-open"
