@@ -524,53 +524,20 @@
   action:
   - if:
     - condition: trigger
-      id: start
+      id:
+      - start
     then:
-    - if:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: fan.elenas_room_fan
-          state: 'on'
-        - condition: state
-          entity_id: climate.elenas_room_ac
-          state: cool
-      then:
-      - data: {}
-        target:
-          entity_id:
-          - automation.elenas_room_fan_auto_control
-        action: automation.turn_on
-    - if:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: fan.elis_room_fan
-          state: 'on'
-        - condition: state
-          entity_id: climate.elis_room_ac
-          state: cool
-      then:
-      - data: {}
-        target:
-          entity_id:
-          - automation.elis_room_fan_auto_control
-        action: automation.turn_on
-    - if:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: fan.parents_room_fan
-          state: 'on'
-        - condition: state
-          entity_id: climate.parents_room_ac
-          state: cool
-      then:
-      - data: {}
-        target:
-          entity_id:
-          - automation.parents_room_fan_auto_control
-        action: automation.turn_on
+    - data:
+        stop_actions: true
+      target:
+        entity_id:
+        - automation.elenas_room_fan_auto_control
+        - automation.elis_room_fan_auto_control
+        - automation.dining_room_fan_auto_control
+        - automation.living_room_fan_auto_control
+        - automation.study_room_fan_auto_control
+        - automation.parents_room_fan_auto_control
+      action: automation.turn_on
     else:
     - data:
         stop_actions: true
