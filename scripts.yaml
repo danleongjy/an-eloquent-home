@@ -1151,7 +1151,7 @@ ac_controller:
           entity_id: '{{ ac }}'
         data:
           temperature: "{% if state_attr(ac, 'temperature') < 27 %}\n  {{ state_attr(ac,
-            'temperature') + 1 }}\n{% else %}\n  27\n{% endif %}\n"
+            'temperature') + 0.5 }}\n{% else %}\n  27\n{% endif %}\n"
     - conditions:
       - condition: template
         value_template: '{{ command == ''ac_colder'' }}'
@@ -1160,8 +1160,8 @@ ac_controller:
         target:
           entity_id: '{{ ac }}'
         data:
-          temperature: "{% if state_attr(ac, 'temperature') > 24 %}\n  {{ state_attr(ac,
-            'temperature') - 1 }}\n{% else %}\n  24\n{% endif %}\n"
+          temperature: "{% if state_attr(ac, 'temperature') > 23.5 %}\n  {{ state_attr(ac,
+            'temperature') - 0.5 }}\n{% else %}\n  23.5\n{% endif %}\n"
     - conditions:
       - condition: template
         value_template: '{{ command == ''cooling_auto_control'' }}'
