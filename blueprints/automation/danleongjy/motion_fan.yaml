@@ -24,20 +24,6 @@ blueprint:
       selector:
         entity:
           domain: automation
-    fan_auto_control_start:
-      name: Fan Auto Control Start
-      description: Time helper indicating when fan auto control should be turned on.  If fan auto control never needs to turn on, set this to the same as Fan Auto Control End.
-      selector:
-        entity:
-          domain: input_datetime
-      default: input_datetime.fan_auto_control_end
-    fan_auto_control_end:
-      name: Fan Auto Control End
-      description: Time helper indicating when fan auto control should be turned off.
-      selector:
-        entity:
-          domain: input_datetime
-      default: input_datetime.fan_auto_control_end
     off_hours_start:
       name: Off Hours Start
       description: A time helper indicating when the fan should be off.  If the fan never needs to be off, set this to the same time as Off Hours End.
@@ -89,9 +75,6 @@ condition:
   - condition: template
     value_template: "{{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}"
 action:
-  - variables:
-      auto_control_start: !input fan_auto_control_start
-      auto_control_end: !input fan_auto_control_end
   - delay: 0.05
   - condition: time
     after: !input off_hours_end
@@ -99,23 +82,5 @@ action:
   - action: automation.trigger
     target:
       entity_id: !input fan_auto_control
-  - condition: template
-    value_template: "{{ states(auto_control_start) != states(auto_control_end) }}"
-  - if:
-      - condition: time
-        after: !input fan_auto_control_start
-        before: !input fan_auto_control_end
-    then:
-      - action: automation.turn_on
-        data: {}
-        target:
-          entity_id: !input fan_auto_control
-    else:
-      - action: automation.turn_off
-        data:
-          stop_actions: true
-        target:
-          entity_id: !input fan_auto_control
-    
 mode: single
 max_exceeded: silent
