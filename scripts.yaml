@@ -947,9 +947,9 @@ fan_controller:
       - condition: template
         value_template: '{{ command == ''fan_on'' }}'
       sequence:
-      - action: fan.turn_on
+      - action: automation.trigger
         target:
-          entity_id: '{{ fan }}'
+          entity_id: automation.{{ fan.split('.')[1] }}_auto_control
     - conditions:
       - condition: template
         value_template: '{{ command == ''fan_off'' }}'
@@ -961,6 +961,9 @@ fan_controller:
       - condition: template
         value_template: '{{ command == ''fan_speed_up'' }}'
       sequence:
+      - action: automation.turn_off
+        target:
+          entity_id: automation.{{ fan.split('.')[1] }}_auto_control
       - action: fan.increase_speed
         target:
           entity_id: '{{ fan }}'
@@ -976,6 +979,9 @@ fan_controller:
           target:
             entity_id: '{{ fan }}'
         else:
+        - action: automation.turn_off
+          target:
+            entity_id: automation.{{ fan.split('.')[1] }}_auto_control
         - action: fan.decrease_speed
           target:
             entity_id: '{{ fan }}'
@@ -983,6 +989,9 @@ fan_controller:
       - condition: template
         value_template: '{{ command == ''fan_reverse'' }}'
       sequence:
+      - action: automation.turn_off
+        target:
+          entity_id: automation.{{ fan.split('.')[1] }}_auto_control
       - action: fan.set_direction
         data:
           direction: reverse
@@ -992,6 +1001,9 @@ fan_controller:
       - condition: template
         value_template: '{{ command == ''fan_forward'' }}'
       sequence:
+      - action: automation.turn_off
+        target:
+          entity_id: automation.{{ fan.split('.')[1] }}_auto_control
       - action: fan.set_direction
         data:
           direction: forward
@@ -1258,6 +1270,11 @@ cover_controller:
       - condition: template
         value_template: '{{ command == ''cover_open'' }}'
       sequence:
+      - action: automation.turn_off
+        target:
+          entity_id: "{% if cover == 'cover.master_bathroom_blind' %}\n  automation.master_bathroom_blind_auto_control\n{%
+            elif cover == 'cover.kitchen_blind' %}\n  automation.kitchen_blind_auto_control\n{%
+            else %}\n  automation.south_facing_blinds_auto_control\n{% endif %}\n"
       - if:
         - condition: template
           value_template: '{{ is_state(cover, ''closing'') }}'
@@ -1273,6 +1290,11 @@ cover_controller:
       - condition: template
         value_template: '{{ command == ''cover_close'' }}'
       sequence:
+      - action: automation.turn_off
+        target:
+          entity_id: "{% if cover == 'cover.master_bathroom_blind' %}\n  automation.master_bathroom_blind_auto_control\n{%
+            elif cover == 'cover.kitchen_blind' %}\n  automation.kitchen_blind_auto_control\n{%
+            else %}\n  automation.south_facing_blinds_auto_control\n{% endif %}\n"
       - if:
         - condition: template
           value_template: '{{ is_state(cover, ''opening'') }}'

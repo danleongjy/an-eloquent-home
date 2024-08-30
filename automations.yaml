@@ -504,11 +504,13 @@
   alias: Auto Cooling at Night
   description: Turn on Fan Auto Control at night in bedrooms
   trigger:
+  - platform: time
+    at: input_datetime.sleep_hours_start
+    id: start
   - platform: template
-    value_template: '{{ now() > [[as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo)
+    value_template: '{{ now() > [as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo)
       - timedelta(minutes = 30), as_datetime(states(''input_datetime.graces_next_alarm'')).astimezone(now().tzinfo)
-      - timedelta(minutes = 30)] | max)]
-      | min }}'
+      - timedelta(minutes = 30)] | max }}'
     id: parents_room
   - platform: template
     value_template: '{{ now() > as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo)
@@ -534,11 +536,11 @@
           entity_id: climate.elenas_room_ac
           state: cool
       then:
-      - service: automation.turn_on
-        data: {}
+      - data: {}
         target:
           entity_id:
           - automation.elenas_room_fan_auto_control
+        action: automation.turn_on
     - if:
       - condition: or
         conditions:
@@ -549,11 +551,11 @@
           entity_id: climate.elis_room_ac
           state: cool
       then:
-      - service: automation.turn_on
-        data: {}
+      - data: {}
         target:
           entity_id:
           - automation.elis_room_fan_auto_control
+        action: automation.turn_on
     - if:
       - condition: or
         conditions:
@@ -564,21 +566,21 @@
           entity_id: climate.parents_room_ac
           state: cool
       then:
-      - service: automation.turn_on
-        data: {}
+      - data: {}
         target:
           entity_id:
           - automation.parents_room_fan_auto_control
+        action: automation.turn_on
     else:
-    - service: automation.turn_off
-      data:
+    - data:
         stop_actions: true
       target:
         entity_id:
         - automation.{{ trigger.id }}_fan_auto_control
-    - service: climate.turn_off
-      target:
+      action: automation.turn_off
+    - target:
         entity_id: climate.{{ trigger.id }}_ac
+      action: climate.turn_off
   mode: parallel
   max: 5
 - id: '1643973685368'
@@ -2338,6 +2340,12 @@
       target:
         entity_id:
         - automation.auto_cooling_at_night
+        - automation.elenas_room_fan_auto_control
+        - automation.elis_room_fan_auto_control
+        - automation.parents_room_fan_auto_control
+        - automation.dining_room_fan_auto_control
+        - automation.living_room_fan_auto_control
+        - automation.study_room_fan_auto_control
         - automation.hallway_motion_lights
         - automation.junior_bathroom_motion_lights
         - automation.kitchen_blind_auto_control
@@ -4274,22 +4282,12 @@
       controller_device: 63ca2b52933039d3f01175d8c06dd220
       helper_last_controller_event: input_text.zz_kitchen_blind_controller_last_event
       action_button_up_short:
-      - action: automation.turn_off
-        data:
-          stop_actions: true
-        target:
-          entity_id: automation.kitchen_blind_auto_control
       - action: script.cover_controller
         metadata: {}
         data:
           cover: cover.kitchen_blind
           command: cover_open
       action_button_down_short:
-      - action: automation.turn_off
-        data:
-          stop_actions: true
-        target:
-          entity_id: automation.kitchen_blind_auto_control
       - action: script.cover_controller
         metadata: {}
         data:
