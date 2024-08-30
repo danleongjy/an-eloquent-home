@@ -71,146 +71,6 @@
       total_doors_open: "{{ is_state('binary_sensor.parents_room_door', 'on') + is_state('binary_sensor.master_bathroom_door', 'on') }}/2"
       total_doors: "2"
 
-  - name: AC On With Door Open at Dining Room
-    unique_id: binary_sensor.ac_on_with_door_open_at_dining_room
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.main_door', ['climate.dining_room_ac']) }}
-    attributes:
-      main_door: "{{ states('binary_sensor.main_door') }}"
-      dining_room_ac: " {{ states('climate.dining_room_ac') }}"
-
-  - name: AC On With Window Open at Yard
-    unique_id: binary_sensor.ac_on_with_window_open_at_yard
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.yard_window', ['climate.dining_room_ac']) }}
-    attributes:
-      yard_window: "{{ states('binary_sensor.yard_window') }}"
-      dining_room_ac: " {{ states('climate.dining_room_ac') }}"
-
-  - name: AC On With Door Open at Powder Room
-    unique_id: binary_sensor.ac_on_with_door_open_at_powder_room
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.powder_room_door', ['climate.dining_room_ac']) }}
-    attributes:
-      powder_room_door: "{{ states('binary_sensor.powder_room_door') }}"
-      dining_room_ac: " {{ states('climate.dining_room_ac') }}"
-
-  - name: AC On With Door Open at Junior Bathroom
-    unique_id: binary_sensor.ac_on_with_door_open_at_junior_bathroom
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.junior_bathroom_door', ['climate.dining_room_ac']) }}
-    attributes:
-      junior_bathroom_door: "{{ states('binary_sensor.junior_bathroom_door') }}"
-      dining_room_ac: " {{ states('climate.dining_room_ac') }}"
-
-  - name: AC On With Door Open at Elena's Room
-    unique_id: binary_sensor.ac_on_with_door_open_at_elenas_room
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.elenas_room_door', ['climate.dining_room_ac', 'climate.elenas_room_ac']) }}
-    attributes:
-      elenas_room_door: "{{ states('binary_sensor.elenas_room_door') }}"
-      elenas_room_ac: "{{ states('climate.elenas_room_ac') }}"
-      dining_room_ac: "{{ states('climate.dining_room_ac') }}"
-
-  - name: AC On With Windows Open at Elena's Room
-    unique_id: binary_sensor.ac_on_with_windows_open_at_elenas_room
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.elenas_room_left_window', ['climate.elenas_room_ac']) }}
-    attributes:
-      elenas_room_left_window: "{{ states('binary_sensor.elenas_room_left_window') }}"
-      elenas_room_ac: " {{ states('climate.elenas_room_ac') }}"
-
-  - name: AC On With Door Open at Eli's Room
-    unique_id: binary_sensor.ac_on_with_door_open_at_elis_room
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.elis_room_door', ['climate.dining_room_ac', 'climate.elis_room_ac']) }}
-    attributes:
-      elis_room_door: "{{ states('binary_sensor.elis_room_door') }}"
-      elis_room_ac: "{{ states('climate.elis_room_ac') }}"
-      dining_room_ac: "{{ states('climate.dining_room_ac') }}"
-
-  - name: AC On With Windows Open at Eli's Room
-    unique_id: binary_sensor.ac_on_with_windows_open_at_elis_room
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.elis_room_right_window', ['climate.elis_room_ac']) }}
-    attributes:
-      elis_room_right_window: "{{ states('binary_sensor.elis_room_right_window') }}"
-      elis_room_ac: " {{ states('climate.elis_room_ac') }}"
-
-  - name: AC On With Doors Open at Hallway
-    unique_id: binary_sensor.ac_on_with_doors_open_at_hallway
-    state: >
-      {{ is_state('binary_sensor.ac_on_with_door_open_at_elenas_room', 'on')
-        or is_state('binary_sensor.ac_on_with_door_open_at_elis_room', 'on')
-        or is_state('binary_sensor.ac_on_with_door_open_at_powder_room', 'on')
-        or is_state('binary_sensor.ac_on_with_door_open_at_junior_bathroom', 'on')
-      }}
-    attributes:
-      elenas_room_door: "{{ states('binary_sensor.elenas_room_door') }}"
-      elis_room_door: "{{ states('binary_sensor.elis_room_door') }}"
-      powder_room_door: "{{ states('binary_sensor.powder_room_door') }}"
-      junior_bathroom_door: "{{ states('binary_sensor.junior_bathroom_door') }}"
-      elenas_room_ac: "{{ states('climate.elenas_room_ac') }}"
-      elis_room_ac: "{{ states('climate.elis_room_ac') }}"
-      dining_room_ac: "{{ states('climate.dining_room_ac') }}"
-
-  - name: AC On With Door Open at Study Room
-    unique_id: binary_sensor.ac_on_with_door_open_at_study_room
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.parents_room_door', ['climate.study_room_ac', 'climate.parents_room_ac']) }}
-    attributes:
-      parents_room_door: "{{ states('binary_sensor.parents_room_door') }}"
-      parents_room_ac: "{{ states('climate.parents_room_ac') }}"
-      study_room_ac: "{{ states('climate.study_room_ac') }}"
-
-  - name: AC On With Door Open at Master Bathroom
-    unique_id: binary_sensor.ac_on_with_door_open_at_master_bathroom
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.master_bathroom_door', ['climate.parents_room_ac']) }}
-    attributes:
-      powder_room_door: "{{ states('binary_sensor.master_bathroom_door') }}"
-      parents_room_ac: " {{ states('climate.parents_room_ac') }}"
-
-  - name: AC On With Doors Open at Parents' Room
-    unique_id: binary_sensor.ac_on_with_doors_open_at_parents_room
-    state: >
-      {{ is_state('binary_sensor.ac_on_with_door_open_at_study_room', 'on')
-        or is_state('binary_sensor.ac_on_with_door_open_at_master_bathroom', 'on')
-      }}
-    attributes:
-      parents_room_door: "{{ states('binary_sensor.parents_room_door') }}"
-      master_bathroom_door: "{{ states('binary_sensor.master_bathroom_door') }}"
-      parents_room_ac: "{{ states('climate.parents_room_ac') }}"
-      study_room_ac: "{{ states('climate.study_room_ac') }}"
-
-  - name: AC On With Windows Open at Parents' Room
-    unique_id: binary_sensor.ac_on_with_windows_open_at_parents_room
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.parents_room_left_window', ['climate.parents_room_ac']) }}
-    attributes:
-      parents_room_left_window: "{{ states('binary_sensor.parents_room_left_window') }}"
-      parents_room_ac: " {{ states('climate.parents_room_ac') }}"
-
-  - name: AC On With Window Open at Kitchen
-    unique_id: binary_sensor.ac_on_with_window_open_at_kitchen
-    state: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
-      {{ ac_on_with_opening_open('binary_sensor.kitchen_window', ['climate.living_room_ac']) }}
-    attributes:
-      kitchen_window: "{{ states('binary_sensor.kitchen_window') }}"
-      living_room_ac: " {{ states('climate.living_room_ac') }}"
-
   - name: AC On With Doors Open
     unique_id: binary_sensor.ac_on_with_doors_open
     state: >
@@ -219,14 +79,18 @@
          or is_state('binary_sensor.ac_on_with_door_open_at_powder_room', 'on')
          or is_state('binary_sensor.ac_on_with_door_open_at_junior_bathroom', 'on')
          or is_state('binary_sensor.ac_on_with_door_open_at_dining_room', 'on')
-         or is_state('binary_sensor.ac_on_with_window_open_at_yard', 'on') 
          or is_state('binary_sensor.ac_on_with_doors_open_at_parents_room', 'on') 
-         or is_state('binary_sensor.ac_on_with_windows_open_at_parents_room', 'on') 
          or is_state('binary_sensor.ac_on_with_door_open_at_master_bathroom', 'on') 
+         or is_state('binary_sensor.ac_on_with_windows_open_at_elis_room', 'on') 
+         or is_state('binary_sensor.ac_on_with_windows_open_at_elenas_room', 'on') 
+         or is_state('binary_sensor.ac_on_with_windows_open_at_parents_room', 'on') 
+         or is_state('binary_sensor.ac_on_with_window_open_at_yard', 'on') 
          or is_state('binary_sensor.ac_on_with_window_open_at_kitchen', 'on') }}
     attributes:
       elenas_room_door: "{{ states('binary_sensor.elenas_room_door') }}"
+      elenas_room_left_window: "{{ states('binary_sensor.elenas_room_left_window') }}"
       elis_room_door: "{{ states('binary_sensor.elis_room_door') }}"
+      elis_room_right_window: "{{ states('binary_sensor.elis_room_right_window') }}"
       powder_room_door: "{{ states('binary_sensor.powder_room_door') }}"
       junior_bathroom_door: "{{ states('binary_sensor.junior_bathroom_door') }}"
       main_door: "{{ states('binary_sensor.main_door') }}"
