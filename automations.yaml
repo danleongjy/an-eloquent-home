@@ -510,15 +510,15 @@
   - platform: template
     value_template: '{{ now() > [[as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo)
       - timedelta(minutes = 30), as_datetime(states(''input_datetime.graces_next_alarm'')).astimezone(now().tzinfo)
-      - timedelta(minutes = 30)] | max, today_at(''08:00'') ] | min }}'
+      - timedelta(minutes = 30)] | max, today_at(''10:00'')] | min }}'
     id: parents_room
   - platform: template
-    value_template: '{{ now() > as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo)
-      - timedelta(minutes = 30) }}'
+    value_template: '{{ now() > [as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo)
+      - timedelta(minutes = 30), today_at(''10:00'')] | min }}'
     id: elis_room
   - platform: template
-    value_template: '{{ now() > as_datetime(states(''input_datetime.elenas_next_alarm'')).astimezone(now().tzinfo)
-      - timedelta(minutes = 30) }}'
+    value_template: '{{ now() > [as_datetime(states(''input_datetime.elenas_next_alarm'')).astimezone(now().tzinfo)
+      - timedelta(minutes = 30), today_at(''10:00'')] | min }}'
     id: elenas_room
   condition: []
   action:
