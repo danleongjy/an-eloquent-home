@@ -620,14 +620,6 @@
       lux: "{{ states('sensor.kitchen_radar_lux') }}"
       kitchen_lights: "{{ states('light.kitchen_lights') }}"
 
-- image:
-  - url: https://an-eloquent-home.duckdns.org/local/{{ (state_attr('sensor.rain_radar','file_list') | sort)[-1][12:] }}
-    name: Rain Radar Animation
-    unique_id: image.rain_radar_animation
-  - url: https://an-eloquent-home.duckdns.org/local/clock_faces/{{ '0' + (states('sensor.time').split(':')[0] | int(0) % 12) | string if states('sensor.time').split(':')[0] | int(0) % 12 < 10 else states('sensor.time').split(':')[0] | int(0) % 12 }}_{{ states('sensor.time').split(':')[1] }}.png
-    name: Clock Face
-    unique_id: image.clock_face
-
 - trigger:
     - platform: state
       entity_id: binary_sensor.playroom_radar_motion
