@@ -962,83 +962,39 @@
                     }
                   },
                   "on": {
-                    "type": "custom:state-switch",
-                    "entity": "[[fan_direction_indicator]]",
-                    "default": "forward",
-                    "states": {
-                      "forward": {
-                        "type": "custom:slider-button-card",
-                        "entity": "[[fan_entity]]",
-                        "slider": {
-                          "direction": "bottom-top",
-                          "background": "solid",
-                          "use_state_color": false,
-                          "use_percentage_bg_opacity": false,
-                          "show_track": false,
-                          "toggle_on_click": false,
-                          "force_square": true
-                        },
-                        "show_name": false,
-                        "show_state": false,
-                        "compact": true,
-                        "icon": {
-                          "show": true,
-                          "use_state_color": true,
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_on",
-                            "service_data": {
-                              "entity_id": "[[fan_auto_control_automation]]"
-                            }
-                          },
-                          "icon": "mdi:fan-chevron-down"
-                        },
-                        "action_button": {
-                          "mode": "toggle",
-                          "icon": "mdi:power",
-                          "show": false,
-                          "show_spinner": true,
-                          "tap_action": {
-                            "action": "toggle"
-                          }
+                    "type": "custom:slider-button-card",
+                    "entity": "[[fan_entity]]",
+                    "slider": {
+                      "direction": "bottom-top",
+                      "background": "striped",
+                      "use_state_color": false,
+                      "use_percentage_bg_opacity": false,
+                      "show_track": false,
+                      "toggle_on_click": false,
+                      "force_square": true
+                    },
+                    "show_name": false,
+                    "show_state": false,
+                    "compact": true,
+                    "icon": {
+                      "show": true,
+                      "use_state_color": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": "[[fan_auto_control_automation]]"
                         }
                       },
-                      "reverse": {
-                        "type": "custom:slider-button-card",
-                        "entity": "[[fan_entity]]",
-                        "slider": {
-                          "direction": "bottom-top",
-                          "background": "solid",
-                          "use_state_color": false,
-                          "use_percentage_bg_opacity": false,
-                          "show_track": false,
-                          "toggle_on_click": false,
-                          "force_square": true
-                        },
-                        "show_name": false,
-                        "show_state": false,
-                        "compact": true,
-                        "icon": {
-                          "show": true,
-                          "use_state_color": true,
-                          "tap_action": {
-                            "action": "call-service",
-                            "service": "automation.turn_on",
-                            "service_data": {
-                              "entity_id": "[[fan_auto_control_automation]]"
-                            }
-                          },
-                          "icon": "mdi:fan-chevron-up"
-                        },
-                        "action_button": {
-                          "mode": "toggle",
-                          "icon": "mdi:power",
-                          "show": false,
-                          "show_spinner": true,
-                          "tap_action": {
-                            "action": "toggle"
-                          }
-                        }
+                      "icon": "[[fan_icon]]"
+                    },
+                    "action_button": {
+                      "mode": "toggle",
+                      "icon": "mdi:power",
+                      "show": false,
+                      "show_spinner": true,
+                      "tap_action": {
+                        "action": "toggle"
                       }
                     }
                   }
@@ -1047,33 +1003,61 @@
               "on": {
                 "type": "custom:state-switch",
                 "entity": "[[fan_entity]]",
-                "default": "available",
+                "default": "disabled",
                 "states": {
                   "disabled": {
                     "type": "custom:button-card",
                     "entity": "[[fan_entity]]",
                     "template": "error"
                   },
-                  "available": {
+                  "off": {
                     "type": "custom:button-card",
                     "entity": "[[fan_entity]]",
                     "template": "turn_on",
                     "icon": "[[[ if (entity.attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
-                    "label": "[[[ return entity.attributes.percentage + '%';]]]",
-                    "show_label": true,
                     "double_tap_action": {
                       "action": "call-service",
                       "service": "automation.turn_off",
                       "service_data": {
                         "entity_id": "[[fan_auto_control_automation]]"
                       }
+                    }
+                  },
+                  "on": {
+                    "type": "custom:slider-button-card",
+                    "entity": "[[fan_entity]]",
+                    "slider": {
+                      "direction": "bottom-top",
+                      "background": "solid",
+                      "use_state_color": false,
+                      "use_percentage_bg_opacity": false,
+                      "show_track": false,
+                      "toggle_on_click": false,
+                      "force_square": true
                     },
-                    "styles": {
-                      "icon": [
-                        {
-                          "animation": "[[[ \n  if (entity.state == 'on') {\n    return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n  } else {\n    return ''\n  }\n]]]"
+                    "show_name": false,
+                    "show_state": false,
+                    "compact": true,
+                    "icon": {
+                      "show": true,
+                      "use_state_color": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": "[[fan_auto_control_automation]]"
                         }
-                      ]
+                      },
+                      "icon": "[[fan_icon]]"
+                    },
+                    "action_button": {
+                      "mode": "toggle",
+                      "icon": "mdi:power",
+                      "show": false,
+                      "show_spinner": true,
+                      "tap_action": {
+                        "action": "toggle"
+                      }
                     }
                   }
                 }
@@ -1716,6 +1700,83 @@
             }
           }
         },
+        "floorplan_slider_auto_control": {
+          "card": {
+            "type": "custom:state-switch",
+            "entity": "[[auto_control_entity]]",
+            "default": "off",
+            "states": {
+              "on": {
+                "type": "custom:slider-button-card",
+                "entity": "[[slider_entity]]",
+                "slider": {
+                  "direction": "bottom-top",
+                  "background": "solid",
+                  "use_state_color": false,
+                  "use_percentage_bg_opacity": false,
+                  "show_track": false,
+                  "toggle_on_click": false,
+                  "force_square": true,
+                  "invert": false
+                },
+                "show_name": false,
+                "show_state": false,
+                "compact": true,
+                "icon": {
+                  "show": false,
+                  "use_state_color": true,
+                  "tap_action": {
+                    "action": "more-info"
+                  },
+                  "icon": ""
+                },
+                "action_button": {
+                  "mode": "toggle",
+                  "icon": "mdi:power",
+                  "show": false,
+                  "show_spinner": true,
+                  "tap_action": {
+                    "action": null
+                  }
+                }
+              },
+              "off": {
+                "type": "custom:slider-button-card",
+                "entity": "[[slider_entity]]",
+                "slider": {
+                  "direction": "bottom-top",
+                  "background": "striped",
+                  "use_state_color": false,
+                  "use_percentage_bg_opacity": false,
+                  "show_track": false,
+                  "toggle_on_click": false,
+                  "force_square": true,
+                  "invert": false
+                },
+                "show_name": false,
+                "show_state": false,
+                "compact": true,
+                "icon": {
+                  "show": false,
+                  "use_state_color": true,
+                  "tap_action": {
+                    "action": "more-info"
+                  },
+                  "icon": ""
+                },
+                "action_button": {
+                  "mode": "toggle",
+                  "icon": "mdi:power",
+                  "show": false,
+                  "show_spinner": true,
+                  "tap_action": {
+                    "action": null
+                  }
+                }
+              }
+            }
+          }
+        },
         "floorplan_slider_icon_disabled": {
           "card": {
             "type": "custom:button-card",
@@ -1790,79 +1851,22 @@
                 ]
               },
               "available": {
-                "type": "custom:state-switch",
-                "entity": "[[fan_auto_control_automation]]",
-                "default": "off",
-                "states": {
-                  "off": {
-                    "type": "custom:button-card",
-                    "entity": "[[fan_entity]]",
-                    "template": "floorplan_turn_on",
-                    "icon": "[[[ \n  if (entity.attributes.direction == 'forward') \n    return 'mdi:fan-chevron-down'; \n  else \n    return 'mdi:fan-chevron-up';\n]]]",
-                    "styles": {
-                      "icon": [
-                        {
-                          "animation": "[[[ \n  if (entity.state == 'on') {\n    return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n  } else {\n    return ''\n  }\n]]]"
-                        }
-                      ]
-                    },
-                    "double_tap_action": {
-                      "action": "call-service",
-                      "service": "automation.toggle",
-                      "service_data": {
-                        "entity_id": "[[fan_auto_control_automation]]"
-                      }
+                "type": "custom:button-card",
+                "entity": "[[fan_entity]]",
+                "template": "floorplan_turn_on",
+                "icon": "[[[ \n  if (entity.attributes.direction == 'forward') \n    return 'mdi:fan-chevron-down'; \n  else \n    return 'mdi:fan-chevron-up';\n]]]",
+                "styles": {
+                  "icon": [
+                    {
+                      "animation": "[[[ \n  if (entity.state == 'on') {\n    return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n  } else {\n    return ''\n  }\n]]]"
                     }
-                  },
-                  "on": {
-                    "type": "custom:button-card",
-                    "entity": "[[fan_entity]]",
-                    "template": "floorplan_turn_on",
-                    "icon": "[[[ \n  if (entity.attributes.direction == 'forward') \n    return 'mdi:fan-chevron-down'; \n  else \n    return 'mdi:fan-chevron-up';\n]]]",
-                    "custom_fields": {
-                      "auto_control": "A"
-                    },
-                    "styles": {
-                      "icon": [
-                        {
-                          "animation": "[[[ \n  if (entity.state == 'on') {\n    return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n  } else {\n    return ''\n  }\n]]]"
-                        }
-                      ],
-                      "grid": [
-                        {
-                          "position": "relative"
-                        }
-                      ],
-                      "custom_fields": {
-                        "auto_control": [
-                          {
-                            "color": "#f2900f"
-                          },
-                          {
-                            "font-size": "10px"
-                          },
-                          {
-                            "font-weight": "bold"
-                          },
-                          {
-                            "position": "absolute"
-                          },
-                          {
-                            "right": "5%"
-                          },
-                          {
-                            "top": "-5%"
-                          }
-                        ]
-                      }
-                    },
-                    "double_tap_action": {
-                      "action": "call-service",
-                      "service": "automation.toggle",
-                      "service_data": {
-                        "entity_id": "[[fan_auto_control_automation]]"
-                      }
-                    }
+                  ]
+                },
+                "double_tap_action": {
+                  "action": "call-service",
+                  "service": "automation.toggle",
+                  "service_data": {
+                    "entity_id": "[[fan_auto_control_automation]]"
                   }
                 }
               }
@@ -3449,10 +3453,13 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "fan.elenas_room_fan"
+                          },
+                          {
+                            "auto_control_entity": "automation.elenas_room_fan_auto_control"
                           }
                         ],
                         "style": {
@@ -3552,10 +3559,13 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "fan.elis_room_fan"
+                          },
+                          {
+                            "auto_control_entity": "automation.elis_room_fan_auto_control"
                           }
                         ],
                         "style": {
@@ -3685,10 +3695,13 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "fan.dining_room_fan"
+                          },
+                          {
+                            "auto_control_entity": "automation.dining_room_fan_auto_control"
                           }
                         ],
                         "style": {
@@ -3878,10 +3891,13 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "fan.living_room_fan"
+                          },
+                          {
+                            "auto_control_entity": "automation.living_room_fan_auto_control"
                           }
                         ],
                         "style": {
@@ -4590,10 +4606,13 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "fan.study_room_fan"
+                          },
+                          {
+                            "auto_control_entity": "automation.study_room_fan_auto_control"
                           }
                         ],
                         "style": {
@@ -4756,10 +4775,13 @@
                       },
                       {
                         "type": "custom:decluttering-card",
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "fan.parents_room_fan"
+                          },
+                          {
+                            "auto_control_entity": "automation.parents_room_fan_auto_control"
                           }
                         ],
                         "style": {
@@ -5028,19 +5050,41 @@
                             "color_type": "blank-card"
                           },
                           {
-                            "type": "custom:decluttering-card",
-                            "template": "fan",
-                            "variables": [
-                              {
-                                "fan_entity": "fan.elenas_room_fan"
+                            "type": "custom:state-switch",
+                            "entity": "input_select.elenas_room_fan_direction",
+                            "default": "forward",
+                            "states": {
+                              "forward": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.elenas_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.elenas_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-down"
+                                  }
+                                ]
                               },
-                              {
-                                "fan_auto_control_automation": "automation.elenas_room_fan_auto_control"
-                              },
-                              {
-                                "fan_direction_indicator": "input_select.elenas_room_fan_direction"
+                              "reverse": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.elenas_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.elenas_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-up"
+                                  }
+                                ]
                               }
-                            ]
+                            }
                           },
                           {
                             "type": "custom:decluttering-card",
@@ -5073,19 +5117,41 @@
                             "color_type": "blank-card"
                           },
                           {
-                            "type": "custom:decluttering-card",
-                            "template": "fan",
-                            "variables": [
-                              {
-                                "fan_entity": "fan.elis_room_fan"
+                            "type": "custom:state-switch",
+                            "entity": "input_select.elias_room_fan_direction",
+                            "default": "forward",
+                            "states": {
+                              "forward": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.elis_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.elis_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-down"
+                                  }
+                                ]
                               },
-                              {
-                                "fan_auto_control_automation": "automation.elis_room_fan_auto_control"
-                              },
-                              {
-                                "fan_direction_indicator": "input_select.elis_room_fan_direction"
+                              "reverse": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.elis_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.elis_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-up"
+                                  }
+                                ]
                               }
-                            ]
+                            }
                           },
                           {
                             "type": "custom:decluttering-card",
@@ -5162,19 +5228,41 @@
                             ]
                           },
                           {
-                            "type": "custom:decluttering-card",
-                            "template": "fan",
-                            "variables": [
-                              {
-                                "fan_entity": "fan.dining_room_fan"
+                            "type": "custom:state-switch",
+                            "entity": "sensor.dining_room_fan_direction",
+                            "default": "forward",
+                            "states": {
+                              "forward": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.dining_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.dining_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-down"
+                                  }
+                                ]
                               },
-                              {
-                                "fan_auto_control_automation": "automation.dining_room_fan_auto_control"
-                              },
-                              {
-                                "fan_direction_indicator": "sensor.dining_room_fan_direction"
+                              "reverse": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.dining_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.dining_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-up"
+                                  }
+                                ]
                               }
-                            ]
+                            }
                           },
                           {
                             "type": "custom:decluttering-card",
@@ -5220,19 +5308,41 @@
                             ]
                           },
                           {
-                            "type": "custom:decluttering-card",
-                            "template": "fan",
-                            "variables": [
-                              {
-                                "fan_entity": "fan.living_room_fan"
+                            "type": "custom:state-switch",
+                            "entity": "sensor.living_room_fan_direction",
+                            "default": "forward",
+                            "states": {
+                              "forward": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.living_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.living_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-down"
+                                  }
+                                ]
                               },
-                              {
-                                "fan_auto_control_automation": "automation.living_room_fan_auto_control"
-                              },
-                              {
-                                "fan_direction_indicator": "sensor.living_room_fan_direction"
+                              "reverse": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.living_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.living_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-up"
+                                  }
+                                ]
                               }
-                            ]
+                            }
                           },
                           {
                             "type": "custom:decluttering-card",
@@ -5273,19 +5383,41 @@
                             "color_type": "blank-card"
                           },
                           {
-                            "type": "custom:decluttering-card",
-                            "template": "fan",
-                            "variables": [
-                              {
-                                "fan_entity": "fan.study_room_fan"
+                            "type": "custom:state-switch",
+                            "entity": "sensor.study_room_fan_direction",
+                            "default": "forward",
+                            "states": {
+                              "forward": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.study_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.study_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-down"
+                                  }
+                                ]
                               },
-                              {
-                                "fan_auto_control_automation": "automation.study_room_fan_auto_control"
-                              },
-                              {
-                                "fan_direction_indicator": "sensor.study_room_fan_direction"
+                              "reverse": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.study_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.study_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-up"
+                                  }
+                                ]
                               }
-                            ]
+                            }
                           },
                           {
                             "type": "custom:decluttering-card",
@@ -5326,19 +5458,41 @@
                             "color_type": "blank-card"
                           },
                           {
-                            "type": "custom:decluttering-card",
-                            "template": "fan",
-                            "variables": [
-                              {
-                                "fan_entity": "fan.parents_room_fan"
+                            "type": "custom:state-switch",
+                            "entity": "input_select.parents_room_fan_direction",
+                            "default": "forward",
+                            "states": {
+                              "forward": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.parents_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.parents_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-down"
+                                  }
+                                ]
                               },
-                              {
-                                "fan_auto_control_automation": "automation.parents_room_fan_auto_control"
-                              },
-                              {
-                                "fan_direction_indicator": "input_select.parents_room_fan_direction"
+                              "reverse": {
+                                "type": "custom:decluttering-card",
+                                "template": "fan",
+                                "variables": [
+                                  {
+                                    "fan_entity": "fan.parents_room_fan"
+                                  },
+                                  {
+                                    "fan_auto_control_automation": "automation.parents_room_fan_auto_control"
+                                  },
+                                  {
+                                    "fan_icon": "mdi:fan-chevron-up"
+                                  }
+                                ]
                               }
-                            ]
+                            }
                           },
                           {
                             "type": "custom:decluttering-card",
