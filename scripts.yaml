@@ -787,13 +787,14 @@ botc_day_night_toggle:
       - light: light.study_room_lights
         door: none
   - condition: template
-    value_template: '{{ set_day }}'
+    value_template: '{{ not set_day }}'
   - action: media_player.volume_set
     metadata: {}
     data:
       volume_level: 0.8
     target:
       entity_id: media_player.all_speakers
+    enabled: false
   - action: media_player.play_media
     metadata: {}
     data:
@@ -801,6 +802,7 @@ botc_day_night_toggle:
       media_content_type: music
     target:
       entity_id: media_player.all_speakers
+    enabled: false
   description: Set lights to day or night mode for BotC games
   icon: mdi:theme-light-dark
   fields:
