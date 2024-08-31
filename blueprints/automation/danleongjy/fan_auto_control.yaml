@@ -53,8 +53,19 @@ blueprint:
           domain: input_number
       default: input_number.bedrooms_fan_speed_when_warm
 trigger:
-  - platform: state
+  - platform: numeric_state
     entity_id: !input temp_sensor
+    below: !input low_temp
+    id: cool
+  - platform: numeric_state
+    entity_id: !input temp_sensor
+    above: !input low_temp
+    below: !input high_temp
+    id: warm
+  - platform: numeric_state
+    entity_id: !input temp_sensor
+    above: !input high_temp
+    id: hot
 condition:
   - condition: state
     entity_id: !input fan
@@ -68,8 +79,8 @@ action:
       high_temperature: !input high_temp
   - choose:
       - conditions:
-          - condition: template
-            value_template: "{{ states(temperature_sensor) | int(30) < low_temperature }}"
+          - condition: trigger
+            id: cool
         sequence:
           - if:
               - condition: not
@@ -97,8 +108,8 @@ action:
                 target:
                   entity_id: !input fan
       - conditions:
-          - condition: template
-            value_template: "{{ states(temperature_sensor) | int(30) >= low_temperature and states(temperature_sensor) | int(30) < high_temperature }}"
+          - condition: trigger
+            id: warm
         sequence:
           - if:
               - condition: not
