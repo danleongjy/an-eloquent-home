@@ -79,15 +79,12 @@ action:
           - condition: trigger
             id: timeout_doors_open
         sequence:
-          - condition: template
-            value_template: >
-              {{ now() - (states.binary_sensor | selectattr('entity_id', 'in', motion_sensors) | map(attribute = 'last_changed') | list | sort)[-1] > timedelta(minutes = states(minutes_doors_open) | int) }}
           - delay: 0.05
           - condition: template
             value_template: >
               {{ doors | length == 0 
                  or ('on' in states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list 
-                     and now() - (states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'last_changed') | list | sort)[-1] > timedelta(minutes = states(minutes_doors_open) | int )) }}
+                     and now() - (states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'last_changed') | list | sort)[-1] >= timedelta(minutes = states(minutes_doors_open) | int )) }}
           - repeat:
               for_each: !input turnoff_entities_list
               sequence:
@@ -102,9 +99,6 @@ action:
           - condition: trigger
             id: timeout_doors_closed
         sequence:
-          - condition: template
-            value_template: >
-              {{ now() - (states.binary_sensor | selectattr('entity_id', 'in', motion_sensors) | map(attribute = 'last_changed') | list | sort)[-1] > timedelta(minutes = states(minutes_doors_closed) | int) }}
           - delay: 0.05
           - repeat:
               for_each: !input turnoff_entities_list
