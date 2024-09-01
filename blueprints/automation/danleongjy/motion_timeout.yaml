@@ -1,5 +1,5 @@
 blueprint:
-  name: Motion Timeout Bedrooms
+  name: Motion Timeout
   description: Turn off a list of entities when no motion is detected for a certain amount of time depending on whether the doors are closed.
   domain: automation
   input:
@@ -70,15 +70,6 @@ trigger:
       minutes: "{{ states(minutes_doors_closed) | int }}"
     id: timeout_doors_closed
 condition:
-  - condition: state
-    entity_id: !input motion_sensor
-    state: 'off'
-    for:
-      minutes: >
-        {{ states(minutes_doors_open) 
-           if doors | length == 0 or ('on' in states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list
-           else states(minutes_doors_closed)
-        }}
   - condition: template
     value_template: >
       {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
@@ -87,6 +78,9 @@ action:
       - condition: trigger
         id: timeout_doors_open
     then:
+      - condition: template
+        value_template: >
+          {{ now() - (states.binary_sensor | selectattr('entity_id', 'in', motion_sensors) | map(attribute = 'last_changed') | list | sort)[-1] > timedelta(minutes = states(minutes_doors_open) | int) }}
       - delay: 0.05
       - condition: template
         value_template: >
@@ -104,6 +98,9 @@ action:
                 target:
                   entity_id: "{{ repeat.item }}"
     else:
+      - condition: template
+        value_template: >
+          {{ now() - (states.binary_sensor | selectattr('entity_id', 'in', motion_sensors) | map(attribute = 'last_changed') | list | sort)[-1] > timedelta(minutes = states(minutes_doors_closed) | int) }}
       - delay: 0.05
       - repeat:
           for_each: !input turnoff_entities_list
