@@ -74,33 +74,49 @@ condition:
     value_template: >
       {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
 action:
-  - if:
-      - condition: trigger
-        id: timeout_doors_open
-    then:
-      - condition: template
-        value_template: >
-          {{ now() - (states.binary_sensor | selectattr('entity_id', 'in', motion_sensors) | map(attribute = 'last_changed') | list | sort)[-1] > timedelta(minutes = states(minutes_doors_open) | int) }}
-      - delay: 0.05
-      - condition: template
-        value_template: >
-          {{ doors | length == 0 
-             or ('on' in states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list 
-                 and now() - (states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'last_changed') | list | sort)[-1] > timedelta(minutes = states(minutes_doors_open) | int )) }}
-      - repeat:
-          for_each: !input turnoff_entities_list
-          sequence:
-            - if:
-              - condition: template
-                value_template: "{{ states(repeat.item) != 'off' }}"
-              then:
-              - action: homeassistant.turn_off
-                target:
-                  entity_id: "{{ repeat.item }}"
-    else:
-      - condition: template
-        value_template: >
-          {{ now() - (states.binary_sensor | selectattr('entity_id', 'in', motion_sensors) | map(attribute = 'last_changed') | list | sort)[-1] > timedelta(minutes = states(minutes_doors_closed) | int) }}
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: timeout_doors_open
+        sequence:
+          - condition: template
+            value_template: >
+              {{ now() - (states.binary_sensor | selectattr('entity_id', 'in', motion_sensors) | map(attribute = 'last_changed') | list | sort)[-1] > timedelta(minutes = states(minutes_doors_open) | int) }}
+          - delay: 0.05
+          - condition: template
+            value_template: >
+              {{ doors | length == 0 
+                 or ('on' in states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list 
+                     and now() - (states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'last_changed') | list | sort)[-1] > timedelta(minutes = states(minutes_doors_open) | int )) }}
+          - repeat:
+              for_each: !input turnoff_entities_list
+              sequence:
+                - if:
+                  - condition: template
+                    value_template: "{{ states(repeat.item) != 'off' }}"
+                  then:
+                  - action: homeassistant.turn_off
+                    target:
+                      entity_id: "{{ repeat.item }}"
+      - conditions:
+          - condition: trigger
+            id: timeout_doors_closed
+        sequence:
+          - condition: template
+            value_template: >
+              {{ now() - (states.binary_sensor | selectattr('entity_id', 'in', motion_sensors) | map(attribute = 'last_changed') | list | sort)[-1] > timedelta(minutes = states(minutes_doors_closed) | int) }}
+          - delay: 0.05
+          - repeat:
+              for_each: !input turnoff_entities_list
+              sequence:
+                - if:
+                  - condition: template
+                    value_template: "{{ states(repeat.item) != 'off' }}"
+                  then:
+                  - action: homeassistant.turn_off
+                    target:
+                      entity_id: "{{ repeat.item }}"
+    default:
       - delay: 0.05
       - repeat:
           for_each: !input turnoff_entities_list
