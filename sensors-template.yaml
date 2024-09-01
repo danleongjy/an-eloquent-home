@@ -324,22 +324,6 @@
       local_rainfall: "{{ states('sensor.local_rainfall') }}"
       local_two_hour_forecast: "{{ states('sensor.local_two_hour_forecast') }}"
 
-  - name: Dishwasher Last Run Duration
-    unique_id: sensor.dishwasher_last_run_duration
-    state: >
-      {% from 'text_formatting.jinja' import run_time %}
-      {{ run_time(states('input_datetime.dishwasher_last_run_start') | as_datetime,
-                  states('input_datetime.dishwasher_last_run_end') | as_datetime,
-                  -3) }}
-
-  - name: Rice Cooker Last Run Duration
-    unique_id: sensor.rice_cooker_last_run_duration
-    state: >
-      {% from 'text_formatting.jinja' import run_time %}
-      {{ run_time(states('input_datetime.rice_cooker_last_run_start') | as_datetime,
-                  states('input_datetime.rice_cooker_last_run_end') | as_datetime,
-                  -3) }}
-
   - name: Dining Room Fan Direction
     unique_id: sensor.dining_room_fan_direction
     state: "{{ state_attr('fan.dining_room_fan','direction') }}"
@@ -800,39 +784,90 @@
         kitchen_stove_motion: "{{ states('binary_sensor.kitchen_stove_motion') }}"
 
 - trigger:
-  - platform: time_pattern
-    minutes: '/1'
+  - platform: state
+    entity_id: input_select.dishwasher_status
+    from:
+      - Standby
+      - "Off"
+    to: Washing
+  sensor:
+    - name: Dishwasher Last Run Started
+      unique_id: sensor.dishwasher_last_run_started
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+
+- trigger:
+  - platform: state
+    entity_id: input_select.dishwasher_status
+    from: Cooling
+    to: "Off"
+  sensor:
+    - name: Dishwasher Last Run Ended
+      unique_id: sensor.dishwasher_last_run_ended
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+      
+- trigger:
+  - platform: state
+    entity_id: input_select.dishwasher_status
+    from: Cooling
+    to: "Off"
+    for: 1
+  sensor:
+    - name: Dishwasher Last Run Duration
+      unique_id: sensor.dishwasher_last_run_duration
+      state: "{{ states('sensor.dishwasher_last_run_ended') | as_datetime - states('sensor.dishwasher_last_run_started') | as_datetime }}"
+
+- trigger:
+  - platform: state
+    entity_id: binary_sensor.washer_wash_completed
+    from: "off"
+    to: "on"
   sensor:
     - name: Washer Last Wash Completed
       unique_id: sensor.washer_last_wash_completed
-      state: >
-        {{ (states('input_datetime.washer_last_wash_complete') | as_datetime | as_local ).isoformat() }}
+      state: "{{ now().isoformat() }}"
       device_class: timestamp
 
-    - name: Dishwasher Last Run Started
-      unique_id: sensor.dishwasher_last_run_started
-      state: >
-        {{ (states('input_datetime.dishwasher_last_run_start') | as_datetime | as_local ).isoformat() }}
-      device_class: timestamp
-
-    - name: Dishwasher Last Run Ended
-      unique_id: sensor.dishwasher_last_run_ended
-      state: >
-        {{ (states('input_datetime.dishwasher_last_run_end') | as_datetime | as_local ).isoformat() }}
-      device_class: timestamp
-
+- trigger:
+  - platform: state
+    entity_id: input_select.rice_cooker_status
+    from: 
+      - "Off"
+      - Standby
+    to: Cooking
+  sensor:
     - name: Rice Cooker Last Run Started
       unique_id: sensor.rice_cooker_last_run_started
-      state: >
-        {% from 'text_formatting.jinja' import relative_age %}
-        {{ relative_age(states('input_datetime.rice_cooker_last_run_start') | as_datetime) }}
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
 
+- trigger:
+  - platform: state
+    entity_id: input_select.rice_cooker_status
+    from: Cooking
+    to: Warming
+  sensor:
     - name: Rice Cooker Last Run Ended
       unique_id: sensor.rice_cooker_last_run_ended
-      state: >
-        {% from 'text_formatting.jinja' import relative_age %}
-        {{ relative_age(states('input_datetime.rice_cooker_last_run_end') | as_datetime) }}
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+      
+- trigger:
+  - platform: state
+    entity_id: input_select.rice_cooker_status
+    from: Cooking
+    to: Warming
+    for: 1
+  sensor:
+    - name: Rice Cooker Last Run Duration
+      unique_id: sensor.rice_cooker_last_run_duration
+      state: "{{ states('sensor.rice_cooker_last_run_ended') | as_datetime - states('sensor.rice_cooker_last_run_started') | as_datetime }}"
 
+- trigger:
+  - platform: time_pattern
+    minutes: '/1'
+  sensor:
     - name: Stove Last Use
       unique_id: sensor.stove_last_use
       state: >

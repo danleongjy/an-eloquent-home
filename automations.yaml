@@ -1836,23 +1836,18 @@
     - condition: trigger
       id: finished
     then:
-    - service: input_datetime.set_datetime
-      data:
-        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
-      target:
-        entity_id: input_datetime.washer_last_wash_complete
     - condition: state
       entity_id: binary_sensor.washer_door
       state: 'off'
-    - service: input_boolean.turn_on
-      data: {}
+    - data: {}
       target:
         entity_id: input_boolean.washer_load_clean
+      action: input_boolean.turn_on
     else:
-    - service: input_boolean.turn_off
-      data: {}
+    - data: {}
       target:
         entity_id: input_boolean.washer_load_clean
+      action: input_boolean.turn_off
   mode: single
 - id: '1661612907662'
   alias: Dishwasher Load Clean
@@ -2158,42 +2153,6 @@
       milliseconds: 10
   mode: single
   max_exceeded: silent
-- id: '1664612965128'
-  alias: Dishwasher Last Use
-  description: Track the start and end times of the last run of the dishwasher
-  trigger:
-  - platform: state
-    entity_id:
-    - input_select.dishwasher_status
-    to: Washing
-    from:
-    - Standby
-    - 'Off'
-    id: washing_start
-  - platform: state
-    entity_id:
-    - input_select.dishwasher_status
-    from: Cooling
-    to: 'Off'
-    id: washing_end
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: washing_start
-    then:
-    - service: input_datetime.set_datetime
-      data:
-        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
-      target:
-        entity_id: input_datetime.dishwasher_last_run_start
-    else:
-    - service: input_datetime.set_datetime
-      data:
-        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
-      target:
-        entity_id: input_datetime.dishwasher_last_run_end
-  mode: single
 - id: '1667350498199'
   alias: Away Mode
   description: Set automated controls and devices for away mode
@@ -2680,42 +2639,6 @@
           target:
             entity_id: input_select.rice_cooker_status
     default: []
-  mode: single
-- id: '1672735031886'
-  alias: Rice Cooker Last Use
-  description: Track the start and end times of the last run of the rice cooker
-  trigger:
-  - platform: state
-    entity_id:
-    - input_select.rice_cooker_status
-    from:
-    - 'Off'
-    - Standby
-    to: Cooking
-    id: cooking_start
-  - platform: state
-    entity_id:
-    - input_select.rice_cooker_status
-    from: Cooking
-    to: Warming
-    id: cooking_end
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: cooking_start
-    then:
-    - service: input_datetime.set_datetime
-      data:
-        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
-      target:
-        entity_id: input_datetime.rice_cooker_last_run_start
-    else:
-    - service: input_datetime.set_datetime
-      data:
-        datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
-      target:
-        entity_id: input_datetime.rice_cooker_last_run_end
   mode: single
 - id: '1672879233289'
   alias: Lights Auto Turn Off
