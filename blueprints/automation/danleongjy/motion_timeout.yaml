@@ -70,6 +70,15 @@ trigger:
       minutes: "{{ states(minutes_doors_closed) | int }}"
     id: timeout_doors_closed
 condition:
+  - condition: state
+    entity_id: !input motion_sensor
+    state: 'off'
+    for:
+      minutes: >
+        {{ states(minutes_doors_open) 
+           if doors | length == 0 or ('on' in states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list
+           else states(minutes_doors_closed)
+        }}
   - condition: template
     value_template: >
       {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
