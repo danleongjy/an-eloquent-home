@@ -737,19 +737,19 @@
     state: 'on'
     for:
       hours: 0
-      minutes: 3
+      minutes: 5
       seconds: 0
     entity_id: input_boolean.away_mode
   action:
-  - service: input_boolean.turn_off
-    data: {}
+  - data: {}
     target:
       entity_id: input_boolean.away_mode
-  - service: script.set_recommended_scene
-    data:
+    action: input_boolean.turn_off
+  - data:
       room:
       - dining_room
       - living_room
+    action: script.set_recommended_scene
   mode: single
 - id: '1653105007378'
   alias: Notify When Raining With Windows Open

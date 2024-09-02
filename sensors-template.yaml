@@ -865,19 +865,20 @@
       state: "{{ states('sensor.rice_cooker_last_run_ended') | as_datetime - states('sensor.rice_cooker_last_run_started') | as_datetime }}"
 
 - trigger:
-  - platform: time_pattern
-    minutes: '/1'
+  - platform: state
+    entity_id: switch.stove_main_power
+    from: 'on'
+    to: 'off'
   sensor:
     - name: Stove Last Use
       unique_id: sensor.stove_last_use
-      state: >
-        {% if states('switch.stove_main_power') == 'off' %}
-          {% from 'text_formatting.jinja' import relative_age %}
-          {{ relative_age(states.switch.stove_main_power.last_changed) }}
-        {% else %}
-          In use
-        {% endif %}
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
 
+- trigger:
+  - platform: time_pattern
+    minutes: '/1'
+  sensor:
     - name: Proxmox Last Boot
       unique_id: sensor.proxmox_last_boot
       state: >
