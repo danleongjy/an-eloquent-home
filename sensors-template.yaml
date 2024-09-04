@@ -231,31 +231,6 @@
       elenas_room_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[7] == 'T' }}"
       elena_next_alarm_dismissed: "{{ states('sensor.next_alarm_timings')[3] == 'E' }}"
 
-  - name: Washer Status
-    unique_id: sensor.washer_status
-    state: >
-      {% if is_state('sensor.washer','off') %}
-        Off
-      {% else %}
-        {{ state_attr('sensor.washer', 'run_state') }}
-      {% endif %}
-    attributes:
-      washer_power: "{{ states('sensor.washer') }}"
-      washer_run_state: "{{ state_attr('sensor.washer', 'run_state') }}"
-      washer_remaining_time: "{{ state_attr('sensor.washer', 'remain_time')[:-3] }}"
-      washer_reserve_time: "{{ state_attr('sensor.washer', 'reserve_time')[:-3] }}"
-
-  - name: Washer Countdown
-    unique_id: sensor.washer_countdown
-    state: >
-      {% if states('sensor.washer_status') == 'Delay Set' %}
-        {{ states('sensor.washer_countdown_time')[:-3] }}
-      {% elif states('sensor.washer_status') in ['Washing', 'Rinsing', 'Spinning'] %}
-        {{ states('sensor.washer_remaining_time')[:-3] }}
-      {% else %}
-        -
-      {% endif %}
-
   - name: Raining With Yard Windows Open
     unique_id: sensor.raining_with_yard_windows_open
     state: >
