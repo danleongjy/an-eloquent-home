@@ -876,34 +876,6 @@
       device_class: timestamp
 
 - trigger:
-  - platform: time_pattern
-    minutes: '/1'
-  sensor:
-    - name: Proxmox Last Boot
-      unique_id: sensor.proxmox_last_boot
-      state: >
-        {% from 'text_formatting.jinja' import relative_age %}
-        {{ relative_age(states('sensor.node_proxmox_uptime') | as_datetime) }}
-
-    - name: Home Assistant Last Boot
-      unique_id: sensor.home_assistant_last_boot
-      state: >
-        {% from 'text_formatting.jinja' import relative_age %}
-        {{ relative_age(states('sensor.last_boot') | as_datetime) }}
-
-    - name: Docker Last Boot
-      unique_id: sensor.docker_last_boot
-      state: >
-        {% from 'text_formatting.jinja' import relative_age %}
-        {{ relative_age(states('sensor.qemu_docker_102_uptime') | as_datetime) }}
-
-    - name: pfSense Last Boot
-      unique_id: sensor.pfsense_last_boot
-      state: >
-        {% from 'text_formatting.jinja' import relative_age %}
-        {{ relative_age(states('sensor.pfsense_system_boottime') | as_datetime) }}
-
-- trigger:
   - platform: state
     entity_id: binary_sensor.yard_window_1_raw
     not_to:

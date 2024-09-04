@@ -9846,11 +9846,10 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "horizontal-stack",
+                  "type": "vertical-stack",
                   "cards": [
                     {
-                      "type": "grid",
-                      "columns": 1,
+                      "type": "horizontal-stack",
                       "cards": [
                         {
                           "type": "custom:button-card",
@@ -9858,141 +9857,153 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "icon": "mdi:clock-start",
-                          "template": "square_cell"
+                          "icon": "mdi:clock-start"
                         },
                         {
                           "type": "custom:button-card",
-                          "icon": "mdi:memory",
-                          "template": "square_cell"
+                          "icon": "mdi:memory"
                         },
                         {
                           "type": "custom:button-card",
-                          "icon": "mdi:harddisk",
-                          "template": "square_cell"
+                          "icon": "mdi:harddisk"
                         }
                       ]
                     },
                     {
-                      "type": "vertical-stack",
+                      "type": "horizontal-stack",
                       "cards": [
                         {
                           "type": "custom:button-card",
                           "icon": "mdi:server",
-                          "template": "square_cell"
+                          "aspect_ratio": 2
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.proxmox_last_boot",
-                          "template": "square_cell",
+                          "entity": "sensor.node_proxmox_uptime",
+                          "show_name": false,
                           "show_icon": false,
-                          "show_state": true
+                          "show_state": true,
+                          "aspect_ratio": 2,
+                          "state_display": "[[[ \n  var elapsed_time = Date.now() - Date.parse(entity.state)\n  if (Math.floor(elapsed_time / 2592000000) > 0) {\n    return (Math.floor(elapsed_time / 2592000000)).toString() + 'mo'\n  } else if (Math.floor(elapsed_time / 86400000) > 0) {\n    return (Math.floor(elapsed_time / 86400000)).toString() + 'd'\n  } else if (Math.floor(elapsed_time / 3600000) > 0) {\n    return (Math.floor(elapsed_time / 3600000)).toString() + 'h'\n  } else if (Math.floor(elapsed_time / 60000) > 0) {\n    return (Math.floor(elapsed_time / 60000)).toString() + 'min'\n  } else {\n    return (Math.floor(elapsed_time / 1000)).toString() + 's'\n  }\n]]]\n"
                         },
                         {
                           "type": "custom:button-card",
                           "entity": "sensor.node_proxmox_memory_used_percentage",
-                          "template": "square_cell",
+                          "show_name": false,
                           "show_icon": false,
                           "show_state": true,
+                          "aspect_ratio": 2,
                           "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
                         },
                         {
                           "type": "custom:button-card",
                           "entity": "sensor.node_proxmox_disk_used_percentage",
-                          "template": "square_cell",
+                          "show_name": false,
                           "show_icon": false,
                           "show_state": true,
+                          "aspect_ratio": 2,
                           "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
                         }
                       ]
                     },
                     {
-                      "type": "vertical-stack",
+                      "type": "horizontal-stack",
                       "cards": [
                         {
                           "type": "custom:button-card",
                           "icon": "mdi:router-wireless",
-                          "template": "square_cell"
+                          "aspect_ratio": 2
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.pfsense_last_boot",
-                          "template": "square_cell",
+                          "entity": "sensor.pfsense_system_boottime",
+                          "show_name": false,
                           "show_icon": false,
-                          "show_state": true
+                          "show_state": true,
+                          "aspect_ratio": 2,
+                          "state_display": "[[[ \n  var elapsed_time = Date.now() - Date.parse(entity.state)\n  if (Math.floor(elapsed_time / 2592000000) > 0) {\n    return (Math.floor(elapsed_time / 2592000000)).toString() + 'mo'\n  } else if (Math.floor(elapsed_time / 86400000) > 0) {\n    return (Math.floor(elapsed_time / 86400000)).toString() + 'd'\n  } else if (Math.floor(elapsed_time / 3600000) > 0) {\n    return (Math.floor(elapsed_time / 3600000)).toString() + 'h'\n  } else if (Math.floor(elapsed_time / 60000) > 0) {\n    return (Math.floor(elapsed_time / 60000)).toString() + 'min'\n  } else {\n    return (Math.floor(elapsed_time / 1000)).toString() + 's'\n  }\n]]]\n"
                         },
                         {
                           "type": "custom:button-card",
                           "entity": "sensor.qemu_pfsense_100_memory_used_percentage",
-                          "template": "square_cell",
+                          "show_name": false,
                           "show_icon": false,
                           "show_state": true,
+                          "aspect_ratio": 2,
                           "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
                         },
                         {
                           "type": "custom:button-card",
                           "entity": "sensor.pfsense_filesystem_used_percentage_slash",
-                          "template": "square_cell",
+                          "show_name": false,
                           "show_icon": false,
                           "show_state": true,
+                          "aspect_ratio": 2,
                           "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
                         }
                       ]
                     },
                     {
-                      "type": "vertical-stack",
+                      "type": "horizontal-stack",
                       "cards": [
                         {
                           "type": "custom:button-card",
                           "icon": "mdi:home-assistant",
-                          "template": "square_cell"
+                          "aspect_ratio": 2
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.home_assistant_last_boot",
-                          "template": "square_cell",
+                          "entity": "sensor.last_boot",
+                          "show_name": false,
                           "show_icon": false,
-                          "show_state": true
+                          "show_state": true,
+                          "aspect_ratio": 2,
+                          "state_display": "[[[ \n  var elapsed_time = Date.now() - Date.parse(entity.state)\n  if (Math.floor(elapsed_time / 2592000000) > 0) {\n    return (Math.floor(elapsed_time / 2592000000)).toString() + 'mo'\n  } else if (Math.floor(elapsed_time / 86400000) > 0) {\n    return (Math.floor(elapsed_time / 86400000)).toString() + 'd'\n  } else if (Math.floor(elapsed_time / 3600000) > 0) {\n    return (Math.floor(elapsed_time / 3600000)).toString() + 'h'\n  } else if (Math.floor(elapsed_time / 60000) > 0) {\n    return (Math.floor(elapsed_time / 60000)).toString() + 'min'\n  } else {\n    return (Math.floor(elapsed_time / 1000)).toString() + 's'\n  }\n]]]\n"
                         },
                         {
                           "type": "custom:button-card",
                           "entity": "sensor.qemu_eloquent_house_101_memory_used_percentage",
-                          "template": "square_cell",
+                          "show_name": false,
                           "show_icon": false,
                           "show_state": true,
+                          "aspect_ratio": 2,
                           "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
                         },
                         {
                           "type": "custom:button-card",
                           "entity": "sensor.disk_use_percent",
-                          "template": "square_cell",
+                          "show_name": false,
                           "show_icon": false,
                           "show_state": true,
+                          "aspect_ratio": 2,
                           "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
                         }
                       ]
                     },
                     {
-                      "type": "vertical-stack",
+                      "type": "horizontal-stack",
                       "cards": [
                         {
                           "type": "custom:button-card",
                           "icon": "mdi:docker",
-                          "template": "square_cell"
+                          "aspect_ratio": 2
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.docker_last_boot",
-                          "template": "square_cell",
+                          "entity": "sensor.qemu_docker_102_uptime",
+                          "show_name": false,
                           "show_icon": false,
-                          "show_state": true
+                          "show_state": true,
+                          "aspect_ratio": 2,
+                          "state_display": "[[[ \n  var elapsed_time = Date.now() - Date.parse(entity.state)\n  if (Math.floor(elapsed_time / 2592000000) > 0) {\n    return (Math.floor(elapsed_time / 2592000000)).toString() + 'mo'\n  } else if (Math.floor(elapsed_time / 86400000) > 0) {\n    return (Math.floor(elapsed_time / 86400000)).toString() + 'd'\n  } else if (Math.floor(elapsed_time / 3600000) > 0) {\n    return (Math.floor(elapsed_time / 3600000)).toString() + 'h'\n  } else if (Math.floor(elapsed_time / 60000) > 0) {\n    return (Math.floor(elapsed_time / 60000)).toString() + 'min'\n  } else {\n    return (Math.floor(elapsed_time / 1000)).toString() + 's'\n  }\n]]]\n"
                         },
                         {
                           "type": "custom:button-card",
                           "entity": "sensor.qemu_docker_102_memory_used_percentage",
-                          "template": "square_cell",
+                          "show_name": false,
                           "show_icon": false,
                           "show_state": true,
+                          "aspect_ratio": 2,
                           "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
                         },
                         {
