@@ -483,6 +483,16 @@
 
 - trigger:
   - platform: state
+    entity_id: sensor.washer_run_state
+    to: Washing
+  sensor:
+    - name: Washer Last Wash Started
+      unique_id: sensor.washer_last_wash_started
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+
+- trigger:
+  - platform: state
     entity_id: binary_sensor.washer_wash_completed
     from: "off"
     to: "on"
@@ -491,6 +501,17 @@
       unique_id: sensor.washer_last_wash_completed
       state: "{{ now().isoformat() }}"
       device_class: timestamp
+
+- trigger:
+  - platform: state
+    entity_id: binary_sensor.washer_wash_completed
+    from: "off"
+    to: "on"
+    for: 1
+  sensor:
+    - name: Washer Last Wash Duration
+      unique_id: sensor.washer_last_wash_duration
+      state: "{{ states('sensor.washer_last_wash_completed') | as_datetime - states('sensor.washer_last_wash_started') | as_datetime }}"
 
 - trigger:
   - platform: state
