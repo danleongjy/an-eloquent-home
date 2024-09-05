@@ -67,26 +67,58 @@
       percentage_template: "{{ states('input_number.parents_room_fan_speed') | int }}"
       direction_template: "{{ states('input_select.parents_room_fan_direction') }}"
       turn_on:
-        service: input_boolean.turn_on
-        target:
-          entity_id: input_boolean.parents_room_fan_power
-      turn_off:
-        service: input_boolean.turn_off
-        target:
-          entity_id: input_boolean.parents_room_fan_power
-      set_percentage:
-        - service: input_boolean.turn_{{ 'on' if percentage > 0 else 'off' }}
+        - action: input_boolean.turn_on
           target:
             entity_id: input_boolean.parents_room_fan_power
-        - service: input_number.set_value
+        - action: automation.trigger
           target:
-            entity_id: input_number.parents_room_fan_speed
+            entity_id: automation.parents_room_fan_auto_control
+        #- action: remote.send_command
+        #  target:
+        #    entity_id: remote.parents_room_universal_remote
+        #  data:
+        #    device: Parents' Room Fan
+        #    command: "{{ ((states('input_number.parents_room_fan_speed') | int) / 100 * 6) | round(0) }}"
+      turn_off:
+        - action: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.parents_room_fan_power
+        - action: remote.send_command
+          target:
+            entity_id: remote.parents_room_universal_remote
           data:
-            value: "{{ percentage }}"
+            device: Parents' Room Fan
+            command: 'Off'
+      set_percentage:
+        - action: input_boolean.turn_{{ 'on' if percentage > 0 else 'off' }}
+          target:
+            entity_id: input_boolean.parents_room_fan_power
+        - if:
+            - condition: template
+              value_template: "{{ percentage > 0 }}"
+          then:
+            - action: input_number.set_value
+              target:
+                entity_id: input_number.parents_room_fan_speed
+              data:
+                value: "{{ percentage }}"
+        - action: remote.send_command
+          target:
+            entity_id: remote.parents_room_universal_remote
+          data:
+            device: Parents' Room Fan
+            command: "{{ 'Off' if percentage | int == 0 else ((percentage | int) / 100 * 6) | round(0) }}"
       set_direction:
-        service: script.fan_set_direction
-        data:
-          target_fan: Parents' Room Fan
-          direction: "{{ direction }}"
+        - action: input_select.select_option
+          target:
+            entity_id: input_select.parents_room_fan_direction
+          data:
+            option: "{{ direction }}"
+        - action: remote.send_command
+          target:
+            entity_id: remote.parents_room_universal_remote
+          data:
+            device: Parents' Room Fan
+            command: Reverse
       speed_count: 6
       
