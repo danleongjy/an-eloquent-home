@@ -56,31 +56,26 @@ trigger:
   - platform: numeric_state
     entity_id: !input temp_sensor
     below: !input low_temp
-    id: cool
   - platform: numeric_state
     entity_id: !input temp_sensor
     above: !input low_temp
     below: !input high_temp
-    id: warm
   - platform: numeric_state
     entity_id: !input temp_sensor
     above: !input high_temp
-    id: hot
 condition:
   - condition: state
     entity_id: !input fan
     state: "on"
 action:
   - variables:
-      temperature_sensor: !input temp_sensor
       low_fan_speed: !input low_speed
       high_fan_speed: !input high_speed
-      low_temperature: !input low_temp
-      high_temperature: !input high_temp
   - choose:
       - conditions:
-          - condition: trigger
-            id: cool
+          - condition: numeric_state
+            entity_id: !input temp_sensor
+            below: !input low_temp
         sequence:
           - if:
               - condition: not
@@ -108,8 +103,10 @@ action:
                 target:
                   entity_id: !input fan
       - conditions:
-          - condition: trigger
-            id: warm
+          - condition: numeric_state
+            entity_id: !input temp_sensor
+            above: !input low_temp
+            below: !input high_temp
         sequence:
           - if:
               - condition: not
