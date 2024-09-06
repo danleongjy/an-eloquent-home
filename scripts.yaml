@@ -881,15 +881,19 @@ doorbell:
             - target:
                 entity_id: '{{ rooms[repeat.item][''button''] }}'
               action: button.press
+      - data: {}
+        action: button.press
+        target:
+          entity_id: button.kitchen_core_ring_doorbell
+    - sequence:
+      - condition: state
+        entity_id: binary_sensor.study_room_ethernet_connection
+        state: 'off'
       - target:
           entity_id:
           - button.study_room_core_ring_doorbell
         data: {}
         action: button.press
-    - sequence:
-      - condition: state
-        entity_id: binary_sensor.study_room_ethernet_connection
-        state: 'off'
       - action: media_player.volume_set
         metadata: {}
         data:
@@ -909,12 +913,6 @@ doorbell:
             Susuki Heights V2'] | random }}.mp3\n"
           media_content_type: music
         action: media_player.play_media
-      - target:
-          entity_id:
-          - button.kitchen_core_ring_doorbell
-          - button.study_room_core_ring_doorbell
-        data: {}
-        action: button.press
   description: Play doorbell tones and flash Room Core lights
   icon: mdi:bell-ring-outline
   mode: restart
