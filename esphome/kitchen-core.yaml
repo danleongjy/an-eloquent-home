@@ -408,6 +408,8 @@ color:
     hex: 4D729D #41A7F2
   - id: auto_control
     hex: F2900F
+  - id: black
+    hex: '000000'
 
 font:
   - file: 
@@ -566,12 +568,14 @@ display:
           // main display
           if (id(blinds_position).state > 0) {
             it.filled_rectangle(0, id(height) * (0.7 - (0.7 * id(blinds_position).state) / 100), id(width), id(height) * (0.7 * id(blinds_position).state / 100), id(slider));
+            if (!id(blinds_auto_control).state) {
+              for (int i = 1; i <= 10; i++) {
+                id(interface_display).filled_rectangle(0, id(height) * 0.7 - id(height) * 0.7 / 10 * i, id(width), id(height) * 0.7 / 20, id(black));
+              }
+            }
             it.image(id(width) * 0.5, id(height) * 0.35, id(main_blinds), ImageAlign::CENTER, id(device_on));
           } else {
             it.image(id(width) * 0.5, id(height) * 0.35, id(main_blinds), ImageAlign::CENTER, id(device_off));
-          }
-          if (id(blinds_auto_control).state) {
-            it.print(id(width) * 0.85, id(height) * 0.2, id(auto_control_indicator), id(auto_control), TextAlign::CENTER, "A");
           }
       - id: screensaver
         lambda: |-
