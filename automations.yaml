@@ -512,8 +512,8 @@
       for alarm in [states('input_datetime.daniels_next_alarm') | as_datetime | as_local,\n
       \                states('input_datetime.graces_next_alarm') | as_datetime |
       as_local] %}\n  {% if alarm.date() == now().date() %}\n    {% set alarms.times
-      = alarms.times + [alarm] %}\n  {% endif %}\n{% endfor %}\n{{ now() > max(alarms.times)
-      - timedelta(minutes = 30) }}"
+      = alarms.times + [alarm - timedelta(minutes = 30)] %}\n  {% endif %}\n{% endfor
+      %}\n{{ now() > min(alarms.times) }}"
     id: parents_room
   - platform: template
     value_template: '{{ now() > [as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo)
@@ -530,8 +530,7 @@
       id:
       - start
     then:
-    - data:
-        stop_actions: true
+    - data: {}
       target:
         entity_id:
         - automation.elenas_room_fan_auto_control
@@ -542,9 +541,7 @@
         - automation.parents_room_fan_auto_control
       action: automation.turn_on
     else:
-    - data:
-        stop_actions: true
-      target:
+    - target:
         entity_id:
         - automation.{{ trigger.id }}_fan_auto_control
       action: automation.turn_off
