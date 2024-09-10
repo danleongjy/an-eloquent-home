@@ -266,7 +266,24 @@
           {% endif %}
         {% endfor %}
         {{ batteries.names }}
-        
+
+- trigger:
+    - platform: time
+      at: '04:00:00'
+  sensor:
+    - name: Parents' Room Auto Cooling at Night End Time
+      unique_id: sensor.parents_room_auto_cooling_at_night_end_time
+      state: >
+        {% set alarms = namespace(times = []) %}
+        {% for alarm in [states('input_datetime.daniels_next_alarm') | as_datetime | as_local,
+                         states('input_datetime.graces_next_alarm') | as_datetime | as_local] %}
+          {% if alarm.date() == now().date() %}
+            {% set alarms.times = alarms.times + [alarm - timedelta(minutes = 30)] %}
+          {% endif %}
+        {% endfor %}
+        {{ ([alarms.times | max, today_at('10:00')] | min).isoformat() }}
+      device_class: timestamp
+
 - trigger:
     - platform: state
       entity_id: binary_sensor.playroom_radar_motion

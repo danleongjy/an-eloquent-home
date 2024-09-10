@@ -507,13 +507,8 @@
   - platform: time
     at: input_datetime.sleep_hours_start
     id: start
-  - platform: template
-    value_template: "{% set alarms = namespace(times = [today_at('10:00')]) %}\n{%
-      for alarm in [states('input_datetime.daniels_next_alarm') | as_datetime | as_local,\n
-      \                states('input_datetime.graces_next_alarm') | as_datetime |
-      as_local] %}\n  {% if alarm.date() == now().date() %}\n    {% set alarms.times
-      = alarms.times + [alarm - timedelta(minutes = 30)] %}\n  {% endif %}\n{% endfor
-      %}\n{{ now() > min(alarms.times) }}"
+  - platform: time
+    at: sensor.parents_room_auto_cooling_at_night_end_time
     id: parents_room
   - platform: template
     value_template: '{{ now() > [as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo)
