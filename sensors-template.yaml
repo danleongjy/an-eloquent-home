@@ -281,7 +281,7 @@
             {% set alarms.times = alarms.times + [alarm - timedelta(minutes = 30)] %}
           {% endif %}
         {% endfor %}
-        {{ ([alarms.times | max, today_at('10:00')] | min).isoformat() }}
+        {{ ([alarms.times | max, today_at('10:00')] | min).isoformat() if alarms.times | length > 0 else today_at('10:00') }}
       device_class: timestamp
 
 - trigger:
