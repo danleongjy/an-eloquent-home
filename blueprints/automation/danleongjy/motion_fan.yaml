@@ -70,8 +70,13 @@ trigger:
     from: "off"
     to: "on"
 condition:
-  - condition: template
-    value_template: "{{ not respect_doors or doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
+  - condition: or
+    conditions:
+      - condition: template
+        value_template: "{{ not respect_doors or doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
+      - condition: time
+        after: input_datetime.sleep_hours_start
+        before: input_datetime.sleep_hours_end
   - condition: template
     value_template: "{{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}"
 action:
