@@ -81,9 +81,6 @@ script:
           if (id(homeassistant_time).now().second % 2 == 0) {
             id(interface_display).print(id(width) * 0.5, id(height) * 0.325, id(main_time), TextAlign::CENTER, ":");
           }
-
-          // display date
-          id(interface_display).strftime(id(width) * 0.5, id(height) * 0.6, id(small_time), TextAlign::CENTER, "%a %d %b %Y", id(homeassistant_time).now());
   - id: draw_display_main_lights
     then:
       - lambda: |
@@ -773,6 +770,9 @@ display:
           id(draw_display_bottom_status_bar).execute();
           id(draw_display_main_time).execute();
           id(draw_display_borders).execute();
+          
+          // display date
+          id(interface_display).strftime(id(width) * 0.5, id(height) * 0.6, id(small_time), TextAlign::CENTER, "%a %d %b %Y", id(homeassistant_time).now());
       - id: main_door
         lambda: |-
           // tabs
