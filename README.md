@@ -24,12 +24,12 @@ Domain | Quantity
 -- | --
 [`automation`](https://www.home-assistant.io/components/automation) | 144
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 172
-[`button`](https://www.home-assistant.io/components/button) | 161
+[`button`](https://www.home-assistant.io/components/button) | 160
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 4
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
-[`cover`](https://www.home-assistant.io/components/cover) | 13
+[`cover`](https://www.home-assistant.io/components/cover) | 12
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 6
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`image`](https://www.home-assistant.io/components/image) | 3
@@ -45,18 +45,18 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 22
 [`select`](https://www.home-assistant.io/components/select) | 22
-[`sensor`](https://www.home-assistant.io/components/sensor) | 518
+[`sensor`](https://www.home-assistant.io/components/sensor) | 515
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 43
+[`switch`](https://www.home-assistant.io/components/switch) | 42
 [`time`](https://www.home-assistant.io/components/time) | 2
 [`tts`](https://www.home-assistant.io/components/tts) | 2
-[`update`](https://www.home-assistant.io/components/update) | 126
+[`update`](https://www.home-assistant.io/components/update) | 125
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1525
+Total | 1518
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
