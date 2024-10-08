@@ -231,7 +231,11 @@
       elenas_room_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[7] == 'T' }}"
       elena_next_alarm_dismissed: "{{ states('sensor.next_alarm_timings')[3] == 'E' }}"
 
-  - name: ZHA Device Issues
+- trigger:
+  - platform: time_pattern
+    minutes: /10
+  sensor:
+    name: ZHA Device Issues
     unique_id: sensor.zha_device_issues
     state: >
       {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
