@@ -9268,66 +9268,16 @@
           "cards": []
         },
         {
-          "theme": "Backend-selected",
           "title": "Settings - Cooling",
           "path": "settings-cooling",
           "icon": "mdi:home-thermometer-outline",
+          "theme": "no_border",
           "subview": true,
-          "badges": [],
-          "cards": [
+          "type": "sections",
+          "sections": [
             {
-              "type": "vertical-stack",
+              "type": "grid",
               "cards": [
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "binary_sensor.elenas_room_ac_vent",
-                      "name": "Elena's Room"
-                    },
-                    {
-                      "entity": "binary_sensor.elis_room_ac_vent",
-                      "name": "Eli's Room"
-                    },
-                    {
-                      "entity": "binary_sensor.dining_room_ac_vent",
-                      "name": "Dining Room"
-                    },
-                    {
-                      "entity": "binary_sensor.living_room_ac_vent",
-                      "name": "Living Room"
-                    },
-                    {
-                      "entity": "binary_sensor.study_room_ac_vent",
-                      "name": "Study Room"
-                    },
-                    {
-                      "entity": "binary_sensor.parents_room_ac_vent",
-                      "name": "Parents' Room"
-                    }
-                  ],
-                  "title": "AC Vents",
-                  "show_header_toggle": false,
-                  "state_color": true
-                },
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "input_select.elenas_room_fan_direction",
-                      "name": "Elena's Room"
-                    },
-                    {
-                      "entity": "input_select.elis_room_fan_direction",
-                      "name": "Eli's Room"
-                    },
-                    {
-                      "entity": "input_select.parents_room_fan_direction",
-                      "name": "Parents' Room"
-                    }
-                  ],
-                  "title": "Bedroom Fan Directions"
-                },
                 {
                   "type": "entities",
                   "entities": [
@@ -9339,9 +9289,15 @@
                       "entity": "input_number.sitting_rooms_fan_speed_when_warm",
                       "name": "Warm Speed"
                     }
-                  ],
-                  "title": "Fan Speed - Sitting Rooms"
-                },
+                  ]
+                }
+              ],
+              "title": "Fan Speed - Sitting Rooms",
+              "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "entities",
                   "entities": [
@@ -9353,12 +9309,164 @@
                       "entity": "input_number.bedrooms_fan_speed_when_warm",
                       "name": "Warm Speed"
                     }
-                  ],
-                  "title": "Fan Speed - Bedrooms"
+                  ]
                 }
-              ]
+              ],
+              "title": "Fan Speed - Bedrooms",
+              "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "icon": "mdi:bed",
+                          "name": "Elena",
+                          "show_name": true
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "icon": "mdi:bed",
+                          "name": "Eli",
+                          "show_name": true
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "icon": "mdi:pasta"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "icon": "mdi:sofa"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "icon": "mdi:bookshelf"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "icon": "mdi:bed",
+                          "name": "D&G",
+                          "show_name": true
+                        }
+                      ]
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "icon": "mdi:snowflake"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "binary_sensor.elenas_room_ac_vent"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "binary_sensor.elis_room_ac_vent"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "binary_sensor.dining_room_ac_vent"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "binary_sensor.living_room_ac_vent"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "binary_sensor.study_room_ac_vent"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "binary_sensor.parents_room_ac_vent"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "icon": "mdi:fan"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "input_select.elenas_room_fan_direction",
+                          "color": "var(--paper-item-icon-color)",
+                          "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "input_select.elis_room_fan_direction",
+                          "color": "var(--paper-item-icon-color)",
+                          "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "sensor.dining_room_fan_direction",
+                          "color": "var(--paper-item-icon-color)",
+                          "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "sensor.living_room_fan_direction",
+                          "color": "var(--paper-item-icon-color)",
+                          "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "sensor.study_room_fan_direction",
+                          "color": "var(--paper-item-icon-color)",
+                          "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "input_select.parents_room_fan_direction",
+                          "color": "var(--paper-item-icon-color)",
+                          "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "column_span": 1,
+              "title": "AC & Fan Helpers"
             }
-          ]
+          ],
+          "max_columns": 4,
+          "cards": []
         },
         {
           "theme": "no_border",
