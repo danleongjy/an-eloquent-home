@@ -9372,7 +9372,9 @@
                         {
                           "type": "custom:button-card",
                           "template": "square_cell",
-                          "icon": "mdi:snowflake"
+                          "icon": "mdi:snowflake",
+                          "name": "Vent",
+                          "show_name": true
                         },
                         {
                           "type": "custom:button-card",
@@ -9412,7 +9414,9 @@
                         {
                           "type": "custom:button-card",
                           "template": "square_cell",
-                          "icon": "mdi:fan"
+                          "icon": "mdi:fan",
+                          "name": "Blow",
+                          "show_name": true
                         },
                         {
                           "type": "custom:button-card",
@@ -9469,67 +9473,113 @@
           "cards": []
         },
         {
-          "theme": "no_border",
-          "title": "Settings - Lighting",
-          "path": "settings-lighting",
           "icon": "mdi:home-lightbulb-outline",
+          "path": "settings-lighting",
+          "title": "Settings - Lighting",
+          "theme": "no_border",
           "subview": true,
-          "badges": [],
-          "cards": [
+          "type": "sections",
+          "sections": [
             {
-              "type": "entities",
-              "entities": [
+              "type": "grid",
+              "cards": [
                 {
-                  "entity": "input_number.minimum_lux"
-                },
-                {
-                  "entity": "input_number.comfortable_lux"
-                },
-                {
-                  "entity": "input_number.maximum_lux"
-                },
-                {
-                  "entity": "input_number.light_brightness_change_step",
-                  "name": "Brightness Change"
-                },
-                {
-                  "entity": "input_number.morning_light_brightness",
-                  "name": "Morning Brightness"
-                },
-                {
-                  "entity": "input_number.night_light_brightness",
-                  "name": "Night Brightness"
-                },
-                {
-                  "entity": "input_datetime.dim_hours_start"
-                },
-                {
-                  "entity": "input_datetime.dim_hours_end"
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "automation.south_facing_blinds_auto_control",
+                      "name": "Auto South-Facing Blinds"
+                    },
+                    {
+                      "entity": "automation.kitchen_blind_auto_control",
+                      "name": "Auto Kitchen Blinds"
+                    },
+                    {
+                      "entity": "input_number.blinds_command_deconflict",
+                      "name": "Deconflict"
+                    },
+                    {
+                      "entity": "input_number.blinds_auto_control_debounce",
+                      "name": "Debounce"
+                    }
+                  ]
                 }
-              ]
+              ],
+              "title": "Blinds",
+              "column_span": 1
             },
             {
-              "type": "entities",
-              "entities": [
+              "type": "grid",
+              "cards": [
                 {
-                  "entity": "input_number.blinds_command_deconflict",
-                  "name": "Blinds Deconflict"
-                },
-                {
-                  "entity": "input_number.blinds_auto_control_debounce",
-                  "name": "Blinds Debounce"
-                },
-                {
-                  "entity": "automation.south_facing_blinds_auto_control",
-                  "name": "Auto South-Facing Blinds"
-                },
-                {
-                  "entity": "automation.kitchen_blind_auto_control",
-                  "name": "Auto Kitchen Blinds"
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_datetime.dim_hours_start",
+                      "name": "Start"
+                    },
+                    {
+                      "entity": "input_datetime.dim_hours_end",
+                      "name": "End"
+                    }
+                  ]
                 }
-              ]
+              ],
+              "title": "Dim Hours",
+              "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_number.minimum_lux",
+                      "name": "Minimum"
+                    },
+                    {
+                      "entity": "input_number.comfortable_lux",
+                      "name": "Comfortable"
+                    },
+                    {
+                      "entity": "input_number.maximum_lux",
+                      "name": "Maximum"
+                    }
+                  ]
+                }
+              ],
+              "title": "Lux Levels",
+              "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_number.morning_light_brightness",
+                      "name": "Morning"
+                    },
+                    {
+                      "entity": "input_number.night_light_brightness",
+                      "name": "Night"
+                    },
+                    {
+                      "entity": "input_number.light_brightness_change_step",
+                      "name": "Change Step"
+                    }
+                  ]
+                }
+              ],
+              "title": "Light Brightness Levels",
+              "column_span": 1
             }
-          ]
+          ],
+          "max_columns": 4,
+          "dense_section_placement": false,
+          "cards": []
         },
         {
           "theme": "no_border",
