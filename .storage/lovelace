@@ -9195,7 +9195,8 @@
                     }
                   ]
                 }
-              ]
+              ],
+              "column_span": 1
             },
             {
               "type": "grid",
@@ -9223,29 +9224,6 @@
                   "type": "entities",
                   "entities": [
                     {
-                      "entity": "input_datetime.wind_down"
-                    },
-                    {
-                      "entity": "input_datetime.sleep_hours_start"
-                    },
-                    {
-                      "entity": "input_datetime.sleep_hours_end"
-                    },
-                    {
-                      "entity": "input_number.minimum_sleep_hours",
-                      "name": "Minimum Sleep"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
                       "entity": "input_datetime.daniels_work_day_alarm"
                     },
                     {
@@ -9259,6 +9237,29 @@
                     },
                     {
                       "entity": "input_datetime.eca_day_alarm"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_datetime.wind_down"
+                    },
+                    {
+                      "entity": "input_datetime.sleep_hours_start"
+                    },
+                    {
+                      "entity": "input_datetime.sleep_hours_end"
+                    },
+                    {
+                      "entity": "input_number.minimum_sleep_hours",
+                      "name": "Minimum Sleep"
                     }
                   ]
                 }
@@ -9289,10 +9290,10 @@
                       "entity": "input_number.sitting_rooms_fan_speed_when_warm",
                       "name": "Warm Speed"
                     }
-                  ]
+                  ],
+                  "title": "Sitting Room Fans"
                 }
               ],
-              "title": "Fan Speed - Sitting Rooms",
               "column_span": 1
             },
             {
@@ -9309,10 +9310,10 @@
                       "entity": "input_number.bedrooms_fan_speed_when_warm",
                       "name": "Warm Speed"
                     }
-                  ]
+                  ],
+                  "title": "Bedroom Fans"
                 }
               ],
-              "title": "Fan Speed - Bedrooms",
               "column_span": 1
             },
             {
@@ -9496,16 +9497,15 @@
                     },
                     {
                       "entity": "input_number.blinds_command_deconflict",
-                      "name": "Deconflict"
+                      "name": "Blinds Deconflict"
                     },
                     {
                       "entity": "input_number.blinds_auto_control_debounce",
-                      "name": "Debounce"
+                      "name": "Blinds Debounce"
                     }
                   ]
                 }
               ],
-              "title": "Blinds",
               "column_span": 1
             },
             {
@@ -9515,17 +9515,14 @@
                   "type": "entities",
                   "entities": [
                     {
-                      "entity": "input_datetime.dim_hours_start",
-                      "name": "Start"
+                      "entity": "input_datetime.dim_hours_start"
                     },
                     {
-                      "entity": "input_datetime.dim_hours_end",
-                      "name": "End"
+                      "entity": "input_datetime.dim_hours_end"
                     }
                   ]
                 }
               ],
-              "title": "Dim Hours",
               "column_span": 1
             },
             {
@@ -9535,21 +9532,17 @@
                   "type": "entities",
                   "entities": [
                     {
-                      "entity": "input_number.minimum_lux",
-                      "name": "Minimum"
+                      "entity": "input_number.minimum_lux"
                     },
                     {
-                      "entity": "input_number.comfortable_lux",
-                      "name": "Comfortable"
+                      "entity": "input_number.comfortable_lux"
                     },
                     {
-                      "entity": "input_number.maximum_lux",
-                      "name": "Maximum"
+                      "entity": "input_number.maximum_lux"
                     }
                   ]
                 }
               ],
-              "title": "Lux Levels",
               "column_span": 1
             },
             {
@@ -9560,20 +9553,19 @@
                   "entities": [
                     {
                       "entity": "input_number.morning_light_brightness",
-                      "name": "Morning"
+                      "name": "Morning Brightness"
                     },
                     {
                       "entity": "input_number.night_light_brightness",
-                      "name": "Night"
+                      "name": "Night Brightness"
                     },
                     {
                       "entity": "input_number.light_brightness_change_step",
-                      "name": "Change Step"
+                      "name": "Brightness Change"
                     }
                   ]
                 }
               ],
-              "title": "Light Brightness Levels",
               "column_span": 1
             }
           ],
@@ -13385,12 +13377,12 @@
           "title": "Weather",
           "path": "weather",
           "icon": "mdi:weather-cloudy",
-          "theme": "no_border",
+          "cards": [],
           "subview": true,
-          "badges": [],
-          "cards": [
+          "type": "sections",
+          "sections": [
             {
-              "type": "vertical-stack",
+              "type": "grid",
               "cards": [
                 {
                   "show_current": true,
@@ -13402,16 +13394,30 @@
                   "forecast_type": "daily"
                 },
                 {
-                  "type": "picture",
-                  "tap_action": {
-                    "action": "call-service",
-                    "service": "script.nea_rain_radar_animation",
-                    "target": {}
-                  },
-                  "hold_action": {
-                    "action": "none"
-                  },
-                  "image_entity": "image.rain_radar_animation"
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.raining_with_windows_open",
+                      "state": "alert"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Heavy rain with windows open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.raining_with_windows_open",
+                      "state": "warning"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
+                  }
                 },
                 {
                   "type": "conditional",
@@ -13424,7 +13430,7 @@
                   "card": {
                     "type": "custom:button-card",
                     "entity": "script.nea_rain_radar_animation",
-                    "name": "Last Updated",
+                    "name": "Map Last Updated",
                     "state_display": "[[[ \n  return helpers.formatShortDateTime(states['image.rain_radar_animation'].last_changed)\n]]]\n",
                     "show_state": true,
                     "show_icon": false,
@@ -13452,7 +13458,7 @@
                   ],
                   "card": {
                     "type": "custom:button-card",
-                    "name": "Updating...",
+                    "name": "Updating Map...",
                     "styles": {
                       "card": [
                         {
@@ -13466,36 +13472,28 @@
                       ]
                     }
                   }
-                },
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
-                  "type": "conditional",
-                  "conditions": [
-                    {
-                      "entity": "sensor.raining_with_windows_open",
-                      "state": "alert"
-                    }
-                  ],
-                  "card": {
-                    "type": "markdown",
-                    "content": "<ha-alert alert-type=\"error\">Heavy rain with windows open</ha-alert>"
-                  }
-                },
-                {
-                  "type": "conditional",
-                  "conditions": [
-                    {
-                      "entity": "sensor.raining_with_windows_open",
-                      "state": "warning"
-                    }
-                  ],
-                  "card": {
-                    "type": "markdown",
-                    "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
-                  }
+                  "type": "picture",
+                  "tap_action": {
+                    "action": "call-service",
+                    "service": "script.nea_rain_radar_animation",
+                    "target": {}
+                  },
+                  "hold_action": {
+                    "action": "none"
+                  },
+                  "image_entity": "image.rain_radar_animation"
                 }
               ]
             }
-          ]
+          ],
+          "max_columns": 4
         },
         {
           "title": "Transit",
