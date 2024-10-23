@@ -5527,10 +5527,8 @@
       conditions:
       - condition: state
         entity_id:
-        - binary_sensor.kitchen_presence
         - binary_sensor.dining_room_presence
         - binary_sensor.living_room_presence
-        - binary_sensor.study_room_radar_occupancy
         state: 'off'
         for:
           minutes: '{{ states(''input_number.motion_timeout_presence'') | int(5) }}'
@@ -5546,12 +5544,6 @@
     else:
     - condition: or
       conditions:
-      - condition: state
-        entity_id: binary_sensor.kitchen_presence
-        state: 'on'
-      - condition: state
-        entity_id: binary_sensor.study_room_radar_occupancy
-        state: 'on'
       - condition: state
         entity_id: binary_sensor.dining_room_presence
         state: 'on'
