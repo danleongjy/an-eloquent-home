@@ -5538,9 +5538,11 @@
         entity_id: input_boolean.away_mode
         state: 'on'
     then:
-    - service: hassio.addon_stop
+    - action: number.set_value
+      target:
+        entity_id: number.living_room_voice_assistant_mic_volume
       data:
-        addon: 47701997_assist_microphone
+        value: '0.1'
     else:
     - condition: or
       conditions:
@@ -5556,9 +5558,11 @@
       - condition: state
         entity_id: binary_sensor.living_room_presence
         state: 'on'
-    - service: hassio.addon_start
+    - action: number.set_value
+      target:
+        entity_id: number.living_room_voice_assistant_mic_volume
       data:
-        addon: 47701997_assist_microphone
+        value: '7.5'
   mode: single
   max_exceeded: silent
 - id: '1702898924227'
