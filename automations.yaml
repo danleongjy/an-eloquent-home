@@ -5505,7 +5505,6 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.dining_room_presence
     - binary_sensor.living_room_presence
     to: 'on'
     from: 'off'
@@ -5514,7 +5513,6 @@
     - input_boolean.away_mode
   - platform: state
     entity_id:
-    - binary_sensor.dining_room_presence
     - binary_sensor.living_room_presence
     to: 'off'
     from: 'on'
@@ -5527,7 +5525,6 @@
       conditions:
       - condition: state
         entity_id:
-        - binary_sensor.dining_room_presence
         - binary_sensor.living_room_presence
         state: 'off'
         for:
@@ -5536,25 +5533,15 @@
         entity_id: input_boolean.away_mode
         state: 'on'
     then:
-    - action: number.set_value
+    - action: switch.turn_on
       target:
-        entity_id: number.living_room_voice_assistant_mic_volume
-      data:
-        value: '0.1'
+        entity_id: switch.living_room_voice_assistant_mute
+      data: {}
     else:
-    - condition: or
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.dining_room_presence
-        state: 'on'
-      - condition: state
-        entity_id: binary_sensor.living_room_presence
-        state: 'on'
-    - action: number.set_value
+    - action: switch.turn_off
       target:
-        entity_id: number.living_room_voice_assistant_mic_volume
-      data:
-        value: '7.5'
+        entity_id: switch.living_room_voice_assistant_mute
+      data: {}
   mode: single
   max_exceeded: silent
 - id: '1702898924227'
