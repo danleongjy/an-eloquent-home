@@ -5557,9 +5557,6 @@
     from: 'off'
   - platform: state
     entity_id:
-    - input_boolean.away_mode
-  - platform: state
-    entity_id:
     - binary_sensor.living_room_presence
     to: 'off'
     from: 'on'
@@ -5568,26 +5565,20 @@
   condition: []
   action:
   - if:
-    - condition: or
-      conditions:
-      - condition: state
-        entity_id:
-        - binary_sensor.living_room_presence
-        state: 'off'
-        for:
-          minutes: '{{ states(''input_number.motion_timeout_presence'') | int(5) }}'
-      - condition: state
-        entity_id: input_boolean.away_mode
-        state: 'on'
+    - condition: state
+      entity_id: binary_sensor.living_room_presence
+      state: 'on'
     then:
-    - action: switch.turn_on
-      target:
-        entity_id: switch.living_room_voice_assistant_mute
-      data: {}
-    else:
     - action: switch.turn_off
       target:
-        entity_id: switch.living_room_voice_assistant_mute
+        entity_id:
+        - switch.living_room_voice_assistant_mute
+      data: {}
+    else:
+    - action: switch.turn_on
+      target:
+        entity_id:
+        - switch.living_room_voice_assistant_mute
       data: {}
   mode: single
   max_exceeded: silent
