@@ -2252,10 +2252,8 @@
         entity_id:
         - switch.study_room_voice_assistant_use_wake_word
         - switch.kitchen_core_use_wake_word
+        - switch.living_room_voice_assistant_mute
       action: switch.turn_off
-    - data:
-        addon: 47701997_assist_microphone
-      action: hassio.addon_stop
     else:
     - data: {}
       target:
@@ -2317,9 +2315,6 @@
         - automation.south_facing_blinds_auto_control
         - automation.kitchen_blind_auto_control
       action: automation.trigger
-    - data:
-        addon: 47701997_assist_microphone
-      action: hassio.addon_start
   mode: single
 - id: '1670838907474'
   alias: System Housekeeping
@@ -3769,11 +3764,11 @@
       entity_id: input_boolean.party_mode
       state: 'on'
     then:
-    - service: input_datetime.set_datetime
-      data:
+    - data:
         time: '{{ states(''input_datetime.dim_hours_end'') }}'
       target:
         entity_id: input_datetime.dim_hours_start
+      action: input_datetime.set_datetime
     - delay: 1
     - repeat:
         for_each:
@@ -3781,16 +3776,38 @@
         - living_room
         - study_room
         sequence:
-        - service: script.set_recommended_scene
-          data:
+        - data:
             room: '{{ [repeat.item] }}'
+          action: script.set_recommended_scene
         - delay: 1
+    - action: homeassistant.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id:
+        - automation.kitchen_voice_assistant_listening_for_wake_word
+        - automation.study_room_voice_assistant_listening_for_wake_word
+        - automation.living_room_voice_assistant_listening_for_wake_word
+        - switch.kitchen_core_use_wake_word
+        - switch.study_room_voice_assistant_use_wake_word
+    - action: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.living_room_voice_assistant_mute
     else:
-    - service: input_datetime.set_datetime
-      data:
+    - action: homeassistant.turn_on
+      target:
+        entity_id:
+        - automation.kitchen_voice_assistant_listening_for_wake_word
+        - automation.study_room_voice_assistant_listening_for_wake_word
+        - automation.living_room_voice_assistant_listening_for_wake_word
+      data: {}
+    - data:
         time: '{{ states(''input_datetime.wind_down'') }}'
       target:
         entity_id: input_datetime.dim_hours_start
+      action: input_datetime.set_datetime
     - delay: 1
     - repeat:
         for_each:
@@ -3798,10 +3815,40 @@
         - living_room
         - study_room
         sequence:
-        - service: script.set_recommended_scene
-          data:
+        - data:
             room: '{{ [repeat.item] }}'
+          action: script.set_recommended_scene
         - delay: 1
+    - if:
+      - condition: state
+        entity_id: binary_sensor.kitchen_presence
+        state: 'on'
+      then:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.kitchen_core_use_wake_word
+    - if:
+      - condition: state
+        entity_id: binary_sensor.study_room_presence
+        state: 'on'
+      then:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.study_room_voice_assistant_use_wake_word
+    - if:
+      - condition: state
+        entity_id: binary_sensor.living_room_presence
+        state: 'on'
+      then:
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.living_room_voice_assistant_mute
   mode: single
 - id: '1681736538604'
   alias: Hallway Motion Timeout
