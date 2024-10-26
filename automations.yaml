@@ -5553,25 +5553,25 @@
   alias: Living Room Voice Assistant Listening for Wake Word
   description: Listen for wake word  on the Living Room Voice Assistant if presence
     is detected in the kitchen, living room, dining room or study room
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.living_room_presence
     to: 'on'
     from: 'off'
-  - platform: state
-    entity_id:
+    trigger: state
+    id: motion
+  - entity_id:
     - binary_sensor.living_room_presence
     to: 'off'
     from: 'on'
-    for:
-      minutes: '{{ states(''input_number.motion_timeout_presence'') | int(5) }}'
-  condition: []
-  action:
+    trigger: state
+    id: clear
+  conditions: []
+  actions:
   - if:
-    - condition: state
-      entity_id: binary_sensor.living_room_presence
-      state: 'on'
+    - condition: trigger
+      id:
+      - motion
     then:
     - action: switch.turn_off
       target:
