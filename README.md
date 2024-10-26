@@ -14,16 +14,17 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [13.1](https://github.com/home-assistant/operating-system/releases/tag/13.2) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core 2024.9.3](https://github.com/home-assistant/core/releases/tag/2024.9.3)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [13.2](https://github.com/home-assistant/operating-system/releases/tag/13.2) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Core 2024.10.4](https://github.com/home-assistant/core/releases/tag/2024.10.4)
 * 4 cores, 4GB RAM, 32GB storage
 
 ## Entities
 
 Domain | Quantity
 -- | --
+[`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 144
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 173
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 171
 [`button`](https://www.home-assistant.io/components/button) | 165
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 4
