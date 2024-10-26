@@ -2151,12 +2151,12 @@
 - id: '1667350498199'
   alias: Away Mode
   description: Set automated controls and devices for away mode
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - input_boolean.away_mode
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: state
       entity_id: input_boolean.away_mode
@@ -2252,8 +2252,12 @@
         entity_id:
         - switch.study_room_voice_assistant_use_wake_word
         - switch.kitchen_core_use_wake_word
-        - switch.living_room_voice_assistant_mute
       action: switch.turn_off
+    - action: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.living_room_voice_assistant_mute
     else:
     - data: {}
       target:
