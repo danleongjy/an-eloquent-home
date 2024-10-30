@@ -2323,35 +2323,114 @@
 - id: '1670838907474'
   alias: System Housekeeping
   description: Daily housekeeping tasks executed at 2350h
-  trigger:
-  - platform: time
-    at: '23:50:00'
-  condition: []
-  action:
-  - service: shell_command.removeoldmaindoorcamerasnapshots
-    metadata: {}
-    data: {}
-  - service: script.git_push
-    data:
-      commit_message: Autocommit on {{ now().day }}/{{ now().month }}/{{ now().year
-        }} {{ now().hour }}:{{ now().minute }}
-  - condition: state
-    entity_id: input_boolean.away_mode
-    state: 'off'
-  - service: automation.turn_on
-    data: {}
-    target:
-      entity_id:
-      - automation.south_facing_blinds_auto_control
-      - automation.kitchen_blind_auto_control
-      - automation.dining_room_motion_timeout
-      - automation.elenas_room_motion_timeout
-      - automation.elis_room_motion_timeout
-      - automation.living_room_motion_timeout
-      - automation.parents_room_motion_timeout
-      - automation.study_walkway_motion_timeout
-      - automation.study_room_motion_timeout
-      - automation.master_bathroom_blind_auto_control
+  triggers:
+  - at: '23:50:00'
+    trigger: time
+    id: daily
+  - trigger: time
+    at: 00:50:00
+    id: sunday_only_pmbackup_start
+  - trigger: time
+    at: 01:50:00
+    id: sunday_only_pmbackup_end
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - daily
+      sequence:
+      - metadata: {}
+        data: {}
+        action: shell_command.removeoldmaindoorcamerasnapshots
+      - data:
+          commit_message: Autocommit on {{ now().day }}/{{ now().month }}/{{ now().year
+            }} {{ now().hour }}:{{ now().minute }}
+        action: script.git_push
+      - condition: state
+        entity_id: input_boolean.away_mode
+        state: 'off'
+      - data: {}
+        target:
+          entity_id:
+          - automation.south_facing_blinds_auto_control
+          - automation.kitchen_blind_auto_control
+          - automation.dining_room_motion_timeout
+          - automation.elenas_room_motion_timeout
+          - automation.elis_room_motion_timeout
+          - automation.living_room_motion_timeout
+          - automation.parents_room_motion_timeout
+          - automation.study_walkway_motion_timeout
+          - automation.study_room_motion_timeout
+          - automation.master_bathroom_blind_auto_control
+        action: automation.turn_on
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.jupyterlab
+      - delay: 60
+      - repeat:
+          sequence:
+          - action: switch.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: '{{ repeat.item }}'
+          - delay: 60
+          for_each:
+          - switch.immich_server
+          - switch.immich_postgres
+          - switch.immich_redis
+          - switch.immich_machine_learning
+    - conditions:
+      - condition: trigger
+        id:
+        - sunday_only_pmbackup_start
+      sequence:
+      - condition: time
+        after: 00:49:00
+        before: 00:51:00
+        weekday:
+        - sun
+      - repeat:
+          sequence:
+          - action: switch.turn_off
+            metadata: {}
+            data: {}
+            target:
+              entity_id: '{{ repeat.item }}'
+          - delay: 60
+          for_each:
+          - switch.jupyterlab
+          - switch.immich_server
+          - switch.immich_postgres
+          - switch.immich_redis
+          - switch.immich_machine_learning
+    - conditions:
+      - condition: trigger
+        id:
+        - sunday_only_pmbackup_end
+      sequence:
+      - condition: time
+        after: 01:49:00
+        before: 01:51:00
+        weekday:
+        - sun
+      - repeat:
+          sequence:
+          - action: switch.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: '{{ repeat.item }}'
+          - delay: 60
+          for_each:
+          - switch.immich_server
+          - switch.immich_postgres
+          - switch.immich_redis
+          - switch.immich_machine_learning
   mode: single
 - id: '1672302011128'
   alias: South-Facing Blinds Auto Control

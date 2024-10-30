@@ -100,7 +100,7 @@
   is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
 
 - platform: rest
-  resource: http://192.168.18.102:8126/container/immich_immich-server
+  resource: http://192.168.18.102:8126/container/immich_server
   name: Immich Server
   body_on: '{"state": "start"}'
   body_off: '{"state": "stop"}'
@@ -109,7 +109,7 @@
   is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
 
 - platform: rest
-  resource: http://192.168.18.102:8126/container/immich_immich-redis
+  resource: http://192.168.18.102:8126/container/immich_redis
   name: Immich Redis
   body_on: '{"state": "start"}'
   body_off: '{"state": "stop"}'
@@ -118,7 +118,17 @@
   is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
 
 - platform: rest
-  resource: http://192.168.18.102:8126/container/immich_immich-postgres
+  resource: http://192.168.18.102:8126/container/immich_machine_learning
+  name: Immich Machine Learning
+  body_on: '{"state": "start"}'
+  body_off: '{"state": "stop"}'
+  headers:
+    Content-Type: application/json
+  is_on_template: '{{ value_json is not none and value_json.state == "running" }}'
+
+- platform: rest
+
+  resource: http://192.168.18.102:8126/container/immich_postgres
   name: Immich Postgres
   body_on: '{"state": "start"}'
   body_off: '{"state": "stop"}'

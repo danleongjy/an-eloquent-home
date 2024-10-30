@@ -774,6 +774,73 @@
       attributes:
         timestamp: "{{ now() }}"
         
+- trigger:
+  - platform: state
+    entity_id: sensor.qemu_docker_102_network_in
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: Docker MB In within 1min
+      unique_id: sensor.docker_mb_in_within_1min
+      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.qemu_docker_102_network_out
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: Docker MB Out within 1min
+      unique_id: sensor.docker_mb_out_within_1min
+      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.lxc_samba_103_network_in
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: Samba MB In within 1min
+      unique_id: sensor.samba_mb_in_within_1min
+      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.lxc_samba_103_network_out
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: Samba MB Out within 1min
+      unique_id: sensor.samba_mb_out_within_1min
+      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
 
 - trigger:
     - platform: time_pattern

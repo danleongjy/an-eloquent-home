@@ -10043,7 +10043,35 @@
                   "type": "heading",
                   "heading": "Proxmox",
                   "heading_style": "title",
-                  "icon": "mdi:server-network"
+                  "icon": "mdi:server",
+                  "badges": [
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.node_proxmox_uptime",
+                      "icon": "mdi:power"
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.node_proxmox_cpu_used",
+                      "icon": "mdi:cpu-64-bit",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.node_proxmox_memory_used_percentage",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    }
+                  ]
                 }
               ],
               "column_span": 2
@@ -10217,14 +10245,46 @@
                           "color_type": "blank-card"
                         }
                       ]
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:folder-account",
+                          "aspect_ratio": 2
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.lxc_samba_103_last_boot",
+                          "show_name": false,
+                          "show_icon": false,
+                          "show_state": true,
+                          "aspect_ratio": 2,
+                          "state_display": "[[[ \n  var elapsed_time = Date.now() - Date.parse(entity.state)\n  if (Math.floor(elapsed_time / 2592000000) > 0) {\n    return (Math.floor(elapsed_time / 2592000000)).toString() + 'mo'\n  } else if (Math.floor(elapsed_time / 86400000) > 0) {\n    return (Math.floor(elapsed_time / 86400000)).toString() + 'd'\n  } else if (Math.floor(elapsed_time / 3600000) > 0) {\n    return (Math.floor(elapsed_time / 3600000)).toString() + 'h'\n  } else if (Math.floor(elapsed_time / 60000) > 0) {\n    return (Math.floor(elapsed_time / 60000)).toString() + 'min'\n  } else {\n    return (Math.floor(elapsed_time / 1000)).toString() + 's'\n  }\n]]]\n"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.lxc_samba_103_memory_used_percentage",
+                          "show_name": false,
+                          "show_icon": false,
+                          "show_state": true,
+                          "aspect_ratio": 2,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.lxc_samba_103_disk_used_percentage",
+                          "show_name": false,
+                          "show_icon": false,
+                          "show_state": true,
+                          "aspect_ratio": 2,
+                          "state_display": "[[[ return parseFloat(entity.state).toFixed(1) + '%']]]"
+                        }
+                      ]
                     }
                   ]
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
+                },
                 {
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
@@ -10247,10 +10307,15 @@
                     {
                       "entity": "sensor.qemu_docker_102_cpu_used",
                       "name": "Docker"
+                    },
+                    {
+                      "entity": "sensor.lxc_samba_103_cpu_used",
+                      "name": "Samba"
                     }
                   ]
                 }
-              ]
+              ],
+              "column_span": 2
             },
             {
               "type": "grid",
@@ -10259,7 +10324,35 @@
                   "type": "heading",
                   "heading": "pfSense",
                   "heading_style": "title",
-                  "icon": "mdi:router-wireless"
+                  "icon": "mdi:router-wireless",
+                  "badges": [
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.pfsense_system_boottime",
+                      "icon": "mdi:power"
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.qemu_pfsense_100_cpu_used",
+                      "icon": "mdi:cpu-64-bit",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.qemu_pfsense_100_memory_used_percentage",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    }
+                  ]
                 }
               ],
               "column_span": 2
@@ -10309,12 +10402,7 @@
                       }
                     }
                   ]
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
+                },
                 {
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
@@ -10326,24 +10414,41 @@
                   },
                   "series": [
                     {
-                      "entity": "sensor.pfsense_mb_in_within_1min",
+                      "entity": "sensor.pfsense_mb_out_within_1min",
                       "name": "pfSense inbound"
                     },
                     {
-                      "entity": "sensor.pfsense_mb_out_within_1min",
+                      "entity": "sensor.pfsense_mb_in_within_1min",
                       "name": "pfSense outbound"
                     },
                     {
-                      "entity": "sensor.home_assistant_mb_in_within_1min",
+                      "entity": "sensor.home_assistant_mb_out_within_1min",
                       "name": "HA inbound"
                     },
                     {
-                      "entity": "sensor.home_assistant_mb_out_within_1min",
+                      "entity": "sensor.home_assistant_mb_in_within_1min",
                       "name": "HA outbound"
+                    },
+                    {
+                      "entity": "sensor.docker_mb_out_within_1min",
+                      "name": "Docker inbound"
+                    },
+                    {
+                      "entity": "sensor.docker_mb_in_within_1min",
+                      "name": "Docker outbound"
+                    },
+                    {
+                      "entity": "sensor.samba_mb_out_within_1min",
+                      "name": "Samba inbound"
+                    },
+                    {
+                      "entity": "sensor.samba_mb_in_within_1min",
+                      "name": "Samba outbound"
                     }
                   ]
                 }
-              ]
+              ],
+              "column_span": 2
             },
             {
               "type": "grid",
@@ -10407,26 +10512,6 @@
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
                   "header": {
-                    "title": "AdGuard DNS Processing Speed"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.adguard_home_average_processing_speed",
-                      "name": " ",
-                      "stroke_width": 2,
-                      "curve": "smooth"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
                     "title": "AdGuard DNS Queries"
                   },
                   "series": [
@@ -10464,6 +10549,165 @@
                       "id": "percent",
                       "opposite": true
                     }
+                  ]
+                }
+              ],
+              "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "AdGuard DNS Processing Speed"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.adguard_home_average_processing_speed",
+                      "name": " ",
+                      "stroke_width": 2,
+                      "curve": "smooth"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Docker",
+                  "heading_style": "title",
+                  "icon": "mdi:docker",
+                  "badges": [
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.qemu_docker_102_uptime",
+                      "icon": "mdi:power"
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.qemu_docker_102_cpu_used",
+                      "icon": "mdi:cpu-64-bit",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.qemu_docker_102_memory_used_percentage",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "tile",
+                  "entity": "switch.jupyterlab",
+                  "state_content": "last_changed",
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "script.docker_mode",
+                    "target": {},
+                    "data": {
+                      "mode": "JupyterLab"
+                    }
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "heading",
+                  "icon": "mdi:camera-iris",
+                  "heading": "Immich",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "type": "tile",
+                  "entity": "switch.immich_server",
+                  "state_content": "last_changed",
+                  "name": "Server",
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "script.docker_mode",
+                    "target": {},
+                    "data": {
+                      "mode": "Immich"
+                    }
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "switch.immich_postgres",
+                  "state_content": "last_changed",
+                  "name": "Postgres",
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "script.docker_mode",
+                    "target": {},
+                    "data": {
+                      "mode": "Immich"
+                    }
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "switch.immich_redis",
+                  "state_content": "last_changed",
+                  "name": "Redis",
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "script.docker_mode",
+                    "target": {},
+                    "data": {
+                      "mode": "Immich"
+                    }
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "switch.immich_machine_learning",
+                  "state_content": "last_changed",
+                  "name": "Machine Learning",
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "script.docker_mode",
+                    "target": {},
+                    "data": {
+                      "mode": "Immich"
+                    }
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                }
+              ],
+              "column_span": 2,
+              "visibility": [
+                {
+                  "condition": "user",
+                  "users": [
+                    "ad2bcce775894550affb6dfef93a2a36"
                   ]
                 }
               ]

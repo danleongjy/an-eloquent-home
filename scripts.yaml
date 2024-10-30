@@ -1306,3 +1306,111 @@ elenas_room_ac_set_state:
       air_conditioner: switch.elenas_room_ac_switch
   description: Turn on or off Elena's Room AC
   icon: mdi:snowflake
+docker_mode:
+  alias: Docker Mode
+  sequence:
+  - if:
+    - condition: template
+      value_template: '{{ mode == ''JupyterLab'' }}'
+    then:
+    - condition: not
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id:
+          - switch.immich_machine_learning
+          - switch.immich_postgres
+          - switch.immich_redis
+          - switch.immich_server
+          state: 'off'
+        - condition: state
+          entity_id: switch.jupyterlab
+          state: 'on'
+    - repeat:
+        sequence:
+        - action: switch.turn_off
+          metadata: {}
+          data: {}
+          target:
+            entity_id: '{{ repeat.item }}'
+        - delay: 60
+        for_each:
+        - switch.immich_server
+        - switch.immich_postgres
+        - switch.immich_redis
+        - switch.immich_machine_learning
+    - wait_for_trigger:
+      - trigger: state
+        entity_id:
+        - switch.immich_server
+        - switch.immich_redis
+        - switch.immich_postgres
+        - switch.immich_machine_learning
+        to: 'off'
+        for:
+          hours: 0
+          minutes: 1
+          seconds: 0
+      continue_on_timeout: false
+    - action: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.jupyterlab
+    else:
+    - condition: not
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id:
+          - switch.immich_machine_learning
+          - switch.immich_postgres
+          - switch.immich_redis
+          - switch.immich_server
+          state: 'on'
+        - condition: state
+          entity_id: switch.jupyterlab
+          state: 'off'
+    - action: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.jupyterlab
+    - wait_for_trigger:
+      - trigger: state
+        entity_id:
+        - switch.jupyterlab
+        to: 'off'
+        for:
+          hours: 0
+          minutes: 1
+          seconds: 0
+      continue_on_timeout: false
+    - repeat:
+        sequence:
+        - action: switch.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id: '{{ repeat.item }}'
+        - delay: 60
+        for_each:
+        - switch.immich_machine_learning
+        - switch.immich_postgres
+        - switch.immich_redis
+        - switch.immich_server
+  fields:
+    mode:
+      selector:
+        select:
+          options:
+          - JupyterLab
+          - Immich
+      name: Mode
+      description: Docker to run JupyterLab or Immich
+      default: Immich
+      required: true
+  description: Set Docker to run JupyterLab or Immich
+  icon: mdi:docker
