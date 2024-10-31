@@ -2435,29 +2435,23 @@
 - id: '1672302011128'
   alias: South-Facing Blinds Auto Control
   description: Open or close the south-facing blinds based on sun position
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - sun.sun
     attribute: rising
     to: false
-  - platform: numeric_state
-    entity_id: sensor.sun_solar_elevation
+    trigger: state
+  - entity_id: sensor.sun_solar_elevation
     above: 65
-  - platform: numeric_state
-    entity_id: sensor.dining_room_lux
-    below: input_number.comfortable_lux
-    for:
-      minutes: '{{ states(''input_number.blinds_auto_control_debounce'') | int(5)
-        }}'
-  - platform: numeric_state
-    entity_id: sensor.dining_room_lux
+    trigger: numeric_state
+  - entity_id: sensor.dining_room_lux
     above: input_number.maximum_lux
     for:
       minutes: '{{ states(''input_number.blinds_auto_control_debounce'') | int(5)
         }}'
-  condition: []
-  action:
+    trigger: numeric_state
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: or
@@ -2467,13 +2461,8 @@
           attribute: rising
           state: false
         - condition: numeric_state
-          entity_id: sensor.dining_room_lux
-          below: 300
-      - condition: template
-        value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
-          ''cover.living_room_blinds'']) | map(attribute = ''last_changed'') | list
-          | sort)[-1] >= timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
-          | int(0)) }}'
+          entity_id: sensor.sun_solar_elevation
+          above: 65
       sequence:
       - repeat:
           for_each:
@@ -2486,21 +2475,16 @@
           - cover.study_room_right_blind
           - cover.study_room_left_blind
           sequence:
-          - service: cover.open_cover
-            target:
+          - target:
               entity_id: '{{ repeat.item }}'
             continue_on_error: true
+            action: cover.open_cover
           - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
               }}'
     - conditions:
       - condition: numeric_state
         entity_id: sensor.dining_room_lux
         above: input_number.maximum_lux
-      - condition: template
-        value_template: '{{ now() - (states | selectattr(''entity_id'', ''in'', [''cover.dining_room_blinds'',
-          ''cover.living_room_blinds'']) | map(attribute = ''last_changed'') | list
-          | sort)[-1] >= timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
-          | int(0)) }}'
       sequence:
       - condition: state
         entity_id: sun.sun
@@ -2517,10 +2501,10 @@
           - cover.study_room_right_blind
           - cover.study_room_left_blind
           sequence:
-          - service: cover.close_cover
-            target:
+          - target:
               entity_id: '{{ repeat.item }}'
             continue_on_error: true
+            action: cover.close_cover
           - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
               }}'
   mode: single
