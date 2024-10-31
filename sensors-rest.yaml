@@ -81,3 +81,10 @@
       value_template: >
         {% from 'transit.jinja' import bus_operating %}
         {{ bus_operating(value_json, '67') }}
+        
+
+- resource: http://192.168.18.102:8126/container/dockermon
+  scan_interval: 60
+  binary_sensor:
+    - name: Dockermon
+      value_template: "{{ value_json['state'] == 'running' }}"
