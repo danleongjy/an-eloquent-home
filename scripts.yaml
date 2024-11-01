@@ -1334,25 +1334,17 @@ docker_mode:
           data: {}
           target:
             entity_id: '{{ repeat.item }}'
-        - delay: 60
+        - repeat:
+            sequence:
+            - delay: 10
+            while:
+            - condition: template
+              value_template: '{{ is_state(repeat.item, ''on'') }}'
         for_each:
         - switch.immich_server
         - switch.immich_postgres
         - switch.immich_redis
         - switch.immich_machine_learning
-    - wait_for_trigger:
-      - trigger: state
-        entity_id:
-        - switch.immich_server
-        - switch.immich_redis
-        - switch.immich_postgres
-        - switch.immich_machine_learning
-        to: 'off'
-        for:
-          hours: 0
-          minutes: 1
-          seconds: 0
-      continue_on_timeout: false
     - action: switch.turn_on
       metadata: {}
       data: {}
@@ -1378,16 +1370,13 @@ docker_mode:
       data: {}
       target:
         entity_id: switch.jupyterlab
-    - wait_for_trigger:
-      - trigger: state
-        entity_id:
-        - switch.jupyterlab
-        to: 'off'
-        for:
-          hours: 0
-          minutes: 1
-          seconds: 0
-      continue_on_timeout: false
+    - repeat:
+        sequence:
+        - delay: 10
+        while:
+        - condition: state
+          entity_id: switch.jupyterlab
+          state: 'on'
     - repeat:
         sequence:
         - action: switch.turn_on
@@ -1395,7 +1384,12 @@ docker_mode:
           data: {}
           target:
             entity_id: '{{ repeat.item }}'
-        - delay: 60
+        - repeat:
+            sequence:
+            - delay: 10
+            while:
+            - condition: template
+              value_template: '{{ is_state(repeat.item, ''off'') }}'
         for_each:
         - switch.immich_machine_learning
         - switch.immich_postgres
