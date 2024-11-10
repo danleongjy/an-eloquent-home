@@ -718,7 +718,7 @@
   sensor:
     - name: pfSense MB In within 1min
       unique_id: sensor.pfsense_mb_in_within_1min
-      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
       unit_of_measurement: MB
       attributes:
         timestamp: "{{ now() }}"
@@ -735,7 +735,7 @@
   sensor:
     - name: pfSense MB Out within 1min
       unique_id: sensor.pfsense_mb_out_within_1min
-      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
       unit_of_measurement: MB
       attributes:
         timestamp: "{{ now() }}"
@@ -752,7 +752,7 @@
   sensor:
     - name: Home Assistant MB In within 1min
       unique_id: sensor.home_assistant_mb_in_within_1min
-      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0),0]) }}"
       unit_of_measurement: MB
       attributes:
         timestamp: "{{ now() }}"
@@ -769,7 +769,7 @@
   sensor:
     - name: Home Assistant MB Out within 1min
       unique_id: sensor.home_assistant_mb_out_within_1min
-      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
       unit_of_measurement: MB
       attributes:
         timestamp: "{{ now() }}"
@@ -786,7 +786,7 @@
   sensor:
     - name: Docker MB In within 1min
       unique_id: sensor.docker_mb_in_within_1min
-      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
       unit_of_measurement: MB
       attributes:
         timestamp: "{{ now() }}"
@@ -803,7 +803,7 @@
   sensor:
     - name: Docker MB Out within 1min
       unique_id: sensor.docker_mb_out_within_1min
-      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
       unit_of_measurement: MB
       attributes:
         timestamp: "{{ now() }}"
@@ -820,7 +820,7 @@
   sensor:
     - name: Samba MB In within 1min
       unique_id: sensor.samba_mb_in_within_1min
-      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
       unit_of_measurement: MB
       attributes:
         timestamp: "{{ now() }}"
@@ -837,7 +837,7 @@
   sensor:
     - name: Samba MB Out within 1min
       unique_id: sensor.samba_mb_out_within_1min
-      state: "{{ trigger.to_state.state | float(0) - trigger.from_state.state | float(0) }}"
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
       unit_of_measurement: MB
       attributes:
         timestamp: "{{ now() }}"
