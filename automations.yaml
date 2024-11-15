@@ -2215,6 +2215,8 @@
         - automation.study_room_voice_assistant_listening_for_wake_word
         - automation.kitchen_voice_assistant_listening_for_wake_word
         - automation.living_room_voice_assistant_listening_for_wake_word
+        - automation.elenas_room_curtains_auto_control
+        - automation.elis_room_curtains_auto_control
       enabled: true
       action: automation.turn_off
     - data: {}
@@ -2230,6 +2232,8 @@
       action: script.turn_off_all
     - repeat:
         for_each:
+        - cover.elenas_room_curtains
+        - cover.elis_room_curtains
         - cover.dining_room_right_blind
         - cover.dining_room_middle_blind
         - cover.dining_room_left_blind
@@ -2313,14 +2317,23 @@
         - automation.study_room_voice_assistant_listening_for_wake_word
         - automation.kitchen_voice_assistant_listening_for_wake_word
         - automation.living_room_voice_assistant_listening_for_wake_word
+        - automation.elenas_room_curtains_auto_control
+        - automation.elis_room_curtains_auto_control
       action: automation.turn_on
-    - data:
-        skip_condition: false
-      target:
-        entity_id:
+    - repeat:
+        sequence:
+        - action: automation.trigger
+          metadata: {}
+          data:
+            skip_condition: true
+          target:
+            entity_id: '{{ repeat.item }}'
+        - delay: 5
+        for_each:
         - automation.south_facing_blinds_auto_control
         - automation.kitchen_blind_auto_control
-      action: automation.trigger
+        - automation.elis_room_curtains_auto_control
+        - automation.elenas_room_curtains_auto_control
   mode: single
 - id: '1670838907474'
   alias: System Housekeeping

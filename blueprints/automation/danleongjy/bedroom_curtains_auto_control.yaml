@@ -52,41 +52,35 @@ triggers:
     entity_id: !input windows
     from: 'on'
     to: 'off'
-    id: windows_closed
   - trigger: time
     at: !input sleep_hours_start
-    id: sleep_start
   - trigger: state
     entity_id: !input motion
     from: 'on'
     to: 'off'
     for: 
       minutes: "{{ states('input_number.motion_timeout_presence') }}"
-    id: no_motion
 actions:
-  - if:
-      - or:
-          - condition: trigger
-            id: windows_closed
-          - condition: trigger
-            id: sleep_start
-    then:
-      - condition: state
-        entity_id: !input windows
-        state: 'off'
-      - condition: time
-        after: !input sleep_hours_start
-        before: !input sleep_hours_end
-      - action: cover.close_cover
-        target:
-          entity_id: !input curtains
-    else:
-      - condition: state
-        entity_id: !input doors
-        state: 'on'
-      - condition: time
-        after: !input sleep_hours_end
-        before: !input sleep_hours_start
-      - action: cover.open_cover
-        target:
-          entity_id: !input curtains
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: !input windows
+            state: 'off'
+          - condition: time
+            after: !input sleep_hours_start
+            before: !input sleep_hours_end
+        sequence:
+          - action: cover.close_cover
+            target:
+              entity_id: !input curtains
+      - conditions:
+          - condition: state
+            entity_id: !input doors
+            state: 'on'
+          - condition: time
+            after: !input sleep_hours_end
+            before: !input sleep_hours_start
+        sequence:
+          - action: cover.open_cover
+            target:
+              entity_id: !input curtains
