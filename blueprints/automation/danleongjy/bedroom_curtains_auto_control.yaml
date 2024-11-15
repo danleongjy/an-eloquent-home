@@ -1,0 +1,92 @@
+blueprint:
+  name: Bedroom Curtains Auto Control
+  description: Open or close bedroom curtains based on time and windows state.  If the windows are closed and the time is after sleep hours start, the curtains will close.  If no motion is detected, the doors are open and the time is after sleep hours end, the curtains will open.
+  domain: automation
+  input:
+    curtains:
+      name: Curtains
+      description: Curtains for auto control
+      selector:
+        entity:
+          domain: cover
+          device_class: curtain
+    sleep_hours_start:
+      name: Sleep Hours Start
+      description: Input datetime indicating the start of sleep hours
+      selector:
+        entity:
+          domain: input_datetime
+      default: input_datetime.sleep_hours_start
+    sleep_hours_end:
+      name: Sleep Hours End
+      description: Input datetime indicating the end of sleep hours
+      selector:
+        entity:
+          domain: input_datetime
+      default: input_datetime.sleep_hours_end
+    windows:
+      name: Windows
+      description: Binary sensor indicating whether the bedroom windows are closed
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: window
+    doors:
+      name: Doors
+      description: Binary sensor indicating whether the bedroom doors are closed
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: door
+    motion:
+      name: Motion Sensor
+      description: Binary sensor indicating whether motion is detected in the bedroom
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class:
+            - motion
+            - occupancy
+triggers:
+  - trigger: state
+    entity_id: !input windows
+    from: 'on'
+    to: 'off'
+    id: windows_closed
+  - trigger: time
+    at: !input sleep_hours_start
+    id: sleep_start
+  - trigger: state
+    entity_id: !input motion
+    from: 'on'
+    to: 'off'
+    for: 
+      minutes: "{{ states('input_number.motion_timeout_presence') }}"
+    id: no_motion
+actions:
+  - if:
+      - or:
+          - condition: trigger
+            id: windows_closed
+          - condition: trigger
+            id: sleep_start
+    then:
+      - condition: state
+        entity_id: !input windows
+        state: 'off'
+      - condition: time
+        after: !input sleep_hours_start
+        before: !input sleep_hours_end
+      - action: cover.close_cover
+        target:
+          entity_id: !input curtains
+    else:
+      - condition: state
+        entity_id: !input doors
+        state: 'on'
+      - condition: time
+        after: !input sleep_hours_end
+        before: !input sleep_hours_start
+      - action: cover.open_cover
+        target:
+          entity_id: !input curtains
