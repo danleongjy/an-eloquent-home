@@ -55,11 +55,13 @@ triggers:
   - trigger: time
     at: !input sleep_hours_start
   - trigger: state
+    entity_id: !input doors
+  - trigger: state
     entity_id: !input motion
     from: 'on'
     to: 'off'
     for: 
-      minutes: "{{ states('input_number.motion_timeout_presence') }}"
+      minutes: "{{ states('input_number.motion_timeout_bedrooms') }}"
 actions:
   - choose:
       - conditions:
@@ -77,6 +79,11 @@ actions:
           - condition: state
             entity_id: !input doors
             state: 'on'
+          - condition: state
+            entity_id: !input motion
+            state: 'off'
+            for:
+              minutes: "{{ states('inout_number.motion_timeout_bedrooms') }}"
           - condition: time
             after: !input sleep_hours_end
             before: !input sleep_hours_start
