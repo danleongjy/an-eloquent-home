@@ -1,32 +1,32 @@
 script:
-  - id: draw_display_main_blinds
+  - id: draw_display_main_cover
     then:
       - lambda: |
           // tab
-          if (id(blinds_position).state > 0) {
+          if (id(cover_position).state > 0) {
             id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
             id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
           }
           // main display
-          if (id(blinds_position).state > 0) {
-            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * id(blinds_position).state) / 100), id(width), id(height) * (0.75 * id(blinds_position).state / 100), id(slider));
-            if (!id(blinds_auto_control).state) {
+          if (id(cover_position).state > 0) {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * id(cover_position).state) / 100), id(width), id(height) * (0.75 * id(cover_position).state / 100), id(slider));
+            if (!id(cover_auto_control).state) {
               for (int i = 1; i <= 10; i++) {
                 id(interface_display).filled_rectangle(0, id(height) * 0.75 - id(height) * 0.75 / 10 * i, id(width), id(height) * 0.75 / 20, id(black));
               }
             }
-            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_blinds), ImageAlign::CENTER, id(device_on));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_cover), ImageAlign::CENTER, id(device_on));
           } else {
-            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_blinds), ImageAlign::CENTER, id(device_off));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_cover), ImageAlign::CENTER, id(device_off));
           }
 
 sensor:
   - platform: homeassistant
-    id: blinds_position
-    entity_id: ${blinds_entity}
+    id: cover_position
+    entity_id: ${cover_entity}
     attribute: current_position
       
 binary_sensor:
   - platform: homeassistant
-    id: blinds_auto_control
-    entity_id: ${blinds_auto_control_automation}
+    id: cover_auto_control
+    entity_id: ${cover_auto_control_automation}

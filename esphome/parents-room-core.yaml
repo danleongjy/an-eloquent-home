@@ -3,8 +3,9 @@ substitutions:
   hostname_room: parents-room
   capitalised_room_name: Parents' Room
   alarm_room: parents_room
-  blinds_entity: cover.master_bathroom_blind
-  blinds_auto_control_automation: automation.master_bathroom_blind_auto_control
+  window_cover_type: roller-shade
+  cover_entity: cover.master_bathroom_blind
+  cover_auto_control_automation: automation.master_bathroom_blind_auto_control
   display_rotation: 270°
   volume: "0.001" # 0.005 generally loud enough
 
@@ -49,51 +50,3 @@ captive_portal:
 packages:
   core: !include packages/room_core.yaml
   env3: !include packages/env3.yaml
-  master_bathroom_blind: !include packages/room_blinds.yaml
-  
-display:
-  - id: !extend interface_display
-    on_page_change:
-      - to: blinds
-        then:
-          lambda: 'id(current_view).publish_state("blinds");'
-    pages:
-      - id: !extend lights
-        lambda: |-
-          // tabs
-          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_blinds), ImageAlign::CENTER);
-
-          id(draw_display_borders).execute();
-          id(draw_display_bottom_status_bar).execute();
-          id(draw_display_main_lights).execute();
-      - id: !extend fan
-        lambda: |-
-          // tabs
-          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_blinds), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
-
-          id(draw_display_borders).execute();
-          id(draw_display_bottom_status_bar).execute();
-          id(draw_display_main_fan).execute();
-      - id: !extend ac
-        lambda: |-
-          // tabs
-          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_blinds), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
-
-          id(draw_display_borders).execute();
-          id(draw_display_bottom_status_bar).execute();
-          id(draw_display_main_ac).execute();
-      - id: blinds
-        lambda: |-
-          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
-
-          id(draw_display_borders).execute();
-          id(draw_display_bottom_status_bar).execute();
-          id(draw_display_main_blinds).execute();

@@ -1,13 +1,13 @@
 turn_off_all:
   sequence:
-  - service: automation.trigger
-    data:
+  - data:
       skip_condition: true
     target:
       entity_id:
       - automation.playroom_motion_timeout
       - automation.yard_motion_timeout
       - automation.kitchen_motion_timeout
+    action: automation.trigger
   - if:
     - condition: not
       conditions:
@@ -15,66 +15,67 @@ turn_off_all:
         entity_id: media_player.kitchen_speaker
         state: 'off'
     then:
-    - service: media_player.media_stop
-      data: {}
+    - data: {}
       target:
         entity_id: media_player.kitchen_speaker
+      action: media_player.media_stop
+      continue_on_error: true
   - delay:
       hours: 0
       minutes: 0
       seconds: 0
       milliseconds: 300
-  - service: automation.trigger
-    data:
+  - data:
       skip_condition: true
     target:
       entity_id:
       - automation.elenas_room_motion_timeout
       - automation.master_bathroom_motion_timeout
+    action: automation.trigger
   - delay:
       hours: 0
       minutes: 0
       seconds: 0
       milliseconds: 300
-  - service: automation.trigger
-    data:
+  - data:
       skip_condition: true
     target:
       entity_id:
       - automation.elis_room_motion_timeout
       - automation.parents_room_motion_timeout
+    action: automation.trigger
   - delay:
       hours: 0
       minutes: 0
       seconds: 0
       milliseconds: 300
-  - service: automation.trigger
-    data:
+  - data:
       skip_condition: true
     target:
       entity_id: automation.hallway_motion_timeout
+    action: automation.trigger
   - delay:
       hours: 0
       minutes: 0
       seconds: 0
       milliseconds: 100
-  - service: automation.trigger
-    data:
+  - data:
       skip_condition: true
     target:
       entity_id: automation.junior_bathroom_motion_timeout
+    action: automation.trigger
   - delay:
       hours: 0
       minutes: 0
       seconds: 0
       milliseconds: 100
-  - service: automation.trigger
-    data:
+  - data:
       skip_condition: true
     target:
       entity_id:
       - automation.study_room_motion_timeout
       - automation.powder_room_motion_timeout
+    action: automation.trigger
   - if:
     - condition: not
       conditions:
@@ -82,27 +83,28 @@ turn_off_all:
         entity_id: media_player.study_room_speaker
         state: 'off'
     then:
-    - service: media_player.media_stop
-      data: {}
+    - data: {}
       target:
         entity_id: media_player.study_room_speaker
+      action: media_player.media_stop
+      continue_on_error: true
   - delay:
       hours: 0
       minutes: 0
       seconds: 0
       milliseconds: 300
-  - service: automation.trigger
-    data:
+  - data:
       skip_condition: true
     target:
       entity_id:
       - automation.dining_room_motion_timeout
       - automation.living_room_motion_timeout
       - automation.dining_and_living_room_ac_motion_timeout
-  - service: switch.turn_off
-    data: {}
+    action: automation.trigger
+  - data: {}
     target:
       entity_id: switch.water_heater
+    action: switch.turn_off
   mode: single
   alias: Turn Off All
   icon: mdi:home-export-outline
@@ -1147,6 +1149,16 @@ cover_controller:
       cover.study_room_blinds: light.study_room_bulb_3_entity
       cover.master_bathroom_blind: light.master_bathroom_pendant_light_entity
       cover.kitchen_blind: light.kitchen_ceiling_light_entity
+      cover.elenas_room_curtains: light.elenas_room_bulb_1_entity
+      cover.elis_room_curtains: light.elis_room_bulb_3_entity
+    automation:
+      cover.dining_room_blinds: automation.south_facing_blinds_auto_control
+      cover.living_room_blinds: automation.south_facing_blinds_auto_control
+      cover.study_room_blinds: automation.south_facing_blinds_auto_control
+      cover.master_bathroom_blind: automation.master_bathroom_blind_auto_control
+      cover.kitchen_blind: automation.kitchen_blind_auto_control
+      cover.elenas_room_curtains: automation.elenas_room_curtains_auto_control
+      cover.elis_room_curtains: automation.elis_room_curtains_auto_control
   sequence:
   - choose:
     - conditions:
@@ -1155,9 +1167,7 @@ cover_controller:
       sequence:
       - action: automation.turn_off
         target:
-          entity_id: "{% if cover == 'cover.master_bathroom_blind' %}\n  automation.master_bathroom_blind_auto_control\n{%
-            elif cover == 'cover.kitchen_blind' %}\n  automation.kitchen_blind_auto_control\n{%
-            else %}\n  automation.south_facing_blinds_auto_control\n{% endif %}\n"
+          entity_id: '{{ automation[cover] }}'
       - if:
         - condition: template
           value_template: '{{ is_state(cover, ''closing'') }}'
@@ -1175,9 +1185,7 @@ cover_controller:
       sequence:
       - action: automation.turn_off
         target:
-          entity_id: "{% if cover == 'cover.master_bathroom_blind' %}\n  automation.master_bathroom_blind_auto_control\n{%
-            elif cover == 'cover.kitchen_blind' %}\n  automation.kitchen_blind_auto_control\n{%
-            else %}\n  automation.south_facing_blinds_auto_control\n{% endif %}\n"
+          entity_id: '{{ automation[cover] }}'
       - if:
         - condition: template
           value_template: '{{ is_state(cover, ''opening'') }}'
@@ -1194,9 +1202,7 @@ cover_controller:
         value_template: '{{ command == ''cover_auto_control'' }}'
       sequence:
       - target:
-          entity_id: "{% if cover == 'cover.master_bathroom_blind' %}\n  automation.master_bathroom_blind_auto_control\n{%
-            elif cover == 'cover.kitchen_blind' %}\n  automation.kitchen_blind_auto_control\n{%
-            else %}\n  automation.south_facing_blinds_auto_control\n{% endif %}\n"
+          entity_id: '{{ automation[cover] }}'
         action: automation.turn_on
       - condition: or
         conditions:
@@ -1215,9 +1221,7 @@ cover_controller:
         value_template: '{{ command == ''cover_manual_control'' }}'
       sequence:
       - target:
-          entity_id: "{% if cover == 'cover.master_bathroom_blind' %}\n  automation.master_bathroom_blind_auto_control\n{%
-            elif cover == 'cover.kitchen_blind' %}\n  automation.kitchen_blind_auto_control\n{%
-            else %}\n  automation.south_facing_blinds_auto_control\n{% endif %}\n"
+          entity_id: '{{ automation[cover] }}'
         action: automation.turn_off
       - condition: or
         conditions:

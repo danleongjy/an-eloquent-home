@@ -3,8 +3,9 @@ substitutions:
   hostname_room: study-room
   capitalised_room_name: Study Room
   alarm_room: parents_room
-  blinds_entity: cover.study_room_blinds
-  blinds_auto_control_automation: automation.south_facing_blinds_auto_control
+  window_cover_type: roller-shade
+  cover_entity: cover.study_room_blinds
+  cover_auto_control_automation: automation.south_facing_blinds_auto_control
   display_rotation: 270°
   volume: "0.003" # 0.005 generally loud enough
   
@@ -48,7 +49,6 @@ captive_portal:
 
 packages:
   core: !include packages/room_core.yaml
-  study_room_blinds: !include packages/room_blinds.yaml
 
 script:
   - id: !remove doorbell
@@ -88,10 +88,6 @@ sensor:
 
 display:
   - id: !extend interface_display
-    on_page_change:
-      - to: blinds
-        then:
-          lambda: 'id(current_view).publish_state("blinds");'
     pages:
       - id: !extend current_time
         lambda: |-
@@ -125,43 +121,3 @@ display:
             id(interface_display).strftime(id(width) * 0.5, id(height) * 0.6, id(small_time), TextAlign::CENTER, "%a %d %b %Y", id(homeassistant_time).now());
           }
           id(draw_display_main_time).execute();
-      - id: !extend lights
-        lambda: |-
-          // tabs
-          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_blinds), ImageAlign::CENTER);
-
-          id(draw_display_bottom_status_bar).execute();
-          id(draw_display_main_lights).execute();
-          id(draw_display_borders).execute();
-      - id: !extend fan
-        lambda: |-
-          // tabs
-          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_blinds), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
-
-          id(draw_display_bottom_status_bar).execute();
-          id(draw_display_main_fan).execute();
-          id(draw_display_borders).execute();
-      - id: !extend ac
-        lambda: |-
-          // tabs
-          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_blinds), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
-
-          id(draw_display_bottom_status_bar).execute();
-          id(draw_display_main_ac).execute();
-          id(draw_display_borders).execute();
-      - id: blinds
-        lambda: |-
-          // tabs
-          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
-
-          id(draw_display_bottom_status_bar).execute();
-          id(draw_display_main_blinds).execute();
-          id(draw_display_borders).execute();

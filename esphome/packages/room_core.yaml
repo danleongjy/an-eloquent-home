@@ -142,6 +142,26 @@ script:
           if (id(fan_auto_control).state) {
             id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(fan_auto), ImageAlign::CENTER, id(auto_control));
           }
+  - id: draw_display_main_cover
+    then:
+      - lambda: |
+          // tab
+          if (id(cover_position).state > 0) {
+            id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
+          }
+          // main display
+          if (id(cover_position).state > 0) {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * id(cover_position).state) / 100), id(width), id(height) * (0.75 * id(cover_position).state / 100), id(slider));
+            if (!id(cover_auto_control).state) {
+              for (int i = 1; i <= 10; i++) {
+                id(interface_display).filled_rectangle(0, id(height) * 0.75 - id(height) * 0.75 / 10 * i, id(width), id(height) * 0.75 / 20, id(black));
+              }
+            }
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_cover), ImageAlign::CENTER, id(device_on));
+          } else {
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_cover), ImageAlign::CENTER, id(device_off));
+          }
   - id: draw_display_main_doorbell
     then:
       - lambda: |
@@ -235,6 +255,10 @@ sensor:
   - platform: homeassistant
     id: room_lux
     entity_id: sensor.${core_room}_lux
+  - platform: homeassistant
+    id: cover_position
+    entity_id: ${cover_entity}
+    attribute: current_position
 
 binary_sensor:
   - platform: homeassistant
@@ -246,6 +270,9 @@ binary_sensor:
   - platform: homeassistant
     id: fan_auto_control
     entity_id: automation.${core_room}_fan_auto_control
+  - platform: homeassistant
+    id: cover_auto_control
+    entity_id: ${cover_auto_control_automation}
   - platform: homeassistant
     id: room_next_alarm_imminent
     entity_id: sensor.next_alarm_timings
@@ -295,9 +322,9 @@ binary_sensor:
                       - lambda: 'id(current_command).publish_state("ac_on");'
                 - if:
                     condition:
-                      lambda: 'return id(current_view).state == "blinds";'
+                      lambda: 'return id(current_view).state == "cover";'
                     then:
-                      - lambda: 'id(current_command).publish_state("blinds_open");'
+                      - lambda: 'id(current_command).publish_state("cover_open");'
       - timing:
           - ON for at least 1.5s
         then:
@@ -386,9 +413,9 @@ binary_sensor:
                       - lambda: 'id(current_command).publish_state("cooling_auto_control");'
                 - if:
                     condition:
-                      lambda: 'return id(current_view).state == "blinds";'
+                      lambda: 'return id(current_view).state == "cover";'
                     then:
-                      - lambda: 'id(current_command).publish_state("blinds_auto_control");'
+                      - lambda: 'id(current_command).publish_state("cover_auto_control");'
   - platform: gpio
     pin: 38
     name: 'Middle Button'
@@ -455,9 +482,9 @@ binary_sensor:
                       - lambda: 'id(current_command).publish_state("ac_off");'
                 - if:
                     condition:
-                      lambda: 'return id(current_view).state == "blinds";'
+                      lambda: 'return id(current_view).state == "cover";'
                     then:
-                      - lambda: 'id(current_command).publish_state("blinds_close");'
+                      - lambda: 'id(current_command).publish_state("cover_close");'
       - timing:
           - ON for at least 1.5s
         then:
@@ -546,9 +573,9 @@ binary_sensor:
                       - lambda: 'id(current_command).publish_state("cooling_manual_control");'
                 - if:
                     condition:
-                      lambda: 'return id(current_view).state == "blinds";'
+                      lambda: 'return id(current_view).state == "cover";'
                     then:
-                      - lambda: 'id(current_command).publish_state("blinds_manual_control");'
+                      - lambda: 'id(current_command).publish_state("cover_manual_control");'
 
 number:
   - platform: template
@@ -662,8 +689,8 @@ image:
   - file: mdi:snowflake
     id: tab_ac
     resize: 30x30
-  - file: mdi:roller-shade
-    id: tab_blinds
+  - file: mdi:${window_cover_type}
+    id: tab_cover
     resize: 30x30
   - file: mdi:fan-auto
     id: fan_auto
@@ -686,8 +713,8 @@ image:
   - file: mdi:snowflake
     id: main_ac
     resize: 160x160
-  - file: mdi:roller-shade
-    id: main_blinds
+  - file: mdi:${window_cover_type}
+    id: main_cover
     resize: 160x160
   - file: mdi:bell-ring-outline
     id: main_doorbell
@@ -762,6 +789,9 @@ display:
       - to: ac
         then:
           lambda: 'id(current_view).publish_state("ac");'
+      - to: cover
+        then:
+          lambda: 'id(current_view).publish_state("cover");'
     pages:
       - id: current_time
         lambda: |-
@@ -791,7 +821,7 @@ display:
           // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_cover), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
           id(draw_display_main_lights).execute();
@@ -800,8 +830,8 @@ display:
         lambda: |-
           // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_cover), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
           id(draw_display_main_fan).execute();
@@ -809,10 +839,20 @@ display:
       - id: ac
         lambda: |-
           // tabs
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_cover), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
+
+          id(draw_display_bottom_status_bar).execute();
+          id(draw_display_main_ac).execute();
+          id(draw_display_borders).execute();
+      - id: cover
+        lambda: |-
+          // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
           it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
-          id(draw_display_main_ac).execute();
+          id(draw_display_main_cover).execute();
           id(draw_display_borders).execute();
