@@ -114,9 +114,10 @@ action:
         conditions:
         - condition: trigger
           id: door_opened
-        - condition: state
-          entity_id: !input motion_sensor
-          state: 'off'
+        - not:
+          - condition: state
+            entity_id: !input motion_sensor
+            state: 'on'
     sequence:
     - action: input_boolean.turn_off
       data: {}
