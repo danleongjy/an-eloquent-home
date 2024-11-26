@@ -132,9 +132,13 @@ action:
             target:
               entity_id: !input lights_list
       - conditions:
-          - condition: numeric_state
-            entity_id: !input lux_sensor
-            below: !input insufficient_lux
+          - or:
+              - condition: state
+                entity_id: !input lux_sensor
+                state: unavailable
+              - condition: numeric_state
+                entity_id: !input lux_sensor
+                below: !input insufficient_lux
         sequence:
           - repeat:
               for_each: !input lights_list
