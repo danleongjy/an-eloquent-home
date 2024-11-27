@@ -94,7 +94,7 @@ Total | 1588
 
 ### Add-ons
 - Assist Microphone
-- ESPHome
+- ESPHome Device Compiler
 - File editor
 - Home Assistant Google Drive Backup
 - openWakeWord
