@@ -23,7 +23,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 3
-[`automation`](https://www.home-assistant.io/components/automation) | 147
+[`automation`](https://www.home-assistant.io/components/automation) | 148
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 174
 [`button`](https://www.home-assistant.io/components/button) | 166
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
@@ -57,7 +57,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1602
+Total | 1603
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)

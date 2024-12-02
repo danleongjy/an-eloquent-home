@@ -988,7 +988,6 @@
           lights:
           - light.living_room_lights
           - light.living_room_pendant_light_entity
-          - light.christmas_tree
           command: lights_on
       action_button_up_long:
       - action: script.lights_controller
@@ -1005,7 +1004,6 @@
           lights:
           - light.living_room_lights
           - light.living_room_pendant_light_entity
-          - light.christmas_tree
           command: lights_off
       action_button_down_long:
       - action: script.lights_controller
@@ -3511,7 +3509,6 @@
     input:
       lights_list:
       - light.living_room_lights
-      - light.christmas_tree
       motion_sensor: binary_sensor.living_room_presence
       lux_sensor: sensor.dining_room_lux
       blackout_hours_start: input_datetime.dim_hours_start
@@ -6351,3 +6348,18 @@
       core_command_open: cover_open
       core_command_auto_control: cover_auto_control
       core_command_manual_control: cover_manual_control
+- id: '1733134617074'
+  alias: Christmas Tree
+  description: Sync Christmas Tree lights to Living Room Lights
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.living_room_lights
+  conditions: []
+  actions:
+  - action: light.turn_{{ states('light.living_room_lights') }}
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.christmas_tree
+  mode: single
