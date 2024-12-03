@@ -566,7 +566,7 @@
     - condition: trigger
       id: idle
     then:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         message: Vacuum not docked properly
         title: Please manually dock vacuum
@@ -580,7 +580,7 @@
         data:
           tag: vacuum_undocked
     else:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         message: clear_notification
         data:
@@ -616,7 +616,7 @@
     - condition: trigger
       id: notify
     then:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         message: AC on with doors and windows open
         title: Please close the doors and windows
@@ -629,7 +629,7 @@
         data:
           tag: doors_open
     else:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         message: clear_notification
         data:
@@ -655,7 +655,7 @@
       entity_id: input_boolean.washer_load_clean
       state: 'on'
     then:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         title: Please unload laundry
         message: Wash completed at {{ (now() | string)[11:16] }}
@@ -669,7 +669,7 @@
         data:
           tag: washer_load_clean
     else:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         message: clear_notification
         data:
@@ -695,7 +695,7 @@
       entity_id: input_boolean.dishwasher_load_clean
       state: 'on'
     then:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         message: Dishwasher cooled down at {{ (now().time()| string)[:5] }}.
         title: Please open dishwasher
@@ -709,7 +709,7 @@
         data:
           tag: dishwasher_load_clean
     else:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         message: clear_notification
         data:
@@ -761,7 +761,7 @@
       entity_id: sensor.raining_with_windows_open
       state: alert
     then:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         title: Please close windows
         message: Windows open in heavy rain
@@ -774,7 +774,7 @@
         data:
           tag: windows_open_raining
     else:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         message: clear_notification
         data:
@@ -3197,7 +3197,7 @@
         ''calendar.eli_no_school'': ''Eli has no school'', ''calendar.public_holidays'':
         ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(trigger.id,''message'')
         }}.'
-  - service: notify.mobile_app_pixel_4a
+  - service: notify.mobile_app_daniel_s_pixel
     data:
       title: "{% set start_date = (state_attr(trigger.id,'start_time').split()[0]
         | as_datetime).date() %} {% set end_date = (state_attr(trigger.id,'end_time').split()[0]
@@ -4128,7 +4128,7 @@
         entity_id: binary_sensor.rice_cooker
         state: 'on'
     then:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         title: Turn off kitchen appliances?
         data:
@@ -4145,7 +4145,7 @@
           'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker',
           'on') %}\n  Rice cooker is on.\n{% else %}\n  Stove is on.\n{% endif %}"
     else:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         message: clear_notification
         data:
@@ -4691,7 +4691,7 @@
     to: true
   condition: []
   action:
-  - service: notify.mobile_app_pixel_4a
+  - service: notify.mobile_app_daniel_s_pixel
     data:
       message: Upcoming alarm at {{ state_attr('sensor.next_alarm_timings','parents_room').split('
         ')[1][:5] }}
@@ -5833,7 +5833,7 @@
       id:
       - high
     then:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       metadata: {}
       data:
         message: CPU load exceeded 20% for at least 1h
@@ -5842,7 +5842,7 @@
           tag: high
           clickAction: /lovelace/network
     else:
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       metadata: {}
       data:
         message: clear_notification
@@ -5862,7 +5862,7 @@
     above: 10
   condition: []
   action:
-  - service: notify.mobile_app_pixel_4a
+  - service: notify.mobile_app_daniel_s_pixel
     metadata: {}
     data:
       message: clear_notification
@@ -5874,7 +5874,7 @@
       above: 0
     then:
     - delay: 1
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       metadata: {}
       data:
         title: Check Zigbee Devices
@@ -5949,7 +5949,7 @@
           message: Bedtime starting at {{ (states('input_datetime.daniels_next_alarm')
             | as_datetime - timedelta(hours = states('input_number.minimum_sleep_hours')
             | float)).strftime('%H:%M') }}.
-        action: notify.mobile_app_pixel_4a
+        action: notify.mobile_app_daniel_s_pixel
     - conditions:
       - condition: trigger
         id:
@@ -5965,21 +5965,21 @@
           message: command_dnd
           data:
             command: alarms_only
-        action: notify.mobile_app_pixel_4a
+        action: notify.mobile_app_daniel_s_pixel
       - delay: 1
       - metadata: {}
         data:
           message: command_auto_screen_brightness
           data:
             command: turn_off
-        action: notify.mobile_app_pixel_4a
+        action: notify.mobile_app_daniel_s_pixel
       - delay: 1
       - metadata: {}
         data:
           message: command_screen_brightness_level
           data:
             command: 1
-        action: notify.mobile_app_pixel_4a
+        action: notify.mobile_app_daniel_s_pixel
     - conditions:
       - condition: trigger
         id:
@@ -5991,14 +5991,14 @@
           message: command_dnd
           data:
             command: 'off'
-        action: notify.mobile_app_pixel_4a
+        action: notify.mobile_app_daniel_s_pixel
       - delay: 1
       - metadata: {}
         data:
           message: command_auto_screen_brightness
           data:
             command: turn_on
-        action: notify.mobile_app_pixel_4a
+        action: notify.mobile_app_daniel_s_pixel
   mode: single
 - id: '1712999157282'
   alias: Study Room Core
@@ -6110,7 +6110,7 @@
       data: {}
       target:
         entity_id: input_boolean.vacuum_mop_unclean
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         title: Please clean vacuum mop
         message: Vacuum completed mopping at {{ (now() | string)[11:16] }}
@@ -6123,7 +6123,7 @@
       data: {}
       target:
         entity_id: input_boolean.vacuum_mop_unclean
-    - service: notify.mobile_app_pixel_4a
+    - service: notify.mobile_app_daniel_s_pixel
       data:
         message: clear_notification
         data:
