@@ -6357,7 +6357,8 @@
     - light.living_room_lights
   conditions: []
   actions:
-  - action: light.turn_{{ states('light.living_room_lights') }}
+  - action: light.turn_{{ states('light.living_room_lights') if states('light.living_room_lights')
+      in ['on','off'] else 'off' }}
     metadata: {}
     data: {}
     target:
