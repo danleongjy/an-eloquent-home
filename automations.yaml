@@ -4623,11 +4623,11 @@
 - id: '1690717352582'
   alias: Daniel's Alarm
   description: Wake up Daniel at his next alarm
-  trigger:
-  - platform: time
-    at: input_datetime.daniels_next_alarm
-  condition: []
-  action:
+  triggers:
+  - at: input_datetime.daniels_next_alarm
+    trigger: time
+  conditions: []
+  actions:
   - if:
     - condition: state
       entity_id: input_boolean.parents_room_next_alarm_dismissed
@@ -4664,7 +4664,7 @@
       state: 'off'
     then:
     - condition: state
-      entity_id: sensor.pixel_4a_battery_state
+      entity_id: sensor.daniels_pixel_battery_state
       state:
       - charging
       - full
@@ -5896,60 +5896,60 @@
 - id: '1708558912067'
   alias: Daniel's Phone Sleep Mode
   description: Set screen brightness and Do Not Disturb for sleep before next alarm
-  trigger:
+  triggers:
   - alias: Before wakeup alarm
-    platform: template
     value_template: '{{ now() >= (states(''input_datetime.daniels_next_alarm'') |
       as_datetime - timedelta(minutes = 1)).astimezone(now().tzinfo) and now() < (states(''input_datetime.daniels_next_alarm'')
       | as_datetime).astimezone(now().tzinfo) }}'
     id: before_wakeup
+    trigger: template
   - alias: At sleep time
-    platform: template
     value_template: '{{ now() >= (states(''input_datetime.daniels_next_alarm'') |
       as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
       | float)).astimezone(now().tzinfo) and now() < (states(''input_datetime.daniels_next_alarm'')
       | as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
       | float - 0.01)).astimezone(now().tzinfo) }}'
     id: sleep_time
+    trigger: template
   - alias: 15min before sleep time
-    platform: template
     value_template: "{{ now() >= (states('input_datetime.daniels_next_alarm') | as_datetime
       - timedelta(hours = states('input_number.minimum_sleep_hours') | float, minutes
       = 15)).astimezone(now().tzinfo) and \nnow() < (states('input_datetime.daniels_next_alarm')
       | as_datetime - timedelta(hours = states('input_number.minimum_sleep_hours')
       | float, minutes = 14)).astimezone(now().tzinfo) }}"
     id: before_sleep_time
-  - platform: state
-    entity_id:
-    - sensor.pixel_4a_battery_state
+    trigger: template
+  - entity_id:
+    - sensor.daniels_pixel_battery_state
     from: discharging
     to:
     - charging
     - full
     id: phone_charging
-  - platform: state
-    entity_id:
-    - sensor.pixel_4a_battery_state
+    trigger: state
+  - entity_id:
+    - sensor.daniels_pixel_battery_state
     from:
     - charging
     - full
     to: discharging
     id: phone_discharging
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: trigger
         id:
         - before_sleep_time
       sequence:
-      - service: notify.mobile_app_pixel_4a
-        metadata: {}
+      - metadata: {}
         data:
           title: Prepare for bed
           message: Bedtime starting at {{ (states('input_datetime.daniels_next_alarm')
             | as_datetime - timedelta(hours = states('input_number.minimum_sleep_hours')
             | float)).strftime('%H:%M') }}.
+        action: notify.mobile_app_pixel_4a
     - conditions:
       - condition: trigger
         id:
@@ -5960,45 +5960,45 @@
         value_template: '{{ now() >= (states(''input_datetime.daniels_next_alarm'')
           | as_datetime - timedelta(hours = states(''input_number.minimum_sleep_hours'')
           | float)).astimezone(now().tzinfo) }}'
-      - service: notify.mobile_app_pixel_4a
-        metadata: {}
+      - metadata: {}
         data:
           message: command_dnd
           data:
             command: alarms_only
+        action: notify.mobile_app_pixel_4a
       - delay: 1
-      - service: notify.mobile_app_pixel_4a
-        metadata: {}
+      - metadata: {}
         data:
           message: command_auto_screen_brightness
           data:
             command: turn_off
+        action: notify.mobile_app_pixel_4a
       - delay: 1
-      - service: notify.mobile_app_pixel_4a
-        metadata: {}
+      - metadata: {}
         data:
           message: command_screen_brightness_level
           data:
             command: 1
+        action: notify.mobile_app_pixel_4a
     - conditions:
       - condition: trigger
         id:
         - before_wakeup
         - phone_discharging
       sequence:
-      - service: notify.mobile_app_pixel_4a
-        metadata: {}
+      - metadata: {}
         data:
           message: command_dnd
           data:
             command: 'off'
+        action: notify.mobile_app_pixel_4a
       - delay: 1
-      - service: notify.mobile_app_pixel_4a
-        metadata: {}
+      - metadata: {}
         data:
           message: command_auto_screen_brightness
           data:
             command: turn_on
+        action: notify.mobile_app_pixel_4a
   mode: single
 - id: '1712999157282'
   alias: Study Room Core
