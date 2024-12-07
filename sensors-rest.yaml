@@ -82,10 +82,35 @@
         {% from 'transit.jinja' import bus_operating %}
         {{ bus_operating(value_json, '67') }}
         
-
 - resource: http://192.168.18.102:8126/container/dockermon
   scan_interval: 60
   binary_sensor:
     - name: Dockermon
       unique_id: binary_sensor.dockermon
       value_template: "{{ value_json['state'] == 'running' }}"
+
+- resource: 'https://eloquent-imagery.duckdns.org/api/server/statistics'
+  scan_interval: 60
+  headers:
+    x-api-key: !secret immich_apikey
+  sensor:
+    - name: Immich Photos
+      unique_id: sensor.immich_photos
+      value_template: "{{ value_json['photos'] }}"
+      availability: "{{ true if value_json['photos'] is defined else false }}"
+      unit_of_measurement: photos
+    - name: Immich Videos
+      unique_id: sensor.immich_videos
+      value_template: "{{ value_json['videos'] }}"
+      availability: "{{ true if value_json['videos'] is defined else false }}"
+      unit_of_measurement: videos
+    - name: Immich Usage Photos
+      unique_id: sensor.immich_usage_photos
+      value_template: "{{ value_json['usagePhotos'] / (1024 ** 3) }}"
+      availability: "{{ true if value_json['usagePhotos'] is defined else false }}"
+      unit_of_measurement: GB
+    - name: Immich Usage Videos
+      unique_id: sensor.immich_usage_videos
+      value_template: "{{ value_json['usageVideos'] / (1024 ** 3) }}"
+      availability: "{{ true if value_json['usageVideos'] is defined else false }}"
+      unit_of_measurement: GB
