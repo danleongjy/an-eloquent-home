@@ -1478,15 +1478,14 @@
   alias: Master Bathroom Blind Auto Control
   description: Control the Master Bathroom Blind based on whether there is motion
     in the Master Shower and whether doors are open at Parents Room and Master Bathroom
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.master_shower_motion
     to: 'on'
     from: 'off'
     id: motion
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - binary_sensor.master_shower_motion
     - binary_sensor.master_bathroom_motion
     from: 'on'
@@ -1496,23 +1495,30 @@
       minutes: 10
       seconds: 0
     id: no_motion
-  - platform: time
-    at: input_datetime.sleep_hours_start
+    trigger: state
+  - at: input_datetime.sleep_hours_start
     id: sleep_hours_start
-  - platform: state
-    entity_id:
+    trigger: time
+  - entity_id:
     - binary_sensor.parents_room_door
     - binary_sensor.master_bathroom_door
     from: 'off'
     to: 'on'
     id: door_open
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - binary_sensor.parents_room_motion
     to: 'on'
     id: parents_room_motion
-  condition: []
-  action:
+    trigger: state
+  - trigger: state
+    entity_id:
+    - input_boolean.away_mode
+    to: 'off'
+    from: 'on'
+    id: away_mode_off
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: trigger
@@ -1531,13 +1537,15 @@
         - condition: state
           entity_id: cover.master_bathroom_blind
           state: closed
-      - service: cover.close_cover
-        data: {}
+      - data: {}
         target:
           entity_id: cover.master_bathroom_blind
+        action: cover.close_cover
     - conditions:
       - condition: trigger
-        id: no_motion
+        id:
+        - no_motion
+        - away_mode_off
       sequence:
       - condition: and
         conditions:
@@ -1575,10 +1583,10 @@
           entity_id: cover.master_bathroom_blind
           attribute: current_position
           state: '100'
-      - service: cover.open_cover
-        data: {}
+      - data: {}
         target:
           entity_id: cover.master_bathroom_blind
+        action: cover.open_cover
     - conditions:
       - condition: trigger
         id: sleep_hours_start
@@ -1588,10 +1596,10 @@
         - condition: state
           entity_id: cover.master_bathroom_blind
           state: closed
-      - service: cover.close_cover
-        data: {}
+      - data: {}
         target:
           entity_id: cover.master_bathroom_blind
+        action: cover.close_cover
     - conditions:
       - condition: trigger
         id: door_open
@@ -1628,10 +1636,10 @@
           entity_id: cover.master_bathroom_blind
           attribute: current_position
           state: '100'
-      - service: cover.open_cover
-        data: {}
+      - data: {}
         target:
           entity_id: cover.master_bathroom_blind
+        action: cover.open_cover
     - conditions:
       - condition: trigger
         id:
@@ -1645,10 +1653,10 @@
         - condition: state
           entity_id: cover.master_bathroom_blind
           state: closed
-      - service: cover.close_cover
-        data: {}
+      - data: {}
         target:
           entity_id: cover.master_bathroom_blind
+        action: cover.close_cover
     default: []
   mode: restart
 - id: '1660480730988'
@@ -2330,7 +2338,6 @@
         - automation.kitchen_blind_auto_control
         - automation.elis_room_curtains_auto_control
         - automation.elenas_room_curtains_auto_control
-        - automation.master_bathroom_blind_auto_control
   mode: single
 - id: '1670838907474'
   alias: System Housekeeping
