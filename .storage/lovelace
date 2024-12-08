@@ -5782,7 +5782,7 @@
                       "cards": [
                         {
                           "type": "custom:button-card",
-                          "icon": "mdi:teddy-bear",
+                          "icon": "mdi:piano",
                           "template": "sensor_view"
                         },
                         {
@@ -6283,7 +6283,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "icon": "mdi:teddy-bear",
+                          "icon": "mdi:piano",
                           "template": "square_cell"
                         },
                         {
@@ -7319,7 +7319,7 @@
                       "cards": [
                         {
                           "type": "custom:button-card",
-                          "icon": "mdi:teddy-bear",
+                          "icon": "mdi:piano",
                           "template": "square_cell"
                         },
                         {
@@ -8584,7 +8584,7 @@
                       "cards": [
                         {
                           "type": "custom:button-card",
-                          "icon": "mdi:teddy-bear",
+                          "icon": "mdi:piano",
                           "template": "zigbee_endpoint"
                         },
                         {
@@ -11081,9 +11081,64 @@
                           "columns": 2,
                           "cards": [
                             {
-                              "name": " ",
-                              "type": "tile",
-                              "entity": "sensor.roborock_s7_battery"
+                              "type": "conditional",
+                              "conditions": [
+                                {
+                                  "condition": "state",
+                                  "entity": "vacuum.roborock_s7",
+                                  "state_not": "unavailable"
+                                }
+                              ],
+                              "card": {
+                                "name": " ",
+                                "type": "tile",
+                                "entity": "sensor.roborock_s7_battery"
+                              }
+                            },
+                            {
+                              "type": "conditional",
+                              "conditions": [
+                                {
+                                  "condition": "state",
+                                  "entity": "vacuum.roborock_s7",
+                                  "state": "docked"
+                                }
+                              ],
+                              "card": {
+                                "name": " ",
+                                "type": "tile",
+                                "entity": "sensor.roborock_s7_last_clean_begin"
+                              }
+                            },
+                            {
+                              "type": "conditional",
+                              "conditions": [
+                                {
+                                  "condition": "state",
+                                  "entity": "vacuum.roborock_s7",
+                                  "state_not": "unavailable"
+                                }
+                              ],
+                              "card": {
+                                "name": " ",
+                                "type": "tile",
+                                "entity": "sensor.roborock_s7_cleaning_time"
+                              }
+                            },
+                            {
+                              "type": "conditional",
+                              "conditions": [
+                                {
+                                  "condition": "state",
+                                  "entity": "vacuum.roborock_s7",
+                                  "state_not": "unavailable"
+                                }
+                              ],
+                              "card": {
+                                "name": " ",
+                                "type": "tile",
+                                "entity": "sensor.roborock_s7_cleaning_area"
+                              }
                             },
                             {
                               "type": "conditional",
@@ -11104,31 +11159,6 @@
                                 "type": "tile",
                                 "entity": "binary_sensor.roborock_s7_water_supply"
                               }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "condition": "state",
-                                  "entity": "vacuum.roborock_s7",
-                                  "state": "docked"
-                                }
-                              ],
-                              "card": {
-                                "name": " ",
-                                "type": "tile",
-                                "entity": "sensor.roborock_s7_last_clean_begin"
-                              }
-                            },
-                            {
-                              "name": " ",
-                              "type": "tile",
-                              "entity": "sensor.roborock_s7_cleaning_time"
-                            },
-                            {
-                              "name": " ",
-                              "type": "tile",
-                              "entity": "sensor.roborock_s7_cleaning_area"
                             }
                           ]
                         }
