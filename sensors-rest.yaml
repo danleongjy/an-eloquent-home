@@ -89,7 +89,7 @@
       unique_id: binary_sensor.dockermon
       value_template: "{{ value_json['state'] == 'running' }}"
 
-- resource: 'https://eloquent-imagery.duckdns.org/api/server/statistics'
+- resource: 'http://192.168.18.102:2283/api/server/statistics'
   scan_interval: 60
   headers:
     x-api-key: !secret immich_apikey
@@ -97,20 +97,64 @@
     - name: Immich Photos
       unique_id: sensor.immich_photos
       value_template: "{{ value_json['photos'] }}"
-      availability: "{{ true if value_json['photos'] is defined else false }}"
+      availability: "{{ value_json['photos'] is defined }}"
       unit_of_measurement: photos
     - name: Immich Videos
       unique_id: sensor.immich_videos
       value_template: "{{ value_json['videos'] }}"
-      availability: "{{ true if value_json['videos'] is defined else false }}"
+      availability: "{{ value_json['videos'] is defined }}"
       unit_of_measurement: videos
     - name: Immich Usage Photos
       unique_id: sensor.immich_usage_photos
       value_template: "{{ value_json['usagePhotos'] / (1024 ** 3) }}"
-      availability: "{{ true if value_json['usagePhotos'] is defined else false }}"
+      availability: "{{ value_json['usagePhotos'] is defined }}"
       unit_of_measurement: GB
     - name: Immich Usage Videos
       unique_id: sensor.immich_usage_videos
       value_template: "{{ value_json['usageVideos'] / (1024 ** 3) }}"
-      availability: "{{ true if value_json['usageVideos'] is defined else false }}"
+      availability: "{{ value_json['usageVideos'] is defined }}"
       unit_of_measurement: GB
+
+- resource: 'http://192.168.18.102:2283/api/jobs'
+  scan_interval: 60
+  headers:
+    x-api-key: !secret immich_apikey
+  sensor:
+    - name: Immich Job Facial Recognition
+      unique_id: sensor.immich_job_facial_recognition
+      value_template: >
+        {% if value_json['facialRecognition']['queueStatus']['isPaused'] %}
+          Paused
+        {% elif value_json['facialRecognition']['queueStatus']['isActive'] %}
+          Active
+        {% else %}
+          Off
+        {% endif %}
+      availability: "{{ value_json['facialRecognition'] is defined }}"
+      json_attributes_path: "$.facialRecognition.jobCounts"
+      json_attributes:
+        - active
+        - completed
+        - failed
+        - delayed
+        - waiting
+        - paused
+    - name: Immich Job Face Detection
+      unique_id: sensor.immich_job_face_detection
+      value_template: >
+        {% if value_json['faceDetection']['queueStatus']['isPaused'] %}
+          Paused
+        {% elif value_json['faceDetection']['queueStatus']['isActive'] %}
+          Active
+        {% else %}
+          Off
+        {% endif %}
+      availability: "{{ value_json['faceDetection'] is defined }}"
+      json_attributes_path: "$.faceDetection.jobCounts"
+      json_attributes:
+        - active
+        - completed
+        - failed
+        - delayed
+        - waiting
+        - paused

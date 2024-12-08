@@ -6371,3 +6371,49 @@
     target:
       entity_id: light.christmas_tree
   mode: single
+- id: '1733622332194'
+  alias: Notify When Immich Facial Processing Failed
+  description: Send a notification when Immich facial recognition or face detection
+    jobs fail
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.immich_job_facial_recognition
+    attribute: failed
+  - trigger: state
+    entity_id:
+    - sensor.immich_job_face_detection
+    attribute: failed
+  conditions:
+  - condition: or
+    conditions:
+    - condition: numeric_state
+      entity_id: sensor.immich_job_face_detection
+      attribute: failed
+      above: 0
+    - condition: numeric_state
+      entity_id: sensor.immich_job_facial_recognition
+      attribute: failed
+      above: 0
+  actions:
+  - data:
+      message: clear_notification
+      data:
+        tag: immich_errors
+    action: notify.mobile_app_aurora
+  - action: notify.mobile_app_aurora
+    metadata: {}
+    data:
+      title: Immich Facial Processing Failed
+      message: '{{ ''Face detection failed for '' if state_attr(''sensor.immich_job_face_detection'',
+        ''failed'') > 0 }}{{ state_attr(''sensor.immich_job_face_detection'', ''failed'')
+        if state_attr(''sensor.immich_job_face_detection'', ''failed'') > 0 }}{{ ''
+        assets. '' if state_attr(''sensor.immich_job_face_detection'', ''failed'')
+        > 0 }}{{ ''Facial recognition failed for '' if state_attr(''sensor.immich_job_facial_recognition'',
+        ''failed'') > 0 }}{{ state_attr(''sensor.immich_job_facial_recognition'',
+        ''failed'') if state_attr(''sensor.immich_job_facial_recognition'', ''failed'')
+        > 0 }}{{ '' assets.'' if state_attr(''sensor.immich_job_facial_recognition'',
+        ''failed'') > 0 }}'
+      data:
+        tag: immich_errors
+  mode: single
