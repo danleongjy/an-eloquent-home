@@ -104,12 +104,15 @@ action:
           conditions:
           - condition: state
             entity_id: !input door_sensor
+            state: 'unavailable'
+          - condition: state
+            entity_id: !input door_sensor
             state: 'on'
           - condition: template
             value_template: '{{ not is_state(door_sensor, ''on'') and as_local(as_datetime(states(last_motion_helper)))
               < states[door_sensor].last_changed }}'
             alias: True, when the door is closed and the last move was before that
-          alias: Check if door is open or closed and no motion was detected afterwards
+          alias: Check if door is open or closed and no motion was detected afterwards, or door sensor is unavailable
       - condition: and
         conditions:
         - condition: trigger
