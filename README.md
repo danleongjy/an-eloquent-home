@@ -14,8 +14,8 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [13.2](https://github.com/home-assistant/operating-system/releases/tag/14.1) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core 2024.11.3](https://github.com/home-assistant/core/releases/tag/2024.11.3)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [14.1](https://github.com/home-assistant/operating-system/releases/tag/14.1) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Core 2024.12.5](https://github.com/home-assistant/core/releases/tag/2024.12.5)
 * 4 cores, 4GB RAM, 32GB storage
 
 ## Entities
@@ -45,7 +45,7 @@ Domain | Quantity
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 23
-[`select`](https://www.home-assistant.io/components/select) | 29
+[`select`](https://www.home-assistant.io/components/select) | 31
 [`sensor`](https://www.home-assistant.io/components/sensor) | 556
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
@@ -57,7 +57,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 1
-Total | 1613
+Total | 1615
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -94,7 +94,7 @@ Total | 1613
 
 ### Add-ons
 - Assist Microphone
-- ESPHome Device Compiler
+- ESPHome Device Builder
 - File editor
 - Home Assistant Google Drive Backup
 - openWakeWord
