@@ -14,6 +14,9 @@ esp32:
   board: esp32dev
   framework:
     type: esp-idf
+    # workaround for 2024.12 compile issue @ https://github.com/esphome/wake-word-voice-assistants/issues/42#issuecomment-2550985988
+    version: 4.4.8 
+    platform_version: 5.4.0
 
 # Enable logging
 logger:
@@ -165,13 +168,13 @@ binary_sensor:
     id: blinds_auto_control
     entity_id: automation.kitchen_blind_auto_control
   - platform: homeassistant
-    id: kitchen_presence
-    entity_id: binary_sensor.kitchen_presence
+    id: kitchen_radar_occupancy
+    entity_id: binary_sensor.kitchen_radar_occupancy
     on_state:
       then:
         if:
           condition:
-            binary_sensor.is_on: kitchen_presence
+            binary_sensor.is_on: kitchen_radar_occupancy
           then:
             - script.stop: activate_screensaver
             - display.page.show: current_time
