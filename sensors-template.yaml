@@ -443,31 +443,6 @@
         parents_room_motion: "{{ states('binary_sensor.parents_room_motion') }}"
 
 - trigger:
-    - platform: state
-      entity_id: binary_sensor.kitchen_stove_motion
-    - platform: state
-      entity_id: binary_sensor.kitchen_radar_motion
-    - platform: state
-      entity_id: binary_sensor.kitchen_radar_occupancy
-      from: 'off'
-      to: 'on'
-      for:
-        seconds: "{{ states('input_number.radar_occupancy_on_delay') | int(10) }}"
-    - platform: state
-      entity_id: binary_sensor.kitchen_radar_occupancy
-      from: 'on'
-      to: 'off'
-  binary_sensor:
-    - name: Kitchen Presence
-      unique_id: binary_sensor.kitchen_presence
-      device_class: occupancy
-      state: "{{ is_state('binary_sensor.kitchen_radar_occupancy', 'on') or is_state('binary_sensor.kitchen_radar_motion', 'on') or is_state('binary_sensor.kitchen_stove_motion', 'on') }}"
-      attributes:
-        kitchen_radar_occupancy: "{{ states('binary_sensor.kitchen_radar_occupancy') }}"
-        kitchen_radar_motion: "{{ states('binary_sensor.kitchen_radar_motion') }}"
-        kitchen_stove_motion: "{{ states('binary_sensor.kitchen_stove_motion') }}"
-
-- trigger:
   - platform: state
     entity_id: input_select.dishwasher_status
     from:
