@@ -6049,7 +6049,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.dining_room_lux",
+                          "entity": "sensor.dining_room_radar_lux",
                           "template": "sensor_lux"
                         }
                       ]
@@ -6126,7 +6126,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.study_room_radar_lux",
+                          "entity": "sensor.study_walkway_lux",
                           "template": "sensor_lux"
                         }
                       ]
@@ -6735,7 +6735,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.dining_room_lux",
+                          "entity": "sensor.dining_room_radar_lux",
                           "template": "sensor_lux"
                         },
                         {
@@ -6745,7 +6745,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.study_room_radar_lux",
+                          "entity": "sensor.study_walkway_lux",
                           "template": "sensor_lux"
                         },
                         {
@@ -10159,31 +10159,40 @@
                 {
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
-                  "graph_span": "3h",
+                  "graph_span": "4h",
                   "stacked": true,
                   "header": {
                     "title": "RAM Use"
                   },
                   "series": [
                     {
+                      "entity": "sensor.node_proxmox_memory_used",
+                      "name": "Proxmox",
+                      "stack_group": "line"
+                    },
+                    {
                       "entity": "sensor.qemu_pfsense_100_memory_used",
                       "name": "pfSense",
-                      "type": "column"
+                      "type": "column",
+                      "stack_group": "col"
                     },
                     {
                       "entity": "sensor.qemu_eloquent_house_101_memory_used",
                       "name": "Home Assistant",
-                      "type": "column"
+                      "type": "column",
+                      "stack_group": "col"
                     },
                     {
                       "entity": "sensor.qemu_docker_102_memory_used",
                       "name": "Docker",
-                      "type": "column"
+                      "type": "column",
+                      "stack_group": "col"
                     },
                     {
                       "entity": "sensor.lxc_samba_103_memory_used",
                       "name": "Samba",
-                      "type": "column"
+                      "type": "column",
+                      "stack_group": "col"
                     }
                   ],
                   "all_series_config": {
@@ -10236,13 +10245,73 @@
                       }
                     }
                   ]
-                }
-              ],
-              "column_span": 2
-            },
-            {
-              "type": "grid",
-              "cards": [
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Inbound Traffic"
+                  },
+                  "stacked": true,
+                  "all_series_config": {
+                    "type": "column",
+                    "group_by": {
+                      "func": "sum",
+                      "duration": "5min"
+                    }
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.pfsense_mb_in_within_1min",
+                      "name": "pfSense"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_mb_in_within_1min",
+                      "name": "Home Assistant"
+                    },
+                    {
+                      "entity": "sensor.docker_mb_in_within_1min",
+                      "name": "Docker"
+                    },
+                    {
+                      "entity": "sensor.samba_mb_in_within_1min",
+                      "name": "Samba"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Outbound Traffic"
+                  },
+                  "stacked": true,
+                  "all_series_config": {
+                    "type": "column",
+                    "group_by": {
+                      "func": "sum",
+                      "duration": "5min"
+                    }
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.pfsense_mb_out_within_1min",
+                      "name": "pfSense"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_mb_out_within_1min",
+                      "name": "Home Assistant"
+                    },
+                    {
+                      "entity": "sensor.docker_mb_out_within_1min",
+                      "name": "Docker"
+                    },
+                    {
+                      "entity": "sensor.samba_mb_out_within_1min",
+                      "name": "Samba"
+                    }
+                  ]
+                },
                 {
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
@@ -10253,7 +10322,7 @@
                     {
                       "entity": "sensor.pfsense_pf_state_table_used",
                       "unit": "states",
-                      "name": "States",
+                      "name": "states",
                       "yaxis_id": "states",
                       "show": {
                         "name_in_header": false
@@ -10283,50 +10352,6 @@
                       "apex_config": {
                         "tickAmount": 5
                       }
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "Network Traffic"
-                  },
-                  "all_series_config": {
-                    "curve": "smooth"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.pfsense_mb_out_within_1min",
-                      "name": "pfSense inbound"
-                    },
-                    {
-                      "entity": "sensor.pfsense_mb_in_within_1min",
-                      "name": "pfSense outbound"
-                    },
-                    {
-                      "entity": "sensor.home_assistant_mb_out_within_1min",
-                      "name": "HA inbound"
-                    },
-                    {
-                      "entity": "sensor.home_assistant_mb_in_within_1min",
-                      "name": "HA outbound"
-                    },
-                    {
-                      "entity": "sensor.docker_mb_out_within_1min",
-                      "name": "Docker inbound"
-                    },
-                    {
-                      "entity": "sensor.docker_mb_in_within_1min",
-                      "name": "Docker outbound"
-                    },
-                    {
-                      "entity": "sensor.samba_mb_out_within_1min",
-                      "name": "Samba inbound"
-                    },
-                    {
-                      "entity": "sensor.samba_mb_in_within_1min",
-                      "name": "Samba outbound"
                     }
                   ]
                 }
@@ -12579,7 +12604,7 @@
                     },
                     {
                       "type": "custom:button-card",
-                      "entity": "sensor.dining_room_lux",
+                      "entity": "sensor.dining_room_radar_lux",
                       "template": "square_cell_background",
                       "show_state": true
                     }
@@ -12672,7 +12697,7 @@
                     },
                     {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.study_room_presence",
+                      "entity": "binary_sensor.study_room_radar_occupancy",
                       "template": "square_cell_background",
                       "label": "Desk",
                       "show_label": true
@@ -12701,7 +12726,7 @@
                     },
                     {
                       "type": "custom:button-card",
-                      "entity": "sensor.study_room_radar_lux",
+                      "entity": "sensor.study_walkway_lux",
                       "template": "square_cell_background",
                       "show_state": true
                     }
