@@ -6126,7 +6126,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.study_walkway_lux",
+                          "entity": "sensor.study_room_radar_lux",
                           "template": "sensor_lux"
                         }
                       ]
@@ -6745,7 +6745,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.study_walkway_lux",
+                          "entity": "sensor.study_room_radar_lux",
                           "template": "sensor_lux"
                         },
                         {
@@ -10157,6 +10157,43 @@
                   ]
                 },
                 {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "graph_span": "3h",
+                  "stacked": true,
+                  "header": {
+                    "title": "RAM Use"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.qemu_pfsense_100_memory_used",
+                      "name": "pfSense",
+                      "type": "column"
+                    },
+                    {
+                      "entity": "sensor.qemu_eloquent_house_101_memory_used",
+                      "name": "Home Assistant",
+                      "type": "column"
+                    },
+                    {
+                      "entity": "sensor.qemu_docker_102_memory_used",
+                      "name": "Docker",
+                      "type": "column"
+                    },
+                    {
+                      "entity": "sensor.lxc_samba_103_memory_used",
+                      "name": "Samba",
+                      "type": "column"
+                    }
+                  ],
+                  "all_series_config": {
+                    "group_by": {
+                      "func": "last",
+                      "duration": "5min"
+                    }
+                  }
+                },
+                {
                   "type": "markdown",
                   "content": "<table width=100%>\n<tr>\n<td></td>\n<td><ha-icon icon='mdi:power'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:cpu-64-bit'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:memory'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:harddisk'></ha-icon></td>\n</tr>\n<tr>\n<td>Proxmox</td>\n<td>{{ time_since(states('sensor.node_proxmox_uptime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_disk_used_percentage', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>pfSense</td>\n<td>{{ time_since(states('sensor.pfsense_system_boottime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_pfsense_100_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.pfsense_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.pfsense_filesystem_used_percentage_slash', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>Home Assistant</td>\n<td>{{ time_since(states('sensor.last_boot') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_eloquent_house_101_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.qemu_eloquent_house_101_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.disk_use_percent', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>Docker</td>\n<td>{{ time_since(states('sensor.qemu_docker_102_uptime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_docker_102_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.qemu_docker_102_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>-</td>\n</tr>\n<tr>\n<td>Samba</td>\n<td>{{ time_since(states('sensor.lxc_samba_103_last_boot') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_disk_used_percentage', with_unit=True, rounded=True) }}</td>\n</tr>\n</table>"
                 }
@@ -10362,29 +10399,42 @@
                 {
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
+                  "stacked": true,
                   "header": {
                     "title": "DNS Queries"
                   },
                   "series": [
                     {
-                      "entity": "sensor.dns_queries_within_5min",
-                      "type": "column",
-                      "name": "requested within 5min",
-                      "yaxis_id": "count",
-                      "color": "teal"
-                    },
-                    {
                       "entity": "sensor.dns_queries_blocked_by_filters_within_5min",
                       "name": "blocked within 5min",
                       "type": "column",
                       "yaxis_id": "count",
-                      "color": "red"
+                      "color": "red",
+                      "stack_group": "count",
+                      "group_by": {
+                        "func": "last",
+                        "duration": "5min"
+                      }
+                    },
+                    {
+                      "entity": "sensor.dns_queries_within_5min",
+                      "type": "column",
+                      "name": "passed within 5min",
+                      "yaxis_id": "count",
+                      "color": "teal",
+                      "stack_group": "count",
+                      "transform": "return Number(x) - Number(hass.states['sensor.dns_queries_blocked_by_filters_within_5min'].state)",
+                      "group_by": {
+                        "func": "last",
+                        "duration": "5min"
+                      }
                     },
                     {
                       "entity": "sensor.dns_query_filter_block_rate_within_5min",
                       "name": "requests blocked within 5min",
                       "yaxis_id": "percent",
-                      "color": "orange"
+                      "color": "orange",
+                      "stack_group": "percent"
                     }
                   ],
                   "yaxis": [
@@ -10585,7 +10635,12 @@
                       "name": "Videos",
                       "unit": " "
                     }
-                  ]
+                  ],
+                  "apex_config": {
+                    "legend": {
+                      "show": false
+                    }
+                  }
                 },
                 {
                   "type": "custom:apexcharts-card",
@@ -10603,7 +10658,12 @@
                       "entity": "sensor.immich_usage_videos",
                       "name": "Videos"
                     }
-                  ]
+                  ],
+                  "apex_config": {
+                    "legend": {
+                      "show": false
+                    }
+                  }
                 },
                 {
                   "type": "markdown",
@@ -12641,7 +12701,7 @@
                     },
                     {
                       "type": "custom:button-card",
-                      "entity": "sensor.study_walkway_lux",
+                      "entity": "sensor.study_room_radar_lux",
                       "template": "square_cell_background",
                       "show_state": true
                     }
