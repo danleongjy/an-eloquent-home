@@ -10159,8 +10159,7 @@
                 {
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
-                  "graph_span": "4h",
-                  "stacked": true,
+                  "chart_type": "donut",
                   "header": {
                     "title": "RAM Use"
                   },
@@ -10168,37 +10167,52 @@
                     {
                       "entity": "sensor.node_proxmox_memory_used",
                       "name": "Proxmox",
-                      "stack_group": "line"
+                      "transform": "return x - hass.states['sensor.qemu_pfsense_100_memory_used'].state - hass.states['sensor.qemu_eloquent_house_101_memory_used'].state - hass.states['sensor.qemu_docker_102_memory_used'].state - hass.states['sensor.lxc_samba_103_memory_used'].state",
+                      "show": {
+                        "datalabels": "percent"
+                      }
                     },
                     {
                       "entity": "sensor.qemu_pfsense_100_memory_used",
                       "name": "pfSense",
-                      "type": "column",
-                      "stack_group": "col"
+                      "show": {
+                        "datalabels": "percent"
+                      }
                     },
                     {
                       "entity": "sensor.qemu_eloquent_house_101_memory_used",
                       "name": "Home Assistant",
-                      "type": "column",
-                      "stack_group": "col"
+                      "show": {
+                        "datalabels": "percent"
+                      }
                     },
                     {
                       "entity": "sensor.qemu_docker_102_memory_used",
                       "name": "Docker",
-                      "type": "column",
-                      "stack_group": "col"
+                      "show": {
+                        "datalabels": "percent"
+                      }
                     },
                     {
                       "entity": "sensor.lxc_samba_103_memory_used",
                       "name": "Samba",
-                      "type": "column",
-                      "stack_group": "col"
+                      "show": {
+                        "datalabels": "percent"
+                      }
+                    },
+                    {
+                      "entity": "sensor.node_proxmox_memory_used",
+                      "name": "Available",
+                      "transform": "return 10 - x",
+                      "color": "grey",
+                      "show": {
+                        "datalabels": "percent"
+                      }
                     }
                   ],
-                  "all_series_config": {
-                    "group_by": {
-                      "func": "last",
-                      "duration": "5min"
+                  "apex_config": {
+                    "legend": {
+                      "show": false
                     }
                   }
                 },
@@ -10263,19 +10277,24 @@
                   "series": [
                     {
                       "entity": "sensor.pfsense_mb_in_within_1min",
-                      "name": "pfSense"
+                      "name": "pfSense",
+                      "stack_group": "total",
+                      "type": "line"
                     },
                     {
                       "entity": "sensor.home_assistant_mb_in_within_1min",
-                      "name": "Home Assistant"
+                      "name": "Home Assistant",
+                      "stack_group": "subtotal"
                     },
                     {
                       "entity": "sensor.docker_mb_in_within_1min",
-                      "name": "Docker"
+                      "name": "Docker",
+                      "stack_group": "subtotal"
                     },
                     {
                       "entity": "sensor.samba_mb_in_within_1min",
-                      "name": "Samba"
+                      "name": "Samba",
+                      "stack_group": "subtotal"
                     }
                   ]
                 },
@@ -10296,19 +10315,24 @@
                   "series": [
                     {
                       "entity": "sensor.pfsense_mb_out_within_1min",
-                      "name": "pfSense"
+                      "name": "pfSense",
+                      "stack_group": "total",
+                      "type": "line"
                     },
                     {
                       "entity": "sensor.home_assistant_mb_out_within_1min",
-                      "name": "Home Assistant"
+                      "name": "Home Assistant",
+                      "stack_group": "subtotal"
                     },
                     {
                       "entity": "sensor.docker_mb_out_within_1min",
-                      "name": "Docker"
+                      "name": "Docker",
+                      "stack_group": "subtotal"
                     },
                     {
                       "entity": "sensor.samba_mb_out_within_1min",
-                      "name": "Samba"
+                      "name": "Samba",
+                      "stack_group": "subtotal"
                     }
                   ]
                 },
