@@ -2,24 +2,13 @@ substitutions:
   name: dining_room_radar
   friendly_name: Dining Room Radar
   illuminance_update_interval: "2s"
-  log_level: DEBUG
-
+  log_level: INFO
 packages:
-  EverythingSmartTechnology.Everything_Presence_Lite.device_base: github://everythingsmarthome/everything-presence-lite/common/everything-presence-lite-base.yaml@main
-  dining_room_radar_ld2450: !include packages/dining_room_radar_ld2450.yaml
-  EverythingSmartTechnology.Everything_Presence_Lite.bluetooth_base: github://everythingsmarthome/everything-presence-lite/common/bluetooth-base.yaml@main
-
+  EverythingSmartTechnology.Everything_Presence_Lite: github://everythingsmarthome/everything-presence-lite/everything-presence-lite-ha.yaml@main
 esphome:
   name: ${name}
   name_add_mac_suffix: false
   friendly_name: ${friendly_name}
-  project: !remove
-
-http_request: !remove
-improv_serial: !remove
-ota:
-  - id: !remove ota_http_request
-
 api:
   encryption:
     key: !secret dining_room_radar_api_key
@@ -33,44 +22,14 @@ wifi:
     gateway: 192.168.18.1
     subnet: 255.255.255.0
 
+esp32:
+  framework:
+    # workaround for 2024.12 compile issue @ https://github.com/esphome/wake-word-voice-assistants/issues/42#issuecomment-2550985988
+    version: 4.4.8 
+    platform_version: 5.4.0
+
 sensor:
   - id: !extend illuminance_sensor
     name: Lux
     filters:
       - lambda: "return 3.33 * x + id(illuminance_offset_ui).state;"
-  - id: !extend target1_x
-    internal: true
-  - id: !extend target1_y
-    internal: true
-  - id: !extend target1_speed
-    internal: true
-  - id: !extend target1_resolution
-    internal: true
-  - id: !extend target2_x
-    internal: true
-  - id: !extend target2_y
-    internal: true
-  - id: !extend target2_speed
-    internal: true
-  - id: !extend target2_resolution
-    internal: true
-  - id: !extend target3_x
-    internal: true
-  - id: !extend target3_y
-    internal: true
-  - id: !extend target3_speed
-    internal: true
-  - id: !extend target3_resolution
-    internal: true
-  - id: !extend target1_angle
-    internal: true
-  - id: !extend target2_angle
-    internal: true
-  - id: !extend target3_angle
-    internal: true
-  - id: !extend target1_distance
-    internal: true
-  - id: !extend target2_distance
-    internal: true
-  - id: !extend target3_distance
-    internal: true

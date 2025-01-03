@@ -10131,7 +10131,7 @@
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
                   "header": {
-                    "title": "CPU Use"
+                    "title": "CPU Usage"
                   },
                   "series": [
                     {
@@ -10161,7 +10161,7 @@
                   "config_templates": "standard",
                   "chart_type": "donut",
                   "header": {
-                    "title": "RAM Use"
+                    "title": "RAM Usage"
                   },
                   "series": [
                     {
@@ -10213,12 +10213,18 @@
                   "apex_config": {
                     "legend": {
                       "show": false
+                    },
+                    "dataLabels": {
+                      "formatter": "EVAL:function(x) {\n  return Math.round(x) + '%'\n}\n"
                     }
                   }
                 },
                 {
                   "type": "markdown",
-                  "content": "<table width=100%>\n<tr>\n<td></td>\n<td><ha-icon icon='mdi:power'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:cpu-64-bit'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:memory'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:harddisk'></ha-icon></td>\n</tr>\n<tr>\n<td>Proxmox</td>\n<td>{{ time_since(states('sensor.node_proxmox_uptime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_disk_used_percentage', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>pfSense</td>\n<td>{{ time_since(states('sensor.pfsense_system_boottime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_pfsense_100_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.pfsense_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.pfsense_filesystem_used_percentage_slash', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>Home Assistant</td>\n<td>{{ time_since(states('sensor.last_boot') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_eloquent_house_101_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.qemu_eloquent_house_101_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.disk_use_percent', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>Docker</td>\n<td>{{ time_since(states('sensor.qemu_docker_102_uptime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_docker_102_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.qemu_docker_102_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>-</td>\n</tr>\n<tr>\n<td>Samba</td>\n<td>{{ time_since(states('sensor.lxc_samba_103_last_boot') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_disk_used_percentage', with_unit=True, rounded=True) }}</td>\n</tr>\n</table>"
+                  "content": "<table width=100%>\n<tr>\n<td></td>\n<td><ha-icon icon='mdi:power'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:cpu-64-bit'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:memory'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:harddisk'></ha-icon></td>\n</tr>\n<tr>\n<td>Proxmox</td>\n<td>{{ time_since(states('sensor.node_proxmox_uptime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_disk_used_percentage', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>pfSense</td>\n<td>{{ time_since(states('sensor.pfsense_system_boottime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_pfsense_100_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.pfsense_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.pfsense_filesystem_used_percentage_slash', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>Home Assistant</td>\n<td>{{ time_since(states('sensor.last_boot') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_eloquent_house_101_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.qemu_eloquent_house_101_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.disk_use_percent', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>Docker</td>\n<td>{{ time_since(states('sensor.qemu_docker_102_uptime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_docker_102_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.qemu_docker_102_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>-</td>\n</tr>\n<tr>\n<td>Samba</td>\n<td>{{ time_since(states('sensor.lxc_samba_103_last_boot') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_disk_used_percentage', with_unit=True, rounded=True) }}</td>\n</tr>\n</table>",
+                  "grid_options": {
+                    "rows": "auto"
+                  }
                 }
               ],
               "column_span": 2
@@ -10694,6 +10700,9 @@
                   "apex_config": {
                     "legend": {
                       "show": false
+                    },
+                    "dataLabels": {
+                      "formatter": "EVAL:function(x) {\n  return Math.round(x) + '%'\n}\n"
                     }
                   }
                 },
@@ -10723,6 +10732,9 @@
                   "apex_config": {
                     "legend": {
                       "show": false
+                    },
+                    "dataLabels": {
+                      "formatter": "EVAL:function(x) {\n  return Math.round(x) + '%'\n}\n"
                     }
                   }
                 },
