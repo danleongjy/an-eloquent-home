@@ -2345,7 +2345,8 @@
   mode: single
 - id: '1670838907474'
   alias: System Housekeeping
-  description: Daily housekeeping tasks executed at 2350h
+  description: Housekeeping tasks executed on a schedule or to dismiss device discovery
+    notifications
   triggers:
   - at: '23:50:00'
     trigger: time
@@ -2356,6 +2357,11 @@
   - trigger: time
     at: 01:50:00
     id: sunday_only_pmbackup_end
+  - trigger: persistent_notification
+    update_type:
+    - added
+    notification_id: config_entry_discovery
+    id: device_discovered
   conditions: []
   actions:
   - choose:
@@ -2454,6 +2460,15 @@
           - switch.immich_postgres
           - switch.immich_redis
           - switch.immich_machine_learning
+    - conditions:
+      - condition: trigger
+        id:
+        - device_discovered
+      sequence:
+      - action: persistent_notification.dismiss
+        metadata: {}
+        data:
+          notification_id: config_entry_discovery
   mode: single
 - id: '1672302011128'
   alias: South-Facing Blinds Auto Control
@@ -2469,9 +2484,6 @@
     trigger: numeric_state
   - entity_id: sensor.dining_room_lux
     above: input_number.maximum_lux
-    for:
-      minutes: '{{ states(''input_number.blinds_auto_control_debounce'') | int(5)
-        }}'
     trigger: numeric_state
   conditions: []
   actions:
