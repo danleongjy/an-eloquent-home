@@ -5234,17 +5234,32 @@
       - sensor.bus_stop_aljunied_station
       - sensor.bus_stop_before_lorong_23_geylang
   - if:
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: sensor.bus_stop_kallang_station
-        state: unavailable
+    - condition: numeric_state
+      entity_id: zone.kallang_station_outer_perimeter
+      above: 0
     then:
     - action: homeassistant.update_entity
       metadata: {}
       data:
         entity_id:
         - sensor.bus_stop_kallang_station
+  - if:
+    - condition: numeric_state
+      entity_id: zone.paya_lebar_outer_perimeter
+      above: 0
+      enabled: false
+    then:
+    - repeat:
+        sequence:
+        - action: homeassistant.update_entity
+          metadata: {}
+          data:
+            entity_id: '{{ repeat.item }}'
+        for_each:
+        - sensor.bus_stop_paya_lebar_square
+        - sensor.bus_stop_opposite_paya_lebar_square
+        - sensor.bus_stop_church_of_our_lady_queen_of_peace
+        - sensor.bus_stop_opposite_lorong_39_geylang
   mode: single
 - id: '1694229495079'
   alias: NEA Rain Radar Animation

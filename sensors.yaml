@@ -303,6 +303,114 @@
     {{ next_buses.formattedstr }}
   availability: "{{ value_json.Services is defined and value_json.Services | length > 0 }}"
 
+- platform: rest
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81111
+  name: Bus Stop Paya Lebar Square
+  unique_id: sensor.bus_stop_paya_lebar_square
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: >
+    {% set next_buses = namespace(output = [], formattedstr = '') %}
+    {% for bus in value_json.Services %}
+      {% if bus.ServiceNo in ['137'] %}
+        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
+          {% if bus[nextbus].EstimatedArrival | length > 0 %}
+            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
+                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
+                                                             'Load': bus[nextbus].Load,
+                                                             'Type': bus[nextbus].Type}] %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
+      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
+    {% endfor %}
+    {{ next_buses.formattedstr }}
+  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+
+- platform: rest
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81119
+  name: Bus Stop Opposite Paya Lebar Square
+  unique_id: sensor.bus_stop_opposite_paya_lebar_square
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: >
+    {% set next_buses = namespace(output = [], formattedstr = '') %}
+    {% for bus in value_json.Services %}
+      {% if bus.ServiceNo in ['134'] %}
+        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
+          {% if bus[nextbus].EstimatedArrival | length > 0 %}
+            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
+                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
+                                                             'Load': bus[nextbus].Load,
+                                                             'Type': bus[nextbus].Type}] %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
+      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
+    {% endfor %}
+    {{ next_buses.formattedstr }}
+  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+
+- platform: rest
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81069
+  name: Bus Stop Opposite Lorong 39 Geylang
+  unique_id: sensor.bus_stop_opposite_lorong_39_geylang
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: >
+    {% set next_buses = namespace(output = [], formattedstr = '') %}
+    {% for bus in value_json.Services %}
+      {% if bus.ServiceNo in ['137','40'] %}
+        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
+          {% if bus[nextbus].EstimatedArrival | length > 0 %}
+            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
+                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
+                                                             'Load': bus[nextbus].Load,
+                                                             'Type': bus[nextbus].Type}] %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
+      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
+    {% endfor %}
+    {{ next_buses.formattedstr }}
+  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+
+- platform: rest
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=82091
+  name: Bus Stop Church of Our Lady Queen of Peace
+  unique_id: sensor.bus_stop_church_of_our_lady_queen_of_peace
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: >
+    {% set next_buses = namespace(output = [], formattedstr = '') %}
+    {% for bus in value_json.Services %}
+      {% if bus.ServiceNo in ['134','40'] %}
+        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
+          {% if bus[nextbus].EstimatedArrival | length > 0 %}
+            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
+                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
+                                                             'Load': bus[nextbus].Load,
+                                                             'Type': bus[nextbus].Type}] %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
+      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
+    {% endfor %}
+    {{ next_buses.formattedstr }}
+  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+
 - platform: folder
   folder: /config/www/rain_radar/frames
 
