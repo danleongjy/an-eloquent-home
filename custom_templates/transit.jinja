@@ -1,0 +1,19 @@
+{% macro bus_stop_next_buses(json, bus_services) %}
+{% set next_buses = namespace(output = [], formattedstr = '') %}
+{% for bus in json.Services %}
+  {% if bus.ServiceNo in bus_services %}
+    {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
+      {% if bus[nextbus].EstimatedArrival | length > 0 %}
+        {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
+                                                         'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
+                                                         'Load': bus[nextbus].Load,
+                                                         'Type': bus[nextbus].Type}] %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+{% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
+  {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
+{% endfor %}
+{{ next_buses.formattedstr }}
+{% endmacro %}

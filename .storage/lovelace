@@ -2200,6 +2200,23 @@
               "legend_value": false
             }
           }
+        },
+        "donut": {
+          "config_templates": "standard",
+          "chart_type": "donut",
+          "all_series_config": {
+            "show": {
+              "datalabels": "percent"
+            }
+          },
+          "apex_config": {
+            "legend": {
+              "show": false
+            },
+            "dataLabels": {
+              "formatter": "EVAL:function(x) {\n  return Math.round(x) + '%'\n}\n"
+            }
+          }
         }
       },
       "views": [
@@ -5150,14 +5167,19 @@
                           },
                           {
                             "type": "custom:button-card",
-                            "entity": "binary_sensor.sims_drive_market_bus_stop",
+                            "entity": "sensor.bus_stop_sims_drive_market",
                             "template": "top_row",
-                            "label": "[[[ if (entity.state == 'on') { return entity.attributes.next_buses[0].ServiceNo } else { return '' } ]]]",
+                            "label": "[[[ if (entity.state != 'unavailable') { return entity.state.split(',')[0].split('/')[0] } else { return '' } ]]]",
                             "show_label": true,
                             "styles": {
+                              "icon": [
+                                {
+                                  "color": "[[[\n  if (entity.state == 'unavailable') {\n    return 'var(--disabled-color)'\n  } else if (entity.state.split(',')[0].split('/')[1] < 5) {\n    return 'var(--state-binary_sensor-active-color)'\n  } else {\n     return 'var(--state-inactive-color)'\n  }\n]]]\n"
+                                }
+                              ],
                               "label": [
                                 {
-                                  "animation": "[[[\n  if (entity.state == 'on') {\n    if (Math.floor((Date.parse(entity.attributes.next_buses[0].EstimatedArrival) - Date.parse(Date())) / 60000) < 3) {\n      return 'blink 2s ease infinite'\n    }\n  }\n]]]\n"
+                                  "animation": "[[[\n  if (entity.state != 'unavailable') {\n    if (entity.state.split(',')[0].split('/')[1] < 3)  {\n      return 'blink 2s ease infinite'\n    }\n  }\n]]]\n"
                                 }
                               ]
                             },
@@ -10285,8 +10307,7 @@
                 },
                 {
                   "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "chart_type": "donut",
+                  "config_templates": "donut",
                   "header": {
                     "title": "RAM Usage"
                   },
@@ -10294,57 +10315,31 @@
                     {
                       "entity": "sensor.node_proxmox_memory_used",
                       "name": "Proxmox",
-                      "transform": "return x - hass.states['sensor.qemu_pfsense_100_memory_used'].state - hass.states['sensor.qemu_eloquent_house_101_memory_used'].state - hass.states['sensor.qemu_docker_102_memory_used'].state - hass.states['sensor.lxc_samba_103_memory_used'].state",
-                      "show": {
-                        "datalabels": "percent"
-                      }
+                      "transform": "return x - hass.states['sensor.qemu_pfsense_100_memory_used'].state - hass.states['sensor.qemu_eloquent_house_101_memory_used'].state - hass.states['sensor.qemu_docker_102_memory_used'].state - hass.states['sensor.lxc_samba_103_memory_used'].state"
                     },
                     {
                       "entity": "sensor.qemu_pfsense_100_memory_used",
-                      "name": "pfSense",
-                      "show": {
-                        "datalabels": "percent"
-                      }
+                      "name": "pfSense"
                     },
                     {
                       "entity": "sensor.qemu_eloquent_house_101_memory_used",
-                      "name": "Home Assistant",
-                      "show": {
-                        "datalabels": "percent"
-                      }
+                      "name": "Home Assistant"
                     },
                     {
                       "entity": "sensor.qemu_docker_102_memory_used",
-                      "name": "Docker",
-                      "show": {
-                        "datalabels": "percent"
-                      }
+                      "name": "Docker"
                     },
                     {
                       "entity": "sensor.lxc_samba_103_memory_used",
-                      "name": "Samba",
-                      "show": {
-                        "datalabels": "percent"
-                      }
+                      "name": "Samba"
                     },
                     {
                       "entity": "sensor.node_proxmox_memory_used",
                       "name": "Available",
                       "transform": "return 10 - x",
-                      "color": "grey",
-                      "show": {
-                        "datalabels": "percent"
-                      }
+                      "color": "grey"
                     }
-                  ],
-                  "apex_config": {
-                    "legend": {
-                      "show": false
-                    },
-                    "dataLabels": {
-                      "formatter": "EVAL:function(x) {\n  return Math.round(x) + '%'\n}\n"
-                    }
-                  }
+                  ]
                 },
                 {
                   "type": "markdown",
@@ -10581,42 +10576,29 @@
                 {
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
-                  "stacked": true,
                   "header": {
                     "title": "DNS Queries"
                   },
                   "series": [
                     {
-                      "entity": "sensor.dns_queries_blocked_by_filters_within_5min",
-                      "name": "blocked within 5min",
-                      "type": "column",
+                      "entity": "sensor.dns_queries_within_5min",
+                      "type": "area",
+                      "name": "processed within 5min",
                       "yaxis_id": "count",
-                      "color": "red",
-                      "stack_group": "count",
-                      "group_by": {
-                        "func": "last",
-                        "duration": "5min"
-                      }
+                      "color": "teal"
                     },
                     {
-                      "entity": "sensor.dns_queries_within_5min",
-                      "type": "column",
-                      "name": "passed within 5min",
+                      "entity": "sensor.dns_queries_blocked_by_filters_within_5min",
+                      "name": "blocked within 5min",
+                      "type": "area",
                       "yaxis_id": "count",
-                      "color": "teal",
-                      "stack_group": "count",
-                      "transform": "return Number(x) - Number(hass.states['sensor.dns_queries_blocked_by_filters_within_5min'].state)",
-                      "group_by": {
-                        "func": "last",
-                        "duration": "5min"
-                      }
+                      "color": "red"
                     },
                     {
                       "entity": "sensor.dns_query_filter_block_rate_within_5min",
                       "name": "requests blocked within 5min",
                       "yaxis_id": "percent",
-                      "color": "orange",
-                      "stack_group": "percent"
+                      "color": "orange"
                     }
                   ],
                   "yaxis": [
@@ -10801,8 +10783,7 @@
               "cards": [
                 {
                   "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "chart_type": "donut",
+                  "config_templates": "donut",
                   "header": {
                     "title": "Assets"
                   },
@@ -10810,60 +10791,31 @@
                     {
                       "entity": "sensor.immich_photos",
                       "name": "Photos",
-                      "unit": " ",
-                      "show": {
-                        "datalabels": "percent"
-                      }
+                      "unit": " "
                     },
                     {
                       "entity": "sensor.immich_videos",
                       "name": "Videos",
-                      "unit": " ",
-                      "show": {
-                        "datalabels": "percent"
-                      }
+                      "unit": " "
                     }
-                  ],
-                  "apex_config": {
-                    "legend": {
-                      "show": false
-                    },
-                    "dataLabels": {
-                      "formatter": "EVAL:function(x) {\n  return Math.round(x) + '%'\n}\n"
-                    }
-                  }
+                  ]
                 },
                 {
                   "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "chart_type": "donut",
+                  "config_templates": "donut",
                   "header": {
                     "title": "Storage Usage"
                   },
                   "series": [
                     {
                       "entity": "sensor.immich_usage_photos",
-                      "name": "Photos",
-                      "show": {
-                        "datalabels": "percent"
-                      }
+                      "name": "Photos"
                     },
                     {
                       "entity": "sensor.immich_usage_videos",
-                      "name": "Videos",
-                      "show": {
-                        "datalabels": "percent"
-                      }
+                      "name": "Videos"
                     }
-                  ],
-                  "apex_config": {
-                    "legend": {
-                      "show": false
-                    },
-                    "dataLabels": {
-                      "formatter": "EVAL:function(x) {\n  return Math.round(x) + '%'\n}\n"
-                    }
-                  }
+                  ]
                 },
                 {
                   "type": "markdown",

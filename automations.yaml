@@ -5637,38 +5637,41 @@
     action: local_file.update_file_path
   mode: single
 - id: '1705228748219'
-  alias: Notify 5min Before Wind Down
-  description: Play a TTS notification 5min before wind down
-  trigger:
+  alias: Notify 15min Before Wind Down
+  description: Play a TTS notification 15min before wind down
+  triggers:
   - alias: 15min before wind down
-    platform: template
     value_template: '{{ now() >= today_at(states(''input_datetime.wind_down'')) -
-      timedelta(minutes = 5) }}'
-  condition:
+      timedelta(minutes = 15) }}'
+    trigger: template
+  conditions:
   - condition: state
     entity_id: input_boolean.party_mode
     state: 'off'
   - condition: state
     entity_id: input_boolean.away_mode
     state: 'off'
-  action:
-  - target:
-      entity_id: tts.piper
-    data:
-      cache: true
-      media_player_entity_id: media_player.kitchen_speaker
-      message: Winding down in 5 minutes
-    action: tts.speak
-  - condition: state
-    entity_id: binary_sensor.study_room_ethernet_connection
-    state: 'off'
-  - target:
-      entity_id: tts.piper
-    data:
-      cache: true
-      media_player_entity_id: media_player.study_room_speaker
-      message: Winding down in 5 minutes
-    action: tts.speak
+  actions:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.study_room_ethernet_connection
+      state: 'off'
+    then:
+    - target:
+        entity_id: tts.piper
+      data:
+        cache: true
+        message: Winding down in 15 minutes
+        media_player_entity_id: media_player.all_speakers
+      action: tts.speak
+    else:
+    - target:
+        entity_id: tts.piper
+      data:
+        cache: true
+        media_player_entity_id: media_player.kitchen_speaker
+        message: Winding down in 15 minutes
+      action: tts.speak
   mode: single
 - id: '1705277866413'
   alias: Vacuum Configuration

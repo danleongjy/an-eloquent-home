@@ -176,23 +176,8 @@
     accountKey: !secret lta_datamall_apikey
   scan_interval: 172800
   value_template: >
-    {% set next_buses = namespace(output = [], formattedstr = '') %}
-    {% for bus in value_json.Services %}
-      {% if bus.ServiceNo in ['2','13','51','63','67','80','100'] %}
-        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
-          {% if bus[nextbus].EstimatedArrival | length > 0 %}
-            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
-                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
-                                                             'Load': bus[nextbus].Load,
-                                                             'Type': bus[nextbus].Type}] %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
-      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
-    {% endfor %}
-    {{ next_buses.formattedstr }}
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['2','13','51','63','67','80','100']) }}
   availability: "{{ states('zone.kallang_station_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
   
 - platform: rest
@@ -203,23 +188,8 @@
     accountKey: !secret lta_datamall_apikey
   scan_interval: 172800
   value_template: >
-    {% set next_buses = namespace(output = [], formattedstr = '') %}
-    {% for bus in value_json.Services %}
-      {% if bus.ServiceNo in ['64','134','137'] %}
-        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
-          {% if bus[nextbus].EstimatedArrival | length > 0 %}
-            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
-                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
-                                                             'Load': bus[nextbus].Load,
-                                                             'Type': bus[nextbus].Type}] %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
-      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
-    {% endfor %}
-    {{ next_buses.formattedstr }}
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['64','134','137']) }}
   availability: "{{ value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
@@ -230,23 +200,8 @@
     accountKey: !secret lta_datamall_apikey
   scan_interval: 172800
   value_template: >
-    {% set next_buses = namespace(output = [], formattedstr = '') %}
-    {% for bus in value_json.Services %}
-      {% if bus.ServiceNo in ['40','125'] %}
-        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
-          {% if bus[nextbus].EstimatedArrival | length > 0 %}
-            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
-                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
-                                                             'Load': bus[nextbus].Load,
-                                                             'Type': bus[nextbus].Type}] %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
-      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
-    {% endfor %}
-    {{ next_buses.formattedstr }}
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['40','125']) }}
   availability: "{{ value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
@@ -257,23 +212,8 @@
     accountKey: !secret lta_datamall_apikey
   scan_interval: 172800
   value_template: >
-    {% set next_buses = namespace(output = [], formattedstr = '') %}
-    {% for bus in value_json.Services %}
-      {% if bus.ServiceNo in ['40','80','100'] %}
-        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
-          {% if bus[nextbus].EstimatedArrival | length > 0 %}
-            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
-                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
-                                                             'Load': bus[nextbus].Load,
-                                                             'Type': bus[nextbus].Type}] %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
-      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
-    {% endfor %}
-    {{ next_buses.formattedstr }}
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['40','80','100']) }}
   availability: "{{ value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
@@ -284,23 +224,8 @@
     accountKey: !secret lta_datamall_apikey
   scan_interval: 172800
   value_template: >
-    {% set next_buses = namespace(output = [], formattedstr = '') %}
-    {% for bus in value_json.Services %}
-      {% if bus.ServiceNo in ['2','13','26','67'] %}
-        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
-          {% if bus[nextbus].EstimatedArrival | length > 0 %}
-            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
-                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
-                                                             'Load': bus[nextbus].Load,
-                                                             'Type': bus[nextbus].Type}] %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
-      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
-    {% endfor %}
-    {{ next_buses.formattedstr }}
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['2','13','26','67']) }}
   availability: "{{ value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
@@ -311,24 +236,9 @@
     accountKey: !secret lta_datamall_apikey
   scan_interval: 172800
   value_template: >
-    {% set next_buses = namespace(output = [], formattedstr = '') %}
-    {% for bus in value_json.Services %}
-      {% if bus.ServiceNo in ['137'] %}
-        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
-          {% if bus[nextbus].EstimatedArrival | length > 0 %}
-            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
-                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
-                                                             'Load': bus[nextbus].Load,
-                                                             'Type': bus[nextbus].Type}] %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
-      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
-    {% endfor %}
-    {{ next_buses.formattedstr }}
-  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['137']) }}
+#  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
 
 - platform: rest
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81119
@@ -338,24 +248,9 @@
     accountKey: !secret lta_datamall_apikey
   scan_interval: 172800
   value_template: >
-    {% set next_buses = namespace(output = [], formattedstr = '') %}
-    {% for bus in value_json.Services %}
-      {% if bus.ServiceNo in ['134'] %}
-        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
-          {% if bus[nextbus].EstimatedArrival | length > 0 %}
-            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
-                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
-                                                             'Load': bus[nextbus].Load,
-                                                             'Type': bus[nextbus].Type}] %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
-      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
-    {% endfor %}
-    {{ next_buses.formattedstr }}
-  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['134']) }}
+#  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
 
 - platform: rest
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81069
@@ -365,24 +260,9 @@
     accountKey: !secret lta_datamall_apikey
   scan_interval: 172800
   value_template: >
-    {% set next_buses = namespace(output = [], formattedstr = '') %}
-    {% for bus in value_json.Services %}
-      {% if bus.ServiceNo in ['137','40'] %}
-        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
-          {% if bus[nextbus].EstimatedArrival | length > 0 %}
-            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
-                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
-                                                             'Load': bus[nextbus].Load,
-                                                             'Type': bus[nextbus].Type}] %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
-      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
-    {% endfor %}
-    {{ next_buses.formattedstr }}
-  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['137','40']) }}
+#  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
 
 - platform: rest
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=82091
@@ -392,24 +272,9 @@
     accountKey: !secret lta_datamall_apikey
   scan_interval: 172800
   value_template: >
-    {% set next_buses = namespace(output = [], formattedstr = '') %}
-    {% for bus in value_json.Services %}
-      {% if bus.ServiceNo in ['134','40'] %}
-        {% for nextbus in ['NextBus', 'NextBus2', 'NextBus3'] %}
-          {% if bus[nextbus].EstimatedArrival | length > 0 %}
-            {% set next_buses.output = next_buses.output + [{'ServiceNo': bus.ServiceNo, 
-                                                             'EstimatedArrival': (as_datetime(bus[nextbus].EstimatedArrival) - now()) // timedelta(minutes = 1), 
-                                                             'Load': bus[nextbus].Load,
-                                                             'Type': bus[nextbus].Type}] %}
-          {% endif %}
-        {% endfor %}
-      {% endif %}
-    {% endfor %}
-    {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
-      {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
-    {% endfor %}
-    {{ next_buses.formattedstr }}
-  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['134','40']) }}
+#  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
 
 - platform: folder
   folder: /config/www/rain_radar/frames
