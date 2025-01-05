@@ -13197,6 +13197,91 @@
               "type": "grid",
               "cards": [
                 {
+                  "type": "markdown",
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon> Kallang Station to Home"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.bus_stop_kallang_station",
+                  "show_name": false,
+                  "show_icon": false,
+                  "show_state": false,
+                  "custom_fields": {
+                    "bus1_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[0].split('/')[0] ]]]",
+                    "bus1_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[0].split('/')[2]\n  if (crowd == 'SEA') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'SDA') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'LSD') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[0].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
+                    "bus2_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[1].split('/')[0] ]]]",
+                    "bus2_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[1].split('/')[2]\n  if (crowd == 'SEA') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'SDA') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'LSD') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[1].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
+                    "bus3_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[2].split('/')[0] ]]]",
+                    "bus3_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[2].split('/')[2]\n  if (crowd == 'SEA') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'SDA') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'LSD') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[2].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
+                    "bus4_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[3].split('/')[0] ]]]",
+                    "bus4_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[3].split('/')[2]\n  if (crowd == 'SEA') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'SDA') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'LSD') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[3].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n"
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "background-color": "rgba(0,0,0,0.0)"
+                      }
+                    ],
+                    "grid": [
+                      {
+                        "grid-template-areas": "'bus1_no bus2_no bus3_no bus4_no' 'bus1_status bus2_status bus3_status bus4_status'\n"
+                      },
+                      {
+                        "grid-template-columns": "1fr 1fr 1fr 1fr"
+                      },
+                      {
+                        "grid-template-rows": "min-content min-content"
+                      }
+                    ],
+                    "custom_fields": {
+                      "bus1_no": [
+                        {
+                          "font-weight": "bold"
+                        },
+                        {
+                          "font-size": "40px"
+                        }
+                      ],
+                      "bus2_no": [
+                        {
+                          "font-weight": "bold"
+                        },
+                        {
+                          "font-size": "40px"
+                        }
+                      ],
+                      "bus3_no": [
+                        {
+                          "font-weight": "bold"
+                        },
+                        {
+                          "font-size": "40px"
+                        }
+                      ],
+                      "bus4_no": [
+                        {
+                          "font-weight": "bold"
+                        },
+                        {
+                          "font-size": "40px"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "zone.kallang_station_bus_stop",
+                  "above": 0
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
                   "type": "vertical-stack",
                   "cards": [
                     {
