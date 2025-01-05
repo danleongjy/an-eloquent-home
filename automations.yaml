@@ -5220,69 +5220,31 @@
     alias: update
     id: update
     trigger: time_pattern
-  - seconds: '50'
-    alias: Probe
-    id: probe
-    trigger: time_pattern
   conditions: []
   actions:
-  - if:
-    - condition: trigger
-      id:
-      - update
-    then:
-    - repeat:
-        for_each:
-        - aljunied_station_bus_40
-        - aljunied_station_bus_80
-        - aljunied_station_bus_100
-        - before_lorong_23_geylang_bus_2
-        - before_lorong_23_geylang_bus_13
-        - before_lorong_23_geylang_bus_26
-        - before_lorong_23_geylang_bus_67
-        - opposite_aljunied_station_bus_40
-        - opposite_aljunied_station_bus_125
-        - sims_drive_market_bus_64
-        - sims_drive_market_bus_134
-        - sims_drive_market_bus_137
-        sequence:
-        - if:
-          - condition: template
-            value_template: '{{ is_state(''binary_sensor.'' + repeat.item + ''_operating'',
-              ''on'') }}'
-          then:
-          - target:
-              entity_id: sensor.{{ repeat.item }}
-            action: homeassistant.update_entity
-    - if:
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id: sensor.bus_stop_kallang_station
-          state: unavailable
-      then:
+  - repeat:
+      sequence:
       - action: homeassistant.update_entity
         metadata: {}
         data:
-          entity_id:
-          - sensor.bus_stop_kallang_station
-    else:
-    - data: {}
-      target:
+          entity_id: '{{ repeat.item }}'
+      for_each:
+      - sensor.bus_stop_sims_drive_market
+      - sensor.bus_stop_opposite_aljunied_station
+      - sensor.bus_stop_aljunied_station
+      - sensor.bus_stop_before_lorong_23_geylang
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.bus_stop_kallang_station
+        state: unavailable
+    then:
+    - action: homeassistant.update_entity
+      metadata: {}
+      data:
         entity_id:
-        - binary_sensor.aljunied_station_bus_40_operating
-        - binary_sensor.aljunied_station_bus_80_operating
-        - binary_sensor.aljunied_station_bus_100_operating
-        - binary_sensor.before_lorong_23_geylang_bus_2_operating
-        - binary_sensor.before_lorong_23_geylang_bus_13_operating
-        - binary_sensor.before_lorong_23_geylang_bus_26_operating
-        - binary_sensor.before_lorong_23_geylang_bus_67_operating
-        - binary_sensor.opposite_aljunied_station_bus_40_operating
-        - binary_sensor.opposite_aljunied_station_bus_125_operating
-        - binary_sensor.sims_drive_market_bus_64_operating
-        - binary_sensor.sims_drive_market_bus_134_operating
-        - binary_sensor.sims_drive_market_bus_137_operating
-      action: homeassistant.update_entity
+        - sensor.bus_stop_kallang_station
   mode: single
 - id: '1694229495079'
   alias: NEA Rain Radar Animation

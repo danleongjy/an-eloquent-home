@@ -630,19 +630,47 @@
           "show_icon": false,
           "show_name": false,
           "variables": {
-            "service_no": "",
-            "bus_stop_binary_sensor": "binary_sensor.sims_drive_market_bus_stop",
-            "comfortable_walk_time": "[[[ return states[variables.bus_stop_binary_sensor].attributes.comfortable_walk_time ]]]",
-            "min_walk_time": "[[[ return states[variables.bus_stop_binary_sensor].attributes.min_walk_time ]]]"
+            "busno": 64,
+            "busstops": {
+              "sensor.bus_stop_sims_drive_market": {
+                "walk_comfortable": 5,
+                "walk_min": 2
+              },
+              "sensor.bus_stop_opposite_aljunied_station": {
+                "walk_comfortable": 10,
+                "walk_min": 5
+              },
+              "sensor.bus_stop_aljunied_station": {
+                "walk_comfortable": 12,
+                "walk_min": 7
+              },
+              "sensor.bus_stop_before_lorong_23_geylang": {
+                "walk_comfortable": 10,
+                "walk_min": 5
+              }
+            },
+            "comfortable_walk_time": "[[[ return parseInt(variables.busstops[entity.entity_id].walk_comfortable) ]]]",
+            "min_walk_time": "[[[ return parseInt(variables.busstops[entity.entity_id].walk_min) ]]]",
+            "bus_symbols": {
+              "SD": "<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>",
+              "DD": "<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>"
+            },
+            "crowd_symbols": {
+              "SEA": "<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>",
+              "SDA": "<font color = \"orange\"><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>",
+              "LSD": "<font color = \"red\"><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>"
+            },
+            "timings": "[[[\n  const timings = []\n  for (const bus of entity.state.split(',')) {\n    if (bus.split('/')[0] == variables.busno) {\n      timings.push(bus.split('/')[1])\n    }\n  }\n  return timings\n]]]\n",
+            "statuses": "[[[\n  let statuses = []\n  for (const bus of entity.state.split(',')) {\n    if (bus.split('/')[0] == variables.busno) {\n      statuses.push(variables.crowd_symbols[bus.split('/')[2]] + variables.bus_symbols[bus.split('/')[3]])\n    }\n  }\n  return statuses\n]]]\n"
           },
           "custom_fields": {
-            "service_no": "[[[ return variables.service_no ]]]",
-            "nextbus1_min": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return ''\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
-            "nextbus2_min": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return ''\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
-            "nextbus3_min": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return ''\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return '' \n  } else if (min < 2) {\n    return 'Arriving'\n  } else {\n    return min + 'min'\n  }\n]]]\n",
-            "nextbus1": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return `<ha-icon icon=\"mdi:circle-off-outline\" style=\"width: 40px; height: 40px\"></ha-icon>`\n    }\n  let bus = ``\n  if (entity.attributes.NextBus.Load == 'LSD') {\n    bus = `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus.Load == 'SDA') {\n    bus = `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus.Load == 'SEA') {\n    bus = `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n",
-            "nextbus2": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return ''\n    }\n  let bus = ``\n  if (entity.attributes.NextBus2.Load == 'LSD') {\n    bus = bus + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus2.Load == 'SDA') {\n    bus = bus + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus2.Load == 'SEA') {\n    bus = bus + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus2.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus2.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n",
-            "nextbus3": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return ''\n    }\n  let bus = ``\n  if (entity.attributes.NextBus3.Load == 'LSD') {\n    bus = bus + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus3.Load == 'SDA') {\n    bus = bus + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (entity.attributes.NextBus3.Load == 'SEA') {\n    bus = bus + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  }\n  if (entity.attributes.NextBus3.Type == 'SD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-side\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  } else if (entity.attributes.NextBus3.Type == 'DD') {\n    bus = bus + `<ha-icon icon=\"mdi:bus-double-decker\" style=\"width: 40px; height: 40px\"></ha-icon>`\n  }\n  return bus\n]]]\n"
+            "busno": "[[[ return variables.busno ]]]",
+            "bus1_min": "[[[ \n  if (isNaN(variables.timings[0])) {\n    return ''\n  } else if (variables.timings[0] < 2) {\n    return 'Arriving'\n  } else {\n    return variables.timings[0] + 'min' }\n]]]\n",
+            "bus2_min": "[[[ \n  if (isNaN(variables.timings[1])) {\n    return ''\n  } else if (variables.timings[1] < 2) {\n    return 'Arriving'\n  } else {\n    return variables.timings[1] + 'min' }\n]]]\n",
+            "bus3_min": "[[[ \n  if (isNaN(variables.timings[2])) {\n    return ''\n  } else if (variables.timings[2] < 2) {\n    return 'Arriving'\n  } else {\n    return variables.timings[2] + 'min' }\n]]]\n",
+            "bus1_status": "[[[ return variables.statuses[0] ]]]",
+            "bus2_status": "[[[ return variables.statuses[1] ]]]",
+            "bus3_status": "[[[ return variables.statuses[2] ]]]"
           },
           "styles": {
             "card": [
@@ -652,7 +680,7 @@
             ],
             "grid": [
               {
-                "grid-template-areas": "'service_no nextbus1 nextbus2 nextbus3' 'service_no nextbus1_min nextbus2_min nextbus3_min'"
+                "grid-template-areas": "'busno bus1_status bus2_status bus3_status' 'busno bus1_min bus2_min bus3_min'"
               },
               {
                 "grid-template-columns": "1fr 1fr 1fr 1fr"
@@ -662,7 +690,7 @@
               }
             ],
             "custom_fields": {
-              "service_no": [
+              "busno": [
                 {
                   "font-weight": "bold"
                 },
@@ -670,19 +698,19 @@
                   "font-size": "40px"
                 }
               ],
-              "nextbus1_min": [
+              "bus1_min": [
                 {
-                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min <= variables.min_walk_time) {\n    return 'red';\n  } else if (min <= variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  if (isNaN(variables.timings[0])) {\n    return 'white'\n  } else if (variables.timings[0] <= variables.min_walk_time) {\n    return 'red'\n  } else if (variables.timings[0] <= variables.comfortable_walk_time) {\n    return 'orange'\n  } else {\n    return 'white'\n  }\n]]]\n"
                 }
               ],
-              "nextbus2_min": [
+              "bus2_min": [
                 {
-                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus2.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min <= variables.min_walk_time) {\n    return 'red';\n  } else if (min <= variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  if (isNaN(variables.timings[1])) {\n    return 'white'\n  } else if (variables.timings[1] <= variables.min_walk_time) {\n    return 'red'\n  } else if (variables.timings[1] <= variables.comfortable_walk_time) {\n    return 'orange'\n  } else {\n    return 'white'\n  }\n]]]\n"
                 }
               ],
-              "nextbus3_min": [
+              "bus3_min": [
                 {
-                  "color": "[[[\n  if (states['binary_' + entity.entity_id + '_operating'].state == 'off' || entity.state == 'unknown') {\n    return 'white';\n  }\n  let min = Math.floor((Date.parse(entity.attributes.NextBus3.EstimatedArrival) - Date.parse(Date())) / 60000)\n  if (isNaN(min)) {\n    return 'white';\n  } else if (min <= variables.min_walk_time) {\n    return 'red';\n  } else if (min <= variables.comfortable_walk_time) {\n    return 'orange';\n  } else {\n    return 'white';\n  }\n]]]\n"
+                  "color": "[[[\n  if (isNaN(variables.timings[2])) {\n    return 'white'\n  } else if (variables.timings[2] <= variables.min_walk_time) {\n    return 'red'\n  } else if (variables.timings[2] <= variables.comfortable_walk_time) {\n    return 'orange'\n  } else {\n    return 'white'\n  }\n]]]\n"
                 }
               ]
             }
@@ -690,9 +718,28 @@
         },
         "floorplan_nextbus": {
           "variables": {
+            "busstops": {
+              "sensor.bus_stop_sims_drive_market": {
+                "walk_comfortable": 5,
+                "walk_min": 2
+              },
+              "sensor.bus_stop_opposite_aljunied_station": {
+                "walk_comfortable": 10,
+                "walk_min": 5
+              },
+              "sensor.bus_stop_aljunied_station": {
+                "walk_comfortable": 12,
+                "walk_min": 7
+              },
+              "sensor.bus_stop_before_lorong_23_geylang": {
+                "walk_comfortable": 10,
+                "walk_min": 5
+              }
+            },
             "stop_no": 1,
-            "comfortable_walk_time": "[[[ return entity.attributes.comfortable_walk_time ]]]",
-            "min_walk_time": "[[[ return entity.attributes.min_walk_time ]]]"
+            "comfortable_walk_time": "[[[ return variables.busstops[entity.entity_id].walk_comfortable ]]]",
+            "min_walk_time": "[[[ return variables.busstops[entity.entity_id].walk_min ]]]",
+            "timings": "[[[\n  const timings = []\n  for (const bus of entity.state.split(',')) {\n    timings.push(bus.split('/')[0] + '/' + bus.split('/')[1])\n  }\n  return timings\n]]]\n"
           },
           "icon": "[[[ return 'mdi:numeric-' + variables.stop_no.toString() + '-circle' ]]]",
           "label": "[[[ return ' 🚶︎ ' + variables.comfortable_walk_time.toString() + 'min' ]]]",
@@ -703,9 +750,9 @@
             "navigation_path": "/lovelace/transit"
           },
           "custom_fields": {
-            "nextbus1": "[[[\n  if (entity.state == 'unavailable') {\n    return `No service`\n  } else if (entity.attributes.next_buses.length < 1) {\n    return `No service`\n  } else {\n    let bus = `<b>` + entity.attributes.next_buses[0].ServiceNo + `</b>: `\n    let min = Math.floor((Date.parse(entity.attributes.next_buses[0].EstimatedArrival) - Date.parse(Date())) / 60000)\n    if (isNaN(min)) {\n      bus = bus + 'c' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n  return 'b'\n]]]\n",
-            "nextbus2": "[[[\n  if (entity.state == 'unavailable') {\n    return ``\n  } else if (entity.attributes.next_buses.length < 2) {\n    return ``\n  } else {\n    let bus = `<b>` + entity.attributes.next_buses[1].ServiceNo + `</b>: `\n    let min = Math.floor((Date.parse(entity.attributes.next_buses[1].EstimatedArrival) - Date.parse(Date())) / 60000)\n    if (isNaN(min)) {\n      bus = bus + 'c' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n  return 'b'\n]]]\n",
-            "nextbus3": "[[[\n  if (entity.state == 'unavailable') {\n    return ``\n  } else if (entity.attributes.next_buses.length < 3) {\n    return ``\n  } else {\n    let bus = `<b>` + entity.attributes.next_buses[2].ServiceNo + `</b>: `\n    let min = Math.floor((Date.parse(entity.attributes.next_buses[2].EstimatedArrival) - Date.parse(Date())) / 60000)\n    if (isNaN(min)) {\n      bus = bus + 'c' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n  return 'b'\n]]]\n"
+            "nextbus1": "[[[\n  if (entity.state == 'unavailable') {\n    return `No service`\n  } else {\n    let bus = `<b>` + variables.timings[0].split('/')[0] + `</b>: `\n    let min = variables.timings[0].split('/')[1]\n    if (isNaN(min)) {\n      bus = bus + 'No Service' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n]]]\n",
+            "nextbus2": "[[[\n  if (entity.state == 'unavailable') {\n    return ``\n  } else if (variables.timings.length < 2) {\n    return ``\n  } else {\n    let bus = `<b>` + variables.timings[1].split('/')[0] + `</b>: `\n    let min = variables.timings[1].split('/')[1]\n    if (isNaN(min)) {\n      bus = bus + 'No Service' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n]]]\n",
+            "nextbus3": "[[[\n  if (entity.state == 'unavailable') {\n    return ``\n  } else if (variables.timings.length < 3) {\n    return ``\n  } else {\n    let bus = `<b>` + variables.timings[2].split('/')[0] + `</b>: `\n    let min = variables.timings[2].split('/')[1]\n    if (isNaN(min)) {\n      bus = bus + 'No Service' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n]]]\n"
           },
           "styles": {
             "grid": [
@@ -3016,7 +3063,7 @@
                               "width": "9.5%"
                             },
                             "template": "floorplan_nextbus",
-                            "entity": "binary_sensor.sims_drive_market_bus_stop"
+                            "entity": "sensor.bus_stop_sims_drive_market"
                           },
                           {
                             "type": "custom:button-card",
@@ -3027,7 +3074,7 @@
                               "width": "9.5%"
                             },
                             "template": "floorplan_nextbus",
-                            "entity": "binary_sensor.opposite_aljunied_station_bus_stop",
+                            "entity": "sensor.bus_stop_opposite_aljunied_station",
                             "variables": {
                               "stop_no": 2
                             }
@@ -3041,7 +3088,7 @@
                               "width": "9.5%"
                             },
                             "template": "floorplan_nextbus",
-                            "entity": "binary_sensor.aljunied_station_bus_stop",
+                            "entity": "sensor.bus_stop_aljunied_station",
                             "variables": {
                               "stop_no": 3
                             }
@@ -3055,7 +3102,7 @@
                               "width": "9.5%"
                             },
                             "template": "floorplan_nextbus",
-                            "entity": "binary_sensor.before_lorong_23_geylang_bus_stop",
+                            "entity": "sensor.bus_stop_before_lorong_23_geylang",
                             "variables": {
                               "stop_no": 4
                             }
@@ -13208,13 +13255,13 @@
                   "show_state": false,
                   "custom_fields": {
                     "bus1_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[0].split('/')[0] ]]]",
-                    "bus1_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[0].split('/')[2]\n  if (crowd == 'SEA') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'SDA') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'LSD') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[0].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
+                    "bus1_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[0].split('/')[2]\n  if (crowd == 'E') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'M') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'F') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[0].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
                     "bus2_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[1].split('/')[0] ]]]",
-                    "bus2_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[1].split('/')[2]\n  if (crowd == 'SEA') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'SDA') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'LSD') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[1].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
+                    "bus2_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[1].split('/')[2]\n  if (crowd == 'E') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'M') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'F') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[1].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
                     "bus3_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[2].split('/')[0] ]]]",
-                    "bus3_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[2].split('/')[2]\n  if (crowd == 'SEA') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'SDA') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'LSD') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[2].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
+                    "bus3_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[2].split('/')[2]\n  if (crowd == 'E') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'M') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'F') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[2].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
                     "bus4_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[3].split('/')[0] ]]]",
-                    "bus4_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[3].split('/')[2]\n  if (crowd == 'SEA') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'SDA') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'LSD') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[3].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n"
+                    "bus4_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[3].split('/')[2]\n  if (crowd == 'E') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'M') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'F') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[3].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n"
                   },
                   "styles": {
                     "card": [
@@ -13282,37 +13329,32 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "vertical-stack",
-                  "cards": [
-                    {
-                      "type": "markdown",
-                      "content": "## <ha-icon icon=\"mdi:numeric-1-circle\"></ha-icon> Sims Drive Market"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "template": "nextbus",
-                      "entity": "sensor.sims_drive_market_bus_64",
-                      "variables": {
-                        "service_no": 64
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "template": "nextbus",
-                      "entity": "sensor.sims_drive_market_bus_134",
-                      "variables": {
-                        "service_no": 134
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "template": "nextbus",
-                      "entity": "sensor.sims_drive_market_bus_137",
-                      "variables": {
-                        "service_no": 137
-                      }
-                    }
-                  ]
+                  "type": "markdown",
+                  "content": "## <ha-icon icon=\"mdi:numeric-1-circle\"></ha-icon> Sims Drive Market"
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_sims_drive_market",
+                  "variables": {
+                    "busno": 64
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_sims_drive_market",
+                  "variables": {
+                    "busno": 134
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_sims_drive_market",
+                  "variables": {
+                    "busno": 137
+                  }
                 }
               ]
             },
@@ -13320,31 +13362,24 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "vertical-stack",
-                  "cards": [
-                    {
-                      "type": "markdown",
-                      "content": "## <ha-icon icon=\"mdi:numeric-2-circle\"></ha-icon> Opposite Aljunied Station"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.opposite_aljunied_station_bus_40",
-                      "template": "nextbus",
-                      "variables": {
-                        "service_no": 40,
-                        "bus_stop_binary_sensor": "binary_sensor.opposite_aljunied_station_bus_stop"
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.opposite_aljunied_station_bus_125",
-                      "template": "nextbus",
-                      "variables": {
-                        "service_no": 125,
-                        "bus_stop_binary_sensor": "binary_sensor.opposite_aljunied_station_bus_stop"
-                      }
-                    }
-                  ]
+                  "type": "markdown",
+                  "content": "## <ha-icon icon=\"mdi:numeric-2-circle\"></ha-icon> Opposite Aljunied Station"
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_opposite_aljunied_station",
+                  "variables": {
+                    "busno": 40
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_opposite_aljunied_station",
+                  "variables": {
+                    "busno": 125
+                  }
                 }
               ]
             },
@@ -13352,40 +13387,32 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "vertical-stack",
-                  "cards": [
-                    {
-                      "type": "markdown",
-                      "content": "## <ha-icon icon=\"mdi:numeric-3-circle\"></ha-icon> Aljunied Station"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.aljunied_station_bus_40",
-                      "template": "nextbus",
-                      "variables": {
-                        "service_no": 40,
-                        "bus_stop_binary_sensor": "binary_sensor.aljunied_station_bus_stop"
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.aljunied_station_bus_80",
-                      "template": "nextbus",
-                      "variables": {
-                        "service_no": 80,
-                        "bus_stop_binary_sensor": "binary_sensor.aljunied_station_bus_stop"
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.aljunied_station_bus_100",
-                      "template": "nextbus",
-                      "variables": {
-                        "service_no": 100,
-                        "bus_stop_binary_sensor": "binary_sensor.aljunied_station_bus_stop"
-                      }
-                    }
-                  ]
+                  "type": "markdown",
+                  "content": "## <ha-icon icon=\"mdi:numeric-3-circle\"></ha-icon> Aljunied Station"
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_aljunied_station",
+                  "variables": {
+                    "busno": 40
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_aljunied_station",
+                  "variables": {
+                    "busno": 80
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_aljunied_station",
+                  "variables": {
+                    "busno": 100
+                  }
                 }
               ]
             },
@@ -13393,49 +13420,40 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "vertical-stack",
-                  "cards": [
-                    {
-                      "type": "markdown",
-                      "content": "## <ha-icon icon=\"mdi:numeric-4-circle\"></ha-icon> Before Lorong 23 Geylang"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.before_lorong_23_geylang_bus_2",
-                      "template": "nextbus",
-                      "variables": {
-                        "service_no": 2,
-                        "bus_stop_binary_sensor": "binary_sensor.before_lorong_23_geylang_bus_stop"
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.before_lorong_23_geylang_bus_13",
-                      "template": "nextbus",
-                      "variables": {
-                        "service_no": 13,
-                        "bus_stop_binary_sensor": "binary_sensor.before_lorong_23_geylang_bus_stop"
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.before_lorong_23_geylang_bus_26",
-                      "template": "nextbus",
-                      "variables": {
-                        "service_no": 26,
-                        "bus_stop_binary_sensor": "binary_sensor.before_lorong_23_geylang_bus_stop"
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.before_lorong_23_geylang_bus_67",
-                      "template": "nextbus",
-                      "variables": {
-                        "service_no": 67,
-                        "bus_stop_binary_sensor": "binary_sensor.before_lorong_23_geylang_bus_stop"
-                      }
-                    }
-                  ]
+                  "type": "markdown",
+                  "content": "## <ha-icon icon=\"mdi:numeric-4-circle\"></ha-icon> Before Lorong 23 Geylang"
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_before_lorong_23_geylang",
+                  "variables": {
+                    "busno": 2
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_before_lorong_23_geylang",
+                  "variables": {
+                    "busno": 13
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_before_lorong_23_geylang",
+                  "variables": {
+                    "busno": 26
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "nextbus",
+                  "entity": "sensor.bus_stop_before_lorong_23_geylang",
+                  "variables": {
+                    "busno": 67
+                  }
                 }
               ]
             },
