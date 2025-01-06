@@ -4685,13 +4685,12 @@
     - condition: state
       entity_id: input_boolean.parents_room_next_alarm_dismissed
       state: 'off'
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: sensor.aurora_battery_state
+        state: discharging
     then:
-    - condition: state
-      entity_id: sensor.aurora_battery_state
-      state:
-      - charging
-      - full
-      enabled: true
     - data:
         bedroom: parents_room
         ringtone: Eli's Song
@@ -5947,6 +5946,7 @@
     from:
     - charging
     - full
+    - not_charging
     to: discharging
     id: phone_discharging
     trigger: state
