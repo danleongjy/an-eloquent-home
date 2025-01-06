@@ -174,7 +174,7 @@
   unique_id: sensor.bus_stop_sims_drive_market
   headers:
     accountKey: !secret lta_datamall_apikey
-  scan_interval: 172800
+  scan_interval: 60
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
     {{ bus_stop_next_buses(value_json, ['64','134','137']) }}
@@ -186,7 +186,7 @@
   unique_id: sensor.bus_stop_opposite_aljunied_station
   headers:
     accountKey: !secret lta_datamall_apikey
-  scan_interval: 172800
+  scan_interval: 60
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
     {{ bus_stop_next_buses(value_json, ['40','125']) }}
@@ -198,7 +198,7 @@
   unique_id: sensor.bus_stop_aljunied_station
   headers:
     accountKey: !secret lta_datamall_apikey
-  scan_interval: 172800
+  scan_interval: 60
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
     {{ bus_stop_next_buses(value_json, ['40','80','100']) }}
@@ -210,7 +210,7 @@
   unique_id: sensor.bus_stop_before_lorong_23_geylang
   headers:
     accountKey: !secret lta_datamall_apikey
-  scan_interval: 172800
+  scan_interval: 60
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
     {{ bus_stop_next_buses(value_json, ['2','13','26','67']) }}
@@ -226,7 +226,7 @@
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
     {{ bus_stop_next_buses(value_json, ['2','13','51','63','67','80','100']) }}
-  availability: "{{ states('zone.kallang_station_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+  availability: "{{ states('zone.kallang_station_outer_perimeter') | int(0) > 0 and value_json.Services is defined and value_json.Services | length > 0 }}"
   
 - platform: rest
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81111
@@ -238,7 +238,7 @@
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
     {{ bus_stop_next_buses(value_json, ['137']) }}
-  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81119
@@ -250,7 +250,7 @@
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
     {{ bus_stop_next_buses(value_json, ['134']) }}
-  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=81069
@@ -262,7 +262,7 @@
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
     {{ bus_stop_next_buses(value_json, ['137','40']) }}
-  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=82091
@@ -274,7 +274,7 @@
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
     {{ bus_stop_next_buses(value_json, ['134','40']) }}
-  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+  availability: "{{ states('zone.paya_lebar_outer_perimeter') | int(0) > 0 and value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=40089
@@ -286,7 +286,7 @@
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
     {{ bus_stop_next_buses(value_json, ['48','67','170','960','972M']) }}
-  availability: "{{ states('zone.schools_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+  availability: "{{ states('zone.schools_outer_perimeter') | int(0) > 0 and value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
   resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=40069
@@ -298,7 +298,7 @@
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
     {{ bus_stop_next_buses(value_json, ['48','67','170','960','972M']) }}
-  availability: "{{ states('zone.schools_outer_perimeter') | int(0) > 0 and now() > today_at(states('input_datetime.sleep_hours_end')) and now() < today_at(states('input_datetime.sleep_hours_start')) }}"
+  availability: "{{ states('zone.schools_outer_perimeter') | int(0) > 0 and value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: folder
   folder: /config/www/rain_radar/frames

@@ -13445,7 +13445,7 @@
               "visibility": [
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.bus_stop_scgs",
+                  "entity": "zone.scgs_bus_stop",
                   "above": 0
                 }
               ]
@@ -13466,7 +13466,7 @@
               "visibility": [
                 {
                   "condition": "numeric_state",
-                  "entity": "sensor.bus_stop_acs",
+                  "entity": "zone.acs_bus_stop",
                   "above": 0
                 }
               ]
@@ -13474,6 +13474,29 @@
             {
               "type": "grid",
               "cards": [
+                {
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "name": "Update Location",
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "notify.mobile_app_aurora",
+                        "service_data": {
+                          "message": "request_location_update"
+                        }
+                      }
+                    }
+                  ],
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "person.daniel",
+                      "state": "not_home"
+                    }
+                  ]
+                },
                 {
                   "type": "markdown",
                   "content": "## <ha-icon icon=\"mdi:numeric-1-circle\"></ha-icon> Sims Drive Market"

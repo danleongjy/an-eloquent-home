@@ -4701,7 +4701,14 @@
     - zone.paya_lebar_outer_perimeter
     - zone.marine_parade_outer_perimeter
     above: 0
-    id: outer_perimeter
+    id: outer_perimeter_entered
+  - trigger: numeric_state
+    entity_id:
+    - zone.schools_outer_perimeter
+    - zone.paya_lebar_outer_perimeter
+    - zone.marine_parade_outer_perimeter
+    id: outer_perimeter_exited
+    below: 1
   conditions: []
   actions:
   - variables:
@@ -4722,17 +4729,6 @@
         id:
         - update
       sequence:
-      - repeat:
-          sequence:
-          - action: homeassistant.update_entity
-            metadata: {}
-            data:
-              entity_id: '{{ repeat.item }}'
-          for_each:
-          - sensor.bus_stop_sims_drive_market
-          - sensor.bus_stop_opposite_aljunied_station
-          - sensor.bus_stop_aljunied_station
-          - sensor.bus_stop_before_lorong_23_geylang
       - if:
         - condition: numeric_state
           entity_id: zone.kallang_station_outer_perimeter
@@ -4779,7 +4775,8 @@
     - conditions:
       - condition: trigger
         id:
-        - outer_perimeter
+        - outer_perimeter_entered
+        - outer_perimeter_exited
       sequence:
       - repeat:
           for_each: '{{ outer_perimeters[trigger.entity_id] }}'
