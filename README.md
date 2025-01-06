@@ -23,8 +23,8 @@ The network topology demonstrates some principles we employ in setting up our sy
 Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 3
-[`automation`](https://www.home-assistant.io/components/automation) | 152
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 166
+[`automation`](https://www.home-assistant.io/components/automation) | 149
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 162
 [`button`](https://www.home-assistant.io/components/button) | 168
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 4
@@ -46,7 +46,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 23
 [`select`](https://www.home-assistant.io/components/select) | 31
-[`sensor`](https://www.home-assistant.io/components/sensor) | 622
+[`sensor`](https://www.home-assistant.io/components/sensor) | 624
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 51
@@ -56,8 +56,8 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
-[`zone`](https://www.home-assistant.io/components/zone) | 11
-Total | 1680
+[`zone`](https://www.home-assistant.io/components/zone) | 14
+Total | 1678
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)

@@ -4380,269 +4380,6 @@
             attribute: current_position
   mode: single
   max_exceeded: silent
-- id: '1690715091749'
-  alias: Grace's Next Alarm Old
-  description: Set the date and time for Grace's next alarm
-  triggers:
-  - alias: When Grace's Next Alarm has fired
-    value_template: '{{ now() > as_datetime(states(''input_datetime.graces_next_alarm'')).astimezone(now().tzinfo)
-      + timedelta(minutes = 6) }}'
-    id: alarm_fired
-    trigger: template
-  - entity_id:
-    - calendar.daniel_work_days
-    - calendar.eli_school_days
-    - calendar.elena_school_days
-    id: calendar_changed
-    trigger: state
-  - entity_id:
-    - input_datetime.eca_day_alarm
-    - input_datetime.elenas_school_day_alarm
-    - input_datetime.elis_school_day_alarm
-    - input_datetime.graces_work_day_alarm
-    id: childrens_alarms_changed
-    trigger: state
-  conditions: []
-  actions:
-  - if:
-    - condition: trigger
-      id:
-      - alarm_fired
-    then:
-    - data:
-        start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-          = 21, minute = 30) - timedelta(days = 1) }}'
-        duration:
-          hours: 2
-          minutes: 30
-      target:
-        entity_id: calendar.daniel_work_days
-      response_variable: late_work_night_yesterday
-      alias: List Daniel's late work nights occurring the day before Grace's Next
-        Alarm
-      action: calendar.get_events
-    - data:
-        start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-          = 9, minute = 30) }}'
-        end_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-          = 12, minute = 0) + timedelta(days = 1) }}'
-      target:
-        entity_id: calendar.grace_work_days
-      response_variable: work_days
-      alias: List Grace's morning work days occurring on Grace's Next Alarm
-      action: calendar.get_events
-    - data:
-        start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-          = 0, minute = 0) }}'
-        end_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-          = 0, minute = 0) + timedelta(days = 1) }}'
-      target:
-        entity_id:
-        - calendar.eli_school_days
-        - calendar.elena_school_days
-      response_variable: school_days
-      alias: List school days occurring on Grace's Next Alarm
-      action: calendar.get_events
-    - repeat:
-        until:
-        - condition: template
-          value_template: '{{ now().date() < as_datetime(states(''input_datetime.graces_next_alarm'')).date()
-            }}'
-          alias: Alarm day is in the future
-        - or:
-          - condition: template
-            value_template: '{{ work_days[''calendar.grace_work_days''].events | length
-              > 0 }}'
-            alias: Grace has a work day
-          - and:
-            - or:
-              - condition: template
-                value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
-                  | length == 0 }}'
-                alias: Daniel didn't have a late work night yesterday
-              - condition: template
-                value_template: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).weekday()
-                  != 4 }}'
-                alias: Alarm is not on a Friday
-            - condition: template
-              value_template: '{{ school_days[''calendar.elena_school_days''].events
-                | length > 0 }}'
-              alias: Elena has a school day
-          - and:
-            - or:
-              - condition: template
-                value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
-                  | length > 0 }}'
-                alias: Daniel had a late work night yesterday
-              - condition: template
-                value_template: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).weekday()
-                  == 4 }}'
-                alias: Alarm is on a Friday
-            - condition: template
-              value_template: '{{ school_days[''calendar.eli_school_days''].events
-                | length > 0 }}'
-              alias: Eli has a school day
-        sequence:
-        - data:
-            date: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).date()
-              + timedelta(days = 1) }}'
-          target:
-            entity_id: input_datetime.graces_next_alarm
-          alias: Increment alarm by 1 day
-          action: input_datetime.set_datetime
-        - data:
-            start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-              = 21, minute = 30) - timedelta(days = 1) }}'
-            duration:
-              hours: 2
-              minutes: 30
-          target:
-            entity_id: calendar.daniel_work_days
-          response_variable: late_work_night_yesterday
-          alias: List Daniel's late work nights occurring the day before Daniel's
-            Next Alarm
-          action: calendar.get_events
-        - data:
-            start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-              = 9, minute = 30) }}'
-            end_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-              = 12, minute = 0) }}'
-          target:
-            entity_id: calendar.grace_work_days
-          response_variable: work_days
-          alias: List Grace's morning work days occurring on Grace's Next Alarm
-          action: calendar.get_events
-        - data:
-            start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-              = 0, minute = 0) }}'
-            end_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-              = 0, minute = 0) + timedelta(days = 1) }}'
-          target:
-            entity_id:
-            - calendar.eli_school_days
-            - calendar.elena_school_days
-          response_variable: school_days
-          alias: List school days occurring on Grace's Next Alarm
-          action: calendar.get_events
-  - data:
-      start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-        = 21, minute = 30) - timedelta(days = 1) }}'
-      duration:
-        hours: 2
-        minutes: 30
-    target:
-      entity_id: calendar.daniel_work_days
-    response_variable: late_work_night_yesterday
-    alias: List Daniel's late work nights occurring the day before Grace's Next Alarm
-    action: calendar.get_events
-  - data:
-      start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-        = 0, minute = 0) }}'
-      end_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
-        = 0, minute = 0) + timedelta(days = 1) }}'
-    target:
-      entity_id:
-      - calendar.eli_school_days
-      - calendar.elena_school_days
-    response_variable: school_days
-    alias: List school days occurring on Grace's Next Alarm
-    action: calendar.get_events
-  - choose:
-    - conditions:
-      - alias: If Daniel had a late work night
-        condition: template
-        value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
-          | length > 0 }}'
-      - alias: If Eli has school
-        condition: template
-        value_template: '{{ school_days[''calendar.eli_school_days''].events | length
-          > 0 }}'
-      sequence:
-      - if:
-        - condition: template
-          value_template: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).weekday()
-            < 5 }}'
-          alias: Alarm is on a weekday
-        then:
-        - data:
-            time: '{{ states(''input_datetime.elis_school_day_alarm'') }}'
-          target:
-            entity_id: input_datetime.graces_next_alarm
-          alias: Set Grace's Next Alarm to Eli's School Day Alarm
-          action: input_datetime.set_datetime
-        - data:
-            datetime: '{{ as_datetime(states(''input_datetime.graces_next_alarm''))
-              - timedelta(minutes = 5) }}'
-          target:
-            entity_id: input_datetime.graces_next_alarm
-          alias: Set Grace's Next Alarm 5min before Eli's alarm
-          action: input_datetime.set_datetime
-        else:
-        - data:
-            time: '{{ states(''input_datetime.eca_day_alarm'') }}'
-          target:
-            entity_id: input_datetime.graces_next_alarm
-          alias: Set Grace's Next Alarm to ECA Day Alarm
-          action: input_datetime.set_datetime
-        - data:
-            datetime: '{{ as_datetime(states(''input_datetime.graces_next_alarm''))
-              - timedelta(minutes = 10) }}'
-          target:
-            entity_id: input_datetime.graces_next_alarm
-          alias: Set Grace's Next Alarm 10min before kids' alarm
-          action: input_datetime.set_datetime
-    - conditions:
-      - alias: If Daniel did not have a late work night
-        condition: template
-        value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
-          | length == 0 }}'
-      - alias: If Elena has school
-        condition: template
-        value_template: '{{ school_days[''calendar.elena_school_days''].events | length
-          > 0 }}'
-      sequence:
-      - if:
-        - condition: template
-          value_template: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).weekday()
-            < 5 }}'
-          alias: Alarm is on a weekday
-        then:
-        - data:
-            time: '{{ states(''input_datetime.elenas_school_day_alarm'') }}'
-          target:
-            entity_id: input_datetime.graces_next_alarm
-          alias: Set Grace's Next Alarm to Elena's School Day Alarm
-          action: input_datetime.set_datetime
-        - data:
-            datetime: '{{ as_datetime(states(''input_datetime.graces_next_alarm''))
-              - timedelta(minutes = 10) }}'
-          target:
-            entity_id: input_datetime.graces_next_alarm
-          alias: Set Grace's Next Alarm 10min before Elena's alarm
-          action: input_datetime.set_datetime
-        else:
-        - data:
-            time: '{{ states(''input_datetime.eca_day_alarm'') }}'
-          target:
-            entity_id: input_datetime.graces_next_alarm
-          alias: Set Grace's Next Alarm to ECA Day Alarm
-          action: input_datetime.set_datetime
-        - data:
-            datetime: '{{ as_datetime(states(''input_datetime.graces_next_alarm''))
-              - timedelta(minutes = 10) }}'
-          target:
-            entity_id: input_datetime.graces_next_alarm
-          alias: Set Grace's Next Alarm 10min before kids' alarm
-          action: input_datetime.set_datetime
-    default:
-    - data:
-        time: '{{ states(''input_datetime.graces_work_day_alarm'') }}'
-      target:
-        entity_id: input_datetime.graces_next_alarm
-      alias: Set Grace's Next Alarm to Grace's Work Day Alarm
-      action: input_datetime.set_datetime
-  mode: single
-  max_exceeded: silent
 - id: '1690717352582'
   alias: Daniel's Alarm
   description: Wake up Daniel at his next alarm
@@ -4759,267 +4496,6 @@
       target:
         entity_id: input_boolean.parents_room_next_alarm_dismissed
   mode: single
-- id: '1690765502879'
-  alias: Daniel's Next Alarm Old
-  description: Set the date and time for Daniel's next alarm
-  triggers:
-  - alias: When Daniel's Next Alarm has fired
-    value_template: '{{ now() > as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo)
-      + timedelta(minutes = 1) }}'
-    id: alarm_fired
-    trigger: template
-  - entity_id:
-    - calendar.daniel_work_days
-    - calendar.elena_school_days
-    - calendar.eli_school_days
-    id: calendar_changed
-    trigger: state
-  - entity_id:
-    - input_datetime.eca_day_alarm
-    - input_datetime.elenas_school_day_alarm
-    - input_datetime.elis_school_day_alarm
-    - input_datetime.daniels_work_day_alarm
-    id: childrens_alarms_changed
-    trigger: state
-  conditions: []
-  actions:
-  - if:
-    - condition: trigger
-      id:
-      - alarm_fired
-    then:
-    - data:
-        start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-          = 21, minute = 30) - timedelta(days = 1) }}'
-        duration:
-          hours: 2
-          minutes: 30
-      target:
-        entity_id: calendar.daniel_work_days
-      response_variable: late_work_night_yesterday
-      alias: List late work nights occurring the day before Daniel's Next Alarm
-      action: calendar.get_events
-    - data:
-        start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-          = 9, minute = 30) }}'
-        end_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-          = 12, minute = 0) }}'
-      target:
-        entity_id: calendar.daniel_work_days
-      response_variable: work_days
-      alias: List Daniel's morning work days occurring on Daniel's Next Alarm
-      action: calendar.get_events
-    - data:
-        start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-          = 0, minute = 0) }}'
-        end_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-          = 0, minute = 0) + timedelta(days = 1) }}'
-      target:
-        entity_id:
-        - calendar.eli_school_days
-        - calendar.elena_school_days
-      response_variable: school_days
-      alias: List school days occurring on Daniel's Next Alarm
-      action: calendar.get_events
-    - repeat:
-        until:
-        - condition: template
-          value_template: '{{ now().date() < as_datetime(states(''input_datetime.daniels_next_alarm'')).date()
-            }}'
-          alias: Alarm day is in the future
-        - or:
-          - condition: template
-            value_template: '{{ work_days[''calendar.daniel_work_days''].events |
-              length > 0 }}'
-            alias: Daniel has a work day
-          - and:
-            - or:
-              - condition: template
-                value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
-                  | length == 0 }}'
-                alias: Daniel didn't have a late work night yesterday
-              - condition: template
-                value_template: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).weekday()
-                  != 4 }}'
-                alias: Alarm is not on a Friday
-            - condition: template
-              value_template: '{{ school_days[''calendar.eli_school_days''].events
-                | length > 0 }}'
-              alias: Eli has a school day
-          - and:
-            - or:
-              - condition: template
-                value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
-                  | length > 0 }}'
-                alias: Daniel had a late work night yesterday
-              - condition: template
-                value_template: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).weekday()
-                  == 4 }}'
-                alias: Alarm is on a Friday
-            - condition: template
-              value_template: '{{ school_days[''calendar.elena_school_days''].events
-                | length > 0 }}'
-              alias: Elena has a school day
-        sequence:
-        - data:
-            date: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).date()
-              + timedelta(days = 1) }}'
-          target:
-            entity_id: input_datetime.daniels_next_alarm
-          alias: Increment alarm by 1 day
-          action: input_datetime.set_datetime
-        - data:
-            start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-              = 21, minute = 30) - timedelta(days = 1) }}'
-            duration:
-              hours: 2
-              minutes: 30
-          target:
-            entity_id: calendar.daniel_work_days
-          response_variable: late_work_night_yesterday
-          alias: List late work nights occurring the day before Daniel's Next Alarm
-          action: calendar.get_events
-        - data:
-            start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-              = 9, minute = 30) }}'
-            end_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-              = 12, minute = 0) }}'
-          target:
-            entity_id: calendar.daniel_work_days
-          response_variable: work_days
-          alias: List Daniel's morning work days occurring on Daniel's Next Alarm
-          action: calendar.get_events
-        - data:
-            start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-              = 0, minute = 0) }}'
-            end_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-              = 0, minute = 0) + timedelta(days = 1) }}'
-          target:
-            entity_id:
-            - calendar.eli_school_days
-            - calendar.elena_school_days
-          response_variable: school_days
-          alias: List school days occurring on Daniel's Next Alarm
-          action: calendar.get_events
-  - data:
-      start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-        = 21, minute = 30) - timedelta(days = 1) }}'
-      duration:
-        hours: 2
-        minutes: 30
-    target:
-      entity_id: calendar.daniel_work_days
-    response_variable: late_work_night_yesterday
-    alias: List late work nights occurring the day before Daniel's Next Alarm
-    action: calendar.get_events
-  - data:
-      start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-        = 0, minute = 0) }}'
-      end_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
-        = 0, minute = 0) + timedelta(days = 1) }}'
-    target:
-      entity_id:
-      - calendar.eli_school_days
-      - calendar.elena_school_days
-    response_variable: school_days
-    alias: List school days occurring on Daniel's Next Alarm
-    action: calendar.get_events
-  - choose:
-    - conditions:
-      - alias: If Daniel had a late work night
-        condition: template
-        value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
-          | length > 0 }}'
-      - alias: If Elena has school
-        condition: template
-        value_template: '{{ school_days[''calendar.elena_school_days''].events | length
-          > 0 }}'
-      sequence:
-      - if:
-        - condition: template
-          value_template: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).weekday()
-            < 5 }}'
-          alias: Alarm is on a weekday
-        then:
-        - data:
-            time: '{{ states(''input_datetime.elenas_school_day_alarm'') }}'
-          target:
-            entity_id: input_datetime.daniels_next_alarm
-          alias: Set Daniel's Next Alarm to Elena's School Day Alarm
-          action: input_datetime.set_datetime
-        - data:
-            datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
-              - timedelta(minutes = 10) }}'
-          target:
-            entity_id: input_datetime.daniels_next_alarm
-          alias: Set Daniel's Next Alarm 10min before Elena's alarm
-          action: input_datetime.set_datetime
-        else:
-        - data:
-            time: '{{ states(''input_datetime.eca_day_alarm'') }}'
-          target:
-            entity_id: input_datetime.daniels_next_alarm
-          alias: Set Daniel's Next Alarm to ECA Day Alarm
-          action: input_datetime.set_datetime
-        - data:
-            datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
-              - timedelta(minutes = 10) }}'
-          target:
-            entity_id: input_datetime.daniels_next_alarm
-          alias: Set Daniel's Next Alarm 10min before kids' alarm
-          action: input_datetime.set_datetime
-    - conditions:
-      - alias: If Daniel did not have a late work night
-        condition: template
-        value_template: '{{ late_work_night_yesterday[''calendar.daniel_work_days''].events
-          | length == 0 }}'
-      - alias: If Eli has school
-        condition: template
-        value_template: '{{ school_days[''calendar.eli_school_days''].events | length
-          > 0 }}'
-      sequence:
-      - if:
-        - condition: template
-          value_template: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).weekday()
-            < 5 }}'
-          alias: Alarm is on a weekday
-        then:
-        - data:
-            time: '{{ states(''input_datetime.elis_school_day_alarm'') }}'
-          target:
-            entity_id: input_datetime.daniels_next_alarm
-          alias: Set Daniel's Next Alarm to Eli's School Day Alarm
-          action: input_datetime.set_datetime
-        - data:
-            datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
-              - timedelta(minutes = 5) }}'
-          target:
-            entity_id: input_datetime.daniels_next_alarm
-          alias: Set Daniel's Next Alarm 5min before Eli's alarm
-          action: input_datetime.set_datetime
-        else:
-        - data:
-            time: '{{ states(''input_datetime.eca_day_alarm'') }}'
-          target:
-            entity_id: input_datetime.daniels_next_alarm
-          alias: Set Daniel's Next Alarm to ECA Day Alarm
-          action: input_datetime.set_datetime
-        - data:
-            datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
-              - timedelta(minutes = 10) }}'
-          target:
-            entity_id: input_datetime.daniels_next_alarm
-          alias: Set Daniel's Next Alarm 10min before kids' alarm
-          action: input_datetime.set_datetime
-    default:
-    - data:
-        time: '{{ states(''input_datetime.daniels_work_day_alarm'') }}'
-      target:
-        entity_id: input_datetime.daniels_next_alarm
-      alias: Set Daniel's Next Alarm to Daniel's Work Day Alarm
-      action: input_datetime.set_datetime
-  mode: single
-  max_exceeded: silent
 - id: '1690814237442'
   alias: Eli's Next Alarm
   description: Set Eli's Next Alarm to the next day where he has school
@@ -5219,46 +4695,99 @@
     alias: update
     id: update
     trigger: time_pattern
+  - trigger: numeric_state
+    entity_id:
+    - zone.schools_outer_perimeter
+    - zone.paya_lebar_outer_perimeter
+    - zone.marine_parade_outer_perimeter
+    above: 0
+    id: outer_perimeter
   conditions: []
   actions:
-  - repeat:
-      sequence:
-      - action: homeassistant.update_entity
-        metadata: {}
-        data:
-          entity_id: '{{ repeat.item }}'
-      for_each:
-      - sensor.bus_stop_sims_drive_market
-      - sensor.bus_stop_opposite_aljunied_station
-      - sensor.bus_stop_aljunied_station
-      - sensor.bus_stop_before_lorong_23_geylang
-  - if:
-    - condition: numeric_state
-      entity_id: zone.kallang_station_outer_perimeter
-      above: 0
-    then:
-    - action: homeassistant.update_entity
-      metadata: {}
-      data:
-        entity_id:
+  - variables:
+      outer_perimeters:
+        zone.schools_outer_perimeter:
+        - sensor.bus_stop_acs
+        - sensor.bus_stop_scgs
+        zone.kallang_station_outer_perimeter:
         - sensor.bus_stop_kallang_station
-  - if:
-    - condition: numeric_state
-      entity_id: zone.paya_lebar_outer_perimeter
-      above: 0
-      enabled: false
-    then:
-    - repeat:
-        sequence:
+        zone.paya_lebar_outer_perimeter:
+        - sensor.bus_stop_church_of_our_lady_queen_of_peace
+        - sensor.bus_stop_opposite_lorong_39_geylang
+        - sensor.bus_stop_opposite_paya_lebar_square
+        - sensor.bus_stop_paya_lebar_square
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - update
+      sequence:
+      - repeat:
+          sequence:
+          - action: homeassistant.update_entity
+            metadata: {}
+            data:
+              entity_id: '{{ repeat.item }}'
+          for_each:
+          - sensor.bus_stop_sims_drive_market
+          - sensor.bus_stop_opposite_aljunied_station
+          - sensor.bus_stop_aljunied_station
+          - sensor.bus_stop_before_lorong_23_geylang
+      - if:
+        - condition: numeric_state
+          entity_id: zone.kallang_station_outer_perimeter
+          above: 0
+          enabled: true
+        then:
         - action: homeassistant.update_entity
           metadata: {}
           data:
-            entity_id: '{{ repeat.item }}'
-        for_each:
-        - sensor.bus_stop_paya_lebar_square
-        - sensor.bus_stop_opposite_paya_lebar_square
-        - sensor.bus_stop_church_of_our_lady_queen_of_peace
-        - sensor.bus_stop_opposite_lorong_39_geylang
+            entity_id:
+            - sensor.bus_stop_kallang_station
+      - if:
+        - condition: numeric_state
+          entity_id: zone.paya_lebar_outer_perimeter
+          above: 0
+          enabled: true
+        then:
+        - repeat:
+            sequence:
+            - action: homeassistant.update_entity
+              metadata: {}
+              data:
+                entity_id: '{{ repeat.item }}'
+            for_each:
+            - sensor.bus_stop_paya_lebar_square
+            - sensor.bus_stop_opposite_paya_lebar_square
+            - sensor.bus_stop_church_of_our_lady_queen_of_peace
+            - sensor.bus_stop_opposite_lorong_39_geylang
+      - if:
+        - condition: numeric_state
+          entity_id: zone.schools_outer_perimeter
+          above: 0
+          enabled: true
+        then:
+        - repeat:
+            sequence:
+            - action: homeassistant.update_entity
+              metadata: {}
+              data:
+                entity_id: '{{ repeat.item }}'
+            for_each:
+            - sensor.bus_stop_scgs
+            - sensor.bus_stop_acs
+    - conditions:
+      - condition: trigger
+        id:
+        - outer_perimeter
+      sequence:
+      - repeat:
+          for_each: '{{ outer_perimeters[trigger.entity_id] }}'
+          sequence:
+          - action: homeassistant.update_entity
+            metadata: {}
+            data:
+              entity_id: '{{ repeat.item }}'
   mode: single
 - id: '1694229495079'
   alias: NEA Rain Radar Animation
@@ -6378,52 +5907,6 @@
     data: {}
     target:
       entity_id: light.christmas_tree
-  mode: single
-- id: '1733622332194'
-  alias: Notify When Immich Facial Processing Failed
-  description: Send a notification when Immich facial recognition or face detection
-    jobs fail
-  triggers:
-  - trigger: state
-    entity_id:
-    - sensor.immich_job_facial_recognition
-    attribute: failed
-  - trigger: state
-    entity_id:
-    - sensor.immich_job_face_detection
-    attribute: failed
-  conditions:
-  - condition: or
-    conditions:
-    - condition: numeric_state
-      entity_id: sensor.immich_job_face_detection
-      attribute: failed
-      above: 0
-    - condition: numeric_state
-      entity_id: sensor.immich_job_facial_recognition
-      attribute: failed
-      above: 0
-  actions:
-  - data:
-      message: clear_notification
-      data:
-        tag: immich_errors
-    action: notify.mobile_app_aurora
-  - action: notify.mobile_app_aurora
-    metadata: {}
-    data:
-      title: Immich Facial Processing Failed
-      message: '{{ ''Face detection failed for '' if state_attr(''sensor.immich_job_face_detection'',
-        ''failed'') > 0 }}{{ state_attr(''sensor.immich_job_face_detection'', ''failed'')
-        if state_attr(''sensor.immich_job_face_detection'', ''failed'') > 0 }}{{ ''
-        assets. '' if state_attr(''sensor.immich_job_face_detection'', ''failed'')
-        > 0 }}{{ ''Facial recognition failed for '' if state_attr(''sensor.immich_job_facial_recognition'',
-        ''failed'') > 0 }}{{ state_attr(''sensor.immich_job_facial_recognition'',
-        ''failed'') if state_attr(''sensor.immich_job_facial_recognition'', ''failed'')
-        > 0 }}{{ '' assets.'' if state_attr(''sensor.immich_job_facial_recognition'',
-        ''failed'') > 0 }}'
-      data:
-        tag: immich_errors
   mode: single
 - id: '1735294884034'
   alias: Daniel's Next Alarm

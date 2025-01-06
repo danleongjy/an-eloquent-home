@@ -734,13 +734,13 @@
             }
           },
           "custom_fields": {
-            "bus1_no": "[[[ \n  if (isNaN(entity.state.split(\",\")[0].split(\"/\")[0])) {\n    return ''\n  } else {\n    return entity.state.split(\",\")[0].split(\"/\")[0]\n  }\n]]]\n",
+            "bus1_no": "[[[ \n  return entity.state.split(\",\")[0].split(\"/\")[0]\n]]]\n",
             "bus1_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[0].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min < 4) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  return status + '  ' + variables.crowd_symbols[entity.state.split(',')[0].split('/')[2]]\n]]]\n",
-            "bus2_no": "[[[ \n  if (isNaN(entity.state.split(\",\")[1].split(\"/\")[0])) {\n    return ''\n  } else {\n    return entity.state.split(\",\")[1].split(\"/\")[0]\n  }\n]]]\n",
+            "bus2_no": "[[[ \n  return entity.state.split(\",\")[1].split(\"/\")[0]\n]]]\n",
             "bus2_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[1].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min < 4) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[1].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[1].split('/')[2]]\n  }\n  return status\n]]]\n",
-            "bus3_no": "[[[ \n  if (isNaN(entity.state.split(\",\")[2].split(\"/\")[0])) {\n    return ''\n  } else {\n    return entity.state.split(\",\")[2].split(\"/\")[0]\n  }\n]]]\n",
+            "bus3_no": "[[[ \n  return entity.state.split(\",\")[2].split(\"/\")[0]\n]]]\n",
             "bus3_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[2].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min < 4) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[2].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[2].split('/')[2]]\n  }\n  return status\n]]]\n",
-            "bus4_no": "[[[ \n  if (isNaN(entity.state.split(\",\")[3].split(\"/\")[0])) {\n    return ''\n  } else {\n    return entity.state.split(\",\")[3].split(\"/\")[0]\n  }\n]]]\n",
+            "bus4_no": "[[[ \n  return entity.state.split(\",\")[3].split(\"/\")[0]\n]]]\n",
             "bus4_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[3].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min < 4) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[3].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[3].split('/')[2]]\n  }\n  return status\n]]]\n"
           },
           "styles": {
@@ -13425,6 +13425,48 @@
                 {
                   "condition": "numeric_state",
                   "entity": "zone.kallang_station_bus_stop",
+                  "above": 0
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "markdown",
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon> Singapore Chinese Girls School"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.bus_stop_scgs",
+                  "template": "homebound_bus"
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.bus_stop_scgs",
+                  "above": 0
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "markdown",
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon> Anglo Chinese School"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.bus_stop_acs",
+                  "template": "homebound_bus"
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.bus_stop_acs",
                   "above": 0
                 }
               ]
