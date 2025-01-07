@@ -4699,20 +4699,28 @@
     entity_id:
     - zone.schools_outer_perimeter
     - zone.paya_lebar_outer_perimeter
-    - zone.marine_parade_outer_perimeter
+    - zone.church_of_our_lady_queen_of_peace_bus_stop
+    - zone.opposite_lorong_39_geylang_bus_stop
+    - zone.paya_lebar_station_bus_stops
+    - zone.acs_bus_stop
+    - zone.scgs_bus_stop
     above: 0
-    id: outer_perimeter_entered
+    id: location_entered
   - trigger: numeric_state
     entity_id:
     - zone.schools_outer_perimeter
     - zone.paya_lebar_outer_perimeter
-    - zone.marine_parade_outer_perimeter
-    id: outer_perimeter_exited
+    - zone.church_of_our_lady_queen_of_peace_bus_stop
+    - zone.opposite_lorong_39_geylang_bus_stop
+    - zone.paya_lebar_station_bus_stops
+    - zone.acs_bus_stop
+    - zone.scgs_bus_stop
+    id: location_exited
     below: 1
   conditions: []
   actions:
   - variables:
-      outer_perimeters:
+      locations:
         zone.schools_outer_perimeter:
         - sensor.bus_stop_acs
         - sensor.bus_stop_scgs
@@ -4723,6 +4731,17 @@
         - sensor.bus_stop_opposite_lorong_39_geylang
         - sensor.bus_stop_opposite_paya_lebar_square
         - sensor.bus_stop_paya_lebar_square
+        zone.church_of_our_lady_queen_of_peace_bus_stop:
+        - sensor.bus_stop_church_of_our_lady_queen_of_peace
+        zone.opposite_lorong_39_geylang_bus_stop:
+        - sensor.bus_stop_opposite_lorong_39_geylang
+        zone.paya_lebar_station_bus_stops:
+        - sensor.bus_stop_opposite_paya_lebar_square
+        - sensor.bus_stop_paya_lebar_square
+        zone.acs_bus_stop:
+        - sensor.bus_stop_acs
+        zone.scgs_bus_stop:
+        - sensor.bus_stop_scgs
   - choose:
     - conditions:
       - condition: trigger
@@ -4730,10 +4749,9 @@
         - update
       sequence:
       - if:
-        - condition: numeric_state
-          entity_id: zone.kallang_station_outer_perimeter
-          above: 0
-          enabled: true
+        - condition: template
+          value_template: '{{ states.zone | selectattr(''entity_id'',''in'',[''zone.kallang_station_outer_perimeter'',''zone.kallang_station_bus_stop''])
+            | map(attribute = ''state'') | map(''int'') | list | sum > 0 }}'
         then:
         - action: homeassistant.update_entity
           metadata: {}
@@ -4741,10 +4759,9 @@
             entity_id:
             - sensor.bus_stop_kallang_station
       - if:
-        - condition: numeric_state
-          entity_id: zone.paya_lebar_outer_perimeter
-          above: 0
-          enabled: true
+        - condition: template
+          value_template: '{{ states.zone | selectattr(''entity_id'',''in'',[''zone.church_of_our_lady_queen_of_peace_bus_stop'',''zone.opposite_lorong_39_geylang_bus_stop'',''zone.paya_lebar_outer_perimeter'',''zone.paya_lebar_station_bus_stops''])
+            | map(attribute = ''state'') | map(''int'') | list | sum > 0 }}'
         then:
         - repeat:
             sequence:
@@ -4758,10 +4775,9 @@
             - sensor.bus_stop_church_of_our_lady_queen_of_peace
             - sensor.bus_stop_opposite_lorong_39_geylang
       - if:
-        - condition: numeric_state
-          entity_id: zone.schools_outer_perimeter
-          above: 0
-          enabled: true
+        - condition: template
+          value_template: '{{ states.zone | selectattr(''entity_id'',''in'',[''zone.acs_bus_stop'',''zone.scgs_bus_stop'',''zone.schools_outer_perimeter''])
+            | map(attribute = ''state'') | map(''int'') | list | sum > 0 }}'
         then:
         - repeat:
             sequence:
@@ -4775,17 +4791,17 @@
     - conditions:
       - condition: trigger
         id:
-        - outer_perimeter_entered
-        - outer_perimeter_exited
+        - location_entered
+        - location_exited
       sequence:
       - repeat:
-          for_each: '{{ outer_perimeters[trigger.entity_id] }}'
+          for_each: '{{ locations[trigger.entity_id] }}'
           sequence:
           - action: homeassistant.update_entity
             metadata: {}
             data:
               entity_id: '{{ repeat.item }}'
-  mode: single
+  mode: queued
 - id: '1694229495079'
   alias: NEA Rain Radar Animation
   description: Update NEA Rain Radar Animation 5min past every hour if it is not during
