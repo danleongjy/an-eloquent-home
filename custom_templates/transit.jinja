@@ -1,4 +1,4 @@
-{% macro bus_stop_next_buses(json, bus_services) %}
+{% macro bus_stop_next_buses(json, bus_services, bus_qty) %}
 {% set next_buses = namespace(output = [], formattedstr = '') %}
 {% for bus in json.Services %}
   {% if bus.ServiceNo in bus_services %}
@@ -12,6 +12,9 @@
     {% endfor %}
   {% endif %}
 {% endfor %}
+{% if bus_qty != 0 %}
+  {% set next_buses.output = next_buses.output[:bus_qty] %}
+{% endif %}
 {% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
   {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
 {% endfor %}

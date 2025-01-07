@@ -177,7 +177,7 @@
   scan_interval: 60
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['64','134','137']) }}
+    {{ bus_stop_next_buses(value_json, ['64','134','137'], 0) }}
   availability: "{{ value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
@@ -189,7 +189,7 @@
   scan_interval: 60
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['40','125']) }}
+    {{ bus_stop_next_buses(value_json, ['40','125'], 0) }}
   availability: "{{ value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
@@ -201,7 +201,7 @@
   scan_interval: 60
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['40','80','100']) }}
+    {{ bus_stop_next_buses(value_json, ['40','80','100'], 0) }}
   availability: "{{ value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
@@ -213,7 +213,7 @@
   scan_interval: 60
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['2','13','26','67']) }}
+    {{ bus_stop_next_buses(value_json, ['2','13','26','67'], 0) }}
   availability: "{{ value_json.Services is defined and value_json.Services | length > 0 }}"
 
 - platform: rest
@@ -225,7 +225,7 @@
   scan_interval: 172800
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['2','13','51','63','67','80','100']) }}
+    {{ bus_stop_next_buses(value_json, ['2','13','51','63','67','80','100'], 4) }}
   availability: >
     {{ (states('zone.kallang_station_outer_perimeter') | int(0) > 0 
         or states('zone.kallang_station_bus_stop') | int(0) > 0)
@@ -240,7 +240,7 @@
   scan_interval: 172800
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['137']) }}
+    {{ bus_stop_next_buses(value_json, ['137'], 4) }}
   availability: >
     {{ (states('zone.paya_lebar_outer_perimeter') | int(0) > 0 
         or states('zone.paya_lebar_station_bus_stops') | int(0) > 0)
@@ -255,7 +255,7 @@
   scan_interval: 172800
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['134']) }}
+    {{ bus_stop_next_buses(value_json, ['134'], 4) }}
   availability: >
     {{ (states('zone.paya_lebar_outer_perimeter') | int(0) > 0
         or states('zone.paya_lebar_station_bus_stops') | int(0) > 0)
@@ -270,7 +270,7 @@
   scan_interval: 172800
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['137','40']) }}
+    {{ bus_stop_next_buses(value_json, ['137','40'], 4) }}
   availability: >
     {{ (states('zone.paya_lebar_outer_perimeter') | int(0) > 0 
         or states('zone.opposite_lorong_39_geylang_bus_stop') | int(0) >0)
@@ -285,7 +285,7 @@
   scan_interval: 172800
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['134','40']) }}
+    {{ bus_stop_next_buses(value_json, ['134','40'], 4) }}
   availability: >
     {{ (states('zone.paya_lebar_outer_perimeter') | int(0) > 0 
         or states('zone.church_of_our_lady_queen_of_peace_bus_stop') | int(0) > 0)
@@ -300,7 +300,7 @@
   scan_interval: 172800
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['48','67','170','960','972M']) }}
+    {{ bus_stop_next_buses(value_json, ['48','67','170','960','972M'], 4) }}
   availability: >
     {{ (states('zone.schools_outer_perimeter') | int(0) > 0 
         or states('zone.scgs_bus_stop') | int(0) >0)
@@ -315,7 +315,7 @@
   scan_interval: 172800
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['48','67','170','960','972M']) }}
+    {{ bus_stop_next_buses(value_json, ['48','67','170','960','972M'], 4) }}
   availability: >
     {{ (states('zone.schools_outer_perimeter') | int(0) > 0
         or states('zone.acs_bus_stop') | int(0) > 0)
@@ -330,7 +330,7 @@
   scan_interval: 172800
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['40']) }}
+    {{ bus_stop_next_buses(value_json, ['40'], 4) }}
   availability: >
     {{ (states('zone.marine_parade_outer_perimeter') | int(0) > 0
         or states('zone.holy_family_church_bus_stop') | int(0) > 0)
@@ -345,7 +345,7 @@
   scan_interval: 172800
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['40']) }}
+    {{ bus_stop_next_buses(value_json, ['40'], 4) }}
   availability: >
     {{ (states('zone.marine_parade_outer_perimeter') | int(0) > 0
         or states('zone.roxy_square_bus_stop') | int(0) > 0)
@@ -360,7 +360,7 @@
   scan_interval: 172800
   value_template: >
     {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['134']) }}
+    {{ bus_stop_next_buses(value_json, ['134'], 4) }}
   availability: >
     {{ (states('zone.marine_parade_outer_perimeter') | int(0) > 0
         or states('zone.parkway_parade_bus_stop') | int(0) > 0)
