@@ -13276,8 +13276,72 @@
               "type": "grid",
               "cards": [
                 {
+                  "type": "custom:button-card",
+                  "entity": "person.daniel",
+                  "show_name": false,
+                  "show_state": true,
+                  "show_icon": false,
+                  "state_display": "[[[ \n  if (entity.state == 'not_home') {\n    return 'Not home'\n  } else {\n    return 'At ' + entity.state\n  }\n]]]\n",
+                  "label": "[[[ return helpers.relativeTime(entity.last_changed) ]]]",
+                  "show_label": true,
+                  "tap_action": {
+                    "action": "call-service",
+                    "service": "notify.mobile_app_aurora",
+                    "service_data": {
+                      "message": "request_location_update"
+                    }
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "padding": "5px"
+                      }
+                    ],
+                    "state": [
+                      {
+                        "font-size": "16pt"
+                      }
+                    ],
+                    "label": [
+                      {
+                        "color": "gray"
+                      },
+                      {
+                        "font-size": "10pt"
+                      }
+                    ],
+                    "grid": [
+                      {
+                        "grid-template-rows": "min-content min-content"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "person.daniel",
+                  "state_not": "home"
+                },
+                {
+                  "condition": "user",
+                  "users": [
+                    "ad2bcce775894550affb6dfef93a2a36"
+                  ]
+                },
+                {
+                  "condition": "screen",
+                  "media_query": "(min-width: 0px) and (max-width: 767px)"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
                   "type": "markdown",
-                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon> Paya Lebar Square to Home"
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon><ha-icon icon=\"mdi:home-import-outline\"></ha-icon> Paya Lebar Square"
                 },
                 {
                   "type": "custom:button-card",
@@ -13286,7 +13350,7 @@
                 },
                 {
                   "type": "markdown",
-                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon> Opposite Paya Lebar Square to Home"
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon><ha-icon icon=\"mdi:home-import-outline\"></ha-icon> Opposite Paya Lebar Square"
                 },
                 {
                   "type": "custom:button-card",
@@ -13311,7 +13375,7 @@
               "cards": [
                 {
                   "type": "markdown",
-                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon> Our Lady Queen of Peace to Home"
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon><ha-icon icon=\"mdi:home-import-outline\"></ha-icon> Our Lady Queen of Peace"
                 },
                 {
                   "type": "custom:button-card",
@@ -13336,7 +13400,7 @@
               "cards": [
                 {
                   "type": "markdown",
-                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon> Opposite Lorong 39 Geylang to Home"
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon><ha-icon icon=\"mdi:home-import-outline\"></ha-icon> Opposite Lorong 39 Geylang"
                 },
                 {
                   "type": "custom:button-card",
@@ -13361,82 +13425,93 @@
               "cards": [
                 {
                   "type": "markdown",
-                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon> Kallang Station to Home"
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon><ha-icon icon=\"mdi:home-import-outline\"></ha-icon> Kallang Station"
                 },
                 {
                   "type": "custom:button-card",
                   "entity": "sensor.bus_stop_kallang_station",
-                  "show_name": false,
-                  "show_icon": false,
-                  "show_state": false,
-                  "custom_fields": {
-                    "bus1_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[0].split('/')[0] ]]]",
-                    "bus1_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[0].split('/')[2]\n  if (crowd == 'E') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'M') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'F') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[0].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
-                    "bus2_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[1].split('/')[0] ]]]",
-                    "bus2_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[1].split('/')[2]\n  if (crowd == 'E') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'M') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'F') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[1].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
-                    "bus3_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[2].split('/')[0] ]]]",
-                    "bus3_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[2].split('/')[2]\n  if (crowd == 'E') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'M') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'F') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[2].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n",
-                    "bus4_no": "[[[ return states['sensor.bus_stop_kallang_station'].state.split(',')[3].split('/')[0] ]]]",
-                    "bus4_status": "[[[ \n  let status = ''\n  let crowd = states['sensor.bus_stop_kallang_station'].state.split(',')[3].split('/')[2]\n  if (crowd == 'E') {\n    status = status + `<ha-icon icon=\"mdi:account\" style=\"width: 15px; height: 15px\"></ha-icon>`\n  } else if (crowd == 'M') {\n    status = status + `<font color = 'orange'><ha-icon icon=\"mdi:account-supervisor\" style=\"width: 15px; height: 15px\"/></font>`\n  } else if (crowd == 'F') {\n    status = status + `<font color = 'red'><ha-icon icon=\"mdi:account-group\" style=\"width: 15px; height: 15px\"/></font>`\n  }\n\n  let min = parseInt(states['sensor.bus_stop_kallang_station'].state.split(',')[3].split('/')[1])\n  if (min < 2) {\n    return status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    return status + ''\n  } else {\n    if (min < 4) {\n      return status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      return status + min + 'min'\n    }\n  }\n]]]\n"
-                  },
-                  "styles": {
-                    "card": [
-                      {
-                        "background-color": "rgba(0,0,0,0.0)"
-                      }
-                    ],
-                    "grid": [
-                      {
-                        "grid-template-areas": "'bus1_no bus2_no bus3_no bus4_no' 'bus1_status bus2_status bus3_status bus4_status'\n"
-                      },
-                      {
-                        "grid-template-columns": "1fr 1fr 1fr 1fr"
-                      },
-                      {
-                        "grid-template-rows": "min-content min-content"
-                      }
-                    ],
-                    "custom_fields": {
-                      "bus1_no": [
-                        {
-                          "font-weight": "bold"
-                        },
-                        {
-                          "font-size": "40px"
-                        }
-                      ],
-                      "bus2_no": [
-                        {
-                          "font-weight": "bold"
-                        },
-                        {
-                          "font-size": "40px"
-                        }
-                      ],
-                      "bus3_no": [
-                        {
-                          "font-weight": "bold"
-                        },
-                        {
-                          "font-size": "40px"
-                        }
-                      ],
-                      "bus4_no": [
-                        {
-                          "font-weight": "bold"
-                        },
-                        {
-                          "font-size": "40px"
-                        }
-                      ]
-                    }
-                  }
+                  "template": "homebound_bus"
                 }
               ],
               "visibility": [
                 {
                   "condition": "numeric_state",
                   "entity": "zone.kallang_station_bus_stop",
+                  "above": 0
+                },
+                {
+                  "condition": "screen",
+                  "media_query": "(min-width: 0px) and (max-width: 767px)"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "markdown",
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon><ha-icon icon=\"mdi:home-import-outline\"></ha-icon> Holy Family Church"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.bus_stop_holy_family_church",
+                  "template": "homebound_bus"
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "zone.holy_family_church_bus_stop",
+                  "above": 0
+                },
+                {
+                  "condition": "screen",
+                  "media_query": "(min-width: 0px) and (max-width: 767px)"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "markdown",
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon><ha-icon icon=\"mdi:home-import-outline\"></ha-icon> Roxy Square"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.bus_stop_roxy_square",
+                  "template": "homebound_bus"
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "zone.roxy_square_bus_stop",
+                  "above": 0
+                },
+                {
+                  "condition": "screen",
+                  "media_query": "(min-width: 0px) and (max-width: 767px)"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "markdown",
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon><ha-icon icon=\"mdi:home-import-outline\"></ha-icon> Parkway Parade"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.bus_stop_parkway_parade",
+                  "template": "homebound_bus"
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "zone.parkway_parade_bus_stop",
                   "above": 0
                 },
                 {
@@ -13498,54 +13573,6 @@
             {
               "type": "grid",
               "cards": [
-                {
-                  "type": "vertical-stack",
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "entity": "person.daniel",
-                      "show_name": false,
-                      "show_state": true,
-                      "show_icon": false,
-                      "state_display": "[[[ \n  if (entity.state == 'not_home') {\n    return 'You are not home'\n  } else {\n    return 'You are at ' + entity.state\n  }\n]]]\n",
-                      "label": "[[[ return helpers.relativeTime(entity.last_changed) ]]]",
-                      "show_label": true,
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "notify.mobile_app_aurora",
-                        "service_data": {
-                          "message": "request_location_update"
-                        }
-                      },
-                      "styles": {
-                        "card": [
-                          {
-                            "padding": "5px"
-                          }
-                        ],
-                        "label": [
-                          {
-                            "color": "gray"
-                          },
-                          {
-                            "font-size": "10pt"
-                          }
-                        ]
-                      }
-                    }
-                  ],
-                  "visibility": [
-                    {
-                      "condition": "state",
-                      "entity": "person.daniel",
-                      "state_not": "home"
-                    },
-                    {
-                      "condition": "screen",
-                      "media_query": "(min-width: 0px) and (max-width: 767px)"
-                    }
-                  ]
-                },
                 {
                   "type": "markdown",
                   "content": "## <ha-icon icon=\"mdi:numeric-1-circle\"></ha-icon> Sims Drive Market"

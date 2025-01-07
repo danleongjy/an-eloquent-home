@@ -321,6 +321,51 @@
         or states('zone.acs_bus_stop') | int(0) > 0)
        and value_json.Services is defined and value_json.Services | length > 0 }}
 
+- platform: rest
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=92129
+  name: Bus Stop Holy Family Church
+  unique_id: sensor.bus_stop_holy_family_church
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: >
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['40']) }}
+  availability: >
+    {{ (states('zone.marine_parade_outer_perimeter') | int(0) > 0
+        or states('zone.holy_family_church_bus_stop') | int(0) > 0)
+       and value_json.Services is defined and value_json.Services | length > 0 }}
+
+- platform: rest
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=92119
+  name: Bus Stop Roxy Square
+  unique_id: sensor.bus_stop_roxy_square
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: >
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['40']) }}
+  availability: >
+    {{ (states('zone.marine_parade_outer_perimeter') | int(0) > 0
+        or states('zone.roxy_square_bus_stop') | int(0) > 0)
+       and value_json.Services is defined and value_json.Services | length > 0 }}
+
+- platform: rest
+  resource: http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2?BusStopCode=92049
+  name: Bus Stop Parkway Parade
+  unique_id: sensor.bus_stop_parkway_parade
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: >
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['134']) }}
+  availability: >
+    {{ (states('zone.marine_parade_outer_perimeter') | int(0) > 0
+        or states('zone.parkway_parade_bus_stop') | int(0) > 0)
+       and value_json.Services is defined and value_json.Services | length > 0 }}
+
 - platform: folder
   folder: /config/www/rain_radar/frames
 
