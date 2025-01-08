@@ -12,10 +12,11 @@
     {% endfor %}
   {% endif %}
 {% endfor %}
+{% set next_buses.output = next_buses.output | sort(attribute = 'EstimatedArrival') %}
 {% if bus_qty != 0 %}
   {% set next_buses.output = next_buses.output[:bus_qty] %}
 {% endif %}
-{% for bus in (next_buses.output | sort(attribute = 'EstimatedArrival')) %}
+{% for bus in next_buses.output %}
   {% set next_buses.formattedstr = next_buses.formattedstr + '/'.join([bus.ServiceNo, bus.EstimatedArrival | string, bus.Load, bus.Type]) + ',' %}
 {% endfor %}
 {{ next_buses.formattedstr }}
