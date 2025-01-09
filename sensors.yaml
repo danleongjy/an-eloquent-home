@@ -1,9 +1,9 @@
 - platform: rest
-  resource: https://api.data.gov.sg/v1/environment/rainfall
+  resource: https://api-open.data.gov.sg/v2/real-time/api/rainfall
   name: Local Rainfall
   value_template: >
     {% set ns = namespace(max_rain = 0) %}
-    {% set readings = value_json['items'][0]['readings'] %}
+    {% set readings = value_json.data.readings.data %}
     {# max of Geylang East Central, Towner Road, Poole Road and Nicoll Highway #}
     {% for reading in readings %}
       {% if reading['station_id'] in ['S215','S123','S78','S119'] %}
@@ -17,11 +17,11 @@
   scan_interval: 600
 
 - platform: rest
-  resource: https://api.data.gov.sg/v1/environment/air-temperature
+  resource: https://api-open.data.gov.sg/v2/real-time/api/air-temperature
   name: Local Outdoor Temperature
   value_template: >
     {% set ns = namespace(totaltemp = 0) %}
-    {% set readings = value_json['items'][0]['readings'] %}
+    {% set readings = value_json.data.readings.data %}
     {% for reading in readings %}
       {% set ns.totaltemp = ns.totaltemp + reading['value'] %}
     {% endfor %}
@@ -40,11 +40,11 @@
   scan_interval: 600
   
 - platform: rest
-  resource: https://api.data.gov.sg/v1/environment/relative-humidity
+  resource: https://api-open.data.gov.sg/v2/real-time/api/relative-humidity
   name: Local Outdoor Humidity
   value_template: >
     {% set ns = namespace(totalhum = 0) %}
-    {% set readings = value_json['items'][0]['readings'] %}
+    {% set readings = value_json.data.readings.data %}
     {% for reading in readings %}
       {% set ns.totalhum = ns.totalhum + reading['value'] %}
     {% endfor %}
@@ -63,11 +63,11 @@
   scan_interval: 600
 
 - platform: rest
-  resource: https://api.data.gov.sg/v1/environment/wind-speed
+  resource: https://api-open.data.gov.sg/v2/real-time/api/wind-speed
   name: Local Wind Speed
   value_template: >
     {% set ns = namespace(total_speed = 0) %}
-    {% set readings = value_json['items'][0]['readings'] %}
+    {% set readings = value_json.data.readings.data %}
     {# mean of Kim Chuan Rd and Scotts Rd #}
     {% for reading in readings %}
       {% if reading['station_id'] in ['S43','S111'] %}
@@ -80,11 +80,11 @@
   scan_interval: 600
 
 - platform: rest
-  resource: https://api.data.gov.sg/v1/environment/wind-direction
+  resource: https://api-open.data.gov.sg/v2/real-time/api/wind-direction
   name: Local Wind Bearing
   value_template: >
     {% set ns = namespace(total_degrees = 0) %}
-    {% set readings = value_json['items'][0]['readings'] %}
+    {% set readings = value_json.data.readings.data %}
     {# mean of Kim Chuan Rd and Scotts Rd #}
     {% for reading in readings %}
       {% if reading['station_id'] in ['S43','S111'] %}
@@ -96,18 +96,19 @@
   scan_interval: 600
 
 - platform: rest
-  resource: https://api.data.gov.sg/v1/environment/2-hour-weather-forecast
+  resource: https://api-open.data.gov.sg/v2/real-time/api/two-hr-forecast
   name: Local Two Hour Forecast
   value_template: >
-    {% if 'forecasts' in value_json['items'][0].keys() %}
-      {% set forecasts = value_json['items'][0]['forecasts'] %}
+    {% if 'forecasts' in value_json.data['items'][0].keys() %}
+      {% set forecasts = value_json.data['items'][0]['forecasts'] %}
       {% for forecast in forecasts %}
         {% if forecast['area'] == 'Geylang' %}
-          {% set geylang_forecast = forecast['forecast'] %}
-          {% if geylang_forecast.split('(') | length > 1 %}
-            {{geylang_forecast.split('(')[0][:-1]}}
+          {% if forecast['forecast'].split('(') | length > 1 %}
+            {{ forecast['forecast'].split('(')[0][:-1] }}
+            {% break %}
           {% else %}
-            {{ geylang_forecast}}
+            {{ forecast['forecast'] }}
+            {% break %}
           {% endif %}
         {% endif %}
       {% endfor %}
@@ -117,55 +118,59 @@
   scan_interval: 600
 
 - platform: rest
-  resource: https://api.data.gov.sg/v1/environment/4-day-weather-forecast
+  resource: https://api-open.data.gov.sg/v2/real-time/api/four-day-outlook
   name: Local Forecast Day 1
   unique_id: sensor.local_forecast_day_1
-  value_template: "{{ value_json['items'][0]['forecasts'][0]['timestamp'] }}"
-  json_attributes_path: '$.items.[0].forecasts.[0]'
+  value_template: "{{ value_json.data.records[0]['updatedTimestamp'] }}"
+  json_attributes_path: '$.data.records[0].forecasts[0]'
   json_attributes:
     - forecast
     - temperature
-    - relative_humidity
+    - relativeHumidity
     - wind
+    - timestamp
   scan_interval: 600
 
 - platform: rest
-  resource: https://api.data.gov.sg/v1/environment/4-day-weather-forecast
+  resource: https://api-open.data.gov.sg/v2/real-time/api/four-day-outlook
   name: Local Forecast Day 2
   unique_id: sensor.local_forecast_day_2
-  value_template: "{{ value_json['items'][0]['forecasts'][1]['timestamp'] }}"
-  json_attributes_path: '$.items.[0].forecasts.[1]'
+  value_template: "{{ value_json.data.records[0]['updatedTimestamp'] }}"
+  json_attributes_path: '$.data.records[0].forecasts[1]'
   json_attributes:
     - forecast
     - temperature
-    - relative_humidity
+    - relativeHumidity
     - wind
+    - timestamp
   scan_interval: 600
     
 - platform: rest
-  resource: https://api.data.gov.sg/v1/environment/4-day-weather-forecast
+  resource: https://api-open.data.gov.sg/v2/real-time/api/four-day-outlook
   name: Local Forecast Day 3
   unique_id: sensor.local_forecast_day_3
-  value_template: "{{ value_json['items'][0]['forecasts'][2]['timestamp'] }}"
-  json_attributes_path: '$.items.[0].forecasts.[2]'
+  value_template: "{{ value_json.data.records[0]['updatedTimestamp'] }}"
+  json_attributes_path: '$.data.records[0].forecasts[2]'
   json_attributes:
     - forecast
     - temperature
-    - relative_humidity
+    - relativeHumidity
     - wind
+    - timestamp
   scan_interval: 600
 
 - platform: rest
-  resource: https://api.data.gov.sg/v1/environment/4-day-weather-forecast
+  resource: https://api-open.data.gov.sg/v2/real-time/api/four-day-outlook
   name: Local Forecast Day 4
   unique_id: sensor.local_forecast_day_4
-  value_template: "{{ value_json['items'][0]['forecasts'][3]['timestamp'] }}"
-  json_attributes_path: '$.items.[0].forecasts.[3]'
+  value_template: "{{ value_json.data.records[0]['updatedTimestamp'] }}"
+  json_attributes_path: '$.data.records[0].forecasts[3]'
   json_attributes:
     - forecast
     - temperature
-    - relative_humidity
+    - relativeHumidity
     - wind
+    - timestamp
   scan_interval: 600
 
 - platform: rest

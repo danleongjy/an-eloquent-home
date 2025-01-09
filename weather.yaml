@@ -16,11 +16,11 @@
     {%- set ns = namespace(items = []) %}
     {%- for i in range (1,5) %}
       {%- set ns.items = ns.items + [{ 'datetime': states('sensor.local_forecast_day_' ~ i ), 
-                                      'condition': weather_condition(state_attr('sensor.local_forecast_day_' ~ i, 'forecast'), true), 
+                                      'condition': weather_condition(state_attr('sensor.local_forecast_day_' ~ i, 'forecast')['text'], true), 
                                       'native_temperature': state_attr('sensor.local_forecast_day_' ~ i, 'temperature')['high'],
                                       'native_templow': state_attr('sensor.local_forecast_day_' ~ i, 'temperature')['low'],
-                                      'humidity': (state_attr('sensor.local_forecast_day_' ~ i, 'relative_humidity')['low'] | int(95) + 
-                                                   state_attr('sensor.local_forecast_day_' ~ i, 'relative_humidity')['high'] | int(95)) / 2,
+                                      'humidity': (state_attr('sensor.local_forecast_day_' ~ i, 'relativeHumidity')['low'] | int(95) + 
+                                                   state_attr('sensor.local_forecast_day_' ~ i, 'relativeHumidity')['high'] | int(95)) / 2,
                                       'native_wind_speed': (state_attr('sensor.local_forecast_day_' ~ i, 'wind')['speed']['low'] | int(0) + 
                                                             state_attr('sensor.local_forecast_day_' ~ i, 'wind')['speed']['high'] | int(0)) / 2,
                                       'wind_bearing': state_attr('sensor.local_forecast_day_' ~ i, 'wind')['direction'] }] %}
