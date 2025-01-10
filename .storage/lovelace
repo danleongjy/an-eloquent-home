@@ -399,7 +399,7 @@
             "navigation_path": "/lovelace/washer"
           },
           "show_label": true,
-          "label": "[[[ \n  var parse_time = {hours: Math.floor(parseInt(states['sensor.washer_countdown'].state) / 60),\n                    minutes: parseInt(states['sensor.washer_countdown'].state) % 60};\n  if (parse_time.minutes >= 10) {\n    return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n  } else {\n    return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n  }\n]]]\n"
+          "label": "[[[ \n  var parse_time = {hours: Math.floor(parseFloat(states['sensor.washer_countdown'].state)),\n                    minutes: Math.round((parseFloat(states['sensor.washer_countdown'].state) % 1) * 60, 0)};\n  if (parse_time.minutes >= 10) {\n    return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n  } else {\n    return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n  }\n]]]\n"
         },
         "zigbee_endpoint": {
           "aspect_ratio": "1.5/1",
@@ -738,13 +738,13 @@
           },
           "custom_fields": {
             "bus1_no": "[[[ \n  return entity.state.split(\",\")[0].split(\"/\")[0]\n]]]\n",
-            "bus1_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[0].split('/')[1])\n  if (min <= 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  return status + '  ' + variables.crowd_symbols[entity.state.split(',')[0].split('/')[2]]\n]]]\n",
+            "bus1_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[0].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  return status + '  ' + variables.crowd_symbols[entity.state.split(',')[0].split('/')[2]]\n]]]\n",
             "bus2_no": "[[[ \n  return entity.state.split(\",\")[1].split(\"/\")[0]\n]]]\n",
-            "bus2_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[1].split('/')[1])\n  if (min <= 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[1].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[1].split('/')[2]]\n  }\n  return status\n]]]\n",
+            "bus2_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[1].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[1].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[1].split('/')[2]]\n  }\n  return status\n]]]\n",
             "bus3_no": "[[[ \n  return entity.state.split(\",\")[2].split(\"/\")[0]\n]]]\n",
-            "bus3_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[2].split('/')[1])\n  if (min <= 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[2].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[2].split('/')[2]]\n  }\n  return status\n]]]\n",
+            "bus3_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[2].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[2].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[2].split('/')[2]]\n  }\n  return status\n]]]\n",
             "bus4_no": "[[[ \n  return entity.state.split(\",\")[3].split(\"/\")[0]\n]]]\n",
-            "bus4_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[3].split('/')[1])\n  if (min <= 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[3].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[3].split('/')[2]]\n  }\n  return status\n]]]\n"
+            "bus4_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[3].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[3].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[3].split('/')[2]]\n  }\n  return status\n]]]\n"
           },
           "styles": {
             "card": [
@@ -4997,6 +4997,36 @@
                       },
                       {
                         "type": "custom:decluttering-card",
+                        "template": "floorplan_slider",
+                        "variables": [
+                          {
+                            "slider_entity": "light.parents_room_bedside_lamp"
+                          }
+                        ],
+                        "style": {
+                          "top": "95%",
+                          "left": "85%",
+                          "height": "9%",
+                          "width": "4.5%"
+                        }
+                      },
+                      {
+                        "type": "custom:decluttering-card",
+                        "template": "floorplan_slider_light_icon",
+                        "variables": [
+                          {
+                            "light_entity": "light.parents_room_bedside_lamp"
+                          }
+                        ],
+                        "style": {
+                          "top": "95%",
+                          "left": "85%",
+                          "height": "5%",
+                          "width": "2.5%"
+                        }
+                      },
+                      {
+                        "type": "custom:decluttering-card",
                         "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
@@ -5008,7 +5038,7 @@
                         ],
                         "style": {
                           "top": "95%",
-                          "left": "85%",
+                          "left": "90%",
                           "height": "9%",
                           "width": "4.5%"
                         }
@@ -5026,7 +5056,7 @@
                         ],
                         "style": {
                           "top": "95%",
-                          "left": "85%",
+                          "left": "90%",
                           "height": "5%",
                           "width": "2.5%"
                         }
@@ -5035,7 +5065,7 @@
                         "type": "custom:decluttering-card",
                         "style": {
                           "top": "95%",
-                          "left": "90%",
+                          "left": "95%",
                           "height": "9%",
                           "width": "4.5%"
                         },
@@ -5050,7 +5080,7 @@
                         "type": "custom:decluttering-card",
                         "style": {
                           "top": "95%",
-                          "left": "90%",
+                          "left": "95%",
                           "height": "5%",
                           "width": "2.5%"
                         },
@@ -5062,7 +5092,7 @@
                         ]
                       }
                     ],
-                    "image": "/local/floorplan/floorplan_pointers_boxes_20241115.png"
+                    "image": "/local/floorplan/floorplan_pointers_boxes_20250110.png"
                   }
                 },
                 {
@@ -5703,8 +5733,13 @@
                             ]
                           },
                           {
-                            "type": "custom:button-card",
-                            "color_type": "blank-card"
+                            "type": "custom:decluttering-card",
+                            "template": "light",
+                            "variables": [
+                              {
+                                "light_entity": "light.parents_room_bedside_lamp"
+                              }
+                            ]
                           },
                           {
                             "type": "custom:state-switch",
@@ -8147,6 +8182,14 @@
                         },
                         {
                           "type": "custom:button-card",
+                          "entity": "sensor.parents_room_bedside_lamp_lqi",
+                          "template": [
+                            "zigbee_router",
+                            "square_cell"
+                          ]
+                        },
+                        {
+                          "type": "custom:button-card",
                           "entity": "sensor.parents_room_lights_controller_lqi",
                           "template": [
                             "zigbee_endpoint",
@@ -9097,6 +9140,10 @@
                         {
                           "type": "custom:button-card",
                           "color_type": "blank-card"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
                         }
                       ]
                     },
@@ -9228,6 +9275,11 @@
                         },
                         {
                           "type": "custom:button-card",
+                          "entity": "sensor.parents_room_bedside_lamp_lqi",
+                          "template": "zigbee_router"
+                        },
+                        {
+                          "type": "custom:button-card",
                           "entity": "sensor.parents_room_lights_controller_lqi",
                           "template": "zigbee_endpoint"
                         },
@@ -9265,10 +9317,6 @@
                           "type": "custom:button-card",
                           "entity": "sensor.parents_room_ac_vent_lqi",
                           "template": "zigbee_endpoint"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "color_type": "blank-card"
                         },
                         {
                           "type": "custom:button-card",

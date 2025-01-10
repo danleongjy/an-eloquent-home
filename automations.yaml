@@ -1301,6 +1301,7 @@
         data:
           lights:
           - light.parents_room_lights
+          - light.parents_room_bedside_lamp
           command: lights_on
       action_button_up_long:
       - action: script.lights_controller
@@ -1308,6 +1309,7 @@
         data:
           lights:
           - light.parents_room_lights
+          - light.parents_room_bedside_lamp
           command: lights_brighten
       action_button_down_short:
       - action: script.lights_controller
@@ -1315,6 +1317,7 @@
         data:
           lights:
           - light.parents_room_lights
+          - light.parents_room_bedside_lamp
           command: lights_off
       action_button_down_long:
       - action: script.lights_controller
@@ -1322,6 +1325,7 @@
         data:
           lights:
           - light.parents_room_lights
+          - light.parents_room_bedside_lamp
           command: lights_darken
       button_up_long_loop: true
       button_up_long_max_loop_repeats: 50
@@ -1333,6 +1337,7 @@
         data:
           lights:
           - light.parents_room_lights
+          - light.parents_room_bedside_lamp
           command: turn_off_room
       button_down_double_press: true
       helper_double_press_delay: 700
@@ -1342,6 +1347,7 @@
         data:
           lights:
           - light.parents_room_lights
+          - light.parents_room_bedside_lamp
           command: set_recommended_room_scene
       button_up_double_press: true
 - id: '1659256178839'
@@ -3239,8 +3245,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.parents_room_presence
+      motion_sensor: binary_sensor.parents_room_presence
       number_of_minutes_doors_closed: input_number.motion_timeout_bedrooms
       doors_list:
       - binary_sensor.parents_room_door
@@ -3249,6 +3254,7 @@
       - light.parents_room_lights
       - fan.parents_room_fan
       - climate.parents_room_ac
+      - light.parents_room_bedside_lamp
 - id: '1677899246051'
   alias: Parents' Room Motion Fan
   description: Turn on the Parents' Room Fan depending on whether the doors are open
@@ -3293,10 +3299,11 @@
       - light.parents_room_lights
       - fan.parents_room_fan
       - climate.parents_room_ac
+      - light.parents_room_bedside_lamp
       doors_list:
       - binary_sensor.parents_room_door
       - binary_sensor.master_bathroom_door
-      blackout_hours_start: input_datetime.sleep_hours_start
+      blackout_hours_start: input_datetime.wind_down
       blackout_hours_end: input_datetime.sleep_hours_end
 - id: '1677909386904'
   alias: Elena's Room Motion AC
@@ -6607,3 +6614,24 @@
       button_left_double_press: true
       button_right_double_press: true
       helper_debounce_delay: 300
+- id: '1736504317285'
+  alias: Parents' Room Motion Bedside Lamp
+  description: Set the Parents' Room Bedside Lamp when motion is detected, at least
+    one door is open and no devices are on, depending on lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.parents_room_bedside_lamp
+      motion_sensor: binary_sensor.parents_room_presence
+      lux_sensor: sensor.parents_room_lux
+      entities_list:
+      - light.parents_room_lights
+      - fan.parents_room_fan
+      - climate.parents_room_ac
+      - light.parents_room_bedside_lamp
+      doors_list:
+      - binary_sensor.parents_room_door
+      - binary_sensor.master_bathroom_door
+      blackout_hours_start: input_datetime.sleep_hours_start
+      blackout_hours_end: input_datetime.sleep_hours_end

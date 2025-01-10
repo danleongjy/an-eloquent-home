@@ -68,7 +68,17 @@ action:
   - variables:
       core_display_backlight: "{{ 'light.' + room + '_core_display_backlight' }}"
       core_current_command: "{{ 'sensor.' + room + '_core_current_command' }}"
-      lights: "{{ 'light.' + room + '_lights' }}"
+      room: !input core_room
+      lights:
+        parents_room:
+          - light.parents_room_lights
+          - light.parents_room_bedside_lamp
+        elis_room:
+          - light.elis_room_lights
+        elenas_room:
+          - light.elenas_room_lights
+        study_room:
+          - light.study_room_lights
       fan: "{{ 'fan.' + room + '_fan' }}"
       ac: "{{ 'climate.' + room + '_ac' }}"
       motion_timeout: "{{ 'automation.' + room + '_motion_timeout' }}"
@@ -134,7 +144,7 @@ action:
         sequence:
           - condition: or
             conditions:
-              - "{{ is_state(lights,'off') and is_state(fan,'off') and is_state(ac,'off')}}"
+              - "{{ is_state(lights[room],'off') and is_state(fan,'off') and is_state(ac,'off')}}"
               - condition: time
                 after: !input sleep_hours_start
                 before: !input sleep_hours_end
@@ -147,7 +157,7 @@ action:
             sequence:
               - action: script.lights_controller
                 data:
-                  lights: "{{ [lights] }}"
+                  lights: "{{ lights[room] }}"
                   command: "{{ states(core_current_command) }}"
           - conditions: "{{ states(core_current_command) in ['fan_on', 'fan_off', 'fan_speed_up', 'fan_slow_down', 'fan_reverse', 'fan_forward'] }}"
             sequence:
