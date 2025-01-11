@@ -10321,8 +10321,41 @@
                   "type": "heading",
                   "heading_style": "title",
                   "icon": "mdi:server",
-                  "badges": [],
-                  "heading": "Server"
+                  "badges": [
+                    {
+                      "type": "entity",
+                      "entity": "sensor.node_proxmox_uptime"
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.node_proxmox_cpu_used",
+                      "tap_action": {
+                        "action": "more-info"
+                      },
+                      "icon": "mdi:cpu-64-bit"
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.node_proxmox_memory_used_percentage",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.node_proxmox_disk_used_percentage",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    }
+                  ],
+                  "heading": "Proxmox"
                 }
               ],
               "column_span": 2
@@ -10394,13 +10427,171 @@
                       "color": "grey"
                     }
                   ]
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "HA",
+                  "heading_style": "title",
+                  "icon": "mdi:home-assistant",
+                  "badges": [
+                    {
+                      "type": "entity",
+                      "entity": "sensor.last_boot"
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.qemu_eloquent_house_101_cpu_used",
+                      "tap_action": {
+                        "action": "more-info"
+                      },
+                      "icon": "mdi:cpu-64-bit"
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.qemu_eloquent_house_101_memory_used_percentage",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.disk_use_percent",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    }
+                  ]
                 },
                 {
-                  "type": "markdown",
-                  "content": "<table width=100%>\n<tr>\n<td></td>\n<td><ha-icon icon='mdi:power'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:cpu-64-bit'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:memory'></ha-icon></td>\n<td align='right'><ha-icon icon='mdi:harddisk'></ha-icon></td>\n</tr>\n<tr>\n<td>Proxmox</td>\n<td>{{ time_since(states('sensor.node_proxmox_uptime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.node_proxmox_disk_used_percentage', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>pfSense</td>\n<td>{{ time_since(states('sensor.pfsense_system_boottime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_pfsense_100_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.pfsense_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.pfsense_filesystem_used_percentage_slash', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>Home Assistant</td>\n<td>{{ time_since(states('sensor.last_boot') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_eloquent_house_101_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.qemu_eloquent_house_101_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.disk_use_percent', with_unit=True, rounded=True) }}</td>\n</tr>\n<tr>\n<td>Docker</td>\n<td>{{ time_since(states('sensor.qemu_docker_102_uptime') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.qemu_docker_102_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.qemu_docker_102_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>-</td>\n</tr>\n<tr>\n<td>Samba</td>\n<td>{{ time_since(states('sensor.lxc_samba_103_last_boot') | as_datetime) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_cpu_used', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_memory_used_percentage', with_unit=True, rounded=True) }}</td>\n<td align='right'>{{ states('sensor.lxc_samba_103_disk_used_percentage', with_unit=True, rounded=True) }}</td>\n</tr>\n</table>",
-                  "grid_options": {
-                    "rows": "auto"
-                  }
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "stacked": true,
+                  "all_series_config": {
+                    "type": "column"
+                  },
+                  "header": {
+                    "title": "Automations Triggered Within"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.home_assistant_automations_trigger_time_distribution",
+                      "attribute": "triggered_5min",
+                      "name": "5min",
+                      "color": "turquoise"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_automations_trigger_time_distribution",
+                      "attribute": "triggered_30min",
+                      "name": "30min",
+                      "color": "teal"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_automations_trigger_time_distribution",
+                      "attribute": "triggered_1h",
+                      "name": "1h",
+                      "color": "green"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_automations_trigger_time_distribution",
+                      "attribute": "triggered_12h",
+                      "name": "12h",
+                      "color": "lime"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_automations_trigger_time_distribution",
+                      "attribute": "triggered_1d",
+                      "name": "1 day",
+                      "color": "orange"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_automations_trigger_time_distribution",
+                      "attribute": "triggered_1wk",
+                      "name": "1 week",
+                      "color": "brown"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_automations_trigger_time_distribution",
+                      "attribute": "triggered_1wk_up",
+                      "name": "Longer",
+                      "color": "maroon"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "stacked": true,
+                  "all_series_config": {
+                    "stack_group": "total",
+                    "type": "column",
+                    "fill_raw": "last"
+                  },
+                  "header": {
+                    "title": "Scripts Triggered Within"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
+                      "attribute": "triggered_5min",
+                      "name": "5min",
+                      "color": "turquoise",
+                      "fill_raw": "last"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
+                      "attribute": "triggered_30min",
+                      "name": "30min",
+                      "color": "teal",
+                      "fill_raw": "last"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
+                      "attribute": "triggered_1h",
+                      "name": "1h",
+                      "color": "green",
+                      "fill_raw": "last"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
+                      "attribute": "triggered_12h",
+                      "name": "12h",
+                      "color": "lime",
+                      "fill_raw": "last"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
+                      "attribute": "triggered_1d",
+                      "name": "1 day",
+                      "color": "orange",
+                      "fill_raw": "last"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
+                      "attribute": "triggered_1wk",
+                      "name": "1 week",
+                      "color": "brown",
+                      "fill_raw": "last"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
+                      "attribute": "triggered_1wk_up",
+                      "name": "Longer",
+                      "color": "maroon",
+                      "fill_raw": "last"
+                    }
+                  ]
                 }
               ],
               "column_span": 2
@@ -10436,6 +10627,15 @@
                       "show_state": true,
                       "show_icon": true,
                       "entity": "sensor.pfsense_memory_used_percentage",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.pfsense_filesystem_used_percentage_slash",
                       "tap_action": {
                         "action": "more-info"
                       }

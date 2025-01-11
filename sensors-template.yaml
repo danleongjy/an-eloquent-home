@@ -151,42 +151,110 @@
   - platform: time_pattern
     minutes: /10
   sensor:
-    name: ZHA Device Issues
-    unique_id: sensor.zha_device_issues
-    state: >
-      {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
-      {% set batteries_with_low_charge = namespace(batteries = 0) %}
-      {% for battery in zha_batteries %}
-        {% if states(battery) in ['unavailable','unknown'] %}
-          {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
-        {% elif states(battery) | int(0) <= states('input_number.battery_threshold_low') | int %}
-          {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
-        {% endif %}
-      {% endfor %}
-      {{ batteries_with_low_charge.batteries }}
-    unit_of_measurement: count
-    attributes:
-      disconnected: >
+    - name: ZHA Device Issues
+      unique_id: sensor.zha_device_issues
+      state: >
         {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
-        {% set batteries = namespace(names = []) %}
+        {% set batteries_with_low_charge = namespace(batteries = 0) %}
         {% for battery in zha_batteries %}
           {% if states(battery) in ['unavailable','unknown'] %}
-            {% set batteries.names = batteries.names + [battery] %}
-          {% elif states(battery) | int(0) == 0 %}
-            {% set batteries.names = batteries.names + [battery] %}
+            {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
+          {% elif states(battery) | int(0) <= states('input_number.battery_threshold_low') | int %}
+            {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
           {% endif %}
         {% endfor %}
-        {{ batteries.names }}
-      batteries_low: >
-        {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
-        {% set batteries = namespace(names = []) %}
-        {% for battery in zha_batteries %}
-          {% if  states(battery) | int(0) <= states('input_number.battery_threshold_low') | int(10) and states(battery) | int(0) > 0 %}
-            {% set batteries.names = batteries.names + [battery] %}
-          {% endif %}
-        {% endfor %}
-        {{ batteries.names }}
-
+        {{ batteries_with_low_charge.batteries }}
+      unit_of_measurement: count
+      attributes:
+        disconnected: >
+          {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
+          {% set batteries = namespace(names = []) %}
+          {% for battery in zha_batteries %}
+            {% if states(battery) in ['unavailable','unknown'] %}
+              {% set batteries.names = batteries.names + [battery] %}
+            {% elif states(battery) | int(0) == 0 %}
+              {% set batteries.names = batteries.names + [battery] %}
+            {% endif %}
+          {% endfor %}
+          {{ batteries.names }}
+        batteries_low: >
+          {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
+          {% set batteries = namespace(names = []) %}
+          {% for battery in zha_batteries %}
+            {% if  states(battery) | int(0) <= states('input_number.battery_threshold_low') | int(10) and states(battery) | int(0) > 0 %}
+              {% set batteries.names = batteries.names + [battery] %}
+            {% endif %}
+          {% endfor %}
+          {{ batteries.names }}
+    - name: Home Assistant Automations Trigger Time Distribution
+      unique_id: sensor.home_assistant_automations_trigger_time_distribution
+      state: "{{ states.automation | length }}"
+      attributes:
+        triggered_5min: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 0), timedelta(minutes = 5)) }}
+        triggered_30min: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 5), timedelta(minutes = 30)) }}
+        triggered_1h: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 30), timedelta(hours = 1)) }}
+        triggered_12h: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 1), timedelta(hours = 12)) }}
+        triggered_1d: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 12), timedelta(days = 1)) }}
+        triggered_1wk: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(days = 1), timedelta(weeks = 1)) }}
+        triggered_1wk_up: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(weeks = 1), timedelta(days = 10000)) }}
+    - name: Home Assistant Scripts Trigger Time Distribution
+      unique_id: sensor.home_assistant_scripts_trigger_time_distribution
+      state: "{{ states.script | length }}"
+      attributes:
+        triggered_5min: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 0), timedelta(minutes = 5)) }}
+        triggered_30min: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 5), timedelta(minutes = 30)) }}
+        triggered_1h: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 30), timedelta(hours = 1)) }}
+        triggered_12h: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 1), timedelta(hours = 12)) }}
+        triggered_1d: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 12), timedelta(days = 1)) }}
+        triggered_1wk: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(days = 1), timedelta(weeks = 1)) }}
+        triggered_1wk_up: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(weeks = 1), timedelta(days = 10000)) }}
+    - name: Home Assistant Devices by Integration
+      unique_id: sensor.home_assistant_devices_by_integration
+      state: "{{ set(states | map(attribute = 'entity_id') | map('device_id') | reject('none')) | length }}"
+      attributes:
+        adguard: "{{ set(integration_entities('adguard') | map('device_id') | list) | length }}"
+        broadlink: "{{ set(integration_entities('broadlink') | map('device_id') | list) | length }}"
+        esphome: "{{ set(integration_entities('esphome') | map('device_id') | list) | length }}"
+        google_cast: "{{ set(integration_entities('cast') | map('device_id') | list) | length }}"
+        localtuya: "{{ set(integration_entities('localtuya') | map('device_id') | list) | length }}"
+        mjpeg_camera: "{{ set(integration_entities('mjpeg') | map('device_id') | list) | length }}"
+        mobile_app: "{{ set(integration_entities('mobile_app') | map('device_id') | list) | length }}"
+        pfsense: "{{ set(integration_entities('pfsense') | map('device_id') | list) | length }}"
+        proxmoxve: "{{ set(integration_entities('proxmoxve') | map('device_id') | list) | length }}"
+        roborock: "{{ set(integration_entities('roborock') | map('device_id') | list) | length }}"
+        smartthinq: "{{ set(integration_entities('smartthinq_sensors') | map('device_id') | list) | length }}"
+        switchbot: "{{ set(integration_entities('switchbot') | map('device_id') | list) | length }}"
+        wyoming: "{{ set(integration_entities('wyoming') | map('device_id') | list) | length }}"
+        zha: "{{ set(integration_entities('zha') | map('device_id') | list) | length }}"
+        
 - trigger:
     - platform: time
       at: '04:00:00'
@@ -735,7 +803,7 @@
 
 - trigger:
     - platform: time_pattern
-      hours: /1
+      hours: "/1"
   action:
     - service: weather.get_forecasts
       data:
@@ -749,3 +817,36 @@
       state: "{{ now() }}"
       attributes:
         forecast: "{{ daily['weather.local_weather'].forecast }}"
+        
+- trigger:
+    - platform: time_pattern
+      minutes: "/10"
+  sensor:
+    - name: Home Assistant Automations Trigger Time Distribution
+      unique_id: sensor.home_assistant_automations_trigger_time_distribution
+      state: "{{ states.automation | length }}"
+      attributes:
+        triggered_5min: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 0), timedelta(minutes = 5)) }}
+        triggered_30min: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 5), timedelta(minutes = 30)) }}
+        triggered_1h: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 30), timedelta(hours = 1)) }}
+        triggered_12h: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 1), timedelta(hours = 12)) }}
+        triggered_1d: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 12), timedelta(days = 1)) }}
+        triggered_1wk: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(days = 1), timedelta(weeks = 1)) }}
+        triggered_1mo: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(weeks = 1), timedelta(days = 30)) }}
+        triggered_1mo_up: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(days = 30), timedelta(days = 10000)) }}
