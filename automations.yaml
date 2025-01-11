@@ -3936,68 +3936,86 @@
       controller_device: 685b4e90d0ee941d65313b1c9118e6a7
       helper_last_controller_event: input_text.zz_parents_headboard_controller_last_event
       action_button_up_short:
-      - service: script.set_recommended_scene
-        data:
+      - data:
           room:
           - parents_room
+        action: script.set_recommended_scene
       action_button_up_long:
-      - service: light.turn_on
-        data:
+      - data:
           brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
             | int(0) }}'
         target:
           entity_id: light.parents_room_lights
+        action: light.turn_on
       action_button_up_double:
-      - service: automation.trigger
-        data:
+      - data:
           skip_condition: true
         target:
           entity_id:
           - automation.parents_room_motion_fan
           - automation.parents_room_motion_ac
-      - service: light.turn_off
-        data: {}
+        action: automation.trigger
+      - data: {}
         target:
-          entity_id: light.parents_room_lights
-      - service: cover.close_cover
-        data: {}
+          entity_id:
+          - light.parents_room_lights
+        action: light.turn_off
+      - data: {}
         target:
           entity_id: cover.master_bathroom_blind
-      - service: automation.turn_on
-        data: {}
+        action: cover.close_cover
+      - data: {}
         target:
           entity_id:
           - automation.parents_room_fan_auto_control
-      - service: light.turn_off
-        metadata: {}
+        action: automation.turn_on
+      - metadata: {}
         data: {}
         target:
           entity_id: light.parents_room_core_display_backlight
+        action: light.turn_off
+      - if:
+        - condition: time
+          after: input_datetime.sleep_hours_start
+          before: input_datetime.sleep_hours_end
+        then:
+        - action: light.turn_on
+          metadata: {}
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: light.parents_room_bedside_lamp
+        else:
+        - action: light.turn_off
+          metadata: {}
+          data: {}
+          target:
+            entity_id: light.parents_room_bedside_lamp
       action_button_down_short:
-      - service: automation.trigger
-        data:
+      - data:
           skip_condition: true
         target:
           entity_id:
           - automation.master_bathroom_blind_auto_control
           - automation.parents_room_motion_timeout
+        action: automation.trigger
       action_button_down_long:
-      - service: light.turn_on
-        data:
+      - data:
           brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
             | int(0) }}
         target:
           entity_id: light.parents_room_lights
+        action: light.turn_on
       button_up_double_press: true
       helper_double_press_delay: 700
       action_button_down_double:
-      - service: automation.trigger
-        data:
+      - data:
           skip_condition: true
         target:
           entity_id:
           - automation.junior_bathroom_motion_timeout
           - automation.powder_room_motion_timeout
+        action: automation.trigger
       - delay:
           hours: 0
           minutes: 0
@@ -4008,28 +4026,27 @@
           entity_id: binary_sensor.elenas_room_door
           state: 'on'
         then:
-        - service: automation.trigger
-          data:
+        - data:
             skip_condition: true
           target:
             entity_id: automation.elenas_room_motion_timeout
+          action: automation.trigger
       - if:
         - condition: state
           entity_id: binary_sensor.elis_room_door
           state: 'on'
         then:
-        - service: automation.trigger
-          data:
+        - data:
             skip_condition: true
           target:
             entity_id: automation.elis_room_motion_timeout
+          action: automation.trigger
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: automation.trigger
-        data:
+      - data:
           skip_condition: true
         target:
           entity_id:
@@ -4037,29 +4054,30 @@
           - automation.playroom_motion_timeout
           - automation.kitchen_motion_timeout
           - automation.hallway_motion_timeout
+        action: automation.trigger
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: automation.trigger
-        data:
+      - data:
           skip_condition: true
         target:
           entity_id:
           - automation.dining_room_motion_timeout
           - automation.living_room_motion_timeout
+        action: automation.trigger
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 300
-      - service: automation.trigger
-        data:
+      - data:
           skip_condition: true
         target:
           entity_id:
           - automation.master_bathroom_motion_timeout
+        action: automation.trigger
       - if:
         - condition: state
           entity_id: binary_sensor.study_room_radar_occupancy
@@ -4068,12 +4086,12 @@
           entity_id: binary_sensor.study_room_ethernet_connection
           state: 'off'
         then:
-        - service: automation.trigger
-          metadata: {}
+        - metadata: {}
           data:
             skip_condition: true
           target:
             entity_id: automation.study_room_motion_timeout
+          action: automation.trigger
       button_down_double_press: true
       button_up_long_loop: true
       button_down_long_loop: true

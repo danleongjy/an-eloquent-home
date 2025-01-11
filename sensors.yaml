@@ -3,10 +3,10 @@
   name: Local Rainfall
   value_template: >
     {% set ns = namespace(max_rain = 0) %}
-    {% set readings = value_json.data.readings.data %}
+    {% set readings = value_json.data.readings[0].data %}
     {# max of Geylang East Central, Towner Road, Poole Road and Nicoll Highway #}
     {% for reading in readings %}
-      {% if reading['station_id'] in ['S215','S123','S78','S119'] %}
+      {% if reading['stationId'] in ['S215','S123','S78','S119'] %}
         {% if reading['value'] > ns.max_rain %}
           {% set ns.max_rain = reading['value'] %}
         {% endif %}
@@ -21,7 +21,7 @@
   name: Local Outdoor Temperature
   value_template: >
     {% set ns = namespace(totaltemp = 0) %}
-    {% set readings = value_json.data.readings.data %}
+    {% set readings = value_json.data.readings[0].data %}
     {% for reading in readings %}
       {% set ns.totaltemp = ns.totaltemp + reading['value'] %}
     {% endfor %}
@@ -44,7 +44,7 @@
   name: Local Outdoor Humidity
   value_template: >
     {% set ns = namespace(totalhum = 0) %}
-    {% set readings = value_json.data.readings.data %}
+    {% set readings = value_json.data.readings[0].data %}
     {% for reading in readings %}
       {% set ns.totalhum = ns.totalhum + reading['value'] %}
     {% endfor %}
@@ -67,10 +67,10 @@
   name: Local Wind Speed
   value_template: >
     {% set ns = namespace(total_speed = 0) %}
-    {% set readings = value_json.data.readings.data %}
+    {% set readings = value_json.data.readings[0].data %}
     {# mean of Kim Chuan Rd and Scotts Rd #}
     {% for reading in readings %}
-      {% if reading['station_id'] in ['S43','S111'] %}
+      {% if reading['stationId'] in ['S43','S111'] %}
         {% set ns.total_speed = ns.total_speed + reading['value'] %}
       {% endif %}
     {% endfor %}
@@ -84,10 +84,10 @@
   name: Local Wind Bearing
   value_template: >
     {% set ns = namespace(total_degrees = 0) %}
-    {% set readings = value_json.data.readings.data %}
+    {% set readings = value_json.data.readings[0].data %}
     {# mean of Kim Chuan Rd and Scotts Rd #}
     {% for reading in readings %}
-      {% if reading['station_id'] in ['S43','S111'] %}
+      {% if reading['stationId'] in ['S43','S111'] %}
         {% set ns.total_degrees = ns.total_degrees + reading['value'] %}
       {% endif %}
     {% endfor %}
