@@ -6677,7 +6677,9 @@
     - action: light.turn_on
       metadata: {}
       data:
-        brightness_pct: 100
+        brightness_pct: '{{ 66 if now() >= today_at(states(''input_datetime.dim_hours_start''))
+          or now() <= today_at(states(''input_datetime.dim_hours_end'')) else 100
+          }}'
         kelvin: 3156
       target:
         entity_id: light.study_room_floor_lamp_entity
