@@ -2209,6 +2209,7 @@
         - automation.parents_room_motion_ac
         - automation.parents_room_motion_fan
         - automation.parents_room_motion_lights
+        - automation.parents_room_motion_bedside_lamp
         - automation.elenas_room_motion_ac
         - automation.elenas_room_motion_fan
         - automation.elenas_room_motion_lights
@@ -2306,6 +2307,7 @@
         - automation.parents_room_motion_ac
         - automation.parents_room_motion_fan
         - automation.parents_room_motion_lights
+        - automation.parents_room_motion_bedside_lamp
         - automation.elenas_room_motion_ac
         - automation.elenas_room_motion_fan
         - automation.elenas_room_motion_lights
@@ -5962,22 +5964,6 @@
       core_command_open: cover_open
       core_command_auto_control: cover_auto_control
       core_command_manual_control: cover_manual_control
-- id: '1733134617074'
-  alias: Christmas Tree
-  description: Sync Christmas Tree lights to Living Room Lights
-  triggers:
-  - trigger: state
-    entity_id:
-    - light.living_room_lights
-  conditions: []
-  actions:
-  - action: light.turn_{{ states('light.living_room_lights') if states('light.living_room_lights')
-      in ['on','off'] else 'off' }}
-    metadata: {}
-    data: {}
-    target:
-      entity_id: light.christmas_tree
-  mode: single
 - id: '1735294884034'
   alias: Daniel's Next Alarm
   description: Set the date and time for Daniel's next alarm
@@ -6660,3 +6646,39 @@
       blackout_hours_start: input_datetime.sleep_hours_start
       blackout_hours_end: input_datetime.sleep_hours_end
       dim_hours_start: input_datetime.dim_hours_end
+- id: '1736671451711'
+  alias: Study Room Motion Floor Lamp
+  description: Turn on the Study Room Floor Lamp if any lights are on in Living Room
+    or Study Room
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.living_room_lights
+    - light.living_room_pendant_light_entity
+    - light.study_room_lights
+    from:
+    to:
+  conditions: []
+  actions:
+  - if:
+    - condition: state
+      entity_id:
+      - light.living_room_lights
+      - light.living_room_pendant_light_entity
+      - light.study_room_lights
+      state: 'off'
+    then:
+    - action: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.study_room_floor_lamp_entity
+    else:
+    - action: light.turn_on
+      metadata: {}
+      data:
+        brightness_pct: 100
+        kelvin: 3156
+      target:
+        entity_id: light.study_room_floor_lamp_entity
+  mode: single
