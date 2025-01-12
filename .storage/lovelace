@@ -2197,6 +2197,9 @@
           "apex_config": {
             "grid": {
               "show": false
+            },
+            "chart": {
+              "stackOnlyBar": false
             }
           },
           "all_series_config": {
@@ -10344,15 +10347,6 @@
                       "tap_action": {
                         "action": "more-info"
                       }
-                    },
-                    {
-                      "type": "entity",
-                      "show_state": true,
-                      "show_icon": true,
-                      "entity": "sensor.node_proxmox_disk_used_percentage",
-                      "tap_action": {
-                        "action": "more-info"
-                      }
                     }
                   ],
                   "heading": "Proxmox"
@@ -10436,7 +10430,7 @@
               "cards": [
                 {
                   "type": "heading",
-                  "heading": "HA",
+                  "heading": "Home Assistant",
                   "heading_style": "title",
                   "icon": "mdi:home-assistant",
                   "badges": [
@@ -10462,15 +10456,6 @@
                       "tap_action": {
                         "action": "more-info"
                       }
-                    },
-                    {
-                      "type": "entity",
-                      "show_state": true,
-                      "show_icon": true,
-                      "entity": "sensor.disk_use_percent",
-                      "tap_action": {
-                        "action": "more-info"
-                      }
                     }
                   ]
                 },
@@ -10479,7 +10464,7 @@
                   "config_templates": "standard",
                   "stacked": true,
                   "all_series_config": {
-                    "type": "column"
+                    "type": "area"
                   },
                   "header": {
                     "title": "Automations Triggered Within"
@@ -10489,13 +10474,13 @@
                       "entity": "sensor.home_assistant_automations_trigger_time_distribution",
                       "attribute": "triggered_5min",
                       "name": "5min",
-                      "color": "turquoise"
+                      "color": "skyblue"
                     },
                     {
                       "entity": "sensor.home_assistant_automations_trigger_time_distribution",
                       "attribute": "triggered_30min",
                       "name": "30min",
-                      "color": "teal"
+                      "color": "steelblue"
                     },
                     {
                       "entity": "sensor.home_assistant_automations_trigger_time_distribution",
@@ -10507,13 +10492,13 @@
                       "entity": "sensor.home_assistant_automations_trigger_time_distribution",
                       "attribute": "triggered_12h",
                       "name": "12h",
-                      "color": "lime"
+                      "color": "lightgreen"
                     },
                     {
                       "entity": "sensor.home_assistant_automations_trigger_time_distribution",
                       "attribute": "triggered_1d",
                       "name": "1 day",
-                      "color": "orange"
+                      "color": "gold"
                     },
                     {
                       "entity": "sensor.home_assistant_automations_trigger_time_distribution",
@@ -10534,9 +10519,7 @@
                   "config_templates": "standard",
                   "stacked": true,
                   "all_series_config": {
-                    "stack_group": "total",
-                    "type": "column",
-                    "fill_raw": "last"
+                    "type": "area"
                   },
                   "header": {
                     "title": "Scripts Triggered Within"
@@ -10546,52 +10529,137 @@
                       "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
                       "attribute": "triggered_5min",
                       "name": "5min",
-                      "color": "turquoise",
-                      "fill_raw": "last"
+                      "color": "skyblue"
                     },
                     {
                       "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
                       "attribute": "triggered_30min",
                       "name": "30min",
-                      "color": "teal",
-                      "fill_raw": "last"
+                      "color": "steelblue"
                     },
                     {
                       "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
                       "attribute": "triggered_1h",
                       "name": "1h",
-                      "color": "green",
-                      "fill_raw": "last"
+                      "color": "green"
                     },
                     {
                       "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
                       "attribute": "triggered_12h",
                       "name": "12h",
-                      "color": "lime",
-                      "fill_raw": "last"
+                      "color": "lightgreen"
                     },
                     {
                       "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
                       "attribute": "triggered_1d",
                       "name": "1 day",
-                      "color": "orange",
-                      "fill_raw": "last"
+                      "color": "gold"
                     },
                     {
                       "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
                       "attribute": "triggered_1wk",
                       "name": "1 week",
-                      "color": "brown",
-                      "fill_raw": "last"
+                      "color": "brown"
                     },
                     {
                       "entity": "sensor.home_assistant_scripts_trigger_time_distribution",
                       "attribute": "triggered_1wk_up",
                       "name": "Longer",
-                      "color": "maroon",
-                      "fill_raw": "last"
+                      "color": "maroon"
                     }
                   ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "donut",
+                  "header": {
+                    "title": "Devices by Integration"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.home_assistant_devices_by_integration",
+                      "attribute": "zha",
+                      "name": "ZHA"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_devices_by_integration",
+                      "attribute": "esphome",
+                      "name": "ESPHome"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_devices_by_integration",
+                      "attribute": "localtuya",
+                      "name": "LocalTuya"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_devices_by_integration",
+                      "attribute": "broadlink",
+                      "name": "Broadlink"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_devices_by_integration",
+                      "attribute": "switchbot",
+                      "name": "Switchbot"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_devices_by_integration",
+                      "name": "Others",
+                      "transform": "return entity.state - entity.attributes.zha - entity.attributes.esphome - entity.attributes.localtuya - entity.attributes.broadlink - entity.attributes.switchbot",
+                      "color": "grey"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity_picture": "/local/readme_graphics/network_visualisation.png",
+                  "show_entity_picture": true,
+                  "name": "System Relational Topology",
+                  "styles": {
+                    "card": [
+                      {
+                        "height": "420px"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "font-weight": "bold"
+                      },
+                      {
+                        "font-size": "12pt"
+                      },
+                      {
+                        "font-family": "Arial"
+                      }
+                    ],
+                    "icon": [
+                      {
+                        "height": "500px"
+                      },
+                      {
+                        "width": "500px"
+                      },
+                      {
+                        "clip-path": "inset(60px 50px 80px 90px)"
+                      },
+                      {
+                        "margin-top": "10px"
+                      },
+                      {
+                        "margin-left": "-40px"
+                      },
+                      {
+                        "filter": "invert(.89)"
+                      }
+                    ],
+                    "grid": [
+                      {
+                        "grid-template-areas": "\"n\" \"i\""
+                      },
+                      {
+                        "grid-template-rows": "min-content 1fr"
+                      }
+                    ]
+                  }
                 }
               ],
               "column_span": 2
@@ -10627,15 +10695,6 @@
                       "show_state": true,
                       "show_icon": true,
                       "entity": "sensor.pfsense_memory_used_percentage",
-                      "tap_action": {
-                        "action": "more-info"
-                      }
-                    },
-                    {
-                      "type": "entity",
-                      "show_state": true,
-                      "show_icon": true,
-                      "entity": "sensor.pfsense_filesystem_used_percentage_slash",
                       "tap_action": {
                         "action": "more-info"
                       }
