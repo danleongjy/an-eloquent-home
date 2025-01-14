@@ -10746,82 +10746,6 @@
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
                   "header": {
-                    "title": "Inbound Traffic"
-                  },
-                  "stacked": true,
-                  "all_series_config": {
-                    "type": "column",
-                    "group_by": {
-                      "func": "sum",
-                      "duration": "5min"
-                    }
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.pfsense_mb_in_within_1min",
-                      "name": "pfSense",
-                      "stack_group": "total",
-                      "type": "line"
-                    },
-                    {
-                      "entity": "sensor.home_assistant_mb_in_within_1min",
-                      "name": "Home Assistant",
-                      "stack_group": "subtotal"
-                    },
-                    {
-                      "entity": "sensor.docker_mb_in_within_1min",
-                      "name": "Docker",
-                      "stack_group": "subtotal"
-                    },
-                    {
-                      "entity": "sensor.samba_mb_in_within_1min",
-                      "name": "Samba",
-                      "stack_group": "subtotal"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "Outbound Traffic"
-                  },
-                  "stacked": true,
-                  "all_series_config": {
-                    "type": "column",
-                    "group_by": {
-                      "func": "sum",
-                      "duration": "5min"
-                    }
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.pfsense_mb_out_within_1min",
-                      "name": "pfSense",
-                      "stack_group": "total",
-                      "type": "line"
-                    },
-                    {
-                      "entity": "sensor.home_assistant_mb_out_within_1min",
-                      "name": "Home Assistant",
-                      "stack_group": "subtotal"
-                    },
-                    {
-                      "entity": "sensor.docker_mb_out_within_1min",
-                      "name": "Docker",
-                      "stack_group": "subtotal"
-                    },
-                    {
-                      "entity": "sensor.samba_mb_out_within_1min",
-                      "name": "Samba",
-                      "stack_group": "subtotal"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
                     "title": "Connections"
                   },
                   "series": [
@@ -10865,7 +10789,7 @@
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
                   "header": {
-                    "title": "Outbound Traffic"
+                    "title": "VM/CT Traffic (In: + / Out: -)"
                   },
                   "stacked": true,
                   "all_series_config": {
@@ -10877,48 +10801,43 @@
                   },
                   "series": [
                     {
-                      "entity": "sensor.pfsense_mb_in_within_1min",
-                      "name": "pfSense",
-                      "stack_group": "total_in"
-                    },
-                    {
                       "entity": "sensor.home_assistant_mb_in_within_1min",
-                      "name": "Home Assistant",
-                      "stack_group": "subtotal_in"
+                      "name": "HA",
+                      "color": "dodgerblue",
+                      "stack_group": "in"
                     },
                     {
                       "entity": "sensor.docker_mb_in_within_1min",
                       "name": "Docker",
-                      "stack_group": "subtotal_in"
+                      "color": "orange",
+                      "stack_group": "in"
                     },
                     {
                       "entity": "sensor.samba_mb_in_within_1min",
                       "name": "Samba",
-                      "stack_group": "subtotal_in"
-                    },
-                    {
-                      "entity": "sensor.pfsense_mb_out_within_1min",
-                      "name": "pfSense",
-                      "stack_group": "total_out",
-                      "transform": "return -entity.state"
-                    },
-                    {
-                      "entity": "sensor.home_assistant_mb_out_within_1min",
-                      "name": "Home Assistant",
-                      "stack_group": "subtotal_out",
-                      "transform": "return -entity.state"
-                    },
-                    {
-                      "entity": "sensor.docker_mb_out_within_1min",
-                      "name": "Docker",
-                      "stack_group": "subtotal_out",
-                      "transform": "return -entity.state"
+                      "color": "firebrick",
+                      "stack_group": "in"
                     },
                     {
                       "entity": "sensor.samba_mb_out_within_1min",
                       "name": "Samba",
-                      "stack_group": "subtotal_out",
-                      "transform": "return -entity.state"
+                      "transform": "return -x",
+                      "color": "lightcoral",
+                      "stack_group": "out"
+                    },
+                    {
+                      "entity": "sensor.docker_mb_out_within_1min",
+                      "name": "Docker",
+                      "transform": "return -x",
+                      "color": "gold",
+                      "stack_group": "out"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_mb_out_within_1min",
+                      "name": "HA",
+                      "transform": "return -x",
+                      "color": "lightblue",
+                      "stack_group": "out"
                     }
                   ]
                 }
