@@ -10860,6 +10860,67 @@
                       }
                     }
                   ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Outbound Traffic"
+                  },
+                  "stacked": true,
+                  "all_series_config": {
+                    "type": "column",
+                    "group_by": {
+                      "func": "sum",
+                      "duration": "5min"
+                    }
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.pfsense_mb_in_within_1min",
+                      "name": "pfSense",
+                      "stack_group": "total_in"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_mb_in_within_1min",
+                      "name": "Home Assistant",
+                      "stack_group": "subtotal_in"
+                    },
+                    {
+                      "entity": "sensor.docker_mb_in_within_1min",
+                      "name": "Docker",
+                      "stack_group": "subtotal_in"
+                    },
+                    {
+                      "entity": "sensor.samba_mb_in_within_1min",
+                      "name": "Samba",
+                      "stack_group": "subtotal_in"
+                    },
+                    {
+                      "entity": "sensor.pfsense_mb_out_within_1min",
+                      "name": "pfSense",
+                      "stack_group": "total_out",
+                      "transform": "return -entity.state"
+                    },
+                    {
+                      "entity": "sensor.home_assistant_mb_out_within_1min",
+                      "name": "Home Assistant",
+                      "stack_group": "subtotal_out",
+                      "transform": "return -entity.state"
+                    },
+                    {
+                      "entity": "sensor.docker_mb_out_within_1min",
+                      "name": "Docker",
+                      "stack_group": "subtotal_out",
+                      "transform": "return -entity.state"
+                    },
+                    {
+                      "entity": "sensor.samba_mb_out_within_1min",
+                      "name": "Samba",
+                      "stack_group": "subtotal_out",
+                      "transform": "return -entity.state"
+                    }
+                  ]
                 }
               ],
               "column_span": 2
