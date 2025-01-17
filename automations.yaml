@@ -2216,6 +2216,7 @@
         - automation.elis_room_motion_ac
         - automation.elis_room_motion_fan
         - automation.elis_room_motion_lights
+        - automation.elis_room_motion_floor_lamp
         - automation.kitchen_motion_lights
         - automation.study_walkway_motion_light
         - automation.playroom_motion_lights
@@ -2314,6 +2315,7 @@
         - automation.elis_room_motion_ac
         - automation.elis_room_motion_fan
         - automation.elis_room_motion_lights
+        - automation.elis_room_motion_floor_lamp
         - automation.kitchen_motion_lights
         - automation.study_walkway_motion_light
         - automation.playroom_motion_lights
@@ -2950,11 +2952,11 @@
 - id: '1674045954399'
   alias: Lights for Sleep Hours Start
   description: Set the lights for Sleep Hours Start
-  trigger:
-  - platform: time
-    at: input_datetime.sleep_hours_start
-  condition: []
-  action:
+  triggers:
+  - at: input_datetime.sleep_hours_start
+    trigger: time
+  conditions: []
+  actions:
   - repeat:
       for_each:
       - light.elis_room_bulb_1_entity
@@ -2965,14 +2967,10 @@
         - condition: template
           value_template: '{{ is_state(repeat.item, ''on'') }}'
         then:
-        - service: light.turn_on
-          target:
+        - target:
             entity_id: '{{ repeat.item }}'
-          data:
-            transition: 10
-            brightness_pct: '{{ states(''input_number.night_light_brightness'') |
-              int }}'
           continue_on_error: true
+          action: light.turn_off
         - delay: 2
   - repeat:
       for_each:
@@ -2984,14 +2982,14 @@
         - condition: template
           value_template: '{{ is_state(repeat.item, ''on'') }}'
         then:
-        - service: light.turn_on
-          target:
+        - target:
             entity_id: '{{ repeat.item }}'
           data:
             transition: 10
             brightness_pct: '{{ states(''input_number.night_light_brightness'') |
               int }}'
           continue_on_error: true
+          action: light.turn_on
         - delay: 2
   mode: single
 - id: '1675045598043'
@@ -3419,7 +3417,7 @@
       - climate.elis_room_ac
       doors_list:
       - binary_sensor.elis_room_door
-      blackout_hours_start: input_datetime.sleep_hours_start
+      blackout_hours_start: input_datetime.wind_down
       blackout_hours_end: input_datetime.sleep_hours_end
       dim_hours_end: input_datetime.sleep_hours_end
       dim_hours_start: input_datetime.wind_down
@@ -3430,8 +3428,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.elis_room_presence
+      motion_sensor: binary_sensor.elis_room_presence
       number_of_minutes_doors_closed: input_number.motion_timeout_bedrooms
       doors_list:
       - binary_sensor.elis_room_door
@@ -3439,6 +3436,7 @@
       - light.elis_room_lights
       - fan.elis_room_fan
       - climate.elis_room_ac
+      - light.elis_room_floor_lamp
 - id: '1677927683160'
   alias: Kitchen Motion Lights
   description: Set Kitchen Lights when motion is detected, depending on lux level
@@ -6683,3 +6681,23 @@
       target:
         entity_id: light.study_room_floor_lamp_entity
   mode: restart
+- id: '1737111238720'
+  alias: Eli's Room Motion Floor Lamp
+  description: Set Eli's Room Floor Lamp when motion is detected, at least one door
+    is open and no devices are on, depending on lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.elis_room_floor_lamp
+      motion_sensor: binary_sensor.elis_room_presence
+      lux_sensor: sensor.elis_room_lux
+      entities_list:
+      - light.elis_room_lights
+      - fan.elis_room_fan
+      - climate.elis_room_ac
+      doors_list:
+      - binary_sensor.elis_room_door
+      blackout_hours_start: input_datetime.sleep_hours_start
+      blackout_hours_end: input_datetime.sleep_hours_end
+      dim_hours_start: input_datetime.dim_hours_end
