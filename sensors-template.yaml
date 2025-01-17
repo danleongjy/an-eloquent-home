@@ -189,6 +189,7 @@
     - name: Home Assistant Automations Trigger Time Distribution
       unique_id: sensor.home_assistant_automations_trigger_time_distribution
       state: "{{ states.automation | length }}"
+      unit_of_measurement: automations
       attributes:
         triggered_5min: >
           {% from 'time.jinja' import time_bucket %}
@@ -214,6 +215,7 @@
     - name: Home Assistant Scripts Trigger Time Distribution
       unique_id: sensor.home_assistant_scripts_trigger_time_distribution
       state: "{{ states.script | length }}"
+      unit_of_measurement: scripts
       attributes:
         triggered_5min: >
           {% from 'time.jinja' import time_bucket %}
@@ -239,6 +241,7 @@
     - name: Home Assistant Devices by Integration
       unique_id: sensor.home_assistant_devices_by_integration
       state: "{{ set(states | map(attribute = 'entity_id') | map('device_id') | reject('none')) | length }}"
+      unit_of_measurement: devices
       attributes:
         adguard: "{{ set(integration_entities('adguard') | map('device_id') | list) | length }}"
         broadlink: "{{ set(integration_entities('broadlink') | map('device_id') | list) | length }}"
@@ -817,36 +820,3 @@
       state: "{{ now() }}"
       attributes:
         forecast: "{{ daily['weather.local_weather'].forecast }}"
-        
-- trigger:
-    - platform: time_pattern
-      minutes: "/10"
-  sensor:
-    - name: Home Assistant Automations Trigger Time Distribution
-      unique_id: sensor.home_assistant_automations_trigger_time_distribution
-      state: "{{ states.automation | length }}"
-      attributes:
-        triggered_5min: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 0), timedelta(minutes = 5)) }}
-        triggered_30min: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 5), timedelta(minutes = 30)) }}
-        triggered_1h: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 30), timedelta(hours = 1)) }}
-        triggered_12h: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 1), timedelta(hours = 12)) }}
-        triggered_1d: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 12), timedelta(days = 1)) }}
-        triggered_1wk: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(days = 1), timedelta(weeks = 1)) }}
-        triggered_1mo: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(weeks = 1), timedelta(days = 30)) }}
-        triggered_1mo_up: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(days = 30), timedelta(days = 10000)) }}
