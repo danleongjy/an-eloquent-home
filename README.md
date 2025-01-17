@@ -41,23 +41,23 @@ Domain | Quantity
 [`input_text`](https://www.home-assistant.io/components/input_text) | 33
 [`light`](https://www.home-assistant.io/components/light) | 66
 [`media_player`](https://www.home-assistant.io/components/media_player) | 3
-[`number`](https://www.home-assistant.io/components/number) | 96
+[`number`](https://www.home-assistant.io/components/number) | 100
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 23
 [`select`](https://www.home-assistant.io/components/select) | 30
-[`sensor`](https://www.home-assistant.io/components/sensor) | 616
+[`sensor`](https://www.home-assistant.io/components/sensor) | 544
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 49
+[`switch`](https://www.home-assistant.io/components/switch) | 53
 [`time`](https://www.home-assistant.io/components/time) | 2
 [`tts`](https://www.home-assistant.io/components/tts) | 2
-[`update`](https://www.home-assistant.io/components/update) | 129
+[`update`](https://www.home-assistant.io/components/update) | 128
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 15
-Total | 1667
+Total | 1602
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -95,7 +95,6 @@ Total | 1667
 ### Add-ons
 - Assist Microphone
 - ESPHome Device Builder
-- Everything Presence Zone Configurator
 - File editor
 - Home Assistant Google Drive Backup
 - openWakeWord
