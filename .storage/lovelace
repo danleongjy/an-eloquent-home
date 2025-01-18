@@ -737,13 +737,13 @@
             }
           },
           "custom_fields": {
-            "bus1_no": "[[[ \n  return entity.state.split(\",\")[0].split(\"/\")[0]\n]]]\n",
+            "bus1_no": "[[[ \n  if (entity.state != 'unavailable' && (entity.state.split(\",\")).length > 0) {\n    return entity.state.split(\",\")[0].split(\"/\")[0]\n  } else {\n    return ''\n  }\n]]]\n",
             "bus1_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[0].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  return status + '  ' + variables.crowd_symbols[entity.state.split(',')[0].split('/')[2]]\n]]]\n",
-            "bus2_no": "[[[ \n  return entity.state.split(\",\")[1].split(\"/\")[0]\n]]]\n",
+            "bus2_no": "[[[ \n  if (entity.state != 'unavailable' && (entity.state.split(\",\")).length > 1) {\n    return entity.state.split(\",\")[1].split(\"/\")[0]\n  } else {\n    return ''\n  }\n]]]\n",
             "bus2_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[1].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[1].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[1].split('/')[2]]\n  }\n  return status\n]]]\n",
-            "bus3_no": "[[[ \n  return entity.state.split(\",\")[2].split(\"/\")[0]\n]]]\n",
+            "bus3_no": "[[[ \n  if (entity.state != 'unavailable' && (entity.state.split(\",\")).length > 2) {\n    return entity.state.split(\",\")[2].split(\"/\")[0]\n  } else {\n    return ''\n  }\n]]]\n",
             "bus3_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[2].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[2].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[2].split('/')[2]]\n  }\n  return status\n]]]\n",
-            "bus4_no": "[[[ \n  return entity.state.split(\",\")[3].split(\"/\")[0]\n]]]\n",
+            "bus4_no": "[[[ \n  if (entity.state != 'unavailable' && (entity.state.split(\",\")).length > 3) {\n    return entity.state.split(\",\")[3].split(\"/\")[0]\n  } else {\n    return ''\n  }\n]]]\n",
             "bus4_status": "[[[ \n  let status = ''\n  let min = parseInt(entity.state.split(',')[3].split('/')[1])\n  if (min < 2) {\n    status = status + `<font color = 'red'>Arr</font>`\n  } else if (isNaN(min)) {\n    status = status + ''\n  } else {\n    if (min <= 5) {\n      status = status + `<font color = 'orange'>` + min + `min</font>`\n    } else {\n      status = status + min + 'min'\n    }\n  }\n  if (typeof entity.state.split(',')[3].split('/')[2] != 'undefined') {\n    status = status + '  ' + variables.crowd_symbols[entity.state.split(',')[3].split('/')[2]]\n  }\n  return status\n]]]\n"
           },
           "styles": {
@@ -13779,13 +13779,23 @@
               ],
               "visibility": [
                 {
-                  "condition": "numeric_state",
-                  "entity": "zone.paya_lebar_station_bus_stops",
-                  "above": 0
-                },
-                {
                   "condition": "screen",
                   "media_query": "(min-width: 0px) and (max-width: 767px)"
+                },
+                {
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.paya_lebar_station_bus_stops",
+                      "above": 0
+                    },
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.paya_lebar_outer_perimeter",
+                      "above": 0
+                    }
+                  ]
                 }
               ]
             },
@@ -13804,13 +13814,23 @@
               ],
               "visibility": [
                 {
-                  "condition": "numeric_state",
-                  "entity": "zone.church_of_our_lady_queen_of_peace_bus_stop",
-                  "above": 0
-                },
-                {
                   "condition": "screen",
                   "media_query": "(min-width: 0px) and (max-width: 767px)"
+                },
+                {
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.church_of_our_lady_queen_of_peace_bus_stop",
+                      "above": 0
+                    },
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.paya_lebar_outer_perimeter",
+                      "above": 0
+                    }
+                  ]
                 }
               ]
             },
@@ -13829,13 +13849,23 @@
               ],
               "visibility": [
                 {
-                  "condition": "numeric_state",
-                  "entity": "zone.opposite_lorong_39_geylang_bus_stop",
-                  "above": 0
-                },
-                {
                   "condition": "screen",
                   "media_query": "(min-width: 0px) and (max-width: 767px)"
+                },
+                {
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.opposite_lorong_39_geylang_bus_stop",
+                      "above": 0
+                    },
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.paya_lebar_outer_perimeter",
+                      "above": 0
+                    }
+                  ]
                 }
               ]
             },
@@ -13879,9 +13909,19 @@
               ],
               "visibility": [
                 {
-                  "condition": "numeric_state",
-                  "entity": "zone.holy_family_church_bus_stop",
-                  "above": 0
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.holy_family_church_bus_stop",
+                      "above": 0
+                    },
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.marine_parade_outer_perimeter",
+                      "above": 0
+                    }
+                  ]
                 },
                 {
                   "condition": "screen",
@@ -13904,9 +13944,19 @@
               ],
               "visibility": [
                 {
-                  "condition": "numeric_state",
-                  "entity": "zone.roxy_square_bus_stop",
-                  "above": 0
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.roxy_square_bus_stop",
+                      "above": 0
+                    },
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.marine_parade_outer_perimeter",
+                      "above": 0
+                    }
+                  ]
                 },
                 {
                   "condition": "screen",
@@ -13929,9 +13979,19 @@
               ],
               "visibility": [
                 {
-                  "condition": "numeric_state",
-                  "entity": "zone.parkway_parade_bus_stop",
-                  "above": 0
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.parkway_parade_bus_stop",
+                      "above": 0
+                    },
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.marine_parade_outer_perimeter",
+                      "above": 0
+                    }
+                  ]
                 },
                 {
                   "condition": "screen",
@@ -13954,9 +14014,19 @@
               ],
               "visibility": [
                 {
-                  "condition": "numeric_state",
-                  "entity": "zone.scgs_bus_stop",
-                  "above": 0
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.scgs_bus_stop",
+                      "above": 0
+                    },
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.schools_outer_perimeter",
+                      "above": 0
+                    }
+                  ]
                 },
                 {
                   "condition": "screen",
@@ -13979,9 +14049,19 @@
               ],
               "visibility": [
                 {
-                  "condition": "numeric_state",
-                  "entity": "zone.acs_bus_stop",
-                  "above": 0
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.acs_bus_stop",
+                      "above": 0
+                    },
+                    {
+                      "condition": "numeric_state",
+                      "entity": "zone.schools_outer_perimeter",
+                      "above": 0
+                    }
+                  ]
                 },
                 {
                   "condition": "screen",
