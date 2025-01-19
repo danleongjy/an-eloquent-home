@@ -23,9 +23,9 @@ The network topology demonstrates some principles we employ in setting up our sy
 Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 3
-[`automation`](https://www.home-assistant.io/components/automation) | 151
+[`automation`](https://www.home-assistant.io/components/automation) | 144
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 150
-[`button`](https://www.home-assistant.io/components/button) | 170
+[`button`](https://www.home-assistant.io/components/button) | 166
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 4
 [`climate`](https://www.home-assistant.io/components/climate) | 6
@@ -38,7 +38,7 @@ Domain | Quantity
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
 [`input_number`](https://www.home-assistant.io/components/input_number) | 31
 [`input_select`](https://www.home-assistant.io/components/input_select) | 8
-[`input_text`](https://www.home-assistant.io/components/input_text) | 33
+[`input_text`](https://www.home-assistant.io/components/input_text) | 27
 [`light`](https://www.home-assistant.io/components/light) | 67
 [`media_player`](https://www.home-assistant.io/components/media_player) | 3
 [`number`](https://www.home-assistant.io/components/number) | 100
@@ -46,18 +46,18 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 23
 [`select`](https://www.home-assistant.io/components/select) | 33
-[`sensor`](https://www.home-assistant.io/components/sensor) | 546
+[`sensor`](https://www.home-assistant.io/components/sensor) | 534
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 55
 [`time`](https://www.home-assistant.io/components/time) | 2
 [`tts`](https://www.home-assistant.io/components/tts) | 2
-[`update`](https://www.home-assistant.io/components/update) | 129
+[`update`](https://www.home-assistant.io/components/update) | 125
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 15
-Total | 1613
+Total | 1580
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)

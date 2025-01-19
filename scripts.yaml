@@ -1333,23 +1333,16 @@ docker_mode:
   alias: Docker Mode
   sequence:
   - if:
-    - condition: template
-      value_template: '{{ mode == ''JupyterLab'' }}'
-    then:
     - condition: not
       conditions:
-      - condition: and
-        conditions:
-        - condition: state
-          entity_id:
-          - switch.immich_machine_learning
-          - switch.immich_postgres
-          - switch.immich_redis
-          - switch.immich_server
-          state: 'off'
-        - condition: state
-          entity_id: switch.jupyterlab
-          state: 'on'
+      - condition: state
+        entity_id:
+        - switch.immich_machine_learning
+        - switch.immich_postgres
+        - switch.immich_redis
+        - switch.immich_server
+        state: 'off'
+    then:
     - repeat:
         sequence:
         - action: switch.turn_off
@@ -1368,38 +1361,7 @@ docker_mode:
         - switch.immich_postgres
         - switch.immich_redis
         - switch.immich_machine_learning
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.jupyterlab
     else:
-    - condition: not
-      conditions:
-      - condition: and
-        conditions:
-        - condition: state
-          entity_id:
-          - switch.immich_machine_learning
-          - switch.immich_postgres
-          - switch.immich_redis
-          - switch.immich_server
-          state: 'on'
-        - condition: state
-          entity_id: switch.jupyterlab
-          state: 'off'
-    - action: switch.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.jupyterlab
-    - repeat:
-        sequence:
-        - delay: 10
-        while:
-        - condition: state
-          entity_id: switch.jupyterlab
-          state: 'on'
     - repeat:
         sequence:
         - action: switch.turn_on
@@ -1423,16 +1385,5 @@ docker_mode:
       data: {}
       target:
         entity_id: switch.immich_server
-  fields:
-    mode:
-      selector:
-        select:
-          options:
-          - JupyterLab
-          - Immich
-      name: Mode
-      description: Docker to run JupyterLab or Immich
-      default: Immich
-      required: true
-  description: Set Docker to run JupyterLab or Immich
+  description: Sync Immich container states
   icon: mdi:docker
