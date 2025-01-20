@@ -5832,21 +5832,33 @@
               command: cover_open
       action_button_down_long:
       - if:
-        - condition: state
-          entity_id: automation.elenas_room_curtains_auto_control
-          state: 'off'
+        - condition: template
+          value_template: '{{ states(''cover.elenas_room_curtains'') in [''opening'',''closing'']
+            }}'
+        then:
+        - action: cover.stop_cover
+          metadata: {}
+          data: {}
+          target:
+            entity_id: cover.elenas_room_curtains
+        - delay: 1
+      - if:
+        - condition: numeric_state
+          entity_id: cover.elenas_room_curtains
+          attribute: current_position
+          above: 50.5
         then:
         - action: script.cover_controller
           metadata: {}
           data:
-            command: cover_auto_control
             cover: cover.elenas_room_curtains
+            command: cover_close
         else:
         - action: script.cover_controller
           metadata: {}
           data:
-            command: cover_manual_control
             cover: cover.elenas_room_curtains
+            command: cover_open
       button_up_long_loop: false
       button_up_long_max_loop_repeats: 50
       button_down_long_loop: false
@@ -5991,7 +6003,9 @@
       action_button_right_double:
       - if:
         - condition: state
-          entity_id: automation.elenas_room_fan_auto_control
+          entity_id:
+          - automation.elenas_room_fan_auto_control
+          - automation.elenas_room_curtains_auto_control
           state: 'on'
         then:
         - action: script.ac_controller
@@ -5999,15 +6013,31 @@
           data:
             ac: climate.elenas_room_ac
             command: cooling_manual_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_manual_control
+            cover: cover.elenas_room_curtains
         else:
         - action: script.ac_controller
           metadata: {}
           data:
             ac: climate.elenas_room_ac
             command: cooling_auto_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_auto_control
+            cover: cover.elenas_room_curtains
       button_left_double_press: true
       button_right_double_press: true
       helper_debounce_delay: 300
+      action_button_down_release:
+      - action: cover.stop_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.elenas_room_curtains
 - id: '1736504317285'
   alias: Parents' Room Motion Bedside Lamp
   description: Set the Parents' Room Bedside Lamp when motion is detected, at least
@@ -6200,21 +6230,33 @@
               command: cover_open
       action_button_down_long:
       - if:
-        - condition: state
-          entity_id: automation.elis_room_curtains_auto_control
-          state: 'off'
+        - condition: template
+          value_template: '{{ states(''cover.elis_room_curtains'') in [''opening'',''closing'']
+            }}'
+        then:
+        - action: cover.stop_cover
+          metadata: {}
+          data: {}
+          target:
+            entity_id: cover.elis_room_curtains
+        - delay: 1
+      - if:
+        - condition: numeric_state
+          entity_id: cover.elis_room_curtains
+          attribute: current_position
+          above: 50.5
         then:
         - action: script.cover_controller
           metadata: {}
           data:
-            command: cover_auto_control
             cover: cover.elis_room_curtains
+            command: cover_close
         else:
         - action: script.cover_controller
           metadata: {}
           data:
-            command: cover_manual_control
             cover: cover.elis_room_curtains
+            command: cover_open
       button_up_long_loop: false
       button_up_long_max_loop_repeats: 50
       button_down_long_loop: false
@@ -6359,7 +6401,9 @@
       action_button_right_double:
       - if:
         - condition: state
-          entity_id: automation.elis_room_fan_auto_control
+          entity_id:
+          - automation.elis_room_fan_auto_control
+          - automation.elis_room_curtains_auto_control
           state: 'on'
         then:
         - action: script.ac_controller
@@ -6367,15 +6411,31 @@
           data:
             ac: climate.elis_room_ac
             command: cooling_manual_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_manual_control
+            cover: cover.elis_room_curtains
         else:
         - action: script.ac_controller
           metadata: {}
           data:
             ac: climate.elis_room_ac
             command: cooling_auto_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_auto_control
+            cover: cover.elis_room_curtains
       button_left_double_press: true
       button_right_double_press: true
       helper_debounce_delay: 300
+      action_button_down_release:
+      - action: cover.stop_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.elis_room_curtains
 - id: '1737252290821'
   alias: Parents' Room Controller
   description: Control Parents' Room Lights, Fan, AC and Curtain
@@ -6490,22 +6550,33 @@
         enabled: true
       action_button_left_long:
       - if:
-        - condition: state
-          entity_id: automation.master_bathroom_blind_auto_control
-          state: 'off'
+        - condition: template
+          value_template: '{{ states(''cover.master_bathroom_blind'') in [''opening'',''closing'']
+            }}'
+        then:
+        - action: cover.stop_cover
+          metadata: {}
+          data: {}
+          target:
+            entity_id: cover.master_bathroom_blind
+        - delay: 1
+      - if:
+        - condition: numeric_state
+          entity_id: cover.master_bathroom_blind
+          attribute: current_position
+          above: 50.5
         then:
         - action: script.cover_controller
           metadata: {}
           data:
-            command: cover_auto_control
             cover: cover.master_bathroom_blind
+            command: cover_close
         else:
         - action: script.cover_controller
           metadata: {}
           data:
-            command: cover_manual_control
             cover: cover.master_bathroom_blind
-        enabled: true
+            command: cover_open
       button_up_long_loop: false
       button_up_long_max_loop_repeats: 50
       button_down_long_loop: false
@@ -6650,7 +6721,9 @@
       action_button_down_double:
       - if:
         - condition: state
-          entity_id: automation.parents_room_fan_auto_control
+          entity_id:
+          - automation.parents_room_fan_auto_control
+          - automation.master_bathroom_blind_auto_control
           state: 'on'
         then:
         - action: script.ac_controller
@@ -6658,12 +6731,28 @@
           data:
             ac: climate.parents_room_ac
             command: cooling_manual_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_manual_control
+            cover: cover.master_bathroom_blind
         else:
         - action: script.ac_controller
           metadata: {}
           data:
             ac: climate.parents_room_ac
             command: cooling_auto_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_auto_control
+            cover: cover.master_bathroom_blind
       button_left_double_press: true
       button_right_double_press: true
       helper_debounce_delay: 300
+      action_button_left_release:
+      - action: cover.stop_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.master_bathroom_blind
