@@ -5,7 +5,7 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 
 ## Design Principles
 The following graphic visualises all the components in our setup as a network, with components connected to each other if one references another (eg. if an `entity` belongs to a `device` or an `automation` calls a `script`).
-![Network Visualisation](www/readme_graphics/network_visualisation.png)
+![Network Visualisation](/config/www/readme_graphics/animation_202501260329.gif)
 The network topology demonstrates some principles we employ in setting up our system:
 1. An __automation first__ approach puts automations, scripts and blueprints at the core: Things should just adjust themselves in response to changes in the environment, without needing user intervention
 2. The high degree of clustering in the core is driven by __maximum modularity__: Devices, user interfaces and even the automation logic are deployed as repeatable modules, allowing great flexibility in combining them to produce new functionalities, while minimising the number of distinct components that need to be maintained.
@@ -33,7 +33,7 @@ Domain | Quantity
 [`cover`](https://www.home-assistant.io/components/cover) | 15
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 6
 [`fan`](https://www.home-assistant.io/components/fan) | 6
-[`image`](https://www.home-assistant.io/components/image) | 3
+[`image`](https://www.home-assistant.io/components/image) | 4
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 14
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
 [`input_number`](https://www.home-assistant.io/components/input_number) | 31
@@ -46,7 +46,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 23
 [`select`](https://www.home-assistant.io/components/select) | 33
-[`sensor`](https://www.home-assistant.io/components/sensor) | 534
+[`sensor`](https://www.home-assistant.io/components/sensor) | 535
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 56
@@ -57,7 +57,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 15
-Total | 1577
+Total | 1579
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
