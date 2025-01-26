@@ -6,6 +6,7 @@ Hello!  This repo contains the configuration for our [Home Assistant](https://ww
 ## Design Principles
 The following graphic visualises all the components in our setup as a network, with components connected to each other if one references another (eg. if an `entity` belongs to a `device` or an `automation` calls a `script`).
 ![Network Visualisation](www/readme_graphics/animation_202501260329.gif)
+
 The network topology demonstrates some principles we employ in setting up our system:
 1. An __automation first__ approach puts automations, scripts and blueprints at the core: Things should just adjust themselves in response to changes in the environment, without needing user intervention
 2. The high degree of clustering in the core is driven by __maximum modularity__: Devices, user interfaces and even the automation logic are deployed as repeatable modules, allowing great flexibility in combining them to produce new functionalities, while minimising the number of distinct components that need to be maintained.
