@@ -4129,6 +4129,7 @@
     - zone.parkway_parade_bus_stop
     - zone.kallang_station_outer_perimeter
     - zone.kallang_station_bus_stop
+    - zone.telok_kurau
     above: 0
     id: location_entered
   - trigger: numeric_state
@@ -4146,6 +4147,7 @@
     - zone.parkway_parade_bus_stop
     - zone.kallang_station_outer_perimeter
     - zone.kallang_station_bus_stop
+    - zone.telok_kurau
     id: location_exited
     below: 1
   conditions: []
@@ -4185,6 +4187,9 @@
         - sensor.bus_stop_roxy_square
         zone.parkway_parade_bus_stop:
         - sensor.bus_stop_parkway_parade
+        zone.telok_kurau:
+        - sensor.bus_stop_after_kampong_eunos
+        - sensor.bus_stop_after_lorong_g_telok_kurau
   - choose:
     - conditions:
       - condition: trigger
@@ -4231,6 +4236,20 @@
             for_each:
             - sensor.bus_stop_scgs
             - sensor.bus_stop_acs
+      - if:
+        - condition: template
+          value_template: '{{ states.zone | selectattr(''entity_id'',''in'',[''zone.telok_kurau''])
+            | map(attribute = ''state'') | map(''int'') | list | sum > 0 }}'
+        then:
+        - repeat:
+            sequence:
+            - action: homeassistant.update_entity
+              metadata: {}
+              data:
+                entity_id: '{{ repeat.item }}'
+            for_each:
+            - sensor.bus_stop_after_kampong_eunos
+            - sensor.bus_stop_after_lorong_g_telok_kurau
     - conditions:
       - condition: trigger
         id:
