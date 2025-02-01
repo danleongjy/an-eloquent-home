@@ -64,6 +64,34 @@
             ]
           }
         },
+        "manual_control_indicator": {
+          "custom_fields": {
+            "indicator": "[[[ \n  return `<ha-icon icon=\"mdi:alpha-m-box\" style=\"width: 12px; height: 12px;\"></ha-icon>`\n]]]"
+          },
+          "styles": {
+            "grid": [
+              {
+                "position": "relative"
+              }
+            ],
+            "custom_fields": {
+              "indicator": [
+                {
+                  "position": "absolute"
+                },
+                {
+                  "left": "60%"
+                },
+                {
+                  "top": "10%"
+                },
+                {
+                  "color": "rgb(68,115,158)"
+                }
+              ]
+            }
+          }
+        },
         "area_button": {
           "template": "square_cell",
           "tap_action": {
@@ -1086,7 +1114,10 @@
                   "off": {
                     "type": "custom:button-card",
                     "entity": "[[fan_entity]]",
-                    "template": "turn_on",
+                    "template": [
+                      "turn_on",
+                      "manual_control_indicator"
+                    ],
                     "icon": "[[[ if (entity.attributes.direction == 'forward') return 'mdi:fan-chevron-down'; else return 'mdi:fan-chevron-up' ]]]",
                     "double_tap_action": {
                       "action": "call-service",
@@ -1256,78 +1287,43 @@
           ],
           "card": {
             "type": "custom:state-switch",
-            "entity": "[[cover_entity]]",
-            "default": "not_fully_closed",
+            "entity": "[[cover_auto_control_entity]]",
+            "default": "off",
             "states": {
-              "closed": {
-                "type": "custom:button-card",
-                "entity": "[[cover_entity]]",
-                "template": "turn_on",
-                "color": "rgb(68,115,158)",
-                "tap_action": {
-                  "action": "call-service",
-                  "service": "cover.open_cover",
-                  "service_data": {
-                    "entity_id": "[[cover_entity]]"
-                  }
-                },
-                "double_tap_action": {
-                  "action": "call-service",
-                  "service": "automation.toggle",
-                  "service_data": {
-                    "entity_id": "[[cover_auto_control_entity]]"
-                  }
-                }
-              },
-              "unavailable": {
-                "type": "custom:button-card",
-                "entity": "[[cover_entity]]",
-                "template": "error"
-              },
-              "not_fully_closed": {
+              "off": {
                 "type": "custom:state-switch",
-                "entity": "[[cover_auto_control_entity]]",
-                "default": "off",
+                "entity": "[[cover_entity]]",
+                "default": "not_fully_closed",
                 "states": {
-                  "on": {
-                    "type": "custom:slider-button-card",
+                  "closed": {
+                    "type": "custom:button-card",
                     "entity": "[[cover_entity]]",
-                    "slider": {
-                      "direction": "bottom-top",
-                      "background": "solid",
-                      "use_state_color": false,
-                      "use_percentage_bg_opacity": false,
-                      "toggle_on_click": false,
-                      "show_track": false,
-                      "force_square": true,
-                      "invert": false
+                    "template": [
+                      "turn_on",
+                      "manual_control_indicator"
+                    ],
+                    "color": "rgb(68,115,158)",
+                    "tap_action": {
+                      "action": "call-service",
+                      "service": "cover.open_cover",
+                      "service_data": {
+                        "entity_id": "[[cover_entity]]"
+                      }
                     },
-                    "show_name": false,
-                    "show_state": false,
-                    "compact": true,
-                    "icon": {
-                      "show": true,
-                      "use_state_color": true,
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "automation.turn_off",
-                        "service_data": {
-                          "entity_id": "[[cover_auto_control_entity]]"
-                        }
-                      },
-                      "icon": "[[cover_icon]]"
-                    },
-                    "action_button": {
-                      "mode": "toggle",
-                      "icon": "mdi:power",
-                      "show": false,
-                      "show_spinner": true,
-                      "tap_action": {
-                        "action": "toggle"
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.toggle",
+                      "service_data": {
+                        "entity_id": "[[cover_auto_control_entity]]"
                       }
                     }
                   },
-                  "off": {
+                  "unavailable": {
+                    "type": "custom:button-card",
+                    "entity": "[[cover_entity]]",
+                    "template": "error"
+                  },
+                  "not_fully_closed": {
                     "type": "custom:slider-button-card",
                     "entity": "[[cover_entity]]",
                     "slider": {
@@ -1349,6 +1345,76 @@
                       "tap_action": {
                         "action": "call-service",
                         "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": "[[cover_auto_control_entity]]"
+                        }
+                      },
+                      "icon": "[[cover_icon]]"
+                    },
+                    "action_button": {
+                      "mode": "toggle",
+                      "icon": "mdi:power",
+                      "show": false,
+                      "show_spinner": true,
+                      "tap_action": {
+                        "action": "toggle"
+                      }
+                    }
+                  }
+                }
+              },
+              "on": {
+                "type": "custom:state-switch",
+                "entity": "[[cover_entity]]",
+                "default": "not_fully_closed",
+                "states": {
+                  "closed": {
+                    "type": "custom:button-card",
+                    "entity": "[[cover_entity]]",
+                    "template": "turn_on",
+                    "color": "rgb(68,115,158)",
+                    "tap_action": {
+                      "action": "call-service",
+                      "service": "cover.open_cover",
+                      "service_data": {
+                        "entity_id": "[[cover_entity]]"
+                      }
+                    },
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.toggle",
+                      "service_data": {
+                        "entity_id": "[[cover_auto_control_entity]]"
+                      }
+                    }
+                  },
+                  "unavailable": {
+                    "type": "custom:button-card",
+                    "entity": "[[cover_entity]]",
+                    "template": "error"
+                  },
+                  "not_fully_closed": {
+                    "type": "custom:slider-button-card",
+                    "entity": "[[cover_entity]]",
+                    "slider": {
+                      "direction": "bottom-top",
+                      "background": "solid",
+                      "use_state_color": false,
+                      "use_percentage_bg_opacity": false,
+                      "toggle_on_click": false,
+                      "show_track": false,
+                      "force_square": true,
+                      "invert": false
+                    },
+                    "show_name": false,
+                    "show_state": false,
+                    "compact": true,
+                    "icon": {
+                      "show": true,
+                      "use_state_color": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
                         "service_data": {
                           "entity_id": "[[cover_auto_control_entity]]"
                         }
