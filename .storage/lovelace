@@ -77,6 +77,12 @@
             "custom_fields": {
               "indicator": [
                 {
+                  "background-color": "var(--card-background-color)"
+                },
+                {
+                  "line-height": "14px"
+                },
+                {
                   "position": "absolute"
                 },
                 {
@@ -87,6 +93,18 @@
                 },
                 {
                   "color": "rgb(68,115,158)"
+                }
+              ]
+            }
+          }
+        },
+        "floorplan_manual_control_indicator": {
+          "template": "manual_control_indicator",
+          "styles": {
+            "custom_fields": {
+              "indicator": [
+                {
+                  "top": "-25%"
                 }
               ]
             }
@@ -586,6 +604,9 @@
           },
           "styles": {
             "card": [
+              {
+                "border-radius": "0%"
+              },
               {
                 "background-color": "rgba(0,0,0,0.0)"
               }
@@ -2077,7 +2098,7 @@
           "card": {
             "type": "custom:state-switch",
             "entity": "[[fan_entity]]",
-            "default": "available",
+            "default": "unavailable",
             "states": {
               "unavailable": {
                 "type": "custom:decluttering-card",
@@ -2088,16 +2109,7 @@
                   }
                 ]
               },
-              "unknown": {
-                "type": "custom:decluttering-card",
-                "template": "floorplan_slider_icon_disabled",
-                "variables": [
-                  {
-                    "entity": "[[fan_entity]]"
-                  }
-                ]
-              },
-              "available": {
+              "on": {
                 "type": "custom:button-card",
                 "entity": "[[fan_entity]]",
                 "template": "floorplan_turn_on",
@@ -2114,6 +2126,56 @@
                   "service": "automation.toggle",
                   "service_data": {
                     "entity_id": "[[fan_auto_control_automation]]"
+                  }
+                }
+              },
+              "off": {
+                "type": "custom:state-switch",
+                "entity": "[[fan_auto_control_automation]]",
+                "default": "off",
+                "states": {
+                  "on": {
+                    "type": "custom:button-card",
+                    "entity": "[[fan_entity]]",
+                    "template": "floorplan_turn_on",
+                    "icon": "[[[ \n  if (entity.attributes.direction == 'forward') \n    return 'mdi:fan-chevron-down'; \n  else \n    return 'mdi:fan-chevron-up';\n]]]",
+                    "styles": {
+                      "icon": [
+                        {
+                          "animation": "[[[ \n  if (entity.state == 'on') {\n    return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n  } else {\n    return ''\n  }\n]]]"
+                        }
+                      ]
+                    },
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.toggle",
+                      "service_data": {
+                        "entity_id": "[[fan_auto_control_automation]]"
+                      }
+                    }
+                  },
+                  "off": {
+                    "type": "custom:button-card",
+                    "entity": "[[fan_entity]]",
+                    "template": [
+                      "floorplan_turn_on",
+                      "floorplan_manual_control_indicator"
+                    ],
+                    "icon": "[[[ \n  if (entity.attributes.direction == 'forward') \n    return 'mdi:fan-chevron-down'; \n  else \n    return 'mdi:fan-chevron-up';\n]]]",
+                    "styles": {
+                      "icon": [
+                        {
+                          "animation": "[[[ \n  if (entity.state == 'on') {\n    return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n  } else {\n    return ''\n  }\n]]]"
+                        }
+                      ]
+                    },
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.toggle",
+                      "service_data": {
+                        "entity_id": "[[fan_auto_control_automation]]"
+                      }
+                    }
                   }
                 }
               }
@@ -2156,7 +2218,7 @@
           "card": {
             "type": "custom:state-switch",
             "entity": "[[cover_entity]]",
-            "default": "enabled",
+            "default": "not_fully_closed",
             "states": {
               "unavailable": {
                 "type": "custom:decluttering-card",
@@ -2176,20 +2238,13 @@
                   }
                 ]
               },
-              "enabled": {
+              "not_fully_closed": {
                 "type": "custom:button-card",
                 "entity": "[[cover_entity]]",
                 "template": "floorplan_slider_icon",
-                "styles": {
-                  "icon": [
-                    {
-                      "color": "[[[\n  if (entity.attributes.current_position == 0)\n    return 'rgb(68,115,158)';\n  else\n    return 'var(--state-cover-color)'\n]]]\n"
-                    }
-                  ]
-                },
                 "tap_action": {
                   "action": "call-service",
-                  "service": "[[[\n  if (entity.attributes.current_position == 100)\n    return \"cover.close_cover\";\n  else\n    return \"cover.open_cover\";\n]]]\n",
+                  "service": "cover.close_cover",
                   "service_data": {
                     "entity_id": "[[cover_entity]]"
                   }
@@ -2199,6 +2254,54 @@
                   "service": "automation.toggle",
                   "service_data": {
                     "entity_id": "[[cover_auto_control_automation]]"
+                  }
+                }
+              },
+              "closed": {
+                "type": "custom:state-switch",
+                "entity": "[[cover_auto_control_automation]]",
+                "default": "off",
+                "states": {
+                  "on": {
+                    "type": "custom:button-card",
+                    "entity": "[[cover_entity]]",
+                    "template": "floorplan_slider_icon",
+                    "tap_action": {
+                      "action": "call-service",
+                      "service": "cover.open_cover",
+                      "service_data": {
+                        "entity_id": "[[cover_entity]]"
+                      }
+                    },
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.toggle",
+                      "service_data": {
+                        "entity_id": "[[cover_auto_control_automation]]"
+                      }
+                    }
+                  },
+                  "off": {
+                    "type": "custom:button-card",
+                    "entity": "[[cover_entity]]",
+                    "template": [
+                      "floorplan_slider_icon",
+                      "floorplan_manual_control_indicator"
+                    ],
+                    "tap_action": {
+                      "action": "call-service",
+                      "service": "cover.open_cover",
+                      "service_data": {
+                        "entity_id": "[[cover_entity]]"
+                      }
+                    },
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.toggle",
+                      "service_data": {
+                        "entity_id": "[[cover_auto_control_automation]]"
+                      }
+                    }
                   }
                 }
               }
