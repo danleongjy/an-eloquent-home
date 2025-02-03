@@ -13,7 +13,14 @@
       "button_card_templates": {
         "square_cell": {
           "aspect_ratio": "1/1",
-          "show_name": false
+          "show_name": false,
+          "styles": {
+            "card": [
+              {
+                "font-size": "10pt"
+              }
+            ]
+          }
         },
         "square_cell_background": {
           "template": "square_cell",
@@ -127,7 +134,7 @@
         "area_button_elenas_room": {
           "template": "area_button",
           "icon": "mdi:bed",
-          "name": "Elena",
+          "name": "Annika",
           "show_name": true,
           "double_tap_action": {
             "service_data": {
@@ -929,6 +936,7 @@
           }
         },
         "alarms_imminent": {
+          "template": "square_cell",
           "entity": "binary_sensor.next_alarm_imminent",
           "tap_action": {
             "action": "navigate",
@@ -938,7 +946,7 @@
             "daniel": "D",
             "grace": "G",
             "eli": "E",
-            "elena": "e"
+            "elena": "A"
           },
           "styles": {
             "grid": [
@@ -1060,56 +1068,145 @@
         "light": {
           "card": {
             "type": "custom:state-switch",
-            "entity": "[[light_entity]]",
-            "default": "disabled",
+            "entity": "[[light_auto_control_automation]]",
+            "default": "off",
             "states": {
-              "disabled": {
-                "type": "custom:button-card",
+              "on": {
+                "type": "custom:state-switch",
                 "entity": "[[light_entity]]",
-                "template": "error"
-              },
-              "off": {
-                "type": "custom:button-card",
-                "entity": "[[light_entity]]",
-                "template": "turn_on",
-                "tap_action": {
-                  "action": "call-service",
-                  "service": "script.recommended_light_level",
-                  "data": {
-                    "light": "[[light_entity]]"
+                "default": "disabled",
+                "states": {
+                  "disabled": {
+                    "type": "custom:button-card",
+                    "entity": "[[light_entity]]",
+                    "template": "error"
+                  },
+                  "off": {
+                    "type": "custom:button-card",
+                    "entity": "[[light_entity]]",
+                    "template": "turn_on",
+                    "tap_action": {
+                      "action": "call-service",
+                      "service": "script.recommended_light_level",
+                      "data": {
+                        "light": "[[light_entity]]"
+                      }
+                    },
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.turn_off",
+                      "service_data": {
+                        "entity_id": "[[light_auto_control_automation]]"
+                      }
+                    }
+                  },
+                  "on": {
+                    "type": "custom:slider-button-card",
+                    "entity": "[[light_entity]]",
+                    "slider": {
+                      "direction": "bottom-top",
+                      "background": "solid",
+                      "use_state_color": false,
+                      "use_percentage_bg_opacity": false,
+                      "show_track": false,
+                      "toggle_on_click": false,
+                      "force_square": true
+                    },
+                    "show_name": false,
+                    "show_state": false,
+                    "compact": true,
+                    "icon": {
+                      "show": true,
+                      "use_state_color": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": "[[light_auto_control_automation]]"
+                        }
+                      },
+                      "icon": ""
+                    },
+                    "action_button": {
+                      "mode": "toggle",
+                      "icon": "mdi:power",
+                      "show": false,
+                      "show_spinner": true,
+                      "tap_action": {
+                        "action": null
+                      }
+                    }
                   }
                 }
               },
-              "on": {
-                "type": "custom:slider-button-card",
+              "off": {
+                "type": "custom:state-switch",
                 "entity": "[[light_entity]]",
-                "slider": {
-                  "direction": "bottom-top",
-                  "background": "solid",
-                  "use_state_color": false,
-                  "use_percentage_bg_opacity": false,
-                  "show_track": false,
-                  "toggle_on_click": false,
-                  "force_square": true
-                },
-                "show_name": false,
-                "show_state": false,
-                "compact": true,
-                "icon": {
-                  "show": true,
-                  "use_state_color": true,
-                  "tap_action": {
-                    "action": "toggle"
+                "default": "disabled",
+                "states": {
+                  "disabled": {
+                    "type": "custom:button-card",
+                    "entity": "[[light_entity]]",
+                    "template": "error"
                   },
-                  "icon": ""
-                },
-                "action_button": {
-                  "mode": "toggle",
-                  "icon": "mdi:power",
-                  "show": false,
-                  "show_spinner": true,
-                  "tap_action": {
-                    "action": null
+                  "off": {
+                    "type": "custom:button-card",
+                    "entity": "[[light_entity]]",
+                    "template": [
+                      "turn_on",
+                      "manual_control_indicator"
+                    ],
+                    "tap_action": {
+                      "action": "call-service",
+                      "service": "script.recommended_light_level",
+                      "data": {
+                        "light": "[[light_entity]]"
+                      }
+                    },
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.turn_on",
+                      "service_data": {
+                        "entity_id": "[[light_auto_control_automation]]"
+                      }
+                    }
+                  },
+                  "on": {
+                    "type": "custom:slider-button-card",
+                    "entity": "[[light_entity]]",
+                    "slider": {
+                      "direction": "bottom-top",
+                      "background": "striped",
+                      "use_state_color": false,
+                      "use_percentage_bg_opacity": false,
+                      "show_track": false,
+                      "toggle_on_click": false,
+                      "force_square": true
+                    },
+                    "show_name": false,
+                    "show_state": false,
+                    "compact": true,
+                    "icon": {
+                      "show": true,
+                      "use_state_color": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": "[[light_auto_control_automation]]"
+                        }
+                      },
+                      "icon": ""
+                    },
+                    "action_button": {
+                      "mode": "toggle",
+                      "icon": "mdi:power",
+                      "show": false,
+                      "show_spinner": true,
+                      "tap_action": {
+                        "action": null
+                      }
+                    }
                   }
                 }
               }
@@ -1255,45 +1352,129 @@
         "ac": {
           "card": {
             "type": "custom:state-switch",
-            "entity": "[[climate_entity]]",
-            "default": "disabled",
+            "entity": "[[ac_auto_control_automation]]",
+            "default": "off",
             "states": {
-              "disabled": {
-                "type": "custom:button-card",
+              "on": {
+                "type": "custom:state-switch",
                 "entity": "[[climate_entity]]",
-                "template": "error"
+                "default": "disabled",
+                "states": {
+                  "disabled": {
+                    "type": "custom:button-card",
+                    "entity": "[[climate_entity]]",
+                    "template": "error"
+                  },
+                  "off": {
+                    "type": "custom:button-card",
+                    "entity": "[[climate_entity]]",
+                    "template": "turn_on",
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.turn_off",
+                      "service_data": {
+                        "entity_id": "[[ac_auto_control_automation]]"
+                      }
+                    }
+                  },
+                  "cool": {
+                    "type": "custom:slider-button-card",
+                    "entity": "[[climate_entity]]",
+                    "slider": {
+                      "direction": "bottom-top",
+                      "background": "solid",
+                      "use_state_color": false,
+                      "use_percentage_bg_opacity": false,
+                      "show_track": false,
+                      "toggle_on_click": false,
+                      "force_square": true
+                    },
+                    "show_name": false,
+                    "show_state": false,
+                    "compact": true,
+                    "icon": {
+                      "show": true,
+                      "use_state_color": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_off",
+                        "service_data": {
+                          "entity_id": "[[ac_auto_control_automation]]"
+                        }
+                      }
+                    },
+                    "action_button": {
+                      "mode": "toggle",
+                      "icon": "mdi:power",
+                      "show": false,
+                      "show_spinner": true,
+                      "tap_action": {
+                        "action": "toggle"
+                      }
+                    }
+                  }
+                }
               },
               "off": {
-                "type": "custom:button-card",
+                "type": "custom:state-switch",
                 "entity": "[[climate_entity]]",
-                "template": "turn_on"
-              },
-              "cool": {
-                "type": "custom:slider-button-card",
-                "entity": "[[climate_entity]]",
-                "slider": {
-                  "direction": "bottom-top",
-                  "background": "solid",
-                  "use_state_color": false,
-                  "use_percentage_bg_opacity": false,
-                  "show_track": false,
-                  "toggle_on_click": false,
-                  "force_square": true
-                },
-                "show_name": false,
-                "show_state": false,
-                "compact": true,
-                "icon": {
-                  "show": true,
-                  "use_state_color": true
-                },
-                "action_button": {
-                  "mode": "toggle",
-                  "icon": "mdi:power",
-                  "show": false,
-                  "show_spinner": true,
-                  "tap_action": {
-                    "action": "toggle"
+                "default": "disabled",
+                "states": {
+                  "disabled": {
+                    "type": "custom:button-card",
+                    "entity": "[[climate_entity]]",
+                    "template": "error"
+                  },
+                  "off": {
+                    "type": "custom:button-card",
+                    "entity": "[[climate_entity]]",
+                    "template": [
+                      "turn_on",
+                      "manual_control_indicator"
+                    ],
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.turn_on",
+                      "service_data": {
+                        "entity_id": "[[ac_auto_control_automation]]"
+                      }
+                    }
+                  },
+                  "cool": {
+                    "type": "custom:slider-button-card",
+                    "entity": "[[climate_entity]]",
+                    "slider": {
+                      "direction": "bottom-top",
+                      "background": "striped",
+                      "use_state_color": false,
+                      "use_percentage_bg_opacity": false,
+                      "show_track": false,
+                      "toggle_on_click": false,
+                      "force_square": true
+                    },
+                    "show_name": false,
+                    "show_state": false,
+                    "compact": true,
+                    "icon": {
+                      "show": true,
+                      "use_state_color": true,
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "automation.turn_on",
+                        "service_data": {
+                          "entity_id": "[[ac_auto_control_automation]]"
+                        }
+                      }
+                    },
+                    "action_button": {
+                      "mode": "toggle",
+                      "icon": "mdi:power",
+                      "show": false,
+                      "show_spinner": true,
+                      "tap_action": {
+                        "action": "toggle"
+                      }
+                    }
                   }
                 }
               }
@@ -5497,6 +5678,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.playroom_lights"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.playroom_motion_lights"
                               }
                             ]
                           },
@@ -5506,6 +5690,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.yard_light_entity"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.yard_motion_light"
                               }
                             ]
                           },
@@ -5531,6 +5718,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.elenas_room_lights"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.elenas_room_motion_lights"
                               }
                             ]
                           },
@@ -5581,6 +5771,9 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.elenas_room_ac"
+                              },
+                              {
+                                "ac_auto_control_automation": "automation.elenas_room_motion_ac"
                               }
                             ]
                           },
@@ -5609,6 +5802,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.elis_room_lights"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.elis_room_motion_lights"
                               }
                             ]
                           },
@@ -5618,6 +5814,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.elis_room_floor_lamp"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.elis_room_motion_floor_lamp"
                               }
                             ]
                           },
@@ -5664,6 +5863,9 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.elis_room_ac"
+                              },
+                              {
+                                "ac_auto_control_automation": "automation.elis_room_motion_ac"
                               }
                             ]
                           },
@@ -5692,6 +5894,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.hallway_lights"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.hallway_motion_lights"
                               }
                             ]
                           },
@@ -5705,6 +5910,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.powder_room_pendant_light_entity"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.powder_room_motion_pendant_light"
                               }
                             ]
                           },
@@ -5718,6 +5926,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.junior_bathroom_lights"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.junior_bathroom_motion_lights"
                               }
                             ]
                           },
@@ -5731,6 +5942,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.dining_room_lights"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.dining_room_motion_lights"
                               }
                             ]
                           },
@@ -5740,6 +5954,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.dining_room_pendant_light_entity"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.dining_room_motion_pendant_light"
                               }
                             ]
                           },
@@ -5786,6 +6003,9 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.dining_room_ac"
+                              },
+                              {
+                                "ac_auto_control_automation": "automation.dining_room_motion_ac"
                               }
                             ]
                           },
@@ -5811,6 +6031,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.living_room_lights"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.living_room_motion_lights"
                               }
                             ]
                           },
@@ -5820,6 +6043,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.living_room_pendant_light_entity"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.living_room_motion_pendant_light"
                               }
                             ]
                           },
@@ -5866,6 +6092,9 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.living_room_ac"
+                              },
+                              {
+                                "ac_auto_control_automation": "automation.living_room_motion_ac"
                               }
                             ]
                           },
@@ -5891,6 +6120,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.study_room_lights"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.study_room_motion_lights"
                               }
                             ]
                           },
@@ -5900,6 +6132,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.study_room_floor_lamp_entity"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.study_room_motion_floor_lamp"
                               }
                             ]
                           },
@@ -5946,6 +6181,9 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.study_room_ac"
+                              },
+                              {
+                                "ac_auto_control_automation": "automation.study_room_motion_ac"
                               }
                             ]
                           },
@@ -5971,6 +6209,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.parents_room_lights"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.parents_room_motion_lights"
                               }
                             ]
                           },
@@ -5980,6 +6221,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.parents_room_bedside_lamp"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.parents_room_motion_bedside_lamp"
                               }
                             ]
                           },
@@ -6026,6 +6270,9 @@
                             "variables": [
                               {
                                 "climate_entity": "climate.parents_room_ac"
+                              },
+                              {
+                                "ac_auto_control_automation": "automation.parents_room_motion_ac"
                               }
                             ]
                           },
@@ -6043,6 +6290,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.master_bathroom_light_entity"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.master_bathroom_motion_light"
                               }
                             ]
                           },
@@ -6052,6 +6302,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.master_bathroom_pendant_light_entity"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.master_bathroom_motion_pendant_light"
                               }
                             ]
                           },
@@ -6085,6 +6338,9 @@
                             "variables": [
                               {
                                 "light_entity": "light.kitchen_lights"
+                              },
+                              {
+                                "light_auto_control_automation": "automation.kitchen_motion_lights"
                               }
                             ]
                           },
@@ -10839,17 +11095,29 @@
                     "card": [
                       {
                         "height": "420px"
+                      },
+                      {
+                        "padding-top": "10px"
                       }
                     ],
                     "name": [
                       {
-                        "font-weight": "bold"
+                        "font-weight": 500
                       },
                       {
                         "font-size": "12pt"
                       },
                       {
-                        "font-family": "Arial"
+                        "font-family": "Roboto"
+                      },
+                      {
+                        "color": "#999999"
+                      },
+                      {
+                        "justify-self": "start"
+                      },
+                      {
+                        "padding-left": "20px"
                       }
                     ],
                     "icon": [
@@ -10865,15 +11133,18 @@
                         "font-size": "10pt"
                       },
                       {
-                        "font-weight": "bold"
+                        "justify-self": "start"
+                      },
+                      {
+                        "padding-left": "20px"
                       }
                     ],
                     "grid": [
                       {
-                        "grid-template-areas": "\"n\" \"i\" \"l\""
+                        "grid-template-areas": "\"n\" \"l\" \"i\""
                       },
                       {
-                        "grid-template-rows": "min-content 1fr"
+                        "grid-template-rows": "min-content min-content 1fr"
                       }
                     ]
                   }
