@@ -2360,7 +2360,7 @@
           "card": {
             "type": "custom:state-switch",
             "entity": "[[ac_entity]]",
-            "default": "available",
+            "default": "unavailable",
             "states": {
               "unavailable": {
                 "type": "custom:decluttering-card",
@@ -2371,19 +2371,51 @@
                   }
                 ]
               },
-              "unknown": {
-                "type": "custom:decluttering-card",
-                "template": "floorplan_slider_icon_disabled",
-                "variables": [
-                  {
-                    "entity": "[[ac_entity]]"
-                  }
-                ]
-              },
-              "available": {
+              "cool": {
                 "type": "custom:button-card",
                 "entity": "[[ac_entity]]",
-                "template": "floorplan_turn_on"
+                "template": "floorplan_turn_on",
+                "double_tap_action": {
+                  "action": "call-service",
+                  "service": "automation.toggle",
+                  "service_data": {
+                    "entity_id": "[[ac_auto_control_automation]]"
+                  }
+                }
+              },
+              "off": {
+                "type": "custom:state-switch",
+                "entity": "[[ac_auto_control_automation]]",
+                "default": "off",
+                "states": {
+                  "on": {
+                    "type": "custom:button-card",
+                    "entity": "[[ac_entity]]",
+                    "template": "floorplan_turn_on",
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.toggle",
+                      "service_data": {
+                        "entity_id": "[[ac_auto_control_automation]]"
+                      }
+                    }
+                  },
+                  "off": {
+                    "type": "custom:button-card",
+                    "entity": "[[ac_entity]]",
+                    "template": [
+                      "floorplan_turn_on",
+                      "floorplan_manual_control_indicator"
+                    ],
+                    "double_tap_action": {
+                      "action": "call-service",
+                      "service": "automation.toggle",
+                      "service_data": {
+                        "entity_id": "[[ac_auto_control_automation]]"
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -3979,10 +4011,13 @@
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "climate.elenas_room_ac"
+                          },
+                          {
+                            "auto_control_entity": "automation.elenas_room_motion_ac"
                           }
                         ]
                       },
@@ -3998,6 +4033,9 @@
                         "variables": [
                           {
                             "ac_entity": "climate.elenas_room_ac"
+                          },
+                          {
+                            "ac_auto_control_automation": "automation.elenas_room_motion_ac"
                           }
                         ]
                       },
@@ -4151,10 +4189,13 @@
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "climate.elis_room_ac"
+                          },
+                          {
+                            "auto_control_entity": "automation.elis_room_motion_ac"
                           }
                         ]
                       },
@@ -4170,6 +4211,9 @@
                         "variables": [
                           {
                             "ac_entity": "climate.elis_room_ac"
+                          },
+                          {
+                            "ac_auto_control_automation": "automation.elis_room_motion_ac"
                           }
                         ]
                       },
@@ -4323,10 +4367,13 @@
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "climate.dining_room_ac"
+                          },
+                          {
+                            "auto_control_entity": "automation.dining_room_motion_ac"
                           }
                         ]
                       },
@@ -4342,6 +4389,9 @@
                         "variables": [
                           {
                             "ac_entity": "climate.dining_room_ac"
+                          },
+                          {
+                            "ac_auto_control_automation": "automation.dining_room_motion_ac"
                           }
                         ]
                       },
@@ -4522,10 +4572,13 @@
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "climate.living_room_ac"
+                          },
+                          {
+                            "auto_control_entity": "automation.living_room_motion_ac"
                           }
                         ]
                       },
@@ -4541,6 +4594,9 @@
                         "variables": [
                           {
                             "ac_entity": "climate.living_room_ac"
+                          },
+                          {
+                            "ac_auto_control_automation": "automation.living_room_motion_ac"
                           }
                         ]
                       },
@@ -5267,18 +5323,21 @@
                       },
                       {
                         "type": "custom:decluttering-card",
+                        "template": "floorplan_slider_auto_control",
+                        "variables": [
+                          {
+                            "slider_entity": "climate.study_room_ac"
+                          },
+                          {
+                            "auto_control_entity": "automation.study_room_motion_ac"
+                          }
+                        ],
                         "style": {
                           "top": "95%",
                           "left": "42.5%",
                           "height": "9%",
                           "width": "4.5%"
-                        },
-                        "template": "floorplan_slider",
-                        "variables": [
-                          {
-                            "slider_entity": "climate.study_room_ac"
-                          }
-                        ]
+                        }
                       },
                       {
                         "type": "custom:decluttering-card",
@@ -5292,6 +5351,9 @@
                         "variables": [
                           {
                             "ac_entity": "climate.study_room_ac"
+                          },
+                          {
+                            "ac_auto_control_automation": "automation.study_room_motion_ac"
                           }
                         ]
                       },
@@ -5475,10 +5537,13 @@
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "template": "floorplan_slider",
+                        "template": "floorplan_slider_auto_control",
                         "variables": [
                           {
                             "slider_entity": "climate.parents_room_ac"
+                          },
+                          {
+                            "auto_control_entity": "automation.parents_room_motion_ac"
                           }
                         ]
                       },
@@ -5494,6 +5559,9 @@
                         "variables": [
                           {
                             "ac_entity": "climate.parents_room_ac"
+                          },
+                          {
+                            "ac_auto_control_automation": "automation.parents_room_motion_ac"
                           }
                         ]
                       }
