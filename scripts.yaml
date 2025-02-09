@@ -844,8 +844,27 @@ fan_controller:
             value: fan_reverse
           - label: Forward
             value: fan_forward
+          - label: Fan Auto Control
+            value: fan_auto_control
+          - label: Fan Manual Control
+            value: fan_manual_control
       required: true
   sequence:
+  - variables:
+      fan_automations:
+        fan.elenas_room_fan: automation.elenas_room_fan_auto_control
+        fan.elis_room_fan: automation.elis_room_fan_auto_control
+        fan.dining_room_fan: automation.dining_room_fan_auto_control
+        fan.living_room_fan: automation.living_room_fan_auto_control
+        fan.parents_room_fan: automation.parents_room_fan_auto_control
+        fan.study_room_fan: automation.study_room_fan_auto_control
+      indicator_lights:
+        fan.elenas_room_fan: light.elenas_room_bulb_1_entity
+        fan.elis_room_fan: light.elis_room_bulb_3_entity
+        fan.dining_room_fan: light.dining_room_bulb_4_entity
+        fan.living_room_fan: light.living_room_bulb_2_entity
+        fan.parents_room_fan: light.parents_room_bulb_3_entity
+        fan.study_room_fan: light.study_room_bulb_4_entity
   - choose:
     - conditions:
       - condition: template
@@ -913,6 +932,43 @@ fan_controller:
           direction: forward
         target:
           entity_id: '{{ fan }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''fan_auto_control'' }}'
+      sequence:
+      - action: automation.turn_on
+        target:
+          entity_id: '{{ fan_automations[fan] }}'
+      - condition: or
+        conditions:
+        - condition: time
+          before: input_datetime.sleep_hours_start
+          after: input_datetime.sleep_hours_end
+        - condition: template
+          value_template: '{{ fan in [''fan.dining_room_fan'',''fan.living_room_fan'',''fan.study_room_fan'']
+            }}'
+      - action: script.automation_on_off_indicator_light
+        data:
+          flash_once: true
+          indicator_light: '{{ indicator_lights[fan] }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''fan_manual_control'' }}'
+      sequence:
+      - action: automation.turn_off
+        target:
+          entity_id: '{{ fan_automations[fan] }}'
+      - condition: or
+        conditions:
+        - condition: time
+          before: input_datetime.sleep_hours_start
+          after: input_datetime.sleep_hours_end
+        - condition: template
+          value_template: '{{ fan in [''fan.dining_room_fan'',''fan.living_room_fan'',''fan.study_room_fan'']
+            }}'
+      - action: script.automation_on_off_indicator_light
+        data:
+          indicator_light: '{{ indicator_lights[fan] }}'
   description: Set fan state with physical controls
   icon: mdi:fan
   mode: parallel
@@ -920,6 +976,83 @@ fan_controller:
 lights_controller:
   alias: Lights Controller
   sequence:
+  - variables:
+      motion_timeout_automations:
+        Yard:
+        - automation.yard_motion_timeout
+        Playroom:
+        - automation.playroom_motion_timeout
+        Junior Bathroom:
+        - automation.junior_bathroom_motion_timeout
+        Powder Room:
+        - automation.powder_room_motion_timeout
+        Elena's Room:
+        - automation.elenas_room_motion_timeout
+        Eli's Room:
+        - automation.elis_room_motion_timeout
+        Hallway:
+        - automation.hallway_motion_timeout
+        Dining Room:
+        - automation.dining_room_motion_timeout
+        - automation.dining_and_living_room_ac_motion_timeout
+        Living Room:
+        - automation.living_room_motion_timeout
+        - automation.dining_and_living_room_ac_motion_timeout
+        Study Room:
+        - automation.study_room_motion_timeout
+        Parents' Room:
+        - automation.parents_room_motion_timeout
+        Master Bathroom:
+        - automation.master_bathroom_motion_timeout
+        Kitchen:
+        - automation.kitchen_motion_timeout
+      lights_automations:
+        Elena's Room:
+        - automation.elenas_room_motion_lights
+        Eli's Room:
+        - automation.elis_room_motion_floor_lamp
+        - automation.elis_room_motion_lights
+        Junior Bathroom:
+        - automation.junior_bathroom_motion_lights
+        Powder Room:
+        - automation.powder_room_motion_pendant_light
+        Hallway:
+        - automation.hallway_motion_lights
+        Yard:
+        - automation.yard_motion_light
+        Playroom:
+        - automation.playroom_motion_lights
+        Dining Room:
+        - automation.dining_room_motion_lights
+        - automation.dining_room_motion_pendant_light
+        Living Room:
+        - automation.living_room_motion_lights
+        - automation.living_room_motion_pendant_light
+        Study Room:
+        - automation.study_room_motion_lights
+        - automation.study_room_motion_floor_lamp
+        Parents' Room:
+        - automation.parents_room_motion_bedside_lamp
+        - automation.parents_room_motion_lights
+        Master Bathroom:
+        - automation.master_bathroom_motion_light
+        - automation.master_bathroom_motion_pendant_light
+        Kitchen:
+        - automation.kitchen_motion_lights
+      indicator_lights:
+        Elena's Room: light.elenas_room_bulb_2_entity
+        Eli's Room: light.elis_room_bulb_2_entity
+        Junior Bathroom: light.junior_bathroom_pendant_light_entity
+        Powder Room: light.powder_room_pendant_light_entity
+        Hallway: light.hallway_bulb_2_entity
+        Yard: light.yard_light_entity
+        Playroom: light.playroom_bulb_2_entity
+        Dining Room: light.dining_room_bulb_2_entity
+        Living Room: light.living_room_bulb_2_entity
+        Study Room: light.study_room_bulb_2_entity
+        Parents' Room: light.parents_room_bulb_2_entity
+        Master Bathroom: light.master_bathroom_light_entity
+        Kitchen: light.kitchen_bulb_2_entity
   - choose:
     - conditions:
       - condition: template
@@ -976,25 +1109,72 @@ lights_controller:
         data:
           skip_condition: true
         target:
-          entity_id: "{% set motion_timeout_automations = {'Yard': ['automation.yard_motion_timeout'],\n
-            \                                   'Playroom': ['automation.playroom_motion_timeout'],\n
-            \                                   'Junior Bathroom': ['automation.junior_bathroom_motion_timeout'],\n
-            \                                   'Powder Room': ['automation.powder_room_motion_timeout'],\n
-            \                                   \"Elena's Room\": ['automation.elenas_room_motion_timeout'],\n
-            \                                   \"Eli's Room\": ['automation.elis_room_motion_timeout'],\n
-            \                                   'Hallway': ['automation.hallway_motion_timeout'],\n
-            \                                   'Dining Room': ['automation.dining_room_motion_timeout','automation.dining_and_living_room_ac_motion_timeout'],\n
-            \                                   'Living Room': ['automation.living_room_motion_timeout','automation.dining_and_living_room_ac_motion_timeout'],\n
-            \                                   'Study Room': ['automation.study_room_motion_timeout'],\n
-            \                                   \"Parents' Room\": ['automation.parents_room_motion_timeout'],\n
-            \                                   'Master Bathroom': ['automation.master_bathroom_motion_timeout'],\n
-            \                                   'Kitchen': ['automation.kitchen_motion_timeout']}
-            %}\n{% set turnoff_entities = namespace(areas = [], automations = [])
-            %} {% for light in lights %}\n  {% set turnoff_entities.areas = turnoff_entities.areas
-            + [area_name(light)] %}\n{% endfor %} {% for area in turnoff_entities.areas
-            %}\n  {% set turnoff_entities.automations = turnoff_entities.automations
-            + motion_timeout_automations[area] %}\n{% endfor %} {{ turnoff_entities.automations
-            | unique | list }}\n"
+          entity_id: "{% set turnoff_entities = namespace(areas = [], automations
+            = []) %} {% for light in lights %}\n  {% set turnoff_entities.areas =
+            turnoff_entities.areas + [area_name(light)] %}\n{% endfor %} {% for area
+            in turnoff_entities.areas %}\n  {% set turnoff_entities.automations =
+            turnoff_entities.automations + motion_timeout_automations[area] %}\n{%
+            endfor %} {{ turnoff_entities.automations | unique | list }}\n"
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''lights_auto_control'' }}'
+      sequence:
+      - variables:
+          areas: "{% set output = namespace(areas = []) %}\n{% for light in lights
+            %}\n  {% if area_name(light) not in output.areas %}\n    {% set output.areas
+            = output.areas + [area_name(light)] %}\n  {% endif %}\n{% endfor %}\n{{
+            output.areas }}\n"
+          automations: "{% set output = namespace(automations = []) %}\n{% for area
+            in areas %}\n  {% set output.automations = output.automations + lights_automations[area]
+            %}\n{% endfor %}\n{{ output.automations }}\n"
+      - action: automation.turn_on
+        target:
+          entity_id: '{{ automations }}'
+      - repeat:
+          for_each: '{{ areas }}'
+          sequence:
+          - condition: or
+            conditions:
+            - condition: time
+              before: input_datetime.sleep_hours_start
+              after: input_datetime.sleep_hours_end
+            - condition: template
+              value_template: '{{ repeat.item not in ["Elena''s Room","Eli''s Room","Parents''
+                Room"] }}'
+          - action: script.automation_on_off_indicator_light
+            data:
+              flash_once: true
+              indicator_light: '{{ indicator_lights[repeat.item] }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''lights_manual_control'' }}'
+      sequence:
+      - variables:
+          areas: "{% set output = namespace(areas = []) %}\n{% for light in lights
+            %}\n  {% if area_name(light) not in output.areas %}\n    {% set output.areas
+            = output.areas + [area_name(light)] %}\n  {% endif %}\n{% endfor %}\n{{
+            output.areas }}\n"
+          automations: "{% set output = namespace(automations = []) %}\n{% for area
+            in areas %}\n  {% set output.automations = output.automations + lights_automations[area]
+            %}\n{% endfor %}\n{{ output.automations }}\n"
+      - action: automation.turn_off
+        target:
+          entity_id: '{{ automations }}'
+      - repeat:
+          for_each: '{{ areas }}'
+          sequence:
+          - condition: or
+            conditions:
+            - condition: time
+              before: input_datetime.sleep_hours_start
+              after: input_datetime.sleep_hours_end
+            - condition: template
+              value_template: '{{ repeat.item not in ["Elena''s Room","Eli''s Room","Parents''
+                Room"] }}'
+          - action: script.automation_on_off_indicator_light
+            data:
+              flash_once: false
+              indicator_light: '{{ indicator_lights[repeat.item] }}'
   fields:
     lights:
       name: Lights
@@ -1023,6 +1203,10 @@ lights_controller:
             value: set_recommended_room_scene
           - label: Turn Off Room
             value: turn_off_room
+          - label: Lights Auto Control
+            value: lights_auto_control
+          - label: Lights Manual Control
+            value: lights_manual_control
       required: true
   description: Set lights state with physical controls
   icon: mdi:lightbulb-group
@@ -1031,6 +1215,21 @@ lights_controller:
 ac_controller:
   alias: AC Controller
   sequence:
+  - variables:
+      cooling_automations:
+        climate.elenas_room_ac: automation.elenas_room_motion_ac
+        climate.elis_room_ac: automation.elis_room_motion_ac
+        climate.dining_room_ac: automation.dining_room_motion_ac
+        climate.living_room_ac: automation.living_room_motion_ac
+        climate.parents_room_ac: automation.parents_room_motion_ac
+        climate.study_room_ac: automation.study_room_motion_ac
+      indicator_lights:
+        climate.elenas_room_ac: light.elenas_room_bulb_1_entity
+        climate.elis_room_ac: light.elis_room_bulb_3_entity
+        climate.dining_room_ac: light.dining_room_bulb_4_entity
+        climate.living_room_ac: light.living_room_bulb_2_entity
+        climate.parents_room_ac: light.parents_room_bulb_3_entity
+        climate.study_room_ac: light.study_room_bulb_4_entity
   - choose:
     - conditions:
       - condition: template
@@ -1072,13 +1271,7 @@ ac_controller:
       sequence:
       - action: automation.turn_on
         target:
-          entity_id: "{% set cooling_automations = {'climate.elenas_room_ac': 'automation.elenas_room_fan_auto_control',\n
-            \                             'climate.elis_room_ac': 'automation.elis_room_fan_auto_control',\n
-            \                             'climate.dining_room_ac': 'automation.dining_room_fan_auto_control',\n
-            \                             'climate.living_room_ac': 'automation.living_room_fan_auto_control',\n
-            \                             'climate.parents_room_ac': 'automation.parents_room_fan_auto_control',\n
-            \                             'climate.study_room_ac': 'automation.study_room_fan_auto_control'}
-            %}\n{{ cooling_automations[ac] }}\n"
+          entity_id: '{{ cooling_automations[ac] }}'
       - condition: or
         conditions:
         - condition: time
@@ -1090,26 +1283,14 @@ ac_controller:
       - action: script.automation_on_off_indicator_light
         data:
           flash_once: true
-          indicator_light: "{% set indicator_lights = {'climate.elenas_room_ac': 'light.elenas_room_bulb_1_entity',\n
-            \                             'climate.elis_room_ac': 'light.elis_room_bulb_3_entity',\n
-            \                             'climate.dining_room_ac': 'light.dining_room_bulb_4_entity',\n
-            \                             'climate.living_room_ac': 'light.living_room_bulb_2_entity',\n
-            \                             'climate.parents_room_ac': 'light.parents_room_bulb_3_entity',\n
-            \                             'climate.study_room_ac': 'light.study_room_bulb_4_entity'}
-            %}\n{{ indicator_lights[ac] }}\n"
+          indicator_light: '{{ indicator_lights[ac] }}'
     - conditions:
       - condition: template
         value_template: '{{ command == ''cooling_manual_control'' }}'
       sequence:
       - action: automation.turn_off
         target:
-          entity_id: "{% set cooling_automations = {'climate.elenas_room_ac': 'automation.elenas_room_fan_auto_control',\n
-            \                             'climate.elis_room_ac': 'automation.elis_room_fan_auto_control',\n
-            \                             'climate.dining_room_ac': 'automation.dining_room_fan_auto_control',\n
-            \                             'climate.living_room_ac': 'automation.living_room_fan_auto_control',\n
-            \                             'climate.parents_room_ac': 'automation.parents_room_fan_auto_control',\n
-            \                             'climate.study_room_ac': 'automation.study_room_fan_auto_control'}
-            %}\n{{ cooling_automations[ac] }}\n"
+          entity_id: '{{ cooling_automations[ac] }}'
       - condition: or
         conditions:
         - condition: time
@@ -1120,13 +1301,7 @@ ac_controller:
             }}'
       - action: script.automation_on_off_indicator_light
         data:
-          indicator_light: "{% set indicator_lights = {'climate.elenas_room_ac': 'light.elenas_room_bulb_1_entity',\n
-            \                             'climate.elis_room_ac': 'light.elis_room_bulb_3_entity',\n
-            \                             'climate.dining_room_ac': 'light.dining_room_bulb_4_entity',\n
-            \                             'climate.living_room_ac': 'light.living_room_bulb_2_entity',\n
-            \                             'climate.parents_room_ac': 'light.parents_room_bulb_3_entity',\n
-            \                             'climate.study_room_ac': 'light.study_room_bulb_4_entity'}
-            %}\n{{ indicator_lights[ac] }}\n"
+          indicator_light: '{{ indicator_lights[ac] }}'
   fields:
     ac:
       selector:

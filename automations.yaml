@@ -177,6 +177,31 @@
       button_down_long_max_loop_repeats: 50
       button_down_long_loop: true
       button_up_long_loop: true
+      action_button_up_double:
+      - if:
+        - condition: state
+          entity_id:
+          - automation.playroom_motion_lights
+          - automation.yard_motion_light
+          state: 'on'
+        then:
+        - action: automation.turn_off
+          metadata: {}
+          data:
+            stop_actions: true
+          target:
+            entity_id:
+            - automation.playroom_motion_lights
+            - automation.yard_motion_light
+        else:
+        - action: automation.turn_on
+          metadata: {}
+          target:
+            entity_id:
+            - automation.playroom_motion_lights
+            - automation.yard_motion_light
+          data: {}
+      button_up_double_press: true
 - id: '1643643181661'
   alias: Dining Room AC Controller
   description: Control the Dining Room AC
@@ -315,6 +340,13 @@
       button_up_long_max_loop_repeats: 50
       button_down_long_loop: true
       button_down_long_max_loop_repeats: 50
+      button_up_double_press: true
+      action_button_up_double:
+      - action: automation.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: automation.powder_room_motion_pendant_light
 - id: '1643646541355'
   alias: Junior Bathroom Lights Controller
   description: Control the Junior Bathroom Lights
@@ -356,6 +388,13 @@
       button_up_long_max_loop_repeats: 50
       button_down_long_loop: true
       button_down_long_max_loop_repeats: 50
+      action_button_up_double:
+      - action: automation.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: automation.junior_bathroom_motion_lights
+      button_up_double_press: true
 - id: '1643721003621'
   alias: Auto Cooling at Night
   description: Turn on Fan Auto Control at night in bedrooms
@@ -5354,16 +5393,16 @@
         target:
           entity_id: '{{ trigger.entity_id }}'
         enabled: true
-      - action: climate.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: '{{ trigger.entity_id }}'
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 200
+      - action: climate.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: '{{ trigger.entity_id }}'
     default:
     - condition: template
       value_template: '{{ is_state(trigger.entity_id, ''cool'') }}'
@@ -6076,8 +6115,21 @@
           entity_id:
           - automation.elenas_room_fan_auto_control
           - automation.elenas_room_curtains_auto_control
+          - automation.elenas_room_motion_ac
+          - automation.elenas_room_motion_lights
           state: 'on'
         then:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.elenas_room_lights
+            command: lights_manual_control
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.elenas_room_fan
+            command: fan_manual_control
         - action: script.ac_controller
           metadata: {}
           data:
@@ -6089,6 +6141,17 @@
             command: cover_manual_control
             cover: cover.elenas_room_curtains
         else:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.elenas_room_lights
+            command: lights_auto_control
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.elenas_room_fan
+            command: fan_auto_control
         - action: script.ac_controller
           metadata: {}
           data:
@@ -6474,6 +6537,8 @@
           entity_id:
           - automation.elis_room_fan_auto_control
           - automation.elis_room_curtains_auto_control
+          - automation.elis_room_motion_ac
+          - automation.elis_room_motion_lights
           state: 'on'
         then:
         - action: script.ac_controller
@@ -6486,6 +6551,14 @@
           data:
             command: cover_manual_control
             cover: cover.elis_room_curtains
+        - action: automation.turn_off
+          metadata: {}
+          data:
+            stop_actions: true
+          target:
+            entity_id:
+            - automation.elis_room_motion_ac
+            - automation.elis_room_motion_lights
         else:
         - action: script.ac_controller
           metadata: {}
@@ -6497,6 +6570,13 @@
           data:
             command: cover_auto_control
             cover: cover.elis_room_curtains
+        - action: automation.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id:
+            - automation.elis_room_motion_ac
+            - automation.elis_room_motion_lights
       button_left_double_press: true
       button_right_double_press: true
       helper_debounce_delay: 300
