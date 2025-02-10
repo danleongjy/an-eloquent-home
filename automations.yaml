@@ -4184,50 +4184,63 @@
 - id: '1690814237442'
   alias: Eli's Next Alarm
   description: Set Eli's Next Alarm to the next day where he has school
-  trigger:
-  - platform: template
-    value_template: '{{ now() > as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo)
+  triggers:
+  - value_template: '{{ now() > as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo)
       + timedelta(minutes = 1) }}'
     alias: When Eli's Alarm has fired
     id: alarm_fired
-  - platform: state
-    entity_id:
+    trigger: template
+  - entity_id:
     - input_datetime.eca_day_alarm
     - input_datetime.elis_school_day_alarm
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: trigger
       id:
       - alarm_fired
     then:
-    - service: input_datetime.set_datetime
-      data:
+    - data:
         date: '{{ (now() - timedelta(days = 1)).date() }}'
       target:
         entity_id: input_datetime.elis_next_alarm
-    - service: script.increment_alarm_day
-      data:
+      action: input_datetime.set_datetime
+    - data:
         alarm_datetime: input_datetime.elis_next_alarm
         calendars:
         - calendar.eli_school_days
-  - if:
-    - condition: template
-      value_template: '{{ as_datetime(states(''input_datetime.elis_next_alarm'')).weekday()
-        < 5 }}'
-      alias: Next alarm is on a weekday
-    then:
-    - service: input_datetime.set_datetime
-      data:
-        time: '{{ states(''input_datetime.elis_school_day_alarm'') }}'
-      target:
-        entity_id: input_datetime.elis_next_alarm
-    else:
-    - service: input_datetime.set_datetime
-      data:
+      action: script.increment_alarm_day
+  - choose:
+    - conditions:
+      - alias: Next alarm is on Mon, Tue or Wed
+        condition: template
+        value_template: '{{ as_datetime(states(''input_datetime.elis_next_alarm'')).weekday()
+          < 3 }}'
+      sequence:
+      - data:
+          time: '{{ states(''input_datetime.elis_school_day_alarm'') }}'
+        target:
+          entity_id: input_datetime.elis_next_alarm
+        action: input_datetime.set_datetime
+    - conditions:
+      - alias: Next alarm is on Thu or Fri
+        condition: template
+        value_template: '{{ as_datetime(states(''input_datetime.elis_next_alarm'')).weekday()
+          in [3,4] }}'
+      sequence:
+      - data:
+          time: '{{ (today_at(states(''input_datetime.elis_school_day_alarm'')) +
+            timedelta(minutes = 5)).time() }}'
+        target:
+          entity_id: input_datetime.elis_next_alarm
+        action: input_datetime.set_datetime
+    default:
+    - data:
         time: '{{ states(''input_datetime.eca_day_alarm'') }}'
       target:
         entity_id: input_datetime.elis_next_alarm
+      action: input_datetime.set_datetime
   mode: single
   max_exceeded: silent
 - id: '1690814722057'
@@ -5633,11 +5646,13 @@
     default:
     - condition: template
       value_template: '{{ is_state(trigger.entity_id, ''cool'') }}'
-    - action: climate.turn_on
-      metadata: {}
-      data: {}
+    - action: script.turn_on
+      data:
+        variables:
+          switch_on: true
+          resync: false
       target:
-        entity_id: '{{ trigger.entity_id }}'
+        entity_id: script.{{ trigger.entity_id.split('.')[1] }}_set_state
   mode: single
   max_exceeded: silent
 - id: '1731678711205'
@@ -6871,7 +6886,7 @@
             - delay: 1
             while:
             - condition: template
-              value_template: '{{ ''move'' in states(''input_text.zz_parents_room_controller_last_event'')
+              value_template: '{{ ''hold'' in states(''input_text.zz_parents_room_controller_last_event'')
                 }}'
         else:
         - repeat:
@@ -6886,7 +6901,7 @@
             - delay: 1
             while:
             - condition: template
-              value_template: '{{ ''move'' in states(''input_text.zz_parents_room_controller_last_event'')
+              value_template: '{{ ''hold'' in states(''input_text.zz_parents_room_controller_last_event'')
                 }}'
       action_button_left_short:
       - choose:
@@ -6999,7 +7014,7 @@
             - delay: 2
             while:
             - condition: template
-              value_template: '{{ ''hold'' in states(''input_text.zz_parents_room_controller_last_event'')
+              value_template: '{{ ''move'' in states(''input_text.zz_parents_room_controller_last_event'')
                 }}'
         else:
         - repeat:
@@ -7012,7 +7027,7 @@
             - delay: 2
             while:
             - condition: template
-              value_template: '{{ ''hold'' in states(''input_text.zz_parents_room_controller_last_event'')
+              value_template: '{{ ''move'' in states(''input_text.zz_parents_room_controller_last_event'')
                 }}'
       action_button_down_short:
       - if:
@@ -7048,7 +7063,7 @@
             - delay: 2
             while:
             - condition: template
-              value_template: '{{ ''hold'' in states(''input_text.zz_parents_room_controller_last_event'')
+              value_template: '{{ ''move'' in states(''input_text.zz_parents_room_controller_last_event'')
                 }}'
         else:
         - repeat:
@@ -7061,7 +7076,7 @@
             - delay: 2
             while:
             - condition: template
-              value_template: '{{ ''hold'' in states(''input_text.zz_parents_room_controller_last_event'')
+              value_template: '{{ ''move'' in states(''input_text.zz_parents_room_controller_last_event'')
                 }}'
       button_left_long_loop: false
       button_left_long_max_loop_repeats: 50
