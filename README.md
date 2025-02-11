@@ -47,7 +47,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 23
 [`select`](https://www.home-assistant.io/components/select) | 33
-[`sensor`](https://www.home-assistant.io/components/sensor) | 540
+[`sensor`](https://www.home-assistant.io/components/sensor) | 541
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 56
@@ -57,8 +57,8 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
-[`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1591
+[`zone`](https://www.home-assistant.io/components/zone) | 17
+Total | 1593
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)

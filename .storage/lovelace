@@ -11136,82 +11136,6 @@
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
                   "header": {
-                    "title": "Inbound Traffic"
-                  },
-                  "stacked": true,
-                  "all_series_config": {
-                    "type": "column",
-                    "group_by": {
-                      "func": "sum",
-                      "duration": "5min"
-                    }
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.pfsense_mb_in_within_1min",
-                      "name": "pfSense",
-                      "stack_group": "total",
-                      "type": "line"
-                    },
-                    {
-                      "entity": "sensor.home_assistant_mb_in_within_1min",
-                      "name": "Home Assistant",
-                      "stack_group": "subtotal"
-                    },
-                    {
-                      "entity": "sensor.docker_mb_in_within_1min",
-                      "name": "Docker",
-                      "stack_group": "subtotal"
-                    },
-                    {
-                      "entity": "sensor.samba_mb_in_within_1min",
-                      "name": "Samba",
-                      "stack_group": "subtotal"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "Outbound Traffic"
-                  },
-                  "stacked": true,
-                  "all_series_config": {
-                    "type": "column",
-                    "group_by": {
-                      "func": "sum",
-                      "duration": "5min"
-                    }
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.pfsense_mb_out_within_1min",
-                      "name": "pfSense",
-                      "stack_group": "total",
-                      "type": "line"
-                    },
-                    {
-                      "entity": "sensor.home_assistant_mb_out_within_1min",
-                      "name": "Home Assistant",
-                      "stack_group": "subtotal"
-                    },
-                    {
-                      "entity": "sensor.docker_mb_out_within_1min",
-                      "name": "Docker",
-                      "stack_group": "subtotal"
-                    },
-                    {
-                      "entity": "sensor.samba_mb_out_within_1min",
-                      "name": "Samba",
-                      "stack_group": "subtotal"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
                     "title": "Connections"
                   },
                   "series": [
@@ -11248,6 +11172,98 @@
                       "apex_config": {
                         "tickAmount": 5
                       }
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Gateway Traffic"
+                  },
+                  "stacked": true,
+                  "all_series_config": {
+                    "type": "column",
+                    "show": {
+                      "in_header": "raw"
+                    },
+                    "group_by": {
+                      "func": "sum",
+                      "duration": "5min"
+                    }
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.pfsense_mb_in_within_1min",
+                      "name": "Inbound"
+                    },
+                    {
+                      "entity": "sensor.pfsense_mb_out_within_1min",
+                      "name": "Outbound",
+                      "transform": "return -entity.state"
+                    }
+                  ],
+                  "apex_config": {
+                    "yaxis": {
+                      "show": false
+                    }
+                  }
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Inbound Traffic to Apps"
+                  },
+                  "stacked": true,
+                  "all_series_config": {
+                    "type": "column",
+                    "group_by": {
+                      "func": "sum",
+                      "duration": "5min"
+                    }
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.home_assistant_mb_in_within_1min",
+                      "name": "Home Assistant"
+                    },
+                    {
+                      "entity": "sensor.docker_mb_in_within_1min",
+                      "name": "Docker"
+                    },
+                    {
+                      "entity": "sensor.samba_mb_in_within_1min",
+                      "name": "Samba"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Outbound Traffic from Apps"
+                  },
+                  "stacked": true,
+                  "all_series_config": {
+                    "type": "column",
+                    "group_by": {
+                      "func": "sum",
+                      "duration": "5min"
+                    }
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.home_assistant_mb_out_within_1min",
+                      "name": "Home Assistant"
+                    },
+                    {
+                      "entity": "sensor.docker_mb_out_within_1min",
+                      "name": "Docker"
+                    },
+                    {
+                      "entity": "sensor.samba_mb_out_within_1min",
+                      "name": "Samba"
                     }
                   ]
                 }
@@ -14384,6 +14400,31 @@
                       "above": 0
                     }
                   ]
+                },
+                {
+                  "condition": "screen",
+                  "media_query": "(min-width: 0px) and (max-width: 767px)"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "markdown",
+                  "content": "## <ha-icon icon=\"mdi:bus-stop\"></ha-icon> Newton Station Exit C"
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.bus_stop_newton_station_exit_c",
+                  "template": "homebound_bus"
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "zone.newton_station_exit_c_bus_stop",
+                  "above": 0
                 },
                 {
                   "condition": "screen",
