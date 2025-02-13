@@ -4533,6 +4533,19 @@
             for_each:
             - sensor.bus_stop_after_kampong_eunos
             - sensor.bus_stop_after_lorong_g_telok_kurau
+      - if:
+        - condition: template
+          value_template: '{{ states.zone | selectattr(''entity_id'',''in'',[''zone.newton_station_exit_c_bus_stop''])
+            | map(attribute = ''state'') | map(''int'') | list | sum > 0 }}'
+        then:
+        - repeat:
+            sequence:
+            - action: homeassistant.update_entity
+              metadata: {}
+              data:
+                entity_id: '{{ repeat.item }}'
+            for_each:
+            - sensor.bus_stop_newton_station_exit_c
     - conditions:
       - condition: trigger
         id:
@@ -5842,7 +5855,7 @@
         alias: Set Daniel's Next Alarm 10min before Elena's alarm
         action: input_datetime.set_datetime
     - conditions:
-      - alias: If Eli has school on Tue, Thu or Sat
+      - alias: If Eli has school on Tue or Sat
         condition: template
         value_template: "{% set output = false %} \n{% if school_days['calendar.eli_school_days'].events
           | length > 0 %}\n  {% if as_datetime(school_days['calendar.eli_school_days'].events[0].start).weekday()
@@ -5857,6 +5870,48 @@
         then:
         - data:
             time: '{{ states(''input_datetime.elis_school_day_alarm'') }}'
+          target:
+            entity_id: input_datetime.daniels_next_alarm
+          alias: Set Daniel's Next Alarm to Eli's School Day Alarm
+          action: input_datetime.set_datetime
+        - data:
+            datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
+              - timedelta(minutes = 5) }}'
+          target:
+            entity_id: input_datetime.daniels_next_alarm
+          alias: Set Daniel's Next Alarm 5min before Eli's alarm
+          action: input_datetime.set_datetime
+        else:
+        - data:
+            time: '{{ states(''input_datetime.eca_day_alarm'') }}'
+          target:
+            entity_id: input_datetime.daniels_next_alarm
+          alias: Set Daniel's Next Alarm to ECA Day Alarm
+          action: input_datetime.set_datetime
+        - data:
+            datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
+              - timedelta(minutes = 10) }}'
+          target:
+            entity_id: input_datetime.daniels_next_alarm
+          alias: Set Daniel's Next Alarm 10min before kids' alarm
+          action: input_datetime.set_datetime
+    - conditions:
+      - alias: If Eli has school on Thu
+        condition: template
+        value_template: "{% set output = false %} \n{% if school_days['calendar.eli_school_days'].events
+          | length > 0 %}\n  {% if as_datetime(school_days['calendar.eli_school_days'].events[0].start).weekday()
+          in [1,3,5] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %} \n{{
+          output }}"
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).weekday()
+            < 5 }}'
+          alias: Alarm is on a weekday
+        then:
+        - data:
+            time: '{{ (today_at(states(''input_datetime.elis_school_day_alarm''))
+              + timedelta(minutes = 5)).time() }}'
           target:
             entity_id: input_datetime.daniels_next_alarm
           alias: Set Daniel's Next Alarm to Eli's School Day Alarm
@@ -6051,7 +6106,28 @@
           alias: Set Grace's Next Alarm 10min before kids' alarm
           action: input_datetime.set_datetime
     - conditions:
-      - alias: If Eli has school on Mon, Wed or Fri
+      - alias: If Eli has school on Mon or Wed
+        condition: template
+        value_template: "{% set output = false %} \n{% if school_days['calendar.eli_school_days'].events
+          | length > 0 %}\n  {% if as_datetime(school_days['calendar.eli_school_days'].events[0].start).weekday()
+          in [0,2] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %} \n{{
+          output }}"
+      sequence:
+      - data:
+          time: '{{ states(''input_datetime.elis_school_day_alarm'') }}'
+        target:
+          entity_id: input_datetime.graces_next_alarm
+        alias: Set Grace's Next Alarm to Eli's School Day Alarm
+        action: input_datetime.set_datetime
+      - data:
+          datetime: '{{ as_datetime(states(''input_datetime.graces_next_alarm''))
+            - timedelta(minutes = 10) }}'
+        target:
+          entity_id: input_datetime.graces_next_alarm
+        alias: Set Grace's Next Alarm 10min before Eli's alarm
+        action: input_datetime.set_datetime
+    - conditions:
+      - alias: If Eli has school on Fri
         condition: template
         value_template: "{% set output = false %} \n{% if school_days['calendar.eli_school_days'].events
           | length > 0 %}\n  {% if as_datetime(school_days['calendar.eli_school_days'].events[0].start).weekday()
@@ -6059,7 +6135,8 @@
           output }}"
       sequence:
       - data:
-          time: '{{ states(''input_datetime.elis_school_day_alarm'') }}'
+          time: '{{ (today_at(states(''input_datetime.elis_school_day_alarm'')) +
+            timedelta(minutes = 5)).time() }}'
         target:
           entity_id: input_datetime.graces_next_alarm
         alias: Set Grace's Next Alarm to Eli's School Day Alarm
