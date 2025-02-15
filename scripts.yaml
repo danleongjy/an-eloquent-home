@@ -948,6 +948,8 @@ fan_controller:
       - condition: template
         value_template: '{{ command == ''fan_auto_control'' }}'
       sequence:
+      - condition: template
+        value_template: '{{ is_state(fan_automations[fan], ''off'') }}'
       - action: automation.turn_on
         target:
           entity_id: '{{ fan_automations[fan] }}'
@@ -967,6 +969,8 @@ fan_controller:
       - condition: template
         value_template: '{{ command == ''fan_manual_control'' }}'
       sequence:
+      - condition: template
+        value_template: '{{ is_state(fan_automations[fan], ''on'') }}'
       - action: automation.turn_off
         target:
           entity_id: '{{ fan_automations[fan] }}'
@@ -1139,6 +1143,9 @@ lights_controller:
           automations: "{% set output = namespace(automations = []) %}\n{% for area
             in areas %}\n  {% set output.automations = output.automations + lights_automations[area]
             %}\n{% endfor %}\n{{ output.automations }}\n"
+      - condition: template
+        value_template: '{{ ''off'' in states.automation | selectattr(''entity_id'',
+          ''in'', automations) | map(attribute = ''state'') | list }}'
       - action: automation.turn_on
         target:
           entity_id: '{{ automations }}'
@@ -1169,6 +1176,9 @@ lights_controller:
           automations: "{% set output = namespace(automations = []) %}\n{% for area
             in areas %}\n  {% set output.automations = output.automations + lights_automations[area]
             %}\n{% endfor %}\n{{ output.automations }}\n"
+      - condition: template
+        value_template: '{{ ''on'' in states.automation | selectattr(''entity_id'',
+          ''in'', automations) | map(attribute = ''state'') | list }}'
       - action: automation.turn_off
         target:
           entity_id: '{{ automations }}'
@@ -1281,6 +1291,8 @@ ac_controller:
       - condition: template
         value_template: '{{ command == ''cooling_auto_control'' }}'
       sequence:
+      - condition: template
+        value_template: '{{ is_state(cooling_automations[ac], ''off'') }}'
       - action: automation.turn_on
         target:
           entity_id: '{{ cooling_automations[ac] }}'
@@ -1300,6 +1312,8 @@ ac_controller:
       - condition: template
         value_template: '{{ command == ''cooling_manual_control'' }}'
       sequence:
+      - condition: template
+        value_template: '{{ is_state(cooling_automations[ac], ''on'') }}'
       - action: automation.turn_off
         target:
           entity_id: '{{ cooling_automations[ac] }}'
@@ -1407,6 +1421,8 @@ cover_controller:
       - condition: template
         value_template: '{{ command == ''cover_auto_control'' }}'
       sequence:
+      - condition: template
+        value_template: '{{ is_state(automation[cover], ''off'') }}'
       - target:
           entity_id: '{{ automation[cover] }}'
         action: automation.turn_on
@@ -1426,6 +1442,8 @@ cover_controller:
       - condition: template
         value_template: '{{ command == ''cover_manual_control'' }}'
       sequence:
+      - condition: template
+        value_template: '{{ is_state(automation[cover], ''on'') }}'
       - target:
           entity_id: '{{ automation[cover] }}'
         action: automation.turn_off
