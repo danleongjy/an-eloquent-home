@@ -154,13 +154,13 @@ action:
               entity_id: "{{ core_display_backlight }}"
     default:
       - choose:
-          - conditions: "{{ states(core_current_command) in ['lights_on', 'lights_off', 'lights_brighten', 'lights_darken', 'set_recommended_room_scene', 'turn_off_room'] }}"
+          - conditions: "{{ states(core_current_command) in ['lights_on', 'lights_off', 'lights_brighten', 'lights_darken', 'set_recommended_room_scene', 'turn_off_room', 'lights_auto_control', 'lights_manual_control'] }}"
             sequence:
               - action: script.lights_controller
                 data:
                   lights: "{{ lights[room] }}"
                   command: "{{ states(core_current_command) }}"
-          - conditions: "{{ states(core_current_command) in ['fan_on', 'fan_off', 'fan_speed_up', 'fan_slow_down', 'fan_reverse', 'fan_forward'] }}"
+          - conditions: "{{ states(core_current_command) in ['fan_on', 'fan_off', 'fan_speed_up', 'fan_slow_down', 'fan_reverse', 'fan_forward', 'fan_auto_control', 'fan_manual_control'] }}"
             sequence:
               - action: script.fan_controller
                 data:

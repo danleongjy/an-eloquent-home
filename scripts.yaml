@@ -231,7 +231,8 @@ set_recommended_scene:
             '
       - if:
         - condition: template
-          value_template: '{{ room_cover_automation[repeat.item] is defined }}'
+          value_template: '{{ states(room_cover_automation[repeat.item]) != ''unknown''
+            }}'
         then:
         - action: automation.turn_on
           target:

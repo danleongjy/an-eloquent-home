@@ -92,9 +92,17 @@ script:
           // main display
           if (id(lights_power).state) {
             id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(lights_brightness).state) / 255)), id(width), id(height) * (0.75 * (id(lights_brightness).state) / 255), id(slider));
+            if (!id(lights_auto_control).state) {
+              for (int i = 1; i <= 10; i++) {
+                id(interface_display).filled_rectangle(0, id(height) * 0.75 - id(height) * 0.75 / 10 * i, id(width), id(height) * 0.75 / 20, id(black));
+              }
+            }
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_on));
           } else {
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_off));
+            if (!id(lights_auto_control).state) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
           }
   - id: draw_display_main_fan
     then:
@@ -123,6 +131,9 @@ script:
             } else {
               id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_fan_reverse), ImageAlign::CENTER, id(device_off));
             }
+            if (!id(fan_auto_control).state) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
           }
   - id: draw_display_main_ac
     then:
@@ -135,12 +146,17 @@ script:
           // main display
           if (id(ac_mode).state == "cool") {
             id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(ac_temp).state - 23) / 4)), id(width), id(height) * (0.75 * (id(ac_temp).state - 23) / 4), id(slider));
+            if (!id(ac_auto_control).state) {
+              for (int i = 1; i <= 10; i++) {
+                id(interface_display).filled_rectangle(0, id(height) * 0.75 - id(height) * 0.75 / 10 * i, id(width), id(height) * 0.75 / 20, id(black));
+              }
+            }
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_on));
           } else {
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_off));
-          }
-          if (id(fan_auto_control).state) {
-            id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(fan_auto), ImageAlign::CENTER, id(auto_control));
+            if (!id(ac_auto_control).state) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
           }
   - id: draw_display_main_cover
     then:
@@ -161,6 +177,9 @@ script:
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_cover), ImageAlign::CENTER, id(device_on));
           } else {
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_cover), ImageAlign::CENTER, id(device_off));
+            if (!id(cover_auto_control).state) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
           }
   - id: draw_display_main_doorbell
     then:
@@ -265,11 +284,17 @@ binary_sensor:
     id: lights_power
     entity_id: light.${core_room}_lights
   - platform: homeassistant
+    id: lights_auto_control
+    entity_id: automation.${core_room}_motion_lights
+  - platform: homeassistant
     id: fan_power
     entity_id: fan.${core_room}_fan
   - platform: homeassistant
     id: fan_auto_control
     entity_id: automation.${core_room}_fan_auto_control
+  - platform: homeassistant
+    id: ac_auto_control
+    entity_id: automation.${core_room}_motion_ac
   - platform: homeassistant
     id: cover_auto_control
     entity_id: ${cover_auto_control_automation}
@@ -406,39 +431,93 @@ binary_sensor:
                       lambda: 'return id(current_view).state == "fan";'
                     then:
                       - lambda: 'id(current_command).publish_state("fan_reverse");'
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "ac";'
-                    then:
-                      - lambda: 'id(current_command).publish_state("cooling_auto_control");'
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "cover";'
-                    then:
-                      - lambda: 'id(current_command).publish_state("cover_auto_control");'
   - platform: gpio
     pin: 38
     name: 'Middle Button'
     filters:
       - invert:
-    on_click:
-      - script.execute: reset_view
-      - if:
-          condition:
-            rtttl.is_playing
-          then:
-            - rtttl.stop
-      - if:
-          condition:
-            light.is_on: backlight
-          then:
-            - if:
-                condition:
-                  display.is_displaying_page: current_time
-                then:
-                  display.page.show: lights
-                else:
-                  display.page.show_next: interface_display
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                rtttl.is_playing
+              then:
+                - rtttl.stop
+          - if:
+              condition:
+                light.is_on: backlight
+              then:
+                - if:
+                    condition:
+                      display.is_displaying_page: current_time
+                    then:
+                      display.page.show: lights
+                    else:
+                      display.page.show_next: interface_display
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                rtttl.is_playing
+              then:
+                - rtttl.stop
+          - if:
+              condition:
+                light.is_on: backlight
+              then:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(lights_auto_control).state;'
+                          then:
+                            lambda: 'id(current_command).publish_state("lights_manual_control");'
+                          else:
+                            lambda: 'id(current_command).publish_state("lights_auto_control");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(fan_auto_control).state;'
+                          then:
+                            lambda: 'id(current_command).publish_state("fan_manual_control");'
+                          else:
+                            lambda: 'id(current_command).publish_state("fan_auto_control");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "ac";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(ac_auto_control).state;'
+                          then:
+                            lambda: 'id(current_command).publish_state("cooling_manual_control");'
+                          else:
+                            lambda: 'id(current_command).publish_state("cooling_auto_control");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "cover";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(cover_auto_control).state;'
+                          then:
+                            lambda: 'id(current_command).publish_state("cover_manual_control");'
+                          else:
+                            lambda: 'id(current_command).publish_state("cover_auto_control");'
   - platform: gpio
     pin: 37
     name: 'Right Button'
@@ -566,16 +645,6 @@ binary_sensor:
                       lambda: 'return id(current_view).state == "fan";'
                     then:
                       - lambda: 'id(current_command).publish_state("fan_forward");'
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "ac";'
-                    then:
-                      - lambda: 'id(current_command).publish_state("cooling_manual_control");'
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "cover";'
-                    then:
-                      - lambda: 'id(current_command).publish_state("cover_manual_control");'
 
 number:
   - platform: template
@@ -638,8 +707,6 @@ color:
     hex: 4D729D
   - id: slider
     hex: 4D729D #41A7F2
-  - id: auto_control
-    hex: F2900F
   - id: alarm_dismissable
     hex: F2900F
   - id: black
@@ -692,8 +759,8 @@ image:
   - file: mdi:${window_cover_type}
     id: tab_cover
     resize: 30x30
-  - file: mdi:fan-auto
-    id: fan_auto
+  - file: mdi:alpha-m-box
+    id: manual_control
     resize: 50x50
   - file: mdi:alarm
     id: main_alarm
