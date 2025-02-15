@@ -265,12 +265,54 @@ recommended_light_level:
   alias: Recommended Light Level
   sequence:
   - variables:
-      light_room: '{{ area_name(light) }}'
+      lights_dim_start:
+        light.playroom_lights: input_datetime.dim_hours_start
+        light.yard_light_entity: input_datetime.dim_hours_start
+        light.elenas_room_lights: input_datetime.wind_down
+        light.elis_room_lights: input_datetime.wind_down
+        light.elis_room_floor_lamp: input_datetime.dim_hours_end
+        light.hallway_lights: input_datetime.dim_hours_start
+        light.junior_bathroom_lights: input_datetime.dim_hours_start
+        light.powder_room_pendant_light_entity: input_datetime.dim_hours_start
+        light.dining_room_lights: input_datetime.dim_hours_start
+        light.dining_room_pendant_light_entity: input_datetime.dim_hours_start
+        light.living_room_lights: input_datetime.dim_hours_start
+        light.living_room_pendant_light_entity: input_datetime.dim_hours_start
+        light.study_room_lights: input_datetime.dim_hours_start
+        light.study_room_bulb_4_entity: input_datetime.dim_hours_start
+        light.study_room_floor_lamp_entity: input_datetime.dim_hours_start
+        light.master_bathroom_light_entity: input_datetime.dim_hours_start
+        light.master_bathroom_pendant_light_entity: input_datetime.dim_hours_start
+        light.parents_room_lights: input_datetime.wind_down
+        light.parents_room_bedside_lamp: input_datetime.dim_hours_end
+        light.kitchen_lights: input_datetime.dim_hours_start
+      lights_dim_end:
+        light.playroom_lights: input_datetime.dim_hours_end
+        light.yard_light_entity: input_datetime.dim_hours_end
+        light.elenas_room_lights: input_datetime.sleep_hours_end
+        light.elis_room_lights: input_datetime.sleep_hours_end
+        light.elis_room_floor_lamp: input_datetime.dim_hours_end
+        light.hallway_lights: input_datetime.dim_hours_end
+        light.junior_bathroom_lights: input_datetime.dim_hours_end
+        light.powder_room_pendant_light_entity: input_datetime.dim_hours_end
+        light.dining_room_lights: input_datetime.dim_hours_end
+        light.dining_room_pendant_light_entity: input_datetime.dim_hours_end
+        light.living_room_lights: input_datetime.dim_hours_end
+        light.living_room_pendant_light_entity: input_datetime.dim_hours_end
+        light.study_room_lights: input_datetime.dim_hours_end
+        light.study_room_bulb_4_entity: input_datetime.dim_hours_end
+        light.study_room_floor_lamp_entity: input_datetime.dim_hours_end
+        light.master_bathroom_light_entity: input_datetime.dim_hours_end
+        light.master_bathroom_pendant_light_entity: input_datetime.dim_hours_end
+        light.parents_room_lights: input_datetime.sleep_hours_end
+        light.parents_room_bedside_lamp: input_datetime.dim_hours_end
+        light.kitchen_lights: input_datetime.dim_hours_end
+    alias: Define Dim Hours for each light
   - variables:
-      dim_start: "{% if dim_hours_start is defined %}\n  {{ dim_hours_start }}\n{%
-        else %}\n  input_datetime.dim_hours_start\n{% endif %}\n"
-      dim_end: "{% if dim_hours_end is defined %}\n  {{ dim_hours_end }}\n{% else
-        %}\n  input_datetime.dim_hours_end\n{% endif %}\n"
+      dim_start: "{% if lights_dim_start[light] is defined %}\n  {{ lights_dim_start[light]
+        }}\n{% else %}\n  input_datetime.dim_hours_start\n{% endif %}\n"
+      dim_end: "{% if lights_dim_end[light] is defined %}\n  {{ lights_dim_end[light]
+        }}\n{% else %}\n  input_datetime.dim_hours_end\n{% endif %}\n"
   - variables:
       light_brightness: "{% if states(dim_start) != states(dim_end) %}\n  {% if (now()
         > today_at(states(dim_start)) and now() <= today_at('23:59')) or (now() >=
@@ -286,21 +328,6 @@ recommended_light_level:
   mode: parallel
   icon: mdi:lightbulb-on-70
   max: 15
-  variables:
-    wind_down_rooms:
-    - Elena's Room
-    - Eli's Room
-    - Hallway
-    - Master Bathroom
-    - Parents' Room
-    - Powder Room
-    sleep_hours_end_rooms:
-    - Elena's Room
-    - Eli's Room
-    - Hallway
-    - Master Bathroom
-    - Parents' Room
-    - Powder Room
   fields:
     light:
       selector:

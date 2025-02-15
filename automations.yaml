@@ -1991,6 +1991,62 @@
         - automation.elenas_room_curtains_auto_control
         - automation.elis_room_curtains_auto_control
       action: automation.turn_on
+      enabled: false
+    - data: {}
+      target:
+        entity_id:
+        - automation.auto_cooling_at_night
+        - automation.elenas_room_fan_auto_control
+        - automation.elis_room_fan_auto_control
+        - automation.parents_room_fan_auto_control
+        - automation.dining_room_fan_auto_control
+        - automation.living_room_fan_auto_control
+        - automation.study_room_fan_auto_control
+        - automation.hallway_motion_lights
+        - automation.junior_bathroom_motion_lights
+        - automation.master_bathroom_motion_light
+        - automation.master_bathroom_motion_pendant_light
+        - automation.powder_room_motion_pendant_light
+        - automation.water_heater_motion
+        - automation.south_facing_blinds_auto_control
+        - automation.lights_for_wind_down
+        - automation.lights_for_sleep_hours_start
+        - automation.daniels_alarm
+        - automation.elis_alarm
+        - automation.graces_alarm
+        - automation.parents_room_motion_ac
+        - automation.parents_room_motion_fan
+        - automation.parents_room_motion_lights
+        - automation.parents_room_motion_bedside_lamp
+        - automation.elenas_room_motion_ac
+        - automation.elenas_room_motion_fan
+        - automation.elenas_room_motion_lights
+        - automation.elis_room_motion_ac
+        - automation.elis_room_motion_fan
+        - automation.elis_room_motion_lights
+        - automation.elis_room_motion_floor_lamp
+        - automation.kitchen_motion_lights
+        - automation.study_walkway_motion_light
+        - automation.playroom_motion_lights
+        - automation.yard_motion_light
+        - automation.dining_room_motion_ac
+        - automation.dining_room_motion_fan
+        - automation.dining_room_motion_lights
+        - automation.dining_room_motion_pendant_light
+        - automation.living_room_motion_ac
+        - automation.living_room_motion_fan
+        - automation.living_room_motion_lights
+        - automation.living_room_motion_pendant_light
+        - automation.study_room_motion_ac
+        - automation.study_room_motion_fan
+        - automation.study_room_motion_lights
+        - automation.doorbell
+        - automation.study_room_voice_assistant_listening_for_wake_word
+        - automation.kitchen_voice_assistant_listening_for_wake_word
+        - automation.living_room_voice_assistant_listening_for_wake_word
+        - automation.elenas_room_curtains_auto_control
+        - automation.elis_room_curtains_auto_control
+      action: automation.turn_on
     - repeat:
         sequence:
         - action: automation.trigger
@@ -2003,6 +2059,20 @@
         for_each:
         - automation.south_facing_blinds_auto_control
         - automation.kitchen_blind_auto_control
+        - automation.elis_room_curtains_auto_control
+        - automation.elenas_room_curtains_auto_control
+      enabled: false
+    - repeat:
+        sequence:
+        - action: automation.trigger
+          metadata: {}
+          data:
+            skip_condition: true
+          target:
+            entity_id: '{{ repeat.item }}'
+        - delay: 5
+        for_each:
+        - automation.south_facing_blinds_auto_control
         - automation.elis_room_curtains_auto_control
         - automation.elenas_room_curtains_auto_control
   mode: single
@@ -2048,6 +2118,20 @@
           entity_id:
           - automation.south_facing_blinds_auto_control
           - automation.kitchen_blind_auto_control
+          - automation.dining_room_motion_timeout
+          - automation.elenas_room_motion_timeout
+          - automation.elis_room_motion_timeout
+          - automation.living_room_motion_timeout
+          - automation.parents_room_motion_timeout
+          - automation.study_walkway_motion_timeout
+          - automation.study_room_motion_timeout
+          - automation.master_bathroom_blind_auto_control
+        action: automation.turn_on
+        enabled: false
+      - data: {}
+        target:
+          entity_id:
+          - automation.south_facing_blinds_auto_control
           - automation.dining_room_motion_timeout
           - automation.elenas_room_motion_timeout
           - automation.elis_room_motion_timeout
