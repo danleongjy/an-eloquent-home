@@ -40,20 +40,6 @@ blueprint:
         entity:
           domain: input_number
       default: input_number.minimum_lux
-    dim_hours_start:
-      name: Dim Hours Start
-      description: A time helper indicating when lights should be dim.  If lights never need to be dim, set this to the same time as Dim Hours End.
-      selector:
-        entity:
-          domain: input_datetime
-      default: input_datetime.dim_hours_start
-    dim_hours_end:
-      name: Dim Hours End
-      description: A time helper indicating when lights no longer need to be dim.
-      selector:
-        entity:
-          domain: input_datetime
-      default: input_datetime.dim_hours_end
     blackout_hours_start:
       name: Blackout Hours Start
       description: A time helper indicating when lights should be off.  If lights never need to be off, set this to the same time as Blackout Hours End.
@@ -126,8 +112,6 @@ condition:
         value_template: "{{ not debounce }}"
 action:
   - variables:
-      dim_start: !input dim_hours_start
-      dim_end: !input dim_hours_end
       blackout_start: !input blackout_hours_start
       blackout_end: !input blackout_hours_end
   - delay: 0.05
@@ -162,7 +146,5 @@ action:
                 - action: script.recommended_light_level
                   data:
                     light: "{{ repeat.item }}"
-                    dim_hours_start: "{{ dim_start }}"
-                    dim_hours_end: "{{ dim_end }}"
 mode: single
 max_exceeded: silent

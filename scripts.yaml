@@ -266,47 +266,15 @@ recommended_light_level:
   sequence:
   - variables:
       lights_dim_start:
-        light.playroom_lights: input_datetime.dim_hours_start
-        light.yard_light_entity: input_datetime.dim_hours_start
         light.elenas_room_lights: input_datetime.wind_down
         light.elis_room_lights: input_datetime.wind_down
         light.elis_room_floor_lamp: input_datetime.dim_hours_end
-        light.hallway_lights: input_datetime.dim_hours_start
-        light.junior_bathroom_lights: input_datetime.dim_hours_start
-        light.powder_room_pendant_light_entity: input_datetime.dim_hours_start
-        light.dining_room_lights: input_datetime.dim_hours_start
-        light.dining_room_pendant_light_entity: input_datetime.dim_hours_start
-        light.living_room_lights: input_datetime.dim_hours_start
-        light.living_room_pendant_light_entity: input_datetime.dim_hours_start
-        light.study_room_lights: input_datetime.dim_hours_start
-        light.study_room_bulb_4_entity: input_datetime.dim_hours_start
-        light.study_room_floor_lamp_entity: input_datetime.dim_hours_start
-        light.master_bathroom_light_entity: input_datetime.dim_hours_start
-        light.master_bathroom_pendant_light_entity: input_datetime.dim_hours_start
         light.parents_room_lights: input_datetime.wind_down
         light.parents_room_bedside_lamp: input_datetime.dim_hours_end
-        light.kitchen_lights: input_datetime.dim_hours_start
       lights_dim_end:
-        light.playroom_lights: input_datetime.dim_hours_end
-        light.yard_light_entity: input_datetime.dim_hours_end
         light.elenas_room_lights: input_datetime.sleep_hours_end
         light.elis_room_lights: input_datetime.sleep_hours_end
-        light.elis_room_floor_lamp: input_datetime.dim_hours_end
-        light.hallway_lights: input_datetime.dim_hours_end
-        light.junior_bathroom_lights: input_datetime.dim_hours_end
-        light.powder_room_pendant_light_entity: input_datetime.dim_hours_end
-        light.dining_room_lights: input_datetime.dim_hours_end
-        light.dining_room_pendant_light_entity: input_datetime.dim_hours_end
-        light.living_room_lights: input_datetime.dim_hours_end
-        light.living_room_pendant_light_entity: input_datetime.dim_hours_end
-        light.study_room_lights: input_datetime.dim_hours_end
-        light.study_room_bulb_4_entity: input_datetime.dim_hours_end
-        light.study_room_floor_lamp_entity: input_datetime.dim_hours_end
-        light.master_bathroom_light_entity: input_datetime.dim_hours_end
-        light.master_bathroom_pendant_light_entity: input_datetime.dim_hours_end
         light.parents_room_lights: input_datetime.sleep_hours_end
-        light.parents_room_bedside_lamp: input_datetime.dim_hours_end
-        light.kitchen_lights: input_datetime.dim_hours_end
     alias: Define Dim Hours for each light
   - variables:
       dim_start: "{% if lights_dim_start[light] is defined %}\n  {{ lights_dim_start[light]
@@ -337,25 +305,6 @@ recommended_light_level:
       name: Light
       description: The light on which to set the recommended level
       required: true
-    dim_hours_start:
-      selector:
-        entity:
-          filter:
-            domain: input_datetime
-      name: Dim Hours Start
-      description: A time helper indicating when lights should be dim.  If lights
-        never need to be dim, set this to the same time as Dim Hours End.
-      required: true
-      default: input_datetime.dim_hours_start
-    dim_hours_end:
-      selector:
-        entity:
-          filter:
-            domain: input_datetime
-      name: Dim Hours End
-      description: A time helper indicating when lights no longer need to be dim.
-      required: true
-      default: input_datetime.dim_hours_end
 alarm_lights:
   alias: Alarm Lights
   sequence:
