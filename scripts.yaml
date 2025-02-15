@@ -213,7 +213,14 @@ set_recommended_scene:
   sequence:
   - repeat:
       sequence:
-        service: automation.trigger
+      - action: automation.turn_on
+        target:
+          entity_id: '{{ states.automation | selectattr(''entity_id'', ''search'',
+            repeat.item + ''_motion'') | rejectattr(''entity_id'',''search'',''timeout'')
+            | map(attribute = ''entity_id'') | list }}
+
+            '
+      - action: automation.trigger
         data:
           skip_condition: true
         target:
@@ -222,10 +229,39 @@ set_recommended_scene:
             | map(attribute = ''entity_id'') | list }}
 
             '
+      - if:
+        - condition: template
+          value_template: '{{ room_cover_automation[repeat.item] is defined }}'
+        then:
+        - action: automation.turn_on
+          target:
+            entity_id: '{{ room_cover_automation[repeat.item] }}'
+        - action: automation.trigger
+          target:
+            entity_id: '{{ room_cover_automation[repeat.item] }}'
+          data:
+            skip_condition: true
+      - if:
+        - condition: template
+          value_template: '{{ states(''automation.'' + repeat.item + ''_fan_auto_control'')
+            != ''unknown'' }}'
+        then:
+        - action: automation.turn_on
+          target:
+            entity_id: '{{ ''automation.'' + repeat.item + ''_fan_auto_control'' }}'
       for_each: '{{ room }}'
   mode: parallel
   icon: mdi:magic-staff
   max: 15
+  variables:
+    room_cover_automation:
+      elenas_room: automation.elenas_room_curtains_auto_control
+      elis_room: automation.elis_room_curtains_auto_control
+      dining_room: automation.south_facing_blinds_auto_control
+      living_room: automation.south_facing_blinds_auto_control
+      study_room: automation.south_facing_blinds_auto_control
+      parents_room: automation.master_bathroom_blind_auto_control
+      kitchen: automation.kitchen_blind_auto_control
   fields:
     room:
       name: Room
