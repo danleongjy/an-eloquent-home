@@ -18,12 +18,6 @@ blueprint:
       selector:
         entity:
           domain: fan
-    fan_auto_control:
-      name: Fan Auto Control
-      description: Automation that sets the fan speed and direction according to temperature, created using the Fan Auto Control blueprint.
-      selector:
-        entity:
-          domain: automation
     off_hours_start:
       name: Off Hours Start
       description: A time helper indicating when the fan should be off.  If the fan never needs to be off, set this to the same time as Off Hours End.
@@ -84,11 +78,14 @@ action:
   - condition: time
     after: !input off_hours_end
     before: !input off_hours_start
-  - action: automation.trigger
-    target:
-      entity_id: !input fan_auto_control
-  - action: automation.turn_on
-    target:
-      entity_id: !input fan_auto_control
+  - action: script.fan_controller
+    data:
+      fan: !input fan
+      command: fan_on
+  - delay: 1
+  - action: script.fan_controller
+    data:
+      fan: !input fan
+      command: fan_auto_control
 mode: single
 max_exceeded: silent

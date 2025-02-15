@@ -140,11 +140,9 @@ action:
                 entity_id: !input lux_sensor
                 below: !input insufficient_lux
         sequence:
-          - repeat:
-              for_each: !input lights_list
-              sequence:
-                - action: script.recommended_light_level
-                  data:
-                    light: "{{ repeat.item }}"
+          - action: script.lights_controller
+            data:
+              lights: "{{ lights_list }}"
+              command: lights_on
 mode: single
 max_exceeded: silent

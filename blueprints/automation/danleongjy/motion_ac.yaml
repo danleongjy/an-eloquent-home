@@ -122,8 +122,9 @@ action:
           
           {{ ac_on.recommend_turn_off == 0 }}
     then:
-      - action: climate.turn_on
-        target:
-          entity_id: !input ac
+      - action: script.ac_controller
+        data:
+          ac: !input ac
+          command: ac_on
 mode: single
 max_exceeded: silent
