@@ -35,11 +35,32 @@ wifi:
 
 captive_portal:
     
+external_components:
+  - source:
+      type: git
+      url: https://github.com/Chill-Division/M5Stack-ESPHome/
+    components: m5stack_pbhub
+
+i2c:
+  id: grove
+  sda: 4
+  scl: 13
+
+m5stack_pbhub:
+  - id: pbhub
+    address: 0x61
+    sda: 4
+    scl: 13
+
 binary_sensor:
   - platform: gpio
     id: motion
     name: Motion
-    pin: 13
+    pin: 
+      m5stack_pbhub: pbhub
+      number: 31
+      mode:
+        output: true
     device_class: motion
     publish_initial_state: true
     filters:
@@ -52,6 +73,17 @@ binary_sensor:
     on_release: 
       then:
         - light.turn_off: led
+  - platform: gpio
+    id: button
+    name: Button
+    pin: 
+      m5stack_pbhub: pbhub
+      number: 11
+      mode:
+        input: true
+    publish_initial_state: true
+    filters:
+      - invert:
 
 output:
   - platform: ledc
