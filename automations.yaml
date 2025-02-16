@@ -5578,70 +5578,55 @@
       target:
         entity_id: switch.study_room_voice_assistant_use_wake_word
   mode: single
-- id: '1722555368988'
-  alias: Doorbell
-  description: Chime on speakers when doorbell is pressed
-  use_blueprint:
-    path: EPMatt/ikea_e1766.yaml
-    input:
-      integration: ZHA
-      helper_last_controller_event: input_text.zz_doorbell_last_event
-      controller_device: 192b4e9c8aa753c4e58fc37ee65137a8
-      action_button_up_short:
-      - service: script.doorbell
-        data: {}
-      action_button_down_short:
-      - service: script.doorbell
-        data: {}
 - id: '1724106276332'
   alias: Main Door Camera Snapshots
   description: Take a snapshot and when motion detected at main door
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.main_door_motion
     from: 'off'
     to: 'on'
     for:
       hours: 0
       minutes: 0
-      seconds: 5
-  condition: []
-  action:
-  - service: input_text.set_value
-    metadata: {}
+      seconds: 10
+    trigger: state
+  conditions: []
+  actions:
+  - metadata: {}
     data:
       value: snapshot_{{ now().strftime('%Y%m%d_%H%M%S') }}.png
     target:
       entity_id: input_text.newest_main_door_camera_snapshot_filename
-  - service: camera.snapshot
-    metadata: {}
+    action: input_text.set_value
+  - metadata: {}
     data:
       filename: /media/main_door_camera/{{ states('input_text.newest_main_door_camera_snapshot_filename')
         }}
     target:
       entity_id: camera.main_door_camera
+    action: camera.snapshot
   - wait_for_trigger:
-    - platform: state
-      entity_id:
+    - entity_id:
       - sensor.main_door_camera
+      trigger: state
     continue_on_timeout: false
     timeout: 60
-  - service: local_file.update_file_path
-    data:
+  - data:
       entity_id: camera.recent_main_door_snapshot_1
       file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list') |   sort)[-1][7:]
         }}
-  - service: local_file.update_file_path
-    data:
+    action: local_file.update_file_path
+  - data:
       entity_id: camera.recent_main_door_snapshot_2
       file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list') |   sort)[-2][7:]
         }}
-  - service: local_file.update_file_path
-    data:
+    action: local_file.update_file_path
+  - data:
       entity_id: camera.recent_main_door_snapshot_3
       file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list') |   sort)[-3][7:]
         }}
+    action: local_file.update_file_path
   mode: restart
 - id: '1724902259555'
   alias: AC Change Temperature
@@ -7372,3 +7357,108 @@
       button_down_double_press: true
       integration: ZHA
       controller_device: d95e7e6ea10bf4b551365ef55e5a43af
+- id: '1739687260107'
+  alias: New automation
+  description: Play doorbell tones and flash Room Core lights when Main Door Camera
+    Button is pressed
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.main_door_camera_button
+    from: 'off'
+    to: 'on'
+  conditions: []
+  actions:
+  - variables:
+      rooms:
+        elis_room:
+          door: binary_sensor.elis_room_door
+          button: button.elis_room_core_ring_doorbell
+        elenas_room:
+          door: binary_sensor.elenas_room_door
+          button: button.elenas_room_core_ring_doorbell
+        parents_room:
+          door: binary_sensor.parents_room_doors
+          button: button.parents_room_core_ring_doorbell
+  - parallel:
+    - sequence:
+      - action: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: 0.66
+        target:
+          entity_id: media_player.kitchen_speaker
+      - delay: 1
+      - target:
+          entity_id: media_player.kitchen_speaker
+        data:
+          media_content_id: "https://an-eloquent-home.duckdns.org/media/local/doorbells/{{
+            ['JR DDG Final Osaka Loop', \n                                                               'JR
+            DDG nDS e231 Door Chime',\n                                                               'JR
+            Station Notification 2',\n                                                               'JR
+            Sunny Spot V1',\n                                                               'JR
+            Cosmos V1',\n                                                               'JR
+            Susuki Heights V2'] | random }}.mp3\n"
+          media_content_type: music
+        action: media_player.play_media
+    - sequence:
+      - delay: 5
+      - data:
+          skip_condition: true
+        target:
+          entity_id: automation.main_door_camera_snapshots
+        action: automation.trigger
+      - delay: 2
+      - metadata: {}
+        data:
+          message: Doorbell rung at {{ now().strftime('%H:%M') }}.
+          title: Please Check the Door
+          data:
+            image: /media/local/main_door_camera/{{ states('input_text.newest_main_door_camera_snapshot_filename')
+              }}
+            clickAction: /lovelace/dining_room
+        action: notify.mobile_app_aurora
+    - sequence:
+      - repeat:
+          for_each:
+          - elis_room
+          - elenas_room
+          - parents_room
+          sequence:
+            if:
+            - condition: template
+              value_template: '{{ is_state(rooms[repeat.item][''door''], ''on'') }}'
+            then:
+            - target:
+                entity_id: '{{ rooms[repeat.item][''button''] }}'
+              action: button.press
+      - data: {}
+        action: button.press
+        target:
+          entity_id:
+          - button.kitchen_core_ring_doorbell
+          - button.study_room_core_ring_doorbell
+    - sequence:
+      - condition: state
+        entity_id: binary_sensor.study_room_ethernet_connection
+        state: 'off'
+      - action: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: 0.66
+        target:
+          entity_id: media_player.kitchen_speaker
+      - delay: 1
+      - target:
+          entity_id: media_player.kitchen_speaker
+        data:
+          media_content_id: "https://an-eloquent-home.duckdns.org/media/local/doorbells/{{
+            ['JR DDG Final Osaka Loop', \n                                                               'JR
+            DDG nDS e231 Door Chime',\n                                                               'JR
+            Station Notification 2',\n                                                               'JR
+            Sunny Spot V1',\n                                                               'JR
+            Cosmos V1',\n                                                               'JR
+            Susuki Heights V2'] | random }}.mp3\n"
+          media_content_type: music
+        action: media_player.play_media
+  mode: restart
