@@ -165,6 +165,9 @@ binary_sensor:
     id: lights_power
     entity_id: light.${core_room}_lights
   - platform: homeassistant
+    id: lights_auto_control
+    entity_id: automation.${core_room}_motion_lights
+  - platform: homeassistant
     id: blinds_auto_control
     entity_id: automation.kitchen_blind_auto_control
   - platform: homeassistant
@@ -186,18 +189,42 @@ binary_sensor:
     id: front_button
     filters: 
       - invert:
-    on_click:
-      - if:
-          condition:
-            or:
-              - display.is_displaying_page: blinds
-              - display.is_displaying_page: screensaver
-          then:
-            - script.execute: reset_view
-            - display.page.show: current_time
-          else:
-            - script.execute: reset_view
-            - display.page.show_next: interface_display
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - if:
+              condition:
+                or:
+                  - display.is_displaying_page: blinds
+                  - display.is_displaying_page: screensaver
+              then:
+                - script.execute: reset_view
+                - display.page.show: current_time
+              else:
+                - script.execute: reset_view
+                - display.page.show_next: interface_display
+      - timing:
+          - ON for at least 1.5s
+        then:
+          - if:
+              condition:
+                switch.is_off: use_wake_word
+              then:
+                - if:
+                    condition: voice_assistant.is_running
+                    then:
+                      - voice_assistant.stop:
+                      - script.execute: reset_led
+                    else:
+                      - voice_assistant.start:
+              else:
+                - voice_assistant.stop
+                - delay: 1s
+                - script.execute: reset_led
+                - script.wait: reset_led
+                - voice_assistant.start_continuous:
   - platform: gpio
     pin: 33
     name: Blue Button
@@ -264,7 +291,7 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
                     then:
-                      - lambda: 'id(current_command).publish_state("lights_on");'
+                      - lambda: 'id(current_command).publish_state("lights_auto_control");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "blinds";'
@@ -341,7 +368,7 @@ binary_sensor:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
                     then:
-                      - lambda: 'id(current_command).publish_state("lights_off");'
+                      - lambda: 'id(current_command).publish_state("lights_manual_control");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "blinds";'
@@ -438,12 +465,6 @@ font:
     extras:
       - file: "gfonts://Material+Symbols+Outlined"
         glyphs: ["\U0000e846","\U0000f164","\U0000f7e8"] #mdi-thermometer, mdi-humidity, mdi-brightness
-  - file: 
-      type: gfonts
-      family: Roboto
-      weight: bold
-    id: auto_control_indicator
-    size: 50
 
 image:
   - file: mdi:clock-outline
@@ -454,6 +475,9 @@ image:
     resize: 30x30
   - file: mdi:roller-shade
     id: tab_blinds
+    resize: 30x30
+  - file: mdi:alpha-m-box
+    id: manual_control
     resize: 30x30
   - file: mdi:lightbulb-group
     id: main_lights
@@ -551,9 +575,17 @@ display:
           // main display
           if (id(lights_power).state) {
             it.filled_rectangle(0, id(height) * (0.7 - (0.7 * (id(lights_brightness).state) / 255)), id(width), id(height) * (0.7 * (id(lights_brightness).state) / 255), id(slider));
+            if (!id(lights_auto_control).state) {
+              for (int i = 1; i <= 10; i++) {
+                it.filled_rectangle(0, id(height) * 0.7 - id(height) * 0.7 / 10 * i, id(width), id(height) * 0.7 / 20, id(black));
+              }
+            }
             it.image(id(width) * 0.5, id(height) * 0.35, id(main_lights), ImageAlign::CENTER, id(device_on));
           } else {
             it.image(id(width) * 0.5, id(height) * 0.35, id(main_lights), ImageAlign::CENTER, id(device_off));
+            if (!id(lights_auto_control).state) {
+              it.image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
           }
       - id: blinds
         lambda: |-
@@ -573,12 +605,15 @@ display:
             it.filled_rectangle(0, id(height) * (0.7 - (0.7 * id(blinds_position).state) / 100), id(width), id(height) * (0.7 * id(blinds_position).state / 100), id(slider));
             if (!id(blinds_auto_control).state) {
               for (int i = 1; i <= 10; i++) {
-                id(interface_display).filled_rectangle(0, id(height) * 0.7 - id(height) * 0.7 / 10 * i, id(width), id(height) * 0.7 / 20, id(black));
+                it.filled_rectangle(0, id(height) * 0.7 - id(height) * 0.7 / 10 * i, id(width), id(height) * 0.7 / 20, id(black));
               }
             }
             it.image(id(width) * 0.5, id(height) * 0.35, id(main_blinds), ImageAlign::CENTER, id(device_on));
           } else {
             it.image(id(width) * 0.5, id(height) * 0.35, id(main_blinds), ImageAlign::CENTER, id(device_off));
+            if (!id(blinds_auto_control).state) {
+              it.image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
           }
       - id: screensaver
         lambda: |-
