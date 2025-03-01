@@ -70,6 +70,7 @@ Total | 1595
 - [Generic Camera](https://home-assistant.io/integrations/generic)
 - [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
 - [Google Assistant](https://home-assistant.io/integrations/google_assistant)
+- [Google Drive](https://home-assistant.io/integrations/google_drive)
 - [Google Cast](https://home-assistant.io/integrations/cast)
 - [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [Intent Script](https://home-assistant.io/integrations/intent_script)
