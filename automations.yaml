@@ -5239,29 +5239,29 @@
   alias: Notify When Zigbee Devices Have Issues
   description: Send a notification listing the Zigbee devices with low batteries or
     connection issues
-  trigger:
-  - platform: time
-    at: input_datetime.sleep_hours_end
-  - platform: numeric_state
-    entity_id:
+  triggers:
+  - at: input_datetime.sleep_hours_end
+    trigger: time
+  - entity_id:
     - sensor.zha_device_issues
     above: 10
-  condition: []
-  action:
-  - service: notify.mobile_app_aurora
-    metadata: {}
+    trigger: numeric_state
+  conditions: []
+  actions:
+  - metadata: {}
     data:
       message: clear_notification
       data:
         tag: batts_low
+        clickAction: /lovelace/zigbee-diagnostics
+    action: notify.mobile_app_aurora
   - if:
     - condition: numeric_state
       entity_id: sensor.zha_device_issues
       above: 0
     then:
     - delay: 1
-    - service: notify.mobile_app_aurora
-      metadata: {}
+    - metadata: {}
       data:
         title: Check Zigbee Devices
         data:
@@ -5278,6 +5278,7 @@
           %}\n    {% set message.text = message.text + device_attr(device_id(battery),'name_by_user')
           + ', ' %}\n  {% endfor %}\n  {% set message.text = message.text[:-2] %}\n{%
           endif %} {{ message.text }}"
+      action: notify.mobile_app_aurora
   mode: restart
 - id: '1708558912067'
   alias: Daniel's Phone Sleep Mode
