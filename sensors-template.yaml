@@ -365,7 +365,7 @@
 
 - trigger:
     - platform: state
-      entity_id: binary_sensor.living_room_motion
+      entity_id: binary_sensor.living_room_radar_motion
     - platform: state
       entity_id: binary_sensor.living_room_radar_occupancy
       from: 'off'
@@ -380,10 +380,10 @@
     - name: Living Room Presence
       unique_id: binary_sensor.living_room_presence
       device_class: occupancy
-      state: "{{ is_state('binary_sensor.living_room_radar_occupancy', 'on') or is_state('binary_sensor.living_room_motion', 'on') }}"
+      state: "{{ is_state('binary_sensor.living_room_radar_occupancy', 'on') or is_state('binary_sensor.living_room_radar_motion', 'on') }}"
       attributes:
         living_room_radar_occupancy: "{{ states('binary_sensor.living_room_radar_occupancy') }}"
-        living_room_motion: "{{ states('binary_sensor.living_room_motion') }}"
+        living_room_radar_motion: "{{ states('binary_sensor.living_room_radar_motion') }}"
 
 - trigger:
     - platform: state
