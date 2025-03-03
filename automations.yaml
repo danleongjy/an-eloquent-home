@@ -2642,6 +2642,15 @@
           action: light.turn_off
           data:
             transition: 10
+          enabled: false
+        - target:
+            entity_id: '{{ repeat.item }}'
+          data:
+            transition: 10
+            brightness_pct: '{{ states(''input_number.night_light_brightness'') |
+              int }}'
+          continue_on_error: true
+          action: light.turn_on
         - delay: 2
   - repeat:
       for_each:
