@@ -7423,3 +7423,1023 @@
           media_content_type: music
         action: media_player.play_media
   mode: restart
+- id: '1741507342893'
+  alias: Dining Room Controller
+  description: Control Dining Room Lights, Fan, AC and Blinds
+  use_blueprint:
+    path: EPMatt/ikea_e2001_e2002.yaml
+    input:
+      integration: ZHA
+      controller_device: a51d5ba646058f31cd6e10c757ed322e
+      action_button_left_short:
+      - if:
+        - condition: state
+          entity_id: fan.dining_room_fan
+          state: 'off'
+        then:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.dining_room_fan
+            command: fan_on
+        else:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.dining_room_fan
+            command: fan_off
+      action_button_left_long:
+      - if:
+        - condition: numeric_state
+          entity_id: fan.dining_room_fan
+          attribute: percentage
+          above: 51
+        then:
+        - repeat:
+            sequence:
+            - action: script.fan_controller
+              metadata: {}
+              data:
+                fan: fan.dining_room_fan
+                command: fan_slow_down
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_dining_room_controller_last_event'')
+                }}'
+        else:
+        - repeat:
+            sequence:
+            - action: script.fan_controller
+              metadata: {}
+              data:
+                fan: fan.dining_room_fan
+                command: fan_speed_up
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_dining_room_controller_last_event'')
+                }}'
+      helper_last_controller_event: input_text.zz_dining_room_controller_last_event
+      action_button_left_double:
+      - if:
+        - condition: state
+          entity_id: fan.dining_room_fan
+          attribute: direction
+          state: forward
+        then:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.dining_room_fan
+            command: fan_reverse
+        else:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.dining_room_fan
+            command: fan_forward
+      action_button_right_short:
+      - if:
+        - condition: state
+          entity_id: climate.dining_room_ac
+          state: 'off'
+        then:
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.dining_room_ac
+            command: ac_on
+        else:
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.dining_room_ac
+            command: ac_off
+      action_button_right_long:
+      - if:
+        - condition: numeric_state
+          entity_id: climate.dining_room_ac
+          attribute: temperature
+          above: 25.4
+        then:
+        - repeat:
+            sequence:
+            - action: script.ac_controller
+              metadata: {}
+              data:
+                ac: climate.dining_room_ac
+                command: ac_colder
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_dining_room_controller_last_event'')
+                }}'
+        else:
+        - repeat:
+            sequence:
+            - action: script.ac_controller
+              metadata: {}
+              data:
+                ac: climate.dining_room_ac
+                command: ac_warmer
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_dining_room_controller_last_event'')
+                }}'
+      action_button_right_double:
+      - if:
+        - condition: state
+          entity_id:
+          - automation.dining_room_fan_auto_control
+          - automation.south_facing_blinds_auto_control
+          - automation.dining_room_motion_ac
+          - automation.dining_room_motion_lights
+          - automation.dining_room_motion_pendant_light
+          state: 'on'
+        then:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.dining_room_lights
+            command: lights_manual_control
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.dining_room_fan
+            command: fan_manual_control
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.dining_room_ac
+            command: cooling_manual_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_manual_control
+            cover: cover.dining_room_blinds
+        else:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.dining_room_lights
+            command: lights_auto_control
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.dining_room_fan
+            command: fan_auto_control
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.dining_room_ac
+            command: cooling_auto_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_auto_control
+            cover: cover.dining_room_blinds
+      action_button_up_short:
+      - if:
+        - condition: state
+          entity_id:
+          - light.dining_room_lights
+          - light.dining_room_pendant_light_entity
+          state: 'off'
+        then:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.dining_room_lights
+            - light.dining_room_pendant_light_entity
+            command: lights_on
+        else:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.dining_room_lights
+            - light.dining_room_pendant_light_entity
+            command: lights_off
+      action_button_up_long:
+      - if:
+        - condition: numeric_state
+          entity_id: light.dining_room_lights
+          attribute: brightness
+          above: 127
+        then:
+        - repeat:
+            sequence:
+            - action: script.lights_controller
+              metadata: {}
+              data:
+                lights:
+                - light.dining_room_lights
+                - light.dining_room_pendant_light_entity
+                command: lights_darken
+            - delay: 1
+            while:
+            - condition: template
+              value_template: '{{ ''move'' in states(''input_text.zz_dining_room_controller_last_event'')
+                }}'
+        else:
+        - repeat:
+            sequence:
+            - action: script.lights_controller
+              metadata: {}
+              data:
+                lights:
+                - light.dining_room_lights
+                - light.dining_room_pendant_light_entity
+                command: lights_brighten
+            - delay: 1
+            while:
+            - condition: template
+              value_template: '{{ ''move'' in states(''input_text.zz_dining_room_controller_last_event'')
+                }}'
+      action_button_up_double:
+      - action: script.lights_controller
+        metadata: {}
+        data:
+          lights:
+          - light.dining_room_lights
+          command: set_recommended_room_scene
+      action_button_down_short:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: cover.dining_room_blinds
+            state:
+            - closed
+            - closing
+          sequence:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.dining_room_blinds
+              command: cover_open
+        - conditions:
+          - condition: state
+            entity_id: cover.dining_room_blinds
+            state:
+            - opening
+          sequence:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.dining_room_blinds
+              command: cover_close
+        default:
+        - if:
+          - condition: numeric_state
+            entity_id: cover.dining_room_blinds
+            attribute: current_position
+            above: 50.5
+          then:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.dining_room_blinds
+              command: cover_close
+          else:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.dining_room_blinds
+              command: cover_open
+      action_button_down_long:
+      - if:
+        - condition: template
+          value_template: '{{ states(''cover.dining_room_blinds'') in [''opening'',''closing'']
+            }}'
+        then:
+        - action: cover.stop_cover
+          metadata: {}
+          data: {}
+          target:
+            entity_id: cover.dining_room_blinds
+        - delay: 1
+      - if:
+        - condition: numeric_state
+          entity_id: cover.dining_room_blinds
+          attribute: current_position
+          above: 50.5
+        then:
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            cover: cover.dining_room_blinds
+            command: cover_close
+        else:
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            cover: cover.dining_room_blinds
+            command: cover_open
+      action_button_down_release:
+      - action: cover.stop_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.dining_room_blinds
+      action_button_down_double:
+      - action: script.lights_controller
+        metadata: {}
+        data:
+          lights:
+          - light.dining_room_lights
+          command: turn_off_room
+      button_left_long_max_loop_repeats: 50
+      button_right_long_max_loop_repeats: 50
+      button_up_long_max_loop_repeats: 50
+      button_down_long_max_loop_repeats: 50
+      button_left_double_press: true
+      button_right_double_press: true
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
+      helper_debounce_delay: 300
+- id: '1741507826687'
+  alias: Living Room Controller
+  description: Control Living Room Lights, Fan, AC and Blinds
+  use_blueprint:
+    path: EPMatt/ikea_e2001_e2002.yaml
+    input:
+      integration: ZHA
+      controller_device: 9a159e9ba49c746c300cd45a5e0a2f1e
+      action_button_left_short:
+      - if:
+        - condition: state
+          entity_id: fan.living_room_fan
+          state: 'off'
+        then:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.living_room_fan
+            command: fan_on
+        else:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.living_room_fan
+            command: fan_off
+      action_button_left_long:
+      - if:
+        - condition: numeric_state
+          entity_id: fan.living_room_fan
+          attribute: percentage
+          above: 51
+        then:
+        - repeat:
+            sequence:
+            - action: script.fan_controller
+              metadata: {}
+              data:
+                fan: fan.living_room_fan
+                command: fan_slow_down
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_living_room_controller_last_event'')
+                }}'
+        else:
+        - repeat:
+            sequence:
+            - action: script.fan_controller
+              metadata: {}
+              data:
+                fan: fan.living_room_fan
+                command: fan_speed_up
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_living_room_controller_last_event'')
+                }}'
+      helper_last_controller_event: input_text.zz_living_room_controller_last_event
+      action_button_left_double:
+      - if:
+        - condition: state
+          entity_id: fan.living_room_fan
+          attribute: direction
+          state: forward
+        then:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.living_room_fan
+            command: fan_reverse
+        else:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.living_room_fan
+            command: fan_forward
+      action_button_right_short:
+      - if:
+        - condition: state
+          entity_id: climate.living_room_ac
+          state: 'off'
+        then:
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.living_room_ac
+            command: ac_on
+        else:
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.living_room_ac
+            command: ac_off
+      action_button_right_long:
+      - if:
+        - condition: numeric_state
+          entity_id: climate.living_room_ac
+          attribute: temperature
+          above: 25.4
+        then:
+        - repeat:
+            sequence:
+            - action: script.ac_controller
+              metadata: {}
+              data:
+                ac: climate.living_room_ac
+                command: ac_colder
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_living_room_controller_last_event'')
+                }}'
+        else:
+        - repeat:
+            sequence:
+            - action: script.ac_controller
+              metadata: {}
+              data:
+                ac: climate.living_room_ac
+                command: ac_warmer
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_living_room_controller_last_event'')
+                }}'
+      action_button_right_double:
+      - if:
+        - condition: state
+          entity_id:
+          - automation.living_room_fan_auto_control
+          - automation.south_facing_blinds_auto_control
+          - automation.living_room_motion_ac
+          - automation.living_room_motion_lights
+          - automation.living_room_motion_pendant_light
+          state: 'on'
+        then:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.living_room_lights
+            command: lights_manual_control
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.living_room_fan
+            command: fan_manual_control
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.living_room_ac
+            command: cooling_manual_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_manual_control
+            cover: cover.living_room_blinds
+        else:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.living_room_lights
+            command: lights_auto_control
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.living_room_fan
+            command: fan_auto_control
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.living_room_ac
+            command: cooling_auto_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_auto_control
+            cover: cover.living_room_blinds
+      action_button_up_short:
+      - if:
+        - condition: state
+          entity_id:
+          - light.living_room_lights
+          - light.living_room_pendant_light_entity
+          state: 'off'
+        then:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.living_room_lights
+            - light.living_room_pendant_light_entity
+            command: lights_on
+        else:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.living_room_lights
+            - light.living_room_pendant_light_entity
+            command: lights_off
+      action_button_up_long:
+      - if:
+        - condition: numeric_state
+          entity_id: light.living_room_lights
+          attribute: brightness
+          above: 127
+        then:
+        - repeat:
+            sequence:
+            - action: script.lights_controller
+              metadata: {}
+              data:
+                lights:
+                - light.living_room_lights
+                - light.living_room_pendant_light_entity
+                command: lights_darken
+            - delay: 1
+            while:
+            - condition: template
+              value_template: '{{ ''move'' in states(''input_text.zz_living_room_controller_last_event'')
+                }}'
+        else:
+        - repeat:
+            sequence:
+            - action: script.lights_controller
+              metadata: {}
+              data:
+                lights:
+                - light.living_room_lights
+                - light.living_room_pendant_light_entity
+                command: lights_brighten
+            - delay: 1
+            while:
+            - condition: template
+              value_template: '{{ ''move'' in states(''input_text.zz_living_room_controller_last_event'')
+                }}'
+      action_button_up_double:
+      - action: script.lights_controller
+        metadata: {}
+        data:
+          lights:
+          - light.living_room_lights
+          command: set_recommended_room_scene
+      action_button_down_short:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: cover.living_room_blinds
+            state:
+            - closed
+            - closing
+          sequence:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.living_room_blinds
+              command: cover_open
+        - conditions:
+          - condition: state
+            entity_id: cover.living_room_blinds
+            state:
+            - opening
+          sequence:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.living_room_blinds
+              command: cover_close
+        default:
+        - if:
+          - condition: numeric_state
+            entity_id: cover.living_room_blinds
+            attribute: current_position
+            above: 50.5
+          then:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.living_room_blinds
+              command: cover_close
+          else:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.living_room_blinds
+              command: cover_open
+      action_button_down_long:
+      - if:
+        - condition: template
+          value_template: '{{ states(''cover.living_room_blinds'') in [''opening'',''closing'']
+            }}'
+        then:
+        - action: cover.stop_cover
+          metadata: {}
+          data: {}
+          target:
+            entity_id: cover.living_room_blinds
+        - delay: 1
+      - if:
+        - condition: numeric_state
+          entity_id: cover.living_room_blinds
+          attribute: current_position
+          above: 50.5
+        then:
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            cover: cover.living_room_blinds
+            command: cover_close
+        else:
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            cover: cover.living_room_blinds
+            command: cover_open
+      action_button_down_release:
+      - action: cover.stop_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.living_room_blinds
+      action_button_down_double:
+      - action: script.lights_controller
+        metadata: {}
+        data:
+          lights:
+          - light.living_room_lights
+          command: turn_off_room
+      button_left_long_max_loop_repeats: 50
+      button_right_long_max_loop_repeats: 50
+      button_up_long_max_loop_repeats: 50
+      button_down_long_max_loop_repeats: 50
+      button_left_double_press: true
+      button_right_double_press: true
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
+      helper_debounce_delay: 300
+- id: '1741508177842'
+  alias: Study Room Controller
+  description: Control Study Room Lights, Fan, AC and Blinds
+  use_blueprint:
+    path: EPMatt/ikea_e2001_e2002.yaml
+    input:
+      integration: ZHA
+      controller_device: 9a159e9ba49c746c300cd45a5e0a2f1e
+      action_button_left_short:
+      - if:
+        - condition: state
+          entity_id: fan.study_room_fan
+          state: 'off'
+        then:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.study_room_fan
+            command: fan_on
+        else:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.study_room_fan
+            command: fan_off
+      action_button_left_long:
+      - if:
+        - condition: numeric_state
+          entity_id: fan.study_room_fan
+          attribute: percentage
+          above: 51
+        then:
+        - repeat:
+            sequence:
+            - action: script.fan_controller
+              metadata: {}
+              data:
+                fan: fan.study_room_fan
+                command: fan_slow_down
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_study_room_controller_last_event'')
+                }}'
+        else:
+        - repeat:
+            sequence:
+            - action: script.fan_controller
+              metadata: {}
+              data:
+                fan: fan.study_room_fan
+                command: fan_speed_up
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_study_room_controller_last_event'')
+                }}'
+      helper_last_controller_event: input_text.zz_study_room_controller_last_event
+      action_button_left_double:
+      - if:
+        - condition: state
+          entity_id: fan.study_room_fan
+          attribute: direction
+          state: forward
+        then:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.study_room_fan
+            command: fan_reverse
+        else:
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.study_room_fan
+            command: fan_forward
+      action_button_right_short:
+      - if:
+        - condition: state
+          entity_id: climate.study_room_ac
+          state: 'off'
+        then:
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.study_room_ac
+            command: ac_on
+        else:
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.study_room_ac
+            command: ac_off
+      action_button_right_long:
+      - if:
+        - condition: numeric_state
+          entity_id: climate.study_room_ac
+          attribute: temperature
+          above: 25.4
+        then:
+        - repeat:
+            sequence:
+            - action: script.ac_controller
+              metadata: {}
+              data:
+                ac: climate.study_room_ac
+                command: ac_colder
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_study_room_controller_last_event'')
+                }}'
+        else:
+        - repeat:
+            sequence:
+            - action: script.ac_controller
+              metadata: {}
+              data:
+                ac: climate.study_room_ac
+                command: ac_warmer
+            - delay: 2
+            while:
+            - condition: template
+              value_template: '{{ ''hold'' in states(''input_text.zz_study_room_controller_last_event'')
+                }}'
+      action_button_right_double:
+      - if:
+        - condition: state
+          entity_id:
+          - automation.study_room_fan_auto_control
+          - automation.south_facing_blinds_auto_control
+          - automation.study_room_motion_ac
+          - automation.study_room_motion_lights
+          - automation.study_room_motion_floor_lamp
+          state: 'on'
+        then:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.study_room_lights
+            command: lights_manual_control
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.study_room_fan
+            command: fan_manual_control
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.study_room_ac
+            command: cooling_manual_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_manual_control
+            cover: cover.study_room_blinds
+        else:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.study_room_lights
+            command: lights_auto_control
+        - action: script.fan_controller
+          metadata: {}
+          data:
+            fan: fan.study_room_fan
+            command: fan_auto_control
+        - action: script.ac_controller
+          metadata: {}
+          data:
+            ac: climate.study_room_ac
+            command: cooling_auto_control
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            command: cover_auto_control
+            cover: cover.study_room_blinds
+      action_button_up_short:
+      - if:
+        - condition: state
+          entity_id:
+          - light.study_room_lights
+          - light.study_room_floor_lamp_entity
+          state: 'off'
+        then:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.study_room_lights
+            - light.study_room_floor_lamp_entity
+            command: lights_on
+        else:
+        - action: script.lights_controller
+          metadata: {}
+          data:
+            lights:
+            - light.study_room_lights
+            - light.study_room_floor_lamp_entity
+            command: lights_off
+      action_button_up_long:
+      - if:
+        - condition: numeric_state
+          entity_id: light.study_room_lights
+          attribute: brightness
+          above: 127
+        then:
+        - repeat:
+            sequence:
+            - action: script.lights_controller
+              metadata: {}
+              data:
+                lights:
+                - light.study_room_lights
+                - light.study_room_floor_lamp_entity
+                command: lights_darken
+            - delay: 1
+            while:
+            - condition: template
+              value_template: '{{ ''move'' in states(''input_text.zz_study_room_controller_last_event'')
+                }}'
+        else:
+        - repeat:
+            sequence:
+            - action: script.lights_controller
+              metadata: {}
+              data:
+                lights:
+                - light.study_room_lights
+                - light.study_room_floor_lamp_entity
+                command: lights_brighten
+            - delay: 1
+            while:
+            - condition: template
+              value_template: '{{ ''move'' in states(''input_text.zz_study_room_controller_last_event'')
+                }}'
+      action_button_up_double:
+      - action: script.lights_controller
+        metadata: {}
+        data:
+          lights:
+          - light.study_room_lights
+          command: set_recommended_room_scene
+      action_button_down_short:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: cover.study_room_blinds
+            state:
+            - closed
+            - closing
+          sequence:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.study_room_blinds
+              command: cover_open
+        - conditions:
+          - condition: state
+            entity_id: cover.study_room_blinds
+            state:
+            - opening
+          sequence:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.study_room_blinds
+              command: cover_close
+        default:
+        - if:
+          - condition: numeric_state
+            entity_id: cover.study_room_blinds
+            attribute: current_position
+            above: 50.5
+          then:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.study_room_blinds
+              command: cover_close
+          else:
+          - action: script.cover_controller
+            metadata: {}
+            data:
+              cover: cover.study_room_blinds
+              command: cover_open
+      action_button_down_long:
+      - if:
+        - condition: template
+          value_template: '{{ states(''cover.study_room_blinds'') in [''opening'',''closing'']
+            }}'
+        then:
+        - action: cover.stop_cover
+          metadata: {}
+          data: {}
+          target:
+            entity_id: cover.study_room_blinds
+        - delay: 1
+      - if:
+        - condition: numeric_state
+          entity_id: cover.study_room_blinds
+          attribute: current_position
+          above: 50.5
+        then:
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            cover: cover.study_room_blinds
+            command: cover_close
+        else:
+        - action: script.cover_controller
+          metadata: {}
+          data:
+            cover: cover.study_room_blinds
+            command: cover_open
+      action_button_down_release:
+      - action: cover.stop_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.study_room_blinds
+      action_button_down_double:
+      - action: script.lights_controller
+        metadata: {}
+        data:
+          lights:
+          - light.study_room_lights
+          command: turn_off_room
+      button_left_long_max_loop_repeats: 50
+      button_right_long_max_loop_repeats: 50
+      button_up_long_max_loop_repeats: 50
+      button_down_long_max_loop_repeats: 50
+      button_left_double_press: true
+      button_right_double_press: true
+      button_up_double_press: true
+      button_down_double_press: true
+      helper_double_press_delay: 700
+      helper_debounce_delay: 300
