@@ -1,0 +1,72 @@
+select:
+  - platform: template
+    name: Ringtone
+    id: ringtone
+    icon: "mdi:music"
+    optimistic: true
+    options:
+      - Beep
+      - Positive Beep
+      - Negative Beep
+      - Doorbell
+      - "Eli's Song"
+      - Pokemon
+      - Under the Sea
+      - Take On Me
+      - Mario
+      - Bippity Boppity Boo
+    initial_option: "Eli's Song"
+    on_value:
+      - text_sensor.template.publish:
+          id: rtttl_string
+          state: !lambda 'return id(ringtone).state;'
+          
+text_sensor:
+  - platform: template
+    id: rtttl_string
+    filters:
+      - map:
+        - "Eli's Song -> elis_song:d=8,o=5,b=140:8a,8p,8g,8a,8g,8f,8p,8f,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8e,8d,8e,8g,8p,8p,8c6,8p,8g,8p,8a,8f,8p,8p,8p,8p,8c,8a,8f,8f,8f,8p,8c,8p,8p,8c,8d,8c,8a4,8p,8f"
+        - 'Beep -> beep:d=4,o=5,b=200:8c,4c'
+        - 'Positive Beep -> positive_beep:d=4,o=5,b=200:4c4,8c,4c'
+        - 'Negative Beep -> negative_beep:d=4,o=5,b=200:8c,4c,2c4'
+        - 'Doorbell -> doorbell:d=4,o=5,b=200:8c4,4c4,4c'
+        - 'Pokemon -> pokemon:d=4,o=5,b=180:8d6,8d6,8d6,8d6,8p,8d6,c6,8a#,f,p,8a#,d6,d6,8c6,8a#,c.6,1p, 8a#,8d#6,8d#6,d#6,8f6,d6,c6,a#,p,8a#,d6,8d6,c6,8a#,2d.6,p,8d6,8f6,8g6,8p,8d,8d,8 f,8g,8f,g,8p,8d,8f,8g'
+        - 'Under the Sea -> under_the_sea:d=4,o=4,b=200:32p,8e6,8p,8d6,8c6,8p,1a5,8p,8d6,8p,8d6,8c6,8p,1e6,8p,8e6,8p,8d6,8c6,8p,8c6,f5,8e6,8p,8d6,8c6,8p,8b5,g5,8e6,8p,8d6,8c6,8p,2e6,p,8p,8e6,8p,8d6,8c6,8p,8a5,8c6,8p,8c6,8p,8a5,2d6,8p,8d6,8p,8c6,8d6,8p,8e6,8e6,8p,8d6,8p,8d6,c6'
+        - 'Take On Me -> take_on_me:d=32,o=5,b=40:p,g,g,g,16d#,16c,16f,16f,f,a,a,a#,c6,a#,a#,a#,16f,16d#,16g,16g,g,f,f,g,f,g,g,g,16d#,16c,16f,16f,f,a,a,a#,c6,a#,a#,a#,16f,16d#,16g,16g,g,f,f,g,f'
+        - 'Mario -> mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6,8p,8g,8p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,16p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16c7,16p,16c7,16c7,p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16d#6,8p,16d6,8p,16c6'
+        - 'Bippity Boppity Boo -> bibbity:d=16,o=5,b=90:c#6,c6,c#6,8d#6,32c#.6,a#,a,a#,8b,32a#.,f#,f#,f#,f#,f,d#,4c#.,c#,d#,f,f#,g#,a#,b,a#,g#,8c#.6,c#6,d#6,c#6,b,a#,g#,4f#'
+
+number:
+  - platform: template
+    id: speaker_volume
+    name: Speaker Volume
+    icon: mdi:volume-high
+    unit_of_measurement: '%'
+    min_value: 0
+    max_value: 100
+    step: 1
+    optimistic: true
+    initial_value: 10
+    on_value:
+      then:
+        lambda: "return id(core_speaker).set_max_power(id(initial_volume) * x / 10);"
+
+button:
+  - platform: template
+    name: Play Ringtone
+    id: play_ringtone
+    icon: "mdi:timer"
+    on_press:
+      then:
+        - rtttl.play: !lambda 'return id(rtttl_string).state;'
+
+output:
+  - platform: ledc
+    pin: ${rtttl_output_pin}
+    id: core_speaker
+    max_power: ${volume}
+
+rtttl:
+  output: core_speaker
+  id: rtttl_speaker

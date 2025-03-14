@@ -8,6 +8,7 @@ esphome:
   name: ${name}
   name_add_mac_suffix: false
   friendly_name: ${friendly_name}
+  min_version: 2025.2.0
 api:
   encryption:
     key: !secret study_room_voice_assistant_api_key
@@ -42,8 +43,9 @@ button:
     name: Factory reset
 
 i2s_audio:
-  i2s_lrclk_pin: GPIO33
-  i2s_bclk_pin: GPIO19
+  - id: i2s_audio_bus
+    i2s_lrclk_pin: GPIO33
+    i2s_bclk_pin: GPIO19
 
 binary_sensor:
   - platform: gpio
@@ -106,4 +108,3 @@ light:
           update_interval: 100ms
           min_brightness: 50%
           max_brightness: 100%
-

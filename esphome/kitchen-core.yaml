@@ -5,7 +5,9 @@ substitutions:
   blinds_entity: cover.kitchen_blind
   mic_i2s_din_pin: GPIO34
   voice_assistant_media_player: media_player.kitchen_speaker
-
+  rtttl_output_pin: GPIO2
+  volume: "1"
+  
 esphome:
   name: ${hostname_room}-core
   friendly_name: ${capitalised_room_name} Core
@@ -53,6 +55,7 @@ captive_portal:
 packages:
   local_voice_assistant: !include packages/voice_assistant.yaml
   kitchen_blind: !include packages/kitchen_blind.yaml
+  rtttl: !include packages/room_core_rtttl.yaml
 
 external_components:
   - source: github://airy10/esphome-m5stickC/
@@ -66,11 +69,19 @@ globals:
   - id: width
     type: int
     initial_value: '135'
+  - id: initial_volume
+    type: double
+    initial_value: ${volume}
 
 script:
   - id: reset_view
     mode: restart
     then:
+      - if:
+          condition:
+            rtttl.is_playing
+          then:
+            - rtttl.stop
       - delay: 120s
       - display.page.show: current_time
   - id: reset_command
@@ -89,8 +100,18 @@ script:
       - display.page.show: screensaver
   - id: doorbell
     then:
+      - number.set:
+          id: speaker_volume
+          value: 100
+      - select.set:
+          id: ringtone
+          option: Doorbell
+      - button.press: play_ringtone
       - display.page.show: main_door
       - delay: 10s
+      - number.set:
+          id: speaker_volume
+          value: 10
       - display.page.show: current_time
   - id: draw_display_borders
     then:
