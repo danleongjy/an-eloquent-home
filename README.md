@@ -34,7 +34,7 @@ Domain | Quantity
 [`cover`](https://www.home-assistant.io/components/cover) | 15
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 6
 [`fan`](https://www.home-assistant.io/components/fan) | 6
-[`image`](https://www.home-assistant.io/components/image) | 6
+[`image`](https://www.home-assistant.io/components/image) | 4
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 14
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
 [`input_number`](https://www.home-assistant.io/components/input_number) | 31
@@ -58,7 +58,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 17
-Total | 1540
+Total | 1538
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
