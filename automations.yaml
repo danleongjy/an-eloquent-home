@@ -7727,3 +7727,49 @@
         data: {}
         target:
           entity_id: cover.dining_room_blinds
+- id: '1742736717354'
+  alias: Eli's Watch Charging
+  description: Charge Eli's Watch
+  triggers:
+  - trigger: time
+    at: 05:00:00
+    id: pre_wakeup
+  - trigger: state
+    entity_id:
+    - device_tracker.elis_watch
+    to: home
+    from: not_home
+    id: coming_home
+  - trigger: state
+    entity_id:
+    - device_tracker.elis_watch
+    from: home
+    to: not_home
+    id: leaving_home
+  - trigger: numeric_state
+    entity_id:
+    - sensor.elis_watch_charger_watts
+    for:
+      minutes: 10
+    below: 0.5
+    id: charged
+  conditions: []
+  actions:
+  - if:
+    - condition: trigger
+      id:
+      - leaving_home
+      - charged
+    then:
+    - action: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.elis_watch_charger
+    else:
+    - action: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.elis_watch_charger
+  mode: single
