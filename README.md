@@ -53,12 +53,12 @@ Domain | Quantity
 [`switch`](https://www.home-assistant.io/components/switch) | 58
 [`time`](https://www.home-assistant.io/components/time) | 2
 [`tts`](https://www.home-assistant.io/components/tts) | 2
-[`update`](https://www.home-assistant.io/components/update) | 115
+[`update`](https://www.home-assistant.io/components/update) | 114
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 17
-Total | 1558
+Total | 1557
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -97,7 +97,6 @@ Total | 1558
 - Assist Microphone
 - ESPHome Device Builder
 - File editor
-- Home Assistant Google Drive Backup
 - openWakeWord
 - Piper
 - Samba share
