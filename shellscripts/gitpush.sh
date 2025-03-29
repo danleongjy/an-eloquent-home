@@ -1,2 +1,2 @@
 cd /config
-git push -u origin master
+git push --force origin master
