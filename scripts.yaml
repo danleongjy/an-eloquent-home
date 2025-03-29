@@ -461,23 +461,23 @@ git_push:
         text:
       required: true
   sequence:
-  - service: watchman.report
-    data:
+  - data:
       create_file: true
       send_notification: false
       parse_config: false
       chunk_size: false
-  - service: readme.generate
-    data: {}
+    action: watchman.report
+  - data: {}
+    action: readme.generate
   - delay: 5
-  - service: shell_command.gitadd
-    data: {}
-  - service: shell_command.gitcommit
-    data:
+  - data: {}
+    action: shell_command.gitadd
+  - data:
       commit_message: '{{ commit_message }}'
-  - service: shell_command.gitpush
-    data: {}
-    enabled: true
+    action: shell_command.gitcommit
+  - data: {}
+    enabled: false
+    action: shell_command.gitpush
   mode: single
   icon: mdi:git
 automation_on_off_indicator_light:
