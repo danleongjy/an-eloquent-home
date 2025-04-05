@@ -7764,3 +7764,296 @@
       target:
         entity_id: switch.elis_watch_charger
   mode: single
+- id: '1743847597456'
+  alias: Voice Control for Party Mode
+  description: Turn on or off Party Mode with voice commands
+  triggers:
+  - trigger: conversation
+    command:
+    - (I'm | I am | we're | we are) (having | throwing) a party
+    - (turn on | activate | initiate) party mode
+    id: 'on'
+  - trigger: conversation
+    command:
+    - (I'm | I am | we're | we are) (finishing | finished with | ending) the party
+    - (I have | I've | we have | we've) (finished | ended) the party
+    - (turn off | deactivate) party mode
+    id: 'off'
+  conditions: []
+  actions:
+  - action: input_boolean.turn_{{ trigger.id }}
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.party_mode
+  - set_conversation_response: "{% if trigger.id == 'on' %}\n  {{ ['Initiating', 'Activating']
+      | random }} party mode.\n{% else %}\n  {{ ['Turning off', 'Dectivating'] | random
+      }} party mode.\n{% endif %}"
+  mode: single
+- id: '1743848105840'
+  alias: Voice Control for Away Mode
+  description: Turn on Away Mode with voice commands
+  triggers:
+  - trigger: conversation
+    command:
+    - '"(I''m | I am | we''re | we are) (leaving | going out)"'
+    - '"(turn on | activate | initiate) (shutdown | away mode) [sequence]"'
+  conditions: []
+  actions:
+  - action: input_boolean.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.away_mode
+  - set_conversation_response: '{{ [''Initiating'', ''Activating''] | random }} {{
+      [''Away Mode'', ''shutdown sequence''] | random }}.'
+  mode: single
+- id: '1743848999796'
+  alias: Voice Control for Vacuum
+  description: Control the vacuum or request for vacuum status with voice commands
+  triggers:
+  - trigger: conversation
+    command: '{command} [the] (vacuum | vacuuming)'
+    id: execute_command
+  - trigger: conversation
+    command:
+    - (what is | what's) the vacuum doing
+    - is the vacuum (on | off | running | vacuuming | active | paused | stopped |
+      returning | docked)
+    - (what is | what's) the status of the vacuum
+    id: get_status
+  conditions: []
+  actions:
+  - if:
+    - condition: trigger
+      id:
+      - execute_command
+    then:
+    - variables:
+        commands:
+          turn on: start
+          run: start
+          activate: start
+          initiate: start
+          start: start
+          pause: pause
+          stop: stop
+          turn off: stop
+          deactivate: stop
+          terminate: stop
+          dock: return_to_base
+          return: return_to_base
+    - target:
+        entity_id: vacuum.roborock_s7
+      action: vacuum.{{ commands[trigger.slots.command] }}
+    - set_conversation_response: "{% if command == 'start' %}\n  {{ ['Starting','Running','Initiating','Activating']
+        | random }} the vacuum.\n{% elif command == 'pause' %}\n  Vacuum paused.\n{%
+        elif command == 'stop' %}\n  {{ ['Stopping','Deactivating'] | random }} the
+        vacuum.\n{% else %}\n  Returning vacuum to dock.\n{% endif %}"
+    else:
+    - set_conversation_response: "{% set clean_time = namespace(hours = (states('sensor.roborock_s7_cleaning_time')
+        | float(0)) * 60 // 60,\n                              minutes =  ((states('sensor.roborock_s7_cleaning_time')
+        | float(0)) * 60) | int(0)) %}\nThe vacuum is {{ 'in trouble' if states('vacuum.roborock_s7')
+        == 'error' else states('vacuum.roborock_s7') }}.\nIt cleaned {{states('sensor.roborock_s7_cleaning_area')
+        | int(0) }} square metres over {{ clean_time.hours | string + ' hour' if clean_time.hours
+        > 0 }}{{ 's' if clean_time.hours > 1 }}{{ ' and ' if clean_time.hours > 0
+        and clean_time.minutes > 0 }}{{ clean_time.minutes | string + ' minute' if
+        clean_time.minutes > 0 }}{{ 's' if clean_time.minutes > 1 }}.\n{% if states('vacuum.roborock_s7')
+        in ['docked','idle'] %}\n  Its last run ended {{ relative_time(as_datetime(states('sensor.roborock_s7_last_clean_end')))
+        }} ago.\n{% endif %}"
+  mode: single
+- id: '1743851351763'
+  alias: Voice Control for Stove
+  description: Control the stove or request for stove status with voice commands
+  triggers:
+  - trigger: conversation
+    command:
+    - '{cooking_preset} on [the] {side} (cooker | stove | burner)'
+    id: CookingPreset
+  - trigger: conversation
+    command:
+    - set [the] {side} (cooker | stove | burner) to [level] {power}
+    id: SetCookerPower
+  - trigger: conversation
+    command:
+    - set [the] {side} (cooker | stove | burner) timer to {time} minute[s]
+    id: SetCookerTimer
+  - trigger: conversation
+    command:
+    - set [the] {side} (cooker | stove | burner) to [level] {power} for {time} minute[s]
+    id: SetCookerPowerTimer
+  - trigger: conversation
+    command:
+    - turn off [the] {side} (cooker | stove | burner)
+    id: TurnOffCooker
+  - trigger: conversation
+    command:
+    - is the {side} (cooker | stove | burner) (on | off)
+    - (what is | what's) the (status | condition) of the {side} (cooker | stove |
+      burner)
+    id: CookerStatus
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - CookingPreset
+      sequence:
+      - set_conversation_response: "{% if is_state('switch.stove_main_power','on')
+          %}\n  {{ trigger.slots.side | capitalize }} cooker set to {{ trigger.slots.cooking_preset
+          }}.\n{% else %}\n  Please turn on the stove manually first.\n{% endif %}"
+      - condition: state
+        entity_id: switch.stove_main_power
+        state: 'on'
+      - variables:
+          presets:
+            boil water:
+              power: 7
+              time: 6
+            cook rice:
+              power: 1
+              time: 16
+            stir fry:
+              power: 4
+              time: 0
+            simmer:
+              power: 3
+              time: 60
+            steam fish:
+              power: 3
+              time: 16
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: '{{ trigger.slots.side }}'
+        target:
+          entity_id: select.stove_current_burner
+      - action: script.stove_settings
+        metadata: {}
+        data:
+          current_burner_power: '{{ presets[trigger.slots.cooking_preset].power }}'
+          current_burner_timer: '{{ presets[trigger.slots.cooking_preset].time }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - SetCookerPower
+      sequence:
+      - set_conversation_response: "{% if is_state('switch.stove_main_power','on')
+          %}\n  {{ trigger.slots.side | capitalize }} cooker set to level {{ trigger.slots.power
+          }}.\n{% else %}\n  Please turn on the stove manually first.\n{% endif %}"
+      - condition: state
+        entity_id: switch.stove_main_power
+        state: 'on'
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: '{{ trigger.slots.side }}'
+        target:
+          entity_id: select.stove_current_burner
+      - action: script.stove_settings
+        metadata: {}
+        data:
+          current_burner_power: '{{ trigger.slots.power | int(0) }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - SetCookerTimer
+      sequence:
+      - set_conversation_response: "{% if is_state('switch.stove_main_power','on')
+          %}\n  {% if trigger.slots.time | int(0) == 0 %}\n    {{ trigger.slots.side
+          | capitalize }} cooker timer deactivated.\n  {% else %}\n    {{ trigger.slots.side
+          | capitalize }} cooker timer set to {{ trigger.slots.time }} {{ 'minutes'
+          if trigger.slots.time | int(0) > 1 else 'minute' }}.\n  {% endif %}\n{%
+          else %}\n  Please turn on the stove manually first.\n{% endif %}"
+      - condition: state
+        entity_id: switch.stove_main_power
+        state: 'on'
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: '{{ trigger.slots.side }}'
+        target:
+          entity_id: select.stove_current_burner
+      - action: script.stove_settings
+        metadata: {}
+        data:
+          current_burner_timer: '{{ trigger.slots.time | int(0) }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - SetCookerPowerTimer
+      sequence:
+      - set_conversation_response: "{% if is_state('switch.stove_main_power','on')
+          %}\n  {% if trigger.slots.power | int(0) == 0 %}\n    {{ trigger.slots.side
+          | capitalize }} cooker deactivated.\n  {% else %}\n    {% if trigger.slots.time
+          == 0 %}\n      {{ trigger.slots.side | capitalize }} cooker set to level
+          {{ trigger.slots.power }}.\n    {% else %}\n      {{ trigger.slots.side
+          | capitalize }} cooker set to level {{ trigger.slots.power }} for {{ trigger.slots.time
+          }} {{ 'minutes' if trigger.slots.time > 1 else 'minute' }}.\n    {% endif
+          %}\n  {% endif %}\n{% else %}\n  Please turn on the stove manually first.\n{%
+          endif %}"
+      - condition: state
+        entity_id: switch.stove_main_power
+        state: 'on'
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: '{{ trigger.slots.side }}'
+        target:
+          entity_id: select.stove_current_burner
+      - action: script.stove_settings
+        metadata: {}
+        data:
+          current_burner_power: '{{ trigger.slots.power | int(0) }}'
+          current_burner_timer: '{{ trigger.slots.time | int(0) }}'
+    - conditions:
+      - condition: trigger
+        id:
+        - TurnOffCooker
+      sequence:
+      - set_conversation_response: "{% if is_state('switch.stove_main_power','on')
+          %}\n  {{ trigger.slots.side | capitalize }} cooker deactivated.\n{% else
+          %}\n  Stove is already off.\n{% endif %}\n"
+      - condition: state
+        entity_id: switch.stove_main_power
+        state: 'on'
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: '{{ trigger.slots.side }}'
+        target:
+          entity_id: select.stove_current_burner
+      - action: script.stove_settings
+        metadata: {}
+        data:
+          current_burner_power: 0
+    - conditions:
+      - condition: trigger
+        id:
+        - CookerStatus
+      sequence:
+      - if:
+        - condition: state
+          entity_id: switch.stove_main_power
+          state: 'on'
+        then:
+        - action: select.select_option
+          metadata: {}
+          data:
+            option: '{{ trigger.slots.side }}'
+          target:
+            entity_id: select.stove_current_burner
+        - delay: 1
+        - set_conversation_response: "{% set text = namespace(output = '') %}\n{%
+            set text.output = 'The ' + states('select.stove_current_burner') + ' cooker
+            is on level ' + states('select.stove_current_burner_power') %}\n{% if
+            states('number.stove_current_burner_timer') | int(0) == 0 %}\n  {% set
+            text.output = text.output + '.' %}\n{% elif states('number.stove_current_burner_timer')
+            | int(0) == 1 %}\n  {% set text.output = text.output + ' with 1 minute
+            remaining.' %}\n{% else %}\n  {% set text.output = text.output + ' with
+            ' + states('number.stove_current_burner_timer') + ' minutes remaining.'
+            %}\n{% endif %}\n{{ text.output }}\n"
+        else:
+        - set_conversation_response: The {{ trigger.slots.side }} cooker is off.
+  mode: single

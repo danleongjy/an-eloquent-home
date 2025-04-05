@@ -24,7 +24,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 3
-[`automation`](https://www.home-assistant.io/components/automation) | 137
+[`automation`](https://www.home-assistant.io/components/automation) | 141
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 150
 [`button`](https://www.home-assistant.io/components/button) | 159
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
@@ -58,7 +58,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 17
-Total | 1557
+Total | 1561
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -72,7 +72,6 @@ Total | 1557
 - [Google Assistant](https://home-assistant.io/integrations/google_assistant)
 - [Google Cast](https://home-assistant.io/integrations/cast)
 - [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
-- [Intent Script](https://home-assistant.io/integrations/intent_script)
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
 - [Local File Camera](https://home-assistant.io/integrations/local_file)
 - [MJPEG IP Camera](https://home-assistant.io/integrations/mjpeg)
