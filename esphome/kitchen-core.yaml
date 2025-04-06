@@ -232,22 +232,12 @@ binary_sensor:
           - ON for at least 1.5s
         then:
           - if:
-              condition:
-                switch.is_off: use_wake_word
+              condition: voice_assistant.is_running
               then:
-                - if:
-                    condition: voice_assistant.is_running
-                    then:
-                      - voice_assistant.stop:
-                      - script.execute: reset_led
-                    else:
-                      - voice_assistant.start:
-              else:
-                - voice_assistant.stop
-                - delay: 1s
+                - voice_assistant.stop:
                 - script.execute: reset_led
-                - script.wait: reset_led
-                - voice_assistant.start_continuous:
+              else:
+                - voice_assistant.start:
   - platform: gpio
     pin: 33
     name: Blue Button
