@@ -7831,19 +7831,20 @@
       - execute_command
     then:
     - variables:
+        command: '{{ trigger.slots.command | lower }}'
         commands:
-          turn on: start
-          run: start
-          activate: start
-          initiate: start
-          start: start
-          pause: pause
-          stop: stop
-          turn off: stop
-          deactivate: stop
-          terminate: stop
-          dock: return_to_base
-          return: return_to_base
+          Turn on: start
+          Run: start
+          Activate: start
+          Initiate: start
+          Start: start
+          Pause: pause
+          Stop: stop
+          Turn off: stop
+          Deactivate: stop
+          Terminate: stop
+          Dock: return_to_base
+          Return: return_to_base
     - target:
         entity_id: vacuum.roborock_s7
       action: vacuum.{{ commands[trigger.slots.command] }}
@@ -7854,13 +7855,14 @@
     else:
     - set_conversation_response: "{% set clean_time = namespace(hours = (states('sensor.roborock_s7_cleaning_time')
         | float(0)) * 60 // 60,\n                              minutes =  ((states('sensor.roborock_s7_cleaning_time')
-        | float(0)) * 60) | int(0)) %}\nThe vacuum is {{ 'in trouble' if states('vacuum.roborock_s7')
+        | float(0)) % 1 * 60) | int(0)) %}\nThe vacuum is {{ 'in trouble' if states('vacuum.roborock_s7')
         == 'error' else states('vacuum.roborock_s7') }}.\nIt cleaned {{states('sensor.roborock_s7_cleaning_area')
-        | int(0) }} square metres over {{ clean_time.hours | string + ' hour' if clean_time.hours
-        > 0 }}{{ 's' if clean_time.hours > 1 }}{{ ' and ' if clean_time.hours > 0
-        and clean_time.minutes > 0 }}{{ clean_time.minutes | string + ' minute' if
-        clean_time.minutes > 0 }}{{ 's' if clean_time.minutes > 1 }}.\n{% if states('vacuum.roborock_s7')
-        in ['docked','idle'] %}\n  Its last run ended {{ relative_time(as_datetime(states('sensor.roborock_s7_last_clean_end')))
+        | int(0) }} square metres over {{ clean_time.hours | round(0) | string + '
+        hour' if clean_time.hours > 0 }}{{ 's' if clean_time.hours > 1 }}{{ ' and
+        ' if clean_time.hours > 0 and clean_time.minutes > 0 }}{{ clean_time.minutes
+        | string + ' minute' if clean_time.minutes > 0 }}{{ 's' if clean_time.minutes
+        > 1 }}.\n{% if states('vacuum.roborock_s7') in ['docked','idle'] %}\n  Its
+        last run ended {{ relative_time(as_datetime(states('sensor.roborock_s7_last_clean_end')))
         }} ago.\n{% endif %}"
   mode: single
 - id: '1743851351763'
