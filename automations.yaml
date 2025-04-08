@@ -3076,7 +3076,7 @@
       temp_sensor: sensor.elenas_room_core_temperature
       high_temp: 28.5
       fan: fan.elenas_room_fan
-      high_speed: input_number.sitting_rooms_fan_speed_when_warm
+      high_speed: input_number.bedrooms_fan_speed_when_warm
       low_temp: 27.5
 - id: '1684246574094'
   alias: Eli's Room Fan Auto Control
@@ -7831,7 +7831,6 @@
       - execute_command
     then:
     - variables:
-        command: '{{ trigger.slots.command | lower }}'
         commands:
           Turn on: start
           Run: start
@@ -7848,10 +7847,12 @@
     - target:
         entity_id: vacuum.roborock_s7
       action: vacuum.{{ commands[trigger.slots.command] }}
-    - set_conversation_response: "{% if command == 'start' %}\n  {{ ['Starting','Running','Initiating','Activating']
-        | random }} the vacuum.\n{% elif command == 'pause' %}\n  Vacuum paused.\n{%
-        elif command == 'stop' %}\n  {{ ['Stopping','Deactivating'] | random }} the
-        vacuum.\n{% else %}\n  Returning vacuum to dock.\n{% endif %}"
+    - set_conversation_response: "{% if commands[trigger.slots.command] == 'start'
+        %}\n  {{ ['Starting','Running','Initiating','Activating'] | random }} the
+        vacuum.\n{% elif commands[trigger.slots.command] == 'pause' %}\n  Vacuum paused.\n{%
+        elif commands[trigger.slots.command] == 'stop' %}\n  {{ ['Stopping','Deactivating']
+        | random }} the vacuum.\n{% else %}\n  Returning vacuum to dock.\n{% endif
+        %}"
     else:
     - set_conversation_response: "{% set clean_time = namespace(hours = (states('sensor.roborock_s7_cleaning_time')
         | float(0)) * 60 // 60,\n                              minutes =  ((states('sensor.roborock_s7_cleaning_time')
