@@ -1278,7 +1278,6 @@
         - automation.doorbell
         - automation.study_room_voice_assistant_listening_for_wake_word
         - automation.kitchen_voice_assistant_listening_for_wake_word
-        - automation.living_room_voice_assistant_listening_for_wake_word
         - automation.elenas_room_curtains_auto_control
         - automation.elis_room_curtains_auto_control
       enabled: true
@@ -1319,11 +1318,6 @@
         - switch.study_room_voice_assistant_use_wake_word
         - switch.kitchen_core_use_wake_word
       action: switch.turn_off
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.living_room_voice_assistant_mute
     else:
     - data: {}
       target:
@@ -1377,7 +1371,6 @@
         - automation.doorbell
         - automation.study_room_voice_assistant_listening_for_wake_word
         - automation.kitchen_voice_assistant_listening_for_wake_word
-        - automation.living_room_voice_assistant_listening_for_wake_word
         - automation.elenas_room_curtains_auto_control
         - automation.elis_room_curtains_auto_control
       action: automation.turn_on
@@ -2768,21 +2761,14 @@
         entity_id:
         - automation.kitchen_voice_assistant_listening_for_wake_word
         - automation.study_room_voice_assistant_listening_for_wake_word
-        - automation.living_room_voice_assistant_listening_for_wake_word
         - switch.kitchen_core_use_wake_word
         - switch.study_room_voice_assistant_use_wake_word
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.living_room_voice_assistant_mute
     else:
     - action: homeassistant.turn_on
       target:
         entity_id:
         - automation.kitchen_voice_assistant_listening_for_wake_word
         - automation.study_room_voice_assistant_listening_for_wake_word
-        - automation.living_room_voice_assistant_listening_for_wake_word
       data: {}
     - data:
         time: '{{ states(''input_datetime.wind_down'') }}'
@@ -2820,16 +2806,6 @@
         data: {}
         target:
           entity_id: switch.study_room_voice_assistant_use_wake_word
-    - if:
-      - condition: state
-        entity_id: binary_sensor.living_room_presence
-        state: 'on'
-      then:
-      - action: switch.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: switch.living_room_voice_assistant_mute
   mode: single
 - id: '1681736538604'
   alias: Hallway Motion Timeout
@@ -3260,7 +3236,7 @@
             \  or ('Wind' in states('sensor.local_two_hour_forecast')) }}"
         - condition: state
           entity_id: climate.living_room_ac
-          state: cool
+          state=A cool
       - condition: not
         conditions:
         - condition: state
@@ -5351,7 +5327,7 @@
         condition: template
         value_template: "{% set output = false %} \n{% if school_days['calendar.eli_school_days'].events
           | length > 0 %}\n  {% if as_datetime(school_days['calendar.eli_school_days'].events[0].start).weekday()
-          in [0,2,4] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %} \n{{
+          in [0,2,4] %%7\n    {% set output = true %}\n  {% endif %}\n{% endif %} \n{{
           output }}"
       sequence:
       - data:
