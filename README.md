@@ -23,42 +23,43 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 Domain | Quantity
 -- | --
-[`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 3
-[`automation`](https://www.home-assistant.io/components/automation) | 141
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 150
-[`button`](https://www.home-assistant.io/components/button) | 159
+[`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
+[`automation`](https://www.home-assistant.io/components/automation) | 140
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 151
+[`button`](https://www.home-assistant.io/components/button) | 164
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
-[`camera`](https://www.home-assistant.io/components/camera) | 4
+[`camera`](https://www.home-assistant.io/components/camera) | 5
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 15
-[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 7
+[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 8
 [`fan`](https://www.home-assistant.io/components/fan) | 6
-[`image`](https://www.home-assistant.io/components/image) | 4
+[`image`](https://www.home-assistant.io/components/image) | 5
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 14
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
 [`input_number`](https://www.home-assistant.io/components/input_number) | 31
 [`input_select`](https://www.home-assistant.io/components/input_select) | 8
 [`input_text`](https://www.home-assistant.io/components/input_text) | 19
 [`light`](https://www.home-assistant.io/components/light) | 67
-[`media_player`](https://www.home-assistant.io/components/media_player) | 3
-[`number`](https://www.home-assistant.io/components/number) | 101
+[`media_player`](https://www.home-assistant.io/components/media_player) | 4
+[`notify`](https://www.home-assistant.io/components/notify) | 2
+[`number`](https://www.home-assistant.io/components/number) | 103
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 22
-[`select`](https://www.home-assistant.io/components/select) | 35
-[`sensor`](https://www.home-assistant.io/components/sensor) | 535
+[`select`](https://www.home-assistant.io/components/select) | 32
+[`sensor`](https://www.home-assistant.io/components/sensor) | 539
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 58
+[`switch`](https://www.home-assistant.io/components/switch) | 62
 [`time`](https://www.home-assistant.io/components/time) | 2
 [`tts`](https://www.home-assistant.io/components/tts) | 2
-[`update`](https://www.home-assistant.io/components/update) | 114
+[`update`](https://www.home-assistant.io/components/update) | 113
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 17
-Total | 1561
+Total | 1577
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -67,6 +68,7 @@ Total | 1561
 - [Downloader](https://home-assistant.io/integrations/downloader)
 - [ESPHome](https://home-assistant.io/integrations/esphome)
 - [Folder Sensor](https://home-assistant.io/integrations/folder)
+- [Fully Kiosk](https://home-assistant.io/integrations/fully_kiosk)
 - [Generic Camera](https://home-assistant.io/integrations/generic)
 - [Generic Thermostat](https://home-assistant.io/integrations/generic_thermostat)
 - [Google Assistant](https://home-assistant.io/integrations/google_assistant)
@@ -93,7 +95,6 @@ Total | 1561
 ## Extensions
 
 ### Add-ons
-- Assist Microphone
 - ESPHome Device Builder
 - File editor
 - openWakeWord

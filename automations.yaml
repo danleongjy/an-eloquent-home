@@ -4111,43 +4111,6 @@
         - switch.kitchen_core_use_wake_word
   mode: single
   max_exceeded: silent
-- id: '1702652712056'
-  alias: Living Room Voice Assistant Listening for Wake Word
-  description: Listen for wake word  on the Living Room Voice Assistant if presence
-    is detected in the kitchen, living room, dining room or study room
-  triggers:
-  - entity_id:
-    - binary_sensor.living_room_presence
-    to: 'on'
-    from: 'off'
-    trigger: state
-    id: motion
-  - entity_id:
-    - binary_sensor.living_room_presence
-    to: 'off'
-    from: 'on'
-    trigger: state
-    id: clear
-  conditions: []
-  actions:
-  - if:
-    - condition: trigger
-      id:
-      - motion
-    then:
-    - action: switch.turn_off
-      target:
-        entity_id:
-        - switch.living_room_voice_assistant_mute
-      data: {}
-    else:
-    - action: switch.turn_on
-      target:
-        entity_id:
-        - switch.living_room_voice_assistant_mute
-      data: {}
-  mode: single
-  max_exceeded: silent
 - id: '1702898924227'
   alias: Elena's Room Core
   description: Interface between Elena's Room devices and Home Assistant via ESPHome
@@ -6578,8 +6541,8 @@
       button_down_long_loop: true
 - id: '1739698582718'
   alias: Doorbell
-  description: Play doorbell tones and flash Room Core lights when Main Door Camera
-    Button is pressed
+  description: Play doorbell tones, flash Room Core lights and show Camera view on
+    Main Door Display when Main Door Camera Button is pressed
   triggers:
   - trigger: state
     entity_id:
@@ -6599,6 +6562,13 @@
         parents_room:
           door: binary_sensor.parents_room_doors
           button: button.parents_room_core_ring_doorbell
+      doorbell_track: "http://192.168.18.101:8123/media/local/doorbells/{{ ['JR DDG
+        Final Osaka Loop', \n                                                               'JR
+        DDG nDS e231 Door Chime',\n                                                               'JR
+        Station Notification 2',\n                                                               'JR
+        Sunny Spot V1',\n                                                               'JR
+        Cosmos V1',\n                                                               'JR
+        Susuki Heights V2'] | random }}.mp3\n"
   - parallel:
     - sequence:
       - action: media_player.volume_set
@@ -6606,18 +6576,16 @@
         data:
           volume_level: 0.66
         target:
-          entity_id: media_player.kitchen_speaker
+          entity_id:
+          - media_player.kitchen_speaker
+          - media_player.main_door_display
       - delay: 1
       - target:
-          entity_id: media_player.kitchen_speaker
+          entity_id:
+          - media_player.kitchen_speaker
+          - media_player.main_door_display
         data:
-          media_content_id: "https://an-eloquent-home.duckdns.org/media/local/doorbells/{{
-            ['JR DDG Final Osaka Loop', \n                                                               'JR
-            DDG nDS e231 Door Chime',\n                                                               'JR
-            Station Notification 2',\n                                                               'JR
-            Sunny Spot V1',\n                                                               'JR
-            Cosmos V1',\n                                                               'JR
-            Susuki Heights V2'] | random }}.mp3\n"
+          media_content_id: '{{ doorbell_track }}'
           media_content_type: music
         action: media_player.play_media
     - sequence:
@@ -6670,20 +6638,36 @@
         data:
           volume_level: 0.66
         target:
-          entity_id: media_player.kitchen_speaker
+          entity_id: media_player.study_room_speaker
       - delay: 1
       - target:
-          entity_id: media_player.kitchen_speaker
+          entity_id: media_player.study_room_speaker
         data:
-          media_content_id: "https://an-eloquent-home.duckdns.org/media/local/doorbells/{{
-            ['JR DDG Final Osaka Loop', \n                                                               'JR
-            DDG nDS e231 Door Chime',\n                                                               'JR
-            Station Notification 2',\n                                                               'JR
-            Sunny Spot V1',\n                                                               'JR
-            Cosmos V1',\n                                                               'JR
-            Susuki Heights V2'] | random }}.mp3\n"
+          media_content_id: '{{ doorbell_track }}'
           media_content_type: music
         action: media_player.play_media
+  - action: fully_kiosk.load_url
+    metadata: {}
+    data:
+      url: javascript:history.pushState(null,"","/lovelace/main-door");window.dispatchEvent(new
+        CustomEvent("location-changed"));
+    target:
+      device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+  - wait_for_trigger:
+    - trigger: state
+      entity_id:
+      - binary_sensor.main_door
+      from: 'off'
+      to: 'on'
+    timeout:
+      minutes: 1
+  - action: fully_kiosk.load_url
+    metadata: {}
+    data:
+      url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+        CustomEvent("location-changed"));
+    target:
+      device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
   mode: restart
 - id: '1742085553481'
   alias: Study Room Controller
@@ -7718,52 +7702,6 @@
         data: {}
         target:
           entity_id: cover.dining_room_blinds
-- id: '1742736717354'
-  alias: Eli's Watch Charging
-  description: Charge Eli's Watch
-  triggers:
-  - trigger: time
-    at: 05:00:00
-    id: pre_wakeup
-  - trigger: state
-    entity_id:
-    - device_tracker.elis_watch
-    to: home
-    from: not_home
-    id: coming_home
-  - trigger: state
-    entity_id:
-    - device_tracker.elis_watch
-    from: home
-    to: not_home
-    id: leaving_home
-  - trigger: numeric_state
-    entity_id:
-    - sensor.elis_watch_charger_watts
-    for:
-      minutes: 10
-    below: 0.5
-    id: charged
-  conditions: []
-  actions:
-  - if:
-    - condition: trigger
-      id:
-      - leaving_home
-      - charged
-    then:
-    - action: switch.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.elis_watch_charger
-    else:
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.elis_watch_charger
-  mode: single
 - id: '1743847597456'
   alias: Voice Control for Party Mode
   description: Turn on or off Party Mode with voice commands
@@ -8060,4 +7998,74 @@
             %}\n{% endif %}\n{{ text.output }}\n"
         else:
         - set_conversation_response: The {{ trigger.slots.side }} cooker is off.
+  mode: single
+- id: '1744446876391'
+  alias: Main Door Display
+  description: Charge or turn on the Main Door Display
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.main_door_display_battery
+    below: 20
+    id: low
+  - trigger: numeric_state
+    entity_id:
+    - sensor.main_door_display_battery
+    above: 80
+    id: high
+  - trigger: state
+    entity_id:
+    - binary_sensor.dining_room_presence
+    from: 'off'
+    to: 'on'
+    id: motion
+  - trigger: state
+    entity_id:
+    - binary_sensor.dining_room_presence
+    from: 'on'
+    to: 'off'
+    id: no_motion
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - low
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.main_door_display_charger
+    - conditions:
+      - condition: trigger
+        id:
+        - high
+      sequence:
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.main_door_display_charger
+    - conditions:
+      - condition: trigger
+        id:
+        - motion
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.main_door_display_screen
+    - conditions:
+      - condition: trigger
+        id:
+        - no_motion
+      sequence:
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.main_door_display_screen
   mode: single
