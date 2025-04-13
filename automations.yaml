@@ -3236,7 +3236,7 @@
             \  or ('Wind' in states('sensor.local_two_hour_forecast')) }}"
         - condition: state
           entity_id: climate.living_room_ac
-          state=A cool
+          state: cool
       - condition: not
         conditions:
         - condition: state
@@ -5327,7 +5327,7 @@
         condition: template
         value_template: "{% set output = false %} \n{% if school_days['calendar.eli_school_days'].events
           | length > 0 %}\n  {% if as_datetime(school_days['calendar.eli_school_days'].events[0].start).weekday()
-          in [0,2,4] %%7\n    {% set output = true %}\n  {% endif %}\n{% endif %} \n{{
+          in [0,2,4] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %} \n{{
           output }}"
       sequence:
       - data:
@@ -6538,8 +6538,7 @@
         parents_room:
           door: binary_sensor.parents_room_doors
           button: button.parents_room_core_ring_doorbell
-      doorbell_track: "http://192.168.18.101:8123/media/local/doorbells/{{ ['JR DDG
-        Final Osaka Loop', \n                                                               'JR
+      doorbell_track: "{{ ['JR DDG Final Osaka Loop', \n                                                               'JR
         DDG nDS e231 Door Chime',\n                                                               'JR
         Station Notification 2',\n                                                               'JR
         Sunny Spot V1',\n                                                               'JR
@@ -6557,11 +6556,17 @@
           - media_player.main_door_display
       - delay: 1
       - target:
-          entity_id:
-          - media_player.kitchen_speaker
-          - media_player.main_door_display
+          entity_id: media_player.kitchen_speaker
         data:
-          media_content_id: '{{ doorbell_track }}'
+          media_content_id: http://192.168.18.101:8123/media/local/doorbells/{{ doorbell_track
+            }}
+          media_content_type: music
+        action: media_player.play_media
+      - target:
+          entity_id: media_player.main_door_display
+        data:
+          media_content_id: media-source://media_source/local/doorbells/{{ doorbell_track
+            }}
           media_content_type: music
         action: media_player.play_media
     - sequence:
@@ -7982,12 +7987,22 @@
   - trigger: numeric_state
     entity_id:
     - sensor.main_door_display_battery
+    below: 10
+    id: low
+  - trigger: numeric_state
+    entity_id:
+    - sensor.main_door_display_battery
     below: 20
     id: low
   - trigger: numeric_state
     entity_id:
     - sensor.main_door_display_battery
     above: 80
+    id: high
+  - trigger: numeric_state
+    entity_id:
+    - sensor.main_door_display_battery
+    above: 90
     id: high
   - trigger: state
     entity_id:
