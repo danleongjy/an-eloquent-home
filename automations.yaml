@@ -6624,31 +6624,33 @@
       - target:
           entity_id: media_player.study_room_speaker
         data:
-          media_content_id: '{{ doorbell_track }}'
+          media_content_id: http://192.168.18.101:8123/media/local/doorbells/{{ doorbell_track
+            }}
           media_content_type: music
         action: media_player.play_media
-  - action: fully_kiosk.load_url
-    metadata: {}
-    data:
-      url: javascript:history.pushState(null,"","/lovelace/main-door");window.dispatchEvent(new
-        CustomEvent("location-changed"));
-    target:
-      device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
-  - wait_for_trigger:
-    - trigger: state
-      entity_id:
-      - binary_sensor.main_door
-      from: 'off'
-      to: 'on'
-    timeout:
-      minutes: 1
-  - action: fully_kiosk.load_url
-    metadata: {}
-    data:
-      url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
-        CustomEvent("location-changed"));
-    target:
-      device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+    - sequence:
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          url: javascript:history.pushState(null,"","/lovelace/main-door");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+        target:
+          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+      - wait_for_trigger:
+        - trigger: state
+          entity_id:
+          - binary_sensor.main_door
+          from: 'off'
+          to: 'on'
+        timeout:
+          minutes: 1
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+        target:
+          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
   mode: restart
 - id: '1742085553481'
   alias: Study Room Controller
@@ -8016,6 +8018,13 @@
     from: 'on'
     to: 'off'
     id: no_motion
+  - trigger: state
+    entity_id:
+    - sensor.main_door_display_current_page
+    from: http://192.168.18.101:8123/lovelace/0
+    for:
+      minutes: 5
+    id: reset_view
   conditions: []
   actions:
   - choose:
@@ -8059,4 +8068,16 @@
         data: {}
         target:
           entity_id: switch.main_door_display_screen
+    - conditions:
+      - condition: trigger
+        id:
+        - reset_view
+      sequence:
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+        target:
+          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
   mode: single
