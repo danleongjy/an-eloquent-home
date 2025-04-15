@@ -6628,29 +6628,6 @@
             }}
           media_content_type: music
         action: media_player.play_media
-    - sequence:
-      - action: fully_kiosk.load_url
-        metadata: {}
-        data:
-          url: javascript:history.pushState(null,"","/lovelace/main-door");window.dispatchEvent(new
-            CustomEvent("location-changed"));
-        target:
-          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
-      - wait_for_trigger:
-        - trigger: state
-          entity_id:
-          - binary_sensor.main_door
-          from: 'off'
-          to: 'on'
-        timeout:
-          minutes: 1
-      - action: fully_kiosk.load_url
-        metadata: {}
-        data:
-          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
-            CustomEvent("location-changed"));
-        target:
-          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
   mode: restart
 - id: '1742085553481'
   alias: Study Room Controller
@@ -8025,6 +8002,12 @@
     for:
       minutes: 5
     id: reset_view
+  - trigger: state
+    entity_id:
+    - binary_sensor.main_door_camera_motion
+    from: 'off'
+    to: 'on'
+    id: motion
   conditions: []
   actions:
   - choose:
@@ -8080,4 +8063,34 @@
             CustomEvent("location-changed"));
         target:
           device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
-  mode: single
+    - conditions:
+      - condition: trigger
+        id:
+        - motion
+      sequence:
+      - condition: state
+        entity_id: binary_sensor.main_door
+        state: 'off'
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          url: javascript:history.pushState(null,"","/lovelace/main-door");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+        target:
+          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+      - wait_for_trigger:
+        - trigger: state
+          entity_id:
+          - binary_sensor.main_door
+          from: 'off'
+          to: 'on'
+        timeout:
+          minutes: 1
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+        target:
+          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+  mode: restart
