@@ -7988,6 +7988,7 @@
     - binary_sensor.dining_room_presence
     from: 'off'
     id: motion
+    to: 'on'
   - trigger: state
     entity_id:
     - binary_sensor.dining_room_presence
@@ -7996,17 +7997,17 @@
     id: no_motion
   - trigger: state
     entity_id:
-    - sensor.main_door_display_current_page
-    from: http://192.168.18.101:8123/lovelace/0
-    for:
-      minutes: 5
-    id: reset_view
-  - trigger: state
-    entity_id:
     - binary_sensor.main_door_camera_motion
     from: 'off'
     to: 'on'
     id: visitor
+  - trigger: state
+    entity_id:
+    - binary_sensor.dining_room_motion
+    to: 'off'
+    for:
+      minutes: 5
+    id: reset_view
   conditions: []
   actions:
   - choose:
@@ -8050,18 +8051,12 @@
         data: {}
         target:
           entity_id: switch.main_door_display_screen
-    - conditions:
-      - condition: trigger
-        id:
-        - reset_view
-      sequence:
-      - action: fully_kiosk.load_url
+      - action: notify.mobile_app_main_door_display
         metadata: {}
         data:
-          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
-            CustomEvent("location-changed"));
-        target:
-          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+          message: command_webview
+          data:
+            command: /lovelace/0
     - conditions:
       - condition: trigger
         id:
@@ -8070,13 +8065,12 @@
       - condition: state
         entity_id: binary_sensor.main_door
         state: 'off'
-      - action: fully_kiosk.load_url
+      - action: notify.mobile_app_main_door_display
         metadata: {}
         data:
-          url: javascript:history.pushState(null,"","/lovelace/main-door");window.dispatchEvent(new
-            CustomEvent("location-changed"));
-        target:
-          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+          message: command_webview
+          data:
+            command: /lovelace/main-door
       - wait_for_trigger:
         - trigger: state
           entity_id:
@@ -8085,11 +8079,21 @@
           to: 'on'
         timeout:
           minutes: 1
-      - action: fully_kiosk.load_url
+      - action: notify.mobile_app_main_door_display
         metadata: {}
         data:
-          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
-            CustomEvent("location-changed"));
-        target:
-          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+          message: command_webview
+          data:
+            command: /lovelace/0
+    - conditions:
+      - condition: trigger
+        id:
+        - reset_view
+      sequence:
+      - action: notify.mobile_app_main_door_display
+        metadata: {}
+        data:
+          message: command_webview
+          data:
+            command: /lovelace/0
   mode: restart
