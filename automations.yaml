@@ -8008,6 +8008,12 @@
     for:
       minutes: 5
     id: reset_view
+  - trigger: state
+    entity_id:
+    - binary_sensor.main_door
+    from: 'off'
+    to: 'on'
+    id: reset_view
   conditions: []
   actions:
   - choose:
@@ -8063,7 +8069,9 @@
         - visitor
       sequence:
       - condition: state
-        entity_id: binary_sensor.main_door
+        entity_id:
+        - binary_sensor.main_door
+        - input_boolean.away_mode
         state: 'off'
       - action: notify.mobile_app_main_door_display
         metadata: {}
@@ -8071,14 +8079,7 @@
           message: command_webview
           data:
             command: /lovelace/main-door
-      - wait_for_trigger:
-        - trigger: state
-          entity_id:
-          - binary_sensor.main_door
-          from: 'off'
-          to: 'on'
-        timeout:
-          minutes: 1
+      - delay: 60
       - action: notify.mobile_app_main_door_display
         metadata: {}
         data:
