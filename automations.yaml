@@ -3579,18 +3579,18 @@
 - id: '1690850022345'
   alias: Grace's Alarm
   description: Wake up Grace at her next alarm
-  trigger:
-  - platform: time
-    at: input_datetime.graces_next_alarm
+  triggers:
+  - at: input_datetime.graces_next_alarm
     id: alarm
-  - platform: state
-    entity_id:
+    trigger: time
+  - entity_id:
     - binary_sensor.parents_room_doors
     from: 'off'
     to: 'on'
     id: dismiss_alarm
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: trigger
       id:
@@ -3608,7 +3608,7 @@
             int if is_state(''sun.sun'',''below_horizon'') else 100 }}'
         action: light.turn_on
       - data:
-          option: Take On Me
+          option: Beep
         target:
           entity_id: select.parents_room_core_ringtone
         action: select.select_option
@@ -3621,7 +3621,27 @@
         target:
           entity_id: button.parents_room_core_play_ringtone
         action: button.press
-    - delay: 60
+      - delay: 1
+      - data: {}
+        target:
+          entity_id: button.parents_room_core_play_ringtone
+        action: button.press
+      - delay: 1
+      - data: {}
+        target:
+          entity_id: button.parents_room_core_play_ringtone
+        action: button.press
+      - delay: 1
+      - data:
+          option: Negative Beep
+        target:
+          entity_id: select.parents_room_core_ringtone
+        action: select.select_option
+      - data: {}
+        target:
+          entity_id: button.parents_room_core_play_ringtone
+        action: button.press
+    - delay: 300
     - if:
       - condition: state
         entity_id: input_boolean.parents_room_next_alarm_dismissed
@@ -3631,6 +3651,15 @@
           bedroom: parents_room
           ringtone: Take On Me
         action: script.alarm_lights
+      - data:
+          option: Take On Me
+        target:
+          entity_id: select.parents_room_core_ringtone
+        action: select.select_option
+      - data: {}
+        target:
+          entity_id: button.parents_room_core_play_ringtone
+        action: button.press
     - data: {}
       target:
         entity_id: input_boolean.parents_room_next_alarm_dismissed
@@ -8079,6 +8108,14 @@
           message: command_webview
           data:
             command: /lovelace/main-door
+        enabled: false
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          url: javascript:history.pushState(null,"","/lovelace/main-door");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+        target:
+          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
       - delay: 60
       - action: notify.mobile_app_main_door_display
         metadata: {}
@@ -8086,6 +8123,14 @@
           message: command_webview
           data:
             command: /lovelace/0
+        enabled: false
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+        target:
+          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
     - conditions:
       - condition: trigger
         id:
@@ -8097,4 +8142,12 @@
           message: command_webview
           data:
             command: /lovelace/0
+        enabled: false
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+        target:
+          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
   mode: restart
