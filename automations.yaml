@@ -8033,11 +8033,11 @@
     id: visitor
   - trigger: state
     entity_id:
-    - binary_sensor.dining_room_motion
-    to: 'off'
+    - sensor.main_door_display_current_page
     for:
       minutes: 5
     id: reset_view
+    from: https://an-eloquent-home.duckdns.org/lovelace/0
   - trigger: state
     entity_id:
     - binary_sensor.main_door
@@ -8103,13 +8103,6 @@
         - binary_sensor.main_door
         - input_boolean.away_mode
         state: 'off'
-      - action: notify.mobile_app_main_door_display
-        metadata: {}
-        data:
-          message: command_webview
-          data:
-            command: /lovelace/main-door
-        enabled: false
       - action: fully_kiosk.load_url
         metadata: {}
         data:
@@ -8118,13 +8111,6 @@
         target:
           device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
       - delay: 60
-      - action: notify.mobile_app_main_door_display
-        metadata: {}
-        data:
-          message: command_webview
-          data:
-            command: /lovelace/0
-        enabled: false
       - action: fully_kiosk.load_url
         metadata: {}
         data:
@@ -8137,13 +8123,6 @@
         id:
         - reset_view
       sequence:
-      - action: notify.mobile_app_main_door_display
-        metadata: {}
-        data:
-          message: command_webview
-          data:
-            command: /lovelace/0
-        enabled: false
       - action: fully_kiosk.load_url
         metadata: {}
         data:
