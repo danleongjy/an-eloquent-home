@@ -4948,7 +4948,7 @@
   triggers:
   - alias: When Daniel's Next Alarm has fired
     value_template: '{{ now() > as_datetime(states(''input_datetime.daniels_next_alarm'')).astimezone(now().tzinfo)
-      + timedelta(minutes = 1) }}'
+      + timedelta(minutes = 6) }}'
     id: alarm_fired
     trigger: template
   - entity_id:
@@ -7698,14 +7698,14 @@
   triggers:
   - trigger: conversation
     command:
-    - (I'm | I am | we're | we are) (having | throwing) a party
-    - (turn on | activate | initiate) party mode
+    - (I'm | I am | We're | We are) (having | throwing) a party
+    - (Turn on | Activate | Initiate) party mode
     id: 'on'
   - trigger: conversation
     command:
-    - (I'm | I am | we're | we are) (finishing | finished with | ending) the party
-    - (I have | I've | we have | we've) (finished | ended) the party
-    - (turn off | deactivate) party mode
+    - (I'm | I am | We're | We are) (finishing | finished with | ending) the party
+    - (I have | I've | We have | We've) (finished | ended) the party
+    - (Turn off | Deactivate) party mode
     id: 'off'
   conditions: []
   actions:
@@ -7724,8 +7724,8 @@
   triggers:
   - trigger: conversation
     command:
-    - '"(I''m | I am | we''re | we are) (leaving | going out)"'
-    - '"(turn on | activate | initiate) (shutdown | away mode) [sequence]"'
+    - '"(I''m | I am | We''re | We are) (leaving | going out)"'
+    - '"(Turn on | Activate | Initiate) (shutdown | away mode) [sequence]"'
   conditions: []
   actions:
   - action: input_boolean.turn_on
@@ -7804,24 +7804,24 @@
     id: CookingPreset
   - trigger: conversation
     command:
-    - set [the] {side} (cooker | stove | burner) to [level] {power}
+    - Set [the] {side} (cooker | stove | burner) to [level] {power}
     id: SetCookerPower
   - trigger: conversation
     command:
-    - set [the] {side} (cooker | stove | burner) timer to {time} minute[s]
+    - Set [the] {side} (cooker | stove | burner) timer to {time} minute[s]
     id: SetCookerTimer
   - trigger: conversation
     command:
-    - set [the] {side} (cooker | stove | burner) to [level] {power} for {time} minute[s]
+    - Set [the] {side} (cooker | stove | burner) to [level] {power} for {time} minute[s]
     id: SetCookerPowerTimer
   - trigger: conversation
     command:
-    - turn off [the] {side} (cooker | stove | burner)
+    - Turn off [the] {side} (cooker | stove | burner)
     id: TurnOffCooker
   - trigger: conversation
     command:
-    - is the {side} (cooker | stove | burner) (on | off)
-    - (what is | what's) the (status | condition) of the {side} (cooker | stove |
+    - Is the {side} (cooker | stove | burner) (on | off)
+    - (What is | What's) the (status | condition) of the {side} (cooker | stove |
       burner)
     id: CookerStatus
   conditions: []
@@ -8087,12 +8087,11 @@
         data: {}
         target:
           entity_id: switch.main_door_display_screen
-      - action: notify.mobile_app_main_door_display
+      - action: button.press
         metadata: {}
-        data:
-          message: command_webview
-          data:
-            command: /lovelace/0
+        data: {}
+        target:
+          entity_id: button.main_door_display_load_start_url
     - conditions:
       - condition: trigger
         id:
