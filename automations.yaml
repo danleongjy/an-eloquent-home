@@ -3188,17 +3188,16 @@
 - id: '1659777667257'
   alias: Kitchen Blind Auto Control
   description: Close the Kitchen Blind if raining, in the mornings or AC is on
-  trigger:
-  - platform: template
-    value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or ('Thunder'
+  triggers:
+  - value_template: "{{ (states('sensor.local_rainfall') | int(0) > 1)\n   or ('Thunder'
       in states('sensor.local_two_hour_forecast'))\n   or ('Rain' in states('sensor.local_two_hour_forecast'))\n
       \  or ('Wind' in states('sensor.local_two_hour_forecast')) }}"
-  - platform: state
-    entity_id:
+    trigger: template
+  - entity_id:
     - climate.living_room_ac
     to: cool
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - switch.stove_main_power
     - switch.rice_cooker
     not_from:
@@ -3207,24 +3206,25 @@
     not_to:
     - unavailable
     - unknown
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.kitchen_radar_lux
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - binary_sensor.kitchen_radar_occupancy
     to: 'on'
-  - platform: state
-    entity_id: sensor.sun_solar_elevation
-  - platform: state
-    entity_id: sensor.sun_solar_azimuth
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id: sensor.sun_solar_elevation
+    trigger: state
+  - entity_id: sensor.sun_solar_azimuth
+    trigger: state
+  - entity_id:
     - sun.sun
     attribute: rising
     to: false
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: or
@@ -3343,9 +3343,9 @@
         while:
         - condition: not
           conditions:
-          - condition: state
+          - condition: numeric_state
             entity_id: cover.kitchen_blind
-            state: 100
+            above: 95
             attribute: current_position
   mode: single
   max_exceeded: silent
