@@ -124,7 +124,9 @@ script:
   - id: draw_display_bottom_status_bar
     then:
       - lambda: |
-          if (id(env_value_display).state == "temperature") {
+          if (id(env_value_display).state == "current_date") {
+            id(interface_display).strftime(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "%a %d %b", id(homeassistant_time).now());
+          } else if (id(env_value_display).state == "temperature") {
             id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000e846 %.1f°C", id(room_temp).state);
           } else if (id(env_value_display).state == "humidity") {
             id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000f164 %.1f%%", id(room_hum).state);
@@ -163,6 +165,7 @@ select:
   - platform: template
     id: env_value_display
     options:
+      - current_date
       - temperature
       - humidity
       - lux
