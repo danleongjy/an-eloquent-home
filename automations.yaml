@@ -4200,7 +4200,7 @@
     - target:
         entity_id: tts.piper
       data:
-        cache: true
+        cache: false
         message: Winding down in 15 minutes
         media_player_entity_id: media_player.all_speakers
       action: tts.speak
@@ -4208,10 +4208,24 @@
     - target:
         entity_id: tts.piper
       data:
-        cache: true
+        cache: false
         media_player_entity_id: media_player.kitchen_speaker
         message: Winding down in 15 minutes
       action: tts.speak
+  - action: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.8
+    target:
+      entity_id: media_player.main_door_display
+  - action: tts.speak
+    metadata: {}
+    data:
+      cache: false
+      media_player_entity_id: media_player.main_door_display
+      message: Winding down in 15 minutes
+    target:
+      entity_id: tts.piper
   mode: single
 - id: '1705277866413'
   alias: Vacuum Configuration
@@ -6583,19 +6597,20 @@
         target:
           entity_id:
           - media_player.kitchen_speaker
+      - action: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: 0.8
+        target:
+          entity_id:
           - media_player.main_door_display
       - delay: 1
       - target:
-          entity_id: media_player.kitchen_speaker
+          entity_id:
+          - media_player.kitchen_speaker
+          - media_player.main_door_display
         data:
           media_content_id: http://192.168.18.101:8123/media/local/doorbells/{{ doorbell_track
-            }}
-          media_content_type: music
-        action: media_player.play_media
-      - target:
-          entity_id: media_player.main_door_display
-        data:
-          media_content_id: media-source://media_source/local/doorbells/{{ doorbell_track
             }}
           media_content_type: music
         action: media_player.play_media
