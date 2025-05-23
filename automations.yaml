@@ -6606,11 +6606,16 @@
           - media_player.main_door_display
       - delay: 1
       - target:
-          entity_id:
-          - media_player.kitchen_speaker
-          - media_player.main_door_display
+          entity_id: media_player.kitchen_speaker
         data:
           media_content_id: http://192.168.18.101:8123/media/local/doorbells/{{ doorbell_track
+            }}
+          media_content_type: music
+        action: media_player.play_media
+      - target:
+          entity_id: media_player.main_door_display
+        data:
+          media_content_id: media-source://media_source/local/doorbells/{{ doorbell_track
             }}
           media_content_type: music
         action: media_player.play_media
