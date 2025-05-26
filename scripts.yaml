@@ -602,14 +602,14 @@ stove_settings:
 vacuum_selected_rooms:
   alias: Vacuum Selected Rooms
   sequence:
-  - service: vacuum.send_command
-    metadata: {}
+  - metadata: {}
     data:
       command: app_segment_clean
       params:
       - segments: '{{ rooms | map(''int'') | list }}'
+    action: vacuum.send_command
     target:
-      entity_id: vacuum.roborock_s7
+      entity_id: vacuum.hestia
   mode: single
   icon: mdi:home-plus-outline
   fields:

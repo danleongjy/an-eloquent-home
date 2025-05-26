@@ -1743,12 +1743,12 @@
         "vacuum": {
           "card": {
             "type": "custom:state-switch",
-            "entity": "vacuum.roborock_s7",
+            "entity": "vacuum.hestia",
             "default": "disabled",
             "states": {
               "disabled": {
                 "type": "custom:button-card",
-                "entity": "vacuum.roborock_s7",
+                "entity": "vacuum.hestia",
                 "template": "error",
                 "icon": "mdi:robot-vacuum",
                 "tap_action": {
@@ -1758,7 +1758,7 @@
               },
               "error": {
                 "type": "custom:button-card",
-                "entity": "vacuum.roborock_s7",
+                "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
                 "icon": "mdi:robot-vacuum-alert",
                 "styles": {
@@ -1779,7 +1779,7 @@
               },
               "docked": {
                 "type": "custom:button-card",
-                "entity": "vacuum.roborock_s7",
+                "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
                 "label": "[[[ \n  if (parseInt(entity.attributes.battery_level) <= 99)\n    return entity.attributes.battery_level + '%';\n  else\n    return ''\n]]]\n",
                 "show_label": true,
@@ -1788,7 +1788,7 @@
                   "action": "call-service",
                   "service": "vacuum.start",
                   "service_data": {
-                    "entity_id": "vacuum.roborock_s7"
+                    "entity_id": "vacuum.hestia"
                   }
                 },
                 "styles": {
@@ -1806,7 +1806,7 @@
               },
               "cleaning": {
                 "type": "custom:button-card",
-                "entity": "vacuum.roborock_s7",
+                "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
                 "label": "[[[ return entity.attributes.battery_level + '%']]]",
                 "show_label": true,
@@ -1815,13 +1815,13 @@
                   "action": "call-service",
                   "service": "vacuum.pause",
                   "service_data": {
-                    "entity_id": "vacuum.roborock_s7"
+                    "entity_id": "vacuum.hestia"
                   }
                 }
               },
               "returning": {
                 "type": "custom:button-card",
-                "entity": "vacuum.roborock_s7",
+                "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
                 "label": "[[[ return entity.attributes.battery_level + '%']]]",
                 "show_label": true,
@@ -1830,13 +1830,13 @@
                   "action": "call-service",
                   "service": "vacuum.pause",
                   "service_data": {
-                    "entity_id": "vacuum.roborock_s7"
+                    "entity_id": "vacuum.hestia"
                   }
                 }
               },
               "paused": {
                 "type": "custom:button-card",
-                "entity": "vacuum.roborock_s7",
+                "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
                 "color": "rgb(68,115,158)",
                 "label": "[[[ return entity.attributes.battery_level + '%']]]",
@@ -1845,7 +1845,7 @@
                   "action": "call-service",
                   "service": "vacuum.start",
                   "service_data": {
-                    "entity_id": "vacuum.roborock_s7"
+                    "entity_id": "vacuum.hestia"
                   }
                 },
                 "styles": {
@@ -1863,7 +1863,7 @@
               },
               "idle": {
                 "type": "custom:button-card",
-                "entity": "vacuum.roborock_s7",
+                "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
                 "label": "[[[ return entity.attributes.battery_level + '%']]]",
                 "show_label": true,
@@ -3987,7 +3987,7 @@
                           "height": "4%",
                           "width": "2%"
                         },
-                        "entity": "sensor.qemu_eloquent_house_101_cpu_used",
+                        "entity": "sensor.qemu_an_eloquent_home_101_cpu_used",
                         "template": "floorplan_sensor_cpu"
                       },
                       {
@@ -10496,7 +10496,10 @@
                   "badges": [
                     {
                       "type": "entity",
-                      "entity": "sensor.node_proxmox_uptime"
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.node_proxmox_last_boot",
+                      "icon": ""
                     },
                     {
                       "type": "entity",
@@ -10542,7 +10545,7 @@
                       "name": "pfSense"
                     },
                     {
-                      "entity": "sensor.qemu_eloquent_house_101_cpu_used",
+                      "entity": "sensor.qemu_an_eloquent_home_101_cpu_used",
                       "name": "Home Assistant"
                     },
                     {
@@ -10565,14 +10568,14 @@
                     {
                       "entity": "sensor.node_proxmox_memory_used",
                       "name": "Proxmox",
-                      "transform": "return x - hass.states['sensor.qemu_pfsense_100_memory_used'].state - hass.states['sensor.qemu_eloquent_house_101_memory_used'].state - hass.states['sensor.qemu_docker_102_memory_used'].state - hass.states['sensor.lxc_samba_103_memory_used'].state"
+                      "transform": "return x - hass.states['sensor.qemu_pfsense_100_memory_used'].state - hass.states['sensor.qemu_an_eloquent_home_101_memory_used'].state - hass.states['sensor.qemu_docker_102_memory_used'].state - hass.states['sensor.lxc_samba_103_memory_used'].state"
                     },
                     {
                       "entity": "sensor.qemu_pfsense_100_memory_used",
                       "name": "pfSense"
                     },
                     {
-                      "entity": "sensor.qemu_eloquent_house_101_memory_used",
+                      "entity": "sensor.qemu_an_eloquent_home_101_memory_used",
                       "name": "Home Assistant"
                     },
                     {
@@ -10611,7 +10614,7 @@
                       "type": "entity",
                       "show_state": true,
                       "show_icon": true,
-                      "entity": "sensor.qemu_eloquent_house_101_cpu_used",
+                      "entity": "sensor.qemu_an_eloquent_home_101_cpu_used",
                       "tap_action": {
                         "action": "more-info"
                       },
@@ -10621,7 +10624,7 @@
                       "type": "entity",
                       "show_state": true,
                       "show_icon": true,
-                      "entity": "sensor.qemu_eloquent_house_101_memory_used_percentage",
+                      "entity": "sensor.qemu_an_eloquent_home_101_memory_used_percentage",
                       "tap_action": {
                         "action": "more-info"
                       }
@@ -11174,7 +11177,7 @@
                       "type": "entity",
                       "show_state": true,
                       "show_icon": true,
-                      "entity": "sensor.qemu_docker_102_uptime",
+                      "entity": "sensor.qemu_docker_102_last_boot",
                       "icon": "mdi:power"
                     },
                     {
@@ -11432,7 +11435,7 @@
                   "cards": [
                     {
                       "type": "tile",
-                      "entity": "vacuum.roborock_s7",
+                      "entity": "vacuum.hestia",
                       "show_entity_picture": false,
                       "icon_tap_action": {
                         "action": "more-info"
@@ -11440,7 +11443,9 @@
                       "state_content": [
                         "state",
                         "fan_speed"
-                      ]
+                      ],
+                      "features_position": "bottom",
+                      "vertical": false
                     },
                     {
                       "type": "horizontal-stack",
@@ -11450,7 +11455,7 @@
                           "conditions": [
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state": "cleaning"
                             }
                           ],
@@ -11459,11 +11464,12 @@
                             "show_icon": true,
                             "type": "button",
                             "tap_action": {
-                              "action": "call-service",
-                              "service": "vacuum.pause",
+                              "action": "perform-action",
                               "target": {
-                                "entity_id": "vacuum.roborock_s7"
-                              }
+                                "entity_id": "vacuum.hestia"
+                              },
+                              "perform_action": "vacuum.pause",
+                              "data": {}
                             },
                             "icon": "mdi:pause",
                             "hold_action": {
@@ -11477,7 +11483,7 @@
                           "conditions": [
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state": "cleaning"
                             }
                           ],
@@ -11486,13 +11492,12 @@
                             "show_icon": true,
                             "type": "button",
                             "tap_action": {
-                              "action": "call-service",
-                              "service": "vacuum.stop",
+                              "action": "perform-action",
                               "target": {
-                                "entity_id": [
-                                  "vacuum.roborock_s7"
-                                ]
-                              }
+                                "entity_id": "vacuum.hestia"
+                              },
+                              "perform_action": "vacuum.stop",
+                              "data": {}
                             },
                             "icon": "mdi:stop",
                             "hold_action": {
@@ -11506,22 +11511,22 @@
                           "conditions": [
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state_not": "error"
                             },
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state_not": "unavailable"
                             },
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state_not": "unknown"
                             },
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state_not": "cleaning"
                             }
                           ],
@@ -11530,13 +11535,12 @@
                             "show_icon": true,
                             "type": "button",
                             "tap_action": {
-                              "action": "call-service",
-                              "service": "vacuum.start",
+                              "action": "perform-action",
                               "target": {
-                                "entity_id": [
-                                  "vacuum.roborock_s7"
-                                ]
-                              }
+                                "entity_id": "vacuum.hestia"
+                              },
+                              "perform_action": "vacuum.start",
+                              "data": {}
                             },
                             "icon": "mdi:play",
                             "hold_action": {
@@ -11550,22 +11554,22 @@
                           "conditions": [
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state_not": "error"
                             },
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state_not": "unavailable"
                             },
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state_not": "unknown"
                             },
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state_not": "cleaning"
                             }
                           ],
@@ -11589,7 +11593,7 @@
                           "conditions": [
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state_not": "unavailable"
                             }
                           ],
@@ -11598,13 +11602,12 @@
                             "show_icon": true,
                             "type": "button",
                             "tap_action": {
-                              "action": "call-service",
-                              "service": "vacuum.return_to_base",
+                              "action": "perform-action",
                               "target": {
-                                "entity_id": [
-                                  "vacuum.roborock_s7"
-                                ]
-                              }
+                                "entity_id": "vacuum.hestia"
+                              },
+                              "perform_action": "vacuum.return_to_base",
+                              "data": {}
                             },
                             "icon": "mdi:home-import-outline",
                             "hold_action": {
@@ -11623,7 +11626,7 @@
                           "conditions": [
                             {
                               "condition": "state",
-                              "entity": "vacuum.roborock_s7",
+                              "entity": "vacuum.hestia",
                               "state_not": "unavailable"
                             }
                           ],
@@ -11633,14 +11636,14 @@
                             "type": "button",
                             "entity": "input_select.vacuum_fan_speed",
                             "tap_action": {
-                              "action": "call-service",
-                              "service": "input_select.select_next",
+                              "action": "perform-action",
                               "target": {
                                 "entity_id": "input_select.vacuum_fan_speed"
                               },
                               "data": {
                                 "cycle": true
-                              }
+                              },
+                              "perform_action": "input_select.select_next"
                             },
                             "show_state": true,
                             "icon_height": "30px"
@@ -11651,20 +11654,20 @@
                           "conditions": [
                             {
                               "condition": "state",
-                              "entity": "binary_sensor.roborock_s7_mop_attached",
-                              "state": "on"
+                              "entity": "vacuum.hestia",
+                              "state_not": "unavailable"
                             },
                             {
                               "condition": "state",
-                              "entity": "binary_sensor.roborock_s7_water_box_attached",
-                              "state": "on"
+                              "entity": "vacuum.hestia",
+                              "state_not": "unknown"
                             }
                           ],
                           "card": {
                             "show_name": false,
                             "show_icon": true,
                             "type": "button",
-                            "entity": "select.roborock_s7_mop_intensity",
+                            "entity": "switch.hestia_carpet_boost",
                             "tap_action": {
                               "action": "call-service",
                               "service": "select.select_next",
@@ -11684,20 +11687,20 @@
                           "conditions": [
                             {
                               "condition": "state",
-                              "entity": "binary_sensor.roborock_s7_mop_attached",
-                              "state": "on"
+                              "entity": "vacuum.hestia",
+                              "state_not": "unavailable"
                             },
                             {
                               "condition": "state",
-                              "entity": "binary_sensor.roborock_s7_water_box_attached",
-                              "state": "on"
+                              "entity": "vacuum.hestia",
+                              "state_not": "unknown"
                             }
                           ],
                           "card": {
                             "show_name": false,
                             "show_icon": true,
                             "type": "button",
-                            "entity": "select.roborock_s7_mop_mode",
+                            "entity": "switch.hestia_intensive_carpet_cleaning",
                             "tap_action": {
                               "action": "call-service",
                               "service": "select.select_next",
@@ -11716,26 +11719,21 @@
                           "type": "conditional",
                           "conditions": [
                             {
-                              "condition": "or",
-                              "conditions": [
-                                {
-                                  "condition": "state",
-                                  "entity": "binary_sensor.roborock_s7_mop_attached",
-                                  "state": "off"
-                                },
-                                {
-                                  "condition": "state",
-                                  "entity": "binary_sensor.roborock_s7_water_box_attached",
-                                  "state": "off"
-                                }
-                              ]
+                              "condition": "state",
+                              "entity": "vacuum.hestia",
+                              "state_not": "unavailable"
+                            },
+                            {
+                              "condition": "state",
+                              "entity": "vacuum.hestia",
+                              "state_not": "unknown"
                             }
                           ],
                           "card": {
                             "show_name": false,
                             "show_icon": true,
                             "type": "button",
-                            "entity": "binary_sensor.roborock_s7_mop_attached",
+                            "entity": "switch.hestia_large_particles_boost",
                             "tap_action": {
                               "action": "call-service",
                               "service": "select.select_next",
@@ -11754,26 +11752,21 @@
                           "type": "conditional",
                           "conditions": [
                             {
-                              "condition": "or",
-                              "conditions": [
-                                {
-                                  "condition": "state",
-                                  "entity": "binary_sensor.roborock_s7_mop_attached",
-                                  "state": "off"
-                                },
-                                {
-                                  "condition": "state",
-                                  "entity": "binary_sensor.roborock_s7_water_box_attached",
-                                  "state": "off"
-                                }
-                              ]
+                              "condition": "state",
+                              "entity": "vacuum.hestia",
+                              "state_not": "unavailable"
+                            },
+                            {
+                              "condition": "state",
+                              "entity": "vacuum.hestia",
+                              "state_not": "unknown"
                             }
                           ],
                           "card": {
                             "show_name": false,
                             "show_icon": true,
                             "type": "button",
-                            "entity": "binary_sensor.roborock_s7_water_box_attached",
+                            "entity": "switch.hestia_gap_cleaning_extension",
                             "tap_action": {
                               "action": "call-service",
                               "service": "select.select_next",
@@ -11803,14 +11796,16 @@
                               "conditions": [
                                 {
                                   "condition": "state",
-                                  "entity": "vacuum.roborock_s7",
+                                  "entity": "vacuum.hestia",
                                   "state_not": "unavailable"
                                 }
                               ],
                               "card": {
                                 "name": " ",
                                 "type": "tile",
-                                "entity": "sensor.roborock_s7_battery"
+                                "entity": "sensor.hestia_battery_level",
+                                "features_position": "bottom",
+                                "vertical": false
                               }
                             },
                             {
@@ -11818,14 +11813,16 @@
                               "conditions": [
                                 {
                                   "condition": "state",
-                                  "entity": "vacuum.roborock_s7",
+                                  "entity": "vacuum.hestia",
                                   "state": "docked"
                                 }
                               ],
                               "card": {
                                 "name": " ",
                                 "type": "tile",
-                                "entity": "sensor.roborock_s7_last_clean_begin"
+                                "entity": "sensor.hestia_cleaning_history",
+                                "features_position": "bottom",
+                                "vertical": false
                               }
                             },
                             {
@@ -11833,14 +11830,16 @@
                               "conditions": [
                                 {
                                   "condition": "state",
-                                  "entity": "vacuum.roborock_s7",
+                                  "entity": "vacuum.hestia",
                                   "state_not": "unavailable"
                                 }
                               ],
                               "card": {
                                 "name": " ",
                                 "type": "tile",
-                                "entity": "sensor.roborock_s7_cleaning_time"
+                                "entity": "sensor.hestia_cleaning_time",
+                                "features_position": "bottom",
+                                "vertical": false
                               }
                             },
                             {
@@ -11848,34 +11847,16 @@
                               "conditions": [
                                 {
                                   "condition": "state",
-                                  "entity": "vacuum.roborock_s7",
+                                  "entity": "vacuum.hestia",
                                   "state_not": "unavailable"
                                 }
                               ],
                               "card": {
                                 "name": " ",
                                 "type": "tile",
-                                "entity": "sensor.roborock_s7_cleaning_area"
-                              }
-                            },
-                            {
-                              "type": "conditional",
-                              "conditions": [
-                                {
-                                  "condition": "state",
-                                  "entity": "binary_sensor.roborock_s7_mop_attached",
-                                  "state": "on"
-                                },
-                                {
-                                  "condition": "state",
-                                  "entity": "binary_sensor.roborock_s7_water_box_attached",
-                                  "state": "on"
-                                }
-                              ],
-                              "card": {
-                                "name": " ",
-                                "type": "tile",
-                                "entity": "binary_sensor.roborock_s7_water_supply"
+                                "entity": "sensor.hestia_cleaned_area",
+                                "features_position": "bottom",
+                                "vertical": false
                               }
                             }
                           ]
@@ -11897,53 +11878,23 @@
                       "conditions": [
                         {
                           "condition": "state",
-                          "entity": "vacuum.roborock_s7",
+                          "entity": "vacuum.hestia",
                           "state_not": "unavailable"
                         },
                         {
                           "condition": "state",
-                          "entity": "vacuum.roborock_s7",
+                          "entity": "vacuum.hestia",
                           "state_not": "unknown"
                         }
                       ],
                       "card": {
                         "type": "custom:button-card",
-                        "entity": "image.roborock_s7_home",
+                        "entity": "camera.hestia_map",
                         "show_entity_picture": true,
                         "show_name": false,
                         "tap_action": {
                           "action": "more-info",
                           "entity": "script.vacuum_selected_rooms"
-                        },
-                        "triggers_update": [
-                          "sensor.roborock_s7_cleaning_time"
-                        ],
-                        "styles": {
-                          "card": [
-                            {
-                              "height": "220px"
-                            }
-                          ],
-                          "icon": [
-                            {
-                              "height": "600px"
-                            },
-                            {
-                              "width": "350px"
-                            },
-                            {
-                              "rotate": "90deg"
-                            },
-                            {
-                              "clip-path": "inset(110px 80px 60px 70px)"
-                            },
-                            {
-                              "margin-top": "-10px"
-                            },
-                            {
-                              "margin-left": "20px"
-                            }
-                          ]
                         }
                       }
                     },
@@ -11951,7 +11902,8 @@
                       "type": "conditional",
                       "conditions": [
                         {
-                          "entity": "vacuum.roborock_s7",
+                          "condition": "state",
+                          "entity": "vacuum.hestia",
                           "state": "idle"
                         }
                       ],
@@ -11967,68 +11919,17 @@
                           "type": "conditional",
                           "conditions": [
                             {
-                              "entity": "vacuum.roborock_s7",
+                              "condition": "state",
+                              "entity": "vacuum.hestia",
                               "state": "error"
                             }
                           ],
                           "card": {
                             "type": "markdown",
-                            "content": "<ha-alert alert-type=\"error\">{{ states('sensor.roborock_s7_vacuum_error').capitalize().replace('_', ' ') + '.' }}</ha-alert>"
+                            "content": "<ha-alert alert-type=\"error\">{{ states('sensor.hestia_error').capitalize().replace('_', ' ') + '.' }}</ha-alert>"
                           }
                         }
                       ]
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "condition": "state",
-                          "entity": "input_boolean.vacuum_mop_unclean",
-                          "state": "on"
-                        }
-                      ],
-                      "card": {
-                        "type": "markdown",
-                        "content": "<ha-alert alert-type=\"info\">Vacuum mop needs cleaning after last mopping run.</ha-alert>"
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
-                          "condition": "or",
-                          "conditions": [
-                            {
-                              "condition": "state",
-                              "entity": "vacuum.roborock_s7",
-                              "state": "unavailable"
-                            },
-                            {
-                              "condition": "state",
-                              "entity": "vacuum.roborock_s7",
-                              "state": "unknown"
-                            }
-                          ]
-                        }
-                      ],
-                      "card": {
-                        "type": "custom:button-card",
-                        "name": "Reload",
-                        "tap_action": {
-                          "action": "call-service",
-                          "service": "homeassistant.reload_config_entry",
-                          "service_data": {
-                            "device_id": "e53c4142b0a58065e2dedda56a576eff"
-                          }
-                        },
-                        "styles": {
-                          "card": [
-                            {
-                              "height": "20px"
-                            }
-                          ]
-                        }
-                      }
                     }
                   ]
                 }
