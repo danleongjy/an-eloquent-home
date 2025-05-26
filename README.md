@@ -43,11 +43,11 @@ Domain | Quantity
 [`light`](https://www.home-assistant.io/components/light) | 67
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
 [`notify`](https://www.home-assistant.io/components/notify) | 2
-[`number`](https://www.home-assistant.io/components/number) | 121
+[`number`](https://www.home-assistant.io/components/number) | 107
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 22
-[`select`](https://www.home-assistant.io/components/select) | 187
+[`select`](https://www.home-assistant.io/components/select) | 46
 [`sensor`](https://www.home-assistant.io/components/sensor) | 603
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
@@ -59,7 +59,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 17
-Total | 1868
+Total | 1713
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -80,7 +80,6 @@ Total | 1868
 - [RESTful](https://home-assistant.io/integrations/rest)
 - [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [RESTful Switch](https://home-assistant.io/integrations/switch.rest)
-- [Roborock](https://home-assistant.io/integrations/roborock)
 - [Shell Command](https://home-assistant.io/integrations/shell_command)
 - [Statistics Sensor](https://home-assistant.io/integrations/statistics)
 - [Switchbot Bluetooth](https://home-assistant.io/integrations/switchbot)
