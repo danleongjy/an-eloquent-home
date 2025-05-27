@@ -7602,7 +7602,7 @@
     - set_conversation_response: "{% set clean_time = namespace(hours = (states('sensor.hestia_cleaning_time')
         | float(0)) * 60 // 60,\n                              minutes =  ((states('sensor.hestia_cleaning_time')
         | float(0)) % 1 * 60) | int(0)) %}\nThe vacuum is {{ 'in trouble' if states('vacuum.hestia')
-        == 'error' else states('sensor.hestia_error') }}.\nIt cleaned {{states('sensor.hestia_cleaned_area')
+        == 'error' else states('vacuum.hestia') }}.\nIt cleaned {{states('sensor.hestia_cleaned_area')
         | int(0) }} square metres over {{ clean_time.hours | round(0) | string + '
         hour' if clean_time.hours > 0 }}{{ 's' if clean_time.hours > 1 }}{{ ' and
         ' if clean_time.hours > 0 and clean_time.minutes > 0 }}{{ clean_time.minutes
@@ -7657,19 +7657,19 @@
         state: 'on'
       - variables:
           presets:
-            boil water:
+            Boil water:
               power: 7
               time: 6
-            cook rice:
+            Cook rice:
               power: 1
               time: 16
-            stir fry:
+            Stir fry:
               power: 4
               time: 0
-            simmer:
+            Simmer:
               power: 3
               time: 60
-            steam fish:
+            Steam fish:
               power: 3
               time: 16
       - action: select.select_option
