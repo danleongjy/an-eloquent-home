@@ -432,7 +432,7 @@
           }
         },
         "vacuum_more_info": {
-          "template": "top_row",
+          "template": "square_cell",
           "tap_action": {
             "action": "navigate",
             "navigation_path": "/lovelace/vacuum"
@@ -1780,6 +1780,7 @@
               "docked": {
                 "type": "custom:button-card",
                 "entity": "vacuum.hestia",
+                "icon": "mdi:robot-vacuum",
                 "template": "vacuum_more_info",
                 "label": "[[[ \n  if (parseInt(entity.attributes.battery_level) <= 99)\n    return entity.attributes.battery_level + '%';\n  else\n    return ''\n]]]\n",
                 "show_label": true,
@@ -5762,10 +5763,7 @@
                           },
                           {
                             "type": "custom:button-card",
-                            "template": [
-                              "top_row",
-                              "alarms_imminent"
-                            ]
+                            "color_type": "blank-card"
                           },
                           {
                             "type": "custom:state-switch",
@@ -5824,8 +5822,11 @@
                             }
                           },
                           {
-                            "type": "custom:decluttering-card",
-                            "template": "vacuum"
+                            "type": "custom:button-card",
+                            "template": [
+                              "top_row",
+                              "alarms_imminent"
+                            ]
                           },
                           {
                             "type": "custom:button-card",
@@ -5914,12 +5915,12 @@
                             "color_type": "blank-card"
                           },
                           {
-                            "type": "custom:button-card",
-                            "color_type": "blank-card"
+                            "type": "custom:decluttering-card",
+                            "template": "washer"
                           },
                           {
                             "type": "custom:decluttering-card",
-                            "template": "washer"
+                            "template": "vacuum"
                           },
                           {
                             "type": "custom:button-card",
@@ -11577,6 +11578,155 @@
                       "condition": "state",
                       "entity": "vacuum.hestia",
                       "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.hestia",
+                      "state_not": "cleaning"
+                    }
+                  ]
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.hestia_battery_level",
+                      "custom_fields": {
+                        "bar": " ",
+                        "d_state": "[[[ return \"<ha-icon icon='mdi:battery' style='height:20px'></ha-icon> &nbsp&nbsp&nbsp&nbsp\" + entity.state + \"%\" ]]]\n"
+                      },
+                      "show_name": false,
+                      "show_state": false,
+                      "styles": {
+                        "icon": [
+                          {
+                            "height": "50px"
+                          }
+                        ],
+                        "card": [
+                          {
+                            "padding": 0
+                          }
+                        ],
+                        "grid": [
+                          {
+                            "position": "relative"
+                          }
+                        ],
+                        "custom_fields": {
+                          "bar": [
+                            {
+                              "position": "absolute"
+                            },
+                            {
+                              "left": "0%"
+                            },
+                            {
+                              "top": "0%"
+                            },
+                            {
+                              "width": "[[[ return entity.state + '%' ]]]"
+                            },
+                            {
+                              "height": "100%"
+                            },
+                            {
+                              "background-color": "#41a7f2"
+                            }
+                          ],
+                          "d_state": [
+                            {
+                              "position": "absolute"
+                            },
+                            {
+                              "left": "8%"
+                            },
+                            {
+                              "top": "33%"
+                            },
+                            {
+                              "color": "var(--state-binary-sensor-color)"
+                            },
+                            {
+                              "font-size": "10pt"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.hestia_cleaning_progress",
+                      "custom_fields": {
+                        "bar": " ",
+                        "d_state": "[[[ return \"<ha-icon icon='mdi:home-percent' style='height:20px'></ha-icon> &nbsp&nbsp&nbsp&nbsp&nbsp\" + entity.state + \"%\" ]]]\n"
+                      },
+                      "show_name": false,
+                      "show_state": false,
+                      "styles": {
+                        "icon": [
+                          {
+                            "height": "50px"
+                          }
+                        ],
+                        "card": [
+                          {
+                            "padding": 0
+                          }
+                        ],
+                        "grid": [
+                          {
+                            "position": "relative"
+                          }
+                        ],
+                        "custom_fields": {
+                          "bar": [
+                            {
+                              "position": "absolute"
+                            },
+                            {
+                              "left": "0%"
+                            },
+                            {
+                              "top": "0%"
+                            },
+                            {
+                              "width": "[[[ return entity.state + '%' ]]]"
+                            },
+                            {
+                              "height": "100%"
+                            },
+                            {
+                              "background-color": "#41a7f2"
+                            }
+                          ],
+                          "d_state": [
+                            {
+                              "position": "absolute"
+                            },
+                            {
+                              "left": "8%"
+                            },
+                            {
+                              "top": "33%"
+                            },
+                            {
+                              "color": "var(--state-binary-sensor-color)"
+                            },
+                            {
+                              "font-size": "10pt"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.hestia",
+                      "state": "cleaning"
                     }
                   ]
                 },
@@ -11666,6 +11816,24 @@
               "type": "grid",
               "cards": [
                 {
+                  "type": "heading",
+                  "icon": "mdi:cog",
+                  "heading": "Configuration",
+                  "heading_style": "title",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.hestia",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.hestia",
+                      "state_not": "unknown"
+                    }
+                  ]
+                },
+                {
                   "type": "tile",
                   "entity": "select.hestia_cleangenius",
                   "features_position": "bottom",
@@ -11683,7 +11851,19 @@
                   "name": "CleanGenius",
                   "icon_tap_action": {
                     "action": "more-info"
-                  }
+                  },
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "select.hestia_cleangenius",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "select.hestia_cleangenius",
+                      "state_not": "unknown"
+                    }
+                  ]
                 },
                 {
                   "type": "tile",
@@ -11740,7 +11920,12 @@
                     {
                       "condition": "state",
                       "entity": "select.hestia_cleangenius",
-                      "state": "off"
+                      "state_not": "routine_cleaning"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "select.hestia_cleangenius",
+                      "state_not": "deep_cleaning"
                     }
                   ]
                 },
@@ -11807,7 +11992,12 @@
                     {
                       "condition": "state",
                       "entity": "select.hestia_cleangenius",
-                      "state": "off"
+                      "state_not": "routine_cleaning"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "select.hestia_cleangenius",
+                      "state_not": "deep_cleaning"
                     }
                   ]
                 },
@@ -11908,7 +12098,12 @@
                     {
                       "condition": "state",
                       "entity": "select.hestia_cleangenius",
-                      "state": "off"
+                      "state_not": "routine_cleaning"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "select.hestia_cleangenius",
+                      "state_not": "deep_cleaning"
                     }
                   ]
                 },
