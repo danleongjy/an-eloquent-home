@@ -601,6 +601,76 @@
             }
           ]
         },
+        "progress_bar": {
+          "variables": {
+            "progress_icon": "mdi:battery"
+          },
+          "custom_fields": {
+            "bar": " ",
+            "progress_state": "[[[ return \"<ha-icon icon='\" + variables.progress_icon + \"' style='height:24px'></ha-icon> &nbsp&nbsp&nbsp\" + entity.state + \"%\" ]]]\n"
+          },
+          "show_name": false,
+          "show_state": false,
+          "styles": {
+            "icon": [
+              {
+                "height": "56px"
+              },
+              {
+                "color": "var(--card-background-color)"
+              }
+            ],
+            "card": [
+              {
+                "padding": 0
+              }
+            ],
+            "grid": [
+              {
+                "position": "relative"
+              }
+            ],
+            "custom_fields": {
+              "bar": [
+                {
+                  "position": "absolute"
+                },
+                {
+                  "left": "0%"
+                },
+                {
+                  "top": "0%"
+                },
+                {
+                  "width": "[[[ return entity.state + '%' ]]]"
+                },
+                {
+                  "height": "100%"
+                },
+                {
+                  "background-color": "#41a7f2"
+                }
+              ],
+              "progress_state": [
+                {
+                  "position": "absolute"
+                },
+                {
+                  "left": "8%"
+                },
+                {
+                  "top": "30%"
+                },
+                {
+                  "color": "var(--state-binary-sensor-color)"
+                },
+                {
+                  "font-size": "10pt"
+                }
+              ]
+            }
+          }
+        },
         "floorplan_slider_icon": {
           "template": "square_cell",
           "hold_action": {
@@ -11556,24 +11626,24 @@
                   ]
                 },
                 {
-                  "name": " ",
-                  "type": "tile",
-                  "entity": "sensor.hestia_battery_level",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "visibility": [
-                    {
-                      "condition": "numeric_state",
-                      "entity": "sensor.hestia_battery_level",
-                      "above": 99.5
-                    }
-                  ]
-                },
-                {
                   "square": false,
                   "type": "grid",
                   "columns": 2,
                   "cards": [
+                    {
+                      "name": " ",
+                      "type": "tile",
+                      "entity": "sensor.hestia_battery_level",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "visibility": [
+                        {
+                          "condition": "numeric_state",
+                          "entity": "sensor.hestia_battery_level",
+                          "above": 99.5
+                        }
+                      ]
+                    },
                     {
                       "type": "conditional",
                       "conditions": [
@@ -11585,72 +11655,8 @@
                       ],
                       "card": {
                         "type": "custom:button-card",
-                        "entity": "sensor.hestia_battery_level",
-                        "custom_fields": {
-                          "bar": " ",
-                          "d_state": "[[[ return \"<ha-icon icon='mdi:battery' style='height:20px'></ha-icon> &nbsp&nbsp&nbsp&nbsp\" + entity.state + \"%\" ]]]\n"
-                        },
-                        "show_name": false,
-                        "show_state": false,
-                        "styles": {
-                          "icon": [
-                            {
-                              "height": "50px"
-                            },
-                            {
-                              "color": "var(--card-background-color)"
-                            }
-                          ],
-                          "card": [
-                            {
-                              "padding": 0
-                            }
-                          ],
-                          "grid": [
-                            {
-                              "position": "relative"
-                            }
-                          ],
-                          "custom_fields": {
-                            "bar": [
-                              {
-                                "position": "absolute"
-                              },
-                              {
-                                "left": "0%"
-                              },
-                              {
-                                "top": "0%"
-                              },
-                              {
-                                "width": "[[[ return entity.state + '%' ]]]"
-                              },
-                              {
-                                "height": "100%"
-                              },
-                              {
-                                "background-color": "#41a7f2"
-                              }
-                            ],
-                            "d_state": [
-                              {
-                                "position": "absolute"
-                              },
-                              {
-                                "left": "8%"
-                              },
-                              {
-                                "top": "33%"
-                              },
-                              {
-                                "color": "var(--state-binary-sensor-color)"
-                              },
-                              {
-                                "font-size": "10pt"
-                              }
-                            ]
-                          }
-                        }
+                        "template": "progress_bar",
+                        "entity": "sensor.hestia_battery_level"
                       }
                     },
                     {
@@ -11664,71 +11670,10 @@
                       ],
                       "card": {
                         "type": "custom:button-card",
+                        "template": "progress_bar",
                         "entity": "sensor.hestia_cleaning_progress",
-                        "custom_fields": {
-                          "bar": " ",
-                          "d_state": "[[[ return \"<ha-icon icon='mdi:home-percent' style='height:20px'></ha-icon> &nbsp&nbsp&nbsp&nbsp&nbsp\" + entity.state + \"%\" ]]]\n"
-                        },
-                        "show_name": false,
-                        "show_state": false,
-                        "styles": {
-                          "icon": [
-                            {
-                              "height": "50px"
-                            },
-                            {
-                              "color": "var(--card-background-color)"
-                            }
-                          ],
-                          "card": [
-                            {
-                              "padding": 0
-                            }
-                          ],
-                          "grid": [
-                            {
-                              "position": "relative"
-                            }
-                          ],
-                          "custom_fields": {
-                            "bar": [
-                              {
-                                "position": "absolute"
-                              },
-                              {
-                                "left": "0%"
-                              },
-                              {
-                                "top": "0%"
-                              },
-                              {
-                                "width": "[[[ return entity.state + '%' ]]]"
-                              },
-                              {
-                                "height": "100%"
-                              },
-                              {
-                                "background-color": "#41a7f2"
-                              }
-                            ],
-                            "d_state": [
-                              {
-                                "position": "absolute"
-                              },
-                              {
-                                "left": "8%"
-                              },
-                              {
-                                "top": "33%"
-                              },
-                              {
-                                "color": "var(--state-binary-sensor-color)"
-                              },
-                              {
-                                "font-size": "10pt"
-                              }
-                            ]
-                          }
+                        "variables": {
+                          "progress_icon": "mdi:home-percent"
                         }
                       }
                     },
@@ -11743,122 +11688,54 @@
                       ],
                       "card": {
                         "type": "custom:button-card",
+                        "template": "progress_bar",
                         "entity": "sensor.hestia_drying_progress",
-                        "custom_fields": {
-                          "bar": " ",
-                          "d_state": "[[[ return \"<ha-icon icon='mdi:water-percent' style='height:20px'></ha-icon> &nbsp&nbsp&nbsp&nbsp&nbsp\" + entity.state + \"%\" ]]]\n"
-                        },
-                        "show_name": false,
-                        "show_state": false,
-                        "styles": {
-                          "icon": [
-                            {
-                              "height": "50px"
-                            },
-                            {
-                              "color": "var(--card-background-color)"
-                            }
-                          ],
-                          "card": [
-                            {
-                              "padding": 0
-                            }
-                          ],
-                          "grid": [
-                            {
-                              "position": "relative"
-                            }
-                          ],
-                          "custom_fields": {
-                            "bar": [
-                              {
-                                "position": "absolute"
-                              },
-                              {
-                                "left": "0%"
-                              },
-                              {
-                                "top": "0%"
-                              },
-                              {
-                                "width": "[[[ return entity.state + '%' ]]]"
-                              },
-                              {
-                                "height": "100%"
-                              },
-                              {
-                                "background-color": "#41a7f2"
-                              }
-                            ],
-                            "d_state": [
-                              {
-                                "position": "absolute"
-                              },
-                              {
-                                "left": "8%"
-                              },
-                              {
-                                "top": "33%"
-                              },
-                              {
-                                "color": "var(--state-binary-sensor-color)"
-                              },
-                              {
-                                "font-size": "10pt"
-                              }
-                            ]
-                          }
+                        "variables": {
+                          "progress_icon": "mdi:water-percent"
                         }
                       }
-                    }
-                  ],
-                  "visibility": [
+                    },
                     {
-                      "condition": "state",
-                      "entity": "vacuum.hestia",
-                      "state": "cleaning"
-                    }
-                  ]
-                },
-                {
-                  "name": " ",
-                  "type": "tile",
-                  "entity": "sensor.hestia_cleaning_history",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "visibility": [
+                      "name": " ",
+                      "type": "tile",
+                      "entity": "sensor.hestia_cleaning_history",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.hestia",
+                          "state": "docked"
+                        }
+                      ]
+                    },
                     {
-                      "condition": "state",
-                      "entity": "vacuum.hestia",
-                      "state": "docked"
-                    }
-                  ]
-                },
-                {
-                  "name": " ",
-                  "type": "tile",
-                  "entity": "sensor.hestia_cleaning_time",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "visibility": [
+                      "name": " ",
+                      "type": "tile",
+                      "entity": "sensor.hestia_cleaning_time",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.hestia",
+                          "state_not": "unavailable"
+                        }
+                      ]
+                    },
                     {
-                      "condition": "state",
-                      "entity": "vacuum.hestia",
-                      "state_not": "unavailable"
-                    }
-                  ]
-                },
-                {
-                  "name": " ",
-                  "type": "tile",
-                  "entity": "sensor.hestia_cleaned_area",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "visibility": [
-                    {
-                      "condition": "state",
-                      "entity": "vacuum.hestia",
-                      "state_not": "unavailable"
+                      "name": " ",
+                      "type": "tile",
+                      "entity": "sensor.hestia_cleaned_area",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.hestia",
+                          "state_not": "unavailable"
+                        }
+                      ]
                     }
                   ]
                 },
