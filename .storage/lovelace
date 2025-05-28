@@ -674,7 +674,7 @@
                   "position": "absolute"
                 },
                 {
-                  "left": "5%"
+                  "left": "5.5%"
                 },
                 {
                   "top": "21%"
@@ -5839,6 +5839,13 @@
                           },
                           {
                             "type": "custom:button-card",
+                            "template": [
+                              "top_row",
+                              "alarms_imminent"
+                            ]
+                          },
+                          {
+                            "type": "custom:button-card",
                             "color_type": "blank-card"
                           },
                           {
@@ -5896,13 +5903,6 @@
                                 }
                               }
                             }
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "template": [
-                              "top_row",
-                              "alarms_imminent"
-                            ]
                           },
                           {
                             "type": "custom:button-card",
@@ -11594,36 +11594,28 @@
                   ]
                 },
                 {
-                  "type": "conditional",
-                  "conditions": [
+                  "show_state": false,
+                  "show_name": false,
+                  "camera_view": "auto",
+                  "type": "picture-entity",
+                  "entity": "vacuum.hestia",
+                  "camera_image": "camera.hestia_map",
+                  "tap_action": {
+                    "action": "more-info",
+                    "entity": "script.vacuum_selected_rooms"
+                  },
+                  "visibility": [
                     {
                       "condition": "state",
-                      "entity": "vacuum.hestia",
+                      "entity": "camera.hestia_map",
                       "state_not": "unavailable"
                     },
                     {
                       "condition": "state",
-                      "entity": "vacuum.hestia",
+                      "entity": "camera.hestia_map",
                       "state_not": "unknown"
                     }
-                  ],
-                  "card": {
-                    "type": "custom:button-card",
-                    "entity": "camera.hestia_map",
-                    "show_entity_picture": true,
-                    "show_name": false,
-                    "tap_action": {
-                      "action": "more-info",
-                      "entity": "script.vacuum_selected_rooms"
-                    },
-                    "styles": {
-                      "icon": [
-                        {
-                          "width": "400px"
-                        }
-                      ]
-                    }
-                  }
+                  ]
                 },
                 {
                   "type": "heading",
@@ -11682,8 +11674,8 @@
                       "conditions": [
                         {
                           "condition": "state",
-                          "entity": "vacuum.hestia",
-                          "state": "cleaning"
+                          "entity": "sensor.hestia_cleaning_progress",
+                          "state_not": "unavailable"
                         }
                       ],
                       "card": {
@@ -11775,23 +11767,18 @@
                       }
                     },
                     {
-                      "type": "vertical-stack",
-                      "cards": [
+                      "type": "conditional",
+                      "conditions": [
                         {
-                          "type": "conditional",
-                          "conditions": [
-                            {
-                              "condition": "state",
-                              "entity": "vacuum.hestia",
-                              "state": "error"
-                            }
-                          ],
-                          "card": {
-                            "type": "markdown",
-                            "content": "<ha-alert alert-type=\"error\">{{ states('sensor.hestia_error').capitalize().replace('_', ' ') + '.' }}</ha-alert>"
-                          }
+                          "condition": "state",
+                          "entity": "sensor.hestia_error",
+                          "state_not": "no_error"
                         }
-                      ]
+                      ],
+                      "card": {
+                        "type": "markdown",
+                        "content": "<ha-alert alert-type=\"error\">{{ states('sensor.hestia_error').capitalize().replace('_', ' ') + '.' }}</ha-alert>"
+                      }
                     }
                   ]
                 }
@@ -11904,13 +11891,8 @@
                   "visibility": [
                     {
                       "condition": "state",
-                      "entity": "select.hestia_cleangenius",
-                      "state_not": "routine_cleaning"
-                    },
-                    {
-                      "condition": "state",
-                      "entity": "select.hestia_cleangenius",
-                      "state_not": "deep_cleaning"
+                      "entity": "select.hestia_suction_level",
+                      "state_not": "unavailable"
                     }
                   ]
                 },
@@ -11976,13 +11958,8 @@
                   "visibility": [
                     {
                       "condition": "state",
-                      "entity": "select.hestia_cleangenius",
-                      "state_not": "routine_cleaning"
-                    },
-                    {
-                      "condition": "state",
-                      "entity": "select.hestia_cleangenius",
-                      "state_not": "deep_cleaning"
+                      "entity": "select.hestia_cleaning_mode",
+                      "state_not": "unavailable"
                     }
                   ]
                 },
@@ -12008,8 +11985,8 @@
                   "visibility": [
                     {
                       "condition": "state",
-                      "entity": "select.hestia_cleangenius",
-                      "state": "off"
+                      "entity": "select.hestia_cleaning_route",
+                      "state_not": "unavailable"
                     }
                   ]
                 },
@@ -12089,6 +12066,11 @@
                       "condition": "state",
                       "entity": "select.hestia_cleangenius",
                       "state_not": "deep_cleaning"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "select.hestia_cleangenius",
+                      "state_not": "unavailable"
                     }
                   ]
                 },
@@ -12158,12 +12140,69 @@
                         "type": "horizontal-stack",
                         "cards": [
                           {
-                            "type": "tile",
-                            "entity": "sensor.washer_last_wash_started",
-                            "name": " "
+                            "type": "conditional",
+                            "conditions": [
+                              {
+                                "condition": "or",
+                                "conditions": [
+                                  {
+                                    "condition": "state",
+                                    "entity": "sensor.washer_status",
+                                    "state": "Washing"
+                                  },
+                                  {
+                                    "condition": "state",
+                                    "entity": "sensor.washer_status",
+                                    "state": "Rinsing"
+                                  },
+                                  {
+                                    "condition": "state",
+                                    "entity": "sensor.washer_status",
+                                    "state": ""
+                                  }
+                                ]
+                              }
+                            ],
+                            "card": {
+                              "type": "custom:button-card",
+                              "entity": "sensor.washer_wash_progress",
+                              "template": "progress_bar",
+                              "variables": {
+                                "progress_icon": "mdi:washing-machine"
+                              }
+                            }
+                          },
+                          {
+                            "type": "conditional",
+                            "conditions": [
+                              {
+                                "condition": "state",
+                                "entity": "sensor.washer_status",
+                                "state_not": "Washing"
+                              },
+                              {
+                                "condition": "state",
+                                "entity": "sensor.washer_status",
+                                "state_not": "Rinsing"
+                              },
+                              {
+                                "condition": "state",
+                                "entity": "sensor.washer_status",
+                                "state_not": "Spinning"
+                              }
+                            ],
+                            "card": {
+                              "type": "tile",
+                              "features_position": "bottom",
+                              "vertical": false,
+                              "entity": "sensor.washer_last_wash_started",
+                              "name": " "
+                            }
                           },
                           {
                             "type": "tile",
+                            "features_position": "bottom",
+                            "vertical": false,
                             "entity": "sensor.washer_countdown",
                             "name": " "
                           }
@@ -12220,7 +12259,9 @@
                           {
                             "type": "tile",
                             "entity": "sensor.washer_last_wash_completed",
-                            "name": " "
+                            "name": " ",
+                            "features_position": "bottom",
+                            "vertical": false
                           },
                           {
                             "type": "tile",
