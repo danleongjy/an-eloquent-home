@@ -602,92 +602,52 @@
           ]
         },
         "progress_bar": {
-          "variables": {
-            "progress_icon": "mdi:battery"
-          },
-          "custom_fields": {
-            "bar": " ",
-            "progress_state": "[[[ return \"<ha-icon icon='\" + variables.progress_icon + \"' style='height:24px'></ha-icon> &nbsp&nbsp&nbsp\" + entity.state + \"%\" ]]]\n",
-            "spinner": "<ha-icon icon='mdi:loading' style='height: 36px'></ha-icon>"
-          },
           "show_name": false,
-          "show_state": false,
+          "show_state": true,
           "styles": {
-            "icon": [
+            "grid": [
               {
-                "height": "56px"
+                "grid-template-areas": "\"i s\""
               },
               {
-                "color": "var(--card-background-color)"
+                "grid-template-rows": "1fr"
+              },
+              {
+                "grid-template-columns": "1fr 3fr"
+              }
+            ],
+            "icon": [
+              {
+                "color": "var(--state-binary-sensor-color)"
+              },
+              {
+                "height": "24px"
+              },
+              {
+                "animation": "wobble 1s linear infinite"
+              }
+            ],
+            "state": [
+              {
+                "color": "var(--state-binary-sensor-color)"
+              },
+              {
+                "justify-self": "left"
+              },
+              {
+                "font-size": "10pt"
               }
             ],
             "card": [
               {
-                "padding": 0
-              }
-            ],
-            "grid": [
+                "background": "[[[ return \"linear-gradient(90deg, #41a7f2 0%, #41a7f2 \" + entity.state + \"%, #1c1c1c \" + entity.state + \"%, #1c1c1c 100%)\"]]] \n"
+              },
               {
-                "position": "relative"
+                "height": "56px"
               }
-            ],
-            "custom_fields": {
-              "bar": [
-                {
-                  "position": "absolute"
-                },
-                {
-                  "left": "0%"
-                },
-                {
-                  "top": "0%"
-                },
-                {
-                  "width": "[[[ return entity.state + '%' ]]]"
-                },
-                {
-                  "height": "100%"
-                },
-                {
-                  "background-color": "#41a7f2"
-                }
-              ],
-              "progress_state": [
-                {
-                  "position": "absolute"
-                },
-                {
-                  "left": "8%"
-                },
-                {
-                  "top": "30%"
-                },
-                {
-                  "color": "var(--state-binary-sensor-color)"
-                },
-                {
-                  "font-size": "10pt"
-                }
-              ],
-              "spinner": [
-                {
-                  "position": "absolute"
-                },
-                {
-                  "left": "5.5%"
-                },
-                {
-                  "top": "21%"
-                },
-                {
-                  "color": "var(--state-binary-sensor-color)"
-                },
-                {
-                  "animation": "rotating 3s linear infinite"
-                }
-              ]
-            }
-          }
+            ]
+          },
+          "extra_styles": "@keyframes wobble {\n  0%, 50%, 100% { transform: rotate(0deg); }\n  25% { transform: rotate(-20deg); }\n  75% { transform: rotate(20deg); }\n}\n"
         },
         "floorplan_slider_icon": {
           "template": "square_cell",
@@ -11681,10 +11641,7 @@
                       "card": {
                         "type": "custom:button-card",
                         "template": "progress_bar",
-                        "entity": "sensor.hestia_cleaning_progress",
-                        "variables": {
-                          "progress_icon": "mdi:home-percent"
-                        }
+                        "entity": "sensor.hestia_cleaning_progress"
                       }
                     },
                     {
