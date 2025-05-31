@@ -601,16 +601,16 @@
             }
           ]
         },
-        "progress_bar": {
+        "button_card_tile": {
           "show_name": false,
           "show_state": true,
           "custom_fields": {
-            "spinner": "<ha-icon icon='mdi:loading'></ha-icon>"
+            "indicator": ""
           },
           "styles": {
             "grid": [
               {
-                "grid-template-areas": "\"i s spinner\""
+                "grid-template-areas": "\"i s indicator\""
               },
               {
                 "grid-template-rows": "1fr"
@@ -621,19 +621,10 @@
             ],
             "icon": [
               {
-                "color": "var(--state-binary-sensor-color)"
-              },
-              {
                 "height": "24px"
               }
             ],
             "state": [
-              {
-                "color": "var(--state-binary-sensor-color)"
-              },
-              {
-                "font-size": "12px"
-              },
               {
                 "justify-self": "start"
               },
@@ -642,10 +633,7 @@
               }
             ],
             "custom_fields": {
-              "spinner": [
-                {
-                  "color": "var(--state-binary-sensor-color)"
-                },
+              "indicator": [
                 {
                   "height": "24px"
                 },
@@ -657,6 +645,42 @@
                 },
                 {
                   "margin-right": "25%"
+                }
+              ]
+            },
+            "card": [
+              {
+                "height": "56px"
+              },
+              {
+                "padding": "0px"
+              }
+            ]
+          }
+        },
+        "tile_progress_bar": {
+          "template": "button_card_tile",
+          "custom_fields": {
+            "indicator": "<ha-icon icon='mdi:loading'></ha-icon>"
+          },
+          "styles": {
+            "icon": [
+              {
+                "color": "var(--state-binary-sensor-color)"
+              }
+            ],
+            "state": [
+              {
+                "font-size": "12px"
+              },
+              {
+                "color": "var(--state-binary-sensor-color)"
+              }
+            ],
+            "custom_fields": {
+              "indicator": [
+                {
+                  "color": "var(--state-binary-sensor-color)"
                 },
                 {
                   "animation": "rotating 3s linear infinite"
@@ -666,12 +690,22 @@
             "card": [
               {
                 "background": "[[[ return \"linear-gradient(90deg, #41a7f2 0%, #41a7f2 \" + entity.state + \"%, #1c1c1c \" + entity.state + \"%, #1c1c1c 100%)\"]]] \n"
+              }
+            ]
+          }
+        },
+        "tile_nav_button": {
+          "template": "button_card_tile",
+          "custom_fields": {
+            "indicator": "<ha-icon icon='mdi:chevron-right'></ha-icon>"
+          },
+          "styles": {
+            "state": [
+              {
+                "font-size": "14px"
               },
               {
-                "height": "56px"
-              },
-              {
-                "padding": "0px"
+                "font-weight": 500
               }
             ]
           }
@@ -7745,143 +7779,6 @@
         },
         {
           "theme": "no_border",
-          "title": "Settings",
-          "path": "settings",
-          "icon": "mdi:cogs",
-          "badges": [],
-          "cards": [
-            {
-              "square": true,
-              "columns": 4,
-              "type": "grid",
-              "cards": [
-                {
-                  "show_name": true,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/settings-sleep"
-                  },
-                  "name": "Sleep",
-                  "icon": "mdi:bed-clock",
-                  "hold_action": {
-                    "action": "none"
-                  }
-                },
-                {
-                  "show_name": true,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/settings-lighting"
-                  },
-                  "name": "Lighting",
-                  "icon": "mdi:home-lightbulb-outline",
-                  "hold_action": {
-                    "action": "none"
-                  }
-                },
-                {
-                  "show_name": true,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/settings-cooling"
-                  },
-                  "icon": "mdi:home-thermometer-outline",
-                  "hold_action": {
-                    "action": "none"
-                  },
-                  "name": "Cooling"
-                },
-                {
-                  "show_name": true,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/motion"
-                  },
-                  "name": "Motion",
-                  "icon": "mdi:motion-sensor",
-                  "hold_action": {
-                    "action": "none"
-                  }
-                },
-                {
-                  "show_name": true,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/automations"
-                  },
-                  "name": "Automation",
-                  "icon": "mdi:home-automation"
-                },
-                {
-                  "show_name": true,
-                  "show_icon": true,
-                  "type": "button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/network"
-                  },
-                  "name": "Network",
-                  "icon": "mdi:server-security"
-                },
-                {
-                  "type": "conditional",
-                  "conditions": [
-                    {
-                      "condition": "user",
-                      "users": [
-                        "ad2bcce775894550affb6dfef93a2a36"
-                      ]
-                    }
-                  ],
-                  "card": {
-                    "show_name": true,
-                    "show_icon": true,
-                    "type": "button",
-                    "tap_action": {
-                      "action": "navigate",
-                      "navigation_path": "/lovelace/zigbee-diagnostics"
-                    },
-                    "name": "Zigbee",
-                    "icon": "mdi:zigbee"
-                  }
-                }
-              ]
-            },
-            {
-              "type": "conditional",
-              "conditions": [
-                {
-                  "condition": "user",
-                  "users": [
-                    "ad2bcce775894550affb6dfef93a2a36"
-                  ]
-                }
-              ],
-              "card": {
-                "type": "vertical-stack",
-                "cards": [
-                  {
-                    "type": "tile",
-                    "entity": "script.git_push",
-                    "hide_state": true
-                  }
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "theme": "no_border",
           "title": "Zigbee Diagnostics",
           "path": "zigbee-diagnostics",
           "icon": "mdi:zigbee",
@@ -9949,6 +9846,136 @@
           "subview": true
         },
         {
+          "theme": "no_border",
+          "title": "Settings",
+          "path": "settings",
+          "icon": "mdi:cogs",
+          "badges": [],
+          "cards": [
+            {
+              "square": false,
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_nav_button",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/settings-sleep"
+                  },
+                  "state_display": "Sleep",
+                  "icon": "mdi:bed-clock",
+                  "hold_action": {
+                    "action": "none"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_nav_button",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/settings-lighting"
+                  },
+                  "state_display": "Lighting",
+                  "icon": "mdi:home-lightbulb-outline",
+                  "hold_action": {
+                    "action": "none"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_nav_button",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/settings-cooling"
+                  },
+                  "icon": "mdi:home-thermometer-outline",
+                  "hold_action": {
+                    "action": "none"
+                  },
+                  "state_display": "Cooling"
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_nav_button",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/motion"
+                  },
+                  "state_display": "Motion",
+                  "icon": "mdi:motion-sensor",
+                  "hold_action": {
+                    "action": "none"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_nav_button",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/automations"
+                  },
+                  "state_display": "Automation",
+                  "icon": "mdi:home-automation"
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_nav_button",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/network"
+                  },
+                  "state_display": "Network",
+                  "icon": "mdi:server-security"
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "user",
+                      "users": [
+                        "ad2bcce775894550affb6dfef93a2a36"
+                      ]
+                    }
+                  ],
+                  "card": {
+                    "type": "custom:button-card",
+                    "template": "tile_nav_button",
+                    "tap_action": {
+                      "action": "navigate",
+                      "navigation_path": "/lovelace/zigbee-diagnostics"
+                    },
+                    "state_display": "Zigbee",
+                    "icon": "mdi:zigbee"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "user",
+                      "users": [
+                        "ad2bcce775894550affb6dfef93a2a36"
+                      ]
+                    }
+                  ],
+                  "card": {
+                    "type": "vertical-stack",
+                    "cards": [
+                      {
+                        "type": "tile",
+                        "entity": "script.git_push",
+                        "hide_state": true
+                      }
+                    ]
+                  }
+                }
+              ],
+              "columns": 2
+            }
+          ]
+        },
+        {
           "title": "Settings - Sleep",
           "path": "settings-sleep",
           "icon": "mdi:sleep",
@@ -11598,7 +11625,7 @@
                       ],
                       "card": {
                         "type": "custom:button-card",
-                        "template": "progress_bar",
+                        "template": "tile_progress_bar",
                         "entity": "sensor.hestia_battery_level"
                       }
                     },
@@ -11613,7 +11640,7 @@
                       ],
                       "card": {
                         "type": "custom:button-card",
-                        "template": "progress_bar",
+                        "template": "tile_progress_bar",
                         "entity": "sensor.hestia_cleaning_progress"
                       }
                     },
@@ -11628,7 +11655,7 @@
                       ],
                       "card": {
                         "type": "custom:button-card",
-                        "template": "progress_bar",
+                        "template": "tile_progress_bar",
                         "entity": "sensor.hestia_drying_progress",
                         "variables": {
                           "progress_icon": "mdi:water-percent"
@@ -12096,7 +12123,7 @@
                             "card": {
                               "type": "custom:button-card",
                               "entity": "sensor.washer_wash_progress",
-                              "template": "progress_bar",
+                              "template": "tile_progress_bar",
                               "variables": {
                                 "progress_icon": "mdi:washing-machine"
                               }
