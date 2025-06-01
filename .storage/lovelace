@@ -602,7 +602,6 @@
           ]
         },
         "button_card_tile": {
-          "show_name": false,
           "show_state": true,
           "custom_fields": {
             "indicator": ""
@@ -610,13 +609,16 @@
           "styles": {
             "grid": [
               {
-                "grid-template-areas": "\"i s indicator\""
+                "grid-template-areas": "\"i n indicator\" \"i s indicator\""
               },
               {
-                "grid-template-rows": "1fr"
+                "grid-template-rows": "min-content min-content"
               },
               {
-                "grid-template-columns": "1fr 2fr 1fr"
+                "grid-template-columns": "56px auto 56px"
+              },
+              {
+                "align-content": "center"
               }
             ],
             "icon": [
@@ -624,12 +626,41 @@
                 "height": "24px"
               }
             ],
+            "name": [
+              {
+                "justify-self": "start"
+              },
+              {
+                "margin-top": 0
+              },
+              {
+                "margin-bottom": 0
+              },
+              {
+                "font-size": "14px"
+              },
+              {
+                "font-weight": 500
+              },
+              {
+                "align-self": "end"
+              }
+            ],
             "state": [
               {
                 "justify-self": "start"
               },
               {
-                "margin-left": "5%"
+                "margin-top": "3%"
+              },
+              {
+                "margin-bottom": 0
+              },
+              {
+                "font-size": "12px"
+              },
+              {
+                "align-self": "start"
               }
             ],
             "custom_fields": {
@@ -671,9 +702,6 @@
             ],
             "state": [
               {
-                "font-size": "12px"
-              },
-              {
                 "color": "var(--state-binary-sensor-color)"
               }
             ],
@@ -699,15 +727,8 @@
           "custom_fields": {
             "indicator": "<ha-icon icon='mdi:chevron-right'></ha-icon>"
           },
-          "styles": {
-            "state": [
-              {
-                "font-size": "14px"
-              },
-              {
-                "font-weight": 500
-              }
-            ]
+          "tap_action": {
+            "action": "navigate"
           }
         },
         "floorplan_slider_icon": {
@@ -9859,74 +9880,62 @@
                 {
                   "type": "custom:button-card",
                   "template": "tile_nav_button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/settings-sleep"
-                  },
-                  "state_display": "Sleep",
+                  "name": "Sleep",
+                  "state_display": " ",
                   "icon": "mdi:bed-clock",
-                  "hold_action": {
-                    "action": "none"
+                  "tap_action": {
+                    "navigation_path": "/lovelace/settings-sleep"
                   }
                 },
                 {
                   "type": "custom:button-card",
                   "template": "tile_nav_button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/settings-lighting"
-                  },
-                  "state_display": "Lighting",
+                  "name": "Lighting",
+                  "state_display": " ",
                   "icon": "mdi:home-lightbulb-outline",
-                  "hold_action": {
-                    "action": "none"
+                  "tap_action": {
+                    "navigation_path": "/lovelace/settings-lighting"
                   }
                 },
                 {
                   "type": "custom:button-card",
                   "template": "tile_nav_button",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/settings-cooling"
-                  },
+                  "name": "Cooling",
+                  "state_display": " ",
                   "icon": "mdi:home-thermometer-outline",
-                  "hold_action": {
-                    "action": "none"
-                  },
-                  "state_display": "Cooling"
-                },
-                {
-                  "type": "custom:button-card",
-                  "template": "tile_nav_button",
                   "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/motion"
-                  },
-                  "state_display": "Motion",
-                  "icon": "mdi:motion-sensor",
-                  "hold_action": {
-                    "action": "none"
+                    "navigation_path": "/lovelace/settings-cooling"
                   }
                 },
                 {
                   "type": "custom:button-card",
                   "template": "tile_nav_button",
+                  "name": "Motion",
+                  "state_display": " ",
+                  "icon": "mdi:motion-sensor",
                   "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/automations"
-                  },
-                  "state_display": "Automation",
-                  "icon": "mdi:home-automation"
+                    "navigation_path": "/lovelace/motion"
+                  }
                 },
                 {
                   "type": "custom:button-card",
                   "template": "tile_nav_button",
+                  "name": "Automation",
+                  "state_display": " ",
+                  "icon": "mdi:home-automation",
                   "tap_action": {
-                    "action": "navigate",
+                    "navigation_path": "/lovelace/automations"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_nav_button",
+                  "name": "Network",
+                  "state_display": " ",
+                  "icon": "mdi:server-security",
+                  "tap_action": {
                     "navigation_path": "/lovelace/network"
-                  },
-                  "state_display": "Network",
-                  "icon": "mdi:server-security"
+                  }
                 },
                 {
                   "type": "conditional",
@@ -9941,12 +9950,12 @@
                   "card": {
                     "type": "custom:button-card",
                     "template": "tile_nav_button",
+                    "name": "Zigbee",
+                    "state_display": " ",
+                    "icon": "mdi:zigbee",
                     "tap_action": {
-                      "action": "navigate",
                       "navigation_path": "/lovelace/zigbee-diagnostics"
-                    },
-                    "state_display": "Zigbee",
-                    "icon": "mdi:zigbee"
+                    }
                   }
                 },
                 {
@@ -11618,21 +11627,6 @@
                       "type": "conditional",
                       "conditions": [
                         {
-                          "condition": "numeric_state",
-                          "entity": "sensor.hestia_battery_level",
-                          "below": 99.5
-                        }
-                      ],
-                      "card": {
-                        "type": "custom:button-card",
-                        "template": "tile_progress_bar",
-                        "entity": "sensor.hestia_battery_level"
-                      }
-                    },
-                    {
-                      "type": "conditional",
-                      "conditions": [
-                        {
                           "condition": "state",
                           "entity": "sensor.hestia_cleaning_progress",
                           "state_not": "unavailable"
@@ -11641,7 +11635,24 @@
                       "card": {
                         "type": "custom:button-card",
                         "template": "tile_progress_bar",
-                        "entity": "sensor.hestia_cleaning_progress"
+                        "entity": "sensor.hestia_cleaning_progress",
+                        "name": " "
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "numeric_state",
+                          "entity": "sensor.hestia_battery_level",
+                          "below": 99.5
+                        }
+                      ],
+                      "card": {
+                        "type": "custom:button-card",
+                        "template": "tile_progress_bar",
+                        "entity": "sensor.hestia_battery_level",
+                        "name": " "
                       }
                     },
                     {
@@ -11657,9 +11668,7 @@
                         "type": "custom:button-card",
                         "template": "tile_progress_bar",
                         "entity": "sensor.hestia_drying_progress",
-                        "variables": {
-                          "progress_icon": "mdi:water-percent"
-                        }
+                        "name": " "
                       }
                     },
                     {
