@@ -511,19 +511,16 @@
                 "position": "absolute"
               },
               {
-                "left": "0%"
+                "left": "24%"
               },
               {
-                "top": "0%"
+                "top": "25%"
               },
               {
                 "height": "50%"
               },
               {
                 "width": "50%"
-              },
-              {
-                "margin": "25%"
               },
               {
                 "z-index": 2
@@ -542,13 +539,13 @@
             "custom_fields": {
               "indicator_manual_control": [
                 {
-                  "color": "[[[ if (['unavailable','unknown'].includes(entity.state))\n      return 'var(--state-inactive-color)';\n    else if (['off','closed'].includes(entity.state))\n      return 'var(--state-icon-color)';\n    else if (entity.attributes.rgb_color !== null)\n      return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n      entity.attributes.rgb_color[1] + \",\" +\n      entity.attributes.rgb_color[2] + \")\"\n    else\n      return 'var(--state-binary_sensor-active-color)'\n]]]"
+                  "color": "[[[ if (['unavailable','unknown'].includes(entity.state))\n      return 'var(--state-inactive-color)';\n    else if (['off','closed'].includes(entity.state))\n      return 'var(--state-icon-color)';\n    else if (typeof entity.attributes.rgb_color !== 'undefined' && entity.attributes.rgb_color !== null)\n      return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n      entity.attributes.rgb_color[1] + \",\" +\n      entity.attributes.rgb_color[2] + \")\"\n    else\n      return 'var(--state-binary_sensor-active-color)'\n]]]"
                 }
               ]
             },
             "icon": [
               {
-                "color": "[[[ if (['unavailable','unknown'].includes(entity.state))\n      return 'var(--state-inactive-color)';\n    else if (['off','closed'].includes(entity.state))\n      return 'var(--state-icon-color)';\n    else if (entity.attributes.rgb_color !== null)\n      return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n      entity.attributes.rgb_color[1] + \",\" +\n      entity.attributes.rgb_color[2] + \")\"\n    else\n      return 'var(--state-binary_sensor-active-color)'\n]]]"
+                "color": "[[[ if (['unavailable','unknown'].includes(entity.state))\n      return 'var(--state-inactive-color)';\n    else if (['off','closed'].includes(entity.state))\n      return 'var(--state-icon-color)';\n    else if (typeof entity.attributes.rgb_color !== 'undefined' && entity.attributes.rgb_color !== null)\n      return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n      entity.attributes.rgb_color[1] + \",\" +\n      entity.attributes.rgb_color[2] + \")\"\n    else\n      return 'var(--state-binary_sensor-active-color)'\n]]]"
               }
             ]
           }
@@ -862,6 +859,11 @@
                 "color": "var(--state-binary-sensor-color)"
               }
             ],
+            "name": [
+              {
+                "color": "var(--state-binary-sensor-color)"
+              }
+            ],
             "state": [
               {
                 "color": "var(--state-binary-sensor-color)"
@@ -880,6 +882,48 @@
             "card": [
               {
                 "background": "[[[ return \"linear-gradient(90deg, #41a7f2 0%, #41a7f2 \" + entity.state + \"%, #1c1c1c \" + entity.state + \"%, #1c1c1c 100%)\"]]] \n"
+              }
+            ]
+          }
+        },
+        "tile_status_bar": {
+          "template": "button_card_tile",
+          "variables": {
+            "status_color": "[[[\n  if (parseInt(entity.state) > 25)\n    return '#b4fab4'\n  else if (parseInt(entity.state) > 5)\n    return '#f2900f'\n  else\n    return '#9e110d'\n]]]\n",
+            "status_color_background": "[[[\n  if (parseInt(entity.state) > 25)\n    return '#5a7d5a'\n  else if (parseInt(entity.state) > 5)\n    return '#794807'\n  else\n    return '#4f0907'\n]]]\n"
+          },
+          "custom_fields": {
+            "indicator": "[[[\n  if (parseInt(entity.state) > 25) \n    return \"<ha-icon icon='mdi:check-circle-outline'></ha-icon>\"\n  else \n    return \"<ha-icon icon='mdi:alert-circle-outline'></ha-icon>\"\n]]]\n"
+          },
+          "styles": {
+            "icon": [
+              {
+                "color": "[[[ return variables.status_color ]]]"
+              }
+            ],
+            "name": [
+              {
+                "color": "[[[ return variables.status_color ]]]"
+              }
+            ],
+            "state": [
+              {
+                "color": "[[[ return variables.status_color ]]]"
+              }
+            ],
+            "custom_fields": {
+              "indicator": [
+                {
+                  "color": "[[[ return variables.status_color ]]]"
+                },
+                {
+                  "animation": "[[[\n  if (parseInt(entity.state) <= 5) \n    return 'blink 3s ease infinite'\n]]]\n"
+                }
+              ]
+            },
+            "card": [
+              {
+                "background": "[[[ return \"linear-gradient(90deg, \" + variables.status_color_background + \" 0%, \" + variables.status_color_background + \" \" + entity.state + \"%, #1c1c1c \" + entity.state + \"%, #1c1c1c 100%)\"]]] \n"
               }
             ]
           }
@@ -10181,38 +10225,53 @@
                   ]
                 },
                 {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "show": true,
-                    "title": "Vacuum Condition",
-                    "show_states": true,
-                    "colorize_states": true
-                  },
-                  "chart_type": "radialBar",
-                  "series": [
+                  "type": "heading",
+                  "icon": "mdi:robot-vacuum",
+                  "heading": "Vacuum Components",
+                  "heading_style": "title",
+                  "visibility": [
                     {
+                      "condition": "state",
+                      "entity": "vacuum.hestia",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.hestia",
+                      "state_not": "unknown"
+                    }
+                  ]
+                },
+                {
+                  "square": false,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "template": "tile_status_bar",
                       "entity": "sensor.hestia_main_brush_left",
                       "name": "Main Brush"
                     },
                     {
+                      "type": "custom:button-card",
+                      "template": "tile_status_bar",
                       "entity": "sensor.hestia_side_brush_left",
                       "name": "Side Brush"
                     },
                     {
+                      "type": "custom:button-card",
+                      "template": "tile_status_bar",
                       "entity": "sensor.hestia_filter_left",
                       "name": "Filter"
                     },
                     {
+                      "type": "custom:button-card",
+                      "template": "tile_status_bar",
                       "entity": "sensor.hestia_sensor_dirty_left",
                       "name": "Sensors"
                     }
                   ],
-                  "apex_config": {
-                    "legend": {
-                      "show": false
-                    }
-                  }
+                  "columns": 2
                 }
               ],
               "column_span": 1
