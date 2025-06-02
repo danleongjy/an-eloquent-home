@@ -88,9 +88,6 @@
                   "background-color": "rgba(0,0,0,0)"
                 },
                 {
-                  "color": "[[[\n  if (['unavailable','unknown'].includes(entity.state))\n    return 'var(--state-inactive-color)';\n  else if (['off','closed'].includes(entity.state))\n    return 'var(--state-icon-color)';\n  else\n    return 'var(--state-binary_sensor-active-color)';\n]]]\n"
-                },
-                {
                   "position": "absolute"
                 },
                 {
@@ -419,7 +416,7 @@
         },
         "device_slider": {
           "template": [
-            "square_cell",
+            "turn_on",
             "manual_control_indicator"
           ],
           "show_state": false,
@@ -502,6 +499,9 @@
               ],
               "indicator_manual_control": [
                 {
+                  "color": "[[[ if (['unavailable','unknown'].includes(entity.state))\n      return 'var(--state-inactive-color)';\n    else if (['off','closed'].includes(entity.state))\n      return 'var(--state-icon-color)';\n    else if (typeof entity.attributes.rgb_color !== 'undefined' && entity.attributes.rgb_color !== null)\n      return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n      entity.attributes.rgb_color[1] + \",\" +\n      entity.attributes.rgb_color[2] + \")\"\n    else\n      return 'var(--state-binary_sensor-active-color)'\n]]]"
+                },
+                {
                   "z-index": 3
                 }
               ]
@@ -511,7 +511,7 @@
                 "position": "absolute"
               },
               {
-                "left": "24%"
+                "left": "23%"
               },
               {
                 "top": "25%"
@@ -524,6 +524,9 @@
               },
               {
                 "z-index": 2
+              },
+              {
+                "color": "[[[ if (['unavailable','unknown'].includes(entity.state))\n      return 'var(--state-inactive-color)';\n    else if (['off','closed'].includes(entity.state))\n      return 'var(--state-icon-color)';\n    else if (typeof entity.attributes.rgb_color !== 'undefined' && entity.attributes.rgb_color !== null)\n      return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n      entity.attributes.rgb_color[1] + \",\" +\n      entity.attributes.rgb_color[2] + \")\"\n    else\n      return 'var(--state-binary_sensor-active-color)'\n]]]"
               }
             ],
             "card": [
@@ -534,21 +537,7 @@
           }
         },
         "light_slider": {
-          "template": "device_slider",
-          "styles": {
-            "custom_fields": {
-              "indicator_manual_control": [
-                {
-                  "color": "[[[ if (['unavailable','unknown'].includes(entity.state))\n      return 'var(--state-inactive-color)';\n    else if (['off','closed'].includes(entity.state))\n      return 'var(--state-icon-color)';\n    else if (typeof entity.attributes.rgb_color !== 'undefined' && entity.attributes.rgb_color !== null)\n      return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n      entity.attributes.rgb_color[1] + \",\" +\n      entity.attributes.rgb_color[2] + \")\"\n    else\n      return 'var(--state-binary_sensor-active-color)'\n]]]"
-                }
-              ]
-            },
-            "icon": [
-              {
-                "color": "[[[ if (['unavailable','unknown'].includes(entity.state))\n      return 'var(--state-inactive-color)';\n    else if (['off','closed'].includes(entity.state))\n      return 'var(--state-icon-color)';\n    else if (typeof entity.attributes.rgb_color !== 'undefined' && entity.attributes.rgb_color !== null)\n      return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n      entity.attributes.rgb_color[1] + \",\" +\n      entity.attributes.rgb_color[2] + \")\"\n    else\n      return 'var(--state-binary_sensor-active-color)'\n]]]"
-              }
-            ]
-          }
+          "template": "device_slider"
         },
         "fan_slider": {
           "template": "device_slider",
@@ -8432,42 +8421,42 @@
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "input_select.elenas_room_fan_direction",
-                          "color": "var(--paper-item-icon-color)",
+                          "color": "var(--state-icon-color)",
                           "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
                         },
                         {
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "input_select.elis_room_fan_direction",
-                          "color": "var(--paper-item-icon-color)",
+                          "color": "var(--state-icon-color)",
                           "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
                         },
                         {
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "sensor.dining_room_fan_direction",
-                          "color": "var(--paper-item-icon-color)",
+                          "color": "var(--state-icon-color)",
                           "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
                         },
                         {
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "sensor.living_room_fan_direction",
-                          "color": "var(--paper-item-icon-color)",
+                          "color": "var(--state-icon-color)",
                           "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
                         },
                         {
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "sensor.study_room_fan_direction",
-                          "color": "var(--paper-item-icon-color)",
+                          "color": "var(--state-icon-color)",
                           "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
                         },
                         {
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "input_select.parents_room_fan_direction",
-                          "color": "var(--paper-item-icon-color)",
+                          "color": "var(--state-icon-color)",
                           "icon": "[[[ \n  if (entity.state == 'forward') {\n    return 'mdi:arrow-down'\n  } else {\n    return 'mdi:arrow-up'\n  }\n]]]\n"
                         }
                       ]
@@ -10854,7 +10843,7 @@
                             "show_name": true,
                             "show_icon": true,
                             "type": "custom:button-card",
-                            "color": "var(--paper-item-icon-color)",
+                            "color": "var(--state-icon-color)",
                             "tap_action": {
                               "action": "call-service",
                               "service": "script.stove_settings",
@@ -10874,7 +10863,7 @@
                             "show_name": true,
                             "show_icon": true,
                             "type": "custom:button-card",
-                            "color": "var(--paper-item-icon-color)",
+                            "color": "var(--state-icon-color)",
                             "tap_action": {
                               "action": "call-service",
                               "service": "script.stove_settings",
@@ -10894,7 +10883,7 @@
                             "show_name": true,
                             "show_icon": true,
                             "type": "custom:button-card",
-                            "color": "var(--paper-item-icon-color)",
+                            "color": "var(--state-icon-color)",
                             "tap_action": {
                               "action": "call-service",
                               "service": "script.stove_settings",
@@ -10914,7 +10903,7 @@
                             "show_name": true,
                             "show_icon": true,
                             "type": "custom:button-card",
-                            "color": "var(--paper-item-icon-color)",
+                            "color": "var(--state-icon-color)",
                             "tap_action": {
                               "action": "call-service",
                               "service": "script.stove_settings",
@@ -10934,7 +10923,7 @@
                             "show_name": true,
                             "show_icon": true,
                             "type": "custom:button-card",
-                            "color": "var(--paper-item-icon-color)",
+                            "color": "var(--state-icon-color)",
                             "tap_action": {
                               "action": "call-service",
                               "service": "script.stove_settings",

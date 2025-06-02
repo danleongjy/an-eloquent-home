@@ -2,7 +2,7 @@ function t(t,e,i,n){var r,s=arguments.length,a=s<3?e:null===n?n=Object.getOwnPro
   :host {
     position: relative;
     display: block;
-    --state-inactive-color: var(--paper-item-icon-color);
+    --state-inactive-color: var(--state-icon-color);
   }
   ha-card {
     cursor: pointer;
