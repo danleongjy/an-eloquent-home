@@ -511,19 +511,22 @@
                 "position": "absolute"
               },
               {
-                "left": "23%"
+                "left": "29%"
               },
               {
-                "top": "25%"
+                "top": "30%"
               },
               {
-                "height": "50%"
+                "height": "40%"
               },
               {
-                "width": "50%"
+                "width": "40%"
               },
               {
                 "z-index": 2
+              },
+              {
+                "--ha-icon-display": "inline"
               },
               {
                 "color": "[[[ if (['unavailable','unknown'].includes(entity.state))\n      return 'var(--state-inactive-color)';\n    else if (['off','closed'].includes(entity.state))\n      return 'var(--state-icon-color)';\n    else if (typeof entity.attributes.rgb_color !== 'undefined' && entity.attributes.rgb_color !== null)\n      return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n      entity.attributes.rgb_color[1] + \",\" +\n      entity.attributes.rgb_color[2] + \")\"\n    else\n      return 'var(--state-binary_sensor-active-color)'\n]]]"
@@ -537,7 +540,15 @@
           }
         },
         "light_slider": {
-          "template": "device_slider"
+          "template": "device_slider",
+          "tap_action": {
+            "action": "call-service",
+            "service": "script.recommended_light_level",
+            "data": {
+              "light": "[[[ return entity.entity_id ]]]",
+              "turn_on": "[[[ return entity.state == \"off\" ]]]"
+            }
+          }
         },
         "fan_slider": {
           "template": "device_slider",

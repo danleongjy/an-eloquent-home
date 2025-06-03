@@ -329,11 +329,19 @@ recommended_light_level:
         | float }}\n  {% elif is_state('sun.sun','below_horizon') and state_attr('sun.sun','rising')
         %}\n    {{ states('input_number.morning_light_brightness') | float }}\n  {%
         else %}\n    100\n  {% endif %}\n{% else %}\n  100\n{% endif %}"
-  - target:
-      entity_id: '{{ light }}'
-    data:
-      brightness_pct: '{{ light_brightness }}'
-    action: light.turn_on
+  - if:
+    - condition: template
+      value_template: '{{ turn_on }}'
+    then:
+    - target:
+        entity_id: '{{ light }}'
+      data:
+        brightness_pct: '{{ light_brightness }}'
+      action: light.turn_on
+    else:
+    - target:
+        entity_id: '{{ light }}'
+      action: light.turn_off
   mode: parallel
   icon: mdi:lightbulb-on-70
   max: 15
@@ -346,6 +354,12 @@ recommended_light_level:
       name: Light
       description: The light on which to set the recommended level
       required: true
+    turn_on:
+      selector:
+        boolean: {}
+      name: Turn On
+      description: Whether to turn on the light
+      default: true
 alarm_lights:
   alias: Alarm Lights
   sequence:
