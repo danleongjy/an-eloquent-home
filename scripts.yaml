@@ -331,7 +331,7 @@ recommended_light_level:
         else %}\n    100\n  {% endif %}\n{% else %}\n  100\n{% endif %}"
   - if:
     - condition: template
-      value_template: '{{ turn_on }}'
+      value_template: '{{ turn_on | default(true) }}'
     then:
     - target:
         entity_id: '{{ light }}'
@@ -360,6 +360,7 @@ recommended_light_level:
       name: Turn On
       description: Whether to turn on the light
       default: true
+      required: false
 alarm_lights:
   alias: Alarm Lights
   sequence:
