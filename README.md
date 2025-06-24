@@ -16,7 +16,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
 * [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [15.2](https://github.com/home-assistant/operating-system/releases/tag/15.2) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core 2025.4.4](https://github.com/home-assistant/core/releases/tag/2025.4.4)
+* [Home Assistant Core 2025.5.3](https://github.com/home-assistant/core/releases/tag/2025.5.3)
 * 4 cores, 6GB RAM, 32GB storage
 
 ## Entities
@@ -47,11 +47,11 @@ Domain | Quantity
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 5
 [`script`](https://www.home-assistant.io/components/script) | 22
-[`select`](https://www.home-assistant.io/components/select) | 57
+[`select`](https://www.home-assistant.io/components/select) | 56
 [`sensor`](https://www.home-assistant.io/components/sensor) | 604
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 104
+[`switch`](https://www.home-assistant.io/components/switch) | 105
 [`time`](https://www.home-assistant.io/components/time) | 4
 [`tts`](https://www.home-assistant.io/components/tts) | 2
 [`update`](https://www.home-assistant.io/components/update) | 114
