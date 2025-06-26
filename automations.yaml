@@ -7595,21 +7595,22 @@
         ) %}\n{% set remaining_time = namespace(hours = clean_time.remaining_min //
         60,\n                                  minutes = clean_time.remaining_min
         % 60) %}\nThe vacuum is {{ 'in trouble' if states('vacuum.hestia') == 'error'
-        else state_translated('sensor.hestia_state').lower() }} in {{ 'the ' if states('sensor.hestia_current_room')
+        else state_translated('sensor.hestia_state').lower() if states('vacuum.hestia')
+        != 'docked' else 'docked' }} in {{ 'the ' if states('sensor.hestia_current_room')
         not in [\"Elena's Room\",\"Eli's Room\"] }}{{ states('sensor.hestia_current_room')
         }}.\nIt cleaned {{states('sensor.hestia_cleaned_area') | int(0) }} square
         metres {{ 'over' if (states('sensor.hestia_cleaning_time') | float(0)) > 0
         }} {{ clean_time.hours | round(0) | string + ' hour' if clean_time.hours >
         0 }}{{ 's' if clean_time.hours > 1 }}{{ ' and ' if clean_time.hours > 0 and
         clean_time.minutes > 0 }}{{ clean_time.minutes | string + ' minute' if clean_time.minutes
-        > 0 }}{{ 's' if clean_time.minutes > 1 }}.  It will finish cleaning the remaining
-        {{ 100 - states('sensor.hestia_cleaning_progress') | int(0) }} percent of
-        the house in {{ remaining_time.hours | round(0) | string + ' hour' if remaining_time.hours
-        > 0 }}{{ 's' if remaining_time.hours > 1 }}{{ ' and ' if remaining_time.hours
-        > 0 and remaining_time.minutes > 0 }}{{ remaining_time.minutes | string +
-        ' minute' if remaining_time.minutes > 0 }}{{ 's' if remaining_time.minutes
-        > 1 }}.\n{% if states('vacuum.hestia') in ['docked','idle'] %}\n  Its last
-        run ended {{ relative_time(as_datetime(states('sensor.hestia_cleaning_history')))
+        > 0 }}{{ 's' if clean_time.minutes > 1 }}.\n{% if states('sensor.hestia_cleaning_progress')
+        | float(0) > 0 %}\nIt will finish cleaning the remaining {{ 100 - states('sensor.hestia_cleaning_progress')
+        | int(0) }} percent of the house in {{ remaining_time.hours | round(0) | string
+        + ' hour' if remaining_time.hours > 0 }}{{ 's' if remaining_time.hours > 1
+        }}{{ ' and ' if remaining_time.hours > 0 and remaining_time.minutes > 0 }}{{
+        remaining_time.minutes | string + ' minute' if remaining_time.minutes > 0
+        }}{{ 's' if remaining_time.minutes > 1 }}.\n{% endif %}{% if states('vacuum.hestia')
+        in ['docked','idle'] %}\n  Its last run ended {{ relative_time(as_datetime(states('sensor.hestia_cleaning_history')))
         }} ago.\n{% endif %}"
   mode: single
 - id: '1743851351763'
