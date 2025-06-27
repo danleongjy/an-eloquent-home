@@ -16,7 +16,7 @@
     {%- set ns = namespace(items = []) %}
     {%- for i in range (1,5) %}
       {%- set ns.items = ns.items + [{ 'datetime': states('sensor.local_forecast_day_' ~ i ), 
-                                      'condition': weather_condition(state_attr('sensor.local_forecast_day_' ~ i, 'forecast')['text'], true), 
+                                      'condition': weather_condition(state_attr('sensor.local_forecast_day_' ~ i, 'forecast')['summary'], true), 
                                       'native_temperature': state_attr('sensor.local_forecast_day_' ~ i, 'temperature')['high'],
                                       'native_templow': state_attr('sensor.local_forecast_day_' ~ i, 'temperature')['low'],
                                       'humidity': (state_attr('sensor.local_forecast_day_' ~ i, 'relativeHumidity')['low'] | int(95) + 
