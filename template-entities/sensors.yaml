@@ -1,0 +1,536 @@
+- sensor:
+  - name: Next Alarm Timings
+    unique_id: sensor.next_alarm_timings
+    state: >
+      {% set alarms = namespace({ 'Daniel': as_datetime(states('input_datetime.daniels_next_alarm')).astimezone(now().tzinfo),
+                                  'Grace': as_datetime(states('input_datetime.graces_next_alarm')).astimezone(now().tzinfo),
+                                  'Eli': as_datetime(states('input_datetime.elis_next_alarm')).astimezone(now().tzinfo),
+                                  'Elena': as_datetime(states('input_datetime.elenas_next_alarm')).astimezone(now().tzinfo) }) %}
+      {% set alarms_dismissed = namespace({ 'Daniel': alarms['Daniel'] <= alarms['Grace'] and is_state('input_boolean.parents_room_next_alarm_dismissed', 'on'),
+                                            'Grace': alarms['Grace'] <= alarms['Daniel'] and is_state('input_boolean.parents_room_next_alarm_dismissed', 'on'),
+                                            'Eli': is_state('input_boolean.elis_room_next_alarm_dismissed', 'on'),
+                                            'Elena': is_state('input_boolean.elenas_room_next_alarm_dismissed', 'on') }) %}
+      {% set alarm_timings = namespace(output = '') %}
+      {% for person in ['Daniel','Grace','Eli','Elena'] %}
+        {% if alarms[person] - now() > timedelta(hours = 12) %}
+          {% set alarm_timings.output = alarm_timings.output + 'A' %}
+        {% else %}
+          {% if alarms_dismissed[person] %}
+            {% set alarm_timings.output = alarm_timings.output + 'E' %}
+          {% else %}
+            {% if (alarms[person] - alarms['Eli']) <= timedelta(minutes = 10) and (alarms['Eli'] - alarms[person]) <= timedelta(minutes = 10) %}
+              {% set alarm_timings.output = alarm_timings.output + 'B' %}
+            {% elif (alarms[person] - alarms['Elena']) <= timedelta(minutes = 10) and (alarms['Elena'] - alarms[person]) <= timedelta(minutes = 10) %}
+              {% set alarm_timings.output = alarm_timings.output + 'C' %}
+            {% else %}
+              {% set alarm_timings.output = alarm_timings.output + 'D' %}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% for person in ['Daniel','Grace','Eli','Elena'] %}
+        {% if alarms[person] - now() <= timedelta(minutes = 15) and alarms[person] - now() > timedelta(minutes = -5) %}
+          {% set alarm_timings.output = alarm_timings.output + 'T' %}
+        {% else %}
+          {% set alarm_timings.output = alarm_timings.output + 'F' %}
+        {% endif %}
+      {% endfor %}
+      {{ alarm_timings.output }}
+    attributes:
+      Daniel: "{{ states('input_datetime.daniels_next_alarm') }}"
+      daniel_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[0] != 'A' }}"
+      daniel_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[4] == 'T' }}"
+      daniel_next_alarm_dismissed: "{{ states('sensor.next_alarm_timings')[0] == 'E' }}"
+      Grace: "{{ states('input_datetime.graces_next_alarm') }}"
+      grace_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[1] != 'A' }}"
+      grace_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[5] == 'T' }}"
+      grace_next_alarm_dismissed: "{{ states('sensor.next_alarm_timings')[1] == 'E' }}"
+      parents_room: "{{ [states('input_datetime.daniels_next_alarm') | as_datetime, states('input_datetime.graces_next_alarm') | as_datetime] | min }}"
+      parents_room_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[0] != 'A' or states('sensor.next_alarm_timings')[1] != 'A' }}"
+      parents_room_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[4] == 'T' or states('sensor.next_alarm_timings')[5] == 'T' }}"
+      Eli: "{{ states('input_datetime.elis_next_alarm') }}"
+      elis_room_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[2] != 'A' }}"
+      elis_room_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[6] == 'T' }}"
+      eli_next_alarm_dismissed: "{{ states('sensor.next_alarm_timings')[2] == 'E' }}"
+      Elena: "{{ states('input_datetime.elenas_next_alarm') }}"
+      elenas_room_next_alarm_imminent: "{{ states('sensor.next_alarm_timings')[3] != 'A' }}"
+      elenas_room_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[7] == 'T' }}"
+      elena_next_alarm_dismissed: "{{ states('sensor.next_alarm_timings')[3] == 'E' }}"
+
+- trigger:
+  - platform: time_pattern
+    minutes: /10
+  sensor:
+    - name: ZHA Device Issues
+      unique_id: sensor.zha_device_issues
+      state: >
+        {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
+        {% set batteries_with_low_charge = namespace(batteries = 0) %}
+        {% for battery in zha_batteries %}
+          {% if states(battery) in ['unavailable','unknown'] %}
+            {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
+          {% elif states(battery) | int(0) <= 10 %}
+            {% set batteries_with_low_charge.batteries = batteries_with_low_charge.batteries + 1 %}
+          {% endif %}
+        {% endfor %}
+        {{ batteries_with_low_charge.batteries }}
+      unit_of_measurement: count
+      attributes:
+        disconnected: >
+          {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
+          {% set batteries = namespace(names = []) %}
+          {% for battery in zha_batteries %}
+            {% if states(battery) in ['unavailable','unknown'] %}
+              {% set batteries.names = batteries.names + [battery] %}
+            {% endif %}
+          {% endfor %}
+          {{ batteries.names }}
+        batteries_low: >
+          {% set zha_batteries = integration_entities('zha') | select('search', '^sensor.*_battery') | list %}
+          {% set batteries = namespace(names = []) %}
+          {% for battery in zha_batteries %}
+            {% if states(battery) not in ['unavailable','unknown'] %}
+              {% if states(battery) | int(0) <= 10 %}
+                {% set batteries.names = batteries.names + [battery] %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {{ batteries.names }}
+    - name: Home Assistant Automations Trigger Time Distribution
+      unique_id: sensor.home_assistant_automations_trigger_time_distribution
+      state: "{{ states.automation | length }}"
+      unit_of_measurement: automations
+      attributes:
+        triggered_5min: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 0), timedelta(minutes = 5)) }}
+        triggered_30min: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 5), timedelta(minutes = 30)) }}
+        triggered_1h: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 30), timedelta(hours = 1)) }}
+        triggered_12h: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 1), timedelta(hours = 12)) }}
+        triggered_1d: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 12), timedelta(days = 1)) }}
+        triggered_1wk: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(days = 1), timedelta(weeks = 1)) }}
+        triggered_1wk_up: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(weeks = 1), timedelta(days = 10000)) }}
+    - name: Home Assistant Scripts Trigger Time Distribution
+      unique_id: sensor.home_assistant_scripts_trigger_time_distribution
+      state: "{{ states.script | length }}"
+      unit_of_measurement: scripts
+      attributes:
+        triggered_5min: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 0), timedelta(minutes = 5)) }}
+        triggered_30min: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 5), timedelta(minutes = 30)) }}
+        triggered_1h: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 30), timedelta(hours = 1)) }}
+        triggered_12h: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 1), timedelta(hours = 12)) }}
+        triggered_1d: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 12), timedelta(days = 1)) }}
+        triggered_1wk: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(days = 1), timedelta(weeks = 1)) }}
+        triggered_1wk_up: >
+          {% from 'time.jinja' import time_bucket %}
+          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(weeks = 1), timedelta(days = 10000)) }}
+    - name: Home Assistant Devices by Integration
+      unique_id: sensor.home_assistant_devices_by_integration
+      state: "{{ set(states | map(attribute = 'entity_id') | map('device_id') | reject('none')) | length }}"
+      unit_of_measurement: devices
+      attributes:
+        adguard: "{{ set(integration_entities('adguard') | map('device_id') | list) | length }}"
+        broadlink: "{{ set(integration_entities('broadlink') | map('device_id') | list) | length }}"
+        esphome: "{{ set(integration_entities('esphome') | map('device_id') | list) | length }}"
+        google_cast: "{{ set(integration_entities('cast') | map('device_id') | list) | length }}"
+        localtuya: "{{ set(integration_entities('localtuya') | map('device_id') | list) | length }}"
+        mjpeg_camera: "{{ set(integration_entities('mjpeg') | map('device_id') | list) | length }}"
+        mobile_app: "{{ set(integration_entities('mobile_app') | map('device_id') | list) | length }}"
+        pfsense: "{{ set(integration_entities('pfsense') | map('device_id') | list) | length }}"
+        proxmoxve: "{{ set(integration_entities('proxmoxve') | map('device_id') | list) | length }}"
+        roborock: "{{ set(integration_entities('roborock') | map('device_id') | list) | length }}"
+        smartthinq: "{{ set(integration_entities('smartthinq_sensors') | map('device_id') | list) | length }}"
+        switchbot: "{{ set(integration_entities('switchbot') | map('device_id') | list) | length }}"
+        wyoming: "{{ set(integration_entities('wyoming') | map('device_id') | list) | length }}"
+        zha: "{{ set(integration_entities('zha') | map('device_id') | list) | length }}"
+        
+- trigger:
+    - platform: time
+      at: '04:00:00'
+  sensor:
+    - name: Parents' Room Auto Cooling at Night End Time
+      unique_id: sensor.parents_room_auto_cooling_at_night_end_time
+      state: >
+        {% set alarms = namespace(times = []) %}
+        {% for alarm in [states('input_datetime.daniels_next_alarm') | as_datetime | as_local,
+                         states('input_datetime.graces_next_alarm') | as_datetime | as_local] %}
+          {% if alarm.date() == now().date() %}
+            {% set alarms.times = alarms.times + [alarm - timedelta(minutes = 30)] %}
+          {% endif %}
+        {% endfor %}
+        {{ ([alarms.times | max, today_at('10:00')] | min).isoformat() if alarms.times | length > 0 else today_at('10:00') }}
+      device_class: timestamp
+
+- trigger:
+  - platform: state
+    entity_id: input_select.dishwasher_status
+    from:
+      - Standby
+      - "Off"
+    to: Washing
+  sensor:
+    - name: Dishwasher Last Run Started
+      unique_id: sensor.dishwasher_last_run_started
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+
+- trigger:
+  - platform: state
+    entity_id: input_select.dishwasher_status
+    from: Cooling
+    to: "Off"
+  sensor:
+    - name: Dishwasher Last Run Ended
+      unique_id: sensor.dishwasher_last_run_ended
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+      
+- trigger:
+  - platform: state
+    entity_id: input_select.dishwasher_status
+    from: Cooling
+    to: "Off"
+    for: 1
+  sensor:
+    - name: Dishwasher Last Run Duration
+      unique_id: sensor.dishwasher_last_run_duration
+      state: "{{ states('sensor.dishwasher_last_run_ended') | as_datetime - states('sensor.dishwasher_last_run_started') | as_datetime }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.washer_run_state
+    to: Washing
+  sensor:
+    - name: Washer Last Wash Started
+      unique_id: sensor.washer_last_wash_started
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+
+- trigger:
+  - platform: state
+    entity_id: binary_sensor.washer_wash_completed
+    from: "off"
+    to: "on"
+  sensor:
+    - name: Washer Last Wash Completed
+      unique_id: sensor.washer_last_wash_completed
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+
+- trigger:
+  - platform: state
+    entity_id: binary_sensor.washer_wash_completed
+    from: "off"
+    to: "on"
+    for: 1
+  sensor:
+    - name: Washer Last Wash Duration
+      unique_id: sensor.washer_last_wash_duration
+      state: "{{ states('sensor.washer_last_wash_completed') | as_datetime - states('sensor.washer_last_wash_started') | as_datetime }}"
+
+- trigger:
+  - platform: state
+    entity_id: input_select.rice_cooker_status
+    from: 
+      - "Off"
+      - Standby
+    to: Cooking
+  sensor:
+    - name: Rice Cooker Last Run Started
+      unique_id: sensor.rice_cooker_last_run_started
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+
+- trigger:
+  - platform: state
+    entity_id: input_select.rice_cooker_status
+    from: Cooking
+    to: Warming
+  sensor:
+    - name: Rice Cooker Last Run Ended
+      unique_id: sensor.rice_cooker_last_run_ended
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+      
+- trigger:
+  - platform: state
+    entity_id: input_select.rice_cooker_status
+    from: Cooking
+    to: Warming
+    for: 1
+  sensor:
+    - name: Rice Cooker Last Run Duration
+      unique_id: sensor.rice_cooker_last_run_duration
+      state: "{{ states('sensor.rice_cooker_last_run_ended') | as_datetime - states('sensor.rice_cooker_last_run_started') | as_datetime }}"
+
+- trigger:
+  - platform: state
+    entity_id: switch.stove_main_power
+    from: 'on'
+    to: 'off'
+  sensor:
+    - name: Stove Last Use
+      unique_id: sensor.stove_last_use
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+
+- trigger:
+  - platform: state
+    entity_id: sensor.adguard_home_dns_queries
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+    id: state_changed
+  - platform: time_pattern
+    minutes: "/1"
+    id: stale_check
+  sensor:
+    - name: DNS Queries within 5min
+      unique_id: sensor.dns_queries_within_5min
+      state: >
+        {% if trigger.id == 'stale_check' %}
+          {% if now() - states.sensor.adguard_home_dns_queries.last_changed > timedelta(minutes = 5) %}
+            0
+          {% else %}
+            {{ states('sensor.dns_queries_within_5min') }}
+          {% endif %}
+        {% elif trigger.to_state.state | int(0) - trigger.from_state.state | int(0) > 0 %}
+          {{ trigger.to_state.state | int(0) - trigger.from_state.state | int(0) }}
+        {% else %}
+          0
+        {% endif %}
+      unit_of_measurement: queries
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.adguard_home_dns_queries_blocked
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+    id: state_changed
+  - platform: time_pattern
+    minutes: "/1"
+    id: stale_check
+  sensor:
+    - name: DNS Queries Blocked by Filters within 5min
+      unique_id: sensor.dns_queries_blocked_by_filters_within_5min
+      state: >
+        {% if trigger.id == 'stale_check' %}
+          {% if now() - states.sensor.adguard_home_dns_queries_blocked.last_changed > timedelta(minutes = 5) %}
+            0
+          {% else %}
+            {{ states('sensor.dns_queries_blocked_by_filters_within_5min') }}
+          {% endif %}
+        {% elif trigger.to_state.state | int(0) - trigger.from_state.state | int(0) > 0%}
+          {{ trigger.to_state.state | int(0) - trigger.from_state.state | int(0) }}
+        {% else %}
+          0
+        {% endif %}
+      unit_of_measurement: queries
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
+    entity_id:
+      - sensor.dns_queries_within_5min
+      - sensor.dns_queries_blocked_by_filters_within_5min
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+    for:
+      minutes: 1
+      seconds: 1
+  sensor:
+    - name: DNS Query Filter Block Rate within 5min
+      unique_id: sensor.dns_query_filter_block_rate_within_5min
+      state: "{{ ((states('sensor.dns_queries_blocked_by_filters_within_5min') | int(0) / states('sensor.dns_queries_within_5min') | int(1)) * 100) | round(2) if states('sensor.dns_queries_within_5min') | int(1) > 0 else 0 }}"
+      unit_of_measurement: '%'
+
+- trigger:
+  - platform: state
+    entity_id: sensor.qemu_pfsense_100_network_in
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: pfSense MB In within 1min
+      unique_id: sensor.pfsense_mb_in_within_1min
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.qemu_pfsense_100_network_out
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: pfSense MB Out within 1min
+      unique_id: sensor.pfsense_mb_out_within_1min
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.qemu_an_eloquent_home_101_network_in
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: Home Assistant MB In within 1min
+      unique_id: sensor.home_assistant_mb_in_within_1min
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0),0]) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.qemu_an_eloquent_home_101_network_out
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: Home Assistant MB Out within 1min
+      unique_id: sensor.home_assistant_mb_out_within_1min
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
+        
+- trigger:
+  - platform: state
+    entity_id: sensor.qemu_docker_102_network_in
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: Docker MB In within 1min
+      unique_id: sensor.docker_mb_in_within_1min
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.qemu_docker_102_network_out
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: Docker MB Out within 1min
+      unique_id: sensor.docker_mb_out_within_1min
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.lxc_samba_103_network_in
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: Samba MB In within 1min
+      unique_id: sensor.samba_mb_in_within_1min
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
+    entity_id: sensor.lxc_samba_103_network_out
+    not_from:
+      - unknown
+      - unavailable
+    not_to:
+      - unknown
+      - unavailable
+  sensor:
+    - name: Samba MB Out within 1min
+      unique_id: sensor.samba_mb_out_within_1min
+      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
+      unit_of_measurement: MB
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+    - platform: time_pattern
+      hours: "/1"
+  action:
+    - service: weather.get_forecasts
+      data:
+        type: daily
+      target:
+        entity_id: weather.local_weather
+      response_variable: daily
+  sensor:
+    - name: Local 4-Day Weather Forecast
+      unique_id: sensor.local_4_day_weather_forecast
+      state: "{{ now() }}"
+      attributes:
+        forecast: "{{ daily['weather.local_weather'].forecast }}"

@@ -1,0 +1,125 @@
+- fan:
+    - name: "Eli's Room Fan"
+      unique_id: fan.elis_room_fan
+      state: "{{ states('input_number.elis_room_fan_speed') | int > 0 }}"
+      percentage: "{{ states('input_number.elis_room_fan_speed') | int }}"
+      direction: "{{ states('input_select.elis_room_fan_direction') }}"
+      turn_on:
+        - action: automation.trigger
+          target:
+            entity_id: automation.elis_room_fan_auto_control
+      turn_off:
+        - action: fan.set_percentage
+          target:
+            entity_id: fan.elis_room_fan
+          data:
+            percentage: 0
+      set_percentage:
+        - action: input_number.set_value
+          target:
+            entity_id: input_number.elis_room_fan_speed
+          data:
+            value: "{{ percentage }}"
+        - action: remote.send_command
+          target:
+            entity_id: remote.elis_room_universal_remote
+          data:
+            device: Eli's Room Fan
+            command: "{{ 'Off' if percentage | int == 0 else ((percentage | int) / 100 * 6) | round(0) }}"
+      set_direction:
+        - action: input_select.select_option
+          target:
+            entity_id: input_select.elis_room_fan_direction
+          data:
+            option: "{{ direction }}"
+        - action: remote.send_command
+          target:
+            entity_id: remote.elis_room_universal_remote
+          data:
+            device: Eli's Room Fan
+            command: Reverse
+      speed_count: 6
+
+    
+    - name: "Elena's Room Fan"
+      unique_id: fan.elenas_room_fan
+      state: "{{ states('input_number.elenas_room_fan_speed') | int > 0 }}"
+      percentage: "{{ states('input_number.elenas_room_fan_speed') | int }}"
+      direction: "{{ states('input_select.elenas_room_fan_direction') }}"
+      turn_on:
+        - action: automation.trigger
+          target:
+            entity_id: automation.elenas_room_fan_auto_control
+      turn_off:
+        - action: fan.set_percentage
+          target:
+            entity_id: fan.elenas_room_fan
+          data:
+            percentage: 0
+      set_percentage:
+        - action: input_number.set_value
+          target:
+            entity_id: input_number.elenas_room_fan_speed
+          data:
+            value: "{{ percentage }}"
+        - action: remote.send_command
+          target:
+            entity_id: remote.elis_room_universal_remote
+          data:
+            device: Elena's Room Fan
+            command: "{{ 'Off' if percentage | int == 0 else ((percentage | int) / 100 * 6) | round(0) }}"
+      set_direction:
+        - action: input_select.select_option
+          target:
+            entity_id: input_select.elenas_room_fan_direction
+          data:
+            option: "{{ direction }}"
+        - action: remote.send_command
+          target:
+            entity_id: remote.elis_room_universal_remote
+          data:
+            device: Elena's Room Fan
+            command: Reverse
+      speed_count: 6
+
+    - name: "Parents' Room Fan"
+      unique_id: fan.parents_room_fan
+      state: "{{ states('input_number.parents_room_fan_speed') | int > 0 }}"
+      percentage: "{{ states('input_number.parents_room_fan_speed') | int }}"
+      direction: "{{ states('input_select.parents_room_fan_direction') }}"
+      turn_on:
+        - action: automation.trigger
+          target:
+            entity_id: automation.parents_room_fan_auto_control
+      turn_off:
+        - action: fan.set_percentage
+          target:
+            entity_id: fan.parents_room_fan
+          data:
+            percentage: 0
+      set_percentage:
+        - action: input_number.set_value
+          target:
+            entity_id: input_number.parents_room_fan_speed
+          data:
+            value: "{{ percentage }}"
+        - action: remote.send_command
+          target:
+            entity_id: remote.parents_room_universal_remote
+          data:
+            device: Parents' Room Fan
+            command: "{{ 'Off' if percentage | int == 0 else ((percentage | int) / 100 * 6) | round(0) }}"
+      set_direction:
+        - action: input_select.select_option
+          target:
+            entity_id: input_select.parents_room_fan_direction
+          data:
+            option: "{{ direction }}"
+        - action: remote.send_command
+          target:
+            entity_id: remote.parents_room_universal_remote
+          data:
+            device: Parents' Room Fan
+            command: Reverse
+      speed_count: 6
+      
