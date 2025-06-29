@@ -7551,10 +7551,10 @@
     id: execute_command
   - trigger: conversation
     command:
-    - (what is | what's) the vacuum doing
-    - is the vacuum (on | off | running | vacuuming | active | paused | stopped |
-      returning | docked)
-    - (what is | what's) the status of the vacuum
+    - (what is | whats) the vacuum doing
+    - is the vacuum (on | off | running | vacuuming | cleaning | active | paused |
+      stopped | returning | docked)
+    - (what is | whats) the status of the vacuum
     id: get_status
   conditions: []
   actions:
@@ -7631,10 +7631,6 @@
     id: SetCookerTimer
   - trigger: conversation
     command:
-    - Set [the] {side} (cooker | stove | burner) to [level] {power} for {time} minute[s]
-    id: SetCookerPowerTimer
-  - trigger: conversation
-    command:
     - Turn off [the] {side} (cooker | stove | burner)
     id: TurnOffCooker
   - trigger: conversation
@@ -7650,13 +7646,12 @@
       - condition: trigger
         id:
         - CookingPreset
-      sequence:
-      - set_conversation_response: "{% if is_state('switch.stove_main_power','on')
-          %}\n  {{ trigger.slots.side | capitalize }} cooker set to {{ trigger.slots.cooking_preset
-          }}.\n{% else %}\n  Please turn on the stove manually first.\n{% endif %}"
       - condition: state
         entity_id: switch.stove_main_power
         state: 'on'
+      sequence:
+      - set_conversation_response: '{{ trigger.slots.side | capitalize }} cooker set
+          to {{ trigger.slots.cooking_preset }}.'
       - variables:
           presets:
             Boil water:
@@ -7689,64 +7684,47 @@
       - condition: trigger
         id:
         - SetCookerPower
-      sequence:
-      - set_conversation_response: "{% if is_state('switch.stove_main_power','on')
-          %}\n  {{ trigger.slots.side | capitalize }} cooker set to level {{ trigger.slots.power
-          }}.\n{% else %}\n  Please turn on the stove manually first.\n{% endif %}"
       - condition: state
         entity_id: switch.stove_main_power
         state: 'on'
+      sequence:
+      - set_conversation_response: '{{ trigger.slots.side | capitalize }} cooker set
+          to level {{ trigger.slots.power }}.'
       - action: select.select_option
         metadata: {}
         data:
           option: '{{ trigger.slots.side }}'
         target:
           entity_id: select.stove_current_burner
-      - action: script.stove_settings
-        metadata: {}
-        data:
-          current_burner_power: '{{ trigger.slots.power | int(0) }}'
+      - if:
+        - condition: template
+          value_template: '{{ trigger.slots.power | length == 1 }}'
+        then:
+        - action: script.stove_settings
+          metadata: {}
+          data:
+            current_burner_power: '{{ trigger.slots.power | int(0) }}'
+        else:
+        - action: script.stove_settings
+          metadata: {}
+          data:
+            current_burner_power: '{{ trigger.slots.power.split('' '')[0] | int(0)
+              }}'
+            current_burner_timer: '{{ trigger.slots.power.split('' '')[2] | int(0)
+              }}'
     - conditions:
       - condition: trigger
         id:
         - SetCookerTimer
-      sequence:
-      - set_conversation_response: "{% if is_state('switch.stove_main_power','on')
-          %}\n  {% if trigger.slots.time | int(0) == 0 %}\n    {{ trigger.slots.side
-          | capitalize }} cooker timer deactivated.\n  {% else %}\n    {{ trigger.slots.side
-          | capitalize }} cooker timer set to {{ trigger.slots.time }} {{ 'minutes'
-          if trigger.slots.time | int(0) > 1 else 'minute' }}.\n  {% endif %}\n{%
-          else %}\n  Please turn on the stove manually first.\n{% endif %}"
       - condition: state
         entity_id: switch.stove_main_power
         state: 'on'
-      - action: select.select_option
-        metadata: {}
-        data:
-          option: '{{ trigger.slots.side }}'
-        target:
-          entity_id: select.stove_current_burner
-      - action: script.stove_settings
-        metadata: {}
-        data:
-          current_burner_timer: '{{ trigger.slots.time | int(0) }}'
-    - conditions:
-      - condition: trigger
-        id:
-        - SetCookerPowerTimer
       sequence:
-      - set_conversation_response: "{% if is_state('switch.stove_main_power','on')
-          %}\n  {% if trigger.slots.power | int(0) == 0 %}\n    {{ trigger.slots.side
-          | capitalize }} cooker deactivated.\n  {% else %}\n    {% if trigger.slots.time
-          == 0 %}\n      {{ trigger.slots.side | capitalize }} cooker set to level
-          {{ trigger.slots.power }}.\n    {% else %}\n      {{ trigger.slots.side
-          | capitalize }} cooker set to level {{ trigger.slots.power }} for {{ trigger.slots.time
-          }} {{ 'minutes' if trigger.slots.time > 1 else 'minute' }}.\n    {% endif
-          %}\n  {% endif %}\n{% else %}\n  Please turn on the stove manually first.\n{%
+      - set_conversation_response: "{% if trigger.slots.time | int(0) == 0 %}\n  {{
+          trigger.slots.side | capitalize }} cooker timer deactivated.\n{% else %}\n
+          \ {{ trigger.slots.side | capitalize }} cooker timer set to {{ trigger.slots.time
+          }} {{ 'minutes' if trigger.slots.time | int(0) > 1 else 'minute' }}.\n{%
           endif %}"
-      - condition: state
-        entity_id: switch.stove_main_power
-        state: 'on'
       - action: select.select_option
         metadata: {}
         data:
@@ -7756,19 +7734,16 @@
       - action: script.stove_settings
         metadata: {}
         data:
-          current_burner_power: '{{ trigger.slots.power | int(0) }}'
           current_burner_timer: '{{ trigger.slots.time | int(0) }}'
     - conditions:
       - condition: trigger
         id:
         - TurnOffCooker
-      sequence:
-      - set_conversation_response: "{% if is_state('switch.stove_main_power','on')
-          %}\n  {{ trigger.slots.side | capitalize }} cooker deactivated.\n{% else
-          %}\n  Stove is already off.\n{% endif %}\n"
       - condition: state
         entity_id: switch.stove_main_power
         state: 'on'
+      sequence:
+      - set_conversation_response: '{{ trigger.slots.side | capitalize }} cooker deactivated.'
       - action: select.select_option
         metadata: {}
         data:
@@ -7807,6 +7782,8 @@
             %}\n{% endif %}\n{{ text.output }}\n"
         else:
         - set_conversation_response: The {{ trigger.slots.side }} cooker is off.
+    default:
+    - set_conversation_response: Please turn on the stove manually first.
   mode: single
 - id: '1744446876391'
   alias: Main Door Display
@@ -7949,3 +7926,81 @@
         target:
           device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
   mode: restart
+- id: '1751186099654'
+  alias: Voice Control for Washer
+  description: Get the washer status via voice assistants
+  triggers:
+  - trigger: conversation
+    command:
+    - What is the (washer | washing machine) doing
+    - What is the status of the (washer | washing machine)
+    - Is the (washer | washing machine) (running | spinning | rinsing | washing |
+      off)
+  conditions: []
+  actions:
+  - set_conversation_response: "The washer is {{ states('sensor.washer_status') |
+      lower }}.\n{% if states('sensor.washer_status') == 'Off' %}\n  {% set wash_time
+      = namespace(hours = states('sensor.washer_last_wash_duration').split(':')[0],\n
+      \                              minutes = states('sensor.washer_last_wash_duration').split(':')[1])
+      %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours | int(0)
+      > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
+      + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
+      {{ time_since(as_datetime(states('sensor.washer_last_wash_completed'))) }} ago.\n
+      \ {{ 'Please unload the laundry.' if is_state('input_boolean.washer_load_clean',
+      'on') }}\n{% else %}\n  {% set countdown = namespace(hours = states('sensor.washer_countdown')
+      | int(0) // 60,\n                               minutes = states('sensor.washer_countdown')
+      | int(0)) %}\n  The current run started {{ time_since(as_datetime(states('sensor.washer_last_wash_started')))
+      }} ago.\n  {% if countdown.hours > 0 or countdown.minutes > 0 %}\n  The remaining
+      {{ 100 - states('sensor.washer_wash_progress') | int(0) }}% of the run will
+      complete in {{ countdown.hours if countdown.hours > 0 }}{{ ' hours' if countdown.hours
+      > 1 else ' hour' if countdown.hours == 1 }}{{ ' and ' if countdown.hours > 0
+      and countdown.minutes > 0 }}{{ countdown.minutes if countdown.minutes > 0 }}{{
+      ' minutes' if countdown.minutes > 1 else ' minute' if countdown.minutes == 1
+      }}\n  {% endif %}\n{% endif %}"
+  mode: single
+- id: '1751186563137'
+  alias: Voice Control for Dishwasher
+  description: Get the dishwasher status via voice assistants
+  triggers:
+  - trigger: conversation
+    command:
+    - What is the dishwasher doing
+    - What is the status of the dishwasher
+    - Is the dishwasher (running | washing | cooling | off)
+  conditions: []
+  actions:
+  - set_conversation_response: "The dishwasher is {{ states('input_select.dishwasher_status')
+      | lower }}.\n{% if states('input_select.dishwasher_status') == 'Off' %}\n  {%
+      set wash_time = namespace(hours = states('sensor.dishwasher_last_run_duration').split(':')[0],\n
+      \                              minutes = states('sensor.dishwasher_last_run_duration').split(':')[1])
+      %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours | int(0)
+      > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
+      + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
+      {{ time_since(as_datetime(states('sensor.dishwasher_last_run_ended'))) }} ago.\n
+      \ {{ 'Please open the dishwasher door.' if is_state('input_boolean.dishwasher_load_clean',
+      'on') }}\n{% else %}\n  The current run started {{ time_since(as_datetime(states('sensor.dishwasher_last_run_started')))
+      }} ago.\n{% endif %}"
+  mode: single
+- id: '1751186583758'
+  alias: Voice Control for Dishwasher
+  description: Get the dishwasher status via voice assistants
+  triggers:
+  - trigger: conversation
+    command:
+    - What is the dishwasher doing
+    - What is the status of the dishwasher
+    - Is the dishwasher (running | washing | cooling | off)
+  conditions: []
+  actions:
+  - set_conversation_response: "The dishwasher is {{ states('input_select.dishwasher_status')
+      | lower }}.\n{% if states('input_select.dishwasher_status') == 'Off' %}\n  {%
+      set wash_time = namespace(hours = states('sensor.dishwasher_last_run_duration').split(':')[0],\n
+      \                              minutes = states('sensor.dishwasher_last_run_duration').split(':')[1])
+      %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours | int(0)
+      > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
+      + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
+      {{ time_since(as_datetime(states('sensor.dishwasher_last_run_ended'))) }} ago.\n
+      \ {{ 'Please open the dishwasher door.' if is_state('input_boolean.dishwasher_load_clean',
+      'on') }}\n{% else %}\n  The current run started {{ time_since(as_datetime(states('sensor.dishwasher_last_run_started')))
+      }} ago.\n{% endif %}"
+  mode: single
