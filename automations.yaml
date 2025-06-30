@@ -7947,9 +7947,9 @@
       + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
       {{ time_since(as_datetime(states('sensor.washer_last_wash_completed'))) }} ago.\n
       \ {{ 'Please unload the laundry.' if is_state('input_boolean.washer_load_clean',
-      'on') }}\n{% else %}\n  {% set countdown = namespace(hours = states('sensor.washer_countdown')
-      | int(0) // 60,\n                               minutes = states('sensor.washer_countdown')
-      | int(0)) %}\n  The current run started {{ time_since(as_datetime(states('sensor.washer_last_wash_started')))
+      'on') }}\n{% else %}\n  {% set countdown = namespace(hours = ((states('sensor.washer_countdown')
+      | float(0)) * 60 // 60) | int,\n                               minutes = ((states('sensor.washer_countdown')
+      | float(0)) * 60 % 60) | int) %}\n  The current run started {{ time_since(as_datetime(states('sensor.washer_last_wash_started')))
       }} ago.\n  {% if countdown.hours > 0 or countdown.minutes > 0 %}\n  The remaining
       {{ 100 - states('sensor.washer_wash_progress') | int(0) }}% of the run will
       complete in {{ countdown.hours if countdown.hours > 0 }}{{ ' hours' if countdown.hours
