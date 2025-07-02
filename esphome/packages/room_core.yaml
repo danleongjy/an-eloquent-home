@@ -96,18 +96,19 @@ script:
           // main display
           if (id(lights_power).state) {
             id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(lights_brightness).state) / 255)), id(width), id(height) * (0.75 * (id(lights_brightness).state) / 255), id(slider));
-            if (!id(lights_auto_control).state) {
-              for (int i = 1; i <= 10; i++) {
-                id(interface_display).filled_rectangle(0, id(height) * 0.75 - id(height) * 0.75 / 10 * i, id(width), id(height) * 0.75 / 20, id(black));
-              }
-            }
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_on));
           } else {
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_off));
-            if (!id(lights_auto_control).state) {
+          }
+          // auto control indicator
+          if (!id(lights_auto_control).state) {
+            if (id(lights_power).state) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_on));
+            } else {
               id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
             }
           }
+
   - id: draw_display_main_fan
     then:
       - lambda: |
@@ -119,11 +120,6 @@ script:
           // main display
           if (id(fan_power).state) {
             id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * id(fan_speed).state / 100)), id(width), id(height) * (0.75 * id(fan_speed).state / 100), id(slider));
-            if (!id(fan_auto_control).state) {
-              for (int i = 1; i <= 10; i++) {
-                id(interface_display).filled_rectangle(0, id(height) * 0.75 - id(height) * 0.75 / 10 * i, id(width), id(height) * 0.75 / 20, id(black));
-              }
-            }
             if (id(fan_direction).state == "forward") {
               id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_on));
             } else {
@@ -139,6 +135,15 @@ script:
               id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
             }
           }
+          // auto control indicator
+          if (!id(fan_auto_control).state) {
+            if (id(fan_power).state) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_on));
+            } else {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
+          }
+          
   - id: draw_display_main_ac
     then:
       - lambda: |
@@ -150,11 +155,6 @@ script:
           // main display
           if (id(ac_mode).state == "cool") {
             id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(ac_temp).state - 23) / 4)), id(width), id(height) * (0.75 * (id(ac_temp).state - 23) / 4), id(slider));
-            if (!id(ac_auto_control).state) {
-              for (int i = 1; i <= 10; i++) {
-                id(interface_display).filled_rectangle(0, id(height) * 0.75 - id(height) * 0.75 / 10 * i, id(width), id(height) * 0.75 / 20, id(black));
-              }
-            }
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_on));
           } else {
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_off));
@@ -162,6 +162,15 @@ script:
               id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
             }
           }
+          // auto control indicator
+          if (!id(ac_auto_control).state) {
+            if (id(ac_mode).state == "cool") {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_on));
+            } else {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
+          }
+
   - id: draw_display_main_cover
     then:
       - lambda: |
@@ -173,15 +182,18 @@ script:
           // main display
           if (id(cover_position).state > 0) {
             id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * id(cover_position).state) / 100), id(width), id(height) * (0.75 * id(cover_position).state / 100), id(slider));
-            if (!id(cover_auto_control).state) {
-              for (int i = 1; i <= 10; i++) {
-                id(interface_display).filled_rectangle(0, id(height) * 0.75 - id(height) * 0.75 / 10 * i, id(width), id(height) * 0.75 / 20, id(black));
-              }
-            }
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_cover), ImageAlign::CENTER, id(device_on));
           } else {
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_cover), ImageAlign::CENTER, id(device_off));
             if (!id(cover_auto_control).state) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
+          }
+          // auto control indicator
+          if (!id(cover_auto_control).state) {
+            if (id(cover_position).state > 0) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_on));
+            } else {
               id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
             }
           }
@@ -676,7 +688,6 @@ image:
       - file: mdi:bell-ring-outline
         id: main_doorbell
         resize: 160x160
-    opaque:
       - file: mdi:alpha-m-box
         id: manual_control
         resize: 50x50

@@ -500,7 +500,6 @@ image:
       - file: mdi:bell-ring-outline
         id: main_doorbell
         resize: 120x120
-    opaque:
       - file: mdi:alpha-m-box
         id: manual_control
         resize: 30x30
@@ -592,18 +591,20 @@ display:
           // main display
           if (id(lights_power).state) {
             it.filled_rectangle(0, id(height) * (0.7 - (0.7 * (id(lights_brightness).state) / 255)), id(width), id(height) * (0.7 * (id(lights_brightness).state) / 255), id(slider));
-            if (!id(lights_auto_control).state) {
-              for (int i = 1; i <= 10; i++) {
-                it.filled_rectangle(0, id(height) * 0.7 - id(height) * 0.7 / 10 * i, id(width), id(height) * 0.7 / 20, id(black));
-              }
-            }
             it.image(id(width) * 0.5, id(height) * 0.35, id(main_lights), ImageAlign::CENTER, id(device_on));
           } else {
             it.image(id(width) * 0.5, id(height) * 0.35, id(main_lights), ImageAlign::CENTER, id(device_off));
-            if (!id(lights_auto_control).state) {
+          }
+          
+          // auto control indicator
+          if (!id(lights_auto_control).state) {
+            if (id(lights_power).state) {
+              it.image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_on));
+            } else {
               it.image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
             }
           }
+            
       - id: blinds
         lambda: |-
           // tabs
@@ -619,19 +620,24 @@ display:
 
           // main display
           if (id(blinds_position).state > 0) {
-            it.filled_rectangle(0, id(height) * (0.7 - (0.7 * id(blinds_position).state) / 100), id(width), id(height) * (0.7 * id(blinds_position).state / 100), id(slider));
-            if (!id(blinds_auto_control).state) {
-              for (int i = 1; i <= 10; i++) {
-                it.filled_rectangle(0, id(height) * 0.7 - id(height) * 0.7 / 10 * i, id(width), id(height) * 0.7 / 20, id(black));
-              }
-            }
             it.image(id(width) * 0.5, id(height) * 0.35, id(main_blinds), ImageAlign::CENTER, id(device_on));
+            it.filled_rectangle(0, id(height) * (0.7 - (0.7 * id(blinds_position).state) / 100), id(width), id(height) * (0.7 * id(blinds_position).state / 100), id(slider));
           } else {
             it.image(id(width) * 0.5, id(height) * 0.35, id(main_blinds), ImageAlign::CENTER, id(device_off));
             if (!id(blinds_auto_control).state) {
               it.image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
             }
           }
+          
+          // auto control indicator
+          if (!id(blinds_auto_control).state) {
+            if (id(blinds_position).state > 0) {
+              it.image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_on));
+            } else {
+              it.image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
+          }
+          
       - id: screensaver
         lambda: |-
           // Update display brightness
