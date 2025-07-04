@@ -7609,8 +7609,10 @@
         + ' hour' if remaining_time.hours > 0 }}{{ 's' if remaining_time.hours > 1
         }}{{ ' and ' if remaining_time.hours > 0 and remaining_time.minutes > 0 }}{{
         remaining_time.minutes | string + ' minute' if remaining_time.minutes > 0
-        }}{{ 's' if remaining_time.minutes > 1 }}.\n{% endif %}{% if states('vacuum.hestia')
-        in ['docked','idle'] %}\n  Its last run ended {{ relative_time(as_datetime(states('sensor.hestia_cleaning_history')))
+        }}{{ 's' if remaining_time.minutes > 1 }} at {{ (now() + timedelta(hours =
+        remaining_time.hours, minutes = remaining_time.minutes)).strftime('%I:%M%p')
+        }}.\n{% endif %}{% if states('vacuum.hestia') in ['docked','idle'] %}\n  Its
+        last run ended {{ relative_time(as_datetime(states('sensor.hestia_cleaning_history')))
         }} ago.\n{% endif %}"
   mode: single
 - id: '1743851351763'
@@ -7956,6 +7958,7 @@
       > 1 else ' hour' if countdown.hours == 1 }}{{ ' and ' if countdown.hours > 0
       and countdown.minutes > 0 }}{{ countdown.minutes if countdown.minutes > 0 }}{{
       ' minutes' if countdown.minutes > 1 else ' minute' if countdown.minutes == 1
+      }} at {{ (now() + timedelta(hours = countdown.hours, minutes = countdown.minutes)).strftime('%I:%M%p')
       }}\n  {% endif %}\n{% endif %}"
   mode: single
 - id: '1751186563137'
