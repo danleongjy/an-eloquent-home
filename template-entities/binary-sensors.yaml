@@ -88,6 +88,47 @@
       study_room_ac: "{{ states('climate.study_room_ac') }}"
       parents_room_ac: "{{ states('climate.parents_room_ac') }}"
 
+  - name: Devices Desynced
+    unique_id: binary_sensor.devices_desynced
+    state: >
+      {{
+        this.attributes.elenas_room_ac or
+        this.attributes.elis_room_ac or
+        this.attributes.dining_room_ac or
+        this.attributes.living_room_ac or
+        this.attributes.study_room_ac or
+        this.attributes.parents_room_ac or
+        this.attributes.kitchen_blind
+      }}
+    attributes:
+      elenas_room_ac: "{{ states('binary_sensor.elenas_room_ac_vent') != states('input_boolean.elenas_room_ac_power') }}"
+      elenas_room_ac_vent: "{{ states('binary_sensor.elenas_room_ac_vent') }}"
+      elenas_room_ac_power: "{{ states('input_boolean.elenas_room_ac_power') }}"
+      elis_room_ac: "{{ states('binary_sensor.elis_room_ac_vent') != states('input_boolean.elis_room_ac_power') }}"
+      elis_room_ac_vent: "{{ states('binary_sensor.elis_room_ac_vent') }}"
+      elis_room_ac_power: "{{ states('input_boolean.elis_room_ac_power') }}"
+      dining_room_ac: "{{ states('binary_sensor.dining_room_ac_vent') != states('input_boolean.dining_room_ac_power') }}"
+      dining_room_ac_vent: "{{ states('binary_sensor.dining_room_ac_vent') }}"
+      dining_room_ac_power: "{{ states('input_boolean.dining_room_ac_power') }}"
+      living_room_ac: "{{ states('binary_sensor.living_room_ac_vent') != states('input_boolean.living_room_ac_power') }}"
+      living_room_ac_vent: "{{ states('binary_sensor.living_room_ac_vent') }}"
+      living_room_ac_power: "{{ states('input_boolean.living_room_ac_power') }}"
+      study_room_ac: "{{ states('binary_sensor.study_room_ac_vent') != states('input_boolean.study_room_ac_power') }}"
+      study_room_ac_vent: "{{ states('binary_sensor.study_room_ac_vent') }}"
+      study_room_ac_power: "{{ states('input_boolean.study_room_ac_power') }}"
+      parents_room_ac: "{{ states('binary_sensor.parents_room_ac_vent') != states('input_boolean.parents_room_ac_power') }}"
+      parents_room_ac_vent: "{{ states('binary_sensor.parents_room_ac_vent') }}"
+      parents_room_ac_power: "{{ states('input_boolean.parents_room_ac_power') }}"
+      kitchen_blind: > 
+        {{ 
+          (state_attr('cover.kitchen_blind','current_position') == 100 and is_state('binary_sensor.kitchen_blind_opened', 'on')) or 
+          (state_attr('cover.kitchen_blind','current_position') == 0 and is_state('binary_sensor.kitchen_blind_closed', 'on')) or 
+          (state_attr('cover.kitchen_blind','current_position') != 100 and state_attr('cover.kitchen_blind','current_position') != 0 and (is_state('binary_sensor.kitchen_blind_opened', 'off') or is_state('binary_sensor.kitchen_blind_closed', 'off')))
+        }}
+      kitchen_blind_position: "{{ state_attr('cover.kitchen_blind','current_position') }}"
+      kitchen_blind_opened: "{{ states('binary_sensor.kitchen_blind_opened') }}"
+      kitchen_blind_closed: "{{ states('binary_sensor.kitchen_blind_closed') }}"
+
 - trigger:
     - platform: state
       entity_id: binary_sensor.playroom_radar_motion
