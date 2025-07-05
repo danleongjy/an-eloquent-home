@@ -3245,19 +3245,10 @@
           - switch.rice_cooker
           state: 'on'
       sequence:
-      - repeat:
-          sequence:
-          - data: {}
-            target:
-              entity_id: cover.kitchen_blind
-            action: cover.close_cover
-          - delay: '{{ states(''input_number.resync_delay'') | int * 60 }}'
-          while:
-          - condition: not
-            conditions:
-            - condition: state
-              entity_id: cover.kitchen_blind
-              state: closed
+      - data: {}
+        target:
+          entity_id: cover.kitchen_blind
+        action: cover.close_cover
     - conditions:
       - condition: numeric_state
         entity_id: sensor.sun_solar_elevation
@@ -3272,21 +3263,11 @@
         value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed >
           timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
           | int(0)) }}'
-      - repeat:
-          sequence:
-          - data:
-              position: 15
-            target:
-              entity_id: cover.kitchen_blind
-            action: cover.set_cover_position
-          - delay: '{{ states(''input_number.resync_delay'') | int * 60 }}'
-          while:
-          - condition: not
-            conditions:
-            - condition: state
-              entity_id: cover.kitchen_blind
-              attribute: current_position
-              state: 15
+      - data:
+          position: 15
+        target:
+          entity_id: cover.kitchen_blind
+        action: cover.set_cover_position
     default:
     - condition: and
       conditions:
@@ -3333,20 +3314,10 @@
     - condition: template
       value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed > timedelta(minutes
         = states(''input_number.blinds_auto_control_debounce'') | int(0)) }}'
-    - repeat:
-        sequence:
-        - data: {}
-          target:
-            entity_id: cover.kitchen_blind
-          action: cover.open_cover
-        - delay: '{{ states(''input_number.resync_delay'') | int * 60 }}'
-        while:
-        - condition: not
-          conditions:
-          - condition: numeric_state
-            entity_id: cover.kitchen_blind
-            above: 95
-            attribute: current_position
+    - data: {}
+      target:
+        entity_id: cover.kitchen_blind
+      action: cover.open_cover
   mode: single
   max_exceeded: silent
 - id: '1690717352582'
@@ -4624,26 +4595,26 @@
     trigger: state
     id: temp_changed
   - entity_id:
-    - climate.elenas_room_ac
-    - climate.elis_room_ac
-    - climate.dining_room_ac
-    - climate.living_room_ac
-    - climate.study_room_ac
-    - climate.parents_room_ac
+    - input_boolean.elenas_room_ac_power
+    - input_boolean.elis_room_ac_power
+    - input_boolean.dining_room_ac_power
+    - input_boolean.living_room_ac_power
+    - input_boolean.study_room_ac_power
+    - input_boolean.parents_room_ac_power
     trigger: state
     id: ac_off
     to: 'off'
-    from: cool
+    from: 'on'
   - entity_id:
-    - climate.elenas_room_ac
-    - climate.elis_room_ac
-    - climate.dining_room_ac
-    - climate.living_room_ac
-    - climate.study_room_ac
-    - climate.parents_room_ac
+    - input_boolean.elenas_room_ac_power
+    - input_boolean.elis_room_ac_power
+    - input_boolean.dining_room_ac_power
+    - input_boolean.living_room_ac_power
+    - input_boolean.study_room_ac_power
+    - input_boolean.parents_room_ac_power
     trigger: state
     id: ac_on
-    to: cool
+    to: 'on'
     from: 'off'
   conditions: []
   actions:
@@ -4665,11 +4636,12 @@
           target:
             entity_id: '{{ trigger.entity_id }}'
           enabled: true
-      - action: climate.turn_on
-        metadata: {}
-        data: {}
+      - action: script.turn_on
+        data:
+          variables:
+            switch_on: true
         target:
-          entity_id: '{{ trigger.entity_id }}'
+          entity_id: script.{{ trigger.entity_id.split('.')[1][:-6] }}_set_state
     - conditions:
       - condition: or
         conditions:
@@ -4680,11 +4652,12 @@
           id:
           - ac_off
       sequence:
-      - action: climate.turn_off
-        metadata: {}
-        data: {}
+      - action: script.turn_on
+        data:
+          variables:
+            switch_on: false
         target:
-          entity_id: '{{ trigger.entity_id }}'
+          entity_id: script.{{ trigger.entity_id.split('.')[1][:-6] }}_set_state
     default:
     - condition: template
       value_template: '{{ is_state(trigger.entity_id, ''cool'') }}'
@@ -4692,9 +4665,8 @@
       data:
         variables:
           switch_on: true
-          resync: false
       target:
-        entity_id: script.{{ trigger.entity_id.split('.')[1] }}_set_state
+        entity_id: script.{{ trigger.entity_id.split('.')[1][:-6] }}_set_state
   mode: single
   max_exceeded: silent
 - id: '1731678711205'
