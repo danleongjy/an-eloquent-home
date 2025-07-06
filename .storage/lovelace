@@ -8076,11 +8076,11 @@
                   "features_position": "bottom",
                   "vertical": false,
                   "hide_state": true,
-                  "tap_action": {
-                    "action": "toggle"
-                  },
                   "icon_tap_action": {
                     "action": "more-info"
+                  },
+                  "double_tap_action": {
+                    "action": "toggle"
                   }
                 },
                 {
@@ -8089,11 +8089,11 @@
                   "features_position": "bottom",
                   "vertical": false,
                   "hide_state": true,
-                  "tap_action": {
-                    "action": "toggle"
-                  },
                   "icon_tap_action": {
                     "action": "more-info"
+                  },
+                  "double_tap_action": {
+                    "action": "toggle"
                   }
                 },
                 {
@@ -8424,6 +8424,98 @@
           "cards": []
         },
         {
+          "icon": "mdi:home-lightbulb-outline",
+          "path": "settings-lighting",
+          "title": "Settings - Lighting",
+          "theme": "no_border",
+          "subview": true,
+          "type": "sections",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_number.blinds_command_deconflict",
+                      "name": "Blinds Deconflict"
+                    },
+                    {
+                      "entity": "input_number.blinds_auto_control_debounce",
+                      "name": "Blinds Debounce"
+                    }
+                  ]
+                }
+              ],
+              "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_number.minimum_lux"
+                    },
+                    {
+                      "entity": "input_number.comfortable_lux"
+                    },
+                    {
+                      "entity": "input_number.maximum_lux"
+                    }
+                  ]
+                }
+              ],
+              "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_number.morning_light_brightness",
+                      "name": "Morning Brightness"
+                    },
+                    {
+                      "entity": "input_number.night_light_brightness",
+                      "name": "Night Brightness"
+                    },
+                    {
+                      "entity": "input_number.light_brightness_change_step",
+                      "name": "Brightness Change"
+                    }
+                  ]
+                }
+              ],
+              "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_datetime.dim_hours_start"
+                    },
+                    {
+                      "entity": "input_datetime.dim_hours_end"
+                    }
+                  ]
+                }
+              ],
+              "column_span": 1
+            }
+          ],
+          "max_columns": 4,
+          "dense_section_placement": false,
+          "cards": []
+        },
+        {
           "title": "Settings - Cooling",
           "path": "settings-cooling",
           "icon": "mdi:home-thermometer-outline",
@@ -8730,239 +8822,165 @@
           "cards": []
         },
         {
-          "icon": "mdi:home-lightbulb-outline",
-          "path": "settings-lighting",
-          "title": "Settings - Lighting",
-          "theme": "no_border",
-          "subview": true,
-          "type": "sections",
-          "sections": [
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "input_number.blinds_command_deconflict",
-                      "name": "Blinds Deconflict"
-                    },
-                    {
-                      "entity": "input_number.blinds_auto_control_debounce",
-                      "name": "Blinds Debounce"
-                    }
-                  ]
-                }
-              ],
-              "column_span": 1
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "input_number.minimum_lux"
-                    },
-                    {
-                      "entity": "input_number.comfortable_lux"
-                    },
-                    {
-                      "entity": "input_number.maximum_lux"
-                    }
-                  ]
-                }
-              ],
-              "column_span": 1
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "input_number.morning_light_brightness",
-                      "name": "Morning Brightness"
-                    },
-                    {
-                      "entity": "input_number.night_light_brightness",
-                      "name": "Night Brightness"
-                    },
-                    {
-                      "entity": "input_number.light_brightness_change_step",
-                      "name": "Brightness Change"
-                    }
-                  ]
-                }
-              ],
-              "column_span": 1
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "input_datetime.dim_hours_start"
-                    },
-                    {
-                      "entity": "input_datetime.dim_hours_end"
-                    }
-                  ]
-                }
-              ],
-              "column_span": 1
-            }
-          ],
-          "max_columns": 4,
-          "dense_section_placement": false,
-          "cards": []
-        },
-        {
           "theme": "no_border",
           "title": "Motion",
           "path": "motion",
           "icon": "mdi:motion-sensor",
           "subview": true,
           "badges": [],
-          "cards": [
+          "cards": [],
+          "type": "sections",
+          "sections": [
             {
-              "type": "heading",
-              "icon": "mdi:motion-sensor-off",
-              "heading_style": "title",
-              "heading": "Area Timeout Automations"
-            },
-            {
-              "square": true,
               "type": "grid",
               "cards": [
                 {
-                  "type": "custom:button-card",
-                  "entity": "automation.yard_motion_timeout",
-                  "template": "square_cell"
+                  "type": "heading",
+                  "icon": "mdi:motion-sensor-off",
+                  "heading_style": "title",
+                  "heading": "Area Timeout Automations"
                 },
                 {
-                  "type": "custom:button-card",
-                  "entity": "automation.playroom_motion_timeout",
-                  "template": "square_cell"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.elenas_room_motion_timeout",
-                  "template": "square_cell",
-                  "label": "A",
-                  "show_label": true
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.elis_room_motion_timeout",
-                  "template": "square_cell",
-                  "label": "E",
-                  "show_label": true
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.junior_bathroom_motion_timeout",
-                  "template": "square_cell"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.powder_room_motion_timeout",
-                  "template": "square_cell"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.hallway_motion_timeout",
-                  "template": "square_cell",
-                  "label": "Hall",
-                  "show_label": true
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.dining_room_motion_timeout",
-                  "template": "square_cell"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.dining_and_living_room_ac_motion_timeout",
-                  "template": "square_cell",
-                  "label": "ACs",
-                  "show_label": true
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.living_room_motion_timeout",
-                  "template": "square_cell"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.study_room_motion_timeout",
-                  "template": "square_cell"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.study_walkway_motion_timeout",
-                  "template": "square_cell",
-                  "label": "Walk",
-                  "show_label": true
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.parents_room_motion_timeout",
-                  "template": "square_cell",
-                  "label": "D&G",
-                  "show_label": true
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.master_bathroom_motion_timeout",
-                  "template": "square_cell"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "automation.kitchen_motion_timeout",
-                  "template": "square_cell"
-                }
-              ],
-              "columns": 6
-            },
-            {
-              "type": "entities",
-              "entities": [
-                {
-                  "entity": "input_number.radar_occupancy_on_delay",
-                  "name": "Radar Delay"
+                  "square": true,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.yard_motion_timeout",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.playroom_motion_timeout",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.elenas_room_motion_timeout",
+                      "template": "square_cell",
+                      "label": "A",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.elis_room_motion_timeout",
+                      "template": "square_cell",
+                      "label": "E",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.junior_bathroom_motion_timeout",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.powder_room_motion_timeout",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.hallway_motion_timeout",
+                      "template": "square_cell",
+                      "label": "Hall",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.dining_room_motion_timeout",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.dining_and_living_room_ac_motion_timeout",
+                      "template": "square_cell",
+                      "label": "ACs",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.living_room_motion_timeout",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.study_room_motion_timeout",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.study_walkway_motion_timeout",
+                      "template": "square_cell",
+                      "label": "Walk",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.parents_room_motion_timeout",
+                      "template": "square_cell",
+                      "label": "D&G",
+                      "show_label": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.master_bathroom_motion_timeout",
+                      "template": "square_cell"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "automation.kitchen_motion_timeout",
+                      "template": "square_cell"
+                    }
+                  ],
+                  "columns": 6
                 }
               ]
             },
             {
-              "type": "heading",
-              "icon": "mdi:motion-sensor-off",
-              "heading_style": "title",
-              "heading": "Timeouts"
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "icon": "mdi:motion-sensor-off",
+                  "heading_style": "title",
+                  "heading": "Timeouts"
+                },
+                {
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_number.motion_timeout_bedrooms",
+                      "name": "Bedrooms"
+                    },
+                    {
+                      "entity": "input_number.motion_timeout_walking_areas",
+                      "name": "Walking Areas"
+                    },
+                    {
+                      "entity": "input_number.motion_timeout_presence",
+                      "name": "Presence"
+                    }
+                  ],
+                  "show_header_toggle": false
+                }
+              ]
             },
             {
-              "type": "entities",
-              "entities": [
+              "type": "grid",
+              "cards": [
                 {
-                  "entity": "input_number.motion_timeout_bedrooms",
-                  "name": "Bedrooms"
-                },
-                {
-                  "entity": "input_number.motion_timeout_walking_areas",
-                  "name": "Walking Areas"
-                },
-                {
-                  "entity": "input_number.motion_timeout_presence",
-                  "name": "Presence"
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "input_number.radar_occupancy_on_delay",
+                      "name": "Radar Delay"
+                    }
+                  ]
                 }
-              ],
-              "show_header_toggle": false
+              ]
             }
-          ]
+          ],
+          "max_columns": 4
         },
         {
           "title": "Network",
