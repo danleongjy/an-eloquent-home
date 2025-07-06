@@ -3245,6 +3245,12 @@
           - switch.rice_cooker
           state: 'on'
       sequence:
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: cover.kitchen_blind
+          attribute: current_position
+          state: 0
       - data: {}
         target:
           entity_id: cover.kitchen_blind
@@ -3263,6 +3269,12 @@
         value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed >
           timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
           | int(0)) }}'
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: cover.kitchen_blind
+          attribute: current_position
+          state: 15
       - data:
           position: 15
         target:
@@ -3314,6 +3326,12 @@
     - condition: template
       value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed > timedelta(minutes
         = states(''input_number.blinds_auto_control_debounce'') | int(0)) }}'
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: cover.kitchen_blind
+        attribute: current_position
+        state: 100
     - data: {}
       target:
         entity_id: cover.kitchen_blind
