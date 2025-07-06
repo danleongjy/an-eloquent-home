@@ -6,10 +6,10 @@
                                   'Grace': as_datetime(states('input_datetime.graces_next_alarm')).astimezone(now().tzinfo),
                                   'Eli': as_datetime(states('input_datetime.elis_next_alarm')).astimezone(now().tzinfo),
                                   'Elena': as_datetime(states('input_datetime.elenas_next_alarm')).astimezone(now().tzinfo) }) %}
-      {% set alarms_dismissed = namespace({ 'Daniel': alarms['Daniel'] <= alarms['Grace'] and is_state('input_boolean.parents_room_next_alarm_dismissed', 'on'),
-                                            'Grace': alarms['Grace'] <= alarms['Daniel'] and is_state('input_boolean.parents_room_next_alarm_dismissed', 'on'),
-                                            'Eli': is_state('input_boolean.elis_room_next_alarm_dismissed', 'on'),
-                                            'Elena': is_state('input_boolean.elenas_room_next_alarm_dismissed', 'on') }) %}
+      {% set alarms_dismissed = namespace({ 'Daniel': alarms['Daniel'] <= alarms['Grace'] and is_state('input_boolean.parents_room_next_alarm_armed', 'off'),
+                                            'Grace': alarms['Grace'] <= alarms['Daniel'] and is_state('input_boolean.parents_room_next_alarm_armed', 'off'),
+                                            'Eli': is_state('input_boolean.elis_room_next_alarm_armed', 'off'),
+                                            'Elena': is_state('input_boolean.elenas_room_next_alarm_armed', 'off') }) %}
       {% set alarm_timings = namespace(output = '') %}
       {% for person in ['Daniel','Grace','Eli','Elena'] %}
         {% if alarms[person] - now() > timedelta(hours = 12) %}

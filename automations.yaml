@@ -3441,15 +3441,15 @@
     - condition: template
       value_template: '{{ wait.trigger.event.data.action == ''dismiss'' }}'
     then:
-    - service: input_boolean.turn_on
-      data: {}
-      target:
-        entity_id: input_boolean.parents_room_next_alarm_dismissed
-    else:
     - service: input_boolean.turn_off
       data: {}
       target:
-        entity_id: input_boolean.parents_room_next_alarm_dismissed
+        entity_id: input_boolean.parents_room_next_alarm_armed
+    else:
+    - service: input_boolean.turn_on
+      data: {}
+      target:
+        entity_id: input_boolean.parents_room_next_alarm_armed
   mode: single
 - id: '1690814237442'
   alias: Eli's Next Alarm
