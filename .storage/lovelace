@@ -8071,6 +8071,32 @@
               "type": "grid",
               "cards": [
                 {
+                  "type": "tile",
+                  "entity": "input_boolean.away_mode",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "hide_state": true,
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_boolean.party_mode",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "hide_state": true,
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
                   "type": "custom:button-card",
                   "template": "tile_nav_button",
                   "name": "Sleep",
@@ -8108,16 +8134,6 @@
                   "icon": "mdi:motion-sensor",
                   "tap_action": {
                     "navigation_path": "/lovelace/motion"
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "template": "tile_nav_button",
-                  "name": "Automation",
-                  "state_display": " ",
-                  "icon": "mdi:home-automation",
-                  "tap_action": {
-                    "navigation_path": "/lovelace/automations"
                   }
                 },
                 {
@@ -8167,7 +8183,32 @@
                       {
                         "type": "tile",
                         "entity": "script.git_push",
-                        "hide_state": true
+                        "hide_state": true,
+                        "features_position": "bottom",
+                        "vertical": false
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "user",
+                      "users": [
+                        "ad2bcce775894550affb6dfef93a2a36"
+                      ]
+                    }
+                  ],
+                  "card": {
+                    "type": "vertical-stack",
+                    "cards": [
+                      {
+                        "type": "tile",
+                        "entity": "script.botc_day_night_toggle",
+                        "hide_state": true,
+                        "features_position": "bottom",
+                        "vertical": false
                       }
                     ]
                   }
@@ -8274,6 +8315,10 @@
                     {
                       "entity": "input_number.minimum_sleep_hours",
                       "name": "Minimum Sleep"
+                    },
+                    {
+                      "entity": "input_number.holiday_advance_reminder",
+                      "name": "Holiday Reminders"
                     }
                   ]
                 }
@@ -8605,47 +8650,6 @@
           "max_columns": 4,
           "dense_section_placement": false,
           "cards": []
-        },
-        {
-          "theme": "no_border",
-          "title": "Automation",
-          "path": "automations",
-          "icon": "mdi:home-automation",
-          "subview": true,
-          "badges": [],
-          "cards": [
-            {
-              "type": "entities",
-              "entities": [
-                {
-                  "entity": "input_number.holiday_advance_reminder",
-                  "name": "Holiday Reminders"
-                },
-                {
-                  "entity": "input_boolean.away_mode"
-                },
-                {
-                  "entity": "input_boolean.party_mode"
-                }
-              ]
-            },
-            {
-              "type": "tile",
-              "entity": "script.botc_day_night_toggle",
-              "tap_action": {
-                "action": "more-info"
-              },
-              "hide_state": true,
-              "visibility": [
-                {
-                  "condition": "user",
-                  "users": [
-                    "ad2bcce775894550affb6dfef93a2a36"
-                  ]
-                }
-              ]
-            }
-          ]
         },
         {
           "theme": "no_border",
