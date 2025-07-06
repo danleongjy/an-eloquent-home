@@ -7997,3 +7997,102 @@
       'on') }}\n{% else %}\n  The current run started {{ time_since(as_datetime(states('sensor.dishwasher_last_run_started')))
       }} ago.\n{% endif %}"
   mode: single
+- id: '1751765390006'
+  alias: Notify When Device States Desynced
+  description: Send a notification listing devices whose actual states may be desynced
+    with assumed states
+  triggers:
+  - trigger: template
+    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''elenas_room_ac'')
+      }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  - trigger: template
+    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''elis_room_ac'')
+      }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  - trigger: template
+    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''dining_room_ac'')
+      }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  - trigger: template
+    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''living_room_ac'')
+      }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  - trigger: template
+    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''study_room_ac'')
+      }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  - trigger: template
+    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''parents_room_ac'')
+      }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  - trigger: template
+    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''kitchen_blind'')
+      }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  - trigger: state
+    entity_id:
+    - binary_sensor.devices_desynced
+    to: 'off'
+    id: no_desync
+  conditions: []
+  actions:
+  - if:
+    - condition: trigger
+      id:
+      - no_desync
+    then:
+    - action: notify.mobile_app_aurora
+      metadata: {}
+      data:
+        message: clear_notification
+        data:
+          tag: desynced
+    else:
+    - action: notify.mobile_app_aurora
+      metadata: {}
+      data:
+        message: clear_notification
+        data:
+          tag: desynced
+    - action: notify.mobile_app_aurora
+      metadata: {}
+      data:
+        title: Device States Desynced
+        message: '{% set desynced = namespace(devices = [], message = '''') %} {%
+          set friendly_names = {''elenas_room_ac'': "Elena''s Room AC",                          ''elis_room_ac'':
+          "Eli''s Room AC",                          ''dining_room_ac'': ''Dining
+          Room AC'',                          ''living_room_ac'': ''Living Room AC'',                          ''study_room_ac'':
+          ''Study Room AC'',                          ''parents_room_ac'': "Parents''
+          Room AC",                          ''kitchen_blind'': "Kitchen Blind"} %}
+          {% for device in [''elenas_room_ac'', ''elis_room_ac'', ''dining_room_ac'',
+          ''living_room_ac'', ''study_room_ac'', ''parents_room_ac'', ''kitchen_blind'']
+          %}   {% if state_attr(''binary_sensor.devices_desynced'', device) %}     {%
+          set desynced.devices = desynced.devices + [friendly_names[device]] %}   {%
+          endif %} {% endfor %} {% for device in desynced.devices %}   {% set desynced.message
+          = desynced.message + device + '', '' %} {% endfor %} Check {{ desynced.message[:-2]
+          }}.'
+        data:
+          tag: desynced
+  mode: single
