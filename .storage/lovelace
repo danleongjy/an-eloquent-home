@@ -8208,7 +8208,8 @@
                         "entity": "script.botc_day_night_toggle",
                         "hide_state": true,
                         "features_position": "bottom",
-                        "vertical": false
+                        "vertical": false,
+                        "name": "BotC Day/Night"
                       }
                     ]
                   }
@@ -8230,25 +8231,73 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "vertical-stack",
+                  "type": "heading",
+                  "icon": "mdi:alarm",
+                  "heading": "Next Alarms",
+                  "heading_style": "title"
+                },
+                {
+                  "square": false,
+                  "type": "grid",
                   "cards": [
                     {
-                      "type": "tile",
-                      "entity": "input_datetime.daniels_next_alarm"
+                      "type": "custom:button-card",
+                      "entity": "input_datetime.daniels_next_alarm",
+                      "template": "button_card_tile",
+                      "name": "Daniel",
+                      "state_display": "[[[ return helpers.formatShortDateTime(entity.state) ]]]",
+                      "styles": {
+                        "icon": [
+                          {
+                            "color": "[[[\n  if (states['sensor.next_alarm_timings'].state.charAt(0) == 'B')\n    return '#b4fab4';\n  else if (states['sensor.next_alarm_timings'].state.charAt(0) == 'C')\n    return '#41a7f2';\n  else if (states['sensor.next_alarm_timings'].state.charAt(0) == 'D')\n    return '#f2900f';\n  else if (states['sensor.next_alarm_timings'].state.charAt(0) == 'E')\n    return '#484848';\n  else\n    return 'var(--state-inactive-color)';\n]]]\n"
+                          }
+                        ]
+                      }
                     },
                     {
-                      "type": "tile",
-                      "entity": "input_datetime.graces_next_alarm"
+                      "type": "custom:button-card",
+                      "entity": "input_datetime.graces_next_alarm",
+                      "template": "button_card_tile",
+                      "name": "Grace",
+                      "state_display": "[[[ return helpers.formatShortDateTime(entity.state) ]]]",
+                      "styles": {
+                        "icon": [
+                          {
+                            "color": "[[[\n  if (states['sensor.next_alarm_timings'].state.charAt(1) == 'B')\n    return '#b4fab4';\n  else if (states['sensor.next_alarm_timings'].state.charAt(1) == 'C')\n    return '#41a7f2';\n  else if (states['sensor.next_alarm_timings'].state.charAt(1) == 'D')\n    return '#f2900f';\n  else if (states['sensor.next_alarm_timings'].state.charAt(1) == 'E')\n    return '#484848';\n  else\n    return 'var(--state-inactive-color)';\n]]]\n"
+                          }
+                        ]
+                      }
                     },
                     {
-                      "type": "tile",
-                      "entity": "input_datetime.elis_next_alarm"
+                      "type": "custom:button-card",
+                      "entity": "input_datetime.elis_next_alarm",
+                      "template": "button_card_tile",
+                      "name": "Eli",
+                      "state_display": "[[[ return helpers.formatShortDateTime(entity.state) ]]]",
+                      "styles": {
+                        "icon": [
+                          {
+                            "color": "[[[\n  if (states['sensor.next_alarm_timings'].state.charAt(2) == 'B')\n    return '#b4fab4';\n  else if (states['sensor.next_alarm_timings'].state.charAt(2) == 'C')\n    return '#41a7f2';\n  else if (states['sensor.next_alarm_timings'].state.charAt(2) == 'D')\n    return '#f2900f';\n  else if (states['sensor.next_alarm_timings'].state.charAt(2) == 'E')\n    return '#484848';\n  else\n    return 'var(--state-inactive-color)';\n]]]\n"
+                          }
+                        ]
+                      }
                     },
                     {
-                      "type": "tile",
-                      "entity": "input_datetime.elenas_next_alarm"
+                      "type": "custom:button-card",
+                      "entity": "input_datetime.elenas_next_alarm",
+                      "template": "button_card_tile",
+                      "name": "Annika",
+                      "state_display": "[[[ return helpers.formatShortDateTime(entity.state) ]]]",
+                      "styles": {
+                        "icon": [
+                          {
+                            "color": "[[[\n  if (states['sensor.next_alarm_timings'].state.charAt(3) == 'B')\n    return '#b4fab4';\n  else if (states['sensor.next_alarm_timings'].state.charAt(3) == 'C')\n    return '#41a7f2';\n  else if (states['sensor.next_alarm_timings'].state.charAt(3) == 'D')\n    return '#f2900f';\n  else if (states['sensor.next_alarm_timings'].state.charAt(3) == 'E')\n    return '#484848';\n  else\n    return 'var(--state-inactive-color)';\n]]]\n"
+                          }
+                        ]
+                      }
                     }
-                  ]
+                  ],
+                  "columns": 2
                 }
               ],
               "column_span": 1
@@ -8257,16 +8306,55 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "entities",
-                  "entities": [
+                  "type": "heading",
+                  "icon": "mdi:alarm",
+                  "heading": "Alarms Armed",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
                     {
-                      "entity": "input_boolean.parents_room_next_alarm_dismissed"
+                      "type": "tile",
+                      "entity": "input_boolean.parents_room_next_alarm_armed",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "name": "Parents",
+                      "hide_state": true,
+                      "tap_action": {
+                        "action": "toggle"
+                      },
+                      "icon_tap_action": {
+                        "action": "more-info"
+                      }
                     },
                     {
-                      "entity": "input_boolean.elis_room_next_alarm_dismissed"
+                      "type": "tile",
+                      "entity": "input_boolean.elis_room_next_alarm_armed",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "name": "Eli",
+                      "hide_state": true,
+                      "tap_action": {
+                        "action": "toggle"
+                      },
+                      "icon_tap_action": {
+                        "action": "more-info"
+                      }
                     },
                     {
-                      "entity": "input_boolean.elenas_room_next_alarm_dismissed"
+                      "type": "tile",
+                      "entity": "input_boolean.elenas_room_next_alarm_armed",
+                      "features_position": "bottom",
+                      "vertical": false,
+                      "name": "Annika",
+                      "hide_state": true,
+                      "tap_action": {
+                        "action": "toggle"
+                      },
+                      "icon_tap_action": {
+                        "action": "more-info"
+                      }
                     }
                   ]
                 }
@@ -8275,6 +8363,12 @@
             {
               "type": "grid",
               "cards": [
+                {
+                  "type": "heading",
+                  "icon": "mdi:clock-time-eight-outline",
+                  "heading": "Alarm Timings",
+                  "heading_style": "title"
+                },
                 {
                   "type": "entities",
                   "entities": [
@@ -8301,6 +8395,12 @@
               "type": "grid",
               "cards": [
                 {
+                  "type": "heading",
+                  "icon": "mdi:sleep",
+                  "heading": "Sleep Timings",
+                  "heading_style": "title"
+                },
+                {
                   "type": "entities",
                   "entities": [
                     {
@@ -8315,10 +8415,6 @@
                     {
                       "entity": "input_number.minimum_sleep_hours",
                       "name": "Minimum Sleep"
-                    },
-                    {
-                      "entity": "input_number.holiday_advance_reminder",
-                      "name": "Holiday Reminders"
                     }
                   ]
                 }
@@ -8339,6 +8435,11 @@
               "type": "grid",
               "cards": [
                 {
+                  "type": "heading",
+                  "heading_style": "title",
+                  "heading": "Sitting Room Fans"
+                },
+                {
                   "type": "entities",
                   "entities": [
                     {
@@ -8349,8 +8450,7 @@
                       "entity": "input_number.sitting_rooms_fan_speed_when_warm",
                       "name": "Warm Speed"
                     }
-                  ],
-                  "title": "Sitting Room Fans"
+                  ]
                 }
               ],
               "column_span": 1
@@ -8358,6 +8458,11 @@
             {
               "type": "grid",
               "cards": [
+                {
+                  "type": "heading",
+                  "heading_style": "title",
+                  "heading": "Bedroom Fans"
+                },
                 {
                   "type": "entities",
                   "entities": [
@@ -8369,8 +8474,7 @@
                       "entity": "input_number.bedrooms_fan_speed_when_warm",
                       "name": "Warm Speed"
                     }
-                  ],
-                  "title": "Bedroom Fans"
+                  ]
                 }
               ],
               "column_span": 1
@@ -8436,6 +8540,64 @@
                         {
                           "type": "custom:button-card",
                           "template": "square_cell",
+                          "icon": "mdi:snowflake"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "input_boolean.elenas_room_ac_power",
+                          "tap_action": {
+                            "action": "more-info"
+                          }
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "input_boolean.elis_room_ac_power",
+                          "tap_action": {
+                            "action": "more-info"
+                          }
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "input_boolean.dining_room_ac_power",
+                          "tap_action": {
+                            "action": "more-info"
+                          }
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "input_boolean.living_room_ac_power",
+                          "tap_action": {
+                            "action": "more-info"
+                          }
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "input_boolean.study_room_ac_power",
+                          "tap_action": {
+                            "action": "more-info"
+                          }
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
+                          "entity": "input_boolean.parents_room_ac_power",
+                          "tap_action": {
+                            "action": "more-info"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "horizontal-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "template": "square_cell",
                           "icon": "mdi:snowflake",
                           "name": "Vent",
                           "show_name": true
@@ -8444,7 +8606,7 @@
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "binary_sensor.elenas_room_ac_vent",
-                          "tap_action": {
+                          "hold_action": {
                             "action": "more-info",
                             "entity": "script.elenas_room_ac_set_state"
                           }
@@ -8453,7 +8615,7 @@
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "binary_sensor.elis_room_ac_vent",
-                          "tap_action": {
+                          "hold_action": {
                             "action": "more-info",
                             "entity": "script.elis_room_ac_set_state"
                           }
@@ -8462,7 +8624,7 @@
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "binary_sensor.dining_room_ac_vent",
-                          "tap_action": {
+                          "hold_action": {
                             "action": "more-info",
                             "entity": "script.dining_room_ac_set_state"
                           }
@@ -8471,7 +8633,7 @@
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "binary_sensor.living_room_ac_vent",
-                          "tap_action": {
+                          "hold_action": {
                             "action": "more-info",
                             "entity": "script.living_room_ac_set_state"
                           }
@@ -8480,7 +8642,7 @@
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "binary_sensor.study_room_ac_vent",
-                          "tap_action": {
+                          "hold_action": {
                             "action": "more-info",
                             "entity": "script.study_room_ac_set_state"
                           }
@@ -8489,7 +8651,7 @@
                           "type": "custom:button-card",
                           "template": "square_cell",
                           "entity": "binary_sensor.parents_room_ac_vent",
-                          "tap_action": {
+                          "hold_action": {
                             "action": "more-info",
                             "entity": "script.parents_room_ac_set_state"
                           }
@@ -8553,7 +8715,15 @@
                   ]
                 }
               ],
-              "column_span": 1
+              "column_span": 1,
+              "visibility": [
+                {
+                  "condition": "user",
+                  "users": [
+                    "ad2bcce775894550affb6dfef93a2a36"
+                  ]
+                }
+              ]
             }
           ],
           "max_columns": 4,
@@ -8660,6 +8830,12 @@
           "badges": [],
           "cards": [
             {
+              "type": "heading",
+              "icon": "mdi:motion-sensor-off",
+              "heading_style": "title",
+              "heading": "Area Timeout Automations"
+            },
+            {
               "square": true,
               "type": "grid",
               "cards": [
@@ -8751,8 +8927,7 @@
                   "template": "square_cell"
                 }
               ],
-              "columns": 6,
-              "title": "Area Timeout Automations"
+              "columns": 6
             },
             {
               "type": "entities",
@@ -8762,6 +8937,12 @@
                   "name": "Radar Delay"
                 }
               ]
+            },
+            {
+              "type": "heading",
+              "icon": "mdi:motion-sensor-off",
+              "heading_style": "title",
+              "heading": "Timeouts"
             },
             {
               "type": "entities",
@@ -8779,7 +8960,6 @@
                   "name": "Presence"
                 }
               ],
-              "title": "Timeouts",
               "show_header_toggle": false
             }
           ]

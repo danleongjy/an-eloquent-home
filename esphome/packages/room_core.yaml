@@ -64,7 +64,7 @@ script:
           // display alarm
           if (id(room_next_alarm_imminent).state) {
             if (id(room_next_alarm_dismissable).state) {
-              if (id(room_next_alarm_dismissed).state) {
+              if (!id(room_next_alarm_armed).state) {
                 id(interface_display).image(id(width) * 0.325, id(height) * 0.125, id(main_alarm_off), ImageAlign::CENTER);            
                 id(interface_display).printf(id(width) * 0.575, id(height) * 0.125, id(small_time), TextAlign::CENTER, "%s", id(next_alarm_timing).state.substr(0,5).c_str());
               } else {
@@ -286,8 +286,8 @@ binary_sensor:
     entity_id: sensor.next_alarm_timings
     attribute: ${alarm_room}_next_alarm_dismissable
   - platform: homeassistant
-    id: room_next_alarm_dismissed
-    entity_id: input_boolean.${alarm_room}_next_alarm_dismissed
+    id: room_next_alarm_armed
+    entity_id: input_boolean.${alarm_room}_next_alarm_armed
   - platform: gpio
     pin: 39
     name: 'Left Button'
@@ -382,9 +382,9 @@ binary_sensor:
                             lambda: 'return id(room_next_alarm_dismissable).state;'
                           then:
                             - homeassistant.service:
-                                service: input_boolean.turn_off
+                                service: input_boolean.turn_on
                                 data:
-                                  entity_id: input_boolean.${alarm_room}_next_alarm_dismissed
+                                  entity_id: input_boolean.${alarm_room}_next_alarm_armed
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
@@ -568,12 +568,12 @@ binary_sensor:
                     then:
                       - if:
                           condition:
-                            lambda: 'return id(room_next_alarm_dismissable).state && !id(room_next_alarm_dismissed).state;'
+                            lambda: 'return id(room_next_alarm_dismissable).state && id(room_next_alarm_armed).state;'
                           then:
                             - homeassistant.service:
-                                service: input_boolean.turn_on
+                                service: input_boolean.turn_off
                                 data:
-                                  entity_id: input_boolean.${alarm_room}_next_alarm_dismissed
+                                  entity_id: input_boolean.${alarm_room}_next_alarm_armed
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'

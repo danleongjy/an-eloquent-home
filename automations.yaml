@@ -2145,46 +2145,42 @@
 - id: '1676814581353'
   alias: Notify When Holiday Upcoming
   description: Send notifications to apps when school or public holidays are upcoming
-  trigger:
-  - platform: template
-    value_template: '{{ (state_attr(''calendar.elena_no_school'',''start_time'').split()[0]
-      | as_datetime).date() - now().date() <= timedelta(days = states(''input_number.holiday_advance_reminder'')
-      | int(7)) }}'
-    alias: When Elena's next school holiday is less than time threshold for advance
+  triggers:
+  - alias: When Elena's next school holiday is less than time threshold for advance
       reminder
-    id: calendar.elena_no_school
-  - platform: template
     value_template: '{{ (state_attr(''calendar.elena_no_school'',''start_time'').split()[0]
+      | as_datetime).date() - now().date() <= timedelta(days = 5 | int(7)) }}'
+    id: calendar.elena_no_school
+    trigger: template
+  - value_template: '{{ (state_attr(''calendar.elena_no_school'',''start_time'').split()[0]
       | as_datetime).date() - now().date() <= timedelta(days = 1) }}'
     alias: When Elena's next school holiday is tomorrow
     id: calendar.elena_no_school
-  - platform: template
-    value_template: '{{ (state_attr(''calendar.eli_no_school'',''start_time'').split()[0]
-      | as_datetime).date() - now().date() <= timedelta(days = states(''input_number.holiday_advance_reminder'')
-      | int(7)) }}'
-    alias: When Eli's next school holiday is less than time threshold for advance
+    trigger: template
+  - alias: When Eli's next school holiday is less than time threshold for advance
       reminder
-    id: calendar.eli_no_school
-  - platform: template
     value_template: '{{ (state_attr(''calendar.eli_no_school'',''start_time'').split()[0]
+      | as_datetime).date() - now().date() <= timedelta(days = 5 | int(7)) }}'
+    id: calendar.eli_no_school
+    trigger: template
+  - value_template: '{{ (state_attr(''calendar.eli_no_school'',''start_time'').split()[0]
       | as_datetime).date() - now().date() <= timedelta(days = 1) }}'
     id: calendar.eli_no_school
     alias: When Eli's next school holiday is tomorrow
-  - platform: template
+    trigger: template
+  - alias: When the next public holiday is less than time threshold for advance reminder
     value_template: '{{ (state_attr(''calendar.public_holidays'',''start_time'').split()[0]
-      | as_datetime).date() - now().date() <= timedelta(days = states(''input_number.holiday_advance_reminder'')
-      | int(7)) }}'
+      | as_datetime).date() - now().date() <= timedelta(days = 5 | int(7)) }}'
     id: calendar.public_holidays
-    alias: When the next public holiday is less than time threshold for advance reminder
-  - platform: template
-    value_template: '{{ (state_attr(''calendar.public_holidays'',''start_time'').split()[0]
+    trigger: template
+  - value_template: '{{ (state_attr(''calendar.public_holidays'',''start_time'').split()[0]
       | as_datetime).date() - now().date() <= timedelta(days = 1) }}'
     id: calendar.public_holidays
     alias: When the next public holiday is tomorrow
-  condition: []
-  action:
-  - service: notify.mobile_app_grace
-    data:
+    trigger: template
+  conditions: []
+  actions:
+  - data:
       title: "{% set start_date = (state_attr(trigger.id,'start_time').split()[0]
         | as_datetime).date() %} {% set end_date = (state_attr(trigger.id,'end_time').split()[0]
         | as_datetime - timedelta(days=1)).date() %} {% if start_date == end_date
@@ -2194,8 +2190,8 @@
         ''calendar.eli_no_school'': ''Eli has no school'', ''calendar.public_holidays'':
         ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(trigger.id,''message'')
         }}.'
-  - service: notify.mobile_app_aurora
-    data:
+    action: notify.mobile_app_grace
+  - data:
       title: "{% set start_date = (state_attr(trigger.id,'start_time').split()[0]
         | as_datetime).date() %} {% set end_date = (state_attr(trigger.id,'end_time').split()[0]
         | as_datetime - timedelta(days=1)).date() %} {% if start_date == end_date
@@ -2205,6 +2201,7 @@
         ''calendar.eli_no_school'': ''Eli has no school'', ''calendar.public_holidays'':
         ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(trigger.id,''message'')
         }}.'
+    action: notify.mobile_app_aurora
   mode: parallel
 - id: '1677851042764'
   alias: Parents' Room Motion Timeout
@@ -3348,8 +3345,8 @@
   actions:
   - if:
     - condition: state
-      entity_id: input_boolean.parents_room_next_alarm_dismissed
-      state: 'off'
+      entity_id: input_boolean.parents_room_next_alarm_armed
+      state: 'on'
     then:
     - target:
         entity_id: light.parents_room_core_display_backlight
@@ -3378,8 +3375,8 @@
       milliseconds: 0
   - if:
     - condition: state
-      entity_id: input_boolean.parents_room_next_alarm_dismissed
-      state: 'off'
+      entity_id: input_boolean.parents_room_next_alarm_armed
+      state: 'on'
     - condition: not
       conditions:
       - condition: state
@@ -3390,10 +3387,10 @@
         bedroom: parents_room
         ringtone: Eli's Song
       action: script.alarm_lights
-  - data: {}
+  - action: input_boolean.turn_on
     target:
-      entity_id: input_boolean.parents_room_next_alarm_dismissed
-    action: input_boolean.turn_off
+      entity_id: input_boolean.parents_room_next_alarm_armed
+    data: {}
   mode: single
 - id: '1690718460853'
   alias: Notify When Parents' Room Next Alarm Upcoming
@@ -3587,8 +3584,8 @@
     then:
     - if:
       - condition: state
-        entity_id: input_boolean.parents_room_next_alarm_dismissed
-        state: 'off'
+        entity_id: input_boolean.parents_room_next_alarm_armed
+        state: 'on'
       then:
       - target:
           entity_id: light.parents_room_core_display_backlight
@@ -3633,8 +3630,8 @@
     - delay: 300
     - if:
       - condition: state
-        entity_id: input_boolean.parents_room_next_alarm_dismissed
-        state: 'off'
+        entity_id: input_boolean.parents_room_next_alarm_armed
+        state: 'on'
       then:
       - data:
           bedroom: parents_room
@@ -3649,10 +3646,10 @@
         target:
           entity_id: button.parents_room_core_play_ringtone
         action: button.press
-    - data: {}
+    - action: input_boolean.turn_on
       target:
-        entity_id: input_boolean.parents_room_next_alarm_dismissed
-      action: input_boolean.turn_off
+        entity_id: input_boolean.parents_room_next_alarm_armed
+      data: {}
     else:
     - condition: state
       entity_id: sensor.next_alarm_timings
@@ -3661,31 +3658,31 @@
     - metadata: {}
       data: {}
       target:
-        entity_id: input_boolean.parents_room_next_alarm_dismissed
-      action: input_boolean.turn_on
+        entity_id: input_boolean.parents_room_next_alarm_armed
+      action: input_boolean.turn_off
   mode: parallel
   max: 10
 - id: '1690850158819'
   alias: Eli's Alarm
   description: Wake up Eli at his next alarm
-  trigger:
-  - platform: time
-    at: input_datetime.elis_next_alarm
-  condition: []
-  action:
+  triggers:
+  - at: input_datetime.elis_next_alarm
+    trigger: time
+  conditions: []
+  actions:
   - if:
     - condition: state
-      entity_id: input_boolean.elis_room_next_alarm_dismissed
-      state: 'off'
+      entity_id: input_boolean.elis_room_next_alarm_armed
+      state: 'on'
     then:
-    - service: script.alarm_lights
-      data:
+    - data:
         bedroom: elis_room
         ringtone: Pokemon
-  - service: input_boolean.turn_off
-    data: {}
+      action: script.alarm_lights
+  - action: input_boolean.turn_on
     target:
-      entity_id: input_boolean.elis_room_next_alarm_dismissed
+      entity_id: input_boolean.elis_room_next_alarm_armed
+    data: {}
   mode: single
 - id: '1693121253660'
   alias: Live Bus Arrivals
@@ -4119,24 +4116,24 @@
 - id: '1704838438827'
   alias: Elena's Alarm
   description: Wake up Elena at her next alarm
-  trigger:
-  - platform: time
-    at: input_datetime.elenas_next_alarm
-  condition: []
-  action:
+  triggers:
+  - at: input_datetime.elenas_next_alarm
+    trigger: time
+  conditions: []
+  actions:
   - if:
     - condition: state
-      entity_id: input_boolean.elenas_room_next_alarm_dismissed
-      state: 'off'
+      entity_id: input_boolean.elenas_room_next_alarm_armed
+      state: 'on'
     then:
     - data:
         bedroom: elenas_room
         ringtone: Bippity Boppity Boo
       action: script.alarm_lights
-  - data: {}
+  - action: input_boolean.turn_on
     target:
-      entity_id: input_boolean.elenas_room_next_alarm_dismissed
-    action: input_boolean.turn_off
+      entity_id: input_boolean.elenas_room_next_alarm_armed
+    data: {}
   mode: single
 - id: '1704932786787'
   alias: System Startup
