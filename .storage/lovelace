@@ -10495,25 +10495,41 @@
                       "type": "custom:button-card",
                       "template": "tile_status_bar",
                       "entity": "sensor.hestia_main_brush_left",
-                      "name": "Main Brush"
+                      "name": "Main Brush",
+                      "tap_action": {
+                        "action": "more-info",
+                        "entity": "sensor.hestia_main_brush_time_left"
+                      }
                     },
                     {
                       "type": "custom:button-card",
                       "template": "tile_status_bar",
                       "entity": "sensor.hestia_side_brush_left",
-                      "name": "Side Brush"
+                      "name": "Side Brush",
+                      "tap_action": {
+                        "action": "more-info",
+                        "entity": "sensor.hestia_side_brush_time_left"
+                      }
                     },
                     {
                       "type": "custom:button-card",
                       "template": "tile_status_bar",
                       "entity": "sensor.hestia_filter_left",
-                      "name": "Filter"
+                      "name": "Filter",
+                      "tap_action": {
+                        "action": "more-info",
+                        "entity": "sensor.hestia_filter_time_left"
+                      }
                     },
                     {
                       "type": "custom:button-card",
                       "template": "tile_status_bar",
                       "entity": "sensor.hestia_sensor_dirty_left",
-                      "name": "Sensors"
+                      "name": "Sensors",
+                      "tap_action": {
+                        "action": "more-info",
+                        "entity": "sensor.hestia_sensor_dirty_time_left"
+                      }
                     }
                   ],
                   "columns": 2
@@ -11781,9 +11797,8 @@
               "type": "vertical-stack",
               "cards": [
                 {
-                  "type": "grid",
-                  "columns": 5,
                   "square": true,
+                  "type": "grid",
                   "cards": [
                     {
                       "type": "custom:button-card",
@@ -11812,8 +11827,34 @@
                       "entity": "sensor.dining_room_radar_lux",
                       "template": "square_cell_background",
                       "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "switch.main_door_display_charger",
+                      "template": "turn_on",
+                      "show_state": true,
+                      "state_display": "[[[ return states['sensor.main_door_display_battery'].state + '%' ]]]",
+                      "double_tap_action": {
+                        "action": "more-info",
+                        "entity": "sensor.main_door_display_battery"
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "switch.main_door_display_screen",
+                      "template": "turn_on",
+                      "show_state": true,
+                      "state_display": "[[[ \n  const view = String(states['sensor.main_door_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('_',' ')\n  }\n]]]",
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "button.press",
+                        "data": {
+                          "entity_id": "button.main_door_display_load_start_url"
+                        }
+                      }
                     }
-                  ]
+                  ],
+                  "columns": 4
                 },
                 {
                   "type": "conditional",
