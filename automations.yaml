@@ -4859,12 +4859,12 @@
           entity_id: input_datetime.daniels_next_alarm
         alias: Set Daniel's Next Alarm to Elena's School Day Alarm
         action: input_datetime.set_datetime
-      - data:
+      - alias: Set Daniel's Next Alarm 5min before Elena's alarm
+        data:
           datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
-            - timedelta(minutes = 10) }}'
+            - timedelta(minutes = 5) }}'
         target:
           entity_id: input_datetime.daniels_next_alarm
-        alias: Set Daniel's Next Alarm 10min before Elena's alarm
         action: input_datetime.set_datetime
     - conditions:
       - alias: If Eli has school on Tue or Sat
@@ -7826,9 +7826,15 @@
   - trigger: state
     entity_id:
     - binary_sensor.main_door
+    from: 'on'
+    to: 'off'
+    id: reset_view
+  - trigger: state
+    entity_id:
+    - binary_sensor.main_door
     from: 'off'
     to: 'on'
-    id: reset_view
+    id: leaving
   conditions: []
   actions:
   - choose:
@@ -7857,6 +7863,9 @@
         id:
         - motion
       sequence:
+      - condition: state
+        entity_id: input_boolean.away_mode
+        state: 'off'
       - action: switch.turn_on
         metadata: {}
         data: {}
@@ -7911,6 +7920,27 @@
         metadata: {}
         data:
           url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+        target:
+          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+    - conditions:
+      - condition: trigger
+        id:
+        - leaving
+      sequence:
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.main_door_camera_motion
+          state: 'on'
+          for:
+            hours: 0
+            minutes: 0
+            seconds: 1
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          url: javascript:history.pushState(null,"","/lovelace/transit");window.dispatchEvent(new
             CustomEvent("location-changed"));
         target:
           device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
