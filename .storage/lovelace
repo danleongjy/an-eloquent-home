@@ -604,7 +604,7 @@
           "template": "square_cell",
           "tap_action": {
             "action": "navigate",
-            "navigation_path": "/lovelace/dishwasher"
+            "navigation_path": "/lovelace/rice_cooker"
           },
           "double_tap_action": {
             "action": "toggle"
@@ -1673,7 +1673,7 @@
                 "styles": {
                   "label": [
                     {
-                      "color": "[[[\n  if (states['binary_sensor.rice_cooker'].state == 'on') {\n    return var(--state-binary-sensor-color)\n  } else {\n    return var(--state-inactive-color)\n  }\n]]]\n"
+                      "color": "[[[\n  if (states['binary_sensor.rice_cooker'].state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else {\n    return 'var(--state-inactive-color)'\n  }\n]]]\n"
                     }
                   ]
                 }
@@ -1687,7 +1687,7 @@
                 "styles": {
                   "label": [
                     {
-                      "color": "[[[\n  if (states['binary_sensor.rice_cooker'].state == 'on') {\n    return var(--state-binary-sensor-color)\n  } else {\n    return var(--state-inactive-color)\n  }\n]]]\n"
+                      "color": "[[[\n  if (states['binary_sensor.rice_cooker'].state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else {\n    return 'var(--state-inactive-color)'\n  }\n]]]\n"
                     }
                   ]
                 }
@@ -1776,6 +1776,11 @@
                     {
                       "background-color": "[[[\n  if (states['input_boolean.dishwasher_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
                     }
+                  ],
+                  "label": [
+                    {
+                      "color": "[[[ return 'var(--state-inactive-color)' ]]]"
+                    }
                   ]
                 }
               },
@@ -1784,7 +1789,14 @@
                 "entity": "switch.dishwasher",
                 "template": "dishwasher_more_info",
                 "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
-                "show_label": true
+                "show_label": true,
+                "styles": {
+                  "label": [
+                    {
+                      "color": "[[[ return 'var(--state-binary-sensor-color)' ]]]"
+                    }
+                  ]
+                }
               }
             }
           }
@@ -6183,7 +6195,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.dining_room_pendant_light_entity_lqi",
+                          "entity": "sensor.dining_room_pendant_light_lqi",
                           "template": [
                             "zigbee_router",
                             "square_cell"
@@ -7276,7 +7288,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.dining_room_pendant_light_entity_lqi",
+                          "entity": "sensor.dining_room_pendant_light_lqi",
                           "template": "zigbee_router"
                         },
                         {
@@ -11555,13 +11567,16 @@
                       "template": "button_card_tile",
                       "entity": "switch.main_door_display_screen",
                       "name": "Screen",
-                      "state_display": "[[[ \n  const view = String(states['sensor.main_door_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('_',' ')\n  }\n]]]",
+                      "state_display": "[[[ \n  const view = String(states['sensor.main_door_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('-',' ')\n  }\n]]]",
                       "double_tap_action": {
                         "action": "call-service",
                         "service": "button.press",
                         "data": {
                           "entity_id": "button.main_door_display_load_start_url"
                         }
+                      },
+                      "hold_action": {
+                        "action": "more-info"
                       }
                     },
                     {
@@ -11580,16 +11595,19 @@
                       "double_tap_action": {
                         "action": "more-info",
                         "entity": "switch.main_door_display_charger"
+                      },
+                      "hold_action": {
+                        "action": "more-info"
                       }
                     }
-                  ],
-                  "visibility": [
-                    {
-                      "condition": "user",
-                      "users": [
-                        "ad2bcce775894550affb6dfef93a2a36"
-                      ]
-                    }
+                  ]
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "user",
+                  "users": [
+                    "ad2bcce775894550affb6dfef93a2a36"
                   ]
                 }
               ]
