@@ -1697,18 +1697,30 @@
               },
               "on": {
                 "type": "custom:button-card",
-                "entity": "switch.stove_main_power",
-                "template": "stove_more_info",
-                "icon": "[[[ return 'mdi:chevron-' + states['select.stove_current_burner'].state + '-circle-outline' ]]]",
-                "label": "[[[ \n  if (parseInt(states['number.stove_current_burner_timer'].state) >= 70)\n    return states['select.stove_current_burner_power'].state + '|1:' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 60)\n    return states['select.stove_current_burner_power'].state + '|1:0' +\n      (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 10)\n    return states['select.stove_current_burner_power'].state + '|0:' +\n      states['number.stove_current_burner_timer'].state\n  else if (parseInt(states['number.stove_current_burner_timer'].state) > 0)\n    return states['select.stove_current_burner_power'].state + '|0:0' +\n      states['number.stove_current_burner_timer'].state\n  else\n    return states['select.stove_current_burner_power'].state\n]]]",
+                "template": [
+                  "device_slider",
+                  "stove_more_info"
+                ],
+                "entity": "input_number.stove_current_burner_power_slider",
+                "icon": "[[[\n  if (states['switch.stove_pause'].state == 'on') {\n    return 'mdi:pause-circle-outline'\n  } else {\n    return 'mdi:chevron-' + states['select.stove_current_burner'].state + '-circle-outline' \n  }\n]]]\n",
+                "label": "[[[\n  if (parseInt(states['number.stove_current_burner_timer'].state) >= 70)\n    return '1:' + (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 60)\n    return '1:0' + (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 10)\n    return '0:' + states['number.stove_current_burner_timer'].state\n  else if (parseInt(states['number.stove_current_burner_timer'].state) > 0)\n    return '0:0' + states['number.stove_current_burner_timer'].state\n  else\n    return ''\n]]]\n",
                 "show_label": true,
                 "tap_action": {
                   "action": "call-service",
-                  "service": "select.select_option",
+                  "service": "select.select_next",
                   "service_data": {
-                    "entity_id": "select.stove_current_burner",
-                    "option": "[[[\n  if (states['select.stove_current_burner'].state == 'right')\n    return 'left'\n  else\n    return 'right'\n]]]"
+                    "entity_id": "select.stove_current_burner"
                   }
+                },
+                "styles": {
+                  "label": [
+                    {
+                      "z-index": 3
+                    },
+                    {
+                      "color": "var(--state-binary-sensor-color)"
+                    }
+                  ]
                 }
               },
               "off": {
@@ -1747,7 +1759,12 @@
                 "entity": "switch.dishwasher",
                 "template": "dishwasher_more_info",
                 "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
-                "show_label": true
+                "show_label": true,
+                "styles": {
+                  "label": {
+                    "color": "var(--state-binary-sensor-color)"
+                  }
+                }
               }
             }
           }
