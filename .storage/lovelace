@@ -129,6 +129,9 @@
                 },
                 {
                   "top": "10%"
+                },
+                {
+                  "z-index": 3
                 }
               ]
             }
@@ -432,8 +435,7 @@
         },
         "device_slider": {
           "template": [
-            "turn_on",
-            "manual_control_indicator"
+            "turn_on"
           ],
           "show_state": false,
           "tap_action": {
@@ -508,11 +510,6 @@
                 {
                   "margin": 0
                 }
-              ],
-              "indicator_manual_control": [
-                {
-                  "z-index": 3
-                }
               ]
             },
             "icon": [
@@ -548,8 +545,14 @@
             ]
           }
         },
+        "auto_control_slider": {
+          "template": [
+            "device_slider",
+            "manual_control_indicator"
+          ]
+        },
         "light_slider": {
-          "template": "device_slider",
+          "template": "auto_control_slider",
           "tap_action": {
             "action": "call-service",
             "service": "script.recommended_light_level",
@@ -560,7 +563,7 @@
           }
         },
         "fan_slider": {
-          "template": "device_slider",
+          "template": "auto_control_slider",
           "double_tap_action": {
             "action": "call-service",
             "service": "fan.set_direction",
@@ -576,6 +579,18 @@
                 "animation": "[[[ \n  if (entity.state == 'on') {\n    return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n  } else {\n    return ''\n  }\n]]]"
               }
             ]
+          }
+        },
+        "media_player_slider": {
+          "template": "device_slider",
+          "entity_picture": "[[[ return entity.attributes.entity_picture ]]]",
+          "show_entity_picture": true,
+          "tap_action": {
+            "action": "call-service",
+            "service": "[[[\n  if (['playing', 'paused'].includes(entity.state)) {\n    return 'media_player.media_play_pause'\n  } else {\n    return 'media_player.toggle'\n  }\n]]]\n",
+            "service_data": {
+              "entity_id": "entity"
+            }
           }
         },
         "dishwasher_more_info": {
@@ -958,30 +973,6 @@
             "action": "navigate"
           }
         },
-        "floorplan_slider_icon": {
-          "template": "square_cell",
-          "hold_action": {
-            "action": "more-info"
-          },
-          "styles": {
-            "card": [
-              {
-                "border-radius": "0%"
-              },
-              {
-                "background-color": "rgba(0,0,0,0.0)"
-              }
-            ],
-            "icon": [
-              {
-                "height": "100%"
-              },
-              {
-                "width": "100%"
-              }
-            ]
-          }
-        },
         "floorplan_square_cell": {
           "template": "square_cell",
           "styles": {
@@ -993,16 +984,6 @@
                 "width": "80%"
               }
             ]
-          }
-        },
-        "floorplan_turn_on": {
-          "template": "floorplan_slider_icon",
-          "tap_action": {
-            "action": "toggle"
-          },
-          "double_tap_action": {
-            "action": "call-service",
-            "service": "automation.toggle"
           }
         },
         "floorplan_sensor_diag": {
@@ -1423,123 +1404,6 @@
             }
           }
         },
-        "media_player": {
-          "card": {
-            "type": "custom:state-switch",
-            "entity": "[[media_player_entity]]",
-            "default": "not_playing_paused",
-            "states": {
-              "not_playing_paused": {
-                "type": "custom:slider-button-card",
-                "entity": "[[media_player_entity]]",
-                "icon": {
-                  "show": true,
-                  "use_state_color": true,
-                  "tap_action": {
-                    "action": "call-service",
-                    "service": "media_player.turn_off",
-                    "service_data": {
-                      "entity_id": "[[media_player_entity]]"
-                    }
-                  }
-                },
-                "slider": {
-                  "direction": "bottom-top",
-                  "background": "solid",
-                  "use_state_color": false,
-                  "use_percentage_bg_opacity": false,
-                  "show_track": false,
-                  "toggle_on_click": false,
-                  "force_square": true
-                },
-                "show_name": false,
-                "show_state": false,
-                "compact": true,
-                "action_button": {
-                  "mode": "toggle",
-                  "icon": "mdi:power",
-                  "show": false,
-                  "show_spinner": true,
-                  "tap_action": {
-                    "action": "toggle"
-                  }
-                }
-              },
-              "playing": {
-                "type": "custom:slider-button-card",
-                "entity": "[[media_player_entity]]",
-                "icon": {
-                  "show": true,
-                  "use_state_color": true,
-                  "tap_action": {
-                    "action": "call-service",
-                    "service": "media_player.media_play_pause",
-                    "service_data": {
-                      "entity_id": "[[media_player_entity]]"
-                    }
-                  }
-                },
-                "slider": {
-                  "direction": "bottom-top",
-                  "background": "solid",
-                  "use_state_color": false,
-                  "use_percentage_bg_opacity": false,
-                  "show_track": false,
-                  "toggle_on_click": false,
-                  "force_square": true
-                },
-                "show_name": false,
-                "show_state": false,
-                "compact": true,
-                "action_button": {
-                  "mode": "toggle",
-                  "icon": "mdi:power",
-                  "show": false,
-                  "show_spinner": true,
-                  "tap_action": {
-                    "action": "toggle"
-                  }
-                }
-              },
-              "paused": {
-                "type": "custom:slider-button-card",
-                "entity": "[[media_player_entity]]",
-                "icon": {
-                  "show": true,
-                  "use_state_color": true,
-                  "tap_action": {
-                    "action": "call-service",
-                    "service": "media_player.media_play_pause",
-                    "service_data": {
-                      "entity_id": "[[media_player_entity]]"
-                    }
-                  }
-                },
-                "slider": {
-                  "direction": "bottom-top",
-                  "background": "solid",
-                  "use_state_color": false,
-                  "use_percentage_bg_opacity": false,
-                  "show_track": false,
-                  "toggle_on_click": false,
-                  "force_square": true
-                },
-                "show_name": false,
-                "show_state": false,
-                "compact": true,
-                "action_button": {
-                  "mode": "toggle",
-                  "icon": "mdi:power",
-                  "show": false,
-                  "show_spinner": true,
-                  "tap_action": {
-                    "action": "toggle"
-                  }
-                }
-              }
-            }
-          }
-        },
         "vacuum": {
           "card": {
             "type": "custom:state-switch",
@@ -1884,185 +1748,6 @@
                 "template": "dishwasher_more_info",
                 "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
                 "show_label": true
-              }
-            }
-          }
-        },
-        "floorplan_slider": {
-          "card": {
-            "type": "custom:slider-button-card",
-            "entity": "[[slider_entity]]",
-            "slider": {
-              "direction": "bottom-top",
-              "background": "solid",
-              "use_state_color": false,
-              "use_percentage_bg_opacity": false,
-              "show_track": false,
-              "toggle_on_click": false,
-              "force_square": true,
-              "invert": false
-            },
-            "show_name": false,
-            "show_state": false,
-            "compact": true,
-            "icon": {
-              "show": false,
-              "use_state_color": true,
-              "tap_action": {
-                "action": "more-info"
-              },
-              "icon": ""
-            },
-            "action_button": {
-              "mode": "toggle",
-              "icon": "mdi:power",
-              "show": false,
-              "show_spinner": true,
-              "tap_action": {
-                "action": null
-              }
-            }
-          }
-        },
-        "floorplan_slider_auto_control": {
-          "card": {
-            "type": "custom:state-switch",
-            "entity": "[[auto_control_entity]]",
-            "default": "off",
-            "states": {
-              "on": {
-                "type": "custom:slider-button-card",
-                "entity": "[[slider_entity]]",
-                "slider": {
-                  "direction": "bottom-top",
-                  "background": "solid",
-                  "use_state_color": false,
-                  "use_percentage_bg_opacity": false,
-                  "show_track": false,
-                  "toggle_on_click": false,
-                  "force_square": true,
-                  "invert": false
-                },
-                "show_name": false,
-                "show_state": false,
-                "compact": true,
-                "icon": {
-                  "show": false,
-                  "use_state_color": true,
-                  "tap_action": {
-                    "action": "more-info"
-                  },
-                  "icon": ""
-                },
-                "action_button": {
-                  "mode": "toggle",
-                  "icon": "mdi:power",
-                  "show": false,
-                  "show_spinner": true,
-                  "tap_action": {
-                    "action": null
-                  }
-                }
-              },
-              "off": {
-                "type": "custom:slider-button-card",
-                "entity": "[[slider_entity]]",
-                "slider": {
-                  "direction": "bottom-top",
-                  "background": "striped",
-                  "use_state_color": false,
-                  "use_percentage_bg_opacity": false,
-                  "show_track": false,
-                  "toggle_on_click": false,
-                  "force_square": true,
-                  "invert": false
-                },
-                "show_name": false,
-                "show_state": false,
-                "compact": true,
-                "icon": {
-                  "show": false,
-                  "use_state_color": true,
-                  "tap_action": {
-                    "action": "more-info"
-                  },
-                  "icon": ""
-                },
-                "action_button": {
-                  "mode": "toggle",
-                  "icon": "mdi:power",
-                  "show": false,
-                  "show_spinner": true,
-                  "tap_action": {
-                    "action": null
-                  }
-                }
-              }
-            }
-          }
-        },
-        "floorplan_slider_icon_disabled": {
-          "card": {
-            "type": "custom:button-card",
-            "entity": "[[entity]]",
-            "template": "floorplan_slider_icon",
-            "styles": {
-              "icon": [
-                {
-                  "color": "#484848"
-                }
-              ]
-            }
-          }
-        },
-        "floorplan_slider_media_player_icon": {
-          "card": {
-            "type": "custom:state-switch",
-            "entity": "[[media_player_entity]]",
-            "default": "not_off",
-            "states": {
-              "unavailable": {
-                "type": "custom:decluttering-card",
-                "template": "floorplan_slider_icon_disabled",
-                "variables": [
-                  {
-                    "entity": "[[media_player_entity]]"
-                  }
-                ]
-              },
-              "unknown": {
-                "type": "custom:decluttering-card",
-                "template": "floorplan_slider_icon_disabled",
-                "variables": [
-                  {
-                    "entity": "[[media_player_entity]]"
-                  }
-                ]
-              },
-              "off": {
-                "type": "custom:button-card",
-                "entity": "[[media_player_entity]]",
-                "template": "floorplan_turn_on",
-                "double_tap_action": {
-                  "action": "none"
-                }
-              },
-              "not_off": {
-                "type": "custom:button-card",
-                "entity": "[[media_player_entity]]",
-                "template": "floorplan_turn_on",
-                "entity_picture": "[[[ return entity.attributes.entity_picture ]]]",
-                "show_entity_picture": true,
-                "tap_action": {
-                  "action": "call-service",
-                  "service": "[[[\n  if (['playing','paused'].includes(entity.state)) {\n    return 'media_player.media_play_pause'\n  } else {\n    return 'media_player.turn_off'\n  }\n]]]\n",
-                  "service_data": {
-                    "entity_id": "[[media_player_entity]]"
-                  }
-                },
-                "double_tap_action": {
-                  "action": "none"
-                }
               }
             }
           }
@@ -2857,7 +2542,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "cover.kitchen_blind",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.kitchen_blind_auto_control"
                         },
@@ -2869,34 +2554,15 @@
                         }
                       },
                       {
-                        "type": "custom:decluttering-card",
+                        "type": "custom:button-card",
                         "style": {
                           "top": "5%",
                           "left": "62.5%",
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "template": "floorplan_slider",
-                        "variables": [
-                          {
-                            "slider_entity": "media_player.kitchen_speaker"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "custom:decluttering-card",
-                        "style": {
-                          "top": "5%",
-                          "left": "62.5%",
-                          "height": "5%",
-                          "width": "2.5%"
-                        },
-                        "template": "floorplan_slider_media_player_icon",
-                        "variables": [
-                          {
-                            "media_player_entity": "media_player.kitchen_speaker"
-                          }
-                        ]
+                        "template": "media_player_slider",
+                        "entity": "media_player.kitchen_speaker"
                       },
                       {
                         "type": "conditional",
@@ -3360,7 +3026,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "climate.elenas_room_ac",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.elenas_room_motion_ac"
                         },
@@ -3374,7 +3040,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "cover.elenas_room_curtains",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.elenas_room_curtains_auto_control"
                         },
@@ -3440,7 +3106,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "climate.elis_room_ac",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.elis_room_motion_ac"
                         },
@@ -3454,7 +3120,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "cover.elis_room_curtains",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.elis_room_curtains_auto_control"
                         },
@@ -3520,7 +3186,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "climate.dining_room_ac",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.dining_room_motion_ac"
                         },
@@ -3534,7 +3200,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "cover.dining_room_blinds",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.south_facing_blinds_auto_control"
                         },
@@ -3627,7 +3293,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "climate.living_room_ac",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.living_room_motion_ac"
                         },
@@ -3641,7 +3307,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "cover.living_room_blinds",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.south_facing_blinds_auto_control"
                         },
@@ -3693,7 +3359,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "cover.master_bathroom_blind",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.master_bathroom_blind_auto_control"
                         },
@@ -4232,7 +3898,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "climate.study_room_ac",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.study_room_motion_ac"
                         },
@@ -4244,39 +3910,20 @@
                         }
                       },
                       {
-                        "type": "custom:decluttering-card",
+                        "type": "custom:button-card",
                         "style": {
                           "top": "95%",
                           "left": "47.5%",
                           "height": "9%",
                           "width": "4.5%"
                         },
-                        "template": "floorplan_slider",
-                        "variables": [
-                          {
-                            "slider_entity": "media_player.study_room_speaker"
-                          }
-                        ]
-                      },
-                      {
-                        "type": "custom:decluttering-card",
-                        "style": {
-                          "top": "95%",
-                          "left": "47.5%",
-                          "height": "5%",
-                          "width": "2.5%"
-                        },
-                        "template": "floorplan_slider_media_player_icon",
-                        "variables": [
-                          {
-                            "media_player_entity": "media_player.study_room_speaker"
-                          }
-                        ]
+                        "template": "media_player_slider",
+                        "entity": "media_player.study_room_speaker"
                       },
                       {
                         "type": "custom:button-card",
                         "entity": "cover.study_room_blinds",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.south_facing_blinds_auto_control"
                         },
@@ -4342,7 +3989,7 @@
                       {
                         "type": "custom:button-card",
                         "entity": "climate.parents_room_ac",
-                        "template": "device_slider",
+                        "template": "auto_control_slider",
                         "variables": {
                           "auto_control_automation": "automation.parents_room_motion_ac"
                         },
@@ -4433,31 +4080,19 @@
                                 "default": "both",
                                 "states": {
                                   "study_room_speaker": {
-                                    "type": "custom:decluttering-card",
-                                    "template": "media_player",
-                                    "variables": [
-                                      {
-                                        "media_player_entity": "media_player.study_room_speaker"
-                                      }
-                                    ]
+                                    "type": "custom:button-card",
+                                    "template": "media_player_slider",
+                                    "entity": "media_player.study_room_speaker"
                                   },
                                   "kitchen_speaker": {
-                                    "type": "custom:decluttering-card",
-                                    "template": "media_player",
-                                    "variables": [
-                                      {
-                                        "media_player_entity": "media_player.kitchen_speaker"
-                                      }
-                                    ]
+                                    "type": "custom:button-card",
+                                    "template": "media_player_slider",
+                                    "entity": "media_player.kitchen_speaker"
                                   },
                                   "both": {
-                                    "type": "custom:decluttering-card",
-                                    "template": "media_player",
-                                    "variables": [
-                                      {
-                                        "media_player_entity": "media_player.all_speakers"
-                                      }
-                                    ]
+                                    "type": "custom:button-card",
+                                    "template": "media_player_slider",
+                                    "entity": "media_player.all_speakers"
                                   }
                                 }
                               }
@@ -4579,7 +4214,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "climate.elenas_room_ac",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.elenas_room_motion_ac"
                             }
@@ -4587,7 +4222,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "cover.elenas_room_curtains",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.elenas_room_curtains_auto_control"
                             }
@@ -4623,7 +4258,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "climate.elis_room_ac",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.elis_room_motion_ac"
                             }
@@ -4631,7 +4266,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "cover.elis_room_curtains",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.elis_room_curtains_auto_control"
                             }
@@ -4703,7 +4338,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "climate.dining_room_ac",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.dining_room_motion_ac"
                             }
@@ -4711,7 +4346,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "cover.dining_room_blinds",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.south_facing_blinds_auto_control"
                             }
@@ -4747,7 +4382,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "climate.living_room_ac",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.living_room_motion_ac"
                             }
@@ -4755,7 +4390,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "cover.living_room_blinds",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.south_facing_blinds_auto_control"
                             }
@@ -4791,7 +4426,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "climate.study_room_ac",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.study_room_motion_ac"
                             }
@@ -4799,7 +4434,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "cover.study_room_blinds",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.south_facing_blinds_auto_control"
                             }
@@ -4835,7 +4470,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "climate.parents_room_ac",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.parents_room_motion_ac"
                             }
@@ -4875,7 +4510,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "cover.master_bathroom_blind",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.master_bathroom_blind_auto_control"
                             }
@@ -4907,7 +4542,7 @@
                           {
                             "type": "custom:button-card",
                             "entity": "cover.kitchen_blind",
-                            "template": "device_slider",
+                            "template": "auto_control_slider",
                             "variables": {
                               "auto_control_automation": "automation.kitchen_blind_auto_control"
                             }

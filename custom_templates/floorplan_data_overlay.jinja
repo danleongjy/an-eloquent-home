@@ -31,9 +31,9 @@
 {% elif is_state('input_select.floorplan_data_overlay','Temperature') %}
   {% if states(temperature_sensor) in ['unavailable','unknown'] %}
     D
-  {% elif states(temperature_sensor) | float(0) > states('input_number.temperature_threshold_warm') | float %}
+  {% elif states(temperature_sensor) | float(0) > 30 %}
     C
-  {% elif states(temperature_sensor) | float(0) > states('input_number.temperature_threshold_cold') | float %}
+  {% elif states(temperature_sensor) | float(0) > 28 %}
     B
   {% else %}
     A
@@ -41,9 +41,9 @@
 {% elif is_state('input_select.floorplan_data_overlay','Humidity') %}
   {% if states(humidity_sensor) in ['unavailable','unknown'] %}
     D
-  {% elif states(humidity_sensor) | float(0) > states('input_number.humidity_threshold_high') | float %}
+  {% elif states(humidity_sensor) | float(0) > 90 | float %}
     C
-  {% elif states(humidity_sensor) | float(0) > states('input_number.humidity_threshold_low') | float %}
+  {% elif states(humidity_sensor) | float(0) > 70 | float %}
     B
   {% else %}
     A
