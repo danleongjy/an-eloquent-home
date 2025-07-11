@@ -1570,23 +1570,30 @@
                 "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
                 "icon": "mdi:robot-vacuum",
-                "label": "[[[ \n  if (parseInt(entity.attributes.battery_level) <= 99)\n    return entity.attributes.battery_level + '%';\n  else\n    return ''\n]]]\n",
-                "show_label": true,
-                "color": "rgb(68,115,158)",
                 "double_tap_action": {
                   "action": "call-service",
                   "service": "vacuum.start",
                   "service_data": {
                     "entity_id": "vacuum.hestia"
                   }
+                },
+                "styles": {
+                  "icon": [
+                    {
+                      "color": "[[[\n  if (states['sensor.hestia_battery_level'].state != '100') {\n    return var(--state-binary-sensor-color)\n  } else {\n    return var(--state-inactive-color)\n  }\n]]]\n"
+                    }
+                  ],
+                  "card": [
+                    {
+                      "background": "[[[ \n  if (states['sensor.hestia_battery_level'].state == '100') {\n    return '#1c1c1c'\n  } else {\n    return \"linear-gradient(0deg, #41a7f2 0%, #41a7f2 \" +\n    states['sensor.hestia_battery_level'].state + \"%, #1c1c1c \" + \n    states['sensor.hestia_battery_level'].state + \"%, #1c1c1c 100%)\"\n  }\n]]]\n"
+                    }
+                  ]
                 }
               },
               "cleaning": {
                 "type": "custom:button-card",
                 "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
-                "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                "show_label": true,
                 "color": "rgb(253,216,53)",
                 "double_tap_action": {
                   "action": "call-service",
@@ -1594,14 +1601,19 @@
                   "service_data": {
                     "entity_id": "vacuum.hestia"
                   }
+                },
+                "styles": {
+                  "card": [
+                    {
+                      "background": "[[[ return \"linear-gradient(0deg, #41a7f2 0%, #41a7f2 \" + states['sensor.hestia_cleaning_progress'].state + \"%, #1c1c1c \" + states['sensor.hestia_cleaning_progress'].state + \"%, #1c1c1c 100%)\"]]] \n"
+                    }
+                  ]
                 }
               },
               "returning": {
                 "type": "custom:button-card",
                 "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
-                "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                "show_label": true,
                 "color": "rgb(253,216,53)",
                 "double_tap_action": {
                   "action": "call-service",
@@ -1609,15 +1621,20 @@
                   "service_data": {
                     "entity_id": "vacuum.hestia"
                   }
+                },
+                "styles": {
+                  "card": [
+                    {
+                      "background": "[[[ return \"linear-gradient(0deg, #41a7f2 0%, #41a7f2 \" + states['sensor.hestia_cleaning_progress'].state + \"%, #1c1c1c \" + states['sensor.hestia_cleaning_progress'].state + \"%, #1c1c1c 100%)\"]]] \n"
+                    }
+                  ]
                 }
               },
               "paused": {
                 "type": "custom:button-card",
                 "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
-                "color": "rgb(68,115,158)",
-                "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                "show_label": true,
+                "color": "rgb(253,216,53)",
                 "double_tap_action": {
                   "action": "call-service",
                   "service": "vacuum.start",
@@ -1628,10 +1645,10 @@
                 "styles": {
                   "card": [
                     {
-                      "background-color": "#f2900f"
+                      "background": "[[[ return \"linear-gradient(0deg, #41a7f2 0%, #41a7f2 \" + states['sensor.hestia_battery_level'].state + \"%, #1c1c1c \" + states['sensor.hestia_battery_level'].state + \"%, #1c1c1c 100%)\"]]] \n"
                     }
                   ],
-                  "label": [
+                  "icon": [
                     {
                       "animation": "blink 2s ease infinite"
                     }
@@ -1642,15 +1659,14 @@
                 "type": "custom:button-card",
                 "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
-                "label": "[[[ return entity.attributes.battery_level + '%']]]",
-                "show_label": true,
+                "color": "#9e110d",
                 "styles": {
                   "card": [
                     {
-                      "background-color": "#9e110d"
+                      "background": "[[[ return \"linear-gradient(0deg, #41a7f2 0%, #41a7f2 \" + states['sensor.hestia_battery_level'].state + \"%, #1c1c1c \" + states['sensor.hestia_battery_level'].state + \"%, #1c1c1c 100%)\"]]] \n"
                     }
                   ],
-                  "label": [
+                  "icon": [
                     {
                       "animation": "blink 2s ease infinite"
                     }
@@ -9978,12 +9994,7 @@
                   "state_content": "state",
                   "features_position": "inline",
                   "vertical": false
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
+                },
                 {
                   "show_state": false,
                   "show_name": false,
@@ -10135,6 +10146,18 @@
                         }
                       ]
                     }
+                  ],
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.hestia",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.hestia",
+                      "state_not": "unknown"
+                    }
                   ]
                 },
                 {
@@ -10169,13 +10192,6 @@
                       }
                     }
                   ]
-                }
-              ],
-              "visibility": [
-                {
-                  "condition": "state",
-                  "entity": "vacuum.hestia",
-                  "state_not": "unavailable"
                 }
               ]
             },
