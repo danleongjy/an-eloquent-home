@@ -617,7 +617,19 @@
             "navigation_path": "/lovelace/washer"
           },
           "show_label": true,
-          "label": "[[[ \n  var parse_time = {hours: Math.floor(parseFloat(states['sensor.washer_countdown'].state)),\n                    minutes: Math.round((parseFloat(states['sensor.washer_countdown'].state) % 1) * 60, 0)};\n  if (parse_time.minutes >= 10) {\n    return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n  } else {\n    return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n  }\n]]]\n"
+          "label": "[[[ \n  var parse_time = {hours: Math.floor(parseFloat(states['sensor.washer_countdown'].state)),\n                    minutes: Math.round((parseFloat(states['sensor.washer_countdown'].state) % 1) * 60, 0)};\n  if (parse_time.minutes >= 10) {\n    return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n  } else {\n    return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n  }\n]]]\n",
+          "styles": {
+            "label": [
+              {
+                "color": "var(--state-binary-sensor-color)"
+              }
+            ],
+            "card": [
+              {
+                "background": "[[[ \n  if (['Washing','Rinsing','Spinning'].includes(states['sensor.washer_status'].state) &&\n      states['sensor.washer_wash_progress'].state != '100') {\n    return \"linear-gradient(0deg, #41a7f2 0%, #41a7f2 \" +\n    states['sensor.washer_wash_progress'].state + \"%, #1c1c1c \" +\n    states['sensor.washer_wash_progress'].state + \"%, #1c1c1c 100%)\"\n  } else {\n    return 'var(--card-background-color)'\n  }\n]]] \n"
+              }
+            ]
+          }
         },
         "zigbee_endpoint": {
           "aspect_ratio": "1.5/1",
@@ -1569,7 +1581,6 @@
                 "type": "custom:button-card",
                 "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
-                "icon": "mdi:robot-vacuum",
                 "double_tap_action": {
                   "action": "call-service",
                   "service": "vacuum.start",
@@ -1580,12 +1591,12 @@
                 "styles": {
                   "icon": [
                     {
-                      "color": "[[[\n  if (states['sensor.hestia_battery_level'].state != '100') {\n    return var(--state-binary-sensor-color)\n  } else {\n    return var(--state-inactive-color)\n  }\n]]]\n"
+                      "color": "[[[\n  if (['100', 'unavailable'].includes(states['sensor.hestia_drying_progress'].state)) {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-binary-sensor-color)'\n  }\n]]]\n"
                     }
                   ],
                   "card": [
                     {
-                      "background": "[[[ \n  if (states['sensor.hestia_battery_level'].state == '100') {\n    return '#1c1c1c'\n  } else {\n    return \"linear-gradient(0deg, #41a7f2 0%, #41a7f2 \" +\n    states['sensor.hestia_battery_level'].state + \"%, #1c1c1c \" + \n    states['sensor.hestia_battery_level'].state + \"%, #1c1c1c 100%)\"\n  }\n]]]\n"
+                      "background": "[[[ \n  if (['100', 'unavailable'].includes(states['sensor.hestia_drying_progress'].state)) {\n    return '#1c1c1c'\n  } else {\n    return \"linear-gradient(0deg, #41a7f2 0%, #41a7f2 \" +\n    states['sensor.hestia_drying_progress'].state + \"%, #1c1c1c \" + \n    states['sensor.hestia_drying_progress'].state + \"%, #1c1c1c 100%)\"\n  }\n]]]\n"
                     }
                   ]
                 }
@@ -1634,7 +1645,6 @@
                 "type": "custom:button-card",
                 "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
-                "color": "rgb(253,216,53)",
                 "double_tap_action": {
                   "action": "call-service",
                   "service": "vacuum.start",
@@ -1649,6 +1659,9 @@
                     }
                   ],
                   "icon": [
+                    {
+                      "color": "[[[ return 'var(--state-binary-sensor-color)' ]]]"
+                    },
                     {
                       "animation": "blink 2s ease infinite"
                     }
@@ -1679,16 +1692,10 @@
         "washer": {
           "card": {
             "type": "custom:state-switch",
-            "style": {
-              "top": "5%",
-              "left": "25%",
-              "height": "9%",
-              "width": "4.5%"
-            },
             "entity": "sensor.washer_status",
-            "default": "disabled",
+            "default": "Washing",
             "states": {
-              "disabled": {
+              "unavailable": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "template": "error"
@@ -1729,16 +1736,6 @@
                 "entity": "switch.washer_power",
                 "template": "washer_more_info"
               },
-              "Rinsing": {
-                "type": "custom:button-card",
-                "entity": "switch.washer_power",
-                "template": "washer_more_info"
-              },
-              "Spinning": {
-                "type": "custom:button-card",
-                "entity": "switch.washer_power",
-                "template": "washer_more_info"
-              },
               "Finished": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
@@ -1749,12 +1746,12 @@
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "template": "washer_more_info",
+                "color": "var(--state-binary-sensor-color)",
                 "label": "Paused",
-                "color": "rgb(68,115,158)",
                 "styles": {
                   "label": [
                     {
-                      "color": "var(--primary-background-color)"
+                      "color": "var(--state-binary-sensor-color)"
                     },
                     {
                       "animation": "blink 2s ease infinite"
@@ -4475,10 +4472,13 @@
                             "styles": {
                               "icon": [
                                 {
-                                  "color": "[[[\n  if (entity.state == 'unavailable') {\n    return 'var(--disabled-color)'\n  } else if (entity.state.split(',')[0].split('/')[1] <= 5) {\n    return 'var(--state-binary_sensor-active-color)'\n  } else {\n     return 'var(--state-inactive-color)'\n  }\n]]]\n"
+                                  "color": "[[[\n  if (entity.state == 'unavailable') {\n    return 'var(--disabled-color)'\n  } else if (entity.state.split(',')[0].split('/')[1] <= 5) {\n    return 'var(--state-binary-sensor-color)'\n  } else {\n     return 'var(--state-inactive-color)'\n  }\n]]]\n"
                                 }
                               ],
                               "label": [
+                                {
+                                  "color": "[[[\n  if (entity.state != 'unavailable') {\n    if (entity.state.split(',')[0].split('/')[1] <= 5) {\n      return 'var(--state-binary-sensor-color)'\n    } else {\n      return 'var(--state-inactive-color)'\n    }\n  }\n]]]\n"
+                                },
                                 {
                                   "animation": "[[[\n  if (entity.state != 'unavailable') {\n    if (entity.state.split(',')[0].split('/')[1] < 3)  {\n      return 'blink 2s ease infinite'\n    }\n  }\n]]]\n"
                                 }
