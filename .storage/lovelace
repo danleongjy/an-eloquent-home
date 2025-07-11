@@ -441,9 +441,6 @@
           "tap_action": {
             "action": "toggle"
           },
-          "triggers_update": [
-            "[[[ return variables.auto_control_automation ]]]"
-          ],
           "custom_fields": {
             "slider": {
               "card": {
@@ -535,7 +532,7 @@
                 "--ha-icon-display": "inline"
               },
               {
-                "color": "[[[ if (['unavailable','unknown'].includes(entity.state))\n      return 'var(--state-inactive-color)';\n    else if (['off','closed'].includes(entity.state))\n      return 'var(--state-icon-color)';\n    else if (typeof entity.attributes.rgb_color !== 'undefined' && entity.attributes.rgb_color !== null)\n      return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n      entity.attributes.rgb_color[1] + \",\" +\n      entity.attributes.rgb_color[2] + \")\"\n    else\n      return 'var(--state-binary_sensor-active-color)'\n]]]"
+                "color": "[[[ if (['unavailable','unknown'].includes(entity.state))\n      return 'var(--disabled-color)';\n    else if (['off','closed'].includes(entity.state))\n      return 'var(--state-icon-color)';\n    else if (typeof entity.attributes.rgb_color !== 'undefined' && entity.attributes.rgb_color !== null)\n      return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n      entity.attributes.rgb_color[1] + \",\" +\n      entity.attributes.rgb_color[2] + \")\"\n    else\n      return 'var(--state-binary_sensor-active-color)'\n]]]"
               }
             ],
             "card": [
@@ -549,6 +546,9 @@
           "template": [
             "device_slider",
             "manual_control_indicator"
+          ],
+          "triggers_update": [
+            "[[[ return variables.auto_control_automation ]]]"
           ]
         },
         "light_slider": {
@@ -602,9 +602,12 @@
         },
         "rice_cooker_more_info": {
           "template": "square_cell",
-          "hold_action": {
+          "tap_action": {
             "action": "navigate",
-            "navigation_path": "/lovelace/rice_cooker"
+            "navigation_path": "/lovelace/dishwasher"
+          },
+          "double_tap_action": {
+            "action": "toggle"
           }
         },
         "stove_more_info": {
@@ -1445,6 +1448,7 @@
                 "type": "custom:button-card",
                 "entity": "vacuum.hestia",
                 "template": "vacuum_more_info",
+                "icon": "[[[\n  if (states['sensor.hestia_status'].state == 'charging') {\n    return 'mdi:lightning-bolt-circle'\n  } else {\n    return 'mdi:robot-vacuum'\n  }\n]]]\n",
                 "double_tap_action": {
                   "action": "call-service",
                   "service": "vacuum.start",
@@ -1665,21 +1669,42 @@
                 "entity": "binary_sensor.rice_cooker",
                 "template": "rice_cooker_more_info",
                 "label": "Cook",
-                "show_label": true
+                "show_label": true,
+                "styles": {
+                  "label": [
+                    {
+                      "color": "[[[\n  if (states['binary_sensor.rice_cooker'].state == 'on') {\n    return var(--state-binary-sensor-color)\n  } else {\n    return var(--state-inactive-color)\n  }\n]]]\n"
+                    }
+                  ]
+                }
               },
               "Warming": {
                 "type": "custom:button-card",
                 "entity": "binary_sensor.rice_cooker",
                 "template": "rice_cooker_more_info",
                 "label": "Warm",
-                "show_label": true
+                "show_label": true,
+                "styles": {
+                  "label": [
+                    {
+                      "color": "[[[\n  if (states['binary_sensor.rice_cooker'].state == 'on') {\n    return var(--state-binary-sensor-color)\n  } else {\n    return var(--state-inactive-color)\n  }\n]]]\n"
+                    }
+                  ]
+                }
               },
               "Standby": {
                 "type": "custom:button-card",
                 "entity": "switch.rice_cooker",
                 "template": "rice_cooker_more_info",
                 "label": "...",
-                "show_label": true
+                "show_label": true,
+                "styles": {
+                  "label": [
+                    {
+                      "color": "var(--state-binary-sensor-color)"
+                    }
+                  ]
+                }
               }
             }
           }
@@ -1759,12 +1784,7 @@
                 "entity": "switch.dishwasher",
                 "template": "dishwasher_more_info",
                 "label": "[[[\n  if (states['input_select.dishwasher_status'].state == 'Washing')\n    return 'Wash'\n  else if (states['input_select.dishwasher_status'].state == 'Cooling')\n    return 'Cool'\n  else if (states['input_select.dishwasher_status'].state == 'Standby')\n    return '...'\n  else\n    return ''\n]]]\n",
-                "show_label": true,
-                "styles": {
-                  "label": {
-                    "color": "var(--state-binary-sensor-color)"
-                  }
-                }
+                "show_label": true
               }
             }
           }
@@ -11499,34 +11519,9 @@
                       "entity": "sensor.dining_room_radar_lux",
                       "template": "square_cell_background",
                       "show_state": true
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "switch.main_door_display_charger",
-                      "template": "turn_on",
-                      "show_state": true,
-                      "state_display": "[[[ return states['sensor.main_door_display_battery'].state + '%' ]]]",
-                      "double_tap_action": {
-                        "action": "more-info",
-                        "entity": "sensor.main_door_display_battery"
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "switch.main_door_display_screen",
-                      "template": "turn_on",
-                      "show_state": true,
-                      "state_display": "[[[ \n  const view = String(states['sensor.main_door_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('_',' ')\n  }\n]]]",
-                      "double_tap_action": {
-                        "action": "call-service",
-                        "service": "button.press",
-                        "data": {
-                          "entity_id": "button.main_door_display_load_start_url"
-                        }
-                      }
                     }
                   ],
-                  "columns": 4
+                  "columns": 5
                 },
                 {
                   "type": "conditional",
@@ -11540,6 +11535,62 @@
                     "type": "markdown",
                     "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
                   }
+                }
+              ]
+            },
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "heading",
+                  "icon": "mdi:cellphone",
+                  "heading_style": "title",
+                  "heading": "Main Door Display"
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "template": "button_card_tile",
+                      "entity": "switch.main_door_display_screen",
+                      "name": "Screen",
+                      "state_display": "[[[ \n  const view = String(states['sensor.main_door_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('_',' ')\n  }\n]]]",
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "button.press",
+                        "data": {
+                          "entity_id": "button.main_door_display_load_start_url"
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "tile_status_bar",
+                      "entity": "sensor.main_door_display_battery",
+                      "name": "Battery",
+                      "state_display": "[[[ \n  if (states['switch.main_door_display_charger'].state == 'on') {\n    return entity.state + '% | Charging'\n  } else {\n    return entity.state + '% | Depleting'\n  }\n]]]\n",
+                      "tap_action": {
+                        "action": "call-service",
+                        "service": "switch.toggle",
+                        "service_data": {
+                          "entity_id": "switch.main_door_display_charger"
+                        }
+                      },
+                      "double_tap_action": {
+                        "action": "more-info",
+                        "entity": "switch.main_door_display_charger"
+                      }
+                    }
+                  ],
+                  "visibility": [
+                    {
+                      "condition": "user",
+                      "users": [
+                        "ad2bcce775894550affb6dfef93a2a36"
+                      ]
+                    }
+                  ]
                 }
               ]
             }
