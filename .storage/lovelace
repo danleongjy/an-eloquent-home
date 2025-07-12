@@ -9462,11 +9462,17 @@
                       ]
                     }
                   ]
-                },
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "heading",
                   "icon": "mdi:camera-iris",
-                  "heading": "Immich",
+                  "heading": "Immich Containers",
                   "heading_style": "subtitle"
                 },
                 {
@@ -9483,15 +9489,7 @@
                     "action": "more-info"
                   },
                   "features_position": "bottom",
-                  "vertical": false,
-                  "visibility": [
-                    {
-                      "condition": "user",
-                      "users": [
-                        "ad2bcce775894550affb6dfef93a2a36"
-                      ]
-                    }
-                  ]
+                  "vertical": false
                 },
                 {
                   "type": "tile",
@@ -9508,15 +9506,7 @@
                     "action": "more-info"
                   },
                   "features_position": "bottom",
-                  "vertical": false,
-                  "visibility": [
-                    {
-                      "condition": "user",
-                      "users": [
-                        "ad2bcce775894550affb6dfef93a2a36"
-                      ]
-                    }
-                  ]
+                  "vertical": false
                 },
                 {
                   "type": "tile",
@@ -9533,15 +9523,7 @@
                     "action": "more-info"
                   },
                   "features_position": "bottom",
-                  "vertical": false,
-                  "visibility": [
-                    {
-                      "condition": "user",
-                      "users": [
-                        "ad2bcce775894550affb6dfef93a2a36"
-                      ]
-                    }
-                  ]
+                  "vertical": false
                 },
                 {
                   "type": "tile",
@@ -9558,58 +9540,174 @@
                     "action": "more-info"
                   },
                   "features_position": "bottom",
-                  "vertical": false,
-                  "visibility": [
-                    {
-                      "condition": "user",
-                      "users": [
-                        "ad2bcce775894550affb6dfef93a2a36"
-                      ]
-                    }
-                  ]
+                  "vertical": false
                 }
               ],
-              "column_span": 2
+              "visibility": [
+                {
+                  "condition": "user",
+                  "users": [
+                    "ad2bcce775894550affb6dfef93a2a36"
+                  ]
+                }
+              ]
             },
             {
               "type": "grid",
               "cards": [
                 {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "donut",
-                  "header": {
-                    "title": "Assets"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.immich_photos",
-                      "name": "Photos",
-                      "unit": " "
-                    },
-                    {
-                      "entity": "sensor.immich_videos",
-                      "name": "Videos",
-                      "unit": " "
-                    }
-                  ]
+                  "type": "heading",
+                  "heading": "Immich Assets",
+                  "heading_style": "subtitle",
+                  "icon": "mdi:image-album"
                 },
                 {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "donut",
-                  "header": {
-                    "title": "Storage Usage"
+                  "type": "custom:button-card",
+                  "custom_fields": {
+                    "photos": "[[[ return states['sensor.immich_photos'].state + ' <ha-icon icon=\"mdi:image\" style=\"height:18pt;width:18pt\"></ha-icon>' ]]]\n",
+                    "videos": "[[[ return states['sensor.immich_videos'].state + ' <ha-icon icon=\"mdi:video\" style=\"height:18pt;width:18pt\"></ha-icon>' ]]]\n"
                   },
-                  "series": [
-                    {
-                      "entity": "sensor.immich_usage_photos",
-                      "name": "Photos"
-                    },
-                    {
-                      "entity": "sensor.immich_usage_videos",
-                      "name": "Videos"
+                  "styles": {
+                    "card": [
+                      {
+                        "position": "relative"
+                      },
+                      {
+                        "background": "[[[ return \"linear-gradient(90deg, #FF9800 0%, #FF9800 \" + (parseInt(states['sensor.immich_photos'].state)/(parseInt(states['sensor.immich_photos'].state) + parseInt(states['sensor.immich_videos'].state))) * 100 + \"%, #3498DB \" +  (parseInt(states['sensor.immich_photos'].state)/(parseInt(states['sensor.immich_photos'].state) + parseInt(states['sensor.immich_videos'].state))) * 100 + \"%, #3498DB 100%)\"]]] \n"
+                      }
+                    ],
+                    "custom_fields": {
+                      "photos": [
+                        {
+                          "position": "absolute"
+                        },
+                        {
+                          "left": "2%"
+                        },
+                        {
+                          "font-size": "14px"
+                        },
+                        {
+                          "font-weight": 500
+                        },
+                        {
+                          "background-color": "#FF9800"
+                        },
+                        {
+                          "padding-left": "1%"
+                        },
+                        {
+                          "padding-right": "1%"
+                        },
+                        {
+                          "border-radius": "4px"
+                        }
+                      ],
+                      "videos": [
+                        {
+                          "position": "absolute"
+                        },
+                        {
+                          "right": "2%"
+                        },
+                        {
+                          "font-size": "14px"
+                        },
+                        {
+                          "font-weight": 500
+                        },
+                        {
+                          "background-color": "#3498DB"
+                        },
+                        {
+                          "padding-left": "1%"
+                        },
+                        {
+                          "padding-right": "1%"
+                        },
+                        {
+                          "border-radius": "4px"
+                        }
+                      ]
                     }
-                  ]
+                  }
                 },
+                {
+                  "type": "custom:button-card",
+                  "custom_fields": {
+                    "photos": "[[[ return helpers.localize(states['sensor.immich_usage_photos']) + ' <ha-icon icon=\"mdi:image\" style=\"height:18pt;width:18pt\"></ha-icon>' ]]]",
+                    "videos": "[[[ return helpers.localize(states['sensor.immich_usage_videos']) + ' <ha-icon icon=\"mdi:video\" style=\"height:18pt;width:18pt\"></ha-icon>' ]]]"
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "position": "relative"
+                      },
+                      {
+                        "background": "[[[ return \"linear-gradient(90deg, #FF9800 0%, #FF9800 \" + (parseInt(states['sensor.immich_usage_photos'].state)/(parseInt(states['sensor.immich_usage_photos'].state) + parseInt(states['sensor.immich_usage_videos'].state))) * 100 + \"%, #3498DB \" +  (parseInt(states['sensor.immich_usage_photos'].state)/(parseInt(states['sensor.immich_usage_photos'].state) + parseInt(states['sensor.immich_usage_videos'].state))) * 100 + \"%, #3498DB 100%)\"]]] \n"
+                      }
+                    ],
+                    "custom_fields": {
+                      "photos": [
+                        {
+                          "position": "absolute"
+                        },
+                        {
+                          "left": "2%"
+                        },
+                        {
+                          "font-size": "14px"
+                        },
+                        {
+                          "font-weight": 500
+                        },
+                        {
+                          "background-color": "#FF9800"
+                        },
+                        {
+                          "padding-left": "1%"
+                        },
+                        {
+                          "padding-right": "1%"
+                        },
+                        {
+                          "border-radius": "4px"
+                        }
+                      ],
+                      "videos": [
+                        {
+                          "position": "absolute"
+                        },
+                        {
+                          "right": "2%"
+                        },
+                        {
+                          "font-size": "14px"
+                        },
+                        {
+                          "font-weight": 500
+                        },
+                        {
+                          "background-color": "#3498DB"
+                        },
+                        {
+                          "padding-left": "1%"
+                        },
+                        {
+                          "padding-right": "1%"
+                        },
+                        {
+                          "border-radius": "4px"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "markdown",
                   "content": "<ha-alert alert-type={{\"info\" if state_attr('sensor.immich_job_face_detection', 'failed') == 0 else \"error\"}}>Face detection in progress. \nRunning: {{ state_attr('sensor.immich_job_face_detection', 'active') }}\nWaiting: {{ state_attr('sensor.immich_job_face_detection', 'waiting') }}\n{{ \"Error: \" if state_attr('sensor.immich_job_face_detection', 'failed') > 0 }}{{ state_attr('sensor.immich_job_face_detection', 'failed') if state_attr('sensor.immich_job_face_detection', 'failed') > 0 }}</ha-alert>",
@@ -11247,11 +11345,6 @@
                       "entity": "sensor.elis_room_lux",
                       "template": "square_cell_background",
                       "show_state": true
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "device_tracker.elis_watch",
-                      "template": "square_cell_background"
                     }
                   ]
                 },
@@ -11531,9 +11624,14 @@
                       "entity": "sensor.dining_room_radar_lux",
                       "template": "square_cell_background",
                       "show_state": true
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "device_tracker.elis_watch",
+                      "template": "square_cell_background"
                     }
                   ],
-                  "columns": 5
+                  "columns": 4
                 },
                 {
                   "type": "conditional",
