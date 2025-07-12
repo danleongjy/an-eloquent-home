@@ -644,7 +644,7 @@
             ],
             "card": [
               {
-                "background": "[[[ \n  if (['Washing','Rinsing','Spinning'].includes(states['sensor.washer_status'].state) &&\n      states['sensor.washer_wash_progress'].state != '100') {\n    return \"linear-gradient(0deg, #41a7f2 0%, #41a7f2 \" +\n    states['sensor.washer_wash_progress'].state + \"%, #1c1c1c \" +\n    states['sensor.washer_wash_progress'].state + \"%, #1c1c1c 100%)\"\n  } else {\n    return 'var(--card-background-color)'\n  }\n]]] \n"
+                "background": "[[[ \n  if (['Delay Set','Washing','Rinsing','Spinning'].includes(states['sensor.washer_status'].state) &&\n      states['sensor.washer_wash_progress'].state != '100') {\n    return \"linear-gradient(0deg, #41a7f2 0%, #41a7f2 \" +\n    states['sensor.washer_wash_progress'].state + \"%, #1c1c1c \" +\n    states['sensor.washer_wash_progress'].state + \"%, #1c1c1c 100%)\"\n  } else {\n    return 'var(--card-background-color)'\n  }\n]]] \n"
               }
             ]
           }
@@ -9573,6 +9573,9 @@
                         "position": "relative"
                       },
                       {
+                        "height": "56px"
+                      },
+                      {
                         "background": "[[[ return \"linear-gradient(90deg, #FF9800 0%, #FF9800 \" + (parseInt(states['sensor.immich_photos'].state)/(parseInt(states['sensor.immich_photos'].state) + parseInt(states['sensor.immich_videos'].state))) * 100 + \"%, #3498DB \" +  (parseInt(states['sensor.immich_photos'].state)/(parseInt(states['sensor.immich_photos'].state) + parseInt(states['sensor.immich_videos'].state))) * 100 + \"%, #3498DB 100%)\"]]] \n"
                       }
                     ],
@@ -9642,6 +9645,9 @@
                     "card": [
                       {
                         "position": "relative"
+                      },
+                      {
+                        "height": "56px"
                       },
                       {
                         "background": "[[[ return \"linear-gradient(90deg, #FF9800 0%, #FF9800 \" + (parseInt(states['sensor.immich_usage_photos'].state)/(parseInt(states['sensor.immich_usage_photos'].state) + parseInt(states['sensor.immich_usage_videos'].state))) * 100 + \"%, #3498DB \" +  (parseInt(states['sensor.immich_usage_photos'].state)/(parseInt(states['sensor.immich_usage_photos'].state) + parseInt(states['sensor.immich_usage_videos'].state))) * 100 + \"%, #3498DB 100%)\"]]] \n"
@@ -10390,6 +10396,11 @@
                                     "condition": "state",
                                     "entity": "sensor.washer_status",
                                     "state": "Spinning"
+                                  },
+                                  {
+                                    "condition": "state",
+                                    "entity": "sensor.washer_status",
+                                    "state": "Delay Set"
                                   }
                                 ]
                               }
@@ -10421,6 +10432,11 @@
                                 "condition": "state",
                                 "entity": "sensor.washer_status",
                                 "state_not": "Spinning"
+                              },
+                              {
+                                "condition": "state",
+                                "entity": "sensor.washer_status",
+                                "state_not": "Delay Set"
                               }
                             ],
                             "card": {
