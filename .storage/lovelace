@@ -1367,6 +1367,31 @@
               ]
             }
           }
+        },
+        "bar_chart_segment": {
+          "variables": {
+            "percent": "[[[ return Math.round(parseInt(entity.state) / variables.chart_total * 100) ]]]"
+          },
+          "name": "[[[ \n  if (variables.percent > 33) {\n    return variables.percent.toString() + '%'\n  } else {\n    return ''\n  }\n]]]\n",
+          "show_icon": false,
+          "styles": {
+            "card": [
+              {
+                "height": "56px"
+              },
+              {
+                "border-radius": "0px"
+              }
+            ],
+            "name": [
+              {
+                "font-size": "14px"
+              },
+              {
+                "font-weight": 500
+              }
+            ]
+          }
         }
       },
       "decluttering_templates": {
@@ -9462,18 +9487,20 @@
                       ]
                     }
                   ]
-                }
-              ],
-              "column_span": 2
-            },
-            {
-              "type": "grid",
-              "cards": [
+                },
                 {
                   "type": "heading",
                   "icon": "mdi:camera-iris",
                   "heading": "Immich Containers",
-                  "heading_style": "subtitle"
+                  "heading_style": "subtitle",
+                  "visibility": [
+                    {
+                      "condition": "user",
+                      "users": [
+                        "ad2bcce775894550affb6dfef93a2a36"
+                      ]
+                    }
+                  ]
                 },
                 {
                   "type": "tile",
@@ -9489,7 +9516,15 @@
                     "action": "more-info"
                   },
                   "features_position": "bottom",
-                  "vertical": false
+                  "vertical": false,
+                  "visibility": [
+                    {
+                      "condition": "user",
+                      "users": [
+                        "ad2bcce775894550affb6dfef93a2a36"
+                      ]
+                    }
+                  ]
                 },
                 {
                   "type": "tile",
@@ -9506,7 +9541,15 @@
                     "action": "more-info"
                   },
                   "features_position": "bottom",
-                  "vertical": false
+                  "vertical": false,
+                  "visibility": [
+                    {
+                      "condition": "user",
+                      "users": [
+                        "ad2bcce775894550affb6dfef93a2a36"
+                      ]
+                    }
+                  ]
                 },
                 {
                   "type": "tile",
@@ -9523,7 +9566,15 @@
                     "action": "more-info"
                   },
                   "features_position": "bottom",
-                  "vertical": false
+                  "vertical": false,
+                  "visibility": [
+                    {
+                      "condition": "user",
+                      "users": [
+                        "ad2bcce775894550affb6dfef93a2a36"
+                      ]
+                    }
+                  ]
                 },
                 {
                   "type": "tile",
@@ -9540,17 +9591,18 @@
                     "action": "more-info"
                   },
                   "features_position": "bottom",
-                  "vertical": false
-                }
-              ],
-              "visibility": [
-                {
-                  "condition": "user",
-                  "users": [
-                    "ad2bcce775894550affb6dfef93a2a36"
+                  "vertical": false,
+                  "visibility": [
+                    {
+                      "condition": "user",
+                      "users": [
+                        "ad2bcce775894550affb6dfef93a2a36"
+                      ]
+                    }
                   ]
                 }
-              ]
+              ],
+              "column_span": 2
             },
             {
               "type": "grid",
@@ -9561,6 +9613,231 @@
                   "heading_style": "subtitle",
                   "icon": "mdi:image-album"
                 },
+                {
+                  "type": "custom:button-card",
+                  "variables": {
+                    "all_total": "[[[ return parseInt(states['sensor.immich_photos'].state) + parseInt(states['sensor.immich_videos'].state) ]]]",
+                    "bar_segment_photos_percent": "[[[ return parseInt(states['sensor.immich_photos'].state)/variables.all_total * 100 ]]]",
+                    "bar_segment_videos_percent": "[[[ return parseInt(states['sensor.immich_videos'].state)/variables.all_total * 100 ]]]"
+                  },
+                  "custom_fields": {
+                    "chart_header": {
+                      "card": {
+                        "type": "custom:apexcharts-card",
+                        "header": {
+                          "show": true,
+                          "show_states": true,
+                          "colorize_states": true
+                        },
+                        "series": [
+                          {
+                            "entity": "sensor.immich_photos",
+                            "name": "Photos",
+                            "unit": " ",
+                            "show": {
+                              "in_chart": false
+                            }
+                          },
+                          {
+                            "entity": "sensor.immich_videos",
+                            "name": "Videos",
+                            "unit": " ",
+                            "show": {
+                              "in_chart": false
+                            }
+                          }
+                        ],
+                        "apex_config": {
+                          "chart": {
+                            "height": "0px"
+                          }
+                        }
+                      }
+                    },
+                    "bar_segment_photos": {
+                      "do_not_eval": true,
+                      "card": {
+                        "type": "custom:button-card",
+                        "entity": "sensor.immich_photos",
+                        "template": "bar_chart_segment",
+                        "variables": {
+                          "chart_total": "[[[ return parseInt(states['sensor.immich_photos'].state) + parseInt(states['sensor.immich_videos'].state) ]]]"
+                        },
+                        "show_name": true,
+                        "styles": {
+                          "card": [
+                            {
+                              "background": "#FF9800"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "bar_segment_videos": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "entity": "sensor.immich_videos",
+                        "template": "bar_chart_segment",
+                        "variables": {
+                          "chart_total": "[[[ return parseInt(states['sensor.immich_photos'].state) + parseInt(states['sensor.immich_videos'].state) ]]]"
+                        },
+                        "show_name": true,
+                        "styles": {
+                          "card": [
+                            {
+                              "background": "#3498DB"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "styles": {
+                    "grid": [
+                      {
+                        "grid-template-areas": "\"chart_header chart_header\" \"bar_segment_photos bar_segment_videos\""
+                      },
+                      {
+                        "grid-template-columns": "[[[ return variables.bar_segment_photos_percent.toString() + '% ' + variables.bar_segment_videos_percent.toString() + '%' ]]]"
+                      },
+                      {
+                        "grid-template-rows": "min-content min-content"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "variables": {
+                    "all_total": "[[[ return parseInt(states['sensor.immich_usage_photos'].state) + parseInt(states['sensor.immich_usage_videos'].state) ]]]",
+                    "bar_segment_photos_percent": "[[[ return parseInt(states['sensor.immich_usage_photos'].state)/variables.all_total * 100 ]]]",
+                    "bar_segment_videos_percent": "[[[ return parseInt(states['sensor.immich_usage_videos'].state)/variables.all_total * 100 ]]]"
+                  },
+                  "custom_fields": {
+                    "chart_header": {
+                      "card": {
+                        "type": "custom:apexcharts-card",
+                        "header": {
+                          "show": true,
+                          "show_states": true,
+                          "colorize_states": true
+                        },
+                        "series": [
+                          {
+                            "entity": "sensor.immich_usage_photos",
+                            "name": "Photos",
+                            "show": {
+                              "in_chart": false
+                            }
+                          },
+                          {
+                            "entity": "sensor.immich_usage_videos",
+                            "name": "Videos",
+                            "show": {
+                              "in_chart": false
+                            }
+                          }
+                        ],
+                        "apex_config": {
+                          "chart": {
+                            "height": "0px"
+                          }
+                        }
+                      }
+                    },
+                    "bar_segment_photos": {
+                      "do_not_eval": true,
+                      "card": {
+                        "type": "custom:button-card",
+                        "entity": "sensor.immich_usage_photos",
+                        "template": "bar_chart_segment",
+                        "variables": {
+                          "chart_total": "[[[ return parseInt(states['sensor.immich_usage_photos'].state) + parseInt(states['sensor.immich_usage_videos'].state) ]]]"
+                        },
+                        "show_name": true,
+                        "styles": {
+                          "card": [
+                            {
+                              "background": "#FF9800"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "bar_segment_videos": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "entity": "sensor.immich_usage_videos",
+                        "template": "bar_chart_segment",
+                        "variables": {
+                          "chart_total": "[[[ return parseInt(states['sensor.immich_usage_videos'].state) + parseInt(states['sensor.immich_usage_videos'].state) ]]]"
+                        },
+                        "show_name": true,
+                        "styles": {
+                          "card": [
+                            {
+                              "background": "#3498DB"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "styles": {
+                    "grid": [
+                      {
+                        "grid-template-areas": "\"chart_header chart_header\" \"bar_segment_photos bar_segment_videos\""
+                      },
+                      {
+                        "grid-template-columns": "[[[ return variables.bar_segment_photos_percent.toString() + '% ' + variables.bar_segment_videos_percent.toString() + '%' ]]]"
+                      },
+                      {
+                        "grid-template-rows": "min-content min-content"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "markdown",
+                  "content": "<ha-alert alert-type={{\"info\" if state_attr('sensor.immich_job_face_detection', 'failed') == 0 else \"error\"}}>Face detection in progress. \nRunning: {{ state_attr('sensor.immich_job_face_detection', 'active') }}\nWaiting: {{ state_attr('sensor.immich_job_face_detection', 'waiting') }}\n{{ \"Error: \" if state_attr('sensor.immich_job_face_detection', 'failed') > 0 }}{{ state_attr('sensor.immich_job_face_detection', 'failed') if state_attr('sensor.immich_job_face_detection', 'failed') > 0 }}</ha-alert>",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.immich_job_face_detection",
+                      "state": "Active"
+                    }
+                  ]
+                },
+                {
+                  "type": "markdown",
+                  "content": "<ha-alert alert-type={{\"info\" if state_attr('sensor.immich_job_facial_recognition', 'failed') == 0 else \"error\"}}>Facial recognition in progress. \nRunning: {{ state_attr('sensor.immich_job_facial_recognition', 'active') }}\nWaiting: {{ state_attr('sensor.immich_job_facial_recognition', 'waiting') }}\n{{ \"Error: \" if state_attr('sensor.immich_job_facial_recognition', 'failed') > 0 }}{{ state_attr('sensor.immich_job_facial_recognition', 'failed') if state_attr('sensor.immich_job_facial_recognition', 'failed') > 0 }}</ha-alert>",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.immich_job_facial_recognition",
+                      "state": "Active"
+                    }
+                  ]
+                }
+              ],
+              "column_span": 2,
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "sensor.immich_photos",
+                  "state_not": "unavailable"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "custom:button-card",
                   "custom_fields": {
@@ -9709,40 +9986,11 @@
                     }
                   }
                 }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "markdown",
-                  "content": "<ha-alert alert-type={{\"info\" if state_attr('sensor.immich_job_face_detection', 'failed') == 0 else \"error\"}}>Face detection in progress. \nRunning: {{ state_attr('sensor.immich_job_face_detection', 'active') }}\nWaiting: {{ state_attr('sensor.immich_job_face_detection', 'waiting') }}\n{{ \"Error: \" if state_attr('sensor.immich_job_face_detection', 'failed') > 0 }}{{ state_attr('sensor.immich_job_face_detection', 'failed') if state_attr('sensor.immich_job_face_detection', 'failed') > 0 }}</ha-alert>",
-                  "visibility": [
-                    {
-                      "condition": "state",
-                      "entity": "sensor.immich_job_face_detection",
-                      "state": "Active"
-                    }
-                  ]
-                },
-                {
-                  "type": "markdown",
-                  "content": "<ha-alert alert-type={{\"info\" if state_attr('sensor.immich_job_facial_recognition', 'failed') == 0 else \"error\"}}>Facial recognition in progress. \nRunning: {{ state_attr('sensor.immich_job_facial_recognition', 'active') }}\nWaiting: {{ state_attr('sensor.immich_job_facial_recognition', 'waiting') }}\n{{ \"Error: \" if state_attr('sensor.immich_job_facial_recognition', 'failed') > 0 }}{{ state_attr('sensor.immich_job_facial_recognition', 'failed') if state_attr('sensor.immich_job_facial_recognition', 'failed') > 0 }}</ha-alert>",
-                  "visibility": [
-                    {
-                      "condition": "state",
-                      "entity": "sensor.immich_job_facial_recognition",
-                      "state": "Active"
-                    }
-                  ]
-                }
               ],
-              "column_span": 2,
               "visibility": [
                 {
-                  "condition": "state",
-                  "entity": "sensor.immich_photos",
-                  "state_not": "unavailable"
+                  "condition": "user",
+                  "users": []
                 }
               ]
             }
