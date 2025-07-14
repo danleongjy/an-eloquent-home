@@ -1369,53 +1369,10 @@
           }
         },
         "bar_chart": {
-          "tap_action": {
-            "action": "none"
-          },
-          "hold_action": {
-            "action": "none"
-          },
-          "custom_fields": {
-            "chart_header": {
-              "card": {
-                "type": "custom:apexcharts-card",
-                "header": {
-                  "show": true,
-                  "show_states": true,
-                  "colorize_states": true
-                },
-                "apex_config": {
-                  "chart": {
-                    "height": "0px"
-                  }
-                }
-              }
-            }
-          },
           "styles": {
             "card": [
               {
                 "padding": "0px"
-              }
-            ],
-            "name": [
-              {
-                "justify-self": "left"
-              },
-              {
-                "padding-left": "15px"
-              },
-              {
-                "padding-top": "10px"
-              },
-              {
-                "font-weight": 500
-              },
-              {
-                "font-size": "12pt"
-              },
-              {
-                "color": "#999999"
               }
             ]
           }
@@ -1441,9 +1398,6 @@
               },
               {
                 "font-weight": 500
-              },
-              {
-                "text-shadow": "1px 1px 2px black"
               }
             ]
           }
@@ -8831,169 +8785,181 @@
                   ]
                 },
                 {
-                  "type": "custom:button-card",
-                  "template": "bar_chart",
-                  "name": "RAM Usage",
-                  "show_icon": false,
-                  "variables": {
-                    "all_total": 15.5,
-                    "bar_segment_proxmox_percent": "[[[ return (parseFloat(states['sensor.node_proxmox_memory_used'].state) - parseFloat(states['sensor.qemu_pfsense_100_memory_used'].state) - parseFloat(states['sensor.qemu_an_eloquent_home_101_memory_used'].state) - parseFloat(states['sensor.qemu_docker_102_memory_used'].state) - parseFloat(states['sensor.lxc_samba_103_memory_used'].state)) / variables.all_total * 100 ]]]",
-                    "bar_segment_pfsense_percent": "[[[ return parseFloat(states['sensor.qemu_pfsense_100_memory_used'].state) / variables.all_total * 100 ]]]",
-                    "bar_segment_homeassistant_percent": "[[[ return parseFloat(states['sensor.qemu_an_eloquent_home_101_memory_used'].state) / variables.all_total * 100 ]]]",
-                    "bar_segment_docker_percent": "[[[ return parseFloat(states['sensor.qemu_docker_102_memory_used'].state) / variables.all_total * 100 ]]]",
-                    "bar_segment_samba_percent": "[[[ return parseFloat(states['sensor.lxc_samba_103_memory_used'].state) / variables.all_total * 100 ]]]",
-                    "bar_segment_zz_available_percent": "[[[ return 100 - variables.bar_segment_proxmox_percent - variables.bar_segment_homeassistant_percent - variables.bar_segment_docker_percent - variables.bar_segment_samba_percent - variables.bar_segment_pfsense_percent ]]]"
-                  },
-                  "custom_fields": {
-                    "chart_header": {
-                      "card": {
-                        "series": [
-                          {
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "custom:apexcharts-card",
+                      "config_templates": "standard",
+                      "header": {
+                        "title": "RAM Usage"
+                      },
+                      "apex_config": {
+                        "chart": {
+                          "height": 0
+                        }
+                      },
+                      "series": [
+                        {
+                          "entity": "sensor.node_proxmox_memory_used",
+                          "name": "Proxmox",
+                          "transform": "return x - hass.states['sensor.qemu_pfsense_100_memory_used'].state - hass.states['sensor.qemu_an_eloquent_home_101_memory_used'].state - hass.states['sensor.qemu_docker_102_memory_used'].state - hass.states['sensor.lxc_samba_103_memory_used'].state\n"
+                        },
+                        {
+                          "entity": "sensor.qemu_pfsense_100_memory_used",
+                          "name": "pfSense"
+                        },
+                        {
+                          "entity": "sensor.qemu_an_eloquent_home_101_memory_used",
+                          "name": "Home Assistant"
+                        },
+                        {
+                          "entity": "sensor.qemu_docker_102_memory_used",
+                          "name": "Docker"
+                        },
+                        {
+                          "entity": "sensor.lxc_samba_103_memory_used",
+                          "name": "Samba"
+                        },
+                        {
+                          "entity": "sensor.node_proxmox_memory_used",
+                          "name": "Available",
+                          "transform": "return 15.5 - x",
+                          "color": "grey"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "bar_chart",
+                      "show_icon": false,
+                      "variables": {
+                        "all_total": 15.5,
+                        "bar_segment_proxmox_percent": "[[[ return (parseFloat(states['sensor.node_proxmox_memory_used'].state) - parseFloat(states['sensor.qemu_pfsense_100_memory_used'].state) - parseFloat(states['sensor.qemu_an_eloquent_home_101_memory_used'].state) - parseFloat(states['sensor.qemu_docker_102_memory_used'].state) - parseFloat(states['sensor.lxc_samba_103_memory_used'].state)) / variables.all_total * 100 ]]]",
+                        "bar_segment_pfsense_percent": "[[[ return parseFloat(states['sensor.qemu_pfsense_100_memory_used'].state) / variables.all_total * 100 ]]]",
+                        "bar_segment_homeassistant_percent": "[[[ return parseFloat(states['sensor.qemu_an_eloquent_home_101_memory_used'].state) / variables.all_total * 100 ]]]",
+                        "bar_segment_docker_percent": "[[[ return parseFloat(states['sensor.qemu_docker_102_memory_used'].state) / variables.all_total * 100 ]]]",
+                        "bar_segment_samba_percent": "[[[ return parseFloat(states['sensor.lxc_samba_103_memory_used'].state) / variables.all_total * 100 ]]]",
+                        "bar_segment_zz_available_percent": "[[[ return 100 - variables.bar_segment_proxmox_percent - variables.bar_segment_homeassistant_percent - variables.bar_segment_docker_percent - variables.bar_segment_samba_percent - variables.bar_segment_pfsense_percent ]]]"
+                      },
+                      "custom_fields": {
+                        "bar_segment_proxmox": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_proxmox_percent) ]]]"
+                            },
                             "entity": "sensor.node_proxmox_memory_used",
-                            "name": "Proxmox",
-                            "transform": "return x - hass.states['sensor.qemu_pfsense_100_memory_used'].state - hass.states['sensor.qemu_an_eloquent_home_101_memory_used'].state - hass.states['sensor.qemu_docker_102_memory_used'].state - hass.states['sensor.lxc_samba_103_memory_used'].state\n"
-                          },
-                          {
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#FF9800"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_pfsense": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_pfsense_percent) ]]]"
+                            },
                             "entity": "sensor.qemu_pfsense_100_memory_used",
-                            "name": "pfSense"
-                          },
-                          {
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#3498DB"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_homeassistant": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_homeassistant_percent) ]]]"
+                            },
                             "entity": "sensor.qemu_an_eloquent_home_101_memory_used",
-                            "name": "Home Assistant"
-                          },
-                          {
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#E74C3C"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_docker": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_docker_percent) ]]]"
+                            },
                             "entity": "sensor.qemu_docker_102_memory_used",
-                            "name": "Docker"
-                          },
-                          {
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#9B59B6"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_samba": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_samba_percent) ]]]"
+                            },
                             "entity": "sensor.lxc_samba_103_memory_used",
-                            "name": "Samba"
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#F1C40F"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_available": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_zz_available_percent) ]]]"
+                            },
+                            "entity": "sensor.node_proxmox_memory_used",
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#808080"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "styles": {
+                        "grid": [
+                          {
+                            "grid-template-areas": "\"chart_header chart_header chart_header chart_header chart_header chart_header\" \"bar_segment_proxmox bar_segment_pfsense bar_segment_homeassistant bar_segment_docker bar_segment_samba bar_segment_available\""
                           },
                           {
-                            "entity": "sensor.node_proxmox_memory_used",
-                            "name": "Available",
-                            "transform": "return 15.5 - x",
-                            "color": "grey"
+                            "grid-template-columns": "[[[ return Math.round(variables.bar_segment_proxmox_percent).toString() + '% ' + variables.bar_segment_pfsense_percent.toString() + '%' + variables.bar_segment_homeassistant_percent.toString() + '%' + variables.bar_segment_docker_percent.toString() + '%' + variables.bar_segment_samba_percent.toString() + '%' + variables.bar_segment_zz_available_percent.toString() + '%' ]]]"
+                          },
+                          {
+                            "grid-template-rows": "min-content min-content"
                           }
                         ]
                       }
-                    },
-                    "bar_segment_proxmox": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_proxmox_percent) ]]]"
-                        },
-                        "entity": "sensor.node_proxmox_memory_used",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#FF9800"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_pfsense": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_pfsense_percent) ]]]"
-                        },
-                        "entity": "sensor.qemu_pfsense_100_memory_used",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#3498DB"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_homeassistant": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_homeassistant_percent) ]]]"
-                        },
-                        "entity": "sensor.qemu_an_eloquent_home_101_memory_used",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#E74C3C"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_docker": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_docker_percent) ]]]"
-                        },
-                        "entity": "sensor.qemu_docker_102_memory_used",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#9B59B6"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_samba": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_samba_percent) ]]]"
-                        },
-                        "entity": "sensor.lxc_samba_103_memory_used",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#F1C40F"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_available": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_zz_available_percent) ]]]"
-                        },
-                        "entity": "sensor.node_proxmox_memory_used",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#808080"
-                            }
-                          ]
-                        }
-                      }
                     }
-                  },
-                  "styles": {
-                    "grid": [
-                      {
-                        "grid-template-areas": "\"n n n n n n\" \"chart_header chart_header chart_header chart_header chart_header chart_header\" \"bar_segment_proxmox bar_segment_pfsense bar_segment_homeassistant bar_segment_docker bar_segment_samba bar_segment_available\""
-                      },
-                      {
-                        "grid-template-columns": "[[[ return Math.round(variables.bar_segment_proxmox_percent).toString() + '% ' + variables.bar_segment_pfsense_percent.toString() + '%' + variables.bar_segment_homeassistant_percent.toString() + '%' + variables.bar_segment_docker_percent.toString() + '%' + variables.bar_segment_samba_percent.toString() + '%' + variables.bar_segment_zz_available_percent.toString() + '%' ]]]"
-                      },
-                      {
-                        "grid-template-rows": "min-content min-content min-content"
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "column_span": 2
@@ -9221,177 +9187,190 @@
                   }
                 },
                 {
-                  "type": "custom:button-card",
-                  "template": "bar_chart",
-                  "entity": "sensor.home_assistant_devices_by_integration",
-                  "name": "Devices by Integration",
-                  "show_icon": false,
-                  "variables": {
-                    "all_total": "[[[ return parseInt(entity.state) ]]]",
-                    "bar_segment_zigbee_percent": "[[[ return parseInt(entity.attributes.zha) / variables.all_total * 100 ]]]",
-                    "bar_segment_esphome_percent": "[[[ return parseInt(entity.attributes.esphome) / variables.all_total * 100 ]]]",
-                    "bar_segment_localtuya_percent": "[[[ return parseInt(entity.attributes.localtuya) / variables.all_total * 100 ]]]",
-                    "bar_segment_broadlink_percent": "[[[ return parseInt(entity.attributes.broadlink) / variables.all_total * 100 ]]]",
-                    "bar_segment_switchbot_percent": "[[[ return parseInt(entity.attributes.switchbot) / variables.all_total * 100 ]]]",
-                    "bar_segment_zz_others_percent": "[[[ return 100 - variables.bar_segment_zigbee_percent - variables.bar_segment_esphome_percent - variables.bar_segment_localtuya_percent - variables.bar_segment_broadlink_percent - variables.bar_segment_switchbot_percent ]]]"
-                  },
-                  "custom_fields": {
-                    "chart_header": {
-                      "card": {
-                        "all_series_config": {
-                          "unit": " "
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "custom:apexcharts-card",
+                      "config_templates": "standard",
+                      "header": {
+                        "title": "Devices by Integration"
+                      },
+                      "apex_config": {
+                        "chart": {
+                          "height": 0
+                        }
+                      },
+                      "all_series_config": {
+                        "unit": " "
+                      },
+                      "series": [
+                        {
+                          "entity": "sensor.home_assistant_devices_by_integration",
+                          "attribute": "zha",
+                          "name": "Zigbee"
                         },
-                        "series": [
-                          {
+                        {
+                          "entity": "sensor.home_assistant_devices_by_integration",
+                          "attribute": "esphome",
+                          "name": "ESPHome"
+                        },
+                        {
+                          "entity": "sensor.home_assistant_devices_by_integration",
+                          "attribute": "localtuya",
+                          "name": "LocalTuya"
+                        },
+                        {
+                          "entity": "sensor.home_assistant_devices_by_integration",
+                          "attribute": "broadlink",
+                          "name": "Broadlink"
+                        },
+                        {
+                          "entity": "sensor.home_assistant_devices_by_integration",
+                          "attribute": "switchbot",
+                          "name": "SwitchBot"
+                        },
+                        {
+                          "entity": "sensor.home_assistant_devices_by_integration",
+                          "name": "Others",
+                          "transform": "return entity.state - entity.attributes.zha - entity.attributes.esphome - entity.attributes.localtuya - entity.attributes.broadlink - entity.attributes.switchbot",
+                          "color": "grey"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "bar_chart",
+                      "entity": "sensor.home_assistant_devices_by_integration",
+                      "show_name": false,
+                      "show_icon": false,
+                      "variables": {
+                        "all_total": "[[[ return parseInt(entity.state) ]]]",
+                        "bar_segment_zigbee_percent": "[[[ return parseInt(entity.attributes.zha) / variables.all_total * 100 ]]]",
+                        "bar_segment_esphome_percent": "[[[ return parseInt(entity.attributes.esphome) / variables.all_total * 100 ]]]",
+                        "bar_segment_localtuya_percent": "[[[ return parseInt(entity.attributes.localtuya) / variables.all_total * 100 ]]]",
+                        "bar_segment_broadlink_percent": "[[[ return parseInt(entity.attributes.broadlink) / variables.all_total * 100 ]]]",
+                        "bar_segment_switchbot_percent": "[[[ return parseInt(entity.attributes.switchbot) / variables.all_total * 100 ]]]",
+                        "bar_segment_zz_others_percent": "[[[ return 100 - variables.bar_segment_zigbee_percent - variables.bar_segment_esphome_percent - variables.bar_segment_localtuya_percent - variables.bar_segment_broadlink_percent - variables.bar_segment_switchbot_percent ]]]"
+                      },
+                      "custom_fields": {
+                        "bar_segment_zigbee": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_zigbee_percent) ]]]"
+                            },
                             "entity": "sensor.home_assistant_devices_by_integration",
-                            "attribute": "zha",
-                            "name": "Zigbee"
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#FF9800"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_esphome": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_esphome_percent) ]]]"
+                            },
+                            "entity": "sensor.home_assistant_devices_by_integration",
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#3498DB"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_localtuya": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_localtuya_percent) ]]]"
+                            },
+                            "entity": "sensor.home_assistant_devices_by_integration",
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#E74C3C"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_broadlink": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_broadlink_percent) ]]]"
+                            },
+                            "entity": "sensor.home_assistant_devices_by_integration",
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#9B59B6"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_switchbot": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_switchbot_percent) ]]]"
+                            },
+                            "entity": "sensor.home_assistant_devices_by_integration",
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#F1C40F"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_others": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_zz_others_percent) ]]]"
+                            },
+                            "entity": "sensor.home_assistant_devices_by_integration",
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#808080"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "styles": {
+                        "grid": [
+                          {
+                            "grid-template-areas": "\"bar_segment_zigbee bar_segment_esphome bar_segment_localtuya bar_segment_broadlink bar_segment_switchbot bar_segment_others\""
                           },
                           {
-                            "entity": "sensor.home_assistant_devices_by_integration",
-                            "attribute": "esphome",
-                            "name": "ESPHome"
+                            "grid-template-columns": "[[[ return variables.bar_segment_zigbee_percent.toString() + '% ' + variables.bar_segment_esphome_percent.toString() + '%' + variables.bar_segment_localtuya_percent.toString() + '%' + variables.bar_segment_broadlink_percent.toString() + '%' + variables.bar_segment_switchbot_percent.toString() + '%' + variables.bar_segment_zz_others_percent.toString() + '%' ]]]"
                           },
                           {
-                            "entity": "sensor.home_assistant_devices_by_integration",
-                            "attribute": "localtuya",
-                            "name": "LocalTuya"
-                          },
-                          {
-                            "entity": "sensor.home_assistant_devices_by_integration",
-                            "attribute": "broadlink",
-                            "name": "Broadlink"
-                          },
-                          {
-                            "entity": "sensor.home_assistant_devices_by_integration",
-                            "attribute": "switchbot",
-                            "name": "SwitchBot"
-                          },
-                          {
-                            "entity": "sensor.home_assistant_devices_by_integration",
-                            "name": "Others",
-                            "transform": "return entity.state - entity.attributes.zha - entity.attributes.esphome - entity.attributes.localtuya - entity.attributes.broadlink - entity.attributes.switchbot",
-                            "color": "grey"
+                            "grid-template-rows": "min-content"
                           }
                         ]
                       }
-                    },
-                    "bar_segment_zigbee": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_zigbee_percent) ]]]"
-                        },
-                        "entity": "sensor.home_assistant_devices_by_integration",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#FF9800"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_esphome": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_esphome_percent) ]]]"
-                        },
-                        "entity": "sensor.home_assistant_devices_by_integration",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#3498DB"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_localtuya": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_localtuya_percent) ]]]"
-                        },
-                        "entity": "sensor.home_assistant_devices_by_integration",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#E74C3C"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_broadlink": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_broadlink_percent) ]]]"
-                        },
-                        "entity": "sensor.home_assistant_devices_by_integration",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#9B59B6"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_switchbot": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_switchbot_percent) ]]]"
-                        },
-                        "entity": "sensor.home_assistant_devices_by_integration",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#F1C40F"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_others": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_zz_others_percent) ]]]"
-                        },
-                        "entity": "sensor.home_assistant_devices_by_integration",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#808080"
-                            }
-                          ]
-                        }
-                      }
                     }
-                  },
-                  "styles": {
-                    "grid": [
-                      {
-                        "grid-template-areas": "\"n n n n n n\" \"chart_header chart_header chart_header chart_header chart_header chart_header\" \"bar_segment_zigbee bar_segment_esphome bar_segment_localtuya bar_segment_broadlink bar_segment_switchbot bar_segment_others\""
-                      },
-                      {
-                        "grid-template-columns": "[[[ return variables.bar_segment_zigbee_percent.toString() + '% ' + variables.bar_segment_esphome_percent.toString() + '%' + variables.bar_segment_localtuya_percent.toString() + '%' + variables.bar_segment_broadlink_percent.toString() + '%' + variables.bar_segment_switchbot_percent.toString() + '%' + variables.bar_segment_zz_others_percent.toString() + '%' ]]]"
-                      },
-                      {
-                        "grid-template-rows": "min-content min-content min-content"
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "column_span": 2
@@ -9897,158 +9876,182 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "custom:button-card",
-                  "template": "bar_chart",
-                  "name": "Assets",
-                  "variables": {
-                    "all_total": "[[[ return parseInt(states['sensor.immich_photos'].state) + parseInt(states['sensor.immich_videos'].state) ]]]",
-                    "bar_segment_photos_percent": "[[[ return parseInt(states['sensor.immich_photos'].state)/variables.all_total * 100 ]]]",
-                    "bar_segment_videos_percent": "[[[ return parseInt(states['sensor.immich_videos'].state)/variables.all_total * 100 ]]]"
-                  },
-                  "custom_fields": {
-                    "chart_header": {
-                      "card": {
-                        "series": [
-                          {
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "custom:apexcharts-card",
+                      "config_templates": "standard",
+                      "header": {
+                        "title": "Assets"
+                      },
+                      "apex_config": {
+                        "chart": {
+                          "height": 0
+                        }
+                      },
+                      "series": [
+                        {
+                          "entity": "sensor.immich_photos",
+                          "name": "Photos",
+                          "unit": " ",
+                          "show": {
+                            "in_chart": false
+                          }
+                        },
+                        {
+                          "entity": "sensor.immich_videos",
+                          "name": "Videos",
+                          "unit": " ",
+                          "show": {
+                            "in_chart": false
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "bar_chart",
+                      "variables": {
+                        "all_total": "[[[ return parseInt(states['sensor.immich_photos'].state) + parseInt(states['sensor.immich_videos'].state) ]]]",
+                        "bar_segment_photos_percent": "[[[ return parseInt(states['sensor.immich_photos'].state)/variables.all_total * 100 ]]]",
+                        "bar_segment_videos_percent": "[[[ return parseInt(states['sensor.immich_videos'].state)/variables.all_total * 100 ]]]"
+                      },
+                      "custom_fields": {
+                        "bar_segment_photos": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_photos_percent) ]]]"
+                            },
                             "entity": "sensor.immich_photos",
-                            "name": "Photos",
-                            "unit": " ",
-                            "show": {
-                              "in_chart": false
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#FF9800"
+                                }
+                              ]
                             }
+                          }
+                        },
+                        "bar_segment_videos": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_videos_percent) ]]]"
+                            },
+                            "entity": "sensor.immich_videos",
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#3498DB"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "styles": {
+                        "grid": [
+                          {
+                            "grid-template-areas": "\"bar_segment_photos bar_segment_videos\""
                           },
                           {
-                            "entity": "sensor.immich_videos",
-                            "name": "Videos",
-                            "unit": " ",
-                            "show": {
-                              "in_chart": false
-                            }
+                            "grid-template-columns": "[[[ return variables.bar_segment_photos_percent.toString() + '% ' + variables.bar_segment_videos_percent.toString() + '%' ]]]"
+                          },
+                          {
+                            "grid-template-rows": "min-content"
                           }
                         ]
                       }
-                    },
-                    "bar_segment_photos": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_photos_percent) ]]]"
-                        },
-                        "entity": "sensor.immich_photos",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#FF9800"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_videos": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_videos_percent) ]]]"
-                        },
-                        "entity": "sensor.immich_videos",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#3498DB"
-                            }
-                          ]
-                        }
-                      }
                     }
-                  },
-                  "styles": {
-                    "grid": [
-                      {
-                        "grid-template-areas": "\"n n\" \"chart_header chart_header\" \"bar_segment_photos bar_segment_videos\""
-                      },
-                      {
-                        "grid-template-columns": "[[[ return variables.bar_segment_photos_percent.toString() + '% ' + variables.bar_segment_videos_percent.toString() + '%' ]]]"
-                      },
-                      {
-                        "grid-template-rows": "min-content min-content min-content"
-                      }
-                    ]
-                  }
+                  ]
                 },
                 {
-                  "type": "custom:button-card",
-                  "template": "bar_chart",
-                  "name": "Storage Used",
-                  "variables": {
-                    "all_total": "[[[ return parseInt(states['sensor.immich_usage_photos'].state) + parseInt(states['sensor.immich_usage_videos'].state) ]]]",
-                    "bar_segment_photos_percent": "[[[ return parseInt(states['sensor.immich_usage_photos'].state)/variables.all_total * 100 ]]]",
-                    "bar_segment_videos_percent": "[[[ return parseInt(states['sensor.immich_usage_videos'].state)/variables.all_total * 100 ]]]"
-                  },
-                  "custom_fields": {
-                    "chart_header": {
-                      "card": {
-                        "series": [
-                          {
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "custom:apexcharts-card",
+                      "config_templates": "standard",
+                      "header": {
+                        "title": "Storage Used"
+                      },
+                      "apex_config": {
+                        "chart": {
+                          "height": 0
+                        }
+                      },
+                      "series": [
+                        {
+                          "entity": "sensor.immich_usage_photos",
+                          "name": "Photos"
+                        },
+                        {
+                          "entity": "sensor.immich_usage_videos",
+                          "name": "Videos"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "bar_chart",
+                      "variables": {
+                        "all_total": "[[[ return parseInt(states['sensor.immich_usage_photos'].state) + parseInt(states['sensor.immich_usage_videos'].state) ]]]",
+                        "bar_segment_photos_percent": "[[[ return parseInt(states['sensor.immich_usage_photos'].state)/variables.all_total * 100 ]]]",
+                        "bar_segment_videos_percent": "[[[ return parseInt(states['sensor.immich_usage_videos'].state)/variables.all_total * 100 ]]]"
+                      },
+                      "custom_fields": {
+                        "bar_segment_photos": {
+                          "card": {
+                            "type": "custom:button-card",
                             "entity": "sensor.immich_usage_photos",
-                            "name": "Photos"
+                            "template": "bar_chart_segment",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_photos_percent) ]]]"
+                            },
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#FF9800"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_videos": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "entity": "sensor.immich_usage_videos",
+                            "template": "bar_chart_segment",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_videos_percent) ]]]"
+                            },
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#3498DB"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "styles": {
+                        "grid": [
+                          {
+                            "grid-template-areas": "\"bar_segment_photos bar_segment_videos\""
                           },
                           {
-                            "entity": "sensor.immich_usage_videos",
-                            "name": "Videos"
+                            "grid-template-columns": "[[[ return variables.bar_segment_photos_percent.toString() + '% ' + variables.bar_segment_videos_percent.toString() + '%' ]]]"
+                          },
+                          {
+                            "grid-template-rows": "min-content"
                           }
                         ]
                       }
-                    },
-                    "bar_segment_photos": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "entity": "sensor.immich_usage_photos",
-                        "template": "bar_chart_segment",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_photos_percent) ]]]"
-                        },
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#FF9800"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_videos": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "entity": "sensor.immich_usage_videos",
-                        "template": "bar_chart_segment",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_videos_percent) ]]]"
-                        },
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#3498DB"
-                            }
-                          ]
-                        }
-                      }
                     }
-                  },
-                  "styles": {
-                    "grid": [
-                      {
-                        "grid-template-areas": "\"n n\" \"chart_header chart_header\" \"bar_segment_photos bar_segment_videos\""
-                      },
-                      {
-                        "grid-template-columns": "[[[ return variables.bar_segment_photos_percent.toString() + '% ' + variables.bar_segment_videos_percent.toString() + '%' ]]]"
-                      },
-                      {
-                        "grid-template-rows": "min-content min-content min-content"
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "column_span": 2
@@ -10085,165 +10088,6 @@
                   "condition": "state",
                   "entity": "sensor.immich_photos",
                   "state_not": "unavailable"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "custom:button-card",
-                  "custom_fields": {
-                    "photos": "[[[ return states['sensor.immich_photos'].state + ' <ha-icon icon=\"mdi:image\" style=\"height:18pt;width:18pt\"></ha-icon>' ]]]\n",
-                    "videos": "[[[ return states['sensor.immich_videos'].state + ' <ha-icon icon=\"mdi:video\" style=\"height:18pt;width:18pt\"></ha-icon>' ]]]\n"
-                  },
-                  "styles": {
-                    "card": [
-                      {
-                        "position": "relative"
-                      },
-                      {
-                        "height": "56px"
-                      },
-                      {
-                        "background": "[[[ return \"linear-gradient(90deg, #FF9800 0%, #FF9800 \" + (parseInt(states['sensor.immich_photos'].state)/(parseInt(states['sensor.immich_photos'].state) + parseInt(states['sensor.immich_videos'].state))) * 100 + \"%, #3498DB \" +  (parseInt(states['sensor.immich_photos'].state)/(parseInt(states['sensor.immich_photos'].state) + parseInt(states['sensor.immich_videos'].state))) * 100 + \"%, #3498DB 100%)\"]]] \n"
-                      }
-                    ],
-                    "custom_fields": {
-                      "photos": [
-                        {
-                          "position": "absolute"
-                        },
-                        {
-                          "left": "2%"
-                        },
-                        {
-                          "font-size": "14px"
-                        },
-                        {
-                          "font-weight": 500
-                        },
-                        {
-                          "background-color": "#FF9800"
-                        },
-                        {
-                          "padding-left": "1%"
-                        },
-                        {
-                          "padding-right": "1%"
-                        },
-                        {
-                          "border-radius": "4px"
-                        }
-                      ],
-                      "videos": [
-                        {
-                          "position": "absolute"
-                        },
-                        {
-                          "right": "2%"
-                        },
-                        {
-                          "font-size": "14px"
-                        },
-                        {
-                          "font-weight": 500
-                        },
-                        {
-                          "background-color": "#3498DB"
-                        },
-                        {
-                          "padding-left": "1%"
-                        },
-                        {
-                          "padding-right": "1%"
-                        },
-                        {
-                          "border-radius": "4px"
-                        }
-                      ]
-                    }
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "custom_fields": {
-                    "photos": "[[[ return helpers.localize(states['sensor.immich_usage_photos']) + ' <ha-icon icon=\"mdi:image\" style=\"height:18pt;width:18pt\"></ha-icon>' ]]]",
-                    "videos": "[[[ return helpers.localize(states['sensor.immich_usage_videos']) + ' <ha-icon icon=\"mdi:video\" style=\"height:18pt;width:18pt\"></ha-icon>' ]]]"
-                  },
-                  "styles": {
-                    "card": [
-                      {
-                        "position": "relative"
-                      },
-                      {
-                        "height": "56px"
-                      },
-                      {
-                        "background": "[[[ return \"linear-gradient(90deg, #FF9800 0%, #FF9800 \" + (parseInt(states['sensor.immich_usage_photos'].state)/(parseInt(states['sensor.immich_usage_photos'].state) + parseInt(states['sensor.immich_usage_videos'].state))) * 100 + \"%, #3498DB \" +  (parseInt(states['sensor.immich_usage_photos'].state)/(parseInt(states['sensor.immich_usage_photos'].state) + parseInt(states['sensor.immich_usage_videos'].state))) * 100 + \"%, #3498DB 100%)\"]]] \n"
-                      }
-                    ],
-                    "custom_fields": {
-                      "photos": [
-                        {
-                          "position": "absolute"
-                        },
-                        {
-                          "left": "2%"
-                        },
-                        {
-                          "font-size": "14px"
-                        },
-                        {
-                          "font-weight": 500
-                        },
-                        {
-                          "background-color": "#FF9800"
-                        },
-                        {
-                          "padding-left": "1%"
-                        },
-                        {
-                          "padding-right": "1%"
-                        },
-                        {
-                          "border-radius": "4px"
-                        }
-                      ],
-                      "videos": [
-                        {
-                          "position": "absolute"
-                        },
-                        {
-                          "right": "2%"
-                        },
-                        {
-                          "font-size": "14px"
-                        },
-                        {
-                          "font-weight": 500
-                        },
-                        {
-                          "background-color": "#3498DB"
-                        },
-                        {
-                          "padding-left": "1%"
-                        },
-                        {
-                          "padding-right": "1%"
-                        },
-                        {
-                          "border-radius": "4px"
-                        }
-                      ]
-                    }
-                  }
-                }
-              ],
-              "visibility": [
-                {
-                  "condition": "user",
-                  "users": []
                 }
               ]
             }
