@@ -297,21 +297,6 @@
        and value_json.Services is defined and value_json.Services | length > 0 }}
 
 - platform: rest
-  resource: https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=40089
-  name: Bus Stop SCGS
-  unique_id: sensor.bus_stop_scgs
-  headers:
-    accountKey: !secret lta_datamall_apikey
-  scan_interval: 172800
-  value_template: >
-    {% from 'transit.jinja' import bus_stop_next_buses %}
-    {{ bus_stop_next_buses(value_json, ['48','67','170','960','972M'], 4) }}
-  availability: >
-    {{ (states('zone.schools_outer_perimeter') | int(0) > 0 
-        or states('zone.scgs_bus_stop') | int(0) >0)
-       and value_json.Services is defined and value_json.Services | length > 0 }}
-
-- platform: rest
   resource: https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=40069
   name: Bus Stop ACS
   unique_id: sensor.bus_stop_acs
