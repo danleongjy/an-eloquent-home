@@ -241,28 +241,6 @@
 
 - trigger:
     - platform: state
-      entity_id: binary_sensor.study_room_radar_motion
-    - platform: state
-      entity_id: binary_sensor.study_room_radar_occupancy
-      from: 'off'
-      to: 'on'
-      for:
-        seconds: "{{ states('input_number.radar_occupancy_on_delay') | int(10) }}"
-    - platform: state
-      entity_id: binary_sensor.study_room_radar_occupancy
-      from: 'on'
-      to: 'off'
-  binary_sensor:
-    - name: Study Room Presence
-      unique_id: binary_sensor.study_room_presence
-      device_class: occupancy
-      state: "{{ is_state('binary_sensor.study_room_radar_occupancy', 'on') or is_state('binary_sensor.study_room_radar_motion', 'on') }}"
-      attributes:
-        study_room_radar_occupancy: "{{ states('binary_sensor.study_room_radar_occupancy') }}"
-        study_room_radar_motion: "{{ states('binary_sensor.study_room_radar_motion') }}"
-
-- trigger:
-    - platform: state
       entity_id: binary_sensor.parents_room_motion
     - platform: state
       entity_id: binary_sensor.parents_room_radar_occupancy

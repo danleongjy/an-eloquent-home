@@ -2691,7 +2691,7 @@
   use_blueprint:
     path: danleongjy/motion_fan.yaml
     input:
-      motion_sensor: binary_sensor.study_room_presence
+      motion_sensor: binary_sensor.study_room_radar_occupancy
       fan: fan.study_room_fan
       entities_list:
       - fan.study_room_fan
@@ -2795,7 +2795,7 @@
           entity_id: switch.kitchen_core_use_wake_word
     - if:
       - condition: state
-        entity_id: binary_sensor.study_room_presence
+        entity_id: binary_sensor.study_room_radar_occupancy
         state: 'on'
       then:
       - action: switch.turn_on
@@ -2823,7 +2823,7 @@
   use_blueprint:
     path: danleongjy/motion_ac.yaml
     input:
-      motion_sensor: binary_sensor.study_room_presence
+      motion_sensor: binary_sensor.study_room_radar_occupancy
       ac: climate.study_room_ac
       entities_list:
       - fan.study_room_fan
@@ -2840,7 +2840,7 @@
     input:
       lights_list:
       - light.study_room_lights
-      motion_sensor: binary_sensor.study_room_presence
+      motion_sensor: binary_sensor.study_room_radar_occupancy
       lux_sensor: sensor.study_walkway_lux
       lights_debounce: false
       entities_list:
@@ -2852,8 +2852,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.study_room_presence
+      motion_sensor: binary_sensor.study_room_radar_occupancy
       entities_list:
       - input_boolean.party_mode
       turnoff_entities_list:
