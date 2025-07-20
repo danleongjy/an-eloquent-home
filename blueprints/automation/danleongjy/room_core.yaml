@@ -80,6 +80,11 @@ action:
           - light.elenas_room_lights
         study_room:
           - light.study_room_lights
+      doors:
+        parents_room: binary_sensor.parents_room_doors
+        study_room: binary_sensor.parents_room_door
+        elis_room: binary_sensor.elis_room_door
+        elenas_room: binary_sensor.elenas_room_door
       fan: "{{ 'fan.' + room + '_fan' }}"
       ac: "{{ 'climate.' + room + '_ac' }}"
       motion_timeout: "{{ 'automation.' + room + '_motion_timeout' }}"
@@ -172,5 +177,50 @@ action:
                 data:
                   ac: "{{ ac }}"
                   command: "{{ states(core_current_command) }}"
+          - conditions: "{{ states(core_current_command) == 'set_special_scene' }}"
+            sequence:
+              - action: script.lights_controller
+                data:
+                  lights: "{{ lights[room] }}"
+                  command: "lights_auto_control"
+              - action: script.fan_controller
+                data:
+                  fan: "{{ fan }}"
+                  command: "fan_auto_control"
+              - action: script.fan_controller
+                data:
+                  fan: "{{ fan }}"
+                  command: "fan_on"
+              - action: script.ac_controller
+                data:
+                  ac: "{{ ac }}"
+                  command: "ac_auto_control"
+              - if:
+                  - condition: template
+                    value_template: "{{ is_state(doors[room], 'off') }}"
+                then:
+                  - if:
+                      - condition: time
+                        after: !input sleep_hours_end
+                        before: !input sleep_hours_start
+                    then:
+                      - action: script.lights_controller
+                        data:
+                          lights: "{{ lights[room] }}"
+                          command: "lights_off"
+                    else:
+                      - action: script.lights_controller
+                        data:
+                          lights: "{{ lights[room] }}"
+                          command: "lights_on"
+                  - action: script.ac_controller
+                    data:
+                      ac: "{{ ac }}"
+                      command: "ac_on"
+                else:
+                  - action: script.lights_controller
+                    data:
+                      lights: "{{ lights[room] }}"
+                      command: "set_recommended_scene"
 mode: queued
 max: 10
