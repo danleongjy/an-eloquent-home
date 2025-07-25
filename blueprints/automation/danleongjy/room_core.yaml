@@ -29,6 +29,13 @@ blueprint:
       selector:
         entity:
           domain: input_datetime
+    cover:
+      name: Cover
+      description: The cover to control
+      selector:
+        entity:
+          filter:
+            - domain: cover
 trigger_variables:
   room: !input core_room
 trigger:
@@ -87,6 +94,7 @@ action:
         elenas_room: binary_sensor.elenas_room_door
       fan: "{{ 'fan.' + room + '_fan' }}"
       ac: "{{ 'climate.' + room + '_ac' }}"
+      cover: !input cover
       motion_timeout: "{{ 'automation.' + room + '_motion_timeout' }}"
       ac_auto_control: "{{ 'automation.' + room + '_ac_auto_control' }}"
       fan_auto_control: "{{ 'automation.' + room + '_fan_auto_control' }}"
@@ -177,6 +185,12 @@ action:
                 data:
                   ac: "{{ ac }}"
                   command: "{{ states(core_current_command) }}"
+          - conditions: "{{ states(core_current_command) in ['cover_open', 'cover_close', 'cover_auto_control', 'cover_manual_control'] }}"
+            sequence:
+              - action: script.cover_controller
+                data:
+                  cover: "{{ cover }}"
+                  command: "{{ states(core_current_command) }}"
           - conditions: "{{ states(core_current_command) == 'set_special_scene' }}"
             sequence:
               - action: script.lights_controller
@@ -195,6 +209,14 @@ action:
                 data:
                   ac: "{{ ac }}"
                   command: "ac_auto_control"
+              - action: script.cover_controller
+                data:
+                  cover: "{{ cover }}"
+                  command: "cover_close"
+              - action: script.cover_controller
+                data:
+                  cover: "{{ cover }}"
+                  command: "cover_auto_control"
               - if:
                   - condition: template
                     value_template: "{{ is_state(doors[room], 'off') }}"
