@@ -9,6 +9,7 @@ substitutions:
   display_rotation: 270°
   rtttl_output_pin: GPIO25
   volume: "0.001" # 0.005 generally loud enough
+  doorbell_led_effect: Right Arrow
 
 esp32:
   board: m5stack-fire
@@ -52,3 +53,110 @@ packages:
   core: !include packages/room_core.yaml
   env3: !include packages/env3.yaml
   rtttl: !include packages/room_core_rtttl.yaml
+
+light:
+  - id: !extend led_strips
+    variant: ws2812x
+    num_leds: 37
+    pin: 26
+    effects:
+      - addressable_lambda:
+          name: Right Arrow
+          update_interval: 0.1s
+          lambda: |-
+            // set white background
+            it.all() = Color::WHITE;
+
+            // initialise green arrow
+            it[3] = Color(0, 255, 0);
+            it[8] = Color(0, 255, 0);
+            it[14] = Color(0, 255, 0);
+            it.range(15,22) =Color(0, 255, 0);
+            it[27] = Color(0, 255, 0);
+            it[32] = Color(0, 255, 0);
+            it[36] = Color(0, 255, 0);
+
+            // animate
+            static uint16_t progress = 0;
+            if (progress > 6) {
+              progress = 0;
+            }
+
+            it[progress + 15] = Color::WHITE;
+            progress = progress + 1;
+      - addressable_lambda:
+          name: Sunrise
+          update_interval: 0.5s
+          lambda: |-
+            // set black background
+            it.all() = Color::BLACK;
+
+            // animate
+            static uint16_t progress = 0;
+            if (progress > 5) {
+              progress = 0;
+            }
+
+            if (progress == 0) {
+              it.range(29,32) = Color(255,255,0);
+              it.range(33,37) = Color(255,255,0);
+            } else if (progress == 1) {
+              it.range(17,20) = Color(255,255,0);
+              it.range(23,27) = Color(255,255,0);
+              it.range(28,37) = Color(255,255,0);
+            } else if (progress == 2) {
+              it.range(5,8) = Color(255,255,0);
+              it.range(10,14) = Color(255,255,0);
+              it.range(16,21) = Color(255,255,0);
+              it.range(23,27) = Color(255,255,0);
+              it.range(29,32) = Color(255,255,0);
+            } else if (progress == 3) {
+              it.range(0,9) = Color(255,255,0);
+              it.range(10,14) = Color(255,255,0);
+              it.range(17,20) = Color(255,255,0);
+            } else if (progress == 4) {
+              it.range(0,4) = Color(255,255,0);
+              it.range(5,8) = Color(255,255,0);
+            }
+            
+            progress = progress + 1;
+      - addressable_lambda:
+          name: Heart
+          update_interval: 0.5s
+          lambda: |-
+            // set black background
+            it.all() = Color::BLACK;
+
+            // small heart
+            it[5] = Color(255,0,0);
+            it[7] = Color(255,0,0);
+            it.range(10,14) = Color(255,0,0);
+            it.range(17,20) = Color(255,0,0);
+            it.range(24,26) = Color(255,0,0);
+            it[30] = Color(255,0,0);
+                                    
+            //animate
+            static uint16_t progress = 0;
+            if (progress > 1) {
+              progress = 0;
+            }
+
+            if (progress == 1) {
+              // add pixels for big heart
+              it[0] = Color(255,0,0);
+              it[3] = Color(255,0,0);
+              it[4] = Color(255,0,0);
+              it[8] = Color(255,0,0);
+              it[9] = Color(255,0,0);
+              it[14] = Color(255,0,0);
+              it[16] = Color(255,0,0);
+              it[20] = Color(255,0,0);
+              it[23] = Color(255,0,0);
+              it[26] = Color(255,0,0);
+              it[29] = Color(255,0,0);
+              it[31] = Color(255,0,0);
+              it[34] = Color(255,0,0);
+              it[35] = Color(255,0,0);
+            }
+
+            progress = progress + 1;
