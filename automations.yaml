@@ -2115,7 +2115,7 @@
       - light.parents_room_lights
       - fan.parents_room_fan
       - climate.parents_room_ac
-      - light.parents_room_bedside_lamp
+      - light.parents_room_core_led_strips
       doors_list:
       - binary_sensor.parents_room_door
       - binary_sensor.master_bathroom_door
@@ -5142,24 +5142,23 @@
         target:
           entity_id: cover.elenas_room_curtains
 - id: '1736504317285'
-  alias: Parents' Room Motion Bedside Lamp
-  description: Set the Parents' Room Bedside Lamp when motion is detected, at least
-    one door is open and no devices are on, depending on lux level and time.
+  alias: Elena's Room Motion Bedside Lamp
+  description: Set Elena's Room Bedside Lamp when motion is detected, the door is
+    open and no devices are on, depending on lux level and time.
   use_blueprint:
     path: danleongjy/motion_lights.yaml
     input:
       lights_list:
-      - light.parents_room_bedside_lamp
-      motion_sensor: binary_sensor.parents_room_presence
-      lux_sensor: sensor.parents_room_lux
+      - light.elenas_room_bedside_lamp
+      motion_sensor: binary_sensor.elenas_room_presence
+      lux_sensor: sensor.elenas_room_lux
       entities_list:
-      - light.parents_room_lights
-      - fan.parents_room_fan
-      - climate.parents_room_ac
-      - light.parents_room_bedside_lamp
+      - light.elenas_room_lights
+      - fan.elenas_room_fan
+      - climate.elenas_room_ac
+      - light.elenas_room_bedside_lamp
       doors_list:
-      - binary_sensor.parents_room_door
-      - binary_sensor.master_bathroom_door
+      - binary_sensor.elenas_room_door
       blackout_hours_start: input_datetime.sleep_hours_start
       blackout_hours_end: input_datetime.sleep_hours_end
 - id: '1736671451711'
@@ -7758,3 +7757,24 @@
         data:
           tag: desynced
   mode: single
+- id: '1753576863029'
+  alias: Parents' Room Motion Core LED Strips
+  description: Set Parents' Room Core LED Strips when motion is detected, the door
+    is open and no devices are on, depending on lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.parents_room_core_led_strips
+      motion_sensor: binary_sensor.parents_room_presence
+      lux_sensor: sensor.parents_room_lux
+      entities_list:
+      - light.parents_room_lights
+      - fan.parents_room_fan
+      - climate.parents_room_ac
+      - light.parents_room_core_led_strips
+      doors_list:
+      - binary_sensor.parents_room_door
+      - binary_sensor.master_bathroom_door
+      blackout_hours_start: input_datetime.sleep_hours_start
+      blackout_hours_end: input_datetime.sleep_hours_end
