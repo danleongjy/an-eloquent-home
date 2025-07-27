@@ -1252,10 +1252,11 @@
         - automation.parents_room_motion_ac
         - automation.parents_room_motion_fan
         - automation.parents_room_motion_lights
-        - automation.parents_room_motion_bedside_lamp
+        - automation.parents_room_motion_core_led_strips
         - automation.elenas_room_motion_ac
         - automation.elenas_room_motion_fan
         - automation.elenas_room_motion_lights
+        - automation.elenas_room_motion_bedside_lamp
         - automation.elis_room_motion_ac
         - automation.elis_room_motion_fan
         - automation.elis_room_motion_lights
@@ -1345,10 +1346,11 @@
         - automation.parents_room_motion_ac
         - automation.parents_room_motion_fan
         - automation.parents_room_motion_lights
-        - automation.parents_room_motion_bedside_lamp
+        - automation.parents_room_motion_core_led_strips
         - automation.elenas_room_motion_ac
         - automation.elenas_room_motion_fan
         - automation.elenas_room_motion_lights
+        - automation.elenas_room_motion_bedside_lamp
         - automation.elis_room_motion_ac
         - automation.elis_room_motion_fan
         - automation.elis_room_motion_lights
@@ -1954,12 +1956,10 @@
         then:
         - target:
             entity_id: '{{ repeat.item }}'
+          continue_on_error: true
+          action: light.turn_off
           data:
             transition: 10
-            brightness_pct: '{{ states(''input_number.night_light_brightness'') |
-              int }}'
-          continue_on_error: true
-          action: light.turn_on
         - delay: 2
   mode: single
 - id: '1675045598043'
@@ -2071,7 +2071,7 @@
       - light.parents_room_lights
       - fan.parents_room_fan
       - climate.parents_room_ac
-      - light.parents_room_bedside_lamp
+      - light.parents_room_core_led_strips
 - id: '1677899246051'
   alias: Parents' Room Motion Fan
   description: Turn on the Parents' Room Fan depending on whether the doors are open
@@ -2174,8 +2174,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.elenas_room_presence
+      motion_sensor: binary_sensor.elenas_room_presence
       number_of_minutes_doors_closed: input_number.motion_timeout_bedrooms
       doors_list:
       - binary_sensor.elenas_room_door
@@ -2183,6 +2182,7 @@
       - light.elenas_room_lights
       - fan.elenas_room_fan
       - climate.elenas_room_ac
+      - light.elenas_room_bedside_lamp
 - id: '1677909834890'
   alias: Eli's Room Motion AC
   description: Control Eli's Room AC when motion is detected depending on whether
@@ -3067,7 +3067,7 @@
     - data:
         bedroom: parents_room
         ringtone: Eli's Song
-        led_effect: Sunrise
+        led_effect: Alarm
       action: script.alarm_lights
   - action: input_boolean.turn_on
     target:
@@ -3318,7 +3318,7 @@
       - data:
           bedroom: parents_room
           ringtone: Take On Me
-          led_effect: Sunrise
+          led_effect: Alarm
         action: script.alarm_lights
       - data:
           option: Take On Me
@@ -4149,29 +4149,30 @@
   - entity_id:
     - sensor.kitchen_core_current_command
     trigger: state
-  conditions:
-  - condition: template
-    value_template: '{{ states(''sensor.kitchen_core_current_command'') in [''lights_on'',''lights_off'',''lights_brighten'',''lights_darken'',''lights_auto_control'',''lights_manual_control'']
-      }}'
+  conditions: []
   actions:
-  - action: script.lights_controller
-    data:
-      lights:
-      - light.kitchen_lights
-      command: '{{ states(''sensor.kitchen_core_current_command'') }}'
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ states(''sensor.kitchen_core_current_command'') in [''lights_on'',''lights_off'',''lights_brighten'',''lights_darken'',''lights_auto_control'',''lights_manual_control'']
+          }}'
+      sequence:
+      - action: script.lights_controller
+        data:
+          lights:
+          - light.kitchen_lights
+          command: '{{ states(''sensor.kitchen_core_current_command'') }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ states(''sensor.kitchen_core_current_command'') in [''cover_open'',''cover_close'',''cover_auto_control'',''cover_manual_control'']
+          }}'
+      sequence:
+      - action: script.cover_controller
+        metadata: {}
+        data:
+          cover: cover.kitchen_blind
+          command: '{{ states(''sensor.kitchen_core_current_command'') }}'
   mode: single
-- id: '1722234123190'
-  alias: Kitchen Core Blinds Controller
-  description: Control the Master Bathroom Blind with the Parents' Room Core
-  use_blueprint:
-    path: danleongjy/room_core_cover_controller.yaml
-    input:
-      cover: cover.kitchen_blind
-      core_current_command: sensor.kitchen_core_current_command
-      core_command_close: blinds_close
-      core_command_open: blinds_open
-      core_command_auto_control: blinds_auto_control
-      core_command_manual_control: blinds_manual_control
 - id: '1722382955872'
   alias: Study Room Voice Assistant Listening for Wake Word
   description: Turn on wake word listening on Study Room Voice Assistant when presence
@@ -4208,7 +4209,7 @@
   description: Take a snapshot and when motion detected at main door
   triggers:
   - entity_id:
-    - binary_sensor.main_door_camera_motion
+    - binary_sensor.main_door_motion
     from: 'off'
     to: 'on'
     for:
@@ -5573,7 +5574,7 @@
         - condition: state
           entity_id:
           - light.parents_room_lights
-          - light.parents_room_bedside_lamp
+          - light.parents_room_core_led_strips
           state: 'off'
         then:
         - action: script.lights_controller
@@ -5581,7 +5582,7 @@
           data:
             lights:
             - light.parents_room_lights
-            - light.parents_room_bedside_lamp
+            - light.parents_room_core_led_strips
             command: lights_on
         else:
         - action: script.lights_controller
@@ -5589,7 +5590,7 @@
           data:
             lights:
             - light.parents_room_lights
-            - light.parents_room_bedside_lamp
+            - light.parents_room_core_led_strips
             command: lights_off
       action_button_right_long:
       - if:
@@ -5605,7 +5606,7 @@
               data:
                 lights:
                 - light.parents_room_lights
-                - light.parents_room_bedside_lamp
+                - light.parents_room_core_led_strips
                 command: lights_darken
             - delay: 1
             while:
@@ -5620,7 +5621,7 @@
               data:
                 lights:
                 - light.parents_room_lights
-                - light.parents_room_bedside_lamp
+                - light.parents_room_core_led_strips
                 command: lights_brighten
             - delay: 1
             while:
@@ -5849,14 +5850,14 @@
           - automation.master_bathroom_blind_auto_control
           - automation.parents_room_motion_ac
           - automation.parents_room_motion_lights
-          - automation.parents_room_motion_bedside_lamp
+          - automation.parents_room_motion_core_led_strips
           state: 'on'
         then:
         - action: script.lights_controller
           metadata: {}
           data:
             lights:
-            - light.parents_room_bedside_lamp
+            - light.parents_room_core_led_strips
             - light.parents_room_lights
             command: lights_manual_control
         - action: script.fan_controller
@@ -5879,7 +5880,7 @@
           metadata: {}
           data:
             lights:
-            - light.parents_room_bedside_lamp
+            - light.parents_room_core_led_strips
             - light.parents_room_lights
             command: lights_auto_control
         - action: script.fan_controller
@@ -5970,11 +5971,18 @@
   description: Play doorbell tones, flash Room Core lights and show Camera view on
     Main Door Display when Main Door Camera Button is pressed
   triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.main_door_camera_button
-    from: 'off'
-    to: 'on'
+  - alias: When Doorbell down button press is detected via zha_event
+    trigger: event
+    event_type: zha_event
+    event_data:
+      device_id: 7bbda61343894729bf01de127a827d8a
+      command: down_close
+  - alias: When Doorbell up button press is detected via zha_event
+    trigger: event
+    event_type: zha_event
+    event_data:
+      device_id: 7bbda61343894729bf01de127a827d8a
+      command: up_open
   conditions: []
   actions:
   - variables:
@@ -7446,7 +7454,7 @@
     id: no_motion
   - trigger: state
     entity_id:
-    - binary_sensor.main_door_camera_motion
+    - binary_sensor.main_door_motion
     from: 'off'
     to: 'on'
     id: visitor
@@ -7565,7 +7573,7 @@
       - condition: not
         conditions:
         - condition: state
-          entity_id: binary_sensor.main_door_camera_motion
+          entity_id: binary_sensor.main_door_motion
           state: 'on'
           for:
             hours: 0

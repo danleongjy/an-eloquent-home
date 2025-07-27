@@ -1,8 +1,8 @@
 esphome:
   name: main-door-camera
   friendly_name: Main Door Camera
-  libraries:
-    - Wire
+#  libraries:
+#    - Wire
 
 esp32:
   board: esp32dev
@@ -41,56 +41,56 @@ wifi:
 
 captive_portal:
     
-external_components:
-  - source:
-      type: git
-      url: https://github.com/Chill-Division/M5Stack-ESPHome/
-    components: m5stack_pbhub
+#external_components:
+#  - source:
+#      type: git
+#      url: https://github.com/Chill-Division/M5Stack-ESPHome/
+#    components: m5stack_pbhub
 
-i2c:
-  id: grove
-  sda: 4
-  scl: 13
-  #frequency: 200kHz
+#i2c:
+#  id: grove
+#  sda: 4
+#  scl: 13
+#  #frequency: 200kHz
 
-m5stack_pbhub:
-  - id: pbhub
-    address: 0x61
-    sda: 4
-    scl: 13
+#m5stack_pbhub:
+#  - id: pbhub
+#    address: 0x61
+#    sda: 4
+#    scl: 13
 
-binary_sensor:
-  - platform: gpio
-    id: motion
-    name: Motion
-    pin: 
-      m5stack_pbhub: pbhub
-      number: 31
-      mode:
-        output: true
-    device_class: motion
-    publish_initial_state: true
-    filters:
-      - delayed_off: 20s
-    on_press: 
-      then:
-        - light.turn_on: 
-            id: led
-            effect: pulse
-    on_release: 
-      then:
-        - light.turn_off: led
-  - platform: gpio
-    id: button
-    name: Button
-    pin: 
-      m5stack_pbhub: pbhub
-      number: 11
-      mode:
-        input: true
-    publish_initial_state: true
-    filters:
-      - invert:
+#binary_sensor:
+#  - platform: gpio
+#    id: motion
+#    name: Motion
+#    pin: 
+#      m5stack_pbhub: pbhub
+#      number: 31
+#      mode:
+#        output: true
+#    device_class: motion
+#    publish_initial_state: true
+#    filters:
+#      - delayed_off: 20s
+#    on_press: 
+#      then:
+#        - light.turn_on: 
+#            id: led
+#            effect: pulse
+#    on_release: 
+#      then:
+#        - light.turn_off: led
+#  - platform: gpio
+#    id: button
+#    name: Button
+#    pin: 
+#      m5stack_pbhub: pbhub
+#      number: 11
+#      mode:
+#        input: true
+#    publish_initial_state: true
+#    filters:
+#      - invert:
 
 output:
   - platform: ledc
@@ -110,6 +110,93 @@ light:
           update_interval: 1000ms
           min_brightness: 10%
           max_brightness: 100%
+  - platform: neopixelbus
+    id: hex_light
+    name: Hex Light
+    type: GRB
+    variant: ws2812x
+    num_leds: 37
+    pin: 4
+    effects:
+      - addressable_lambda:
+          name: Right Arrow
+          update_interval: 0.1s
+          lambda: |-
+            // set background
+            it.all() = Color::WHITE;
+            it.range(9,28) = Color(0, 0, 255);
+
+            // animate
+            static uint16_t progress = 0;
+            if (progress > 6) {
+              progress = 0;
+            }
+
+            if (progress == 6) {
+              it[15] = Color::WHITE;
+            } else {
+              it[progress + 9] = Color::WHITE;
+              it[progress + 16] = Color::WHITE;
+              it[progress + 22] = Color::WHITE;
+            }
+
+            progress = progress + 1;
+      - addressable_lambda:
+          name: Wait
+          update_interval: 0.25s
+          lambda: |-
+            // set background
+            it.all() = Color::WHITE;
+            int blue_ring[12] = {5,6,7,13,20,26,31,30,29,23,16,10};
+            for (int i = 0; i < 12; i++) {
+              it[blue_ring[i]] = Color(0,0,255);
+            }
+
+            // animate
+            static uint16_t progress = 0;
+            if (progress > 11) {
+              progress = 0;
+            }
+
+            if (progress == 11) {
+              it[blue_ring[progress]] = Color::WHITE;
+              it[blue_ring[0]] = Color::WHITE;
+            } else {
+              it[blue_ring[progress]] = Color::WHITE;
+              it[blue_ring[progress + 1]] = Color::WHITE;
+            }
+
+            progress = progress + 1;
+      - addressable_lambda:
+          name: Wink
+          update_interval: 0.5s
+          lambda: |-
+            // set black background
+            it.all() = Color(255,255,0);
+
+            // smilie
+            int black_cells[8] = {5,10,11,17,7,12,13,19};
+            int red_cells[6] = {28,33,34,35,36,32};
+            for (int i = 0; i < 8; i++) {
+              it[black_cells[i]] = Color::BLACK;
+            }
+            for (int j = 0; j < 6; j++) {
+              it[red_cells[j]] = Color(255,0,0);
+            }
+
+            //animate
+            static uint16_t progress = 0;
+            if (progress > 3) {
+              progress = 0;
+            }
+
+            if (progress == 3) {
+              // wink
+              it[5] = Color(255,255,0);
+              it[17] = Color(255,255,0);
+            }
+            
+            progress = progress + 1;
 
 esp32_camera:
   id: camera
