@@ -3067,7 +3067,6 @@
     - data:
         bedroom: parents_room
         ringtone: Eli's Song
-        led_effect: Alarm
       action: script.alarm_lights
   - action: input_boolean.turn_on
     target:
@@ -3318,7 +3317,6 @@
       - data:
           bedroom: parents_room
           ringtone: Take On Me
-          led_effect: Alarm
         action: script.alarm_lights
       - data:
           option: Take On Me
@@ -3361,7 +3359,6 @@
     - data:
         bedroom: elis_room
         ringtone: Pokemon
-        led_effect: Alarm
       action: script.alarm_lights
   - action: input_boolean.turn_on
     target:
@@ -3810,7 +3807,6 @@
     - data:
         bedroom: elenas_room
         ringtone: Bippity Boppity Boo
-        led_effect: Alarm
       action: script.alarm_lights
   - action: input_boolean.turn_on
     target:
@@ -4307,6 +4303,9 @@
         id:
         - motion
       sequence:
+      - condition: state
+        entity_id: binary_sensor.main_door
+        state: 'off'
       - action: light.turn_on
         metadata: {}
         data:
@@ -4349,7 +4348,7 @@
         entity_id:
         - light.main_door_camera_led
         - light.main_door_camera_hex_light
-  mode: queued
+  mode: parallel
   max: 10
 - id: '1724902259555'
   alias: AC Change Temperature
