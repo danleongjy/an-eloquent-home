@@ -79,14 +79,21 @@ action:
       lights:
         parents_room:
           - light.parents_room_lights
-          - light.parents_room_core_led_strips
         elis_room:
           - light.elis_room_lights
-          - light.elis_room_floor_lamp
         elenas_room:
           - light.elenas_room_lights
         study_room:
           - light.study_room_lights
+      lamp:
+        parents_room:
+          - light.parents_room_core_led_strips
+        elis_room:
+          - light.elis_room_floor_lamp
+        elenas_room:
+          - light.elenas_room_bedside_lamp
+        study_room:
+          - light.study_room_floor_lamp
       doors:
         parents_room: binary_sensor.parents_room_doors
         study_room: binary_sensor.parents_room_door
@@ -172,6 +179,12 @@ action:
               - action: script.lights_controller
                 data:
                   lights: "{{ lights[room] }}"
+                  command: "{{ states(core_current_command) }}"
+          - conditions: "{{ states(core_current_command) in ['lamp_on', 'lamp_off', 'lamp_brighten', 'lamp_darken', 'lamp_auto_control', 'lamp_manual_control'] }}"
+            sequence:
+              - action: script.lights_controller
+                data:
+                  lights: "{{ lamp[room] }}"
                   command: "{{ states(core_current_command) }}"
           - conditions: "{{ states(core_current_command) in ['fan_on', 'fan_off', 'fan_speed_up', 'fan_slow_down', 'fan_reverse', 'fan_forward', 'fan_auto_control', 'fan_manual_control'] }}"
             sequence:

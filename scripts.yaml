@@ -1015,6 +1015,7 @@ lights_controller:
       lights_automations:
         Elena's Room:
         - automation.elenas_room_motion_lights
+        - automation.elenas_room_motion_bedside_lamp
         Eli's Room:
         - automation.elis_room_motion_floor_lamp
         - automation.elis_room_motion_lights
@@ -1090,6 +1091,43 @@ lights_controller:
     - conditions:
       - condition: template
         value_template: '{{ command == ''lights_darken'' }}'
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_step_pct: -{{ states('input_number.light_brightness_change_step')
+            }}
+        target:
+          entity_id: '{{ lights }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''lamp_on'' }}'
+      sequence:
+      - repeat:
+          for_each: '{{ lights }}'
+          sequence:
+          - action: script.recommended_light_level
+            data:
+              light: '{{ repeat.item }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''lamp_off'' }}'
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: '{{ lights }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''lamp_brighten'' }}'
+      sequence:
+      - action: light.turn_on
+        data:
+          brightness_step_pct: '{{ states(''input_number.light_brightness_change_step'')
+            }}'
+        target:
+          entity_id: '{{ lights }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ command == ''lamp_darken'' }}'
       sequence:
       - action: light.turn_on
         data:

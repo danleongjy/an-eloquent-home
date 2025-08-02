@@ -5286,7 +5286,7 @@
       metadata: {}
       data: {}
       target:
-        entity_id: light.study_room_floor_lamp_entity
+        entity_id: light.study_room_floor_lamp
     else:
     - action: light.turn_on
       metadata: {}
@@ -5295,7 +5295,7 @@
           or\n          now() <= today_at(states('input_datetime.dim_hours_end')))
           and\n      is_state('input_boolean.party_mode','off') else 100 }}"
       target:
-        entity_id: light.study_room_floor_lamp_entity
+        entity_id: light.study_room_floor_lamp
   mode: restart
 - id: '1737111238720'
   alias: Eli's Room Motion Floor Lamp
@@ -6138,12 +6138,6 @@
           minutes: 0
           seconds: 2
           milliseconds: 0
-      - data:
-          skip_condition: true
-        target:
-          entity_id: automation.main_door_camera_snapshots
-        action: automation.trigger
-      - delay: 2
       - metadata: {}
         data:
           message: Doorbell rung at {{ now().strftime('%H:%M') }}.
@@ -6484,7 +6478,7 @@
           data:
             lights:
             - light.study_room_lights
-            - light.study_room_floor_lamp_entity
+            - light.study_room_floor_lamp
             command: lights_manual_control
         - action: script.fan_controller
           metadata: {}
@@ -6507,7 +6501,7 @@
           data:
             lights:
             - light.study_room_lights
-            - light.study_room_floor_lamp_entity
+            - light.study_room_floor_lamp
             command: lights_auto_control
         - action: script.fan_controller
           metadata: {}

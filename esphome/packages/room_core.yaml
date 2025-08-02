@@ -108,7 +108,29 @@ script:
               id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
             }
           }
-
+  - id: draw_display_main_lamp
+    then:
+      - lambda: |
+          // tab
+          if (id(lamp_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
+          }
+          // main display
+          if (id(lamp_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(lamp_brightness).state) / 255)), id(width), id(height) * (0.75 * (id(lamp_brightness).state) / 255), id(slider));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lamp), ImageAlign::CENTER, id(device_on));
+          } else {
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lamp), ImageAlign::CENTER, id(device_off));
+          }
+          // auto control indicator
+          if (!id(lamp_auto_control).state) {
+            if (id(lamp_power).state) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_on));
+            } else {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
+          }
   - id: draw_display_main_fan
     then:
       - lambda: |
@@ -243,6 +265,10 @@ sensor:
     entity_id: light.${core_room}_lights
     attribute: brightness
   - platform: homeassistant
+    id: lamp_brightness
+    entity_id: light.${core_room}_${lamp}
+    attribute: brightness
+  - platform: homeassistant
     id: fan_speed
     entity_id: fan.${core_room}_fan
     attribute: percentage
@@ -263,8 +289,14 @@ binary_sensor:
     id: lights_power
     entity_id: light.${core_room}_lights
   - platform: homeassistant
+    id: lamp_power
+    entity_id: light.${core_room}_${lamp}
+  - platform: homeassistant
     id: lights_auto_control
     entity_id: automation.${core_room}_motion_lights
+  - platform: homeassistant
+    id: lamp_auto_control
+    entity_id: automation.${core_room}_motion_${lamp}
   - platform: homeassistant
     id: fan_power
     entity_id: fan.${core_room}_fan
@@ -311,6 +343,11 @@ binary_sensor:
                       - lambda: 'id(current_command).publish_state("lights_on");'
                 - if:
                     condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("lamp_on");'
+                - if:
+                    condition:
                       lambda: 'return id(current_view).state == "fan";'
                     then:
                       - lambda: 'id(current_command).publish_state("fan_on");'
@@ -341,6 +378,16 @@ binary_sensor:
                             binary_sensor.is_on: left_button
                           then:
                             - lambda: 'id(current_command).publish_state("lights_brighten");'
+                            - delay: 0.75s
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: left_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("lamp_brighten");'
                             - delay: 0.75s
                 - if:
                     condition:
@@ -383,6 +430,11 @@ binary_sensor:
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("set_recommended_room_scene");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lamp";'
                     then:
                       - lambda: 'id(current_command).publish_state("set_recommended_room_scene");'
                 - if:
@@ -448,6 +500,17 @@ binary_sensor:
                             lambda: 'id(current_command).publish_state("lights_auto_control");'
                 - if:
                     condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(lamp_auto_control).state;'
+                          then:
+                            lambda: 'id(current_command).publish_state("lights_manual_control");'
+                          else:
+                            lambda: 'id(current_command).publish_state("lights_auto_control");'
+                - if:
+                    condition:
                       lambda: 'return id(current_view).state == "fan";'
                     then:
                       - if:
@@ -507,6 +570,11 @@ binary_sensor:
                       - lambda: 'id(current_command).publish_state("lights_off");'
                 - if:
                     condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("lamp_off");'
+                - if:
+                    condition:
                       lambda: 'return id(current_view).state == "fan";'
                     then:
                       - lambda: 'id(current_command).publish_state("fan_off");'
@@ -537,6 +605,16 @@ binary_sensor:
                             binary_sensor.is_on: right_button
                           then:
                             - lambda: 'id(current_command).publish_state("lights_darken");'
+                            - delay: 0.75s
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: right_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("lamp_darken");'
                             - delay: 0.75s
                 - if:
                     condition:
@@ -580,6 +658,11 @@ binary_sensor:
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("turn_off_room");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lamp";'
                     then:
                       - lambda: 'id(current_command).publish_state("turn_off_room");'
                 - if:
@@ -658,6 +741,9 @@ image:
       - file: mdi:lightbulb-group
         id: tab_lights
         resize: 30x30
+      - file: mdi:${lamp_type}
+        id: tab_lamp
+        resize: 30x30
       - file: mdi:fan
         id: tab_fan
         resize: 30x30
@@ -675,6 +761,9 @@ image:
         resize: 30x30
       - file: mdi:lightbulb-group
         id: main_lights
+        resize: 160x160
+      - file: mdi:${lamp_type}
+        id: main_lamp
         resize: 160x160
       - file: mdi:fan-chevron-down
         id: main_fan_forward
@@ -759,6 +848,9 @@ display:
       - to: lights
         then:
           lambda: 'id(current_view).publish_state("lights");'
+      - to: lamp
+        then:
+          lambda: 'id(current_view).publish_state("lamp");'
       - to: fan
         then:
           lambda: 'id(current_view).publish_state("fan");'
@@ -773,7 +865,7 @@ display:
         lambda: |-
           // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
           it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
@@ -786,7 +878,7 @@ display:
         lambda: |-
           // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
           it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
@@ -795,12 +887,22 @@ display:
       - id: lights
         lambda: |-
           // tabs
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
+
+          id(draw_display_bottom_status_bar).execute();
+          id(draw_display_main_lights).execute();
+          id(draw_display_borders).execute();
+      - id: lamp
+        lambda: |-
+          // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_ac), ImageAlign::CENTER);
           it.image(id(width) * 0.875, id(height) * 0.825, id(tab_cover), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
-          id(draw_display_main_lights).execute();
+          id(draw_display_main_lamp).execute();
           id(draw_display_borders).execute();
       - id: fan
         lambda: |-
@@ -827,7 +929,7 @@ display:
           // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
           id(draw_display_main_cover).execute();
