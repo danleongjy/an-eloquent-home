@@ -36,7 +36,7 @@ Domain | Quantity
 [`event`](https://www.home-assistant.io/components/event) | 1
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`image`](https://www.home-assistant.io/components/image) | 3
-[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 19
+[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 18
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
 [`input_number`](https://www.home-assistant.io/components/input_number) | 21
 [`input_select`](https://www.home-assistant.io/components/input_select) | 7
@@ -47,9 +47,9 @@ Domain | Quantity
 [`number`](https://www.home-assistant.io/components/number) | 112
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 5
-[`script`](https://www.home-assistant.io/components/script) | 22
-[`select`](https://www.home-assistant.io/components/select) | 66
-[`sensor`](https://www.home-assistant.io/components/sensor) | 596
+[`script`](https://www.home-assistant.io/components/script) | 21
+[`select`](https://www.home-assistant.io/components/select) | 67
+[`sensor`](https://www.home-assistant.io/components/sensor) | 597
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 108

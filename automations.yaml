@@ -4374,7 +4374,6 @@
     - input_boolean.dining_room_ac_power
     - input_boolean.living_room_ac_power
     - input_boolean.study_room_ac_power
-    - input_boolean.parents_room_ac_power
     trigger: state
     id: ac_off
     to: 'off'
@@ -4385,7 +4384,6 @@
     - input_boolean.dining_room_ac_power
     - input_boolean.living_room_ac_power
     - input_boolean.study_room_ac_power
-    - input_boolean.parents_room_ac_power
     trigger: state
     id: ac_on
     to: 'on'
@@ -7800,13 +7798,6 @@
       minutes: 5
       seconds: 0
   - trigger: template
-    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''parents_room_ac'')
-      }}'
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
-  - trigger: template
     value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''kitchen_blind'')
       }}'
     for:
@@ -7846,15 +7837,13 @@
           set friendly_names = {''elenas_room_ac'': "Elena''s Room AC",                          ''elis_room_ac'':
           "Eli''s Room AC",                          ''dining_room_ac'': ''Dining
           Room AC'',                          ''living_room_ac'': ''Living Room AC'',                          ''study_room_ac'':
-          ''Study Room AC'',                          ''parents_room_ac'': "Parents''
-          Room AC",                          ''kitchen_blind'': "Kitchen Blind"} %}
-          {% for device in [''elenas_room_ac'', ''elis_room_ac'', ''dining_room_ac'',
-          ''living_room_ac'', ''study_room_ac'', ''parents_room_ac'', ''kitchen_blind'']
-          %}   {% if state_attr(''binary_sensor.devices_desynced'', device) %}     {%
-          set desynced.devices = desynced.devices + [friendly_names[device]] %}   {%
-          endif %} {% endfor %} {% for device in desynced.devices %}   {% set desynced.message
-          = desynced.message + device + '', '' %} {% endfor %} Check {{ desynced.message[:-2]
-          }}.'
+          ''Study Room AC'',                          ''kitchen_blind'': "Kitchen
+          Blind"} %} {% for device in [''elenas_room_ac'', ''elis_room_ac'', ''dining_room_ac'',
+          ''living_room_ac'', ''study_room_ac'', ''kitchen_blind''] %}   {% if state_attr(''binary_sensor.devices_desynced'',
+          device) %}     {% set desynced.devices = desynced.devices + [friendly_names[device]]
+          %}   {% endif %} {% endfor %} {% for device in desynced.devices %}   {%
+          set desynced.message = desynced.message + device + '', '' %} {% endfor %}
+          Check {{ desynced.message[:-2] }}.'
         data:
           tag: desynced
   mode: single

@@ -97,7 +97,6 @@
         this.attributes.dining_room_ac or
         this.attributes.living_room_ac or
         this.attributes.study_room_ac or
-        this.attributes.parents_room_ac or
         this.attributes.kitchen_blind
       }}
     attributes:
@@ -116,9 +115,6 @@
       study_room_ac: "{{ not is_state('binary_sensor.study_room_ac_vent', 'unavailable') and states('binary_sensor.study_room_ac_vent') != states('input_boolean.study_room_ac_power') }}"
       study_room_ac_vent: "{{ states('binary_sensor.study_room_ac_vent') }}"
       study_room_ac_power: "{{ states('input_boolean.study_room_ac_power') }}"
-      parents_room_ac: "{{ not is_state('binary_sensor.parents_room_ac_vent', 'unavailable') and states('binary_sensor.parents_room_ac_vent') != states('input_boolean.parents_room_ac_power') }}"
-      parents_room_ac_vent: "{{ states('binary_sensor.parents_room_ac_vent') }}"
-      parents_room_ac_power: "{{ states('input_boolean.parents_room_ac_power') }}"
       kitchen_blind: > 
         {{ 
           (state_attr('cover.kitchen_blind','current_position') == 100 and is_state('binary_sensor.kitchen_blind_opened', 'on')) or 
