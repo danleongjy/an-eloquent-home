@@ -1,0 +1,54 @@
+uart:
+  id: HP_UART
+  baud_rate: 2400
+  tx_pin: 1
+  rx_pin: 3
+
+# External component reference
+external_components:
+  - source: github://echavet/MitsubishiCN105ESPHome
+
+# Climate entity configuration
+climate:
+  - platform: cn105
+    id: hp
+    name: ${friendly_name}
+    icon: mdi:snowflake
+    update_interval: 4s # update interval can be adjusted after a first run and logs monitoring
+    visual:
+      min_temperature: ${min_temp}
+      max_temperature: ${max_temp}
+      temperature_step:
+        target_temperature: 0.5
+        current_temperature: 0.1
+    remote_temperature_timeout: 30min
+    vertical_vane_select:
+      name: Vertical Vane
+
+# Default logging level
+logger:
+  hardware_uart: UART1 # Uncomment on ESP8266 devices
+  level: INFO
+
+sensor:
+  - platform: uptime
+    name: Uptime
+  - platform: homeassistant
+    name: "Remote Temperature Sensor"
+    entity_id: ${external_temp_sensor}
+    internal: false
+    disabled_by_default: true
+    device_class: temperature
+    state_class: measurement
+    unit_of_measurement: "°C"
+    filters:
+      # Uncomment the lambda line to convert F to C on incoming temperature
+      #  - lambda: return (x - 32) * (5.0/9.0);
+      - clamp: # Limits values to range accepted by Mitsubishi units
+          min_value: 1
+          max_value: 40
+          ignore_out_of_range: true
+      - throttle: 30s
+    on_value:
+      then:
+        - lambda: "id(hp).set_remote_temperature(x);"
