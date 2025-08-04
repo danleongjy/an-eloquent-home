@@ -346,7 +346,7 @@
           "styles": {
             "card": [
               {
-                "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_door_open_at_study_room'].state == 'on')\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_door_open_at_study_room'].state == 'on' ||\n      states['binary_sensor.ac_on_with_windows_open_at_study_room'].state == 'on')\n    return '#9e110d';\n  else if (states['sensor.raining_with_study_room_windows_open'].state == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_study_room_windows_open'].state == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
               }
             ]
           }
@@ -2397,8 +2397,38 @@
                           },
                           {
                             "type": "image",
+                            "image": "/local/floorplan/floorplan_openings/floorplan_study_room_left_window.png",
+                            "entity": "binary_sensor.study_room_left_window",
+                            "state_filter": {
+                              "off": "hue-rotate(245deg) saturate(2000%) brightness(90%)",
+                              "unavailable": "grayscale(100%)"
+                            },
+                            "style": {
+                              "top": "50%",
+                              "left": "50%",
+                              "height": "100%",
+                              "width": "100%"
+                            }
+                          },
+                          {
+                            "type": "image",
                             "image": "/local/floorplan/floorplan_openings/floorplan_parents_room_door.png",
                             "entity": "binary_sensor.parents_room_door",
+                            "state_filter": {
+                              "off": "hue-rotate(245deg) saturate(2000%) brightness(90%)",
+                              "unavailable": "grayscale(100%)"
+                            },
+                            "style": {
+                              "top": "50%",
+                              "left": "50%",
+                              "height": "100%",
+                              "width": "100%"
+                            }
+                          },
+                          {
+                            "type": "image",
+                            "image": "/local/floorplan/floorplan_openings/floorplan_parents_room_left_window.png",
+                            "entity": "binary_sensor.parents_room_left_window",
                             "state_filter": {
                               "off": "hue-rotate(245deg) saturate(2000%) brightness(90%)",
                               "unavailable": "grayscale(100%)"
@@ -2429,21 +2459,6 @@
                             "type": "image",
                             "image": "/local/floorplan/floorplan_openings/floorplan_kitchen_window.png",
                             "entity": "binary_sensor.kitchen_window",
-                            "state_filter": {
-                              "off": "hue-rotate(245deg) saturate(2000%) brightness(90%)",
-                              "unavailable": "grayscale(100%)"
-                            },
-                            "style": {
-                              "top": "50%",
-                              "left": "50%",
-                              "height": "100%",
-                              "width": "100%"
-                            }
-                          },
-                          {
-                            "type": "image",
-                            "image": "/local/floorplan/floorplan_openings/floorplan_parents_room_left_window.png",
-                            "entity": "binary_sensor.parents_room_left_window",
                             "state_filter": {
                               "off": "hue-rotate(245deg) saturate(2000%) brightness(90%)",
                               "unavailable": "grayscale(100%)"
@@ -12434,6 +12449,46 @@
                   "card": {
                     "type": "markdown",
                     "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "binary_sensor.ac_on_with_windows_open_at_study_room",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">AC on with windows open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.raining_with_study_room_windows_open",
+                      "state": "alert"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Heavy rain with window open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.raining_with_study_room_windows_open",
+                      "state": "warning"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"warning\">Raining with window open</ha-alert>"
                   }
                 }
               ]
