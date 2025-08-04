@@ -241,12 +241,16 @@ action:
                     then:
                       - action: script.lights_controller
                         data:
-                          lights: "{{ lights[room] }}"
+                          lights: "{{ [lights[room],lamp[room]] }}"
                           command: "lights_off"
                     else:
                       - action: script.lights_controller
                         data:
                           lights: "{{ lights[room] }}"
+                          command: "lights_off"
+                      - action: script.lights_controller
+                        data:
+                          lights: "{{ lamp[room] }}"
                           command: "lights_on"
                   - action: script.ac_controller
                     data:
