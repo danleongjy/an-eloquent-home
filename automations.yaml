@@ -4413,8 +4413,8 @@
       sequence:
       - if:
         - condition: template
-          value_template: '{{ state_attr(trigger.entity_id, ''temperature'') == 23
-            }}'
+          value_template: '{{ state_attr(trigger.entity_id, ''temperature'') == state_attr(trigger.entity_id,
+            ''min_temp'') }}'
         then:
         - action: climate.set_temperature
           metadata: {}
@@ -4422,7 +4422,6 @@
             temperature: 27
           target:
             entity_id: '{{ trigger.entity_id }}'
-          enabled: true
       - action: script.turn_on
         data:
           variables:
@@ -4433,8 +4432,8 @@
       - condition: or
         conditions:
         - condition: template
-          value_template: '{{ state_attr(trigger.entity_id, ''temperature'') < 23.5
-            }}'
+          value_template: '{{ state_attr(trigger.entity_id, ''temperature'') == state_attr(trigger.entity_id,
+            ''min_temp'') }}'
         - condition: trigger
           id:
           - ac_off
@@ -5128,7 +5127,9 @@
         - condition: numeric_state
           entity_id: climate.elenas_room_ac
           attribute: temperature
-          above: 25.4
+          above: 0
+          value_template: '{{ state.attributes.temperature - ((state.attributes.max_temp
+            - state.attributes.min_temp) / 2 + state.attributes.min_temp )}}'
         then:
         - repeat:
             sequence:
@@ -5546,7 +5547,9 @@
         - condition: numeric_state
           entity_id: climate.elis_room_ac
           attribute: temperature
-          above: 25.4
+          above: 0
+          value_template: '{{ state.attributes.temperature - ((state.attributes.max_temp
+            - state.attributes.min_temp) / 2 + state.attributes.min_temp )}}'
         then:
         - repeat:
             sequence:
@@ -5890,7 +5893,9 @@
         - condition: numeric_state
           entity_id: climate.parents_room_ac
           attribute: temperature
-          above: 25.4
+          above: 0
+          value_template: '{{ state.attributes.temperature - ((state.attributes.max_temp
+            - state.attributes.min_temp) / 2 + state.attributes.min_temp )}}'
         then:
         - repeat:
             sequence:
@@ -6411,7 +6416,9 @@
         - condition: numeric_state
           entity_id: climate.study_room_ac
           attribute: temperature
-          above: 25.4
+          above: 0
+          value_template: '{{ state.attributes.temperature - ((state.attributes.max_temp
+            - state.attributes.min_temp) / 2 + state.attributes.min_temp )}}'
         then:
         - repeat:
             sequence:
@@ -6757,7 +6764,9 @@
         - condition: numeric_state
           entity_id: climate.living_room_ac
           attribute: temperature
-          above: 25.4
+          above: 0
+          value_template: '{{ state.attributes.temperature - ((state.attributes.max_temp
+            - state.attributes.min_temp) / 2 + state.attributes.min_temp )}}'
         then:
         - repeat:
             sequence:
@@ -7103,7 +7112,9 @@
         - condition: numeric_state
           entity_id: climate.dining_room_ac
           attribute: temperature
-          above: 25.4
+          above: 0
+          value_template: '{{ state.attributes.temperature - ((state.attributes.max_temp
+            - state.attributes.min_temp) / 2 + state.attributes.min_temp )}}'
         then:
         - repeat:
             sequence:

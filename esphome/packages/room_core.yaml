@@ -176,7 +176,7 @@ script:
           }
           // main display
           if (id(ac_mode).state == "cool") {
-            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(ac_temp).state - 23) / 4)), id(width), id(height) * (0.75 * (id(ac_temp).state - 23) / 4), id(slider));
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(ac_temp).state - id(ac_min_temp).state) / (id(ac_max_temp).state - id(ac_min_temp).state))), id(width), id(height) * (0.75 * (id(ac_temp).state - id(ac_min_temp).state) / (id(ac_max_temp).state - id(ac_min_temp).state)), id(slider));
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_on));
           } else {
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_ac), ImageAlign::CENTER, id(device_off));
@@ -276,6 +276,14 @@ sensor:
     id: ac_temp
     entity_id: climate.${core_room}_ac
     attribute: temperature
+  - platform: homeassistant
+    id: ac_min_temp
+    entity_id: climate.${core_room}_ac
+    attribute: min_temp
+  - platform: homeassistant
+    id: ac_max_temp
+    entity_id: climate.${core_room}_ac
+    attribute: max_temp
   - platform: homeassistant
     id: room_lux
     entity_id: sensor.${core_room}_lux

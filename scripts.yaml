@@ -1288,6 +1288,7 @@ ac_controller:
       - action: climate.turn_on
         target:
           entity_id: '{{ ac }}'
+        data: {}
     - conditions:
       - condition: template
         value_template: '{{ command == ''ac_off'' }}'
@@ -1295,6 +1296,7 @@ ac_controller:
       - action: climate.turn_off
         target:
           entity_id: '{{ ac }}'
+        data: {}
     - conditions:
       - condition: template
         value_template: '{{ command == ''ac_warmer'' }}'
@@ -1303,8 +1305,10 @@ ac_controller:
         target:
           entity_id: '{{ ac }}'
         data:
-          temperature: "{% if state_attr(ac, 'temperature') < 27 %}\n  {{ state_attr(ac,
-            'temperature') + 0.5 }}\n{% else %}\n  27\n{% endif %}\n"
+          temperature: "{% if state_attr(ac, 'temperature') + state_attr(ac, 'target_temp_step')
+            < state_attr(ac, 'max_temp') %}\n  {{ state_attr(ac, 'temperature') +
+            state_attr(ac, 'target_temp_step') }}\n{% else %}\n  {{ state_attr(ac,
+            'max_temp') }}\n{% endif %}\n"
     - conditions:
       - condition: template
         value_template: '{{ command == ''ac_colder'' }}'
@@ -1313,8 +1317,10 @@ ac_controller:
         target:
           entity_id: '{{ ac }}'
         data:
-          temperature: "{% if state_attr(ac, 'temperature') > 23.5 %}\n  {{ state_attr(ac,
-            'temperature') - 0.5 }}\n{% else %}\n  23.5\n{% endif %}\n"
+          temperature: "{% if state_attr(ac, 'temperature') - state_attr(ac, 'target_temp_step')
+            > state_attr(ac, 'min_temp') %}\n  {{ state_attr(ac, 'temperature') -
+            state_attr(ac, 'target_temp_step') }}\n{% else %}\n  {{ state_attr(ac,
+            'min_temp') }}\n{% endif %}\n"
     - conditions:
       - condition: template
         value_template: '{{ command == ''cooling_auto_control'' }}'
@@ -1324,6 +1330,7 @@ ac_controller:
       - action: automation.turn_on
         target:
           entity_id: '{{ cooling_automations[ac] }}'
+        data: {}
       - condition: or
         conditions:
         - condition: time
@@ -1345,6 +1352,8 @@ ac_controller:
       - action: automation.turn_off
         target:
           entity_id: '{{ cooling_automations[ac] }}'
+        data:
+          stop_actions: true
       - condition: or
         conditions:
         - condition: time
