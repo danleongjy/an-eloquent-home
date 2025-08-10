@@ -1039,7 +1039,7 @@ lights_controller:
         - automation.study_room_motion_lights
         - automation.study_room_motion_floor_lamp
         Parents' Room:
-        - automation.parents_room_motion_core_led_strips
+        - automation.parents_room_motion_bedside_lamp
         - automation.parents_room_motion_lights
         Master Bathroom:
         - automation.master_bathroom_motion_light
@@ -1078,6 +1078,7 @@ lights_controller:
       - action: light.turn_off
         target:
           entity_id: '{{ lights }}'
+        data: {}
     - conditions:
       - condition: template
         value_template: '{{ command == ''lights_brighten'' }}'
@@ -1115,6 +1116,7 @@ lights_controller:
       - action: light.turn_off
         target:
           entity_id: '{{ lights }}'
+        data: {}
     - conditions:
       - condition: template
         value_template: '{{ command == ''lamp_brighten'' }}'
@@ -1177,6 +1179,7 @@ lights_controller:
       - action: automation.turn_on
         target:
           entity_id: '{{ automations }}'
+        data: {}
       - repeat:
           for_each: '{{ areas }}'
           sequence:
@@ -1210,6 +1213,8 @@ lights_controller:
       - action: automation.turn_off
         target:
           entity_id: '{{ automations }}'
+        data:
+          stop_actions: true
       - repeat:
           for_each: '{{ areas }}'
           sequence:

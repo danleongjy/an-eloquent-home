@@ -1715,34 +1715,34 @@
 - id: '1672898689403'
   alias: Lights for Wind Down
   description: Set house lights for wind down
-  trigger:
-  - platform: time
-    at: input_datetime.wind_down
-  - platform: state
-    entity_id:
+  triggers:
+  - at: input_datetime.wind_down
+    trigger: time
+  - entity_id:
     - input_boolean.party_mode
     from: 'on'
     to: 'off'
-  condition:
+    trigger: state
+  conditions:
   - condition: template
     value_template: '{{ now() > today_at(states(''input_datetime.wind_down'')) - timedelta(minutes
       = 1) }}'
   - condition: state
     entity_id: input_boolean.party_mode
     state: 'off'
-  action:
+  actions:
   - if:
     - condition: state
       entity_id: light.yard_light_entity
       state: 'on'
     then:
-    - service: light.turn_on
-      data:
+    - data:
         transition: 10
         brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
       target:
         entity_id: light.yard_light_entity
       continue_on_error: true
+      action: light.turn_on
     - delay: 2
   - parallel:
     - repeat:
@@ -1755,14 +1755,14 @@
           - condition: template
             value_template: '{{ is_state(repeat.item, ''on'') }}'
           then:
-          - service: light.turn_on
-            target:
+          - target:
               entity_id: '{{ repeat.item }}'
             data:
               transition: 10
               brightness_pct: '{{ states(''input_number.night_light_brightness'')
                 }}'
             continue_on_error: true
+            action: light.turn_on
           - delay: 2
     - repeat:
         for_each:
@@ -1775,14 +1775,14 @@
           - condition: template
             value_template: '{{ is_state(repeat.item, ''on'') }}'
           then:
-          - service: light.turn_on
-            target:
+          - target:
               entity_id: '{{ repeat.item }}'
             data:
               transition: 10
               brightness_pct: '{{ states(''input_number.night_light_brightness'')
                 }}'
             continue_on_error: true
+            action: light.turn_on
           - delay: 2
     - if:
       - condition: state
@@ -1800,14 +1800,14 @@
             - condition: template
               value_template: '{{ is_state(repeat.item, ''on'') }}'
             then:
-            - service: light.turn_on
-              target:
+            - target:
                 entity_id: '{{ repeat.item }}'
               data:
                 transition: 10
                 brightness_pct: '{{ states(''input_number.night_light_brightness'')
                   }}'
               continue_on_error: true
+              action: light.turn_on
             - delay: 2
   - repeat:
       for_each:
@@ -1816,30 +1816,32 @@
       - light.living_room_bulb_3_entity
       - light.living_room_bulb_4_entity
       - light.living_room_bulb_5_entity
+      - light.living_room_bulb_6
+      - light.living_room_bulb_7
       sequence:
       - if:
         - condition: template
           value_template: '{{ is_state(repeat.item, ''on'') }}'
         then:
-        - service: light.turn_off
-          target:
+        - target:
             entity_id: '{{ repeat.item }}'
           data:
             transition: 10
           continue_on_error: true
+          action: light.turn_off
         - delay: 2
   - if:
     - condition: state
       entity_id: light.living_room_pendant_light_entity
       state: 'on'
     then:
-    - service: light.turn_on
-      data:
+    - data:
         brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
         transition: 10
       target:
         entity_id: light.living_room_pendant_light_entity
       continue_on_error: true
+      action: light.turn_on
   - repeat:
       for_each:
       - light.dining_room_bulb_1_entity
@@ -1851,25 +1853,25 @@
         - condition: template
           value_template: '{{ is_state(repeat.item, ''on'') }}'
         then:
-        - service: light.turn_off
-          target:
+        - target:
             entity_id: '{{ repeat.item }}'
           data:
             transition: 10
           continue_on_error: true
+          action: light.turn_off
         - delay: 2
   - if:
     - condition: state
       entity_id: light.dining_room_pendant_light_entity
       state: 'on'
     then:
-    - service: light.turn_on
-      data:
+    - data:
         transition: 10
         brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
       target:
         entity_id: light.dining_room_pendant_light_entity
       continue_on_error: true
+      action: light.turn_on
   - repeat:
       for_each:
       - light.hallway_bulb_1_entity
@@ -1879,13 +1881,13 @@
         - condition: template
           value_template: '{{ is_state(repeat.item, ''on'') }}'
         then:
-        - service: light.turn_on
-          target:
+        - target:
             entity_id: '{{ repeat.item }}'
           data:
             transition: 10
             brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
           continue_on_error: true
+          action: light.turn_on
         - delay: 2
   - parallel:
     - if:
@@ -1893,13 +1895,13 @@
         entity_id: light.powder_room_pendant_light_entity
         state: 'on'
       then:
-      - service: light.turn_on
-        data:
+      - data:
           transition: 10
           brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
         target:
           entity_id: light.powder_room_pendant_light_entity
         continue_on_error: true
+        action: light.turn_on
     - repeat:
         for_each:
         - light.junior_bathroom_ceiling_light_entity
@@ -1909,14 +1911,14 @@
           - condition: template
             value_template: '{{ is_state(repeat.item, ''on'') }}'
           then:
-          - service: light.turn_on
-            target:
+          - target:
               entity_id: '{{ repeat.item }}'
             data:
               transition: 10
               brightness_pct: '{{ states(''input_number.night_light_brightness'')
                 }}'
             continue_on_error: true
+            action: light.turn_on
           - delay: 2
   mode: single
 - id: '1674045954399'
@@ -2071,7 +2073,7 @@
       - light.parents_room_lights
       - fan.parents_room_fan
       - climate.parents_room_ac
-      - light.parents_room_core_led_strips
+      - light.parents_room_bedside_lamp
 - id: '1677899246051'
   alias: Parents' Room Motion Fan
   description: Turn on the Parents' Room Fan depending on whether the doors are open
@@ -5691,7 +5693,7 @@
         - condition: state
           entity_id:
           - light.parents_room_lights
-          - light.parents_room_core_led_strips
+          - light.parents_room_bedside_lamp
           state: 'off'
         then:
         - action: script.lights_controller
@@ -5699,7 +5701,7 @@
           data:
             lights:
             - light.parents_room_lights
-            - light.parents_room_core_led_strips
+            - light.parents_room_bedside_lamp
             command: lights_on
         else:
         - action: script.lights_controller
@@ -5707,7 +5709,7 @@
           data:
             lights:
             - light.parents_room_lights
-            - light.parents_room_core_led_strips
+            - light.parents_room_bedside_lamp
             command: lights_off
       action_button_right_long:
       - if:
@@ -5723,7 +5725,7 @@
               data:
                 lights:
                 - light.parents_room_lights
-                - light.parents_room_core_led_strips
+                - light.parents_room_bedside_lamp
                 command: lights_darken
             - delay: 1
             while:
@@ -5738,7 +5740,7 @@
               data:
                 lights:
                 - light.parents_room_lights
-                - light.parents_room_core_led_strips
+                - light.parents_room_bedside_lamp
                 command: lights_brighten
             - delay: 1
             while:
@@ -7876,21 +7878,21 @@
           tag: desynced
   mode: single
 - id: '1753576863029'
-  alias: Parents' Room Motion Core LED Strips
-  description: Set Parents' Room Core LED Strips when motion is detected, the door
-    is open and no devices are on, depending on lux level and time.
+  alias: Parents' Room Motion Bedside Lamp
+  description: Set Parents' Room Bedside Lamp when motion is detected, the door is
+    open and no devices are on, depending on lux level and time.
   use_blueprint:
     path: danleongjy/motion_lights.yaml
     input:
       lights_list:
-      - light.parents_room_core_led_strips
+      - light.parents_room_bedside_lamp
       motion_sensor: binary_sensor.parents_room_presence
       lux_sensor: sensor.parents_room_lux
       entities_list:
       - light.parents_room_lights
       - fan.parents_room_fan
       - climate.parents_room_ac
-      - light.parents_room_core_led_strips
+      - light.parents_room_bedside_lamp
       doors_list:
       - binary_sensor.parents_room_door
       - binary_sensor.master_bathroom_door
