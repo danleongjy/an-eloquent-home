@@ -1,0 +1,48 @@
+substitutions:
+  name: elenas_room_ac
+  friendly_name: "Elena's Room AC"
+  min_temp: 16
+  max_temp: 29
+  tx: 17
+  rx: 16
+  external_temp_sensor: sensor.elenas_room_core_temperature
+  external_hum_sensor: sensor.elenas_room_core_humidity
+
+esphome:
+  name: elenas-room-ac
+  friendly_name: Elena's Room AC
+
+esp32:
+  board: esp32doit-devkit-v1
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret elenas_room_ac_api_key
+
+ota:
+  - platform: esphome
+    password: !secret elenas_room_ac_ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  manual_ip:
+    static_ip: 192.168.18.62
+    gateway: 192.168.18.1
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Elena's Room AC"
+    password: !secret ap_password
+
+captive_portal:
+
+packages:
+  aircon: !include packages/aircon.yaml
+
+# Default logging level
+logger:
+  level: INFO
