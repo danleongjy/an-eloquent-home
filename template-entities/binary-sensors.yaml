@@ -94,7 +94,6 @@
     unique_id: binary_sensor.devices_desynced
     state: >
       {{
-        this.attributes.elenas_room_ac or
         this.attributes.elis_room_ac or
         this.attributes.dining_room_ac or
         this.attributes.living_room_ac or
@@ -102,9 +101,6 @@
         this.attributes.kitchen_blind
       }}
     attributes:
-      elenas_room_ac: "{{ not is_state('binary_sensor.elenas_room_ac_vent', 'unavailable') and states('binary_sensor.elenas_room_ac_vent') != states('input_boolean.elenas_room_ac_power') }}"
-      elenas_room_ac_vent: "{{ states('binary_sensor.elenas_room_ac_vent') }}"
-      elenas_room_ac_power: "{{ states('input_boolean.elenas_room_ac_power') }}"
       elis_room_ac: "{{ not is_state('binary_sensor.elis_room_ac_vent', 'unavailable') and states('binary_sensor.elis_room_ac_vent') != states('input_boolean.elis_room_ac_power') }}"
       elis_room_ac_vent: "{{ states('binary_sensor.elis_room_ac_vent') }}"
       elis_room_ac_power: "{{ states('input_boolean.elis_room_ac_power') }}"

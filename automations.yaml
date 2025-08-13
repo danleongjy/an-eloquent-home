@@ -7793,13 +7793,6 @@
     with assumed states
   triggers:
   - trigger: template
-    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''elenas_room_ac'')
-      }}'
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
-  - trigger: template
     value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''elis_room_ac'')
       }}'
     for:
@@ -7864,11 +7857,10 @@
       data:
         title: Device States Desynced
         message: '{% set desynced = namespace(devices = [], message = '''') %} {%
-          set friendly_names = {''elenas_room_ac'': "Elena''s Room AC",                          ''elis_room_ac'':
-          "Eli''s Room AC",                          ''dining_room_ac'': ''Dining
-          Room AC'',                          ''living_room_ac'': ''Living Room AC'',                          ''study_room_ac'':
-          ''Study Room AC'',                          ''kitchen_blind'': "Kitchen
-          Blind"} %} {% for device in [''elenas_room_ac'', ''elis_room_ac'', ''dining_room_ac'',
+          set friendly_names = {''elis_room_ac'': "Eli''s Room AC",                          ''dining_room_ac'':
+          ''Dining Room AC'',                          ''living_room_ac'': ''Living
+          Room AC'',                          ''study_room_ac'': ''Study Room AC'',                          ''kitchen_blind'':
+          "Kitchen Blind"} %} {% for device in [''elis_room_ac'', ''dining_room_ac'',
           ''living_room_ac'', ''study_room_ac'', ''kitchen_blind''] %}   {% if state_attr(''binary_sensor.devices_desynced'',
           device) %}     {% set desynced.devices = desynced.devices + [friendly_names[device]]
           %}   {% endif %} {% endfor %} {% for device in desynced.devices %}   {%
