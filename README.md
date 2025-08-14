@@ -15,7 +15,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [16.0](https://github.com/home-assistant/operating-system/releases/tag/16.0) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [16.0](https://github.com/home-assistant/operating-system/releases/tag/16.1) running in a [Proxmox VM](https://www.proxmox.com/)
 * [Home Assistant Core 2025.7.4](https://github.com/home-assistant/core/releases/tag/2025.7.4)
 * 4 cores, 6GB RAM, 32GB storage
 
@@ -38,8 +38,8 @@ Domain | Quantity
 [`image`](https://www.home-assistant.io/components/image) | 3
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 17
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
-[`input_number`](https://www.home-assistant.io/components/input_number) | 21
-[`input_select`](https://www.home-assistant.io/components/input_select) | 7
+[`input_number`](https://www.home-assistant.io/components/input_number) | 22
+[`input_select`](https://www.home-assistant.io/components/input_select) | 8
 [`input_text`](https://www.home-assistant.io/components/input_text) | 19
 [`light`](https://www.home-assistant.io/components/light) | 71
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
@@ -60,7 +60,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 17
-Total | 1754
+Total | 1756
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
