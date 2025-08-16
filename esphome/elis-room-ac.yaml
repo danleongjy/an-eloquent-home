@@ -61,6 +61,10 @@ climate:
     id: ac
     name: AC
     update_interval: 4s # update interval can be adjusted after a first run and logs monitoring
+    supports:
+      mode: ["OFF", COOL, FAN_ONLY, DRY]
+      fan_mode: [AUTO, QUIET, LOW, MEDIUM, HIGH]
+      swing_mode: ["OFF", VERTICAL]
     visual:
       min_temperature: 16
       max_temperature: 30
@@ -87,7 +91,9 @@ sensor:
           min_value: 1
           max_value: 40
           ignore_out_of_range: true
-      - throttle: 30s
+      # - throttle: 30s
+      - heartbeat: 30s
+          
     on_value:
       then:
         - lambda: "id(ac).set_remote_temperature(x);"
