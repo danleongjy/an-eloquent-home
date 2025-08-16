@@ -1,16 +1,16 @@
 substitutions:
-  name: elis_room_ac
-  friendly_name: "Eli's Room AC"
+  name: living_room_ac
+  friendly_name: "Living Room AC"
   min_temp: 16
   max_temp: 29
   tx: 17
   rx: 18
-  external_temp_sensor: sensor.elis_room_core_temperature
-  external_hum_sensor: sensor.elis_room_core_humidity
+  external_temp_sensor: sensor.living_room_temperature
+  external_hum_sensor: sensor.living_room_humidity
 
 esphome:
-  name: elis-room-ac
-  friendly_name: Eli's Room AC
+  name: living-room-ac
+  friendly_name: Living Room AC
 
 esp32:
   board: nodemcu-32s
@@ -20,28 +20,30 @@ esp32:
 # Enable Home Assistant API
 api:
   encryption:
-    key: !secret elis_room_ac_api_key
+    key: !secret living_room_ac_api_key
 
 ota:
   - platform: esphome
-    password: !secret elis_room_ac_ota_password
+    password: !secret living_room_ac_ota_password
 
 wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+      bssid: 34:97:f6:22:df:28
 
   manual_ip:
-    static_ip: 192.168.18.63
+    static_ip: 192.168.18.65
     gateway: 192.168.18.1
     subnet: 255.255.255.0
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Eli's Room AC"
+    ssid: "Living Room AC"
     password: !secret ap_password
 
 captive_portal:
-  
+
 # Default logging level
 logger:
   level: INFO

@@ -4379,7 +4379,6 @@
     - climate.elis_room_ac
     - climate.dining_room_ac
     - climate.living_room_ac
-    - climate.study_room_ac
     attribute: temperature
     trigger: state
     id: temp_changed
@@ -4387,7 +4386,6 @@
     - input_boolean.elis_room_ac_power
     - input_boolean.dining_room_ac_power
     - input_boolean.living_room_ac_power
-    - input_boolean.study_room_ac_power
     trigger: state
     id: ac_off
     to: 'off'
@@ -4396,7 +4394,6 @@
     - input_boolean.elis_room_ac_power
     - input_boolean.dining_room_ac_power
     - input_boolean.living_room_ac_power
-    - input_boolean.study_room_ac_power
     trigger: state
     id: ac_on
     to: 'on'
@@ -7789,28 +7786,7 @@
     with assumed states
   triggers:
   - trigger: template
-    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''elis_room_ac'')
-      }}'
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
-  - trigger: template
     value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''dining_room_ac'')
-      }}'
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
-  - trigger: template
-    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''living_room_ac'')
-      }}'
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
-  - trigger: template
-    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''study_room_ac'')
       }}'
     for:
       hours: 0
@@ -7853,15 +7829,13 @@
       data:
         title: Device States Desynced
         message: '{% set desynced = namespace(devices = [], message = '''') %} {%
-          set friendly_names = {''elis_room_ac'': "Eli''s Room AC",                          ''dining_room_ac'':
-          ''Dining Room AC'',                          ''living_room_ac'': ''Living
-          Room AC'',                          ''study_room_ac'': ''Study Room AC'',                          ''kitchen_blind'':
-          "Kitchen Blind"} %} {% for device in [''elis_room_ac'', ''dining_room_ac'',
-          ''living_room_ac'', ''study_room_ac'', ''kitchen_blind''] %}   {% if state_attr(''binary_sensor.devices_desynced'',
-          device) %}     {% set desynced.devices = desynced.devices + [friendly_names[device]]
-          %}   {% endif %} {% endfor %} {% for device in desynced.devices %}   {%
-          set desynced.message = desynced.message + device + '', '' %} {% endfor %}
-          Check {{ desynced.message[:-2] }}.'
+          set friendly_names = {''dining_room_ac'': ''Dining Room AC'',                          ''kitchen_blind'':
+          "Kitchen Blind"} %} {% for device in [''dining_room_ac'', ''kitchen_blind'']
+          %}   {% if state_attr(''binary_sensor.devices_desynced'', device) %}     {%
+          set desynced.devices = desynced.devices + [friendly_names[device]] %}   {%
+          endif %} {% endfor %} {% for device in desynced.devices %}   {% set desynced.message
+          = desynced.message + device + '', '' %} {% endfor %} Check {{ desynced.message[:-2]
+          }}.'
         data:
           tag: desynced
   mode: single

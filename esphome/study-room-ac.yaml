@@ -1,0 +1,50 @@
+substitutions:
+  name: study_room_ac
+  friendly_name: "Study Room AC"
+  min_temp: 16
+  max_temp: 29
+  tx: 17
+  rx: 18
+  external_temp_sensor: sensor.study_room_temperature
+  external_hum_sensor: sensor.study_room_humidity
+
+esphome:
+  name: study-room-ac
+  friendly_name: Study Room AC
+
+esp32:
+  board: nodemcu-32s
+  framework:
+    type: esp-idf
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret study_room_ac_api_key
+
+ota:
+  - platform: esphome
+    password: !secret study_room_ac_ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  manual_ip:
+    static_ip: 192.168.18.64
+    gateway: 192.168.18.1
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Study Room AC"
+    password: !secret ap_password
+
+captive_portal:
+    
+packages:
+  aircon: !include packages/aircon.yaml
+  
+# Default logging level
+logger:
+  level: INFO
