@@ -90,27 +90,6 @@
       study_room_left_window: "{{ states('binary_sensor.study_room_left_window') }}"
       parents_room_ac: "{{ states('climate.parents_room_ac') }}"
 
-  - name: Devices Desynced
-    unique_id: binary_sensor.devices_desynced
-    state: >
-      {{
-        this.attributes.dining_room_ac or
-        this.attributes.kitchen_blind
-      }}
-    attributes:
-      dining_room_ac: "{{ not is_state('binary_sensor.dining_room_ac_vent', 'unavailable') and states('binary_sensor.dining_room_ac_vent') != states('input_boolean.dining_room_ac_power') }}"
-      dining_room_ac_vent: "{{ states('binary_sensor.dining_room_ac_vent') }}"
-      dining_room_ac_power: "{{ states('input_boolean.dining_room_ac_power') }}"
-      kitchen_blind: > 
-        {{ 
-          (state_attr('cover.kitchen_blind','current_position') == 100 and is_state('binary_sensor.kitchen_blind_opened', 'on')) or 
-          (state_attr('cover.kitchen_blind','current_position') == 0 and is_state('binary_sensor.kitchen_blind_closed', 'on')) or 
-          (state_attr('cover.kitchen_blind','current_position') != 100 and state_attr('cover.kitchen_blind','current_position') != 0 and (is_state('binary_sensor.kitchen_blind_opened', 'off') or is_state('binary_sensor.kitchen_blind_closed', 'off')))
-        }}
-      kitchen_blind_position: "{{ state_attr('cover.kitchen_blind','current_position') }}"
-      kitchen_blind_opened: "{{ states('binary_sensor.kitchen_blind_opened') }}"
-      kitchen_blind_closed: "{{ states('binary_sensor.kitchen_blind_closed') }}"
-
 - trigger:
     - platform: state
       entity_id: binary_sensor.playroom_radar_motion

@@ -2875,6 +2875,7 @@
     trigger: template
   - entity_id:
     - climate.living_room_ac
+    - climate.dining_room_ac
     to: cool
     trigger: state
   - entity_id:
@@ -2916,6 +2917,9 @@
             \  or ('Wind' in states('sensor.local_two_hour_forecast')) }}"
         - condition: state
           entity_id: climate.living_room_ac
+          state: cool
+        - condition: state
+          entity_id: climate.dining_room_ac
           state: cool
       - condition: not
         conditions:
@@ -3569,89 +3573,6 @@
   - service: script.nea_rain_radar_animation
     data: {}
   mode: single
-- id: '1697798770695'
-  alias: Dining Living Room AC Interlock
-  description: Sync the states of the Dining and Living Room ACs
-  trigger:
-  - platform: template
-    value_template: '{{ states(''climate.dining_room_ac'') != states(''climate.living_room_ac'')
-      or (is_state(''climate.dining_room_ac'',''cool'') and is_state(''climate.living_room_ac'',''cool'')
-      and state_attr(''climate.dining_room_ac'',''temperature'') != state_attr(''climate.living_room_ac'',''temperature''))
-      }}'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 3
-  condition: []
-  action:
-  - if:
-    - condition: template
-      value_template: '{{ states.climate.dining_room_ac.last_updated > states.climate.living_room_ac.last_updated
-        }}'
-    then:
-    - if:
-      - condition: state
-        entity_id: climate.dining_room_ac
-        state: 'off'
-      then:
-      - data: {}
-        target:
-          entity_id: climate.living_room_ac
-        action: climate.turn_off
-      else:
-      - if:
-        - condition: template
-          value_template: '{{ states(''climate.living_room_ac'') != states(''climate.dining_room_ac'')
-            }}'
-        then:
-        - data: {}
-          target:
-            entity_id: climate.living_room_ac
-          action: climate.turn_on
-      - if:
-        - condition: template
-          value_template: '{{ state_attr(''climate.living_room_ac'',''temperature'')
-            != state_attr(''climate.dining_room_ac'',''temperature'') }}'
-        then:
-        - data:
-            temperature: '{{ state_attr(''climate.dining_room_ac'',''temperature'')
-              }}'
-          target:
-            entity_id: climate.living_room_ac
-          action: climate.set_temperature
-    else:
-    - if:
-      - condition: state
-        entity_id: climate.living_room_ac
-        state: 'off'
-      then:
-      - data: {}
-        target:
-          entity_id: climate.dining_room_ac
-        action: climate.turn_off
-      else:
-      - if:
-        - condition: template
-          value_template: '{{ states(''climate.living_room_ac'') != states(''climate.dining_room_ac'')
-            }}'
-        then:
-        - data: {}
-          target:
-            entity_id: climate.dining_room_ac
-          action: climate.turn_on
-      - if:
-        - condition: template
-          value_template: '{{ state_attr(''climate.living_room_ac'',''temperature'')
-            != state_attr(''climate.dining_room_ac'',''temperature'') }}'
-        then:
-        - data:
-            temperature: '{{ state_attr(''climate.living_room_ac'',''temperature'')
-              }}'
-          target:
-            entity_id: climate.dining_room_ac
-          action: climate.set_temperature
-  mode: single
-  max_exceeded: silent
 - id: '1697806604813'
   alias: Dining and Living Room AC Motion Timeout
   description: Turn off the Dining and Living Room ACs if no motion is detected in
@@ -4370,86 +4291,6 @@
         - light.main_door_camera_hex_light
   mode: parallel
   max: 10
-- id: '1724902259555'
-  alias: AC Change Temperature
-  description: Beep the AC when a new target temperature is set, and turn off the
-    AC when specified target temperature is below 23.5°C.
-  triggers:
-  - entity_id:
-    - climate.elis_room_ac
-    - climate.dining_room_ac
-    - climate.living_room_ac
-    attribute: temperature
-    trigger: state
-    id: temp_changed
-  - entity_id:
-    - input_boolean.elis_room_ac_power
-    - input_boolean.dining_room_ac_power
-    - input_boolean.living_room_ac_power
-    trigger: state
-    id: ac_off
-    to: 'off'
-    from: 'on'
-  - entity_id:
-    - input_boolean.elis_room_ac_power
-    - input_boolean.dining_room_ac_power
-    - input_boolean.living_room_ac_power
-    trigger: state
-    id: ac_on
-    to: 'on'
-    from: 'off'
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - ac_on
-      sequence:
-      - if:
-        - condition: template
-          value_template: '{{ state_attr(trigger.entity_id, ''temperature'') == state_attr(trigger.entity_id,
-            ''min_temp'') }}'
-        then:
-        - action: climate.set_temperature
-          metadata: {}
-          data:
-            temperature: 27
-          target:
-            entity_id: '{{ trigger.entity_id }}'
-      - action: script.turn_on
-        data:
-          variables:
-            switch_on: true
-        target:
-          entity_id: script.{{ trigger.entity_id.split('.')[1][:-6] }}_set_state
-    - conditions:
-      - condition: or
-        conditions:
-        - condition: template
-          value_template: '{{ state_attr(trigger.entity_id, ''temperature'') == state_attr(trigger.entity_id,
-            ''min_temp'') }}'
-        - condition: trigger
-          id:
-          - ac_off
-      sequence:
-      - action: script.turn_on
-        data:
-          variables:
-            switch_on: false
-        target:
-          entity_id: script.{{ trigger.entity_id.split('.')[1][:-6] }}_set_state
-    default:
-    - condition: template
-      value_template: '{{ is_state(trigger.entity_id, ''cool'') }}'
-    - action: script.turn_on
-      data:
-        variables:
-          switch_on: true
-      target:
-        entity_id: script.{{ trigger.entity_id.split('.')[1][:-6] }}_set_state
-  mode: single
-  max_exceeded: silent
 - id: '1731678711205'
   alias: Elena's Room Curtains Auto Control
   description: Open or close Elena's Room Curtains based on time and windows state
@@ -7781,28 +7622,30 @@
       }} ago.\n{% endif %}"
   mode: single
 - id: '1751765390006'
-  alias: Notify When Device States Desynced
-  description: Send a notification listing devices whose actual states may be desynced
-    with assumed states
+  alias: Notify When Kitchen Blind State Desynced
+  description: Send a notification when the Kitchen Blind's actual state may be desynced
+    with assumed state
   triggers:
   - trigger: template
-    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''dining_room_ac'')
-      }}'
+    value_template: "{{ (state_attr('cover.kitchen_blind','current_position') == 100
+      and is_state('binary_sensor.kitchen_blind_opened', 'on')) or (state_attr('cover.kitchen_blind','current_position')
+      == 0 and is_state('binary_sensor.kitchen_blind_closed', 'on')) or (state_attr('cover.kitchen_blind','current_position')
+      != 100 and state_attr('cover.kitchen_blind','current_position') != 0 and (is_state('binary_sensor.kitchen_blind_opened',
+      'off') or is_state('binary_sensor.kitchen_blind_closed', 'off')))\n }}"
     for:
       hours: 0
       minutes: 5
       seconds: 0
   - trigger: template
-    value_template: '{{ state_attr(''binary_sensor.devices_desynced'', ''kitchen_blind'')
-      }}'
+    value_template: "{{ not ((state_attr('cover.kitchen_blind','current_position')
+      == 100 and is_state('binary_sensor.kitchen_blind_opened', 'on')) or (state_attr('cover.kitchen_blind','current_position')
+      == 0 and is_state('binary_sensor.kitchen_blind_closed', 'on')) or (state_attr('cover.kitchen_blind','current_position')
+      != 100 and state_attr('cover.kitchen_blind','current_position') != 0 and (is_state('binary_sensor.kitchen_blind_opened',
+      'off') or is_state('binary_sensor.kitchen_blind_closed', 'off'))))\n }}"
     for:
       hours: 0
       minutes: 5
       seconds: 0
-  - trigger: state
-    entity_id:
-    - binary_sensor.devices_desynced
-    to: 'off'
     id: no_desync
   conditions: []
   actions:
@@ -7827,15 +7670,8 @@
     - action: notify.mobile_app_aurora
       metadata: {}
       data:
-        title: Device States Desynced
-        message: '{% set desynced = namespace(devices = [], message = '''') %} {%
-          set friendly_names = {''dining_room_ac'': ''Dining Room AC'',                          ''kitchen_blind'':
-          "Kitchen Blind"} %} {% for device in [''dining_room_ac'', ''kitchen_blind'']
-          %}   {% if state_attr(''binary_sensor.devices_desynced'', device) %}     {%
-          set desynced.devices = desynced.devices + [friendly_names[device]] %}   {%
-          endif %} {% endfor %} {% for device in desynced.devices %}   {% set desynced.message
-          = desynced.message + device + '', '' %} {% endfor %} Check {{ desynced.message[:-2]
-          }}.'
+        title: Kitchen Blind State Desynced
+        message: Check Kitchen Blind.
         data:
           tag: desynced
   mode: single

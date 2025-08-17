@@ -69,8 +69,8 @@ climate:
       min_temperature: 16
       max_temperature: 30
       temperature_step:
-        target_temperature: 1
-        current_temperature: 0.5
+        target_temperature: 0.5
+        current_temperature: 0.1
     remote_temperature_timeout: 30min
     vertical_vane_select:
       name: Vertical Vane
@@ -97,3 +97,18 @@ sensor:
     on_value:
       then:
         - lambda: "id(ac).set_remote_temperature(x);"
+        - if:
+            condition:
+              - lambda: 'return id(ac).mode != CLIMATE_MODE_OFF;'
+            then:
+              - if:
+                  condition:
+                    - lambda: 'return (x - id(ac).target_temperature) > 2;'
+                  then:
+                    climate.control:
+                      id: ac
+                      fan_mode: HIGH
+                  else:
+                    climate.control:
+                      id: ac
+                      fan_mode: LOW

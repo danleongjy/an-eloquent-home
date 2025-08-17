@@ -1,0 +1,57 @@
+substitutions:
+  name: dining_room_ac
+  friendly_name: "Dining Room AC"
+  min_temp: 16
+  max_temp: 29
+  tx: 17
+  rx: 18
+  external_temp_sensor: sensor.dining_room_temperature
+  external_hum_sensor: sensor.dining_room_humidity
+
+esphome:
+  name: dining-room-ac
+  friendly_name: Dining Room AC
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret dining_room_ac_api_key
+
+ota:
+  - platform: esphome
+    password: dining_room_ac_ota_password
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+      bssid: 34:97:f6:22:df:28
+
+  manual_ip:
+    static_ip: 192.168.18.66
+    gateway: 192.168.18.1
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Dining Room AC"
+    password: !secret ap_password
+
+packages:
+  aircon: !include packages/aircon.yaml
+
+#climate:
+#  - id: !remove aircon
+#sensor:
+#  - id: !remove remote_temp_sensor
+  
+captive_portal:
+
+# Enable logging
+logger:
+  level: INFO
