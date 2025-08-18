@@ -23,6 +23,42 @@
       yard_window_1: "{{ states('binary_sensor.yard_window_1') }}"
       yard_window_2: "{{ states('binary_sensor.yard_window_2') }}"
 
+  - name: Dining Room Windows
+    unique_id: binary_sensor.dining_room_windows
+    device_class: window
+    state: >
+      {{ is_state('binary_sensor.dining_room_left_window', 'on') or 
+         is_state('binary_sensor.dining_room_right_window','on') }}
+    attributes:
+      total_panes_open: "{{ is_state('binary_sensor.dining_room_left_window','on') + is_state('binary_sensor.dining_room_right_window','on') }}/2"
+      total_panes: 2
+      dining_room_left_window: "{{ states('binary_sensor.dining_room_left_window') }}"
+      dining_room_right_window: "{{ states('binary_sensor.dining_room_right_window') }}"
+
+  - name: Living Room Windows
+    unique_id: binary_sensor.living_room_windows
+    device_class: window
+    state: >
+      {{ is_state('binary_sensor.living_room_left_window', 'on') or 
+         is_state('binary_sensor.living_room_right_window','on') }}
+    attributes:
+      total_panes_open: "{{ is_state('binary_sensor.living_room_left_window','on') + is_state('binary_sensor.living_room_right_window','on') }}/2"
+      total_panes: 2
+      living_room_left_window: "{{ states('binary_sensor.living_room_left_window') }}"
+      living_room_right_window: "{{ states('binary_sensor.living_room_right_window') }}"
+
+  - name: Study Room Windows
+    unique_id: binary_sensor.study_room_windows
+    device_class: window
+    state: >
+      {{ is_state('binary_sensor.study_room_left_window', 'on') or 
+         is_state('binary_sensor.study_room_right_window','on') }}
+    attributes:
+      total_panes_open: "{{ is_state('binary_sensor.study_room_left_window','on') + is_state('binary_sensor.study_room_right_window','on') }}/2"
+      total_panes: 2
+      study_room_left_window: "{{ states('binary_sensor.study_room_left_window') }}"
+      study_room_right_window: "{{ states('binary_sensor.study_room_right_window') }}"
+
   - name: Hallway Doors
     unique_id: binary_sensor.hallway_doors
     device_class: door
