@@ -299,7 +299,7 @@
           "styles": {
             "card": [
               {
-                "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_door_open_at_dining_room'].state == 'on'\n      && states['binary_sensor.main_door'].state == 'on')\n    return '#9e110d';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_door_open_at_dining_room'].state == 'on'\n      || states['binary_sensor.ac_on_with_windows_open_at_dining_room'].state == 'on')\n    return '#9e110d';\n  else if (states['sensor.raining_with_dining_room_windows_open'].state == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_dining_room_windows_open'].state == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
               }
             ]
           }
@@ -321,6 +321,13 @@
           },
           "hold_action": {
             "navigation_path": "/lovelace/living_room"
+          },
+          "styles": {
+            "card": [
+              {
+                "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_windows_open_at_living_room'].state == 'on')\n    return '#9e110d';\n  else if (states['sensor.raining_with_living_room_windows_open'].state == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_living_room_windows_open'].state == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+              }
+            ]
           }
         },
         "area_button_study_room": {
@@ -5031,7 +5038,10 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "color_type": "blank-card"
+                          "entity": "binary_sensor.dining_room_windows",
+                          "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
+                          "show_label": true,
+                          "template": "sensor_binary"
                         },
                         {
                           "type": "custom:button-card",
@@ -5069,7 +5079,10 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "color_type": "blank-card"
+                          "entity": "binary_sensor.living_room_windows",
+                          "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
+                          "show_label": true,
+                          "template": "sensor_binary"
                         },
                         {
                           "type": "custom:button-card",
@@ -5108,7 +5121,9 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.study_room_left_window",
+                          "entity": "binary_sensor.study_room_windows",
+                          "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
+                          "show_label": true,
                           "template": "sensor_binary"
                         },
                         {
@@ -5528,15 +5543,23 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "color_type": "blank-card"
+                          "entity": "binary_sensor.dining_room_windows",
+                          "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
+                          "show_label": true,
+                          "template": "sensor_binary"
                         },
                         {
                           "type": "custom:button-card",
-                          "color_type": "blank-card"
+                          "entity": "binary_sensor.living_room_windows",
+                          "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
+                          "show_label": true,
+                          "template": "sensor_binary"
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.study_room_left_window",
+                          "entity": "binary_sensor.study_room_windows",
+                          "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
+                          "show_label": true,
                           "template": "sensor_binary"
                         },
                         {
@@ -8472,7 +8495,8 @@
                 {
                   "type": "heading",
                   "heading_style": "title",
-                  "heading": "Sitting Room Fans"
+                  "heading": "Sitting Room Fans",
+                  "icon": "mdi:sofa"
                 },
                 {
                   "type": "entities",
@@ -8496,7 +8520,8 @@
                 {
                   "type": "heading",
                   "heading_style": "title",
-                  "heading": "Bedroom Fans"
+                  "heading": "Bedroom Fans",
+                  "icon": "mdi:bed"
                 },
                 {
                   "type": "entities",
@@ -8521,7 +8546,7 @@
                   "type": "heading",
                   "heading": "Fan Direction Helpers",
                   "heading_style": "title",
-                  "icon": ""
+                  "icon": "mdi:rotate-3d-variant"
                 },
                 {
                   "type": "grid",
@@ -12163,6 +12188,16 @@
                     },
                     {
                       "type": "custom:button-card",
+                      "entity": "binary_sensor.dining_room_left_window",
+                      "template": "square_cell_background"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.dining_room_right_window",
+                      "template": "square_cell_background"
+                    },
+                    {
+                      "type": "custom:button-card",
                       "entity": "sensor.dining_room_temperature",
                       "template": "square_cell_background",
                       "show_state": true
@@ -12198,6 +12233,34 @@
                   "card": {
                     "type": "markdown",
                     "content": "<ha-alert alert-type=\"error\">AC on with door open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.raining_with_dining_room_windows_open",
+                      "state": "alert"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Heavy rain with windows open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.raining_with_dining_room_windows_open",
+                      "state": "warning"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
                   }
                 }
               ]
@@ -12289,6 +12352,16 @@
                     },
                     {
                       "type": "custom:button-card",
+                      "entity": "binary_sensor.living_room_left_window",
+                      "template": "square_cell_background"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.living_room_right_window",
+                      "template": "square_cell_background"
+                    },
+                    {
+                      "type": "custom:button-card",
                       "entity": "sensor.living_room_temperature",
                       "template": "square_cell_background",
                       "show_state": true
@@ -12306,6 +12379,34 @@
                       "show_state": true
                     }
                   ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.raining_with_living_room_windows_open",
+                      "state": "alert"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Heavy rain with windows open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.raining_with_study_room_windows_open",
+                      "state": "warning"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
+                  }
                 }
               ]
             }
@@ -12343,6 +12444,11 @@
                     },
                     {
                       "type": "custom:button-card",
+                      "entity": "binary_sensor.study_room_ethernet_connection",
+                      "template": "square_cell_background"
+                    },
+                    {
+                      "type": "custom:button-card",
                       "entity": "binary_sensor.parents_room_door",
                       "template": "square_cell_background"
                     },
@@ -12353,7 +12459,7 @@
                     },
                     {
                       "type": "custom:button-card",
-                      "entity": "binary_sensor.study_room_ethernet_connection",
+                      "entity": "binary_sensor.study_room_right_window",
                       "template": "square_cell_background"
                     },
                     {
@@ -12413,7 +12519,7 @@
                   ],
                   "card": {
                     "type": "markdown",
-                    "content": "<ha-alert alert-type=\"error\">Heavy rain with window open</ha-alert>"
+                    "content": "<ha-alert alert-type=\"error\">Heavy rain with windows open</ha-alert>"
                   }
                 },
                 {
@@ -12426,7 +12532,7 @@
                   ],
                   "card": {
                     "type": "markdown",
-                    "content": "<ha-alert alert-type=\"warning\">Raining with window open</ha-alert>"
+                    "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
                   }
                 }
               ]
