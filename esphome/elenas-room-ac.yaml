@@ -42,9 +42,73 @@ wifi:
 
 captive_portal:
 
-packages:
-  aircon: !include packages/aircon.yaml
-
 # Default logging level
 logger:
   level: INFO
+
+uart:
+  id: HP_UART
+  baud_rate: 2400
+  tx_pin: ${tx}
+  rx_pin: ${rx}
+
+# External component reference
+external_components:
+  - source: github://echavet/MitsubishiCN105ESPHome
+
+climate:
+  - platform: cn105
+    id: ac
+    name: AC
+    update_interval: 4s # update interval can be adjusted after a first run and logs monitoring
+    supports:
+      mode: ["OFF", COOL, FAN_ONLY, DRY]
+      fan_mode: [AUTO, QUIET, LOW, MEDIUM, HIGH]
+      swing_mode: ["OFF", VERTICAL]
+    visual:
+      min_temperature: 16
+      max_temperature: 30
+      temperature_step:
+        target_temperature: 0.5
+        current_temperature: 0.1
+    remote_temperature_timeout: 30min
+    vertical_vane_select:
+      name: Vertical Vane
+sensor:
+  - platform: uptime
+    name: Uptime
+  - platform: homeassistant
+    id: remote_temp_sensor
+    entity_id: ${external_temp_sensor}
+    internal: true
+    device_class: temperature
+    state_class: measurement
+    unit_of_measurement: "°C"
+    filters:
+      # Uncomment the lambda line to convert F to C on incoming temperature
+      #  - lambda: return (x - 32) * (5.0/9.0);
+      - clamp: # Limits values to range accepted by Mitsubishi units
+          min_value: 1
+          max_value: 40
+          ignore_out_of_range: true
+      # - throttle: 30s
+      - heartbeat: 30s
+          
+    on_value:
+      then:
+        - lambda: "id(ac).set_remote_temperature(x * 1.0);"
+        - if:
+            condition:
+              - lambda: 'return id(ac).mode != CLIMATE_MODE_OFF;'
+            then:
+              - if:
+                  condition:
+                    - lambda: 'return (x - id(ac).target_temperature) > 2;'
+                  then:
+                    climate.control:
+                      id: ac
+                      fan_mode: HIGH
+                  else:
+                    climate.control:
+                      id: ac
+                      fan_mode: LOW

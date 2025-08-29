@@ -127,6 +127,13 @@ sensor:
           min_value: 1
           max_value: 40
           ignore_out_of_range: true
+      - lambda: |
+          // if x is NaN, see https://stackoverflow.com/questions/570669/checking-if-a-double-or-float-is-nan-in-c
+          if (x != x) {
+              return 30.0;
+          } else {
+              return x;
+          }
       - throttle: 30s
     on_value:
       then:
