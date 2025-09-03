@@ -32,7 +32,7 @@ Domain | Quantity
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 15
-[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 2
+[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 6
 [`event`](https://www.home-assistant.io/components/event) | 1
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`image`](https://www.home-assistant.io/components/image) | 3
@@ -60,7 +60,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 17
-Total | 1751
+Total | 1755
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -77,6 +77,7 @@ Total | 1751
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
 - [Local File Camera](https://home-assistant.io/integrations/local_file)
 - [MJPEG IP Camera](https://home-assistant.io/integrations/mjpeg)
+- [NMap Tracker](https://home-assistant.io/integrations/nmap_tracker)
 - [RESTful](https://home-assistant.io/integrations/rest)
 - [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [RESTful Switch](https://home-assistant.io/integrations/switch.rest)
@@ -106,7 +107,7 @@ Total | 1751
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
 - [Local Tuya](https://github.com/rospogrigio/localtuya)
-- [Pfsense Integration For Home Assistant](https://github.com/travisghansen/hass-pfsense)
+- [Openwrt](https://github.com/kvj/hass_openwrt)
 - [Proxmox Ve](https://github.com/dougiteixeira/proxmoxve)
 - [Pyscript](https://github.com/custom-components/pyscript)
 - [Smartthinq Lge Sensors](https://github.com/ollo69/ha-smartthinq-sensors)
