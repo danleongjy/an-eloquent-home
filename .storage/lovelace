@@ -9151,12 +9151,12 @@
                       "show_icon": false,
                       "variables": {
                         "all_total": 15.5,
-                        "bar_segment_proxmox_percent": "[[[ return (parseFloat(states['sensor.node_proxmox_memory_used'].state) - parseFloat(states['sensor.qemu_pfsense_100_memory_used'].state) - parseFloat(states['sensor.qemu_an_eloquent_home_101_memory_used'].state) - parseFloat(states['sensor.qemu_docker_102_memory_used'].state) - parseFloat(states['sensor.lxc_samba_103_memory_used'].state)) / variables.all_total * 100 ]]]",
-                        "bar_segment_pfsense_percent": "[[[ return parseFloat(states['sensor.qemu_pfsense_100_memory_used'].state) / variables.all_total * 100 ]]]",
+                        "bar_segment_proxmox_percent": "[[[ return (parseFloat(states['sensor.node_proxmox_memory_used'].state) - parseFloat(states['sensor.qemu_an_eloquent_home_101_memory_used'].state) - parseFloat(states['sensor.qemu_docker_102_memory_used'].state) - parseFloat(states['sensor.lxc_adguard_104_memory_used'].state) - parseFloat(states['sensor.lxc_samba_103_memory_used'].state)) / variables.all_total * 100 ]]]",
                         "bar_segment_homeassistant_percent": "[[[ return parseFloat(states['sensor.qemu_an_eloquent_home_101_memory_used'].state) / variables.all_total * 100 ]]]",
                         "bar_segment_docker_percent": "[[[ return parseFloat(states['sensor.qemu_docker_102_memory_used'].state) / variables.all_total * 100 ]]]",
+                        "bar_segment_adguard_percent": "[[[ return parseFloat(states['sensor.lxc_adguard_104_memory_used'].state) / variables.all_total * 100 ]]]",
                         "bar_segment_samba_percent": "[[[ return parseFloat(states['sensor.lxc_samba_103_memory_used'].state) / variables.all_total * 100 ]]]",
-                        "bar_segment_zz_available_percent": "[[[ return 100 - variables.bar_segment_proxmox_percent - variables.bar_segment_homeassistant_percent - variables.bar_segment_docker_percent - variables.bar_segment_samba_percent - variables.bar_segment_pfsense_percent ]]]"
+                        "bar_segment_zz_available_percent": "[[[ return 100 - variables.bar_segment_proxmox_percent - variables.bar_segment_homeassistant_percent - variables.bar_segment_docker_percent - variables.bar_segment_adguard_percent - variables.bar_segment_samba_percent ]]]"
                       },
                       "custom_fields": {
                         "bar_segment_proxmox": {
@@ -9176,23 +9176,6 @@
                             }
                           }
                         },
-                        "bar_segment_pfsense": {
-                          "card": {
-                            "type": "custom:button-card",
-                            "variables": {
-                              "percent": "[[[ return Math.round(variables.bar_segment_pfsense_percent) ]]]"
-                            },
-                            "entity": "sensor.qemu_pfsense_100_memory_used",
-                            "template": "bar_chart_segment",
-                            "styles": {
-                              "card": [
-                                {
-                                  "background": "#3498DB"
-                                }
-                              ]
-                            }
-                          }
-                        },
                         "bar_segment_homeassistant": {
                           "card": {
                             "type": "custom:button-card",
@@ -9204,7 +9187,7 @@
                             "styles": {
                               "card": [
                                 {
-                                  "background": "#E74C3C"
+                                  "background": "#3498DB"
                                 }
                               ]
                             }
@@ -9217,6 +9200,23 @@
                               "percent": "[[[ return Math.round(variables.bar_segment_docker_percent) ]]]"
                             },
                             "entity": "sensor.qemu_docker_102_memory_used",
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#E74C3C"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_adguard": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_pfsense_percent) ]]]"
+                            },
+                            "entity": "sensor.lxc_adguard_104_memory_used",
                             "template": "bar_chart_segment",
                             "styles": {
                               "card": [
@@ -9265,10 +9265,10 @@
                       "styles": {
                         "grid": [
                           {
-                            "grid-template-areas": "\"chart_header chart_header chart_header chart_header chart_header chart_header\" \"bar_segment_proxmox bar_segment_pfsense bar_segment_homeassistant bar_segment_docker bar_segment_samba bar_segment_available\""
+                            "grid-template-areas": "\"chart_header chart_header chart_header chart_header chart_header chart_header\" \"bar_segment_proxmox bar_segment_homeassistant bar_segment_docker bar_segment_adguard bar_segment_samba bar_segment_available\""
                           },
                           {
-                            "grid-template-columns": "[[[ return Math.round(variables.bar_segment_proxmox_percent).toString() + '% ' + variables.bar_segment_pfsense_percent.toString() + '%' + variables.bar_segment_homeassistant_percent.toString() + '%' + variables.bar_segment_docker_percent.toString() + '%' + variables.bar_segment_samba_percent.toString() + '%' + variables.bar_segment_zz_available_percent.toString() + '%' ]]]"
+                            "grid-template-columns": "[[[ return Math.round(variables.bar_segment_proxmox_percent).toString() + '% ' +  variables.bar_segment_homeassistant_percent.toString() + '%' + variables.bar_segment_docker_percent.toString() + '%' + variables.bar_segment_adguard_percent.toString() + '%' + variables.bar_segment_samba_percent.toString() + '%' + variables.bar_segment_zz_available_percent.toString() + '%' ]]]"
                           },
                           {
                             "grid-template-rows": "min-content min-content"
