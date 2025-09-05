@@ -32,7 +32,7 @@ Domain | Quantity
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 15
-[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 7
+[`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 16
 [`event`](https://www.home-assistant.io/components/event) | 1
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`image`](https://www.home-assistant.io/components/image) | 3
@@ -49,7 +49,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 3
 [`script`](https://www.home-assistant.io/components/script) | 16
 [`select`](https://www.home-assistant.io/components/select) | 75
-[`sensor`](https://www.home-assistant.io/components/sensor) | 614
+[`sensor`](https://www.home-assistant.io/components/sensor) | 723
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 104
@@ -60,7 +60,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 17
-Total | 1766
+Total | 1884
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -77,7 +77,6 @@ Total | 1766
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
 - [Local File Camera](https://home-assistant.io/integrations/local_file)
 - [MJPEG IP Camera](https://home-assistant.io/integrations/mjpeg)
-- [NMap Tracker](https://home-assistant.io/integrations/nmap_tracker)
 - [RESTful](https://home-assistant.io/integrations/rest)
 - [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [RESTful Switch](https://home-assistant.io/integrations/switch.rest)
@@ -107,7 +106,7 @@ Total | 1766
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
 - [Local Tuya](https://github.com/rospogrigio/localtuya)
-- [Openwrt](https://github.com/kvj/hass_openwrt)
+- [Openwrt Ubus](https://github.com/FUjr/homeassistant-openwrt-ubus)
 - [Proxmox Ve](https://github.com/dougiteixeira/proxmoxve)
 - [Pyscript](https://github.com/custom-components/pyscript)
 - [Smartthinq Lge Sensors](https://github.com/ollo69/ha-smartthinq-sensors)

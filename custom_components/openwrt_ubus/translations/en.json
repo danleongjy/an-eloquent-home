@@ -1,0 +1,306 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "OpenWrt ubus",
+        "description": "Set up connection to OpenWrt device using ubus for wireless device tracking and system monitoring",
+        "data": {
+          "host": "Host",
+          "username": "Username",
+          "password": "Password",
+          "wireless_software": "Wireless Software",
+          "dhcp_software": "DHCP Software"
+        }
+      },
+      "sensors": {
+        "title": "Sensor Configuration",
+        "description": "Choose which sensors to enable for {host}",
+        "data": {
+          "enable_system_sensors": "Enable System Sensors",
+          "enable_qmodem_sensors": "Enable QModem Sensors",
+          "enable_sta_sensors": "Enable Station Device Sensors",
+          "enable_ap_sensors": "Enable Access Point Sensors",
+          "enable_service_controls": "Enable Service Controls",
+          "enable_device_kick_buttons": "Enable Device Kick Buttons (requires hostapd)"
+        }
+      },
+      "services": {
+        "title": "Service Selection",
+        "description": "Select services to control for {host} (found {services_count} services)",
+        "data": {
+          "selected_services": "Services to Control"
+        }
+      },
+      "timeouts": {
+        "title": "Timeout Configuration",
+        "description": "Configure update intervals for {host}",
+        "data": {
+          "system_sensor_timeout": "System Sensor Update Interval (seconds)",
+          "qmodem_sensor_timeout": "QModem Sensor Update Interval (seconds)",
+          "sta_sensor_timeout": "Station Device Sensor Update Interval (seconds)",
+          "ap_sensor_timeout": "Access Point Sensor Update Interval (seconds)",
+          "service_timeout": "Service Status Update Interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error",
+      "cannot_get_services": "Failed to get services list",
+      "no_services_found": "No services found on the router"
+    },
+    "abort": {
+      "already_configured": "Device is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure OpenWrt ubus Integration",
+        "description": "Configure sensor types, timeouts, and other options for your OpenWrt device",
+        "data": {
+          "wireless_software": "Wireless Software",
+          "dhcp_software": "DHCP Software", 
+          "enable_system_sensors": "Enable System Sensors",
+          "enable_qmodem_sensors": "Enable QModem Sensors",
+          "enable_sta_sensors": "Enable Station Device Sensors",
+          "enable_ap_sensors": "Enable Access Point Sensors",
+          "enable_service_controls": "Enable Service Controls",
+          "selected_services": "Services to Control",
+          "refresh_services": "Refresh Services List",
+          "system_sensor_timeout": "System Sensor Update Interval (seconds)",
+          "qmodem_sensor_timeout": "QModem Sensor Update Interval (seconds)",
+          "sta_sensor_timeout": "Station Device Sensor Update Interval (seconds)",
+          "ap_sensor_timeout": "Access Point Sensor Update Interval (seconds)"
+        },
+        "data_description": {
+          "wireless_software": "Software used to get wireless information (iwinfo or hostapd)",
+          "dhcp_software": "Software used to get DHCP lease information",
+          "enable_system_sensors": "Monitor router system information (uptime, memory, load)",
+          "enable_qmodem_sensors": "Monitor cellular modem information (if available)",
+          "enable_sta_sensors": "Monitor connected WiFi devices and their statistics",
+          "enable_ap_sensors": "Monitor access point interface information (WiFi network details)",
+          "system_sensor_timeout": "How often to update system sensor data (10-300 seconds)",
+          "qmodem_sensor_timeout": "How often to update modem sensor data (30-600 seconds)",
+          "sta_sensor_timeout": "How often to update station device data (10-300 seconds)",
+          "ap_sensor_timeout": "How often to update access point data (30-600 seconds)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "uptime": {
+        "name": "Uptime"
+      },
+      "load_1": {
+        "name": "Load Average (1m)"
+      },
+      "load_5": {
+        "name": "Load Average (5m)"
+      },
+      "load_15": {
+        "name": "Load Average (15m)"
+      },
+      "memory_total": {
+        "name": "Total Memory"
+      },
+      "memory_free": {
+        "name": "Free Memory"
+      },
+      "memory_buffered": {
+        "name": "Buffered Memory"
+      },
+      "memory_shared": {
+        "name": "Shared Memory"
+      },
+      "memory_usage_percent": {
+        "name": "Memory Usage"
+      },
+      "swap_total": {
+        "name": "Total Swap"
+      },
+      "swap_free": {
+        "name": "Free Swap"
+      },
+      "board_kernel": {
+        "name": "Kernel Version"
+      },
+      "board_hostname": {
+        "name": "Hostname"
+      },
+      "board_model": {
+        "name": "Board Model"
+      },
+      "board_system": {
+        "name": "System"
+      },
+      "qmodem_manufacturer": {
+        "name": "Modem Manufacturer"
+      },
+      "qmodem_revision": {
+        "name": "Modem Revision"
+      },
+      "qmodem_at_port": {
+        "name": "Modem AT Port"
+      },
+      "qmodem_temperature": {
+        "name": "Modem Temperature"
+      },
+      "qmodem_voltage": {
+        "name": "Modem Voltage"
+      },
+      "qmodem_connect_status": {
+        "name": "Modem Connect Status"
+      },
+      "qmodem_sim_status": {
+        "name": "SIM Status"
+      },
+      "qmodem_isp": {
+        "name": "Internet Service Provider"
+      },
+      "qmodem_sim_slot": {
+        "name": "SIM Slot"
+      },
+      "qmodem_imei": {
+        "name": "IMEI"
+      },
+      "qmodem_imsi": {
+        "name": "IMSI"
+      },
+      "qmodem_iccid": {
+        "name": "ICCID"
+      },
+      "qmodem_lte_rsrp": {
+        "name": "LTE RSRP"
+      },
+      "qmodem_lte_rsrq": {
+        "name": "LTE RSRQ"
+      },
+      "qmodem_lte_rssi": {
+        "name": "LTE RSSI"
+      },
+      "qmodem_lte_sinr": {
+        "name": "LTE SINR"
+      },
+      "qmodem_nr5g_rsrp": {
+        "name": "5G NR RSRP"
+      },
+      "qmodem_nr5g_rsrq": {
+        "name": "5G NR RSRQ"
+      },
+      "qmodem_nr5g_sinr": {
+        "name": "5G NR SINR"
+      },
+      "signal": {
+        "name": "Signal Strength"
+      },
+      "signal_avg": {
+        "name": "Average Signal Strength"
+      },
+      "noise": {
+        "name": "Noise Level"
+      },
+      "connected_time": {
+        "name": "Connected Time"
+      },
+      "rx_rate": {
+        "name": "RX Rate"
+      },
+      "tx_rate": {
+        "name": "TX Rate"
+      },
+      "rx_packets": {
+        "name": "RX Packets"
+      },
+      "tx_packets": {
+        "name": "TX Packets"
+      },
+      "rx_bytes": {
+        "name": "RX Data"
+      },
+      "tx_bytes": {
+        "name": "TX Data"
+      },
+      "ssid": {
+        "name": "SSID"
+      },
+      "bssid": {
+        "name": "BSSID"
+      },
+      "channel": {
+        "name": "Channel"
+      },
+      "frequency": {
+        "name": "Frequency"
+      },
+      "txpower": {
+        "name": "TX Power"
+      },
+      "quality": {
+        "name": "Signal Quality"
+      },
+      "bitrate": {
+        "name": "Bitrate"
+      },
+      "mode": {
+        "name": "Mode"
+      },
+      "hwmode": {
+        "name": "Hardware Mode"
+      },
+      "htmode": {
+        "name": "HT Mode"
+      },
+      "country": {
+        "name": "Country"
+      }
+    },
+    "button": {
+      "service_restart": {
+        "name": "Restart {service_name}",
+        "state_attributes": {
+          "service_name": {
+            "name": "Service Name"
+          },
+          "host": {
+            "name": "Router Host"
+          },
+          "action": {
+            "name": "Action"
+          }
+        }
+      },
+      "device_kick": {
+        "name": "Kick {device_name}",
+        "state_attributes": {
+          "mac_address": {
+            "name": "MAC Address"
+          },
+          "ap_device": {
+            "name": "Access Point"
+          },
+          "hostname": {
+            "name": "Hostname"
+          },
+          "signal": {
+            "name": "Signal Strength"
+          },
+          "connected_time": {
+            "name": "Connected Time"
+          },
+          "authorized": {
+            "name": "Authorized"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "scan_devices": {
+      "name": "Scan devices",
+      "description": "Manually trigger a device scan on the OpenWrt router"
+    }
+  }
+}

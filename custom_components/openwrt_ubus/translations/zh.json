@@ -1,0 +1,336 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "OpenWrt ubus - 连接配置",
+        "description": "配置连接到 OpenWrt 设备，使用 ubus 进行无线设备跟踪和系统监控",
+        "data": {
+          "host": "主机地址",
+          "username": "用户名",
+          "password": "密码",
+          "wireless_software": "无线软件",
+          "dhcp_software": "DHCP 软件"
+        }
+      },
+      "sensors": {
+        "title": "OpenWrt ubus - 传感器配置",
+        "description": "选择要为 {host} 启用的传感器类型",
+        "data": {
+          "enable_system_sensors": "启用系统传感器",
+          "enable_qmodem_sensors": "启用调制解调器传感器",
+          "enable_sta_sensors": "启用站点（WiFi设备）传感器",
+          "enable_ap_sensors": "启用接入点传感器",
+          "enable_service_controls": "启用服务控制",
+          "enable_device_kick_buttons": "启用设备踢出按钮（需要hostapd）"
+        }
+      },
+      "services": {
+        "title": "OpenWrt ubus - 服务选择",
+        "description": "选择要控制的 {host} 服务（发现 {services_count} 个服务）",
+        "data": {
+          "selected_services": "要控制的服务"
+        }
+      },
+      "timeouts": {
+        "title": "OpenWrt ubus - 超时配置",
+        "description": "配置 {host} 上传感器的更新间隔",
+        "data": {
+          "system_sensor_timeout": "系统传感器更新间隔（秒）",
+          "qmodem_sensor_timeout": "调制解调器传感器更新间隔（秒）",
+          "sta_sensor_timeout": "站点传感器更新间隔（秒）",
+          "ap_sensor_timeout": "接入点传感器更新间隔（秒）",
+          "service_timeout": "服务状态更新间隔（秒）"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "连接失败",
+      "invalid_auth": "身份验证无效",
+      "unknown": "未知错误",
+      "cannot_get_services": "获取服务列表失败",
+      "no_services_found": "路由器上未找到服务"
+    },
+    "abort": {
+      "already_configured": "设备已配置"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "OpenWrt ubus 配置",
+        "description": "配置 {host} 的传感器、超时时间和软件设置",
+        "data": {
+          "wireless_software": "无线软件",
+          "dhcp_software": "DHCP 软件",
+          "enable_system_sensors": "启用系统传感器",
+          "enable_qmodem_sensors": "启用调制解调器传感器",
+          "enable_sta_sensors": "启用站点（WiFi设备）传感器",
+          "enable_ap_sensors": "启用接入点传感器",
+          "enable_service_controls": "启用服务控制",
+          "selected_services": "要控制的服务",
+          "refresh_services": "刷新服务列表",
+          "system_sensor_timeout": "系统传感器更新间隔（秒）",
+          "qmodem_sensor_timeout": "调制解调器传感器更新间隔（秒）",
+          "sta_sensor_timeout": "站点传感器更新间隔（秒）",
+          "ap_sensor_timeout": "接入点传感器更新间隔（秒）"
+        }
+      },
+      "sensors": {
+        "title": "传感器配置",
+        "description": "配置 {host} 的传感器类型和软件设置",
+        "data": {
+          "enable_system_sensors": "启用系统传感器",
+          "enable_qmodem_sensors": "启用调制解调器传感器",
+          "enable_sta_sensors": "启用站点（WiFi设备）传感器",
+          "enable_ap_sensors": "启用接入点传感器",
+          "wireless_software": "无线软件",
+          "dhcp_software": "DHCP 软件"
+        }
+      },
+      "timeouts": {
+        "title": "超时配置",
+        "description": "配置 {host} 上传感器的更新间隔",
+        "data": {
+          "system_sensor_timeout": "系统传感器更新间隔（秒）",
+          "qmodem_sensor_timeout": "调制解调器传感器更新间隔（秒）",
+          "sta_sensor_timeout": "站点传感器更新间隔（秒）",
+          "ap_sensor_timeout": "接入点传感器更新间隔（秒）"
+        }
+      },
+      "services": {
+        "title": "服务配置",
+        "description": "配置 {host} 的服务控制（发现 {services_count} 个服务）",
+        "data": {
+          "selected_services": "要控制的服务"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "uptime": {
+        "name": "运行时间"
+      },
+      "load_1": {
+        "name": "负载平均值 (1分钟)"
+      },
+      "load_5": {
+        "name": "负载平均值 (5分钟)"
+      },
+      "load_15": {
+        "name": "负载平均值 (15分钟)"
+      },
+      "memory_total": {
+        "name": "总内存"
+      },
+      "memory_free": {
+        "name": "可用内存"
+      },
+      "memory_buffered": {
+        "name": "缓冲内存"
+      },
+      "memory_shared": {
+        "name": "共享内存"
+      },
+      "memory_usage_percent": {
+        "name": "内存使用率"
+      },
+      "swap_total": {
+        "name": "总交换空间"
+      },
+      "swap_free": {
+        "name": "可用交换空间"
+      },
+      "board_kernel": {
+        "name": "内核版本"
+      },
+      "board_hostname": {
+        "name": "主机名"
+      },
+      "board_model": {
+        "name": "主板型号"
+      },
+      "board_system": {
+        "name": "系统"
+      },
+      "qmodem_manufacturer": {
+        "name": "调制解调器制造商"
+      },
+      "qmodem_revision": {
+        "name": "调制解调器版本"
+      },
+      "qmodem_at_port": {
+        "name": "调制解调器 AT 端口"
+      },
+      "qmodem_temperature": {
+        "name": "调制解调器温度"
+      },
+      "qmodem_voltage": {
+        "name": "调制解调器电压"
+      },
+      "qmodem_connect_status": {
+        "name": "调制解调器连接状态"
+      },
+      "qmodem_sim_status": {
+        "name": "SIM 卡状态"
+      },
+      "qmodem_isp": {
+        "name": "互联网服务提供商"
+      },
+      "qmodem_sim_slot": {
+        "name": "SIM 卡槽"
+      },
+      "qmodem_imei": {
+        "name": "IMEI"
+      },
+      "qmodem_imsi": {
+        "name": "IMSI"
+      },
+      "qmodem_iccid": {
+        "name": "ICCID"
+      },
+      "qmodem_lte_rsrp": {
+        "name": "LTE RSRP"
+      },
+      "qmodem_lte_rsrq": {
+        "name": "LTE RSRQ"
+      },
+      "qmodem_lte_rssi": {
+        "name": "LTE RSSI"
+      },
+      "qmodem_lte_sinr": {
+        "name": "LTE SINR"
+      },
+      "qmodem_nr5g_rsrp": {
+        "name": "5G NR RSRP"
+      },
+      "qmodem_nr5g_rsrq": {
+        "name": "5G NR RSRQ"
+      },
+      "qmodem_nr5g_sinr": {
+        "name": "5G NR SINR"
+      },
+      "signal": {
+        "name": "信号强度"
+      },
+      "signal_avg": {
+        "name": "平均信号强度"
+      },
+      "noise": {
+        "name": "噪声水平"
+      },
+      "connected_time": {
+        "name": "连接时间"
+      },
+      "rx_rate": {
+        "name": "接收速率"
+      },
+      "tx_rate": {
+        "name": "发送速率"
+      },
+      "rx_packets": {
+        "name": "接收数据包"
+      },
+      "tx_packets": {
+        "name": "发送数据包"
+      },
+      "rx_bytes": {
+        "name": "接收数据"
+      },
+      "tx_bytes": {
+        "name": "发送数据"
+      },
+      "ssid": {
+        "name": "网络名称 (SSID)"
+      },
+      "bssid": {
+        "name": "BSSID"
+      },
+      "channel": {
+        "name": "信道"
+      },
+      "frequency": {
+        "name": "频率"
+      },
+      "txpower": {
+        "name": "发射功率"
+      },
+      "quality": {
+        "name": "信号质量"
+      },
+      "bitrate": {
+        "name": "比特率"
+      },
+      "mode": {
+        "name": "模式"
+      },
+      "hwmode": {
+        "name": "硬件模式"
+      },
+      "htmode": {
+        "name": "HT 模式"
+      },
+      "country": {
+        "name": "国家"
+      }
+    },
+    "switch": {
+      "service": {
+        "name": "{service_name} 服务",
+        "state_attributes": {
+          "service_name": {
+            "name": "服务名称"
+          },
+          "host": {
+            "name": "路由器主机"
+          }
+        }
+      }
+    },
+    "button": {
+      "service_restart": {
+        "name": "重启 {service_name}",
+        "state_attributes": {
+          "service_name": {
+            "name": "服务名称"
+          },
+          "host": {
+            "name": "路由器主机"
+          },
+          "action": {
+            "name": "操作"
+          }
+        }
+      },
+      "device_kick": {
+        "name": "踢出 {device_name}",
+        "state_attributes": {
+          "mac_address": {
+            "name": "MAC地址"
+          },
+          "ap_device": {
+            "name": "接入点"
+          },
+          "hostname": {
+            "name": "主机名"
+          },
+          "signal": {
+            "name": "信号强度"
+          },
+          "connected_time": {
+            "name": "连接时间"
+          },
+          "authorized": {
+            "name": "已授权"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "scan_devices": {
+      "name": "扫描设备",
+      "description": "手动触发在 OpenWrt 路由器上的设备扫描"
+    }
+  }
+}
