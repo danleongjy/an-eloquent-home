@@ -160,13 +160,24 @@
         localtuya: "{{ set(integration_entities('localtuya') | map('device_id') | list) | length }}"
         mjpeg_camera: "{{ set(integration_entities('mjpeg') | map('device_id') | list) | length }}"
         mobile_app: "{{ set(integration_entities('mobile_app') | map('device_id') | list) | length }}"
-        pfsense: "{{ set(integration_entities('pfsense') | map('device_id') | list) | length }}"
         proxmoxve: "{{ set(integration_entities('proxmoxve') | map('device_id') | list) | length }}"
         roborock: "{{ set(integration_entities('roborock') | map('device_id') | list) | length }}"
         smartthinq: "{{ set(integration_entities('smartthinq_sensors') | map('device_id') | list) | length }}"
         switchbot: "{{ set(integration_entities('switchbot') | map('device_id') | list) | length }}"
         wyoming: "{{ set(integration_entities('wyoming') | map('device_id') | list) | length }}"
         zha: "{{ set(integration_entities('zha') | map('device_id') | list) | length }}"
+    - name: Router Connected WiFi Clients
+      unique_id: sensor.router_connected_wifi_clients
+      state: "{{ integration_entities('openwrt_ubus') | select('search', 'signal_strength') | reject('search', 'average') | list | length }}"
+      unit_of_measurement: clients
+      attributes:
+        connected_clients: >
+          {% set clients = namespace(raw = integration_entities('openwrt_ubus') | select('search', 'signal_strength') | reject('search', 'average') | list ,
+                                     names = []) %}
+          {% for client in clients.raw %}
+          {% set clients.names = clients.names + [client[7:-16]] %}
+          {% endfor %}
+          {{ clients.names | sort }}
         
 - trigger:
     - platform: time
@@ -384,40 +395,6 @@
       unique_id: sensor.dns_query_filter_block_rate_within_5min
       state: "{{ ((states('sensor.dns_queries_blocked_by_filters_within_5min') | int(0) / states('sensor.dns_queries_within_5min') | int(1)) * 100) | round(2) if states('sensor.dns_queries_within_5min') | int(1) > 0 else 0 }}"
       unit_of_measurement: '%'
-
-- trigger:
-  - platform: state
-    entity_id: sensor.qemu_pfsense_100_network_in
-    not_from:
-      - unknown
-      - unavailable
-    not_to:
-      - unknown
-      - unavailable
-  sensor:
-    - name: pfSense MB In within 1min
-      unique_id: sensor.pfsense_mb_in_within_1min
-      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
-      unit_of_measurement: MB
-      attributes:
-        timestamp: "{{ now() }}"
-
-- trigger:
-  - platform: state
-    entity_id: sensor.qemu_pfsense_100_network_out
-    not_from:
-      - unknown
-      - unavailable
-    not_to:
-      - unknown
-      - unavailable
-  sensor:
-    - name: pfSense MB Out within 1min
-      unique_id: sensor.pfsense_mb_out_within_1min
-      state: "{{ max([trigger.to_state.state | float(0) - trigger.from_state.state | float(0), 0]) }}"
-      unit_of_measurement: MB
-      attributes:
-        timestamp: "{{ now() }}"
 
 - trigger:
   - platform: state
