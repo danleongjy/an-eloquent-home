@@ -37,10 +37,10 @@ climate:
         current_temperature: 0.1
     cool_deadband: 0.5
     cool_overrun: 0
-    min_cooling_off_time: 10s
-    min_cooling_run_time: 10s
-    min_fanning_off_time: 10s
-    min_fanning_run_time: 10s
+    min_cooling_off_time: 120s
+    min_cooling_run_time: 300s
+    min_fanning_off_time: 30s
+    min_fanning_run_time: 30s
     min_fan_mode_switching_time: 5s
     min_idle_time: 10s
     cool_action:
@@ -160,3 +160,19 @@ sensor:
     device_class: humidity
     state_class: measurement
     unit_of_measurement: "%"
+    
+interval:
+  - interval: 5s
+    then:
+      - lambda: |-
+          // Sync thermostat mode with CN105 mode to fix DRY mode reporting
+          auto thermostat_mode = id(aircon).mode;
+          auto cn105_mode = id(hp).mode;
+          
+          // Only sync when in dry mode (CLIMATE_MODE_DRY = 4)
+          if (cn105_mode == 4 && thermostat_mode != cn105_mode) {
+            ESP_LOGI("MODE_SYNC", "Syncing thermostat mode from %d to %d (DRY mode)", thermostat_mode, cn105_mode);
+            auto call = id(hp).make_call();
+            call.set_mode(cn105_mode);
+            call.perform();
+          }

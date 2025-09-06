@@ -168,11 +168,11 @@
         zha: "{{ set(integration_entities('zha') | map('device_id') | list) | length }}"
     - name: Router Connected WiFi Clients
       unique_id: sensor.router_connected_wifi_clients
-      state: "{{ integration_entities('openwrt_ubus') | select('search', 'signal_strength') | reject('search', 'average') | list | length }}"
+      state: "{{ integration_entities('openwrt_ubus') | select('search', 'signal_strength') | reject('search', 'average') | reject('search', 'router') | list | length }}"
       unit_of_measurement: clients
       attributes:
         connected_clients: >
-          {% set clients = namespace(raw = integration_entities('openwrt_ubus') | select('search', 'signal_strength') | reject('search', 'average') | list ,
+          {% set clients = namespace(raw = integration_entities('openwrt_ubus') | select('search', 'signal_strength') | reject('search', 'average') | reject('search', 'router') | list ,
                                      names = []) %}
           {% for client in clients.raw %}
           {% set clients.names = clients.names + [client[7:-16]] %}
