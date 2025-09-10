@@ -598,10 +598,6 @@
             "service_data": {
               "entity_id": "entity"
             }
-          },
-          "double_tap_action": {
-            "action": "assist",
-            "start_listening": true
           }
         },
         "dishwasher_more_info": {
@@ -9058,7 +9054,7 @@
                   "heading_style": "title",
                   "icon": "mdi:lan",
                   "badges": [],
-                  "heading": "Network"
+                  "heading": "Routers"
                 },
                 {
                   "type": "custom:apexcharts-card",
@@ -9095,6 +9091,131 @@
                       "entity": "sensor.access_point_west_memory_usage",
                       "name": "Access Point West",
                       "stroke_width": 2
+                    }
+                  ]
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Adguard",
+                  "heading_style": "subtitle",
+                  "icon": "mdi:shield-check"
+                },
+                {
+                  "type": "tile",
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "entity": "switch.adguard_home_filtering",
+                  "name": "DNS Filtering",
+                  "hide_state": true,
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "entity": "switch.adguard_home_safe_browsing",
+                  "name": "Safe Browsing",
+                  "hide_state": true,
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "entity": "switch.adguard_home_safe_search",
+                  "name": "Safe Search",
+                  "hide_state": true,
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "type": "tile",
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "entity": "switch.adguard_home_parental_control",
+                  "hide_state": true,
+                  "name": "Child-Safe",
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  }
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "DNS Queries within 5min"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.dns_queries_within_5min",
+                      "type": "area",
+                      "name": "processed",
+                      "yaxis_id": "count",
+                      "color": "teal"
+                    },
+                    {
+                      "entity": "sensor.dns_queries_blocked_by_filters_within_5min",
+                      "name": "blocked",
+                      "type": "area",
+                      "yaxis_id": "count",
+                      "color": "red"
+                    },
+                    {
+                      "entity": "sensor.dns_query_filter_block_rate_within_5min",
+                      "name": "blocked",
+                      "yaxis_id": "percent",
+                      "color": "orange"
+                    }
+                  ],
+                  "yaxis": [
+                    {
+                      "id": "count",
+                      "align_to": 10,
+                      "decimals": 0,
+                      "min": 0,
+                      "apex_config": {
+                        "tickAmount": 5
+                      }
+                    },
+                    {
+                      "id": "percent",
+                      "opposite": true
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "DNS Processing Speed"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.adguard_home_average_processing_speed",
+                      "name": " ",
+                      "stroke_width": 2,
+                      "curve": "smooth"
                     }
                   ]
                 }
@@ -9158,8 +9279,8 @@
                       "name": "Docker"
                     },
                     {
-                      "entity": "sensor.lxc_adguard_104_cpu_used",
-                      "name": "Adguard"
+                      "entity": "sensor.lxc_nginx_104_cpu_used",
+                      "name": "Nginx"
                     },
                     {
                       "entity": "sensor.lxc_samba_103_cpu_used",
@@ -9183,7 +9304,7 @@
                         {
                           "entity": "sensor.node_proxmox_memory_used",
                           "name": "Proxmox",
-                          "transform": "return x - hass.states['sensor.qemu_an_eloquent_home_101_memory_used'].state - hass.states['sensor.qemu_docker_102_memory_used'].state - hass.states['sensor.lxc_adguard_104_memory_used'].state - hass.states['sensor.lxc_samba_103_memory_used'].state\n"
+                          "transform": "return x - hass.states['sensor.qemu_an_eloquent_home_101_memory_used'].state - hass.states['sensor.qemu_docker_102_memory_used'].state - hass.states['sensor.lxc_nginx_104_memory_used'].state - hass.states['sensor.lxc_samba_103_memory_used'].state\n"
                         },
                         {
                           "entity": "sensor.qemu_an_eloquent_home_101_memory_used",
@@ -9194,8 +9315,8 @@
                           "name": "Docker"
                         },
                         {
-                          "entity": "sensor.lxc_adguard_104_memory_used",
-                          "name": "Adguard"
+                          "entity": "sensor.lxc_nginx_104_memory_used",
+                          "name": "Nginx"
                         },
                         {
                           "entity": "sensor.lxc_samba_103_memory_used",
@@ -9215,10 +9336,10 @@
                       "show_icon": false,
                       "variables": {
                         "all_total": 15.5,
-                        "bar_segment_proxmox_percent": "[[[ return (parseFloat(states['sensor.node_proxmox_memory_used'].state) - parseFloat(states['sensor.qemu_an_eloquent_home_101_memory_used'].state) - parseFloat(states['sensor.qemu_docker_102_memory_used'].state) - parseFloat(states['sensor.lxc_adguard_104_memory_used'].state) - parseFloat(states['sensor.lxc_samba_103_memory_used'].state)) / variables.all_total * 100 ]]]",
+                        "bar_segment_proxmox_percent": "[[[ return (parseFloat(states['sensor.node_proxmox_memory_used'].state) - parseFloat(states['sensor.qemu_an_eloquent_home_101_memory_used'].state) - parseFloat(states['sensor.qemu_docker_102_memory_used'].state) - parseFloat(states['sensor.lxc_nginx_104_memory_used'].state) - parseFloat(states['sensor.lxc_samba_103_memory_used'].state)) / variables.all_total * 100 ]]]",
                         "bar_segment_homeassistant_percent": "[[[ return parseFloat(states['sensor.qemu_an_eloquent_home_101_memory_used'].state) / variables.all_total * 100 ]]]",
                         "bar_segment_docker_percent": "[[[ return parseFloat(states['sensor.qemu_docker_102_memory_used'].state) / variables.all_total * 100 ]]]",
-                        "bar_segment_adguard_percent": "[[[ return parseFloat(states['sensor.lxc_adguard_104_memory_used'].state) / variables.all_total * 100 ]]]",
+                        "bar_segment_adguard_percent": "[[[ return parseFloat(states['sensor.lxc_nginx_104_memory_used'].state) / variables.all_total * 100 ]]]",
                         "bar_segment_samba_percent": "[[[ return parseFloat(states['sensor.lxc_samba_103_memory_used'].state) / variables.all_total * 100 ]]]",
                         "bar_segment_zz_available_percent": "[[[ return 100 - variables.bar_segment_proxmox_percent - variables.bar_segment_homeassistant_percent - variables.bar_segment_docker_percent - variables.bar_segment_adguard_percent - variables.bar_segment_samba_percent ]]]"
                       },
@@ -9366,8 +9487,8 @@
                       "name": "Docker"
                     },
                     {
-                      "entity": "sensor.adguard_mb_in_within_1min",
-                      "name": "Adguard"
+                      "entity": "sensor.nginx_mb_in_within_1min",
+                      "name": "Nginx"
                     },
                     {
                       "entity": "sensor.samba_mb_in_within_1min",
@@ -9399,8 +9520,8 @@
                       "name": "Docker"
                     },
                     {
-                      "entity": "sensor.adguard_mb_out_within_1min",
-                      "name": "Adguard"
+                      "entity": "sensor.nginx_mb_out_within_1min",
+                      "name": "Nginx"
                     },
                     {
                       "entity": "sensor.samba_mb_out_within_1min",
@@ -9811,130 +9932,6 @@
                           }
                         ]
                       }
-                    }
-                  ]
-                }
-              ],
-              "column_span": 2
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "heading",
-                  "heading": "Adguard",
-                  "heading_style": "subtitle",
-                  "icon": "mdi:shield-check"
-                },
-                {
-                  "type": "tile",
-                  "tap_action": {
-                    "action": "toggle"
-                  },
-                  "entity": "switch.adguard_home_filtering",
-                  "name": "DNS Filtering",
-                  "hide_state": true,
-                  "icon_tap_action": {
-                    "action": "more-info"
-                  }
-                },
-                {
-                  "type": "tile",
-                  "tap_action": {
-                    "action": "toggle"
-                  },
-                  "entity": "switch.adguard_home_safe_browsing",
-                  "name": "Safe Browsing",
-                  "hide_state": true,
-                  "icon_tap_action": {
-                    "action": "more-info"
-                  }
-                },
-                {
-                  "type": "tile",
-                  "tap_action": {
-                    "action": "toggle"
-                  },
-                  "entity": "switch.adguard_home_safe_search",
-                  "name": "Safe Search",
-                  "hide_state": true,
-                  "icon_tap_action": {
-                    "action": "more-info"
-                  }
-                },
-                {
-                  "type": "tile",
-                  "tap_action": {
-                    "action": "toggle"
-                  },
-                  "entity": "switch.adguard_home_parental_control",
-                  "hide_state": true,
-                  "name": "Child-Safe",
-                  "icon_tap_action": {
-                    "action": "more-info"
-                  }
-                }
-              ],
-              "column_span": 2
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "DNS Queries within 5min"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.dns_queries_within_5min",
-                      "type": "area",
-                      "name": "processed",
-                      "yaxis_id": "count",
-                      "color": "teal"
-                    },
-                    {
-                      "entity": "sensor.dns_queries_blocked_by_filters_within_5min",
-                      "name": "blocked",
-                      "type": "area",
-                      "yaxis_id": "count",
-                      "color": "red"
-                    },
-                    {
-                      "entity": "sensor.dns_query_filter_block_rate_within_5min",
-                      "name": "blocked",
-                      "yaxis_id": "percent",
-                      "color": "orange"
-                    }
-                  ],
-                  "yaxis": [
-                    {
-                      "id": "count",
-                      "align_to": 10,
-                      "decimals": 0,
-                      "apex_config": {
-                        "tickAmount": 5
-                      }
-                    },
-                    {
-                      "id": "percent",
-                      "opposite": true
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "DNS Processing Speed"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.adguard_home_average_processing_speed",
-                      "name": " ",
-                      "stroke_width": 2,
-                      "curve": "smooth"
                     }
                   ]
                 }
