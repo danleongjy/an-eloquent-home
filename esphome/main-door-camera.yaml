@@ -117,36 +117,43 @@ light:
 
             progress = progress + 1;
       - addressable_lambda:
-          name: Wink
+          name: Heart
           update_interval: 0.5s
           lambda: |-
             // set black background
-            it.all() = Color(255,255,0);
-
-            // smilie
-            int black_cells[8] = {5,10,11,17,7,12,13,19};
-            int red_cells[6] = {28,33,34,35,36,32};
-            for (int i = 0; i < 8; i++) {
-              it[black_cells[i]] = Color::BLACK;
-            }
-            for (int j = 0; j < 6; j++) {
-              it[red_cells[j]] = Color(255,0,0);
-            }
-
+            it.all() = Color::WHITE;
+            // small heart
+            it[5] = Color(255,0,0);
+            it[7] = Color(255,0,0);
+            it.range(10,14) = Color(255,0,0);
+            it.range(17,20) = Color(255,0,0);
+            it.range(24,26) = Color(255,0,0);
+            it[30] = Color(255,0,0);
+                                    
             //animate
             static uint16_t progress = 0;
-            if (progress > 3) {
+            if (progress > 1) {
               progress = 0;
             }
-
-            if (progress == 3) {
-              // wink
-              it[5] = Color(255,255,0);
-              it[17] = Color(255,255,0);
+            if (progress == 1) {
+              // add pixels for big heart
+              it[0] = Color(255,0,0);
+              it[3] = Color(255,0,0);
+              it[4] = Color(255,0,0);
+              it[8] = Color(255,0,0);
+              it[9] = Color(255,0,0);
+              it[14] = Color(255,0,0);
+              it[16] = Color(255,0,0);
+              it[20] = Color(255,0,0);
+              it[23] = Color(255,0,0);
+              it[26] = Color(255,0,0);
+              it[29] = Color(255,0,0);
+              it[31] = Color(255,0,0);
+              it[34] = Color(255,0,0);
+              it[35] = Color(255,0,0);
             }
-            
             progress = progress + 1;
-
+            
 esp32_camera:
   id: main_door_camera
   external_clock:
