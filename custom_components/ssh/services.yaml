@@ -1,0 +1,114 @@
+execute_command:
+  name: Execute command
+  description: Execute a command on the selected devices.
+  target:
+    device:
+      integration: ssh
+    entity:
+      integration: ssh
+  fields:
+    command:
+      name: Command
+      description: The command to execute.
+      required: true
+      selector:
+        text:
+    timeout:
+      name: Timeout
+      description: The timeout of the command.
+      selector:
+        number:
+          min: 0
+          max: 60
+          unit_of_measurement: "s"
+    variables:
+      name: Variables
+      description: "Variables to pass to the command. Example: A variable `name` can be used inside the command as `@{name}`."
+      selector:
+        object:
+
+run_action:
+  name: Run action
+  description: Run an action on the selected devices.
+  target:
+    device:
+      integration: ssh
+    entity:
+      integration: ssh
+  fields:
+    key:
+      name: Key
+      description: The key of the action command.
+      required: true
+      selector:
+        text:
+    variables:
+      name: Variables
+      description: Variables to pass to the command.
+      selector:
+        object:
+
+poll_sensor:
+  name: Poll sensor
+  description: Poll one or more sensors.
+  target:
+    device:
+      integration: ssh
+    entity:
+      integration: ssh
+      domain:
+        - binary_sensor
+        - number
+        - select
+        - sensor
+        - switch
+        - text
+        - update
+
+set_value:
+  name: Set value
+  description: Set the value of one or more controllable sensors.
+  target:
+    device:
+    entity:
+      integration: ssh
+      domain:
+        - number
+        - select
+        - switch
+        - text
+        - update
+  fields:
+    values:
+      name: Values
+      description: Values in the same order as the target entities.
+      required: true
+      selector:
+        object:
+
+turn_on:
+  name: Turn on
+  description: Turn the selected devices on.
+  target:
+    device:
+      integration: ssh
+    entity:
+      integration: ssh
+
+turn_off:
+  name: Turn off
+  description: Turn the selected devices off.
+  target:
+    device:
+      integration: ssh
+    entity:
+      integration: ssh
+
+restart:
+  name: Restart
+  description: Restart the selected devices.
+  target:
+    device:
+      integration: ssh
+    entity:
+      integration: ssh
