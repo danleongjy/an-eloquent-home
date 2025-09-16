@@ -55,12 +55,12 @@ Domain | Quantity
 [`switch`](https://www.home-assistant.io/components/switch) | 105
 [`time`](https://www.home-assistant.io/components/time) | 4
 [`tts`](https://www.home-assistant.io/components/tts) | 2
-[`update`](https://www.home-assistant.io/components/update) | 116
+[`update`](https://www.home-assistant.io/components/update) | 115
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 17
-Total | 1783
+Total | 1782
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -107,7 +107,6 @@ Total | 1783
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
 - [Local Tuya](https://github.com/rospogrigio/localtuya)
-- [Openwrt Ubus](https://github.com/FUjr/homeassistant-openwrt-ubus)
 - [Proxmox Ve](https://github.com/dougiteixeira/proxmoxve)
 - [Pyscript](https://github.com/custom-components/pyscript)
 - [Smartthinq Lge Sensors](https://github.com/ollo69/ha-smartthinq-sensors)
