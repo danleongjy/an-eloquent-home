@@ -9053,14 +9053,26 @@
                   "type": "heading",
                   "heading_style": "title",
                   "icon": "mdi:lan",
-                  "badges": [],
+                  "badges": [
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.router_cpu_load",
+                      "icon": "mdi:cpu-64-bit"
+                    },
+                    {
+                      "type": "entity",
+                      "entity": "sensor.router_used_memory_percent"
+                    }
+                  ],
                   "heading": "Router"
                 },
                 {
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
                   "header": {
-                    "title": "CPU Used Within 5min"
+                    "title": "Maximum Resources Used Within 5min"
                   },
                   "all_series_config": {
                     "stroke_width": 2,
@@ -9071,67 +9083,16 @@
                   "series": [
                     {
                       "entity": "sensor.router_cpu_load",
-                      "name": "Maximum",
-                      "color": "red",
+                      "name": "CPU",
                       "group_by": {
                         "func": "max"
                       }
                     },
                     {
-                      "entity": "sensor.router_cpu_load",
-                      "name": "Average",
-                      "color": "orange",
-                      "group_by": {
-                        "func": "avg"
-                      }
-                    },
-                    {
-                      "entity": "sensor.router_cpu_load",
-                      "name": "Minimum",
-                      "color": "green",
-                      "group_by": {
-                        "func": "min"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "Memory Used Within 5min"
-                  },
-                  "all_series_config": {
-                    "stroke_width": 2,
-                    "unit": "%",
-                    "transform": "return (1 - x / 497.32) * 100",
-                    "group_by": {
-                      "duration": "5min"
-                    }
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.router_free_memory",
-                      "name": "Maximum",
-                      "color": "red",
+                      "entity": "sensor.router_used_memory_percent",
+                      "name": "RAM",
                       "group_by": {
                         "func": "max"
-                      }
-                    },
-                    {
-                      "entity": "sensor.router_free_memory",
-                      "name": "Average",
-                      "color": "orange",
-                      "group_by": {
-                        "func": "avg"
-                      }
-                    },
-                    {
-                      "entity": "sensor.router_free_memory",
-                      "name": "Minimum",
-                      "color": "green",
-                      "group_by": {
-                        "func": "min"
                       }
                     }
                   ]
@@ -9167,7 +9128,7 @@
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
                   "header": {
-                    "title": "WiFi Traffic Within 5min"
+                    "title": "Data Sent Within 5min To"
                   },
                   "stacked": true,
                   "all_series_config": {
@@ -9180,28 +9141,64 @@
                   },
                   "series": [
                     {
-                      "entity": "sensor.router_2_4ghz_wifi_mb_in_within_1min",
-                      "name": "2.4GHz Received",
-                      "invert": true,
-                      "stack_group": "2_4ghz",
-                      "color": "cyan"
+                      "entity": "sensor.router_lan2_mb_out_within_1min",
+                      "name": "AP East"
+                    },
+                    {
+                      "entity": "sensor.router_lan3_mb_out_within_1min",
+                      "name": "Study Room"
                     },
                     {
                       "entity": "sensor.router_2_4ghz_wifi_mb_out_within_1min",
-                      "name": "2.4GHz Transmitted",
-                      "stack_group": "2_4ghz"
+                      "name": "WiFi",
+                      "transform": "return x + hass.states['sensor.router_5ghz_wifi_mb_out_within_1min'].state"
                     },
                     {
-                      "entity": "sensor.router_5ghz_wifi_mb_in_within_1min",
-                      "name": "5GHz Received",
-                      "invert": true,
-                      "stack_group": "5ghz"
+                      "entity": "sensor.router_lan1_mb_out_within_1min",
+                      "name": "Server"
                     },
                     {
-                      "entity": "sensor.router_5ghz_wifi_mb_out_within_1min",
-                      "name": "5GHz Transmitted",
-                      "stack_group": "5ghz",
-                      "color": "orange"
+                      "entity": "sensor.router_extsw_mb_out_within_1min",
+                      "name": "AP West"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Data Received Within 5min From"
+                  },
+                  "stacked": true,
+                  "all_series_config": {
+                    "type": "column",
+                    "stroke_width": 2,
+                    "group_by": {
+                      "duration": "5min",
+                      "func": "sum"
+                    }
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.router_lan2_mb_in_within_1min",
+                      "name": "AP East"
+                    },
+                    {
+                      "entity": "sensor.router_lan3_mb_in_within_1min",
+                      "name": "Study Room"
+                    },
+                    {
+                      "entity": "sensor.router_2_4ghz_wifi_mb_in_within_1min",
+                      "name": "WiFi",
+                      "transform": "return x + hass.states['sensor.router_5ghz_wifi_mb_in_within_1min'].state"
+                    },
+                    {
+                      "entity": "sensor.router_lan1_mb_in_within_1min",
+                      "name": "Server"
+                    },
+                    {
+                      "entity": "sensor.router_extsw_mb_in_within_1min",
+                      "name": "AP West"
                     }
                   ]
                 }
@@ -9274,23 +9271,22 @@
                 {
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
-                  "stacked": true,
                   "header": {
                     "title": "DNS Queries within 5min"
                   },
                   "series": [
                     {
                       "entity": "sensor.dns_queries_within_5min",
-                      "type": "column",
-                      "name": "allowed",
+                      "type": "area",
+                      "name": "processed",
                       "yaxis_id": "count",
-                      "color": "teal",
-                      "transform": "return x - hass.states['sensor.dns_queries_blocked_by_filters_within_5min'].state"
+                      "color": "teal"
                     },
                     {
                       "entity": "sensor.dns_queries_blocked_by_filters_within_5min",
                       "name": "blocked",
-                      "type": "column",
+                      "type": "area",
+                      "stack_group": "col",
                       "yaxis_id": "count",
                       "color": "red"
                     },
