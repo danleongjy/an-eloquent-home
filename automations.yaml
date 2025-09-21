@@ -1450,7 +1450,8 @@
         metadata: {}
         data: {}
         target:
-          entity_id: switch.jupyterlab
+          entity_id:
+          - switch.lxc_jupyter
       - delay: 60
       - repeat:
           sequence:
@@ -1461,10 +1462,10 @@
               entity_id: '{{ repeat.item }}'
           - delay: 60
           for_each:
-          - switch.immich_server
-          - switch.immich_postgres
-          - switch.immich_redis
-          - switch.immich_machine_learning
+          - switch.docker_container_immich_server
+          - switch.docker_container_immich_postgres
+          - switch.docker_container_immich_redis
+          - switch.docker_container_immich_machine_learning
     - conditions:
       - condition: trigger
         id:
@@ -1484,11 +1485,10 @@
               entity_id: '{{ repeat.item }}'
           - delay: 60
           for_each:
-          - switch.jupyterlab
-          - switch.immich_server
-          - switch.immich_postgres
-          - switch.immich_redis
-          - switch.immich_machine_learning
+          - switch.docker_container_immich_server
+          - switch.docker_container_immich_postgres
+          - switch.docker_container_immich_redis
+          - switch.docker_container_immich_machine_learning
     - conditions:
       - condition: trigger
         id:
@@ -1508,10 +1508,10 @@
               entity_id: '{{ repeat.item }}'
           - delay: 60
           for_each:
-          - switch.immich_postgres
-          - switch.immich_redis
-          - switch.immich_machine_learning
-          - switch.immich_server
+          - switch.docker_container_immich_postgres
+          - switch.docker_container_immich_redis
+          - switch.docker_container_immich_machine_learning
+          - switch.docker_container_immich_server
     - conditions:
       - condition: trigger
         id:
