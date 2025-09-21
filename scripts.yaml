@@ -1539,10 +1539,10 @@ docker_mode:
       conditions:
       - condition: state
         entity_id:
-        - switch.immich_machine_learning
-        - switch.immich_postgres
-        - switch.immich_redis
-        - switch.immich_server
+        - switch.docker_container_immich_machine_learning
+        - switch.docker_container_immich_postgres
+        - switch.docker_container_immich_redis
+        - switch.docker_container_immich_server
         state: 'off'
     then:
     - repeat:
@@ -1559,10 +1559,10 @@ docker_mode:
             - condition: template
               value_template: '{{ is_state(repeat.item, ''on'') }}'
         for_each:
-        - switch.immich_server
-        - switch.immich_postgres
-        - switch.immich_redis
-        - switch.immich_machine_learning
+        - switch.docker_container_immich_machine_learning
+        - switch.docker_container_immich_postgres
+        - switch.docker_container_immich_redis
+        - switch.docker_container_immich_server
     else:
     - repeat:
         sequence:
@@ -1578,14 +1578,14 @@ docker_mode:
             - condition: template
               value_template: '{{ is_state(repeat.item, ''off'') }}'
         for_each:
-        - switch.immich_machine_learning
-        - switch.immich_postgres
-        - switch.immich_redis
+        - switch.docker_container_immich_machine_learning
+        - switch.docker_container_immich_postgres
+        - switch.docker_container_immich_redis
     - delay: 180
     - action: switch.turn_on
       metadata: {}
       data: {}
       target:
-        entity_id: switch.immich_server
+        entity_id: switch.docker_container_immich_server
   description: Sync Immich container states
   icon: mdi:docker
