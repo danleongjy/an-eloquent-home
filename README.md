@@ -52,7 +52,7 @@ Domain | Quantity
 [`sensor`](https://www.home-assistant.io/components/sensor) | 669
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 107
+[`switch`](https://www.home-assistant.io/components/switch) | 104
 [`time`](https://www.home-assistant.io/components/time) | 4
 [`tts`](https://www.home-assistant.io/components/tts) | 2
 [`update`](https://www.home-assistant.io/components/update) | 115
@@ -60,7 +60,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 17
-Total | 1825
+Total | 1822
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -76,7 +76,6 @@ Total | 1825
 - [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
 - [Local File Camera](https://home-assistant.io/integrations/local_file)
-- [MJPEG IP Camera](https://home-assistant.io/integrations/mjpeg)
 - [RESTful](https://home-assistant.io/integrations/rest)
 - [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [Shell Command](https://home-assistant.io/integrations/shell_command)
