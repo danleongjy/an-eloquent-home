@@ -3259,97 +3259,76 @@
   - at: input_datetime.graces_next_alarm
     id: alarm
     trigger: time
-  - entity_id:
-    - binary_sensor.parents_room_doors
-    from: 'off'
-    to: 'on'
-    id: dismiss_alarm
-    trigger: state
   conditions: []
   actions:
   - if:
-    - condition: trigger
-      id:
-      - alarm
-    then:
-    - if:
-      - condition: state
-        entity_id: input_boolean.parents_room_next_alarm_armed
-        state: 'on'
-      then:
-      - target:
-          entity_id: light.parents_room_core_display_backlight
-        data:
-          brightness_pct: '{{ states(''input_number.morning_light_brightness'') |
-            int if is_state(''sun.sun'',''below_horizon'') else 100 }}'
-        action: light.turn_on
-      - data:
-          option: Beep
-        target:
-          entity_id: select.parents_room_core_ringtone
-        action: select.select_option
-      - action: number.set_value
-        target:
-          entity_id: number.parents_room_core_speaker_volume
-        data:
-          value: 10
-      - data: {}
-        target:
-          entity_id: button.parents_room_core_play_ringtone
-        action: button.press
-      - delay: 1
-      - data: {}
-        target:
-          entity_id: button.parents_room_core_play_ringtone
-        action: button.press
-      - delay: 1
-      - data: {}
-        target:
-          entity_id: button.parents_room_core_play_ringtone
-        action: button.press
-      - delay: 1
-      - data:
-          option: Negative Beep
-        target:
-          entity_id: select.parents_room_core_ringtone
-        action: select.select_option
-      - data: {}
-        target:
-          entity_id: button.parents_room_core_play_ringtone
-        action: button.press
-    - delay: 300
-    - if:
-      - condition: state
-        entity_id: input_boolean.parents_room_next_alarm_armed
-        state: 'on'
-      then:
-      - data:
-          bedroom: parents_room
-          ringtone: Take On Me
-        action: script.alarm_lights
-      - data:
-          option: Take On Me
-        target:
-          entity_id: select.parents_room_core_ringtone
-        action: select.select_option
-      - data: {}
-        target:
-          entity_id: button.parents_room_core_play_ringtone
-        action: button.press
-    - action: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.parents_room_next_alarm_armed
-      data: {}
-    else:
     - condition: state
-      entity_id: sensor.next_alarm_timings
-      attribute: grace_next_alarm_dismissable
-      state: true
-    - metadata: {}
-      data: {}
+      entity_id: input_boolean.parents_room_next_alarm_armed
+      state: 'on'
+    then:
+    - target:
+        entity_id: light.parents_room_core_display_backlight
+      data:
+        brightness_pct: '{{ states(''input_number.morning_light_brightness'') | int
+          if is_state(''sun.sun'',''below_horizon'') else 100 }}'
+      action: light.turn_on
+    - data:
+        option: Beep
       target:
-        entity_id: input_boolean.parents_room_next_alarm_armed
-      action: input_boolean.turn_off
+        entity_id: select.parents_room_core_ringtone
+      action: select.select_option
+    - action: number.set_value
+      target:
+        entity_id: number.parents_room_core_speaker_volume
+      data:
+        value: 10
+    - data: {}
+      target:
+        entity_id: button.parents_room_core_play_ringtone
+      action: button.press
+    - delay: 1
+    - data: {}
+      target:
+        entity_id: button.parents_room_core_play_ringtone
+      action: button.press
+    - delay: 1
+    - data: {}
+      target:
+        entity_id: button.parents_room_core_play_ringtone
+      action: button.press
+    - delay: 1
+    - data:
+        option: Negative Beep
+      target:
+        entity_id: select.parents_room_core_ringtone
+      action: select.select_option
+    - data: {}
+      target:
+        entity_id: button.parents_room_core_play_ringtone
+      action: button.press
+  - delay: 300
+  - if:
+    - condition: state
+      entity_id: input_boolean.parents_room_next_alarm_armed
+      state: 'on'
+    then:
+    - data:
+        bedroom: parents_room
+        ringtone: Take On Me
+      action: script.alarm_lights
+    - data:
+        option: Take On Me
+      target:
+        entity_id: select.parents_room_core_ringtone
+      action: select.select_option
+    - data: {}
+      target:
+        entity_id: button.parents_room_core_play_ringtone
+      action: button.press
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.parents_room_next_alarm_armed
+    data: {}
   mode: parallel
   max: 10
 - id: '1690850158819'
