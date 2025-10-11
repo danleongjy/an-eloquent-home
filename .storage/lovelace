@@ -11227,183 +11227,162 @@
           "theme": "no_border",
           "subview": true,
           "badges": [],
-          "cards": [
+          "cards": [],
+          "type": "sections",
+          "sections": [
             {
-              "type": "vertical-stack",
+              "type": "grid",
               "cards": [
                 {
-                  "type": "conditional",
-                  "conditions": [
-                    {
-                      "entity": "sensor.washer_status",
-                      "state_not": "Off"
-                    }
-                  ],
-                  "card": {
-                    "type": "vertical-stack",
-                    "cards": [
-                      {
-                        "type": "horizontal-stack",
-                        "cards": [
-                          {
-                            "type": "conditional",
-                            "conditions": [
-                              {
-                                "condition": "or",
-                                "conditions": [
-                                  {
-                                    "condition": "state",
-                                    "entity": "sensor.washer_status",
-                                    "state": "Washing"
-                                  },
-                                  {
-                                    "condition": "state",
-                                    "entity": "sensor.washer_status",
-                                    "state": "Rinsing"
-                                  },
-                                  {
-                                    "condition": "state",
-                                    "entity": "sensor.washer_status",
-                                    "state": "Spinning"
-                                  },
-                                  {
-                                    "condition": "state",
-                                    "entity": "sensor.washer_status",
-                                    "state": "Delay Set"
-                                  }
-                                ]
-                              }
-                            ],
-                            "card": {
-                              "type": "custom:button-card",
-                              "entity": "sensor.washer_wash_progress",
-                              "template": "tile_progress_bar",
-                              "name": " ",
-                              "variables": {
-                                "progress_icon": "mdi:washing-machine"
-                              }
-                            }
-                          },
-                          {
-                            "type": "conditional",
-                            "conditions": [
-                              {
-                                "condition": "state",
-                                "entity": "sensor.washer_status",
-                                "state_not": "Washing"
-                              },
-                              {
-                                "condition": "state",
-                                "entity": "sensor.washer_status",
-                                "state_not": "Rinsing"
-                              },
-                              {
-                                "condition": "state",
-                                "entity": "sensor.washer_status",
-                                "state_not": "Spinning"
-                              },
-                              {
-                                "condition": "state",
-                                "entity": "sensor.washer_status",
-                                "state_not": "Delay Set"
-                              }
-                            ],
-                            "card": {
-                              "type": "tile",
-                              "features_position": "bottom",
-                              "vertical": false,
-                              "entity": "sensor.washer_last_wash_started",
-                              "name": " "
-                            }
-                          },
-                          {
-                            "type": "tile",
-                            "features_position": "bottom",
-                            "vertical": false,
-                            "entity": "sensor.washer_countdown",
-                            "name": " "
-                          }
-                        ]
-                      },
-                      {
-                        "type": "entities",
-                        "entities": [
-                          {
-                            "entity": "sensor.washer_current_course",
-                            "name": "Current Course"
-                          },
-                          {
-                            "entity": "sensor.washer_status",
-                            "name": "Current Stage"
-                          },
-                          {
-                            "entity": "sensor.washer_water_temp",
-                            "name": "Water Temperature"
-                          },
-                          {
-                            "entity": "sensor.washer_spin_speed",
-                            "name": "Spin Speed"
-                          },
-                          {
-                            "entity": "binary_sensor.washer_door_lock",
-                            "name": "Door Lock"
-                          },
-                          {
-                            "entity": "binary_sensor.washer_child_lock",
-                            "name": "Child Lock"
-                          }
-                        ],
-                        "state_color": true
-                      }
-                    ]
-                  }
+                  "type": "heading",
+                  "heading": "Progress",
+                  "heading_style": "title",
+                  "icon": "mdi:washing-machine"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.washer_status",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "name": " "
                 },
                 {
                   "type": "conditional",
                   "conditions": [
                     {
-                      "entity": "sensor.washer_status",
-                      "state": "Off"
+                      "condition": "or",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.washer_status",
+                          "state": "Washing"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "sensor.washer_status",
+                          "state": "Rinsing"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "sensor.washer_status",
+                          "state": "Spinning"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "sensor.washer_status",
+                          "state": "Delay Set"
+                        }
+                      ]
                     }
                   ],
                   "card": {
-                    "type": "vertical-stack",
-                    "cards": [
-                      {
-                        "square": false,
-                        "type": "grid",
-                        "cards": [
-                          {
-                            "type": "tile",
-                            "entity": "sensor.washer_status",
-                            "name": " ",
-                            "features_position": "bottom",
-                            "vertical": false
-                          },
-                          {
-                            "type": "tile",
-                            "entity": "binary_sensor.washer_door",
-                            "name": " ",
-                            "features_position": "bottom",
-                            "vertical": false
-                          },
-                          {
-                            "type": "tile",
-                            "entity": "sensor.washer_last_wash_completed",
-                            "name": " ",
-                            "features_position": "bottom",
-                            "vertical": false
-                          },
-                          {
-                            "type": "tile",
-                            "entity": "sensor.washer_last_wash_duration",
-                            "name": " "
-                          }
-                        ],
-                        "columns": 2
-                      }
-                    ]
+                    "type": "custom:button-card",
+                    "entity": "sensor.washer_wash_progress",
+                    "template": "tile_progress_bar",
+                    "name": " ",
+                    "variables": {
+                      "progress_icon": "mdi:washing-machine"
+                    }
+                  },
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
                   }
+                },
+                {
+                  "type": "tile",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "entity": "sensor.washer_last_wash_started",
+                  "name": " "
+                },
+                {
+                  "type": "tile",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "entity": "sensor.washer_countdown",
+                  "name": " "
+                },
+                {
+                  "type": "heading",
+                  "icon": "mdi:tshirt-crew",
+                  "heading": "Settings",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.washer_current_course",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "name": "Current Course"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.washer_water_temp",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "name": "Water Temperature"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.washer_spin_speed",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "name": "Spin Speed"
+                },
+                {
+                  "type": "tile",
+                  "entity": "binary_sensor.washer_door_lock",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "name": "Door Lock"
+                },
+                {
+                  "type": "tile",
+                  "entity": "binary_sensor.washer_child_lock",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "name": "Child Lock"
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "sensor.washer_status",
+                  "state_not": "Off"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "tile",
+                  "entity": "sensor.washer_status",
+                  "name": " ",
+                  "features_position": "bottom",
+                  "vertical": false
+                },
+                {
+                  "type": "tile",
+                  "entity": "binary_sensor.washer_door",
+                  "name": " ",
+                  "features_position": "bottom",
+                  "vertical": false
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.washer_last_wash_completed",
+                  "name": " ",
+                  "features_position": "bottom",
+                  "vertical": false
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.washer_last_wash_duration",
+                  "name": " ",
+                  "features_position": "bottom",
+                  "vertical": false
                 },
                 {
                   "type": "conditional",
@@ -11447,7 +11426,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "max_columns": 1
         },
         {
           "title": "Dishwasher",
@@ -13225,19 +13205,6 @@
                   "grid_options": {
                     "columns": 12,
                     "rows": "auto"
-                  }
-                },
-                {
-                  "show_state": false,
-                  "show_name": false,
-                  "camera_view": "live",
-                  "fit_mode": "fill",
-                  "type": "picture-entity",
-                  "entity": "camera.external_camera",
-                  "image": "https://demo.home-assistant.io/stub_config/bedroom.png",
-                  "grid_options": {
-                    "columns": 12,
-                    "rows": 5
                   }
                 }
               ]
