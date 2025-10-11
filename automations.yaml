@@ -4159,7 +4159,7 @@
   description: Take a snapshot and animate camera hex light
   triggers:
   - entity_id:
-    - binary_sensor.main_door_motion
+    - binary_sensor.doorbell_motion
     from: 'off'
     to: 'on'
     for:
@@ -4170,13 +4170,13 @@
     id: snapshot
   - trigger: state
     entity_id:
-    - binary_sensor.main_door_motion
+    - binary_sensor.doorbell_motion
     from: 'off'
     to: 'on'
     id: motion
   - trigger: state
     entity_id:
-    - binary_sensor.main_door_motion
+    - binary_sensor.doorbell_motion
     from: 'on'
     to: 'off'
     id: no_motion
@@ -4196,19 +4196,11 @@
     from: 'on'
     to: 'off'
     id: door_closed
-  - trigger: event
-    event_type: zha_event
-    event_data:
-      command: down_close
-      device_id: 7bbda61343894729bf01de127a827d8a
-    id: doorbell
-    alias: When Doorbell down button press is detected via zha_event
-  - trigger: event
-    event_type: zha_event
-    event_data:
-      device_id: 7bbda61343894729bf01de127a827d8a
-      command: up_open
-    alias: When Doorbell up button press is detected via zha_event
+  - trigger: state
+    entity_id:
+    - binary_sensor.doorbell_button
+    from: 'off'
+    to: 'on'
     id: doorbell
   conditions: []
   actions:
@@ -4272,7 +4264,7 @@
           brightness_pct: 50
           effect: Right Arrow
         target:
-          entity_id: light.main_door_camera_hex_light
+          entity_id: light.doorbell_hex_light
     - conditions:
       - condition: trigger
         id:
@@ -4284,7 +4276,7 @@
           effect: Wait
           brightness_pct: 50
         target:
-          entity_id: light.main_door_camera_hex_light
+          entity_id: light.doorbell_hex_light
     - conditions:
       - condition: trigger
         id:
@@ -4296,7 +4288,7 @@
           effect: Heart
           brightness_pct: 50
         target:
-          entity_id: light.main_door_camera_hex_light
+          entity_id: light.doorbell_hex_light
     default:
     - action: light.turn_off
       metadata: {}
@@ -4304,7 +4296,7 @@
       target:
         entity_id:
         - light.main_door_camera_led
-        - light.main_door_camera_hex_light
+        - light.doorbell_hex_light
   mode: parallel
   max: 10
 - id: '1731678711205'
@@ -5942,18 +5934,11 @@
   description: Play doorbell tones, flash Room Core lights and show Camera view on
     Main Door Display when Main Door Camera Button is pressed
   triggers:
-  - alias: When Doorbell down button press is detected via zha_event
-    trigger: event
-    event_type: zha_event
-    event_data:
-      device_id: 7bbda61343894729bf01de127a827d8a
-      command: down_close
-  - alias: When Doorbell up button press is detected via zha_event
-    trigger: event
-    event_type: zha_event
-    event_data:
-      device_id: 7bbda61343894729bf01de127a827d8a
-      command: up_open
+  - trigger: state
+    entity_id:
+    - binary_sensor.doorbell_button
+    from: 'off'
+    to: 'on'
   conditions: []
   actions:
   - variables:
@@ -5993,16 +5978,20 @@
       - target:
           entity_id: media_player.kitchen_speaker
         data:
-          media_content_id: http://192.168.18.101:8123/media/local/doorbells/{{ doorbell_track
-            }}
-          media_content_type: music
+          media:
+            media_content_id: http://192.168.18.101:8123/media/local/doorbells/{{
+              doorbell_track }}
+            media_content_type: music
+            metadata: {}
         action: media_player.play_media
       - target:
           entity_id: media_player.main_door_display
         data:
-          media_content_id: media-source://media_source/local/doorbells/{{ doorbell_track
-            }}
-          media_content_type: music
+          media:
+            media_content_id: media-source://media_source/local/doorbells/{{ doorbell_track
+              }}
+            media_content_type: music
+            metadata: {}
         action: media_player.play_media
     - sequence:
       - delay:
@@ -6053,9 +6042,11 @@
       - target:
           entity_id: media_player.study_room_speaker
         data:
-          media_content_id: http://192.168.18.101:8123/media/local/doorbells/{{ doorbell_track
-            }}
-          media_content_type: music
+          media:
+            media_content_id: http://192.168.18.101:8123/media/local/doorbells/{{
+              doorbell_track }}
+            media_content_type: music
+            metadata: {}
         action: media_player.play_media
   mode: restart
 - id: '1742085553481'
@@ -7425,7 +7416,7 @@
     id: no_motion
   - trigger: state
     entity_id:
-    - binary_sensor.main_door_motion
+    - binary_sensor.doorbell_motion
     from: 'off'
     to: 'on'
     id: visitor
