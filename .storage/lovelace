@@ -9574,7 +9574,7 @@
                     },
                     {
                       "entity": "sensor.storage_proxmox_pmbackup_disk_free",
-                      "name": "Ext-HDD"
+                      "name": "External HDD"
                     }
                   ],
                   "section_mode": true,
@@ -9590,30 +9590,74 @@
                   "section_mode": true,
                   "grid_options": {
                     "rows": 1,
-                    "columns": 6
+                    "columns": 4
                   }
                 },
                 {
                   "type": "custom:button-card",
                   "template": "tile_status_bar",
                   "entity": "sensor.storage_proxmox_local_lvm_disk_free_percentage",
-                  "name": "Local-LVM",
+                  "name": "LVM",
                   "section_mode": true,
                   "grid_options": {
                     "rows": 1,
-                    "columns": 6
+                    "columns": 4
                   }
                 },
                 {
                   "type": "custom:button-card",
                   "template": "tile_status_bar",
                   "entity": "sensor.storage_proxmox_pmbackup_disk_free_percentage",
-                  "name": "Ext-HDD",
+                  "name": "HDD",
                   "section_mode": true,
                   "grid_options": {
                     "rows": 1,
-                    "columns": 6
+                    "columns": 4
                   }
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Outbound Traffic from Apps"
+                  },
+                  "stacked": true,
+                  "all_series_config": {
+                    "type": "column",
+                    "group_by": {
+                      "func": "sum",
+                      "duration": "5min"
+                    }
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.home_assistant_mb_out_within_1min",
+                      "name": "HAOS"
+                    },
+                    {
+                      "entity": "sensor.docker_mb_out_within_1min",
+                      "name": "Immich"
+                    },
+                    {
+                      "entity": "sensor.nginx_mb_out_within_1min",
+                      "name": "Nginx"
+                    },
+                    {
+                      "entity": "sensor.samba_mb_out_within_1min",
+                      "name": "Samba"
+                    },
+                    {
+                      "entity": "sensor.jupyter_mb_out_within_1min",
+                      "name": "Jupyter"
+                    }
+                  ],
+                  "section_mode": true
                 },
                 {
                   "type": "custom:apexcharts-card",
@@ -9648,44 +9692,6 @@
                     },
                     {
                       "entity": "sensor.jupyter_mb_in_within_1min",
-                      "name": "Jupyter"
-                    }
-                  ],
-                  "section_mode": true
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "title": "Outbound Traffic from Apps"
-                  },
-                  "stacked": true,
-                  "all_series_config": {
-                    "type": "column",
-                    "group_by": {
-                      "func": "sum",
-                      "duration": "5min"
-                    }
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.home_assistant_mb_out_within_1min",
-                      "name": "HAOS"
-                    },
-                    {
-                      "entity": "sensor.docker_mb_out_within_1min",
-                      "name": "Immich"
-                    },
-                    {
-                      "entity": "sensor.nginx_mb_out_within_1min",
-                      "name": "Nginx"
-                    },
-                    {
-                      "entity": "sensor.samba_mb_out_within_1min",
-                      "name": "Samba"
-                    },
-                    {
-                      "entity": "sensor.jupyter_mb_out_within_1min",
                       "name": "Jupyter"
                     }
                   ],
