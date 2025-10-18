@@ -8,108 +8,24 @@ uart:
 external_components:
   - source: github://echavet/MitsubishiCN105ESPHome
 
-# Climate entity configuration
 climate:
   - platform: cn105
-    id: hp
-    internal: true
+    id: ac
+    name: AC
     update_interval: 4s # update interval can be adjusted after a first run and logs monitoring
+    supports:
+      mode: ["OFF", COOL, FAN_ONLY, DRY]
+      fan_mode: [AUTO, QUIET, LOW, MEDIUM, HIGH]
+      swing_mode: ["OFF", VERTICAL]
     visual:
       min_temperature: 16
       max_temperature: 30
       temperature_step:
-        target_temperature: 1
-        current_temperature: 0.5
+        target_temperature: 0.5
+        current_temperature: 0.1
     remote_temperature_timeout: 30min
     vertical_vane_select:
       name: Vertical Vane
-  - platform: thermostat
-    name: ${friendly_name}
-    id: aircon
-    icon: mdi:snowflake
-    sensor: remote_temp_sensor
-    humidity_sensor: remote_hum_sensor
-    visual:
-      min_temperature: ${min_temp}
-      max_temperature: ${max_temp}
-      temperature_step:
-        target_temperature: 0.5
-        current_temperature: 0.1
-    cool_deadband: 0.5
-    cool_overrun: 0
-    min_cooling_off_time: 120s
-    min_cooling_run_time: 300s
-    min_fanning_off_time: 30s
-    min_fanning_run_time: 30s
-    min_fan_mode_switching_time: 5s
-    min_idle_time: 10s
-    cool_action:
-      climate.control:
-        id: hp
-        mode: COOL
-        target_temperature: !lambda |-
-          float ac_temp = floor(id(aircon).target_temperature - 3);
-          return max(16.0f,ac_temp);
-    dry_action:
-      climate.control:
-        id: hp
-        mode: DRY
-    idle_action:
-      climate.control:
-        id: hp
-        mode: "OFF"
-    fan_only_action:
-      climate.control:
-        id: hp
-        mode: FAN_ONLY
-    cool_mode:
-      climate.control:
-        id: hp
-        mode: COOL
-        target_temperature: !lambda |-
-          float ac_temp = floor(id(aircon).target_temperature - 3);
-          return max(16.0f,ac_temp);
-    dry_mode:
-      climate.control:
-        id: hp
-        mode: DRY
-    off_mode:
-      climate.control:
-        id: hp
-        mode: "OFF"
-    fan_only_mode:
-      climate.control:
-        id: hp
-        mode: FAN_ONLY
-    fan_mode_auto_action:
-      climate.control:
-        id: hp
-        fan_mode: AUTO
-    fan_mode_low_action:
-      climate.control:
-        id: hp
-        fan_mode: LOW
-    fan_mode_medium_action:
-      climate.control:
-        id: hp
-        fan_mode: MEDIUM
-    fan_mode_high_action:
-      climate.control:
-        id: hp
-        fan_mode: HIGH
-    fan_mode_quiet_action:
-      climate.control:
-        id: hp
-        fan_mode: QUIET
-    swing_off_action:
-      climate.control:
-        id: hp
-        swing_mode: "OFF"
-    swing_vertical_action:
-      climate.control:
-        id: hp
-        swing_mode: VERTICAL
-
 sensor:
   - platform: uptime
     name: Uptime
@@ -127,52 +43,24 @@ sensor:
           min_value: 1
           max_value: 40
           ignore_out_of_range: true
-      - lambda: |
-          // if x is NaN, see https://stackoverflow.com/questions/570669/checking-if-a-double-or-float-is-nan-in-c
-          if (x != x) {
-              return 30.0;
-          } else {
-              return x;
-          }
-      - throttle: 30s
+      # - throttle: 30s
+      - heartbeat: 30s
+          
     on_value:
       then:
-        - lambda: "id(hp).set_remote_temperature(x);"
+        - lambda: "id(ac).set_remote_temperature(x * 1.0);"
         - if:
             condition:
-              - lambda: 'return id(aircon).mode != CLIMATE_MODE_OFF;'
+              - lambda: 'return id(ac).mode != CLIMATE_MODE_OFF;'
             then:
               - if:
                   condition:
-                    - lambda: 'return (x - id(aircon).target_temperature) > 2;'
+                    - lambda: 'return (x - id(ac).target_temperature) > 2;'
                   then:
                     climate.control:
-                      id: aircon
+                      id: ac
                       fan_mode: HIGH
                   else:
                     climate.control:
-                      id: aircon
+                      id: ac
                       fan_mode: LOW
-  - platform: homeassistant
-    id: remote_hum_sensor
-    entity_id: ${external_hum_sensor}
-    internal: true
-    device_class: humidity
-    state_class: measurement
-    unit_of_measurement: "%"
-    
-interval:
-  - interval: 5s
-    then:
-      - lambda: |-
-          // Sync thermostat mode with CN105 mode to fix DRY mode reporting
-          auto thermostat_mode = id(aircon).mode;
-          auto cn105_mode = id(hp).mode;
-          
-          // Only sync when in dry mode (CLIMATE_MODE_DRY = 4)
-          if (cn105_mode == 4 && thermostat_mode != cn105_mode) {
-            ESP_LOGI("MODE_SYNC", "Syncing thermostat mode from %d to %d (DRY mode)", thermostat_mode, cn105_mode);
-            auto call = id(hp).make_call();
-            call.set_mode(cn105_mode);
-            call.perform();
-          }
