@@ -59,8 +59,8 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
-[`zone`](https://www.home-assistant.io/components/zone) | 17
-Total | 1812
+[`zone`](https://www.home-assistant.io/components/zone) | 16
+Total | 1811
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
