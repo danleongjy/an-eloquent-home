@@ -813,6 +813,11 @@
         },
         "button_card_tile": {
           "show_state": true,
+          "section_mode": true,
+          "grid_options": {
+            "rows": 1,
+            "columns": 6
+          },
           "custom_fields": {
             "indicator": ""
           },
@@ -5879,12 +5884,12 @@
         {
           "theme": "no_border",
           "title": "Settings",
-          "path": "settings",
           "icon": "mdi:cogs",
           "badges": [],
-          "cards": [
+          "cards": [],
+          "type": "sections",
+          "sections": [
             {
-              "square": false,
               "type": "grid",
               "cards": [
                 {
@@ -5919,6 +5924,9 @@
                   "name": "Sleep",
                   "state_display": " ",
                   "icon": "mdi:bed-clock",
+                  "grid_options": {
+                    "rows": null
+                  },
                   "tap_action": {
                     "navigation_path": "/lovelace/settings-sleep"
                   }
@@ -5929,6 +5937,9 @@
                   "name": "Lighting",
                   "state_display": " ",
                   "icon": "mdi:home-lightbulb-outline",
+                  "grid_options": {
+                    "rows": null
+                  },
                   "tap_action": {
                     "navigation_path": "/lovelace/settings-lighting"
                   }
@@ -5939,6 +5950,9 @@
                   "name": "Cooling",
                   "state_display": " ",
                   "icon": "mdi:home-thermometer-outline",
+                  "grid_options": {
+                    "rows": null
+                  },
                   "tap_action": {
                     "navigation_path": "/lovelace/settings-cooling"
                   }
@@ -5949,6 +5963,9 @@
                   "name": "Motion",
                   "state_display": " ",
                   "icon": "mdi:motion-sensor",
+                  "grid_options": {
+                    "rows": null
+                  },
                   "tap_action": {
                     "navigation_path": "/lovelace/motion"
                   }
@@ -5959,6 +5976,9 @@
                   "name": "Network",
                   "state_display": " ",
                   "icon": "mdi:server-security",
+                  "grid_options": {
+                    "rows": null
+                  },
                   "tap_action": {
                     "navigation_path": "/lovelace/network"
                   }
@@ -5982,59 +6002,48 @@
                     "tap_action": {
                       "navigation_path": "/lovelace/zigbee-diagnostics"
                     }
+                  },
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
                   }
                 },
                 {
-                  "type": "conditional",
-                  "conditions": [
+                  "type": "tile",
+                  "entity": "script.git_push",
+                  "hide_state": true,
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "visibility": [
                     {
                       "condition": "user",
                       "users": [
                         "ad2bcce775894550affb6dfef93a2a36"
                       ]
                     }
-                  ],
-                  "card": {
-                    "type": "vertical-stack",
-                    "cards": [
-                      {
-                        "type": "tile",
-                        "entity": "script.git_push",
-                        "hide_state": true,
-                        "features_position": "bottom",
-                        "vertical": false
-                      }
-                    ]
-                  }
+                  ]
                 },
                 {
-                  "type": "conditional",
-                  "conditions": [
+                  "type": "tile",
+                  "entity": "script.botc_day_night_toggle",
+                  "hide_state": true,
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "name": "BotC Day/Night",
+                  "visibility": [
                     {
                       "condition": "user",
                       "users": [
                         "ad2bcce775894550affb6dfef93a2a36"
                       ]
                     }
-                  ],
-                  "card": {
-                    "type": "vertical-stack",
-                    "cards": [
-                      {
-                        "type": "tile",
-                        "entity": "script.botc_day_night_toggle",
-                        "hide_state": true,
-                        "features_position": "bottom",
-                        "vertical": false,
-                        "name": "BotC Day/Night"
-                      }
-                    ]
-                  }
+                  ]
                 }
-              ],
-              "columns": 2
+              ]
             }
-          ]
+          ],
+          "max_columns": 2,
+          "path": "settings"
         },
         {
           "theme": "no_border",
@@ -9601,32 +9610,23 @@
                   "template": "tile_status_bar",
                   "entity": "sensor.storage_proxmox_local_disk_free_percentage",
                   "name": "Local",
-                  "section_mode": true,
                   "grid_options": {
-                    "rows": 1,
-                    "columns": 6
+                    "rows": 1
                   }
                 },
                 {
                   "type": "custom:button-card",
                   "template": "tile_status_bar",
                   "entity": "sensor.storage_proxmox_local_lvm_disk_free_percentage",
-                  "name": "Local-LVM",
-                  "section_mode": true,
-                  "grid_options": {
-                    "rows": 1,
-                    "columns": 6
-                  }
+                  "name": "Local-LVM"
                 },
                 {
                   "type": "custom:button-card",
                   "template": "tile_status_bar",
                   "entity": "sensor.storage_proxmox_pmbackup_disk_free_percentage",
                   "name": "Ext HDD",
-                  "section_mode": true,
                   "grid_options": {
-                    "rows": 1,
-                    "columns": 6
+                    "rows": 1
                   }
                 },
                 {
