@@ -110,18 +110,7 @@ climate:
         id: hp
         mode: FAN_ONLY
     cool_mode:
-      - climate.control: # workaround after ESPHome 2025.8 as CN105 doens't respond to the first turn-on command
-          id: hp
-          mode: COOL
-          target_temperature: !lambda |-
-            float ac_temp = floor(id(aircon).target_temperature - 3);
-            return max(16.0f,ac_temp);
-      - delay: 0.5s
-      - climate.control:
-          id: hp
-          mode: "OFF"
-      - delay: 0.5s
-      - climate.control:
+      - climate.control: # only compile with ESPHome 2025.7.4
           id: hp
           mode: COOL
           target_temperature: !lambda |-
@@ -132,18 +121,7 @@ climate:
         id: hp
         mode: DRY
     off_mode:
-      - climate.control: # workaround after ESPHome 2025.8 as CN105 doens't respond to the first turn-off command
-          id: hp
-          mode: "OFF"
-      - delay: 0.5s
-      - climate.control:
-          id: hp
-          mode: COOL
-          target_temperature: !lambda |-
-            float ac_temp = floor(id(aircon).target_temperature - 3);
-            return max(16.0f,ac_temp);
-      - delay: 0.5s
-      - climate.control:
+      - climate.control: # only compile with ESPHome 2025.7.4
           id: hp
           mode: "OFF"
     fan_only_mode:
