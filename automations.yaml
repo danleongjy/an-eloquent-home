@@ -7640,3 +7640,83 @@
       - binary_sensor.master_bathroom_door
       blackout_hours_start: input_datetime.sleep_hours_start
       blackout_hours_end: input_datetime.sleep_hours_end
+- id: '1762069524284'
+  alias: AC Set State with Target Temperature Changes
+  description: Turn on or off an AC depending on how its target temperature changes
+  triggers:
+  - trigger: state
+    entity_id:
+    - climate.elenas_room_ac
+    - climate.elis_room_ac
+    - climate.dining_room_ac
+    - climate.living_room_ac
+    - climate.study_room_ac
+    - climate.parents_room_ac
+    attribute: temperature
+    id: temp_change
+  - trigger: state
+    entity_id:
+    - climate.elenas_room_ac
+    - climate.elis_room_ac
+    - climate.dining_room_ac
+    - climate.living_room_ac
+    - climate.study_room_ac
+    - climate.parents_room_ac
+    from: 'off'
+    not_to:
+    - unavailable
+    - unknown
+  conditions: []
+  actions:
+  - if:
+    - condition: trigger
+      id:
+      - temp_change
+    then:
+    - if:
+      - alias: If the new temp equals the AC's min temp
+        condition: template
+        value_template: '{{ state_attr(trigger.entity_id, "temperature") == state_attr(trigger.entity_id,
+          ''min_temp'') }}'
+      then:
+      - alias: If AC's state is not off
+        condition: template
+        value_template: '{{ not is_state(trigger.entity_id, ''off'') }}'
+      - action: climate.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: '{{ trigger.entity_id }}'
+      else:
+      - condition: template
+        value_template: '{{ is_state(trigger.entity_id, ''off'') }}'
+        alias: If AC's state is off
+      - action: climate.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: '{{ trigger.entity_id }}'
+    else:
+    - condition: template
+      value_template: '{{ state_attr(trigger.entity_id, ''temperature'') == state_attr(trigger.entity_id,
+        ''min_temp'') }}'
+    - if:
+      - condition: template
+        value_template: '{{ trigger.entity_id in [''climate.elenas_room_ac'', ''climate.elis_room_ac'']
+          }}'
+        alias: If AC is Eli's or Elena's
+      then:
+      - action: climate.set_temperature
+        metadata: {}
+        data:
+          temperature: 28.5
+        target:
+          entity_id: '{{ trigger.entity_id }}'
+      else:
+      - action: climate.set_temperature
+        metadata: {}
+        data:
+          temperature: 27.5
+        target:
+          entity_id: '{{ trigger.entity_id }}'
+  mode: single
