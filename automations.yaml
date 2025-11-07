@@ -262,23 +262,23 @@
 - id: '1643721003621'
   alias: Auto Cooling at Night
   description: Turn on Fan Auto Control at night in bedrooms
-  trigger:
-  - platform: time
-    at: input_datetime.sleep_hours_start
+  triggers:
+  - at: input_datetime.sleep_hours_start
     id: start
-  - platform: time
-    at: sensor.parents_room_auto_cooling_at_night_end_time
+    trigger: time
+  - at: sensor.parents_room_auto_cooling_at_night_end_time
     id: parents_room
-  - platform: template
-    value_template: '{{ now() > [as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo)
+    trigger: time
+  - value_template: '{{ now() > [as_datetime(states(''input_datetime.elis_next_alarm'')).astimezone(now().tzinfo)
       - timedelta(minutes = 30), today_at(''10:00'')] | min }}'
     id: elis_room
-  - platform: template
-    value_template: '{{ now() > [as_datetime(states(''input_datetime.elenas_next_alarm'')).astimezone(now().tzinfo)
+    trigger: template
+  - value_template: '{{ now() > [as_datetime(states(''input_datetime.elenas_next_alarm'')).astimezone(now().tzinfo)
       - timedelta(minutes = 30), today_at(''10:00'')] | min }}'
     id: elenas_room
-  condition: []
-  action:
+    trigger: template
+  conditions: []
+  actions:
   - if:
     - condition: trigger
       id:
@@ -295,10 +295,15 @@
         - automation.parents_room_fan_auto_control
       action: automation.turn_on
     else:
+    - condition: template
+      value_template: '{{ is_state(''binary_sensor.'' + trigger.id + ''_door'', ''off'')
+        }}'
     - target:
         entity_id:
         - automation.{{ trigger.id }}_fan_auto_control
       action: automation.turn_off
+      data:
+        stop_actions: true
     - target:
         entity_id: climate.{{ trigger.id }}_ac
       action: climate.turn_off
