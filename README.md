@@ -25,10 +25,10 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 134
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 162
-[`button`](https://www.home-assistant.io/components/button) | 184
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 163
+[`button`](https://www.home-assistant.io/components/button) | 177
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
-[`camera`](https://www.home-assistant.io/components/camera) | 6
+[`camera`](https://www.home-assistant.io/components/camera) | 5
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 15
@@ -44,23 +44,22 @@ Domain | Quantity
 [`light`](https://www.home-assistant.io/components/light) | 72
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
 [`notify`](https://www.home-assistant.io/components/notify) | 2
-[`number`](https://www.home-assistant.io/components/number) | 124
+[`number`](https://www.home-assistant.io/components/number) | 119
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 4
-[`script`](https://www.home-assistant.io/components/script) | 14
-[`select`](https://www.home-assistant.io/components/select) | 78
-[`sensor`](https://www.home-assistant.io/components/sensor) | 659
+[`script`](https://www.home-assistant.io/components/script) | 13
+[`select`](https://www.home-assistant.io/components/select) | 58
+[`sensor`](https://www.home-assistant.io/components/sensor) | 645
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 104
-[`time`](https://www.home-assistant.io/components/time) | 4
+[`switch`](https://www.home-assistant.io/components/switch) | 63
 [`tts`](https://www.home-assistant.io/components/tts) | 2
-[`update`](https://www.home-assistant.io/components/update) | 114
+[`update`](https://www.home-assistant.io/components/update) | 115
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1814
+Total | 1723
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -77,6 +76,7 @@ Total | 1814
 - [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
 - [Local File Camera](https://home-assistant.io/integrations/local_file)
+- [MQTT](https://home-assistant.io/integrations/mqtt)
 - [RESTful](https://home-assistant.io/integrations/rest)
 - [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [Shell Command](https://home-assistant.io/integrations/shell_command)
@@ -95,13 +95,13 @@ Total | 1814
 ### Add-ons
 - ESPHome Device Builder
 - File editor
+- Mosquitto broker
 - openWakeWord
 - Piper
 - Samba share
 - Whisper
 
 ### Custom integrations
-- [Dreame Vacuum](https://github.com/Tasshack/dreame-vacuum)
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
 - [Local Tuya](https://github.com/rospogrigio/localtuya)
@@ -117,6 +117,7 @@ Total | 1814
 - [Decluttering Card](https://github.com/custom-cards/decluttering-card)
 - [Slider Button Card](https://github.com/custom-cards/slider-button-card)
 - [State Switch](https://github.com/thomasloven/lovelace-state-switch)
+- [Valetudo Map Card](https://github.com/Hypfer/lovelace-valetudo-map-card)
 
 ## Dashboards
 In addition to providing direct control and visual feedback on the state of each controllable device in our house, our dashboards are also designed to be _infographics_ that provide insights into the usage trends of multiple devices of the same type, across different rooms and throughout the whole house.  They are maps in the spirit of the Tube maps - providing a stripped-down view of the components with just enough information to appreciate how the parts relate to the whole.  And the entire graphic fits on one screen on a mobile device, so all information is available at a glance.  The design principles are:

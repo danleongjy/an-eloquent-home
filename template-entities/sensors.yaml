@@ -300,6 +300,17 @@
 
 - trigger:
   - platform: state
+    entity_id: sensor.valetudo_hestia_dock_status
+    not_from: unavailable
+    to: "drying"
+  sensor:
+    - name: Vacuum Mop Drying Started
+      unique_id: sensor.vacuum_mop_drying_started
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+
+- trigger:
+  - platform: state
     entity_id: sensor.adguard_home_dns_queries
     not_from:
       - unknown

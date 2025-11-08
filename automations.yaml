@@ -7111,7 +7111,7 @@
           Dock: return_to_base
           Return: return_to_base
     - target:
-        entity_id: vacuum.hestia
+        entity_id: vacuum.valetudo_hestia
       action: vacuum.{{ commands[trigger.slots.command] }}
     - set_conversation_response: "{% if commands[trigger.slots.command] == 'start'
         %}\n  {{ ['Starting','Running','Initiating','Activating'] | random }} the
@@ -7120,33 +7120,18 @@
         | random }} the vacuum.\n{% else %}\n  Returning vacuum to dock.\n{% endif
         %}"
     else:
-    - set_conversation_response: "{% set clean_time = namespace(hours = (states('sensor.hestia_cleaning_time')
-        | float(0)) // 60,\n                              minutes =  ((states('sensor.hestia_cleaning_time')
-        | float(0)) % 60) | int(0),\n                              remaining_min =
-        (states('sensor.hestia_cleaning_time') | int(0) / states('sensor.hestia_cleaning_progress')
-        | int(1) * (100 - states('sensor.hestia_cleaning_progress') | int(1))) | int
-        ) %}\n{% set remaining_time = namespace(hours = clean_time.remaining_min //
-        60,\n                                  minutes = clean_time.remaining_min
-        % 60) %}\nThe vacuum is {{ 'in trouble' if states('vacuum.hestia') == 'error'
-        else state_translated('sensor.hestia_state').lower() if states('vacuum.hestia')
-        != 'docked' else 'docked' }} in {{ 'the ' if states('sensor.hestia_current_room')
-        not in [\"Elena's Room\",\"Eli's Room\"] }}{{ states('sensor.hestia_current_room')
-        }}.\nIt cleaned {{states('sensor.hestia_cleaned_area') | int(0) }} square
-        metres {{ 'over' if (states('sensor.hestia_cleaning_time') | float(0)) > 0
-        }} {{ clean_time.hours | round(0) | string + ' hour' if clean_time.hours >
-        0 }}{{ 's' if clean_time.hours > 1 }}{{ ' and ' if clean_time.hours > 0 and
-        clean_time.minutes > 0 }}{{ clean_time.minutes | string + ' minute' if clean_time.minutes
-        > 0 }}{{ 's' if clean_time.minutes > 1 }}.\n{% if states('sensor.hestia_cleaning_progress')
-        | float(0) > 0 %}\nIt will finish cleaning the remaining {{ 100 - states('sensor.hestia_cleaning_progress')
-        | int(0) }} percent of the house in {{ remaining_time.hours | round(0) | string
-        + ' hour' if remaining_time.hours > 0 }}{{ 's' if remaining_time.hours > 1
-        }}{{ ' and ' if remaining_time.hours > 0 and remaining_time.minutes > 0 }}{{
-        remaining_time.minutes | string + ' minute' if remaining_time.minutes > 0
-        }}{{ 's' if remaining_time.minutes > 1 }} at {{ (now() + timedelta(hours =
-        remaining_time.hours, minutes = remaining_time.minutes)).strftime('%I:%M%p')
-        }}.\n{% endif %}{% if states('vacuum.hestia') in ['docked','idle'] %}\n  Its
-        last run ended {{ relative_time(as_datetime(states('sensor.hestia_cleaning_history')))
-        }} ago.\n{% endif %}"
+    - set_conversation_response: "{% set clean_time = namespace(hours = (states('sensor.valetudo_hestia_current_statistics_time')
+        | float(0) // 60),\n                              minutes = (states('sensor.valetudo_hestia_current_statistics_time')
+        | float(0) % 60)) %}\nThe vacuum is {{ 'in trouble' if not is_state('sensor.valetudo_hestia_error',
+        'No error') else state_translated('vacuum.valetudo_hestia').lower() if states('vacuum.valetudo_hestia')
+        != 'docked' else 'docked' }}. \n{% if states('sensor.valetudo_hestia_current_statistics_area')
+        | int(0) > 0 %}\n  It cleaned {{ states('sensor.valetudo_hestia_current_statistics_area')
+        | int(0) }} square meters over {{ clean_time.hours | int(0) }} hour{{ 's'
+        if clean_time.hours > 1 }}{{ ' and ' if clean_time.minutes > 0 }}{{ clean_time.minutes
+        | int(0) if clean_time.minutes > 0 }}{{ ' minute' if clean_time.minutes >
+        0}}{{ 's' if clean_time.minutes > 1 }}.\n{% endif %}\n{% if is_state('sensor.valetudo_hestia_dock_status',
+        'drying') %}\n  Its mops will finish drying at {{ as_local(as_datetime(states('sensor.vacuum_mop_drying_started'))
+        + timedelta(hours = 3)).strftime('%I:%M%p') }}.\n{% endif %}\n"
   mode: single
 - id: '1743851351763'
   alias: Voice Control for Stove
