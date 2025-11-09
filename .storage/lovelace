@@ -1646,7 +1646,7 @@
                 "template": "washer_more_info",
                 "label": "..."
               },
-              "Detecting": {
+              "Detecting Load Level": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "template": "washer_more_info",
@@ -6028,7 +6028,10 @@
                         "ad2bcce775894550affb6dfef93a2a36"
                       ]
                     }
-                  ]
+                  ],
+                  "grid_options": {
+                    "rows": 1
+                  }
                 }
               ]
             }
@@ -10703,11 +10706,26 @@
               "type": "grid",
               "cards": [
                 {
+                  "show_state": false,
+                  "show_name": false,
+                  "camera_view": "auto",
+                  "fit_mode": "cover",
+                  "type": "picture-entity",
+                  "entity": "vacuum.valetudo_hestia",
+                  "camera_image": "camera.hestia_camera",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "input_select.vacuum_run_type",
+                      "state": "Whole Home"
+                    }
+                  ]
+                },
+                {
                   "type": "tile",
                   "entity": "vacuum.valetudo_hestia",
                   "name": "Hestia",
                   "vertical": false,
-                  "features_position": "inline",
                   "features": [
                     {
                       "type": "vacuum-commands",
@@ -10717,20 +10735,598 @@
                         "locate"
                       ]
                     }
+                  ],
+                  "features_position": "inline",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "input_select.vacuum_run_type",
+                      "state": "Whole Home"
+                    }
                   ]
                 },
                 {
-                  "type": "custom:valetudo-map-card",
-                  "vacuum": "valetudo_hestia",
-                  "title": null,
-                  "map_scale": 1.5,
-                  "show_status": false,
-                  "show_battery_level": false,
-                  "show_start_button": false,
-                  "show_pause_button": false,
-                  "show_stop_button": false,
-                  "show_home_button": false,
-                  "show_locate_button": false
+                  "type": "custom:xiaomi-vacuum-map-card",
+                  "map_source": {
+                    "camera": "camera.hestia_camera"
+                  },
+                  "calibration_source": {
+                    "camera": true
+                  },
+                  "entity": "vacuum.valetudo_hestia",
+                  "vacuum_platform": "Hypfer/Valetudo",
+                  "map_locked": true,
+                  "internal_variables": {
+                    "topic": "vacuum/hestia"
+                  },
+                  "icons": [],
+                  "tiles": [],
+                  "map_modes": [
+                    {
+                      "template": "vacuum_clean_zone"
+                    },
+                    {
+                      "template": "vacuum_goto"
+                    },
+                    {
+                      "template": "vacuum_clean_segment",
+                      "predefined_selections": [
+                        {
+                          "id": "1",
+                          "icon": {
+                            "name": "mdi:bed",
+                            "x": 3802,
+                            "y": 1907
+                          },
+                          "label": {
+                            "text": "D&G",
+                            "x": 3802,
+                            "y": 1907,
+                            "offset_y": 35
+                          },
+                          "outline": [
+                            [
+                              3595,
+                              2075
+                            ],
+                            [
+                              3610,
+                              1780
+                            ],
+                            [
+                              3620,
+                              1770
+                            ],
+                            [
+                              3995,
+                              1770
+                            ],
+                            [
+                              4010,
+                              1850
+                            ],
+                            [
+                              4010,
+                              1910
+                            ],
+                            [
+                              3995,
+                              2010
+                            ],
+                            [
+                              3695,
+                              2160
+                            ],
+                            [
+                              3640,
+                              2165
+                            ],
+                            [
+                              3630,
+                              2165
+                            ],
+                            [
+                              3595,
+                              2150
+                            ],
+                            [
+                              3595,
+                              2075
+                            ]
+                          ]
+                        },
+                        {
+                          "id": "3",
+                          "icon": {
+                            "name": "mdi:bookshelf",
+                            "x": 3807,
+                            "y": 2210
+                          },
+                          "outline": [
+                            [
+                              3605,
+                              2350
+                            ],
+                            [
+                              3605,
+                              2230
+                            ],
+                            [
+                              3610,
+                              2180
+                            ],
+                            [
+                              3730,
+                              2070
+                            ],
+                            [
+                              4010,
+                              2070
+                            ],
+                            [
+                              4010,
+                              2335
+                            ],
+                            [
+                              4000,
+                              2340
+                            ],
+                            [
+                              3720,
+                              2350
+                            ],
+                            [
+                              3605,
+                              2350
+                            ]
+                          ]
+                        },
+                        {
+                          "id": "5",
+                          "icon": {
+                            "name": "mdi:pot-steam",
+                            "x": 3320,
+                            "y": 2285
+                          },
+                          "outline": [
+                            [
+                              3380,
+                              2105
+                            ],
+                            [
+                              3385,
+                              2360
+                            ],
+                            [
+                              3385,
+                              2465
+                            ],
+                            [
+                              3290,
+                              2465
+                            ],
+                            [
+                              3275,
+                              2460
+                            ],
+                            [
+                              3255,
+                              2370
+                            ],
+                            [
+                              3255,
+                              2110
+                            ],
+                            [
+                              3260,
+                              2105
+                            ],
+                            [
+                              3380,
+                              2105
+                            ]
+                          ]
+                        },
+                        {
+                          "id": "6",
+                          "icon": {
+                            "name": "mdi:sofa",
+                            "x": 3607,
+                            "y": 2525
+                          },
+                          "outline": [
+                            [
+                              3865,
+                              2375
+                            ],
+                            [
+                              3865,
+                              2680
+                            ],
+                            [
+                              3735,
+                              2695
+                            ],
+                            [
+                              3460,
+                              2695
+                            ],
+                            [
+                              3400,
+                              2670
+                            ],
+                            [
+                              3390,
+                              2650
+                            ],
+                            [
+                              3350,
+                              2555
+                            ],
+                            [
+                              3350,
+                              2545
+                            ],
+                            [
+                              3390,
+                              2380
+                            ],
+                            [
+                              3395,
+                              2375
+                            ],
+                            [
+                              3605,
+                              2355
+                            ],
+                            [
+                              3725,
+                              2355
+                            ],
+                            [
+                              3840,
+                              2370
+                            ],
+                            [
+                              3865,
+                              2375
+                            ]
+                          ]
+                        },
+                        {
+                          "id": "7",
+                          "icon": {
+                            "name": "mdi:pasta",
+                            "x": 3617,
+                            "y": 2872
+                          },
+                          "outline": [
+                            [
+                              3860,
+                              2725
+                            ],
+                            [
+                              3860,
+                              3030
+                            ],
+                            [
+                              3700,
+                              3045
+                            ],
+                            [
+                              3605,
+                              3045
+                            ],
+                            [
+                              3420,
+                              3030
+                            ],
+                            [
+                              3375,
+                              2900
+                            ],
+                            [
+                              3375,
+                              2745
+                            ],
+                            [
+                              3460,
+                              2700
+                            ],
+                            [
+                              3745,
+                              2700
+                            ],
+                            [
+                              3860,
+                              2725
+                            ]
+                          ]
+                        },
+                        {
+                          "id": "8",
+                          "icon": {
+                            "name": "mdi:bed",
+                            "x": 3807,
+                            "y": 3197
+                          },
+                          "label": {
+                            "text": "E",
+                            "x": 3807,
+                            "y": 3197,
+                            "offset_y": 35
+                          },
+                          "outline": [
+                            [
+                              3995,
+                              3135
+                            ],
+                            [
+                              3995,
+                              3315
+                            ],
+                            [
+                              3980,
+                              3320
+                            ],
+                            [
+                              3840,
+                              3340
+                            ],
+                            [
+                              3815,
+                              3340
+                            ],
+                            [
+                              3755,
+                              3325
+                            ],
+                            [
+                              3725,
+                              3310
+                            ],
+                            [
+                              3720,
+                              3305
+                            ],
+                            [
+                              3720,
+                              3235
+                            ],
+                            [
+                              3725,
+                              3075
+                            ],
+                            [
+                              3745,
+                              3055
+                            ],
+                            [
+                              3845,
+                              3055
+                            ],
+                            [
+                              3910,
+                              3070
+                            ],
+                            [
+                              3985,
+                              3105
+                            ],
+                            [
+                              3995,
+                              3135
+                            ]
+                          ]
+                        },
+                        {
+                          "id": "9",
+                          "icon": {
+                            "name": "mdi:tshirt-crew",
+                            "x": 3302,
+                            "y": 3300
+                          },
+                          "outline": [
+                            [
+                              3385,
+                              3290
+                            ],
+                            [
+                              3385,
+                              3355
+                            ],
+                            [
+                              3260,
+                              3355
+                            ],
+                            [
+                              3225,
+                              3290
+                            ],
+                            [
+                              3220,
+                              3280
+                            ],
+                            [
+                              3220,
+                              3245
+                            ],
+                            [
+                              3380,
+                              3245
+                            ],
+                            [
+                              3385,
+                              3290
+                            ]
+                          ]
+                        },
+                        {
+                          "id": "11",
+                          "icon": {
+                            "name": "mdi:swap-horizontal-circle-outline",
+                            "x": 3650,
+                            "y": 3260
+                          },
+                          "outline": [
+                            [
+                              3585,
+                              3265
+                            ],
+                            [
+                              3605,
+                              3050
+                            ],
+                            [
+                              3705,
+                              3050
+                            ],
+                            [
+                              3715,
+                              3240
+                            ],
+                            [
+                              3715,
+                              3310
+                            ],
+                            [
+                              3705,
+                              3460
+                            ],
+                            [
+                              3675,
+                              3470
+                            ],
+                            [
+                              3620,
+                              3470
+                            ],
+                            [
+                              3605,
+                              3465
+                            ],
+                            [
+                              3585,
+                              3330
+                            ],
+                            [
+                              3585,
+                              3265
+                            ]
+                          ]
+                        },
+                        {
+                          "id": "13",
+                          "icon": {
+                            "name": "mdi:bed",
+                            "x": 3807,
+                            "y": 3500
+                          },
+                          "label": {
+                            "text": "A",
+                            "x": 3807,
+                            "y": 3500,
+                            "offset_y": 35
+                          },
+                          "outline": [
+                            [
+                              3990,
+                              3365
+                            ],
+                            [
+                              4005,
+                              3500
+                            ],
+                            [
+                              4005,
+                              3515
+                            ],
+                            [
+                              3990,
+                              3605
+                            ],
+                            [
+                              3805,
+                              3635
+                            ],
+                            [
+                              3725,
+                              3635
+                            ],
+                            [
+                              3710,
+                              3455
+                            ],
+                            [
+                              3710,
+                              3410
+                            ],
+                            [
+                              3735,
+                              3380
+                            ],
+                            [
+                              3795,
+                              3365
+                            ],
+                            [
+                              3990,
+                              3365
+                            ]
+                          ]
+                        },
+                        {
+                          "id": "15",
+                          "icon": {
+                            "name": "mdi:teddy-bear",
+                            "x": 3295,
+                            "y": 3087
+                          },
+                          "outline": [
+                            [
+                              3380,
+                              3240
+                            ],
+                            [
+                              3220,
+                              3240
+                            ],
+                            [
+                              3175,
+                              3195
+                            ],
+                            [
+                              3175,
+                              2960
+                            ],
+                            [
+                              3280,
+                              2935
+                            ],
+                            [
+                              3415,
+                              2935
+                            ],
+                            [
+                              3415,
+                              3030
+                            ],
+                            [
+                              3380,
+                              3240
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "input_select.vacuum_run_type",
+                      "state": "Custom"
+                    }
+                  ]
                 },
                 {
                   "type": "vertical-stack",
@@ -10774,6 +11370,79 @@
                       }
                     }
                   ]
+                },
+                {
+                  "type": "heading",
+                  "heading": "Configuration",
+                  "heading_style": "title",
+                  "icon": "mdi:cog"
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.valetudo_hestia",
+                      "state": "docked"
+                    }
+                  ],
+                  "card": {
+                    "type": "custom:button-card",
+                    "entity": "input_select.vacuum_run_type",
+                    "template": "tile_select_button",
+                    "name": "Run Type",
+                    "section_mode": true,
+                    "tap_action": {
+                      "service": "input_select.select_next"
+                    },
+                    "grid_options": {
+                      "rows": null
+                    }
+                  },
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "select.valetudo_hestia_mode",
+                  "template": "tile_select_button",
+                  "name": "Cleaning Mode",
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": null
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "select.valetudo_hestia_fan",
+                  "template": "tile_select_button",
+                  "name": "Suction",
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": null
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "select.valetudo_hestia_carpet_sensor_mode",
+                  "template": "tile_select_button",
+                  "name": "Carpet Mode",
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": null
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "select.valetudo_hestia_water",
+                  "template": "tile_select_button",
+                  "name": "Mop Wetness",
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": null
+                  }
                 }
               ],
               "column_span": 1
@@ -10871,52 +11540,6 @@
                 },
                 {
                   "type": "heading",
-                  "heading": "Configuration",
-                  "heading_style": "title",
-                  "icon": "mdi:cog"
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "select.valetudo_hestia_mode",
-                  "template": "tile_select_button",
-                  "name": "Cleaning Mode",
-                  "section_mode": true,
-                  "grid_options": {
-                    "rows": null
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "select.valetudo_hestia_fan",
-                  "template": "tile_select_button",
-                  "name": "Suction",
-                  "section_mode": true,
-                  "grid_options": {
-                    "rows": null
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "select.valetudo_hestia_carpet_sensor_mode",
-                  "template": "tile_select_button",
-                  "name": "Carpet Mode",
-                  "section_mode": true,
-                  "grid_options": {
-                    "rows": null
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "select.valetudo_hestia_water",
-                  "template": "tile_select_button",
-                  "name": "Mop Wetness",
-                  "section_mode": true,
-                  "grid_options": {
-                    "rows": null
-                  }
-                },
-                {
-                  "type": "heading",
                   "icon": "mdi:wrench",
                   "heading": "Components",
                   "heading_style": "title"
@@ -10928,7 +11551,7 @@
                   "name": "Main Brush",
                   "tap_action": {
                     "action": "more-info",
-                    "entity": "sensor.vacuum_main_brush_left"
+                    "entity": "sensor.valetudo_hestia_main_brush"
                   },
                   "section_mode": true,
                   "grid_options": {
@@ -10942,7 +11565,7 @@
                   "name": "Side Brush",
                   "tap_action": {
                     "action": "more-info",
-                    "entity": "sensor.vacuum_right_brush_left"
+                    "entity": "sensor.valetudo_hestia_right_brush"
                   },
                   "section_mode": true,
                   "grid_options": {
@@ -10956,7 +11579,7 @@
                   "name": "Filter",
                   "tap_action": {
                     "action": "more-info",
-                    "entity": "sensor.vacuum_main_filter_left"
+                    "entity": "sensor.valetudo_hestia_main_filter"
                   },
                   "section_mode": true,
                   "grid_options": {
@@ -10970,13 +11593,33 @@
                   "name": "Sensors",
                   "tap_action": {
                     "action": "more-info",
-                    "entity": "sensor.vacuum_sensors_cleanliness_left"
+                    "entity": "sensor.valetudo_hestia_sensor_cleaning"
                   },
                   "section_mode": true,
                   "grid_options": {
-                    "rows": 1,
-                    "columns": 6
+                    "rows": null
                   }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_status_bar",
+                  "entity": "sensor.vacuum_wheel_cleanliness_left",
+                  "name": "Wheels",
+                  "tap_action": {
+                    "action": "more-info",
+                    "entity": "sensor.valetudo_hestia_wheel_cleaning"
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": null
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "vacuum.valetudo_hestia",
+                  "state_not": "unavailable"
                 }
               ]
             }

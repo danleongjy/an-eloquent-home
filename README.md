@@ -28,7 +28,7 @@ Domain | Quantity
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 163
 [`button`](https://www.home-assistant.io/components/button) | 177
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
-[`camera`](https://www.home-assistant.io/components/camera) | 5
+[`camera`](https://www.home-assistant.io/components/camera) | 6
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 15
@@ -39,7 +39,7 @@ Domain | Quantity
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 14
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
 [`input_number`](https://www.home-assistant.io/components/input_number) | 22
-[`input_select`](https://www.home-assistant.io/components/input_select) | 8
+[`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 19
 [`light`](https://www.home-assistant.io/components/light) | 72
 [`media_player`](https://www.home-assistant.io/components/media_player) | 4
@@ -49,17 +49,17 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 13
 [`select`](https://www.home-assistant.io/components/select) | 58
-[`sensor`](https://www.home-assistant.io/components/sensor) | 645
+[`sensor`](https://www.home-assistant.io/components/sensor) | 646
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 63
 [`tts`](https://www.home-assistant.io/components/tts) | 2
-[`update`](https://www.home-assistant.io/components/update) | 115
+[`update`](https://www.home-assistant.io/components/update) | 116
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1723
+Total | 1727
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -105,6 +105,7 @@ Total | 1723
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
 - [Local Tuya](https://github.com/rospogrigio/localtuya)
+- [Mqtt Vacuum Camera](https://github.com/sca075/mqtt_vacuum_camera)
 - [Proxmox Ve](https://github.com/dougiteixeira/proxmoxve)
 - [Pyscript](https://github.com/custom-components/pyscript)
 - [Smartthinq Lge Sensors](https://github.com/ollo69/ha-smartthinq-sensors)
@@ -117,7 +118,7 @@ Total | 1723
 - [Decluttering Card](https://github.com/custom-cards/decluttering-card)
 - [Slider Button Card](https://github.com/custom-cards/slider-button-card)
 - [State Switch](https://github.com/thomasloven/lovelace-state-switch)
-- [Valetudo Map Card](https://github.com/Hypfer/lovelace-valetudo-map-card)
+- [Xiaomi Vacuum Map Card](https://github.com/PiotrMachowski/lovelace-xiaomi-vacuum-map-card)
 
 ## Dashboards
 In addition to providing direct control and visual feedback on the state of each controllable device in our house, our dashboards are also designed to be _infographics_ that provide insights into the usage trends of multiple devices of the same type, across different rooms and throughout the whole house.  They are maps in the spirit of the Tube maps - providing a stripped-down view of the components with just enough information to appreciate how the parts relate to the whole.  And the entire graphic fits on one screen on a mobile device, so all information is available at a glance.  The design principles are:
