@@ -1,0 +1,16 @@
+vacuum_manual_control:
+  url: "http://192.168.18.35/api/v2/robot/capabilities/HighResolutionManualControlCapability"
+  method: put
+  content_type: "application/json"
+  payload: '{"action": "{{ manual_control }}"}'
+  authentication: basic
+  username: !secret valetudo_user
+  password: !secret valetudo_password
+vacuum_manual_control_vector:
+  url: "http://192.168.18.35/api/v2/robot/capabilities/HighResolutionManualControlCapability"
+  method: put
+  content_type: "application/json"
+  payload: '{"action": "move", "vector": {"velocity": {{ velocity }}, "angle": {{ angle }} }}'
+  authentication: basic
+  username: !secret valetudo_user
+  password: !secret valetudo_password

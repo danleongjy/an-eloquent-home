@@ -7122,15 +7122,32 @@
     else:
     - set_conversation_response: "{% set clean_time = namespace(hours = (states('sensor.valetudo_hestia_current_statistics_time')
         | float(0) // 60),\n                              minutes = (states('sensor.valetudo_hestia_current_statistics_time')
-        | float(0) % 60)) %}\nThe vacuum is {{ 'in trouble' if not is_state('sensor.valetudo_hestia_error',
+        | float(0) % 60)) %}\n{% set remaining = namespace(area = (states('sensor.valetudo_hestia_current_statistics_area')
+        | float(0) / states('sensor.vacuum_whole_home_clean_progress') | float(1)
+        | round(0)), \n                             hours = (states('sensor.valetudo_hestia_current_statistics_time')
+        | float(0) / states('sensor.vacuum_whole_home_clean_progress') | float(1)
+        * (100 - states('sensor.vacuum_whole_home_clean_progress') | float(0)) //
+        60), \n                             minutes = (states('sensor.valetudo_hestia_current_statistics_time')
+        | float(0) / states('sensor.vacuum_whole_home_clean_progress') | float(1)
+        * (100 - states('sensor.vacuum_whole_home_clean_progress') | float(0)) % 60))
+        %}\nThe vacuum is {{ 'in trouble' if not is_state('sensor.valetudo_hestia_error',
         'No error') else state_translated('vacuum.valetudo_hestia').lower() if states('vacuum.valetudo_hestia')
         != 'docked' else 'docked' }}. \n{% if states('sensor.valetudo_hestia_current_statistics_area')
         | int(0) > 0 %}\n  It cleaned {{ states('sensor.valetudo_hestia_current_statistics_area')
-        | int(0) }} square meters over {{ clean_time.hours | int(0) }} hour{{ 's'
-        if clean_time.hours > 1 }}{{ ' and ' if clean_time.minutes > 0 }}{{ clean_time.minutes
+        | int(0) }} square meters over{{ clean_time.hours | int(0) if clean_time.hours
+        > 0 }} {{ 'hour' if clean_time.hours > 0 }}{{ 's' if clean_time.hours > 1
+        }}{{ ' and ' if clean_time.hours > 0 and clean_time.minutes > 0 }}{{ clean_time.minutes
         | int(0) if clean_time.minutes > 0 }}{{ ' minute' if clean_time.minutes >
-        0}}{{ 's' if clean_time.minutes > 1 }}.\n{% endif %}\n{% if is_state('sensor.valetudo_hestia_dock_status',
-        'drying') %}\n  Its mops will finish drying at {{ as_local(as_datetime(states('sensor.vacuum_mop_drying_started'))
+        0}}{{ 's' if clean_time.minutes > 1 }}.\n{% endif %}\n{% if states('sensor.vacuum_whole_home_clean_progress')
+        | int(0) > 0 %}\n  It will finish cleaning the remaining {{ 100 - states('sensor.vacuum_whole_home_clean_progress')
+        | int(0) }}% of the house in{{ remaining.hours | int(0) if remaining.hours
+        > 0 }} {{ 'hour' if remaining.hours > 0 }}{{ 's' if remaining.hours > 1 }}{{
+        ' and ' if remaining.hours > 0 and remaining.minutes > 0 }}{{ remaining.minutes
+        | int(0) if remaining.minutes > 0 }}{{ ' minute' if remaining.minutes > 0}}{{
+        's' if remaining.minutes > 1 }} at {{ (now() + timedelta(hours = remaining.hours,
+        minutes = remaining.minutes)).strftime('%I:%M%p') }}.\n{% endif %}\n{% if
+        is_state('sensor.valetudo_hestia_dock_status', 'drying') %}\n  Its mops will
+        finish drying at {{ as_local(as_datetime(states('sensor.vacuum_mop_drying_started'))
         + timedelta(hours = 3)).strftime('%I:%M%p') }}.\n{% endif %}\n"
   mode: single
 - id: '1743851351763'
@@ -7701,3 +7718,79 @@
         target:
           entity_id: '{{ trigger.entity_id }}'
   mode: single
+- id: '1762751826856'
+  alias: Vacuum Manual Control
+  description: Manually control the vacuum using the Vacuum dashboard
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_boolean.vacuum_manual_control
+    id: manual_control_toggle
+  - trigger: state
+    entity_id:
+    - input_number.vacuum_manual_control_speed
+    - input_number.vacuum_manual_control_turn
+    id: vector
+  conditions: []
+  actions:
+  - if:
+    - condition: trigger
+      id:
+      - manual_control_toggle
+    then:
+    - action: rest_command.vacuum_manual_control
+      metadata: {}
+      data:
+        manual_control: '{{ ''enable'' if is_state(trigger.entity_id, ''on'') else
+          ''disable'' }}'
+    else:
+    - condition: state
+      entity_id: input_boolean.vacuum_manual_control
+      state: 'on'
+    - variables:
+        current_velocity: '{{ states(''input_number.vacuum_manual_control_speed'')
+          | int(0) }}'
+        current_angle: '{{ states(''input_number.vacuum_manual_control_turn'') | int(0)
+          }}'
+    - if:
+      - condition: template
+        value_template: '{{ is_state(''input_number.vacuum_manual_control_speed'',
+          ''0'') or is_state(''input_number.vacuum_manual_control_turn'', ''0'') }}'
+        alias: If speed or turn is 0
+      then:
+      - repeat:
+          while:
+          - condition: template
+            value_template: "{{ states('input_number.vacuum_manual_control_speed')
+              | int(0) == current_velocity and\n   states('input_number.vacuum_manual_control_turn')
+              | int(0) == current_angle }}"
+          sequence:
+          - action: rest_command.vacuum_manual_control_vector
+            metadata: {}
+            data:
+              velocity: '{{ current_velocity * 1 }}'
+              angle: '{{ current_angle * 90 }}'
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+      else:
+      - repeat:
+          while:
+          - condition: template
+            value_template: "{{ states('input_number.vacuum_manual_control_speed')
+              | int(0) == current_velocity and\n   states('input_number.vacuum_manual_control_turn')
+              | int(0) == current_angle }}"
+          sequence:
+          - action: rest_command.vacuum_manual_control_vector
+            metadata: {}
+            data:
+              velocity: '{{ current_velocity * 0.7 }}'
+              angle: '{{ current_angle * 45 }}'
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+  mode: restart
