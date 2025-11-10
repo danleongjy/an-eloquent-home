@@ -78,6 +78,7 @@ Total | 1732
 - [Local File Camera](https://home-assistant.io/integrations/local_file)
 - [MQTT](https://home-assistant.io/integrations/mqtt)
 - [RESTful](https://home-assistant.io/integrations/rest)
+- [RESTful Command](https://home-assistant.io/integrations/rest_command)
 - [RESTful Sensor](https://home-assistant.io/integrations/sensor.rest)
 - [Shell Command](https://home-assistant.io/integrations/shell_command)
 - [Statistics Sensor](https://home-assistant.io/integrations/statistics)
