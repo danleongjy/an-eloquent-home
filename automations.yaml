@@ -7743,6 +7743,14 @@
       data:
         manual_control: '{{ ''enable'' if is_state(trigger.entity_id, ''on'') else
           ''disable'' }}'
+    - condition: state
+      entity_id: input_boolean.vacuum_manual_control
+      state: 'off'
+    - action: vacuum.return_to_base
+      metadata: {}
+      data: {}
+      target:
+        entity_id: vacuum.valetudo_hestia
     else:
     - condition: state
       entity_id: input_boolean.vacuum_manual_control
