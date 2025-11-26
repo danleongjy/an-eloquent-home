@@ -7128,10 +7128,10 @@
         | float(0) / states('sensor.vacuum_whole_home_clean_progress') | float(1)
         | round(0)), \n                             hours = (states('sensor.valetudo_hestia_current_statistics_time')
         | float(0) / states('sensor.vacuum_whole_home_clean_progress') | float(1)
-        * (100 - states('sensor.vacuum_whole_home_clean_progress') | float(0)) //
+        * (100 - states('sensor.vacuum_whole_home_clean_progress') | float(1)) //
         60), \n                             minutes = (states('sensor.valetudo_hestia_current_statistics_time')
         | float(0) / states('sensor.vacuum_whole_home_clean_progress') | float(1)
-        * (100 - states('sensor.vacuum_whole_home_clean_progress') | float(0)) % 60))
+        * (100 - states('sensor.vacuum_whole_home_clean_progress') | float(1)) % 60))
         %}\nThe vacuum is {{ 'in trouble' if not is_state('sensor.valetudo_hestia_error',
         'No error') else state_translated('vacuum.valetudo_hestia').lower() if states('vacuum.valetudo_hestia')
         != 'docked' else 'docked' }}. \n{% if states('sensor.valetudo_hestia_current_statistics_area')
