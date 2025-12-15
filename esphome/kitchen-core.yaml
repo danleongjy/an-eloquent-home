@@ -121,13 +121,13 @@ script:
   - id: draw_display_bottom_status_bar
     then:
       - lambda: |
-          if (id(env_value_display).state == "current_date") {
+          if (id(env_value_display).current_option() == "current_date") {
             id(interface_display).strftime(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "%a %d %b", id(homeassistant_time).now());
-          } else if (id(env_value_display).state == "temperature") {
+          } else if (id(env_value_display).current_option() == "temperature") {
             id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000e846 %.1f°C", id(room_temp).state);
-          } else if (id(env_value_display).state == "humidity") {
+          } else if (id(env_value_display).current_option() == "humidity") {
             id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000f164 %.1f%%", id(room_hum).state);
-          } else if (id(env_value_display).state == "lux") {
+          } else if (id(env_value_display).current_option() == "lux") {
             id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000f7e8 %.0flx", id(room_lux).state);
           }
 
