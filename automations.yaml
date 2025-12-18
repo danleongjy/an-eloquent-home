@@ -2361,7 +2361,6 @@
     input:
       lights_list:
       - light.living_room_lights
-      - light.christmas_tree
       motion_sensor: binary_sensor.living_room_presence
       lux_sensor: sensor.study_walkway_lux
       blackout_hours_start: input_datetime.dim_hours_start
@@ -7747,3 +7746,24 @@
               seconds: 0
               milliseconds: 500
   mode: restart
+- id: '1766020278561'
+  alias: Christmas Tree
+  description: Sync Christmas Tree state with Living Room Lights
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.living_room_lights
+    from:
+    - 'off'
+    - 'on'
+    to:
+    - 'off'
+    - 'on'
+  conditions: []
+  actions:
+  - action: light.turn_{{ trigger.to_state }}
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.christmas_tree
+  mode: single
