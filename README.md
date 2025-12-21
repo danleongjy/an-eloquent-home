@@ -25,17 +25,17 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 136
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 168
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 171
 [`button`](https://www.home-assistant.io/components/button) | 179
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
-[`camera`](https://www.home-assistant.io/components/camera) | 6
+[`camera`](https://www.home-assistant.io/components/camera) | 7
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 15
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 2
 [`event`](https://www.home-assistant.io/components/event) | 1
 [`fan`](https://www.home-assistant.io/components/fan) | 6
-[`image`](https://www.home-assistant.io/components/image) | 3
+[`image`](https://www.home-assistant.io/components/image) | 4
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 15
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
 [`input_number`](https://www.home-assistant.io/components/input_number) | 24
@@ -49,7 +49,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 13
 [`select`](https://www.home-assistant.io/components/select) | 59
-[`sensor`](https://www.home-assistant.io/components/sensor) | 667
+[`sensor`](https://www.home-assistant.io/components/sensor) | 673
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 72
@@ -60,7 +60,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1826
+Total | 1837
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)

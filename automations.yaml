@@ -4174,7 +4174,7 @@
     for:
       hours: 0
       minutes: 0
-      seconds: 3
+      seconds: 5
     trigger: state
     id: snapshot
   - trigger: state
@@ -7081,7 +7081,7 @@
         'cleaning') else 'last' }} run started {{ time_since(as_datetime(states('sensor.vacuum_last_run_started')))
         }} ago.\n{% if states('sensor.valetudo_hestia_current_statistics_area') |
         int(0) > 0 %}\n  It cleaned {{ states('sensor.valetudo_hestia_current_statistics_area')
-        | int(0) }} square meters over{{ clean_time.hours | int(0) if clean_time.hours
+        | int(0) }} square meters over {{ clean_time.hours | int(0) if clean_time.hours
         > 0 }} {{ 'hour' if clean_time.hours > 0 }}{{ 's' if clean_time.hours > 1
         }}{{ ' and ' if clean_time.hours > 0 and clean_time.minutes > 0 }}{{ clean_time.minutes
         | int(0) if clean_time.minutes > 0 }}{{ ' minute' if clean_time.minutes >
@@ -7330,6 +7330,18 @@
     from: 'off'
     to: 'on'
     id: leaving
+  - alias: When screen is on the homepage and the floorplan panel view has not changed
+      for 1min
+    trigger: template
+    value_template: '{{ is_state(''switch.main_door_display_screen'', ''on'') and
+      is_state(''sensor.main_door_display_current_page'', ''http://192.168.18.101:8123/lovelace/0'')
+      and now() - states.input_select.floorplan_panel_view.last_updated > timedelta(minutes
+      = 1) }}'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    id: change_view
   conditions: []
   actions:
   - choose:
@@ -7366,6 +7378,24 @@
         data: {}
         target:
           entity_id: switch.main_door_display_screen
+      - if:
+        - condition: time
+          after: input_datetime.dim_hours_start
+          before: input_datetime.dim_hours_end
+        then:
+        - action: number.set_value
+          metadata: {}
+          data:
+            value: '60'
+          target:
+            entity_id: number.main_door_display_screen_brightness
+        else:
+        - action: number.set_value
+          metadata: {}
+          data:
+            value: '255'
+          target:
+            entity_id: number.main_door_display_screen_brightness
     - conditions:
       - condition: trigger
         id:
@@ -7391,33 +7421,27 @@
         - binary_sensor.main_door
         - input_boolean.away_mode
         state: 'off'
-      - action: fully_kiosk.load_url
+      - action: button.press
+        metadata: {}
+        data: {}
+        target:
+          entity_id: button.main_door_display_load_start_url
+      - action: input_select.select_option
         metadata: {}
         data:
-          url: javascript:history.pushState(null,"","/lovelace/main-door");window.dispatchEvent(new
-            CustomEvent("location-changed"));
+          option: main-door
         target:
-          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
-      - delay: 60
-      - action: fully_kiosk.load_url
-        metadata: {}
-        data:
-          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
-            CustomEvent("location-changed"));
-        target:
-          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+          entity_id: input_select.floorplan_panel_view
     - conditions:
       - condition: trigger
         id:
         - reset_view
       sequence:
-      - action: fully_kiosk.load_url
+      - action: button.press
         metadata: {}
-        data:
-          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
-            CustomEvent("location-changed"));
+        data: {}
         target:
-          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+          entity_id: button.main_door_display_load_start_url
     - conditions:
       - condition: trigger
         id:
@@ -7432,13 +7456,39 @@
             hours: 0
             minutes: 0
             seconds: 1
-      - action: fully_kiosk.load_url
+      - action: button.press
+        metadata: {}
+        data: {}
+        target:
+          entity_id: button.main_door_display_load_start_url
+      - action: input_select.select_option
         metadata: {}
         data:
-          url: javascript:history.pushState(null,"","/lovelace/transit");window.dispatchEvent(new
-            CustomEvent("location-changed"));
+          option: transit
         target:
-          device_id: 24a31c4ac45e2aaa115389ceb2e6fe89
+          entity_id: input_select.floorplan_panel_view
+    - conditions:
+      - condition: trigger
+        id:
+        - change_view
+      sequence:
+      - if:
+        - condition: state
+          entity_id: input_select.floorplan_panel_view
+          state:
+          - transit
+        then:
+        - action: input_select.select_option
+          metadata: {}
+          data:
+            option: weather
+          target:
+            entity_id: input_select.floorplan_panel_view
+        else:
+        - action: input_select.select_next
+          metadata: {}
+          data:
+            cycle: true
   mode: restart
 - id: '1751186099654'
   alias: Voice Control for Washer
