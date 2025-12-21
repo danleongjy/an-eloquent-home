@@ -1538,7 +1538,7 @@
                   ],
                   "card": [
                     {
-                      "background": "[[[ \n  if (!['100', 'unavailable'].includes(states['sensor.vacuum_whole_home_clean_progress'].state)) {\n    return \"linear-gradient(0deg, #009AC7 0%, #009AC7 \" +\n    states['sensor.vacuum_whole_home_clean_progress'].state + \"%, #1c1c1c \" + \n    states['sensor.vacuum_whole_home_clean_progress'].state + \"%, #1c1c1c 100%)\"\n  } else if (!['100', 'unavailable'].includes(states['sensor.vacuum_mop_drying_progress'].state)) {\n    return \"linear-gradient(0deg, #009AC7 0%, #009AC7 \" +\n    states['sensor.vacuum_mop_drying_progress'].state + \"%, #1c1c1c \" + \n    states['sensor.vacuum_mop_drying_progress'].state + \"%, #1c1c1c 100%)\"\n  } else {\n    return '#1c1c1c'\n  }\n]]]\n"
+                      "background": "[[[ \n  if (!['100', 'unavailable'].includes(states['sensor.vacuum_current_run_cleaning_progress'].state)) {\n    return \"linear-gradient(0deg, #009AC7 0%, #009AC7 \" +\n    states['sensor.vacuum_current_run_cleaning_progress'].state + \"%, #1c1c1c \" + \n    states['sensor.vacuum_current_run_cleaning_progress'].state + \"%, #1c1c1c 100%)\"\n  } else if (!['100', 'unavailable'].includes(states['sensor.vacuum_mop_drying_progress'].state)) {\n    return \"linear-gradient(0deg, #009AC7 0%, #009AC7 \" +\n    states['sensor.vacuum_mop_drying_progress'].state + \"%, #1c1c1c \" + \n    states['sensor.vacuum_mop_drying_progress'].state + \"%, #1c1c1c 100%)\"\n  } else {\n    return '#1c1c1c'\n  }\n]]]\n"
                     }
                   ]
                 }
@@ -1558,7 +1558,7 @@
                 "styles": {
                   "card": [
                     {
-                      "background": "[[[ \n  if (['100', 'unavailable'].includes(states['sensor.vacuum_whole_home_clean_progress'].state)) {\n    return '#1c1c1c'\n  } else {\n    return \"linear-gradient(0deg, #009AC7 0%, #009AC7 \" +\n    states['sensor.vacuum_whole_home_clean_progress'].state + \"%, #1c1c1c \" + \n    states['sensor.vacuum_whole_home_clean_progress'].state + \"%, #1c1c1c 100%)\"\n  }\n]]]\n"
+                      "background": "[[[ \n  if (['100', 'unavailable'].includes(states['sensor.vacuum_current_run_cleaning_progress'].state)) {\n    return '#1c1c1c'\n  } else {\n    return \"linear-gradient(0deg, #009AC7 0%, #009AC7 \" +\n    states['sensor.vacuum_current_run_cleaning_progress'].state + \"%, #1c1c1c \" + \n    states['sensor.vacuum_current_run_cleaning_progress'].state + \"%, #1c1c1c 100%)\"\n  }\n]]]\n"
                     }
                   ]
                 }
@@ -1578,7 +1578,7 @@
                 "styles": {
                   "card": [
                     {
-                      "background": "[[[ \n  if (['100', 'unavailable'].includes(states['sensor.vacuum_whole_home_clean_progress'].state)) {\n    return '#1c1c1c'\n  } else {\n    return \"linear-gradient(0deg, #009AC7 0%, #009AC7 \" +\n    states['sensor.vacuum_whole_home_clean_progress'].state + \"%, #1c1c1c \" + \n    states['sensor.vacuum_whole_home_clean_progress'].state + \"%, #1c1c1c 100%)\"\n  }\n]]]\n"
+                      "background": "[[[ \n  if (['100', 'unavailable'].includes(states['sensor.vacuum_current_run_cleaning_progress'].state)) {\n    return '#1c1c1c'\n  } else {\n    return \"linear-gradient(0deg, #009AC7 0%, #009AC7 \" +\n    states['sensor.vacuum_current_run_cleaning_progress'].state + \"%, #1c1c1c \" + \n    states['sensor.vacuum_current_run_cleaning_progress'].state + \"%, #1c1c1c 100%)\"\n  }\n]]]\n"
                     }
                   ]
                 }
@@ -11736,13 +11736,13 @@
                     {
                       "condition": "state",
                       "entity": "input_select.vacuum_run_type",
-                      "state": "Whole Home"
+                      "state_not": "Manual Control"
                     }
                   ],
                   "card": {
                     "type": "custom:button-card",
                     "template": "tile_progress_bar",
-                    "entity": "sensor.vacuum_whole_home_clean_progress",
+                    "entity": "sensor.vacuum_current_run_cleaning_progress",
                     "name": " "
                   },
                   "grid_options": {
@@ -11772,24 +11772,28 @@
                 },
                 {
                   "type": "tile",
+                  "entity": "sensor.vacuum_last_run_started",
+                  "name": " ",
+                  "icon": "mdi:clock-start",
+                  "vertical": false,
+                  "features_position": "bottom",
                   "visibility": [
                     {
-                      "condition": "state",
-                      "entity": "vacuum.valetudo_hestia",
-                      "state": "docked"
-                    },
-                    {
-                      "condition": "state",
-                      "entity": "sensor.valetudo_hestia_dock_status",
-                      "state": "idle"
+                      "condition": "or",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.valetudo_hestia",
+                          "state": "docked"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.valetudo_hestia",
+                          "state": "idle"
+                        }
+                      ]
                     }
-                  ],
-                  "entity": "vacuum.valetudo_hestia",
-                  "name": " ",
-                  "icon": "mdi:clock-end",
-                  "state_content": "last_changed",
-                  "vertical": false,
-                  "features_position": "bottom"
+                  ]
                 },
                 {
                   "type": "tile",

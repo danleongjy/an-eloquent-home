@@ -7767,3 +7767,24 @@
     target:
       entity_id: light.christmas_tree
   mode: single
+- id: '1766280784751'
+  alias: Vacuum Set Current Run Total Area
+  description: Set the vacuum's current run total area when vacuum starts a new run
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.valetudo_hestia_current_statistics_area
+    below: 0.1
+  conditions: []
+  actions:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - action: homeassistant.update_entity
+    metadata: {}
+    data:
+      entity_id:
+      - sensor.vacuum_current_run_cleaning_progress
+  mode: single

@@ -299,6 +299,16 @@
       device_class: timestamp
 
 - trigger:
+  - platform: numeric_state
+    entity_id: sensor.valetudo_hestia_current_statistics_area
+    below: 0.1
+  sensor:
+    - name: Vacuum Last Run Started
+      unique_id: sensor.vacuum_last_run_started
+      state: "{{ now().isoformat() }}"
+      device_class: timestamp
+
+- trigger:
   - platform: state
     entity_id: sensor.valetudo_hestia_dock_status
     not_from: unavailable

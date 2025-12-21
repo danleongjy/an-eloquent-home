@@ -383,6 +383,37 @@
     {{ states('zone.newton_station_exit_c_bus_stop') | int(0) > 0
        and value_json.Services is defined and value_json.Services | length > 0 }}
 
+- platform: rest
+  resource: http://192.168.18.35/api/v2/robot/state/map
+  name: Vacuum Current Run Total Area
+  unique_id: sensor.vacuum_current_run_total_area
+  scan_interval: 604800
+  authentication: basic
+  username: !secret valetudo_user
+  password: !secret valetudo_password
+  value_template: >
+    {% set current_run_area = namespace(total = 0) %}
+    {% for layer in value_json.layers %}
+      {% if layer.type == 'segment' and layer.metaData.active == true %}
+        {% set current_run_area.total = current_run_area.total + layer.metaData.area %}
+      {% endif %}
+    {% endfor %}
+    {% for entity in value_json.entities %}
+      {% if entity.type == "active_zone" %}
+        {% set current_run_area.total = current_run_area.total + (max(entity.points[0], entity.points[2], entity.points[4], entity.points[6]) - 
+                                                                  min(entity.points[0], entity.points[2], entity.points[4], entity.points[6])) 
+                                                               * (max(entity.points[1], entity.points[3], entity.points[5], entity.points[7]) - 
+                                                                  min(entity.points[1], entity.points[3], entity.points[5], entity.points[7])) %}
+      {% endif %}
+    {% endfor %}
+    {% if current_run_area.total == 0 %}
+      86
+    {% else %}
+      {{ (current_run_area.total / 10000) | round(0) }}
+    {% endif %}
+  availability: >
+    {{ not is_state('input_select.vacuum_run_type', 'Manual Control') }}
+
 - platform: folder
   folder: /config/www/rain_radar/frames
 
