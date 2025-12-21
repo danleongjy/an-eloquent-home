@@ -315,12 +315,12 @@
     dismiss it when it stops being idle
   triggers:
   - entity_id:
-    - vacuum.hestia
+    - vacuum.valetudo_hestia
     id: idle
     to: idle
     trigger: state
   - entity_id:
-    - vacuum.hestia
+    - vacuum.valetudo_hestia
     id: not_idle
     from: idle
     trigger: state
@@ -7069,21 +7069,24 @@
         | float(0) % 60)) %}\n{% set remaining = namespace(area = (states('sensor.valetudo_hestia_current_statistics_area')
         | float(0) / states('sensor.vacuum_whole_home_clean_progress') | float(1)
         | round(0)), \n                             hours = (states('sensor.valetudo_hestia_current_statistics_time')
-        | float(0) / states('sensor.vacuum_whole_home_clean_progress') | float(1)
-        * (100 - states('sensor.vacuum_whole_home_clean_progress') | float(1)) //
-        60), \n                             minutes = (states('sensor.valetudo_hestia_current_statistics_time')
-        | float(0) / states('sensor.vacuum_whole_home_clean_progress') | float(1)
-        * (100 - states('sensor.vacuum_whole_home_clean_progress') | float(1)) % 60))
-        %}\nThe vacuum is {{ 'in trouble' if not is_state('sensor.valetudo_hestia_error',
+        | float(0) / states('sensor.vacuum_current_run_cleaning_progress') | float(1)
+        * (100 - states('sensor.vacuum_current_run_cleaning_progress') | float(1))
+        // 60), \n                             minutes = (states('sensor.valetudo_hestia_current_statistics_time')
+        | float(0) / states('sensor.vacuum_current_run_cleaning_progress') | float(1)
+        * (100 - states('sensor.vacuum_current_run_cleaning_progress') | float(1))
+        % 60)) %}\nThe vacuum is {{ 'in trouble' if not is_state('sensor.valetudo_hestia_error',
         'No error') else state_translated('vacuum.valetudo_hestia').lower() if states('vacuum.valetudo_hestia')
-        != 'docked' else 'docked' }}. \n{% if states('sensor.valetudo_hestia_current_statistics_area')
-        | int(0) > 0 %}\n  It cleaned {{ states('sensor.valetudo_hestia_current_statistics_area')
+        != 'docked' else 'docked' }}. \nIts {{ 'current' if states('vacuum.valetudo_hestia')
+        in ['cleaning', 'returning', 'paused'] or is_state('sensor.valetudo_hestia_dock_status',
+        'cleaning') else 'last' }} run started {{ time_since(as_datetime(states('sensor.vacuum_last_run_started')))
+        }} ago.\n{% if states('sensor.valetudo_hestia_current_statistics_area') |
+        int(0) > 0 %}\n  It cleaned {{ states('sensor.valetudo_hestia_current_statistics_area')
         | int(0) }} square meters over{{ clean_time.hours | int(0) if clean_time.hours
         > 0 }} {{ 'hour' if clean_time.hours > 0 }}{{ 's' if clean_time.hours > 1
         }}{{ ' and ' if clean_time.hours > 0 and clean_time.minutes > 0 }}{{ clean_time.minutes
         | int(0) if clean_time.minutes > 0 }}{{ ' minute' if clean_time.minutes >
-        0}}{{ 's' if clean_time.minutes > 1 }}.\n{% endif %}\n{% if states('sensor.vacuum_whole_home_clean_progress')
-        | int(0) > 0 %}\n  It will finish cleaning the remaining {{ 100 - states('sensor.vacuum_whole_home_clean_progress')
+        0}}{{ 's' if clean_time.minutes > 1 }}.\n{% endif %}\n{% if states('sensor.vacuum_current_run_cleaning_progress')
+        | int(0) > 0 %}\n  It will finish cleaning the remaining {{ 100 - states('sensor.vacuum_current_run_cleaning_progress')
         | int(0) }}% of the house in{{ remaining.hours | int(0) if remaining.hours
         > 0 }} {{ 'hour' if remaining.hours > 0 }}{{ 's' if remaining.hours > 1 }}{{
         ' and ' if remaining.hours > 0 and remaining.minutes > 0 }}{{ remaining.minutes
