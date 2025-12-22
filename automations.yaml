@@ -4174,7 +4174,7 @@
     for:
       hours: 0
       minutes: 0
-      seconds: 5
+      seconds: 2
     trigger: state
     id: snapshot
   - trigger: state
@@ -7087,8 +7087,8 @@
         | int(0) if clean_time.minutes > 0 }}{{ ' minute' if clean_time.minutes >
         0}}{{ 's' if clean_time.minutes > 1 }}.\n{% endif %}\n{% if states('sensor.vacuum_current_run_cleaning_progress')
         | int(0) > 0 %}\n  It will finish cleaning the remaining {{ 100 - states('sensor.vacuum_current_run_cleaning_progress')
-        | int(0) }}% of the house in{{ remaining.hours | int(0) if remaining.hours
-        > 0 }} {{ 'hour' if remaining.hours > 0 }}{{ 's' if remaining.hours > 1 }}{{
+        | int(0) }}% of the run in{{ remaining.hours | int(0) if remaining.hours >
+        0 }} {{ 'hour' if remaining.hours > 0 }}{{ 's' if remaining.hours > 1 }}{{
         ' and ' if remaining.hours > 0 and remaining.minutes > 0 }}{{ remaining.minutes
         | int(0) if remaining.minutes > 0 }}{{ ' minute' if remaining.minutes > 0}}{{
         's' if remaining.minutes > 1 }} at {{ (now() + timedelta(hours = remaining.hours,
@@ -7281,7 +7281,7 @@
   - trigger: numeric_state
     entity_id:
     - sensor.main_door_display_battery
-    below: 20
+    below: 25
     id: low
   - trigger: numeric_state
     entity_id:
@@ -7311,13 +7311,12 @@
     from: 'off'
     to: 'on'
     id: visitor
-  - trigger: state
-    entity_id:
-    - sensor.main_door_display_current_page
-    for:
-      minutes: 5
+  - trigger: template
+    value_template: '{{ not ''/lovelace/0'' in states(''sensor.main_door_display_current_page'')
+      and now() - states.sensor.main_door_display_current_page.last_updated > timedelta(minutes
+      = 5) }}'
     id: reset_view
-    from: https://an-eloquent-home.duckdns.org/lovelace/0
+    alias: When the view has been left not on the homepage for 5min
   - trigger: state
     entity_id:
     - binary_sensor.main_door
@@ -7337,10 +7336,6 @@
       is_state(''sensor.main_door_display_current_page'', ''http://192.168.18.101:8123/lovelace/0'')
       and now() - states.input_select.floorplan_panel_view.last_updated > timedelta(minutes
       = 1) }}'
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
     id: change_view
   conditions: []
   actions:
@@ -7406,11 +7401,12 @@
         data: {}
         target:
           entity_id: switch.main_door_display_screen
-      - action: button.press
+      - action: fully_kiosk.load_url
         metadata: {}
-        data: {}
-        target:
-          entity_id: button.main_door_display_load_start_url
+        data:
+          device_id: a5d73504748daf7290dcf724d4c02a5a
+          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
     - conditions:
       - condition: trigger
         id:
@@ -7421,11 +7417,20 @@
         - binary_sensor.main_door
         - input_boolean.away_mode
         state: 'off'
-      - action: button.press
-        metadata: {}
-        data: {}
-        target:
-          entity_id: button.main_door_display_load_start_url
+      - if:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: sensor.main_door_display_current_page
+            state:
+            - http://192.168.18.101:8123/lovelace/0
+        then:
+        - action: fully_kiosk.load_url
+          metadata: {}
+          data:
+            device_id: a5d73504748daf7290dcf724d4c02a5a
+            url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+              CustomEvent("location-changed"));
       - action: input_select.select_option
         metadata: {}
         data:
@@ -7437,11 +7442,12 @@
         id:
         - reset_view
       sequence:
-      - action: button.press
+      - action: fully_kiosk.load_url
         metadata: {}
-        data: {}
-        target:
-          entity_id: button.main_door_display_load_start_url
+        data:
+          device_id: a5d73504748daf7290dcf724d4c02a5a
+          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
     - conditions:
       - condition: trigger
         id:
@@ -7456,17 +7462,20 @@
             hours: 0
             minutes: 0
             seconds: 1
-      - action: button.press
-        metadata: {}
-        data: {}
-        target:
-          entity_id: button.main_door_display_load_start_url
-      - action: input_select.select_option
-        metadata: {}
-        data:
-          option: transit
-        target:
-          entity_id: input_select.floorplan_panel_view
+      - if:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: sensor.main_door_display_current_page
+            state:
+            - http://192.168.18.101:8123/lovelace/transit
+        then:
+        - action: fully_kiosk.load_url
+          metadata: {}
+          data:
+            device_id: a5d73504748daf7290dcf724d4c02a5a
+            url: javascript:history.pushState(null,"","/lovelace/transit");window.dispatchEvent(new
+              CustomEvent("location-changed"));
     - conditions:
       - condition: trigger
         id:
@@ -7489,6 +7498,8 @@
           metadata: {}
           data:
             cycle: true
+          target:
+            entity_id: input_select.floorplan_panel_view
   mode: restart
 - id: '1751186099654'
   alias: Voice Control for Washer

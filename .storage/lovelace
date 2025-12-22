@@ -6012,7 +6012,8 @@
                     {
                       "condition": "user",
                       "users": [
-                        "ad2bcce775894550affb6dfef93a2a36"
+                        "ad2bcce775894550affb6dfef93a2a36",
+                        "361884c4dcb94d5f9d7e583d64844264"
                       ]
                     }
                   ],
@@ -8430,7 +8431,9 @@
               ]
             }
           ],
-          "cards": []
+          "cards": [],
+          "max_columns": 2,
+          "dense_section_placement": false
         },
         {
           "icon": "mdi:home-lightbulb-outline",
@@ -8520,7 +8523,7 @@
               "column_span": 1
             }
           ],
-          "max_columns": 4,
+          "max_columns": 2,
           "dense_section_placement": false,
           "cards": []
         },
@@ -8919,12 +8922,7 @@
                     }
                   ],
                   "show_header_toggle": false
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
+                },
                 {
                   "type": "entities",
                   "entities": [
@@ -13039,7 +13037,7 @@
               "cards": [
                 {
                   "type": "heading",
-                  "icon": "mdi:cellphone",
+                  "icon": "mdi:tablet",
                   "heading_style": "title",
                   "heading": "Main Door Display"
                 },
@@ -13590,21 +13588,76 @@
                   "show_forecast": true,
                   "type": "weather-forecast",
                   "entity": "weather.local_weather",
-                  "secondary_info_attribute": "humidity",
                   "name": "NEA via data.gov.sg",
                   "forecast_type": "daily"
                 },
                 {
-                  "type": "conditional",
-                  "conditions": [
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "show": false
+                  },
+                  "all_series_config": {
+                    "stroke_width": 2
+                  },
+                  "graph_span": "7days",
+                  "series": [
                     {
-                      "entity": "sensor.raining_with_windows_open",
-                      "state": "alert"
+                      "entity": "sensor.local_outdoor_temperature",
+                      "name": "Temperature",
+                      "yaxis_id": "temp"
+                    },
+                    {
+                      "entity": "sensor.local_rainfall",
+                      "name": "Rainfall",
+                      "yaxis_id": "hum",
+                      "stroke_width": 0,
+                      "type": "area",
+                      "transform": "return x > 0 ? 100 : 0;",
+                      "show": {
+                        "in_header": "raw"
+                      }
+                    },
+                    {
+                      "entity": "sensor.local_outdoor_humidity",
+                      "name": "Humidity",
+                      "yaxis_id": "hum"
                     }
                   ],
-                  "card": {
-                    "type": "markdown",
-                    "content": "<ha-alert alert-type=\"error\">Heavy rain with windows open</ha-alert>"
+                  "yaxis": [
+                    {
+                      "id": "temp"
+                    },
+                    {
+                      "id": "hum",
+                      "opposite": true
+                    }
+                  ],
+                  "apex_config": {
+                    "chart": {
+                      "height": "200px"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "picture",
+                  "tap_action": {
+                    "action": "call-service",
+                    "service": "script.nea_rain_radar_animation",
+                    "target": {}
+                  },
+                  "hold_action": {
+                    "action": "none"
+                  },
+                  "image_entity": "image.rain_radar_animation",
+                  "grid_options": {
+                    "columns": 12,
+                    "rows": "auto"
                   }
                 },
                 {
@@ -13618,6 +13671,19 @@
                   "card": {
                     "type": "markdown",
                     "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "entity": "sensor.raining_with_windows_open",
+                      "state": "alert"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"error\">Heavy rain with windows open</ha-alert>"
                   }
                 },
                 {
@@ -13672,27 +13738,6 @@
                         }
                       ]
                     }
-                  }
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "picture",
-                  "tap_action": {
-                    "action": "call-service",
-                    "service": "script.nea_rain_radar_animation",
-                    "target": {}
-                  },
-                  "hold_action": {
-                    "action": "none"
-                  },
-                  "image_entity": "image.rain_radar_animation",
-                  "grid_options": {
-                    "columns": 12,
-                    "rows": "auto"
                   }
                 }
               ]
@@ -14119,6 +14164,28 @@
               "type": "grid",
               "cards": [
                 {
+                  "type": "picture",
+                  "image": {
+                    "media_content_id": "/local/floorplan/transit_basemap_numbered.png"
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "not",
+                  "conditions": [
+                    {
+                      "condition": "screen",
+                      "media_query": "(min-width: 0px) and (max-width: 767px)"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
                   "type": "markdown",
                   "content": "## <ha-icon icon=\"mdi:numeric-1-circle\"></ha-icon> Sims Drive Market"
                 },
@@ -14211,7 +14278,10 @@
               "cards": [
                 {
                   "type": "markdown",
-                  "content": "## <ha-icon icon=\"mdi:numeric-4-circle\"></ha-icon> Before Lorong 23 Geylang"
+                  "content": "## <ha-icon icon=\"mdi:numeric-4-circle\"></ha-icon> Before Lorong 23 Geylang",
+                  "grid_options": {
+                    "columns": "full"
+                  }
                 },
                 {
                   "type": "custom:button-card",
@@ -14259,11 +14329,12 @@
                     "template": "nextbus",
                     "entity": "sensor.bus_stop_before_lorong_23_geylang",
                     "variables": {
-                      "busno": "853M"
+                      "busno": "853<font size=\"4\">M</font>"
                     }
                   }
                 }
-              ]
+              ],
+              "column_span": 2
             },
             {
               "type": "grid",
@@ -14272,10 +14343,16 @@
                   "type": "picture",
                   "image": "/local/floorplan/transit_basemap_numbered.png"
                 }
+              ],
+              "visibility": [
+                {
+                  "condition": "screen",
+                  "media_query": "(min-width: 0px) and (max-width: 767px)"
+                }
               ]
             }
           ],
-          "max_columns": 4,
+          "max_columns": 3,
           "dense_section_placement": true,
           "cards": []
         },
@@ -14298,20 +14375,6 @@
                   "icon": "mdi:cctv"
                 },
                 {
-                  "type": "tile",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "entity": "binary_sensor.doorbell_motion",
-                  "name": " "
-                },
-                {
-                  "type": "tile",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "entity": "binary_sensor.main_door",
-                  "name": " "
-                },
-                {
                   "show_state": false,
                   "show_name": false,
                   "camera_view": "live",
@@ -14325,6 +14388,32 @@
                     "action": "none"
                   },
                   "aspect_ratio": "4:3"
+                }
+              ],
+              "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Main Door",
+                  "heading_style": "title",
+                  "icon": "mdi:door-closed"
+                },
+                {
+                  "type": "tile",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "entity": "binary_sensor.doorbell_motion",
+                  "name": " "
+                },
+                {
+                  "type": "tile",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "entity": "binary_sensor.main_door",
+                  "name": " "
                 },
                 {
                   "type": "custom:slider-button-card",
@@ -14362,13 +14451,7 @@
                   "show_attribute": true,
                   "name": " ",
                   "attribute": "effect"
-                }
-              ],
-              "column_span": 1
-            },
-            {
-              "type": "grid",
-              "cards": [
+                },
                 {
                   "type": "heading",
                   "heading": "Recent Snapshots",
