@@ -7067,7 +7067,7 @@
     - set_conversation_response: "{% set clean_time = namespace(hours = (states('sensor.valetudo_hestia_current_statistics_time')
         | float(0) // 60),\n                              minutes = (states('sensor.valetudo_hestia_current_statistics_time')
         | float(0) % 60)) %}\n{% set remaining = namespace(area = (states('sensor.valetudo_hestia_current_statistics_area')
-        | float(0) / states('sensor.vacuum_whole_home_clean_progress') | float(1)
+        | float(0) / states('sensor.vacuum_current_run_cleaning_progress') | float(1)
         | round(0)), \n                             hours = (states('sensor.valetudo_hestia_current_statistics_time')
         | float(0) / states('sensor.vacuum_current_run_cleaning_progress') | float(1)
         * (100 - states('sensor.vacuum_current_run_cleaning_progress') | float(1))
@@ -7337,6 +7337,21 @@
       and now() - states.input_select.floorplan_panel_view.last_updated > timedelta(minutes
       = 1) }}'
     id: change_view
+  - trigger: template
+    value_template: '{{ is_state(''media_player.main_door_display'', ''playing'')
+      and state_attr(''media_player.main_door_display'', ''volume_level'') == 0 }}'
+    id: media_player_on
+    alias: When the Main Door Display Media Player is playing with 0 volume
+  - trigger: state
+    entity_id:
+    - media_player.main_door_display
+    to:
+    - idle
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: media_player_off
   conditions: []
   actions:
   - choose:
@@ -7500,6 +7515,18 @@
             cycle: true
           target:
             entity_id: input_select.floorplan_panel_view
+    - conditions:
+      - condition: trigger
+        id:
+        - media_player_on
+        - media_player_off
+      sequence:
+      - action: media_player.volume_set
+        metadata: {}
+        target:
+          entity_id: media_player.main_door_display
+        data:
+          volume_level: '{{ 0 if trigger.id == ''media_player_off'' else 0.8 }}'
   mode: restart
 - id: '1751186099654'
   alias: Voice Control for Washer

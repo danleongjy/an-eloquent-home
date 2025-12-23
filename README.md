@@ -42,7 +42,7 @@ Domain | Quantity
 [`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 19
 [`light`](https://www.home-assistant.io/components/light) | 73
-[`media_player`](https://www.home-assistant.io/components/media_player) | 4
+[`media_player`](https://www.home-assistant.io/components/media_player) | 5
 [`notify`](https://www.home-assistant.io/components/notify) | 2
 [`number`](https://www.home-assistant.io/components/number) | 143
 [`person`](https://www.home-assistant.io/components/person) | 3
@@ -60,7 +60,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1861
+Total | 1862
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -91,6 +91,7 @@ Total | 1861
 - [Template Switch](https://home-assistant.io/integrations/switch.template)
 - [Template Weather](https://home-assistant.io/integrations/weather.template)
 - [Time & Date](https://home-assistant.io/integrations/time_date)
+- [Universal Media Player](https://home-assistant.io/integrations/universal)
 - [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
 ## Extensions
 

@@ -1,0 +1,26 @@
+- platform: universal
+  name: Main Door Display Universal Player
+  children:
+    - media_player.main_door_display
+  commands:
+    turn_on:
+      action: media_player.volume_set
+      target:
+        entity_id: media_player.main_door_display
+      data:
+        volume_level: 0.8
+    turn_off:
+      action: media_player.volume_set
+      target:
+        entity_id: media_player.main_door_display
+      data:
+        volume_level: 0
+    volume_mute:
+      action: media_player.volume_set
+      target:
+        entity_id: media_player.main_door_display
+      data:
+        volume_level: 0
+  state_template: "{{ 'off' if state_attr('media_player.main_door_display', 'volume_level') == 0 else states('media_player.main_door_display') }}"
+  attributes:
+    is_volume_muted: "{{ state_attr('media_player.main_door_display', 'volume_level') == 0 }}"
