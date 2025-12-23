@@ -9195,14 +9195,14 @@
                     {
                       "entity": "sensor.dns_queries_within_5min",
                       "type": "area",
-                      "name": "queries processed",
+                      "name": "processed",
                       "yaxis_id": "count",
                       "color": "teal",
                       "unit": " "
                     },
                     {
                       "entity": "sensor.dns_queries_blocked_by_filters_within_5min",
-                      "name": "queries blocked",
+                      "name": "blocked",
                       "type": "area",
                       "stack_group": "col",
                       "yaxis_id": "count",
@@ -9224,14 +9224,22 @@
                       "decimals": 0,
                       "min": 0,
                       "apex_config": {
-                        "tickAmount": 5
+                        "tickAmount": 5,
+                        "title": {
+                          "text": "queries"
+                        }
                       }
                     },
                     {
                       "id": "percent",
                       "opposite": true,
                       "min": 0,
-                      "max": 100
+                      "max": 100,
+                      "apex_config": {
+                        "title": {
+                          "text": "% blocked"
+                        }
+                      }
                     }
                   ],
                   "section_mode": true
@@ -13573,59 +13581,113 @@
               "type": "grid",
               "cards": [
                 {
-                  "show_current": true,
-                  "show_forecast": true,
-                  "type": "weather-forecast",
-                  "entity": "weather.local_weather",
-                  "name": "NEA via data.gov.sg",
-                  "forecast_type": "daily"
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "header": {
-                    "show": false
-                  },
-                  "all_series_config": {
-                    "stroke_width": 2
-                  },
-                  "graph_span": "7days",
-                  "series": [
-                    {
-                      "entity": "sensor.local_outdoor_temperature",
-                      "name": "Temperature",
-                      "yaxis_id": "temp"
-                    },
-                    {
-                      "entity": "sensor.local_rainfall",
-                      "name": "Rainfall",
-                      "yaxis_id": "hum",
-                      "stroke_width": 0,
-                      "type": "area",
-                      "transform": "return x > 0 ? 100 : 0;",
-                      "show": {
-                        "in_header": "raw"
+                  "type": "custom:button-card",
+                  "show_name": false,
+                  "show_icon": false,
+                  "show_state": false,
+                  "custom_fields": {
+                    "current_weather": {
+                      "card": {
+                        "show_current": true,
+                        "show_forecast": false,
+                        "type": "weather-forecast",
+                        "entity": "weather.local_weather",
+                        "name": "NEA via data.gov.sg"
                       }
                     },
-                    {
-                      "entity": "sensor.local_outdoor_humidity",
-                      "name": "Humidity",
-                      "yaxis_id": "hum"
-                    }
-                  ],
-                  "yaxis": [
-                    {
-                      "id": "temp"
+                    "weekly_stats": {
+                      "card": {
+                        "type": "custom:apexcharts-card",
+                        "config_templates": "standard",
+                        "header": {
+                          "show": false
+                        },
+                        "all_series_config": {
+                          "stroke_width": 2
+                        },
+                        "graph_span": "7days",
+                        "series": [
+                          {
+                            "entity": "sensor.local_outdoor_temperature",
+                            "name": "Temperature",
+                            "yaxis_id": "temp"
+                          },
+                          {
+                            "entity": "sensor.local_rainfall",
+                            "name": "Rainfall",
+                            "yaxis_id": "hum",
+                            "stroke_width": 0,
+                            "type": "area",
+                            "transform": "return x > 0 ? 100 : 0;",
+                            "show": {
+                              "in_header": "raw"
+                            }
+                          },
+                          {
+                            "entity": "sensor.local_outdoor_humidity",
+                            "name": "Humidity",
+                            "yaxis_id": "hum"
+                          }
+                        ],
+                        "yaxis": [
+                          {
+                            "id": "temp",
+                            "apex_config": {
+                              "title": {
+                                "text": "°C"
+                              }
+                            }
+                          },
+                          {
+                            "id": "hum",
+                            "opposite": true,
+                            "apex_config": {
+                              "title": {
+                                "text": "%"
+                              }
+                            }
+                          }
+                        ],
+                        "apex_config": {
+                          "chart": {
+                            "height": "200px"
+                          },
+                          "xaxis": {
+                            "labels": {
+                              "datetimeFormatter": {
+                                "day": "ddd"
+                              }
+                            }
+                          }
+                        }
+                      }
                     },
-                    {
-                      "id": "hum",
-                      "opposite": true
+                    "forecast": {
+                      "card": {
+                        "show_current": false,
+                        "type": "weather-forecast",
+                        "entity": "weather.local_weather",
+                        "forecast_type": "daily"
+                      }
                     }
-                  ],
-                  "apex_config": {
-                    "chart": {
-                      "height": "200px"
-                    }
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 7,
+                    "columns": 12
+                  },
+                  "styles": {
+                    "grid": [
+                      {
+                        "grid-template-areas": "'current_weather' 'weekly_stats' 'forecast'"
+                      },
+                      {
+                        "grid-template-columns": "1fr"
+                      },
+                      {
+                        "grid-template-rows": "min-content min-content min-content"
+                      }
+                    ]
                   }
                 }
               ]
@@ -14153,28 +14215,6 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "picture",
-                  "image": {
-                    "media_content_id": "/local/floorplan/transit_basemap_numbered.png"
-                  }
-                }
-              ],
-              "visibility": [
-                {
-                  "condition": "not",
-                  "conditions": [
-                    {
-                      "condition": "screen",
-                      "media_query": "(min-width: 0px) and (max-width: 767px)"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
                   "type": "markdown",
                   "content": "## <ha-icon icon=\"mdi:numeric-1-circle\"></ha-icon> Sims Drive Market"
                 },
@@ -14226,6 +14266,28 @@
                   "variables": {
                     "busno": 125
                   }
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "picture",
+                  "image": {
+                    "media_content_id": "/local/floorplan/transit_basemap_numbered.png"
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "not",
+                  "conditions": [
+                    {
+                      "condition": "screen",
+                      "media_query": "(min-width: 0px) and (max-width: 767px)"
+                    }
+                  ]
                 }
               ]
             },
