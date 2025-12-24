@@ -20,6 +20,11 @@ turn_off_all:
         entity_id: media_player.kitchen_speaker
       action: media_player.media_stop
       continue_on_error: true
+    - action: media_player.turn_off
+      metadata: {}
+      target:
+        entity_id: media_player.kitchen_speaker
+      data: {}
   - delay:
       hours: 0
       minutes: 0
@@ -152,6 +157,11 @@ turn_off_all:
         entity_id: media_player.study_room_speaker
       action: media_player.media_stop
       continue_on_error: true
+    - action: media_player.turn_off
+      metadata: {}
+      target:
+        entity_id: media_player.study_room_speaker
+      data: {}
   - delay:
       hours: 0
       minutes: 0
@@ -168,6 +178,25 @@ turn_off_all:
     target:
       entity_id: switch.water_heater
     action: switch.turn_off
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: media_player.main_door_display_player
+        state:
+        - idle
+    then:
+    - data: {}
+      action: media_player.media_stop
+      continue_on_error: true
+      target:
+        entity_id: media_player.main_door_display_player
+    - action: media_player.volume_set
+      metadata: {}
+      data:
+        volume_level: 0
+      target:
+        entity_id: media_player.main_door_display_player
   mode: single
   alias: Turn Off All
   icon: mdi:home-export-outline
