@@ -104,8 +104,9 @@ voice_assistant:
         data:
           media_content_id: media-source://media_source/local/1_start.wav
           media_content_type: music
-          announce: "true"
           entity_id: ${voice_assistant_media_player}
+        data_template:
+          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') }}"
     - delay: 1s
     - microphone.capture:
     - light.turn_on:
@@ -117,8 +118,9 @@ voice_assistant:
         data:
           media_content_id: media-source://media_source/local/1_ok.wav
           media_content_type: music
-          announce: "true"
           entity_id: ${voice_assistant_media_player}
+        data_template:
+          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') }}"
     - light.turn_on:
         id: led
         effect: "Fast Pulse"
@@ -133,8 +135,9 @@ voice_assistant:
         data:
           media_content_id: !lambda 'return x;'
           media_content_type: audio/mpeg
-          announce: "true"
           entity_id: ${voice_assistant_media_player}
+        data_template:
+          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') }}"
   on_end:
     - delay: 100ms
     - script.execute: reset_led
@@ -160,8 +163,9 @@ voice_assistant:
                     data:
                       media_content_id: media-source://media_source/local/1_start.wav
                       media_content_type: music
-                      announce: "true"
                       entity_id: media_player.all_players
+                    data_template:
+                      announce: "{{ is_state('${voice_assistant_media_player}', 'playing') }}"
   on_timer_finished:
     - script.execute: check_timers
     - homeassistant.service:
@@ -169,8 +173,9 @@ voice_assistant:
         data:
           media_content_id: media-source://media_source/local/1_end.wav
           media_content_type: music
-          announce: "true"
-          entity_id: media_player.all_players
+          entity_id: ${voice_assistant_media_player}
+        data_template:
+          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') }}"
     - delay: 1s
     - script.execute: check_timers
   on_client_connected:
