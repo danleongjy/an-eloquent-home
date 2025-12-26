@@ -1286,6 +1286,7 @@
         - automation.kitchen_voice_assistant_listening_for_wake_word
         - automation.elenas_room_curtains_auto_control
         - automation.elis_room_curtains_auto_control
+        - automation.media_player_occupancy_following
       enabled: true
       action: automation.turn_off
     - data: {}
@@ -1380,6 +1381,7 @@
         - automation.kitchen_voice_assistant_listening_for_wake_word
         - automation.elenas_room_curtains_auto_control
         - automation.elis_room_curtains_auto_control
+        - automation.media_player_occupancy_following
       action: automation.turn_on
       enabled: true
     - repeat:
@@ -1396,6 +1398,28 @@
         - automation.kitchen_blind_auto_control
         - automation.elis_room_curtains_auto_control
         - automation.elenas_room_curtains_auto_control
+  - action: media_player.turn_on
+    metadata: {}
+    target:
+      entity_id:
+      - media_player.study_room_speaker
+      - media_player.kitchen_speaker
+      - media_player.main_door_display_player
+    data: {}
+  - action: media_player.volume_set
+    metadata: {}
+    target:
+      entity_id:
+      - media_player.study_room_speaker
+      - media_player.kitchen_speaker
+    data:
+      volume_level: 0.5
+  - action: media_player.volume_set
+    metadata: {}
+    target:
+      entity_id: media_player.main_door_display
+    data:
+      volume_level: 0.67
   mode: single
 - id: '1670838907474'
   alias: System Housekeeping
@@ -7590,29 +7614,6 @@
       'on') }}\n{% else %}\n  The current run started {{ time_since(as_datetime(states('sensor.dishwasher_last_run_started')))
       }} ago.\n{% endif %}"
   mode: single
-- id: '1751186583758'
-  alias: Voice Control for Dishwasher
-  description: Get the dishwasher status via voice assistants
-  triggers:
-  - trigger: conversation
-    command:
-    - What is the dishwasher doing
-    - What is the status of the dishwasher
-    - Is the dishwasher (running | washing | cooling | off)
-  conditions: []
-  actions:
-  - set_conversation_response: "The dishwasher is {{ states('input_select.dishwasher_status')
-      | lower }}.\n{% if states('input_select.dishwasher_status') == 'Off' %}\n  {%
-      set wash_time = namespace(hours = states('sensor.dishwasher_last_run_duration').split(':')[0],\n
-      \                              minutes = states('sensor.dishwasher_last_run_duration').split(':')[1])
-      %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours | int(0)
-      > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
-      + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
-      {{ time_since(as_datetime(states('sensor.dishwasher_last_run_ended'))) }} ago.\n
-      \ {{ 'Please open the dishwasher door.' if is_state('input_boolean.dishwasher_load_clean',
-      'on') }}\n{% else %}\n  The current run started {{ time_since(as_datetime(states('sensor.dishwasher_last_run_started')))
-      }} ago.\n{% endif %}"
-  mode: single
 - id: '1751765390006'
   alias: Notify When Kitchen Blind State Desynced
   description: Send a notification when the Kitchen Blind's actual state may be desynced
@@ -7884,4 +7885,147 @@
     data:
       entity_id:
       - sensor.vacuum_current_run_total_area
+  mode: single
+- id: '1766741089015'
+  alias: Media Player Occupancy Following
+  description: Transfer the playing queue to media players according to room occupancy
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.kitchen_speaker_sendspin
+    to:
+    - playing
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+    id: kitchen_sendspin_play
+  - trigger: state
+    entity_id:
+    - media_player.study_room_speaker_sendspin
+    to:
+    - playing
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+    id: study_room_sendspin_play
+  - trigger: state
+    entity_id:
+    - binary_sensor.dining_room_presence
+    - binary_sensor.living_room_presence
+    - binary_sensor.study_room_radar_occupancy
+    - binary_sensor.kitchen_radar_occupancy
+    id: presence_changed
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - kitchen_sendspin_play
+      sequence:
+      - condition: state
+        state:
+        - 'off'
+        entity_id: binary_sensor.study_room_ethernet_connection
+      - action: media_player.join
+        metadata: {}
+        target:
+          entity_id: media_player.kitchen_speaker_sendspin
+        data:
+          group_members:
+          - media_player.study_room_speaker_sendspin
+    - conditions:
+      - condition: trigger
+        id:
+        - study_room_sendspin_play
+      sequence:
+      - action: media_player.join
+        metadata: {}
+        target:
+          entity_id: media_player.study_room_speaker_sendspin
+        data:
+          group_members:
+          - media_player.kitchen_speaker_sendspin
+    - conditions:
+      - condition: trigger
+        id:
+        - presence_changed
+      sequence:
+      - choose:
+        - conditions:
+          - condition: or
+            conditions:
+            - condition: state
+              entity_id: binary_sensor.living_room_presence
+              state:
+              - 'on'
+            - condition: state
+              entity_id: binary_sensor.study_room_radar_occupancy
+              state:
+              - 'on'
+            - condition: state
+              entity_id: binary_sensor.kitchen_radar_occupancy
+              state:
+              - 'on'
+          - condition: state
+            entity_id: binary_sensor.dining_room_presence
+            state:
+            - 'off'
+          sequence:
+          - if:
+            - condition: state
+              entity_id: binary_sensor.study_room_ethernet_connection
+              state:
+              - 'on'
+            then:
+            - condition: state
+              state:
+              - idle
+              entity_id: media_player.kitchen_speaker_sendspin
+            - action: music_assistant.transfer_queue
+              metadata: {}
+              target:
+                entity_id: media_player.kitchen_speaker_sendspin
+              data: {}
+            else:
+            - condition: state
+              state:
+              - idle
+              entity_id: media_player.study_room_speaker_sendspin
+            - action: music_assistant.transfer_queue
+              metadata: {}
+              data: {}
+              target:
+                entity_id: media_player.study_room_speaker_sendspin
+        - conditions:
+          - condition: or
+            conditions:
+            - condition: state
+              entity_id: binary_sensor.living_room_presence
+              state:
+              - 'off'
+            - condition: state
+              entity_id: binary_sensor.study_room_radar_occupancy
+              state:
+              - 'off'
+            - condition: state
+              entity_id: binary_sensor.kitchen_radar_occupancy
+              state:
+              - 'off'
+          - condition: state
+            entity_id: binary_sensor.dining_room_presence
+            state:
+            - 'on'
+          sequence:
+          - condition: state
+            state:
+            - idle
+            entity_id: media_player.main_door_display_player
+          - action: music_assistant.transfer_queue
+            metadata: {}
+            data: {}
+            target:
+              entity_id: media_player.main_door_display_player
   mode: single

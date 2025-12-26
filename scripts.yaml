@@ -1,5 +1,12 @@
 turn_off_all:
   sequence:
+  - action: media_player.unjoin
+    metadata: {}
+    target:
+      entity_id:
+      - media_player.study_room_speaker_sendspin
+      - media_player.kitchen_speaker_sendspin
+    data: {}
   - data:
       skip_condition: true
     target:
@@ -184,19 +191,18 @@ turn_off_all:
       - condition: state
         entity_id: media_player.main_door_display_player
         state:
-        - idle
+        - 'off'
     then:
     - data: {}
       action: media_player.media_stop
       continue_on_error: true
       target:
         entity_id: media_player.main_door_display_player
-    - action: media_player.volume_set
+    - action: media_player.turn_off
       metadata: {}
-      data:
-        volume_level: 0
       target:
         entity_id: media_player.main_door_display_player
+      data: {}
   mode: single
   alias: Turn Off All
   icon: mdi:home-export-outline
