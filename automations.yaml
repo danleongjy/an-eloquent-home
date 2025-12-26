@@ -7367,21 +7367,6 @@
       and now() - states.input_select.floorplan_panel_view.last_updated > timedelta(minutes
       = 1) }}'
     id: change_view
-  - trigger: template
-    value_template: '{{ is_state(''media_player.main_door_display'', ''playing'')
-      and state_attr(''media_player.main_door_display'', ''volume_level'') == 0 }}'
-    id: media_player_on
-    alias: When the Main Door Display Media Player is playing with 0 volume
-  - trigger: state
-    entity_id:
-    - media_player.main_door_display
-    to:
-    - idle
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
-    id: media_player_off
   conditions: []
   actions:
   - choose:
@@ -7487,6 +7472,9 @@
         id:
         - reset_view
       sequence:
+      - condition: template
+        value_template: '{{ ''music_assistant'' not in states(''sensor.main_door_display_current_page'')
+          }}'
       - action: fully_kiosk.load_url
         metadata: {}
         data:
@@ -7545,18 +7533,6 @@
             cycle: true
           target:
             entity_id: input_select.floorplan_panel_view
-    - conditions:
-      - condition: trigger
-        id:
-        - media_player_on
-        - media_player_off
-      sequence:
-      - action: media_player.volume_set
-        metadata: {}
-        target:
-          entity_id: media_player.main_door_display
-        data:
-          volume_level: '{{ 0 if trigger.id == ''media_player_off'' else 0.8 }}'
   mode: restart
 - id: '1751186099654'
   alias: Voice Control for Washer
@@ -7917,7 +7893,12 @@
     - binary_sensor.study_room_radar_occupancy
     - binary_sensor.kitchen_radar_occupancy
     id: presence_changed
-  conditions: []
+  conditions:
+  - condition: template
+    value_template: '{{ ''playing'' in [states(''media_player.main_door_display_player''),
+      states(''media_player.study_room_speaker_sendspin''), states(''media_player.kitchen_speaker_sendspin'')]
+      }}'
+    alias: If a player is playing
   actions:
   - choose:
     - conditions:

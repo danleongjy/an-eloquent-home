@@ -4315,17 +4315,29 @@
                               "unavailable": {
                                 "type": "custom:button-card",
                                 "entity": "binary_sensor.all_players",
-                                "template": "error"
+                                "template": "error",
+                                "tap_action": {
+                                  "action": "navigate",
+                                  "navigation_path": "/lovelace/media"
+                                }
                               },
                               "unknown": {
                                 "type": "custom:button-card",
                                 "entity": "binary_sensor.all_players",
-                                "template": "error"
+                                "template": "error",
+                                "tap_action": {
+                                  "action": "navigate",
+                                  "navigation_path": "/lovelace/media"
+                                }
                               },
                               "off": {
                                 "type": "custom:button-card",
                                 "entity": "binary_sensor.all_players",
                                 "template": "top_row",
+                                "tap_action": {
+                                  "action": "navigate",
+                                  "navigation_path": "/lovelace/media"
+                                },
                                 "double_tap_action": {
                                   "action": "assist",
                                   "start_listening": true
@@ -4373,7 +4385,11 @@
                                     "template": [
                                       "top_row"
                                     ],
-                                    "entity": "binary_sensor.all_players"
+                                    "entity": "binary_sensor.all_players",
+                                    "tap_action": {
+                                      "action": "navigate",
+                                      "navigation_path": "/lovelace/media"
+                                    }
                                   }
                                 }
                               }
@@ -6032,6 +6048,19 @@
                   },
                   "tap_action": {
                     "navigation_path": "/lovelace/motion"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_nav_button",
+                  "name": "Media",
+                  "state_display": " ",
+                  "icon": "mdi:music",
+                  "tap_action": {
+                    "navigation_path": "/lovelace/media"
+                  },
+                  "grid_options": {
+                    "rows": null
                   }
                 },
                 {
@@ -14850,6 +14879,111 @@
                   ]
                 }
               ]
+            }
+          ]
+        },
+        {
+          "type": "sections",
+          "max_columns": 2,
+          "title": "Media",
+          "path": "media",
+          "icon": "mdi:music",
+          "theme": "no_border",
+          "subview": true,
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "media-control",
+                  "entity": "media_player.kitchen_speaker_sendspin",
+                  "name": "Kitchen Speaker",
+                  "theme": "no_border",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "media_player.kitchen_speaker_sendspin",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "media_player.kitchen_speaker_sendspin",
+                      "state_not": "unknown"
+                    }
+                  ]
+                },
+                {
+                  "type": "media-control",
+                  "entity": "media_player.kitchen_speaker",
+                  "theme": "no_border",
+                  "visibility": [
+                    {
+                      "condition": "or",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "media_player.kitchen_speaker_sendspin",
+                          "state": "unavailable"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "media_player.kitchen_speaker_sendspin",
+                          "state": "unknown"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "media-control",
+                  "entity": "media_player.study_room_speaker_sendspin",
+                  "theme": "no_border",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "media_player.study_room_speaker_sendspin",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "media_player.study_room_speaker_sendspin",
+                      "state_not": "unknown"
+                    }
+                  ],
+                  "name": "Study Room Speaker"
+                },
+                {
+                  "type": "media-control",
+                  "entity": "media_player.study_room_speaker",
+                  "theme": "no_border",
+                  "visibility": [
+                    {
+                      "condition": "or",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "media_player.study_room_speaker_sendspin",
+                          "state": "unavailable"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "media_player.study_room_speaker_sendspin",
+                          "state": "unknown"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "media-control",
+                  "entity": "media_player.main_door_display_player",
+                  "theme": "no_border",
+                  "grid_options": {
+                    "columns": "full"
+                  }
+                }
+              ],
+              "column_span": 2
             }
           ]
         }
