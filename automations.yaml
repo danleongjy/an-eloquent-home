@@ -309,52 +309,6 @@
       action: climate.turn_off
   mode: parallel
   max: 5
-- id: '1643973685368'
-  alias: Notify When Vacuum Undocked
-  description: Send a persistent notification if the vacuum is undocked and idle and
-    dismiss it when it stops being idle
-  triggers:
-  - entity_id:
-    - vacuum.valetudo_hestia
-    id: idle
-    to: idle
-    trigger: state
-  - entity_id:
-    - vacuum.valetudo_hestia
-    id: not_idle
-    from: idle
-    trigger: state
-  conditions: []
-  actions:
-  - if:
-    - condition: trigger
-      id: idle
-    then:
-    - data:
-        message: Vacuum not docked properly
-        title: Please manually dock vacuum
-        data:
-          tag: vacuum_undocked
-          clickAction: /lovelace/vacuum
-      action: notify.mobile_app_aurora
-    - data:
-        message: Vacuum not docked properly
-        title: Please manually dock vacuum
-        data:
-          tag: vacuum_undocked
-      action: notify.mobile_app_grace
-    else:
-    - data:
-        message: clear_notification
-        data:
-          tag: vacuum_undocked
-      action: notify.mobile_app_aurora
-    - data:
-        message: clear_notification
-        data:
-          tag: vacuum_undocked
-      action: notify.mobile_app_grace
-  mode: single
 - id: '1643979293415'
   alias: Notify When AC On With Doors Open
   description: Send a persistent notification when AC is on with doors open, and clear
