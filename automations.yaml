@@ -7323,18 +7323,15 @@
     from: 'off'
     id: motion
     to: 'on'
-  - trigger: state
-    entity_id:
-    - binary_sensor.dining_room_presence
-    from:
-    - 'on'
-    to:
-    - 'off'
-    id: no_motion
+  - alias: When the screen is on with no motion in the Dining Room for 5min
+    trigger: template
+    value_template: '{{ is_state(''switch.main_door_display_screen'', ''on'') and
+      is_state(''binary_sensor.dining_room_presence'', ''off'') }}'
     for:
       hours: 0
       minutes: 5
       seconds: 0
+    id: no_motion
   - trigger: state
     entity_id:
     - binary_sensor.doorbell_motion
@@ -7398,6 +7395,12 @@
       - condition: state
         entity_id: input_boolean.away_mode
         state: 'off'
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          device_id: a5d73504748daf7290dcf724d4c02a5a
+          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
       - action: switch.turn_on
         metadata: {}
         data: {}
@@ -7981,20 +7984,18 @@
               target:
                 entity_id: media_player.study_room_speaker_sendspin
         - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: binary_sensor.living_room_presence
-              state:
-              - 'off'
-            - condition: state
-              entity_id: binary_sensor.study_room_radar_occupancy
-              state:
-              - 'off'
-            - condition: state
-              entity_id: binary_sensor.kitchen_radar_occupancy
-              state:
-              - 'off'
+          - condition: state
+            entity_id: binary_sensor.living_room_presence
+            state:
+            - 'off'
+          - condition: state
+            entity_id: binary_sensor.study_room_radar_occupancy
+            state:
+            - 'off'
+          - condition: state
+            entity_id: binary_sensor.kitchen_radar_occupancy
+            state:
+            - 'off'
           - condition: state
             entity_id: binary_sensor.dining_room_presence
             state:
