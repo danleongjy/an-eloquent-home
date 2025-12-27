@@ -7913,6 +7913,22 @@
         state:
         - 'off'
         entity_id: binary_sensor.study_room_ethernet_connection
+      - if:
+        - condition: state
+          entity_id: media_player.study_room_speaker
+          state:
+          - 'off'
+        then:
+        - action: media_player.turn_on
+          metadata: {}
+          target:
+            entity_id: media_player.study_room_speaker
+          data: {}
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 5
+            milliseconds: 0
       - action: media_player.join
         metadata: {}
         target:
@@ -7925,6 +7941,22 @@
         id:
         - study_room_sendspin_play
       sequence:
+      - if:
+        - condition: state
+          entity_id: media_player.kitchen_speaker
+          state:
+          - 'off'
+        then:
+        - action: media_player.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id: media_player.kitchen_speaker
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 5
+            milliseconds: 0
       - action: media_player.join
         metadata: {}
         target:
@@ -7964,6 +7996,22 @@
               state:
               - 'on'
             then:
+            - if:
+              - condition: state
+                entity_id: media_player.kitchen_speaker
+                state:
+                - 'off'
+              then:
+              - action: media_player.turn_on
+                metadata: {}
+                data: {}
+                target:
+                  entity_id: media_player.kitchen_speaker
+              - delay:
+                  hours: 0
+                  minutes: 0
+                  seconds: 5
+                  milliseconds: 0
             - condition: state
               state:
               - idle
@@ -7974,6 +8022,22 @@
                 entity_id: media_player.kitchen_speaker_sendspin
               data: {}
             else:
+            - if:
+              - condition: state
+                entity_id: media_player.kitchen_speaker
+                state:
+                - 'off'
+              then:
+              - action: media_player.turn_on
+                metadata: {}
+                data: {}
+                target:
+                  entity_id: media_player.kitchen_speaker
+              - delay:
+                  hours: 0
+                  minutes: 0
+                  seconds: 5
+                  milliseconds: 0
             - condition: state
               state:
               - idle
