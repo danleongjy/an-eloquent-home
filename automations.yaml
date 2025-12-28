@@ -3806,13 +3806,16 @@
         data:
           cache: false
           message: Winding down in 15 minutes
-          media_player_entity_id: media_player.study_room_speaker
+          media_player_entity_id: media_player.study_room_speaker{{ '_sendspin' if
+            not is_state('media_player.study_room_speaker_sendspin', 'unavailable')
+            }}
         action: tts.speak
     - target:
         entity_id: tts.piper
       data:
         cache: false
-        media_player_entity_id: media_player.kitchen_speaker
+        media_player_entity_id: media_player.kitchen_speaker{{ '_sendspin' if not
+          is_state('media_player.kitchen_speaker_sendspin', 'unavailable') }}
         message: Winding down in 15 minutes
       action: tts.speak
     - sequence:
@@ -8010,4 +8013,35 @@
             data: {}
             target:
               entity_id: media_player.main_door_display_player
+        - conditions:
+          - condition: state
+            entity_id: binary_sensor.dining_room_presence
+            state:
+            - 'off'
+          - condition: state
+            entity_id: binary_sensor.living_room_presence
+            state:
+            - 'off'
+          - condition: state
+            entity_id: binary_sensor.study_room_radar_occupancy
+            state:
+            - 'off'
+          - condition: state
+            entity_id: binary_sensor.kitchen_radar_occupancy
+            state:
+            - 'off'
+          sequence:
+          - repeat:
+              for_each:
+              - media_player.kitchen_speaker_sendspin
+              - media_player.study_room_speaker_sendspin
+              - media_player.main_door_display_player
+              sequence:
+              - condition: template
+                value_template: '{{ is_state(repeat.item, "playing") }}'
+              - action: media_player.media_pause
+                metadata: {}
+                target:
+                  entity_id: '{{ repeat.item }}'
+                data: {}
   mode: single
