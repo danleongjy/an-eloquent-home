@@ -321,6 +321,25 @@
 
 - trigger:
   - platform: state
+    entity_id: vacuum.valetudo_hestia
+    not_from: unavailable
+    to: docked
+    for:
+      minutes: 10
+    id: cleaning_completed
+  - platform: state
+    entity_id: button.vacuum_reset_dock_cleanliness
+    id: reset
+  sensor:
+    - name: Vacuum Dock Cleaning
+      unique_id: sensor.vacuum_dock_cleaning
+      state: "{{ max(this.state | int(0) - states('sensor.valetudo_hestia_current_statistics_time') | int(0), 0) if trigger.id == 'cleaning_completed' else 3500 }}"
+      unit_of_measurement: min
+      attributes:
+        timestamp: "{{ now() }}"
+
+- trigger:
+  - platform: state
     entity_id: sensor.adguard_home_dns_queries
     not_from:
       - unknown

@@ -11047,22 +11047,6 @@
                   }
                 },
                 {
-                  "show_state": false,
-                  "show_name": false,
-                  "camera_view": "auto",
-                  "fit_mode": "cover",
-                  "type": "picture-entity",
-                  "entity": "vacuum.valetudo_hestia",
-                  "camera_image": "camera.hestia_camera",
-                  "visibility": [
-                    {
-                      "condition": "state",
-                      "entity": "input_select.vacuum_run_type",
-                      "state": "Whole Home"
-                    }
-                  ]
-                },
-                {
                   "type": "tile",
                   "entity": "vacuum.valetudo_hestia",
                   "name": "Hestia",
@@ -11078,6 +11062,22 @@
                     }
                   ],
                   "features_position": "inline",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "input_select.vacuum_run_type",
+                      "state": "Whole Home"
+                    }
+                  ]
+                },
+                {
+                  "show_state": false,
+                  "show_name": false,
+                  "camera_view": "auto",
+                  "fit_mode": "cover",
+                  "type": "picture-entity",
+                  "entity": "vacuum.valetudo_hestia",
+                  "camera_image": "camera.hestia_camera",
                   "visibility": [
                     {
                       "condition": "state",
@@ -11707,7 +11707,13 @@
                       }
                     }
                   ]
-                },
+                }
+              ],
+              "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "heading",
                   "heading": "Configuration",
@@ -11767,8 +11773,7 @@
                     "rows": null
                   }
                 }
-              ],
-              "column_span": 1
+              ]
             },
             {
               "type": "grid",
@@ -11930,7 +11935,19 @@
                       "state_not": "unavailable"
                     }
                   ]
-                },
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "vacuum.valetudo_hestia",
+                  "state_not": "unavailable"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "heading",
                   "icon": "mdi:wrench",
@@ -11946,6 +11963,16 @@
                     "action": "more-info",
                     "entity": "sensor.valetudo_hestia_main_brush"
                   },
+                  "double_tap_action": {
+                    "action": "call-service",
+                    "service": "button.press",
+                    "service_data": {
+                      "entity_id": "button.valetudo_hestia_reset_main_brush_consumable"
+                    },
+                    "confirmation": {
+                      "text": "Confirm that the main brush has been replaced."
+                    }
+                  },
                   "section_mode": true,
                   "grid_options": {
                     "rows": null
@@ -11959,6 +11986,16 @@
                   "tap_action": {
                     "action": "more-info",
                     "entity": "sensor.valetudo_hestia_right_brush"
+                  },
+                  "double_tap_action": {
+                    "action": "call-service",
+                    "service": "button.press",
+                    "service_data": {
+                      "entity_id": "button.valetudo_hestia_reset_right_brush_consumable"
+                    },
+                    "confirmation": {
+                      "text": "Confirm that the side brush has been replaced."
+                    }
                   },
                   "section_mode": true,
                   "grid_options": {
@@ -11974,6 +12011,16 @@
                     "action": "more-info",
                     "entity": "sensor.valetudo_hestia_main_filter"
                   },
+                  "double_tap_action": {
+                    "action": "call-service",
+                    "service": "button.press",
+                    "service_data": {
+                      "entity_id": "button.valetudo_hestia_reset_main_filter_consumable"
+                    },
+                    "confirmation": {
+                      "text": "Confirm that the filter has been replaced."
+                    }
+                  },
                   "section_mode": true,
                   "grid_options": {
                     "rows": null
@@ -11987,6 +12034,16 @@
                   "tap_action": {
                     "action": "more-info",
                     "entity": "sensor.valetudo_hestia_sensor_cleaning"
+                  },
+                  "double_tap_action": {
+                    "action": "call-service",
+                    "service": "button.press",
+                    "service_data": {
+                      "entity_id": "button.valetudo_hestia_reset_sensor_cleaning_consumable"
+                    },
+                    "confirmation": {
+                      "text": "Confirm that the sensors have been cleaned."
+                    }
                   },
                   "section_mode": true,
                   "grid_options": {
@@ -12002,17 +12059,44 @@
                     "action": "more-info",
                     "entity": "sensor.valetudo_hestia_wheel_cleaning"
                   },
+                  "double_tap_action": {
+                    "action": "call-service",
+                    "service": "button.press",
+                    "service_data": {
+                      "entity_id": "button.valetudo_hestia_reset_wheel_cleaning_consumable"
+                    },
+                    "confirmation": {
+                      "text": "Confirm that the wheels have been cleaned."
+                    }
+                  },
                   "section_mode": true,
                   "grid_options": {
                     "rows": null
                   }
-                }
-              ],
-              "visibility": [
+                },
                 {
-                  "condition": "state",
-                  "entity": "vacuum.valetudo_hestia",
-                  "state_not": "unavailable"
+                  "type": "custom:button-card",
+                  "template": "tile_status_bar",
+                  "entity": "sensor.vacuum_dock_cleanliness_left",
+                  "name": "Dock",
+                  "tap_action": {
+                    "action": "more-info",
+                    "entity": "sensor.vacuum_dock_cleaning"
+                  },
+                  "double_tap_action": {
+                    "action": "call-service",
+                    "service": "button.press",
+                    "service_data": {
+                      "entity_id": "button.vacuum_reset_dock_cleanliness"
+                    },
+                    "confirmation": {
+                      "text": "Confirm to start dock cleaning process."
+                    }
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": null
+                  }
                 }
               ]
             }
