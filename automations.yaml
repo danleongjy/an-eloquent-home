@@ -3795,19 +3795,19 @@
     entity_id: input_boolean.away_mode
     state: 'off'
   actions:
-  - if:
-    - condition: state
-      entity_id: binary_sensor.study_room_ethernet_connection
-      state: 'off'
-    then:
-    - target:
-        entity_id: tts.piper
-      data:
-        cache: false
-        message: Winding down in 15 minutes
-        media_player_entity_id: media_player.all_players
-      action: tts.speak
-    else:
+  - parallel:
+    - if:
+      - condition: state
+        entity_id: binary_sensor.study_room_ethernet_connection
+        state: 'off'
+      then:
+      - target:
+          entity_id: tts.piper
+        data:
+          cache: false
+          message: Winding down in 15 minutes
+          media_player_entity_id: media_player.study_room_speaker
+        action: tts.speak
     - target:
         entity_id: tts.piper
       data:
@@ -3815,20 +3815,21 @@
         media_player_entity_id: media_player.kitchen_speaker
         message: Winding down in 15 minutes
       action: tts.speak
-  - action: media_player.volume_set
-    metadata: {}
-    data:
-      volume_level: 0.8
-    target:
-      entity_id: media_player.main_door_display
-  - action: tts.speak
-    metadata: {}
-    data:
-      cache: false
-      media_player_entity_id: media_player.main_door_display
-      message: Winding down in 15 minutes
-    target:
-      entity_id: tts.piper
+    - sequence:
+      - action: media_player.volume_set
+        metadata: {}
+        data:
+          volume_level: 0.66
+        target:
+          entity_id: media_player.main_door_display_player
+      - action: tts.speak
+        metadata: {}
+        data:
+          cache: false
+          message: Winding down in 15 minutes
+          media_player_entity_id: media_player.main_door_display_player
+        target:
+          entity_id: tts.piper
   mode: single
 - id: '1707352533395'
   alias: Notify When Server Load High
