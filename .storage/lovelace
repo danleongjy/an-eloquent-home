@@ -590,15 +590,18 @@
           "entity_picture": "[[[ return entity.attributes.entity_picture ]]]",
           "show_entity_picture": true,
           "tap_action": {
-            "action": "call-service",
-            "service": "[[[\n  if (typeof entity.attributes.media_position !== 'undefined') {\n    return 'media_player.media_play_pause'\n  } else {\n    return 'media_player.toggle'\n  }\n]]]\n",
-            "service_data": {
-              "entity_id": "entity"
-            }
-          },
-          "hold_action": {
             "action": "navigate",
             "navigation_path": "/d5369777_music_assistant/ingress"
+          },
+          "custom_fields": {
+            "indicator_manual_control": {
+              "card": {
+                "tap_action": {
+                  "action": "navigate",
+                  "navigation_path": "/d5369777_music_assistant/ingress"
+                }
+              }
+            }
           },
           "double_tap_action": {
             "action": "call-service",
@@ -4369,10 +4372,6 @@
                                   "action": "navigate",
                                   "navigation_path": "/d5369777_music_assistant/ingress"
                                 },
-                                "double_tap_action": {
-                                  "action": "assist",
-                                  "start_listening": true
-                                },
                                 "custom_fields": {
                                   "indicator_manual_control": {
                                     "card": {
@@ -4382,11 +4381,15 @@
                                       }
                                     }
                                   }
+                                },
+                                "double_tap_action": {
+                                  "action": "assist",
+                                  "start_listening": true
                                 }
                               },
                               "in_use": {
                                 "type": "custom:state-switch",
-                                "entity": "{% set players = [states('media_player.kitchen_speaker'),states('media_player.study_room_speaker'),states('media_player.main_door_display_player')] %}{% if players[1] in ['idle','off'] and players[2] in ['idle','off'] %}\n  kitchen_speaker\n{% elif players[0] in ['idle','off'] and players[2] in ['idle','off'] %}\n  study_room_speaker\n{% elif players[0] in ['idle','off'] and players[1] in ['idle','off'] %}\n  main_door_display_player\n{% else %}\n  multiple\n{% endif %}",
+                                "entity": "{% set players = [states('media_player.kitchen_speaker'),states('media_player.study_room_speaker'),states('media_player.main_door_display_player')] %} {% if players[0] not in ['idle','off'] and players[1] in ['idle','off'] and players[2] in ['idle','off'] %}\n  kitchen_speaker\n{% elif players[0] in ['idle','off'] and players[1] not in ['idle','off'] and players[2] in ['idle','off'] %}\n  study_room_speaker\n{% elif players[0] in ['idle','off'] and players[1] in ['idle','off'] and players[2] not in ['idle','off'] %}\n  main_door_display_player\n{% elif players[0] not in ['idle','off'] and players[1] not in ['idle','off'] and players[2] in ['idle','off'] %}\n  {% if state_attr('media_player.kitchen_speaker_sendspin', 'group_members')[0] == state_attr('media_player.study_room_speaker_sendspin', 'group_members')[0]%}\n    {{ state_attr('media_player.kitchen_speaker_sendspin', 'group_members')[0].split('.')[1][:-9] }}\n  {% endif %}\n{% else %}\n  multiple\n{% endif %}",
                                 "default": "multiple",
                                 "states": {
                                   "study_room_speaker": {
@@ -4396,6 +4399,9 @@
                                       "top_row"
                                     ],
                                     "entity": "media_player.study_room_speaker",
+                                    "hold_action": {
+                                      "entity": "[[[ \n  if (states[entity.entity_id + '_sendspin'].state == 'unavailable') {\n    return entity.entity_id\n  } else {\n    return entity.entity_id + '_sendspin'\n  }\n]]]"
+                                    },
                                     "variables": {
                                       "auto_control_automation": "automation.media_player_occupancy_following"
                                     }
@@ -4407,6 +4413,9 @@
                                       "top_row"
                                     ],
                                     "entity": "media_player.kitchen_speaker",
+                                    "hold_action": {
+                                      "entity": "[[[ \n  if (states[entity.entity_id + '_sendspin'].state == 'unavailable') {\n    return entity.entity_id\n  } else {\n    return entity.entity_id + '_sendspin'\n  }\n]]]"
+                                    },
                                     "variables": {
                                       "auto_control_automation": "automation.media_player_occupancy_following"
                                     }
