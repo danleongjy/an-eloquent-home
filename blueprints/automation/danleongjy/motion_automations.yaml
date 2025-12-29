@@ -1,0 +1,82 @@
+blueprint:
+  name: Motion Automations
+  description: Turn on automations when motion is detected.
+  domain: automation
+  input:
+    room:
+      name: Room
+      description: The room to set the recommended scene in
+      selector:
+        select:
+          options:
+            - label: Parents' Room
+              value: parents_room
+            - label: Master Bathroom
+              value: master_bathroom
+            - label: Kitchen
+              value: kitchen
+            - label: Study Room
+              value: study_room
+            - label: Living Room
+              value: living_room
+            - label: Dining Room
+              value: dining_room
+            - label: Playroom
+              value: playroom
+            - label: Yard
+              value: yard
+            - label: Hallway
+              value: hallway
+            - label: Powder Room
+              value: powder_room
+            - label: Junior Bathroom
+              value: junior_bathroom
+            - label: Eli's Room
+              value: elis_room
+            - label: Elena's Room
+              value: elenas_room
+          multiple: true
+    motion_sensor:
+      name: Motion Sensor
+      description: When motion is detected by this sensor, the automations may turn on.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: 
+            - motion
+            - occupancy
+    entities_list:
+      name: Entities to Track
+      description: A list of entities.  If the automations should not turn on  when any of these entities are on even if motion is detected, specify them here.  Otherwise, leave blank.
+      selector:
+        entity:
+          multiple: true
+      default: []
+    doors_list:
+      name: Doors to Track
+      description: A list of doors or door groups.  If the automations should not turn on when all the doors are closed even if motion is detected (useful in bedrooms when someone is sleeping), specify the doors here.  Otherwise, leave blank.
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: door
+          multiple: true
+      default: []
+trigger:
+  - platform: state
+    entity_id: !input motion_sensor
+    from: "off"
+    to: "on"
+trigger_variables:
+  doors: !input doors_list
+  entities: !input entities_list
+condition:
+  - "{{ doors | length == 0 or 'on' in states | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list }}"
+  - "{{ ['off'] * entities | length == states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}"
+action:
+  - variables:
+      rooms: !input room
+  - action: script.set_recommended_scene
+    data:
+      room: "{{ rooms }}"
+mode: single
+max_exceeded: silent

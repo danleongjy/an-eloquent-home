@@ -318,23 +318,25 @@ set_recommended_scene:
             | map(attribute = ''entity_id'') | list }}
 
             '
+        data: {}
       - action: automation.trigger
         data:
           skip_condition: true
         target:
           entity_id: '{{ states.automation | selectattr(''entity_id'', ''search'',
             repeat.item + ''_motion'') | rejectattr(''entity_id'',''search'',''timeout'')
-            | map(attribute = ''entity_id'') | list }}
+            | rejectattr(''entity_id'',''search'',''_automations'') | map(attribute
+            = ''entity_id'') | list }}
 
             '
       - if:
         - condition: template
-          value_template: '{{ states(room_cover_automation[repeat.item]) != ''unknown''
-            }}'
+          value_template: '{{ room_cover_automation[repeat.item] is defined }}'
         then:
         - action: automation.turn_on
           target:
             entity_id: '{{ room_cover_automation[repeat.item] }}'
+          data: {}
         - action: automation.trigger
           target:
             entity_id: '{{ room_cover_automation[repeat.item] }}'
@@ -1378,10 +1380,6 @@ cover_controller:
         - condition: time
           before: input_datetime.sleep_hours_start
           after: input_datetime.sleep_hours_end
-      - data:
-          indicator_light: '{{ light[cover] }}'
-          flash_once: true
-        action: script.automation_on_off_indicator_light
     - conditions:
       - condition: template
         value_template: '{{ command == ''cover_manual_control'' }}'
