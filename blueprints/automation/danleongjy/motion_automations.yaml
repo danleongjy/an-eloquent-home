@@ -1,11 +1,11 @@
 blueprint:
   name: Motion Automations
-  description: Turn on automations when motion is detected.
+  description: Turn on automations when motion is cleared after a period of time.
   domain: automation
   input:
     room:
       name: Room
-      description: The room to set the recommended scene in
+      description: The room to turn on motion automations
       selector:
         select:
           options:
@@ -38,13 +38,22 @@ blueprint:
           multiple: true
     motion_sensor:
       name: Motion Sensor
-      description: When motion is detected by this sensor, the automations may turn on.
+      description: When motion is cleared by this sensor for the indicated time, the automations may turn on.
       selector:
         entity:
           domain: binary_sensor
           device_class: 
             - motion
             - occupancy
+    time_period:
+      name: Time Period
+      description: The amount of time that the motion sensor must be clear.
+      selector:
+        number:
+          min: 1
+          max: 60
+          unit_of_measurement: min
+      default: 1
     entities_list:
       name: Entities to Track
       description: A list of entities.  If the automations should not turn on  when any of these entities are on even if motion is detected, specify them here.  Otherwise, leave blank.
@@ -64,8 +73,10 @@ blueprint:
 trigger:
   - platform: state
     entity_id: !input motion_sensor
-    from: "off"
-    to: "on"
+    from: "on"
+    to: "off"
+    for:
+      minutes: !input time_period
 trigger_variables:
   doors: !input doors_list
   entities: !input entities_list
@@ -75,8 +86,41 @@ condition:
 action:
   - variables:
       rooms: !input room
-  - action: script.set_recommended_scene
-    data:
-      room: "{{ rooms }}"
+      room_cover_automation:
+        elenas_room: automation.elenas_room_curtains_auto_control
+        elis_room: automation.elis_room_curtains_auto_control
+        dining_room: automation.south_facing_blinds_auto_control
+        living_room: automation.south_facing_blinds_auto_control
+        study_room: automation.south_facing_blinds_auto_control
+        parents_room: automation.master_bathroom_blind_auto_control
+        master_bathroom: automation.master_bathroom_blind_auto_control
+        kitchen: automation.kitchen_blind_auto_control
+  - repeat:
+      for_each: "{{ rooms }}"
+      sequence:
+        - action: automation.turn_on
+          target:
+            entity_id: >
+              {{ states.automation | selectattr('entity_id', 'search',
+              repeat.item + '_motion') |
+              rejectattr('entity_id','search','timeout') | map(attribute =
+              'entity_id') | list }}
+        - if:
+            - condition: template
+              value_template: "{{ room_cover_automation[repeat.item] is defined }}"
+          then:
+            - action: automation.turn_on
+              target:
+                entity_id: "{{ room_cover_automation[repeat.item] }}"
+              data: {}
+        - if:
+            - condition: template
+              value_template: >-
+                {{ states('automation.' + repeat.item + '_fan_auto_control') !=
+                'unknown' }}
+          then:
+            - action: automation.turn_on
+              target:
+                entity_id: "{{ 'automation.' + repeat.item + '_fan_auto_control' }}"
 mode: single
 max_exceeded: silent
