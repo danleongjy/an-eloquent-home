@@ -164,27 +164,17 @@ voice_assistant:
         then:
           - if:
               condition:
-                lambda: 'return id(first_timer_seconds_left).state <= 3 && id(first_timer_seconds_left).state > 0;'
+                lambda: 'return id(first_timer_seconds_left).state == 10;'
               then:
                 - homeassistant.service:
                     service: media_player.play_media
                     data:
-                      media_content_id: media-source://media_source/local/1_start.wav
+                      media_content_id: media-source://media_source/local/countdown_announcement.wav
                       media_content_type: music
                     data_template:
                       announce: "{{ is_state('${voice_assistant_media_player}', 'playing') if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else is_state('${voice_assistant_media_player}' + '_sendspin', 'playing') }}"
                       entity_id: "{{ '${voice_assistant_media_player}' if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else '${voice_assistant_media_player}' + '_sendspin' }}"
   on_timer_finished:
-    - script.execute: check_timers
-    - homeassistant.service:
-        service: media_player.play_media
-        data:
-          media_content_id: media-source://media_source/local/1_end.wav
-          media_content_type: music
-        data_template:
-          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else is_state('${voice_assistant_media_player}' + '_sendspin', 'playing') }}"
-          entity_id: "{{ '${voice_assistant_media_player}' if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else '${voice_assistant_media_player}' + '_sendspin' }}"
-    - delay: 1s
     - script.execute: check_timers
   on_client_connected:
     - script.execute: check_timers
