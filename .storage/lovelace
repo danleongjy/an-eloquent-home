@@ -13245,7 +13245,9 @@
                   "heading": "Main Door Display"
                 },
                 {
-                  "type": "horizontal-stack",
+                  "square": false,
+                  "type": "grid",
+                  "columns": 2,
                   "cards": [
                     {
                       "type": "custom:button-card",
@@ -13265,24 +13267,71 @@
                       }
                     },
                     {
-                      "type": "custom:button-card",
-                      "template": "tile_status_bar",
-                      "entity": "sensor.main_door_display_battery",
-                      "name": "Battery",
-                      "state_display": "[[[ \n  if (states['switch.main_door_display_charger'].state == 'on') {\n    return entity.state + '% | Charging'\n  } else {\n    return entity.state + '% | Depleting'\n  }\n]]]\n",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "switch.toggle",
-                        "service_data": {
-                          "entity_id": "switch.main_door_display_charger"
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "switch.main_door_display_charger",
+                          "state": "on"
+                        }
+                      ],
+                      "card": {
+                        "type": "custom:button-card",
+                        "template": "tile_progress_bar",
+                        "entity": "sensor.main_door_display_battery",
+                        "name": "Battery",
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "switch.toggle",
+                          "service_data": {
+                            "entity_id": "switch.main_door_display_charger"
+                          }
+                        },
+                        "double_tap_action": {
+                          "action": "more-info",
+                          "entity": "switch.main_door_display_charger"
+                        },
+                        "hold_action": {
+                          "action": "more-info"
                         }
                       },
-                      "double_tap_action": {
-                        "action": "more-info",
-                        "entity": "switch.main_door_display_charger"
+                      "grid_options": {
+                        "columns": 6,
+                        "rows": "auto"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "switch.main_door_display_charger",
+                          "state": "off"
+                        }
+                      ],
+                      "card": {
+                        "type": "custom:button-card",
+                        "template": "tile_status_bar",
+                        "entity": "sensor.main_door_display_battery",
+                        "name": "Battery",
+                        "tap_action": {
+                          "action": "call-service",
+                          "service": "switch.toggle",
+                          "service_data": {
+                            "entity_id": "switch.main_door_display_charger"
+                          }
+                        },
+                        "double_tap_action": {
+                          "action": "more-info",
+                          "entity": "switch.main_door_display_charger"
+                        },
+                        "hold_action": {
+                          "action": "more-info"
+                        }
                       },
-                      "hold_action": {
-                        "action": "more-info"
+                      "grid_options": {
+                        "columns": 6,
+                        "rows": "auto"
                       }
                     }
                   ]
@@ -14428,31 +14477,6 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "picture",
-                  "image": {
-                    "media_content_id": "/local/floorplan/transit_basemap_numbered.png"
-                  },
-                  "tap_action": {
-                    "action": "none"
-                  }
-                }
-              ],
-              "visibility": [
-                {
-                  "condition": "not",
-                  "conditions": [
-                    {
-                      "condition": "screen",
-                      "media_query": "(min-width: 0px) and (max-width: 767px)"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
                   "type": "markdown",
                   "content": "## <ha-icon icon=\"mdi:numeric-3-circle\"></ha-icon> Aljunied Station"
                 },
@@ -14556,12 +14580,6 @@
                   "tap_action": {
                     "action": "none"
                   }
-                }
-              ],
-              "visibility": [
-                {
-                  "condition": "screen",
-                  "media_query": "(min-width: 0px) and (max-width: 767px)"
                 }
               ]
             }
