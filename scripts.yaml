@@ -1417,3 +1417,42 @@ cover_controller:
   icon: mdi:blinds
   mode: parallel
   max: 8
+lcars_speak:
+  sequence:
+  - action: tts.speak
+    metadata: {}
+    target:
+      entity_id: tts.piper
+    data:
+      cache: false
+      options:
+        voice: en_US-fedcomp-medium
+      media_player_entity_id: '{{ player }}'
+      message: '{{ message }}'
+  fields:
+    message:
+      selector:
+        text:
+      name: Message
+      description: Message to play
+      required: true
+    player:
+      selector:
+        select:
+          multiple: true
+          options:
+          - label: Study Room Speaker
+            value: media_player.study_room_speaker
+          - label: Study Room Speaker (Sendspin)
+            value: media_player.study_room_speaker_sendspin
+          - label: Kitchen Speaker
+            value: media_player.kitchen_speaker
+          - label: Kitchen Speaker (Sendspin)
+            value: media_player.kitchen_speaker_sendspin
+          - label: Main Door Display Player
+            value: media_player.main_door_display_player
+      default:
+      - media_player.main_door_display_player
+  alias: LCARS Speak
+  description: TTS with Piper using LCARS voice model
+  icon: mdi:account-voice

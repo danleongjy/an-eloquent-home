@@ -3827,23 +3827,117 @@
         entity_id: binary_sensor.study_room_ethernet_connection
         state: 'off'
       then:
-      - target:
-          entity_id: tts.piper
-        data:
-          cache: false
-          message: Winding down in 15 minutes
-          media_player_entity_id: media_player.study_room_speaker{{ '_sendspin' if
-            not is_state('media_player.study_room_speaker_sendspin', 'unavailable')
-            }}
-        action: tts.speak
-    - target:
-        entity_id: tts.piper
+      - if:
+        - condition: state
+          entity_id: media_player.study_room_speaker_sendspin
+          state:
+          - unavailable
+          - unknown
+        then:
+        - action: media_player.play_media
+          metadata: {}
+          target:
+            entity_id: media_player.study_room_speaker
+          data:
+            media:
+              media_content_id: media-source://media_source/local/winding_down.wav
+              media_content_type: audio/x-wav
+              metadata:
+                title: winding_down.wav
+                thumbnail:
+                media_class: music
+                children_media_class:
+                navigateIds:
+                - {}
+                - media_content_type: app
+                  media_content_id: media-source://media_source
+                browse_entity_id: media_player.study_room_speaker
+            announce: true
+        else:
+        - action: media_player.play_media
+          metadata: {}
+          data:
+            media:
+              media_content_id: media-source://media_source/local/winding_down.wav
+              media_content_type: audio/x-wav
+              metadata:
+                title: winding_down.wav
+                thumbnail:
+                media_class: music
+                children_media_class:
+                navigateIds:
+                - {}
+                - media_content_type: app
+                  media_content_id: media-source://media_source
+                browse_entity_id: media_player.study_room_speaker
+            announce: true
+          target:
+            entity_id: media_player.study_room_speaker_sendspin
+    - action: media_player.play_media
+      metadata: {}
       data:
-        cache: false
-        media_player_entity_id: media_player.kitchen_speaker{{ '_sendspin' if not
-          is_state('media_player.kitchen_speaker_sendspin', 'unavailable') }}
-        message: Winding down in 15 minutes
-      action: tts.speak
+        media:
+          media_content_id: media-source://media_source/local/winding_down.wav
+          media_content_type: audio/x-wav
+          metadata:
+            title: winding_down.wav
+            thumbnail:
+            media_class: music
+            children_media_class:
+            navigateIds:
+            - {}
+            - media_content_type: app
+              media_content_id: media-source://media_source
+            browse_entity_id: media_player.study_room_speaker
+        announce: true
+      target:
+        entity_id: media_player.kitchen_speaker
+    - if:
+      - condition: state
+        entity_id: media_player.kitchen_speaker_sendspin
+        state:
+        - unavailable
+        - unknown
+      then:
+      - action: media_player.play_media
+        metadata: {}
+        data:
+          media:
+            media_content_id: media-source://media_source/local/winding_down.wav
+            media_content_type: audio/x-wav
+            metadata:
+              title: winding_down.wav
+              thumbnail:
+              media_class: music
+              children_media_class:
+              navigateIds:
+              - {}
+              - media_content_type: app
+                media_content_id: media-source://media_source
+              browse_entity_id: media_player.study_room_speaker
+          announce: true
+        target:
+          entity_id: media_player.kitchen_speaker
+      else:
+      - action: media_player.play_media
+        metadata: {}
+        data:
+          media:
+            media_content_id: media-source://media_source/local/winding_down.wav
+            media_content_type: audio/x-wav
+            metadata:
+              title: winding_down.wav
+              thumbnail:
+              media_class: music
+              children_media_class:
+              navigateIds:
+              - {}
+              - media_content_type: app
+                media_content_id: media-source://media_source
+              browse_entity_id: media_player.study_room_speaker
+          announce: true
+        target:
+          entity_id: media_player.kitchen_speaker_sendspin
     - sequence:
       - action: media_player.volume_set
         metadata: {}
@@ -3851,14 +3945,25 @@
           volume_level: 0.66
         target:
           entity_id: media_player.main_door_display_player
-      - action: tts.speak
+      - action: media_player.play_media
         metadata: {}
         data:
-          cache: false
-          message: Winding down in 15 minutes
-          media_player_entity_id: media_player.main_door_display_player
+          media:
+            media_content_id: media-source://media_source/local/winding_down.wav
+            media_content_type: audio/x-wav
+            metadata:
+              title: winding_down.wav
+              thumbnail:
+              media_class: music
+              children_media_class:
+              navigateIds:
+              - {}
+              - media_content_type: app
+                media_content_id: media-source://media_source
+              browse_entity_id: media_player.study_room_speaker
+          announce: true
         target:
-          entity_id: tts.piper
+          entity_id: media_player.main_door_display_player
   mode: single
 - id: '1707352533395'
   alias: Notify When Server Load High
