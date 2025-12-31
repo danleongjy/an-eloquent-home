@@ -3207,25 +3207,13 @@
       action: script.increment_alarm_day
   - choose:
     - conditions:
-      - alias: Next alarm is on Mon, Tue or Wed
+      - alias: Next alarm is on a weekday
         condition: template
         value_template: '{{ as_datetime(states(''input_datetime.elis_next_alarm'')).weekday()
-          < 3 }}'
+          < 5 }}'
       sequence:
       - data:
           time: '{{ states(''input_datetime.elis_school_day_alarm'') }}'
-        target:
-          entity_id: input_datetime.elis_next_alarm
-        action: input_datetime.set_datetime
-    - conditions:
-      - alias: Next alarm is on Thu or Fri
-        condition: template
-        value_template: '{{ as_datetime(states(''input_datetime.elis_next_alarm'')).weekday()
-          in [3,4] }}'
-      sequence:
-      - data:
-          time: '{{ (today_at(states(''input_datetime.elis_school_day_alarm'')) +
-            timedelta(minutes = 5)).time() }}'
         target:
           entity_id: input_datetime.elis_next_alarm
         action: input_datetime.set_datetime
