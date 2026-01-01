@@ -7093,11 +7093,11 @@
   conditions: []
   actions:
   - set_conversation_response: '{{ [''Initiating'', ''Activating''] | random }} {{
-      [''Away Mode'', ''shutdown sequence''] | random }} in 10 seconds.'
+      [''Away Mode'', ''shutdown sequence''] | random }}.'
   - delay:
       hours: 0
       minutes: 0
-      seconds: 10
+      seconds: 20
       milliseconds: 0
   - action: input_boolean.turn_on
     metadata: {}
@@ -7354,7 +7354,8 @@
         else:
         - set_conversation_response: The {{ trigger.slots.side }} cooker is off.
     default:
-    - set_conversation_response: Please turn on the stove manually first.
+    - set_conversation_response: Unable to comply! Stove must be manually turned on
+        first.
   mode: single
 - id: '1744446876391'
   alias: Main Door Display
