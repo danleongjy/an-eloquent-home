@@ -1378,28 +1378,28 @@
         - automation.kitchen_blind_auto_control
         - automation.elis_room_curtains_auto_control
         - automation.elenas_room_curtains_auto_control
-  - action: media_player.turn_on
-    metadata: {}
-    target:
-      entity_id:
-      - media_player.study_room_speaker
-      - media_player.kitchen_speaker
-      - media_player.main_door_display_player
-    data: {}
-  - action: media_player.volume_set
-    metadata: {}
-    target:
-      entity_id:
-      - media_player.study_room_speaker
-      - media_player.kitchen_speaker
-    data:
-      volume_level: 0.5
-  - action: media_player.volume_set
-    metadata: {}
-    target:
-      entity_id: media_player.main_door_display
-    data:
-      volume_level: 0.67
+    - action: media_player.turn_on
+      metadata: {}
+      target:
+        entity_id:
+        - media_player.study_room_speaker
+        - media_player.kitchen_speaker
+        - media_player.main_door_display_player
+      data: {}
+    - action: media_player.volume_set
+      metadata: {}
+      target:
+        entity_id:
+        - media_player.study_room_speaker
+        - media_player.kitchen_speaker
+      data:
+        volume_level: 0.5
+    - action: media_player.volume_set
+      metadata: {}
+      target:
+        entity_id: media_player.main_door_display
+      data:
+        volume_level: 0.67
   mode: single
 - id: '1670838907474'
   alias: System Housekeeping
@@ -7092,14 +7092,19 @@
     - (Turn on | Activate | Initiate) (shutdown | away mode) [sequence] [procedure]
   conditions: []
   actions:
+  - set_conversation_response: '{{ [''Initiating'', ''Activating''] | random }} {{
+      [''Away Mode'', ''shutdown sequence''] | random }} in 10 seconds.'
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 10
+      milliseconds: 0
   - action: input_boolean.turn_on
     metadata: {}
     data: {}
     target:
       entity_id: input_boolean.away_mode
     enabled: true
-  - set_conversation_response: '{{ [''Initiating'', ''Activating''] | random }} {{
-      [''Away Mode'', ''shutdown sequence''] | random }}.'
   mode: single
 - id: '1743848999796'
   alias: Voice Control for Vacuum
