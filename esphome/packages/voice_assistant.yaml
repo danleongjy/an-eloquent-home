@@ -100,11 +100,12 @@ voice_assistant:
     - microphone.stop_capture:
     - delay: 0.3s
     - homeassistant.service:
-        service: script.lcars_speak
+        service: chime_tts.say
         data:
-          chime: '1_start.wav'
+          chime_path: '/media/1_start.wav'
         data_template:
-          player: "{{ '${voice_assistant_media_player}' if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else '${voice_assistant_media_player}' + '_sendspin' }}"
+          entity_id: "{{ '${voice_assistant_media_player}' if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else '${voice_assistant_media_player}' + '_sendspin' }}"
+          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else is_state('${voice_assistant_media_player}' + '_sendspin', 'playing') }}"
     - delay: 2s
     - microphone.capture:
     - light.turn_on:
@@ -127,25 +128,24 @@ voice_assistant:
         id: led
         brightness: 100%
         effect: none
-    - if:
-        condition:
-          lambda: 'return x.find("Unable to comply") != std::string::npos;'
-        then:
-          - homeassistant.service:
-              service: script.lcars_speak
-              data: 
-                chime: '1_error.mp3'
-                message: !lambda 'return x + "[[ .. ]] Clip";' # added word at the end to address Music Assistant's premature clipping of announced audio files
-              data_template:
-                player: "{{ '${voice_assistant_media_player}' if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else '${voice_assistant_media_player}' + '_sendspin' }}"
-        else:
-          - homeassistant.service:
-              service: script.lcars_speak
-              data: 
-                chime: '1_ok.wav'
-                message: !lambda 'return x + "[[ .. ]] Clip";' # added word at the end to address Music Assistant's premature clipping of announced audio files
-              data_template:
-                player: "{{ '${voice_assistant_media_player}' if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else '${voice_assistant_media_player}' + '_sendspin' }}"
+    - homeassistant.action:
+        action: chime_tts.say
+        variables:
+          error_response: |-
+            if (x.find("Unable to comply") != std::string::npos) {
+              return "true";
+            } else {
+              return "false";
+            }
+          text: 'return x;'
+        data: 
+          offset: '-1000'
+          tts_speed: '90'
+        data_template:
+          message:  "{{ text + '[[ .. ]] Clip' }}" # added word at the end to address Music Assistant's premature clipping of announced audio files
+          chime_path: " {{ '/media/1_error.mp3' if error_response == 'true' else '/media/1_ok.wav' }}"
+          entity_id: "{{ '${voice_assistant_media_player}' if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else '${voice_assistant_media_player}' + '_sendspin' }}"
+          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else is_state('${voice_assistant_media_player}' + '_sendspin', 'playing') }}"
   on_end:
     - delay: 100ms
     - script.execute: reset_led

@@ -47,7 +47,7 @@ Domain | Quantity
 [`number`](https://www.home-assistant.io/components/number) | 143
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 4
-[`script`](https://www.home-assistant.io/components/script) | 14
+[`script`](https://www.home-assistant.io/components/script) | 13
 [`select`](https://www.home-assistant.io/components/select) | 59
 [`sensor`](https://www.home-assistant.io/components/sensor) | 697
 [`stt`](https://www.home-assistant.io/components/stt) | 1
@@ -55,7 +55,7 @@ Domain | Quantity
 [`switch`](https://www.home-assistant.io/components/switch) | 72
 [`text`](https://www.home-assistant.io/components/text) | 32
 [`tts`](https://www.home-assistant.io/components/tts) | 2
-[`update`](https://www.home-assistant.io/components/update) | 117
+[`update`](https://www.home-assistant.io/components/update) | 118
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
@@ -106,6 +106,7 @@ Total | 1885
 - Whisper
 
 ### Custom integrations
+- [Chime Tts](https://github.com/nimroddolev/chime_tts)
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
 - [Local Tuya](https://github.com/rospogrigio/localtuya)
