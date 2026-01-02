@@ -4389,8 +4389,8 @@
                               },
                               "in_use": {
                                 "type": "custom:state-switch",
-                                "entity": "{% set players = [states('media_player.kitchen_speaker'),states('media_player.study_room_speaker'),states('media_player.main_door_display_player')] %} {% if players[0] not in ['idle','off'] and players[1] in ['idle','off'] and players[2] in ['idle','off'] %}\n  kitchen_speaker\n{% elif players[0] in ['idle','off'] and players[1] not in ['idle','off'] and players[2] in ['idle','off'] %}\n  study_room_speaker\n{% elif players[0] in ['idle','off'] and players[1] in ['idle','off'] and players[2] not in ['idle','off'] %}\n  main_door_display_player\n{% elif players[0] not in ['idle','off'] and players[1] not in ['idle','off'] and players[2] in ['idle','off'] %}\n  {% if state_attr('media_player.kitchen_speaker_sendspin', 'group_members')[0] == state_attr('media_player.study_room_speaker_sendspin', 'group_members')[0]%}\n    {{ state_attr('media_player.kitchen_speaker_sendspin', 'group_members')[0].split('.')[1][:-9] }}\n  {% endif %}\n{% else %}\n  multiple\n{% endif %}",
-                                "default": "multiple",
+                                "entity": "{% set players = [states('media_player.kitchen_speaker'),states('media_player.study_room_speaker'),states('media_player.main_door_display_player')] %} {% if players[0] not in ['idle','off'] and players[1] in ['idle','off'] and players[2] in ['idle','off'] %}\n  kitchen_speaker\n{% elif players[0] in ['idle','off'] and players[1] not in ['idle','off'] and players[2] in ['idle','off'] %}\n  study_room_speaker\n{% elif players[0] in ['idle','off'] and players[1] in ['idle','off'] and players[2] not in ['idle','off'] %}\n  main_door_display_player\n{% elif players[0] not in ['idle','off'] and players[1] not in ['idle','off'] and players[2] in ['idle','off'] %}\n  google_speakers\n{% else %}\n  none\n{% endif %}",
+                                "default": "none",
                                 "states": {
                                   "study_room_speaker": {
                                     "type": "custom:button-card",
@@ -4399,9 +4399,6 @@
                                       "top_row"
                                     ],
                                     "entity": "media_player.study_room_speaker",
-                                    "hold_action": {
-                                      "entity": "[[[ \n  if (states[entity.entity_id + '_sendspin'].state == 'unavailable') {\n    return entity.entity_id\n  } else {\n    return entity.entity_id + '_sendspin'\n  }\n]]]"
-                                    },
                                     "variables": {
                                       "auto_control_automation": "automation.media_player_occupancy_following"
                                     }
@@ -4413,9 +4410,6 @@
                                       "top_row"
                                     ],
                                     "entity": "media_player.kitchen_speaker",
-                                    "hold_action": {
-                                      "entity": "[[[ \n  if (states[entity.entity_id + '_sendspin'].state == 'unavailable') {\n    return entity.entity_id\n  } else {\n    return entity.entity_id + '_sendspin'\n  }\n]]]"
-                                    },
                                     "variables": {
                                       "auto_control_automation": "automation.media_player_occupancy_following"
                                     }
@@ -4431,7 +4425,18 @@
                                       "auto_control_automation": "automation.media_player_occupancy_following"
                                     }
                                   },
-                                  "multiple": {
+                                  "google_speakers": {
+                                    "type": "custom:button-card",
+                                    "template": [
+                                      "media_player_slider",
+                                      "top_row"
+                                    ],
+                                    "entity": "media_player.google_speakers",
+                                    "variables": {
+                                      "auto_control_automation": "automation.media_player_occupancy_following"
+                                    }
+                                  },
+                                  "none": {
                                     "type": "custom:button-card",
                                     "template": [
                                       "top_row",

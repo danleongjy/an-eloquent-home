@@ -104,8 +104,8 @@ voice_assistant:
         data:
           chime_path: '/media/1_start.wav'
         data_template:
-          entity_id: "{{ '${voice_assistant_media_player}' if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else '${voice_assistant_media_player}' + '_sendspin' }}"
-          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else is_state('${voice_assistant_media_player}' + '_sendspin', 'playing') }}"
+          entity_id: "{{ '${voice_assistant_media_player}' if not is_state('media_player.google_speakers', 'playing') else 'media_player.google_speakers' }}"
+          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') or is_state('media_player.google_speakers', 'playing') }}"
     - delay: 2s
     - microphone.capture:
     - light.turn_on:
@@ -142,10 +142,10 @@ voice_assistant:
           offset: '-1000'
           tts_speed: '90'
         data_template:
-          message:  "{{ text + '[[ .. ]] Clip' }}" # added word at the end to address Music Assistant's premature clipping of announced audio files
+          entity_id: "{{ '${voice_assistant_media_player}' if not is_state('media_player.google_speakers', 'playing') else 'media_player.google_speakers' }}"
+          message:  "{{ text }}"
           chime_path: " {{ '/media/1_error.mp3' if error_response == 'true' else '/media/1_ok.wav' }}"
-          entity_id: "{{ '${voice_assistant_media_player}' if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else '${voice_assistant_media_player}' + '_sendspin' }}"
-          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else is_state('${voice_assistant_media_player}' + '_sendspin', 'playing') }}"
+          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') or is_state('media_player.google_speakers', 'playing') }}"
   on_end:
     - delay: 100ms
     - script.execute: reset_led
@@ -172,8 +172,8 @@ voice_assistant:
                       media_content_id: media-source://media_source/local/countdown_announcement.wav
                       media_content_type: music
                     data_template:
-                      announce: "{{ is_state('${voice_assistant_media_player}', 'playing') if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else is_state('${voice_assistant_media_player}' + '_sendspin', 'playing') }}"
-                      entity_id: "{{ '${voice_assistant_media_player}' if is_state('${voice_assistant_media_player}' + '_sendspin', 'unavailable') else '${voice_assistant_media_player}' + '_sendspin' }}"
+                      entity_id: "{{ '${voice_assistant_media_player}' if not is_state('media_player.google_speakers', 'playing') else 'media_player.google_speakers' }}"
+                      announce: "{{ is_state('${voice_assistant_media_player}', 'playing') or is_state('media_player.google_speakers', 'playing') }}"
   on_timer_finished:
     - script.execute: check_timers
   on_client_connected:
