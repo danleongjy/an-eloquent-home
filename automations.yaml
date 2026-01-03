@@ -4474,11 +4474,11 @@
     action: calendar.get_events
   - choose:
     - conditions:
-      - alias: If Elena has school on Mon, Thu or Fri
+      - alias: If Elena has school on Tue, Wed or Fri
         condition: template
         value_template: "{% set output = false %}\n{% if school_days['calendar.elena_school_days'].events
           | length > 0 %}\n  {% if as_datetime(school_days['calendar.elena_school_days'].events[0].start).weekday()
-          in [0,3,4] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %}\n{{
+          in [1,2,4] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %}\n{{
           output }}"
       sequence:
       - data:
@@ -4495,11 +4495,11 @@
           entity_id: input_datetime.daniels_next_alarm
         action: input_datetime.set_datetime
     - conditions:
-      - alias: If Eli has school on Tue, Wed or Sat
+      - alias: If Eli has school on Mon, Thu or Sat
         condition: template
         value_template: "{% set output = false %} \n{% if school_days['calendar.eli_school_days'].events
           | length > 0 %}\n  {% if as_datetime(school_days['calendar.eli_school_days'].events[0].start).weekday()
-          in [1,2,5] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %} \n{{
+          in [0,3,5] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %} \n{{
           output }}"
       sequence:
       - if:
@@ -4663,11 +4663,11 @@
     action: calendar.get_events
   - choose:
     - conditions:
-      - alias: If Elena has school on Tue, Wed or Sat
+      - alias: If Elena has school on Mon, Thu or Sat
         condition: template
         value_template: "{% set output = false %}\n{% if school_days['calendar.elena_school_days'].events
           | length > 0 %}\n  {% if as_datetime(school_days['calendar.elena_school_days'].events[0].start).weekday()
-          in [1,2,5] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %}\n{{
+          in [0,3,5] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %}\n{{
           output }}"
       sequence:
       - if:
@@ -4704,11 +4704,11 @@
           alias: Set Grace's Next Alarm 10min before kids' alarm
           action: input_datetime.set_datetime
     - conditions:
-      - alias: If Eli has school on Mon, Thu or Fri
+      - alias: If Eli has school on Tue, Wed or Fri
         condition: template
         value_template: "{% set output = false %} \n{% if school_days['calendar.eli_school_days'].events
           | length > 0 %}\n  {% if as_datetime(school_days['calendar.eli_school_days'].events[0].start).weekday()
-          in [0,3,4] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %} \n{{
+          in [1,2,4] %}\n    {% set output = true %}\n  {% endif %}\n{% endif %} \n{{
           output }}"
       sequence:
       - data:
