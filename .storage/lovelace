@@ -3453,7 +3453,7 @@
                           "width": "4.5%"
                         },
                         "template": "media_player_slider",
-                        "entity": "media_player.main_door_display_player",
+                        "entity": "media_player.dining_room_speaker",
                         "variables": {
                           "auto_control_automation": "automation.media_player_occupancy_following"
                         }
@@ -4395,7 +4395,7 @@
                               },
                               "in_use": {
                                 "type": "custom:state-switch",
-                                "entity": "{% set players = [states('media_player.kitchen_speaker'),states('media_player.study_room_speaker'),states('media_player.main_door_display_player')] %} {% if players[0] not in ['idle','off'] and players[1] in ['idle','off'] and players[2] in ['idle','off'] %}\n  kitchen_speaker\n{% elif players[0] in ['idle','off'] and players[1] not in ['idle','off'] and players[2] in ['idle','off'] %}\n  study_room_speaker\n{% elif players[0] in ['idle','off'] and players[1] in ['idle','off'] and players[2] not in ['idle','off'] %}\n  main_door_display_player\n{% elif players[0] not in ['idle','off'] and players[1] not in ['idle','off'] and players[2] in ['idle','off'] %}\n  multiple\n{% endif %}",
+                                "entity": "{% set players = [states('media_player.kitchen_speaker'),states('media_player.study_room_speaker'),states('media_player.dining_room_speaker')] %} {% if players[0] not in ['idle','off'] and players[1] in ['idle','off'] and players[2] in ['idle','off'] %}\n  kitchen_speaker\n{% elif players[0] in ['idle','off'] and players[1] not in ['idle','off'] and players[2] in ['idle','off'] %}\n  study_room_speaker\n{% elif players[0] in ['idle','off'] and players[1] in ['idle','off'] and players[2] not in ['idle','off'] %}\n  dining_room_speaker\n{% elif players[0] not in ['idle','off'] and players[1] in ['idle','off'] and players[2] not in ['idle','off'] %}\n  multiple\n{% endif %}",
                                 "default": "multiple",
                                 "states": {
                                   "study_room_speaker": {
@@ -4420,13 +4420,13 @@
                                       "auto_control_automation": "automation.media_player_occupancy_following"
                                     }
                                   },
-                                  "main_door_display_player": {
+                                  "dining_room_speaker": {
                                     "type": "custom:button-card",
                                     "template": [
                                       "media_player_slider",
                                       "top_row"
                                     ],
-                                    "entity": "media_player.main_door_display_player",
+                                    "entity": "media_player.dining_room_speaker",
                                     "variables": {
                                       "auto_control_automation": "automation.media_player_occupancy_following"
                                     }
