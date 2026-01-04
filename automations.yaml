@@ -1384,7 +1384,7 @@
         entity_id:
         - media_player.study_room_speaker
         - media_player.kitchen_speaker
-        - media_player.main_door_display_player
+        - media_player.dining_room_speaker
       data: {}
     - action: media_player.volume_set
       metadata: {}
@@ -1392,14 +1392,9 @@
         entity_id:
         - media_player.study_room_speaker
         - media_player.kitchen_speaker
+        - media_player.dining_room_speaker
       data:
         volume_level: 0.5
-    - action: media_player.volume_set
-      metadata: {}
-      target:
-        entity_id: media_player.main_door_display
-      data:
-        volume_level: 0.67
   mode: single
 - id: '1670838907474'
   alias: System Housekeeping
@@ -8025,32 +8020,85 @@
         data: {}
       alias: If Kitchen is occupied, Dining Room and Kitchen are clear and Study Room
         Ethernet Connection is connected or Study Room is clear
-    default:
-    - condition: state
-      state:
-      - 'off'
-      entity_id: binary_sensor.study_room_ethernet_connection
-    - if:
+    - conditions:
       - condition: state
-        entity_id: media_player.study_room_speaker
+        entity_id: binary_sensor.kitchen_radar_occupancy
         state:
         - 'off'
-      then:
-      - action: media_player.turn_on
+      - condition: state
+        entity_id: binary_sensor.dining_room_presence
+        state:
+        - 'off'
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: binary_sensor.living_room_presence
+          state:
+          - 'on'
+        - condition: state
+          entity_id: binary_sensor.study_room_radar_occupancy
+          state:
+          - 'on'
+      - condition: state
+        entity_id: binary_sensor.study_room_ethernet_connection
+        state:
+        - 'off'
+      sequence:
+      - if:
+        - condition: state
+          entity_id: media_player.study_room_speaker
+          state:
+          - 'off'
+        then:
+        - action: media_player.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id: media_player.study_room_speaker
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 5
+            milliseconds: 0
+      - action: music_assistant.transfer_queue
         metadata: {}
-        data: {}
         target:
           entity_id: media_player.study_room_speaker
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 5
-          milliseconds: 0
-    - action: music_assistant.transfer_queue
-      metadata: {}
-      target:
-        entity_id: media_player.study_room_speaker
-      data: {}
+        data: {}
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.dining_room_presence
+        state:
+        - 'off'
+      - condition: state
+        entity_id: binary_sensor.living_room_presence
+        state:
+        - 'off'
+      - condition: state
+        entity_id: binary_sensor.kitchen_radar_occupancy
+        state:
+        - 'off'
+      - condition: state
+        entity_id: binary_sensor.study_room_radar_occupancy
+        state:
+        - 'off'
+      sequence:
+      - repeat:
+          for_each:
+          - media_player.google_speakers
+          - media_player.study_room_speaker
+          - media_player.kitchen_speaker
+          - media_player.dining_room_speaker
+          sequence:
+          - if:
+            - condition: template
+              value_template: '{{ is_state(repeat.item, ''playing'') }}'
+            then:
+            - action: media_player.media_pause
+              metadata: {}
+              target:
+                entity_id: '{{ repeat.item }}'
+              data: {}
   mode: single
 - id: '1766971457601'
   alias: Elena's Room Motion Automations
