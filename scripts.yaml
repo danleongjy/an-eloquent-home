@@ -36,7 +36,8 @@ turn_off_all:
       entity_id:
       - automation.master_bathroom_motion_timeout
     action: automation.trigger
-  - if:
+  - alias: Conditionally turn off Elena's Room
+    if:
     - condition: or
       conditions:
       - condition: state
@@ -44,7 +45,12 @@ turn_off_all:
         state: 'on'
       - condition: state
         entity_id: binary_sensor.elenas_room_door
-        state: 'on'
+        state:
+        - 'on'
+        for:
+          hours: 0
+          minutes: 1
+          seconds: 0
     then:
     - action: automation.trigger
       metadata: {}
@@ -52,7 +58,6 @@ turn_off_all:
         skip_condition: true
       target:
         entity_id: automation.elenas_room_motion_timeout
-    alias: Conditionally turn off Elena's Room
   - delay:
       hours: 0
       minutes: 0
@@ -67,7 +72,12 @@ turn_off_all:
         state: 'on'
       - condition: state
         entity_id: binary_sensor.parents_room_doors
-        state: 'on'
+        state:
+        - 'on'
+        for:
+          hours: 0
+          minutes: 1
+          seconds: 0
     then:
     - action: automation.trigger
       metadata: {}
@@ -75,7 +85,8 @@ turn_off_all:
         skip_condition: true
       target:
         entity_id: automation.parents_room_motion_timeout
-  - if:
+  - alias: Conditionally turn off Eli's Room
+    if:
     - condition: or
       conditions:
       - condition: state
@@ -83,7 +94,12 @@ turn_off_all:
         state: 'on'
       - condition: state
         entity_id: binary_sensor.elis_room_door
-        state: 'on'
+        state:
+        - 'on'
+        for:
+          hours: 0
+          minutes: 1
+          seconds: 0
     then:
     - action: automation.trigger
       metadata: {}
@@ -91,7 +107,6 @@ turn_off_all:
         skip_condition: true
       target:
         entity_id: automation.elis_room_motion_timeout
-    alias: Conditionally turn off Eli's Room
   - delay:
       hours: 0
       minutes: 0
