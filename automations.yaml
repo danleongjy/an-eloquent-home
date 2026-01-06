@@ -7893,6 +7893,17 @@
         state:
         - 'on'
       sequence:
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: media_player.dining_room_speaker
+          state:
+          - playing
+        - condition: state
+          entity_id: media_player.kitchen_speaker
+          state:
+          - playing
+        alias: If Dining Room and Kitchen Speakers are not playing
       - parallel:
         - if:
           - condition: state
@@ -7930,7 +7941,8 @@
         metadata: {}
         target:
           entity_id: media_player.google_speakers
-        data: {}
+        data:
+          auto_play: true
       alias: If Kitchen, Living or Dining Rooms are occupied and Study Room Ethernet
         Connection is connected
     - conditions:
@@ -7951,6 +7963,13 @@
         state:
         - 'off'
       sequence:
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: media_player.dining_room_speaker
+          state:
+          - playing
+        alias: If Dining Room Speaker is not playing
       - if:
         - condition: state
           entity_id: media_player.dining_room_speaker
@@ -7969,7 +7988,8 @@
             milliseconds: 0
       - action: music_assistant.transfer_queue
         metadata: {}
-        data: {}
+        data:
+          auto_play: true
         target:
           entity_id: media_player.dining_room_speaker
       alias: If only Dining Room is occupied
@@ -7997,6 +8017,13 @@
           state:
           - 'on'
       sequence:
+      - alias: If Kitchen Speaker is not playing
+        condition: not
+        conditions:
+        - condition: state
+          entity_id: media_player.kitchen_speaker
+          state:
+          - playing
       - if:
         - condition: state
           entity_id: media_player.kitchen_speaker
@@ -8017,7 +8044,8 @@
         metadata: {}
         target:
           entity_id: media_player.kitchen_speaker
-        data: {}
+        data:
+          auto_play: true
       alias: If Kitchen is occupied, Dining Room and Kitchen are clear and Study Room
         Ethernet Connection is connected or Study Room is clear
     - conditions:
@@ -8044,6 +8072,13 @@
         state:
         - 'off'
       sequence:
+      - alias: If Study Room Speaker is not playing
+        condition: not
+        conditions:
+        - condition: state
+          entity_id: media_player.study_room_speaker
+          state:
+          - playing
       - if:
         - condition: state
           entity_id: media_player.study_room_speaker
@@ -8064,7 +8099,8 @@
         metadata: {}
         target:
           entity_id: media_player.study_room_speaker
-        data: {}
+        data:
+          auto_play: true
     - conditions:
       - condition: state
         entity_id: binary_sensor.dining_room_presence
