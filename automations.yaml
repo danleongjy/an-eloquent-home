@@ -2585,12 +2585,12 @@
   alias: Party Mode
   description: Set recommended scenes in public areas and prevent lights dimming when
     Party Mode is on
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - input_boolean.party_mode
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: state
       entity_id: input_boolean.party_mode
@@ -2602,16 +2602,6 @@
         entity_id: input_datetime.dim_hours_start
       action: input_datetime.set_datetime
     - delay: 1
-    - repeat:
-        for_each:
-        - dining_room
-        - living_room
-        - study_room
-        sequence:
-        - data:
-            room: '{{ [repeat.item] }}'
-          action: script.set_recommended_scene
-        - delay: 1
     - action: homeassistant.turn_off
       metadata: {}
       data: {}
@@ -2634,16 +2624,6 @@
         entity_id: input_datetime.dim_hours_start
       action: input_datetime.set_datetime
     - delay: 1
-    - repeat:
-        for_each:
-        - dining_room
-        - living_room
-        - study_room
-        sequence:
-        - data:
-            room: '{{ [repeat.item] }}'
-          action: script.set_recommended_scene
-        - delay: 1
     - if:
       - condition: state
         entity_id: binary_sensor.kitchen_radar_occupancy
@@ -2664,6 +2644,16 @@
         data: {}
         target:
           entity_id: switch.study_room_voice_assistant_use_wake_word
+  - repeat:
+      for_each:
+      - dining_room
+      - living_room
+      - study_room
+      sequence:
+      - data:
+          room: '{{ [repeat.item] }}'
+        action: script.set_recommended_scene
+      - delay: 1
   mode: single
 - id: '1681736538604'
   alias: Hallway Motion Timeout
