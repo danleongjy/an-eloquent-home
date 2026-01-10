@@ -25,7 +25,7 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 147
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 172
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 173
 [`button`](https://www.home-assistant.io/components/button) | 180
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 7
@@ -38,7 +38,7 @@ Domain | Quantity
 [`image`](https://www.home-assistant.io/components/image) | 4
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 15
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
-[`input_number`](https://www.home-assistant.io/components/input_number) | 24
+[`input_number`](https://www.home-assistant.io/components/input_number) | 25
 [`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 19
 [`light`](https://www.home-assistant.io/components/light) | 72
@@ -49,12 +49,12 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 13
 [`select`](https://www.home-assistant.io/components/select) | 58
-[`sensor`](https://www.home-assistant.io/components/sensor) | 682
+[`sensor`](https://www.home-assistant.io/components/sensor) | 681
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 71
 [`text`](https://www.home-assistant.io/components/text) | 32
-[`tts`](https://www.home-assistant.io/components/tts) | 2
+[`tts`](https://www.home-assistant.io/components/tts) | 1
 [`update`](https://www.home-assistant.io/components/update) | 118
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
