@@ -7837,8 +7837,18 @@
     - binary_sensor.kitchen_radar_occupancy
     for:
       hours: 0
-      minutes: 1
+      minutes: 0
+      seconds: 30
+    id: motion
+  - trigger: template
+    value_template: '{{ ''on'' not in [states(''media_player.google_speakers''), states(''media_player.kitchen_speaker''),
+      states(''media_player.study_room_speaker''), states(''media_player.dining_room_speaker''),
+      ] }}'
+    for:
+      hours: 0
+      minutes: 5
       seconds: 0
+    id: no_motion
   conditions:
   - alias: If a player is playing
     condition: template
@@ -7846,39 +7856,109 @@
       states(''media_player.study_room_speaker''), states(''media_player.kitchen_speaker'')]
       }}'
   actions:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.kitchen_radar_occupancy
-        state:
-        - 'on'
-      - condition: or
-        conditions:
+  - if:
+    - condition: trigger
+      id:
+      - motion
+    then:
+    - choose:
+      - conditions:
         - condition: state
-          entity_id: binary_sensor.living_room_presence
+          entity_id: binary_sensor.kitchen_radar_occupancy
           state:
           - 'on'
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.living_room_presence
+            state:
+            - 'on'
+          - condition: state
+            entity_id: binary_sensor.dining_room_presence
+            state:
+            - 'on'
+        - condition: state
+          entity_id: binary_sensor.study_room_ethernet_connection
+          state:
+          - 'on'
+        sequence:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: media_player.dining_room_speaker
+            state:
+            - playing
+          - condition: state
+            entity_id: media_player.kitchen_speaker
+            state:
+            - playing
+          alias: If Dining Room and Kitchen Speakers are not playing
+        - parallel:
+          - if:
+            - condition: state
+              entity_id: media_player.dining_room_speaker
+              state:
+              - 'off'
+            then:
+            - action: media_player.turn_on
+              metadata: {}
+              target:
+                entity_id: media_player.dining_room_speaker
+              data: {}
+            - delay:
+                hours: 0
+                minutes: 0
+                seconds: 5
+                milliseconds: 0
+          - if:
+            - condition: state
+              entity_id: media_player.kitchen_speaker
+              state:
+              - 'off'
+            then:
+            - action: media_player.turn_on
+              metadata: {}
+              data: {}
+              target:
+                entity_id: media_player.kitchen_speaker
+            - delay:
+                hours: 0
+                minutes: 0
+                seconds: 5
+                milliseconds: 0
+        - action: music_assistant.transfer_queue
+          metadata: {}
+          target:
+            entity_id: media_player.google_speakers
+          data:
+            auto_play: true
+        alias: If Kitchen, Living or Dining Rooms are occupied and Study Room Ethernet
+          Connection is connected
+      - conditions:
         - condition: state
           entity_id: binary_sensor.dining_room_presence
           state:
           - 'on'
-      - condition: state
-        entity_id: binary_sensor.study_room_ethernet_connection
-        state:
-        - 'on'
-      sequence:
-      - condition: not
-        conditions:
         - condition: state
-          entity_id: media_player.dining_room_speaker
+          entity_id: binary_sensor.kitchen_radar_occupancy
           state:
-          - playing
+          - 'off'
         - condition: state
-          entity_id: media_player.kitchen_speaker
+          entity_id: binary_sensor.living_room_presence
           state:
-          - playing
-        alias: If Dining Room and Kitchen Speakers are not playing
-      - parallel:
+          - 'off'
+        - condition: state
+          entity_id: binary_sensor.study_room_radar_occupancy
+          state:
+          - 'off'
+        sequence:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: media_player.dining_room_speaker
+            state:
+            - playing
+          alias: If Dining Room Speaker is not playing
         - if:
           - condition: state
             entity_id: media_player.dining_room_speaker
@@ -7895,6 +7975,44 @@
               minutes: 0
               seconds: 5
               milliseconds: 0
+        - action: music_assistant.transfer_queue
+          metadata: {}
+          data:
+            auto_play: true
+          target:
+            entity_id: media_player.dining_room_speaker
+        alias: If only Dining Room is occupied
+      - conditions:
+        - condition: state
+          entity_id: binary_sensor.kitchen_radar_occupancy
+          state:
+          - 'on'
+        - condition: state
+          entity_id: binary_sensor.dining_room_presence
+          state:
+          - 'off'
+        - condition: state
+          entity_id: binary_sensor.living_room_presence
+          state:
+          - 'off'
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.study_room_radar_occupancy
+            state:
+            - 'off'
+          - condition: state
+            entity_id: binary_sensor.study_room_ethernet_connection
+            state:
+            - 'on'
+        sequence:
+        - alias: If Kitchen Speaker is not playing
+          condition: not
+          conditions:
+          - condition: state
+            entity_id: media_player.kitchen_speaker
+            state:
+            - playing
         - if:
           - condition: state
             entity_id: media_player.kitchen_speaker
@@ -7911,204 +8029,121 @@
               minutes: 0
               seconds: 5
               milliseconds: 0
-      - action: music_assistant.transfer_queue
-        metadata: {}
-        target:
-          entity_id: media_player.google_speakers
-        data:
-          auto_play: true
-      alias: If Kitchen, Living or Dining Rooms are occupied and Study Room Ethernet
-        Connection is connected
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.dining_room_presence
-        state:
-        - 'on'
-      - condition: state
-        entity_id: binary_sensor.kitchen_radar_occupancy
-        state:
-        - 'off'
-      - condition: state
-        entity_id: binary_sensor.living_room_presence
-        state:
-        - 'off'
-      - condition: state
-        entity_id: binary_sensor.study_room_radar_occupancy
-        state:
-        - 'off'
-      sequence:
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id: media_player.dining_room_speaker
-          state:
-          - playing
-        alias: If Dining Room Speaker is not playing
-      - if:
-        - condition: state
-          entity_id: media_player.dining_room_speaker
-          state:
-          - 'off'
-        then:
-        - action: media_player.turn_on
+        - action: music_assistant.transfer_queue
           metadata: {}
           target:
-            entity_id: media_player.dining_room_speaker
-          data: {}
-        - delay:
-            hours: 0
-            minutes: 0
-            seconds: 5
-            milliseconds: 0
-      - action: music_assistant.transfer_queue
-        metadata: {}
-        data:
-          auto_play: true
-        target:
-          entity_id: media_player.dining_room_speaker
-      alias: If only Dining Room is occupied
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.kitchen_radar_occupancy
-        state:
-        - 'on'
-      - condition: state
-        entity_id: binary_sensor.dining_room_presence
-        state:
-        - 'off'
-      - condition: state
-        entity_id: binary_sensor.living_room_presence
-        state:
-        - 'off'
-      - condition: or
-        conditions:
+            entity_id: media_player.kitchen_speaker
+          data:
+            auto_play: true
+        alias: If Kitchen is occupied, Dining Room and Kitchen are clear and Study
+          Room Ethernet Connection is connected or Study Room is clear
+      - conditions:
         - condition: state
-          entity_id: binary_sensor.study_room_radar_occupancy
+          entity_id: binary_sensor.kitchen_radar_occupancy
           state:
           - 'off'
+        - condition: state
+          entity_id: binary_sensor.dining_room_presence
+          state:
+          - 'off'
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: binary_sensor.living_room_presence
+            state:
+            - 'on'
+          - condition: state
+            entity_id: binary_sensor.study_room_radar_occupancy
+            state:
+            - 'on'
         - condition: state
           entity_id: binary_sensor.study_room_ethernet_connection
           state:
-          - 'on'
-      sequence:
-      - alias: If Kitchen Speaker is not playing
-        condition: not
-        conditions:
+          - 'off'
+        sequence:
+        - alias: If Study Room Speaker is not playing
+          condition: not
+          conditions:
+          - condition: state
+            entity_id: media_player.study_room_speaker
+            state:
+            - playing
+        - if:
+          - condition: state
+            entity_id: media_player.study_room_speaker
+            state:
+            - 'off'
+          then:
+          - action: media_player.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: media_player.study_room_speaker
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 5
+              milliseconds: 0
+        - action: music_assistant.transfer_queue
+          metadata: {}
+          target:
+            entity_id: media_player.study_room_speaker
+          data:
+            auto_play: true
+      - conditions:
         - condition: state
-          entity_id: media_player.kitchen_speaker
-          state:
-          - playing
-      - if:
-        - condition: state
-          entity_id: media_player.kitchen_speaker
+          entity_id: binary_sensor.dining_room_presence
           state:
           - 'off'
-        then:
-        - action: media_player.turn_on
-          metadata: {}
-          data: {}
-          target:
-            entity_id: media_player.kitchen_speaker
-        - delay:
-            hours: 0
-            minutes: 0
-            seconds: 5
-            milliseconds: 0
-      - action: music_assistant.transfer_queue
-        metadata: {}
-        target:
-          entity_id: media_player.kitchen_speaker
-        data:
-          auto_play: true
-      alias: If Kitchen is occupied, Dining Room and Kitchen are clear and Study Room
-        Ethernet Connection is connected or Study Room is clear
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.kitchen_radar_occupancy
-        state:
-        - 'off'
-      - condition: state
-        entity_id: binary_sensor.dining_room_presence
-        state:
-        - 'off'
-      - condition: or
-        conditions:
         - condition: state
           entity_id: binary_sensor.living_room_presence
           state:
-          - 'on'
+          - 'off'
+        - condition: state
+          entity_id: binary_sensor.kitchen_radar_occupancy
+          state:
+          - 'off'
         - condition: state
           entity_id: binary_sensor.study_room_radar_occupancy
           state:
-          - 'on'
-      - condition: state
-        entity_id: binary_sensor.study_room_ethernet_connection
-        state:
-        - 'off'
-      sequence:
-      - alias: If Study Room Speaker is not playing
-        condition: not
-        conditions:
-        - condition: state
-          entity_id: media_player.study_room_speaker
-          state:
-          - playing
-      - if:
-        - condition: state
-          entity_id: media_player.study_room_speaker
-          state:
           - 'off'
-        then:
-        - action: media_player.turn_on
+        sequence:
+        - repeat:
+            for_each:
+            - media_player.google_speakers
+            - media_player.study_room_speaker
+            - media_player.kitchen_speaker
+            - media_player.dining_room_speaker
+            sequence:
+            - if:
+              - condition: template
+                value_template: '{{ is_state(repeat.item, ''playing'') }}'
+              then:
+              - action: media_player.media_pause
+                metadata: {}
+                target:
+                  entity_id: '{{ repeat.item }}'
+                data: {}
+    else:
+    - repeat:
+        for_each:
+        - media_player.google_speakers
+        - media_player.dining_room_speaker
+        - media_player.kitchen_speaker
+        - media_player.study_room_speaker
+        sequence:
+        - action: media_player.clear_playlist
           metadata: {}
-          data: {}
           target:
-            entity_id: media_player.study_room_speaker
-        - delay:
-            hours: 0
-            minutes: 0
-            seconds: 5
-            milliseconds: 0
-      - action: music_assistant.transfer_queue
-        metadata: {}
-        target:
-          entity_id: media_player.study_room_speaker
-        data:
-          auto_play: true
-    - conditions:
-      - condition: state
-        entity_id: binary_sensor.dining_room_presence
-        state:
-        - 'off'
-      - condition: state
-        entity_id: binary_sensor.living_room_presence
-        state:
-        - 'off'
-      - condition: state
-        entity_id: binary_sensor.kitchen_radar_occupancy
-        state:
-        - 'off'
-      - condition: state
-        entity_id: binary_sensor.study_room_radar_occupancy
-        state:
-        - 'off'
-      sequence:
-      - repeat:
-          for_each:
-          - media_player.google_speakers
-          - media_player.study_room_speaker
-          - media_player.kitchen_speaker
-          - media_player.dining_room_speaker
-          sequence:
-          - if:
-            - condition: template
-              value_template: '{{ is_state(repeat.item, ''playing'') }}'
-            then:
-            - action: media_player.media_pause
-              metadata: {}
-              target:
-                entity_id: '{{ repeat.item }}'
-              data: {}
+            entity_id: '{{ repeat.item }}'
+          data: {}
+        - condition: template
+          value_template: '{{ not is_state(repeat.item, ''off'') }}'
+        - action: media_player.turn_off
+          metadata: {}
+          target:
+            entity_id: '{{ repeat.item }}'
+          data: {}
   mode: single
 - id: '1766971457601'
   alias: Elena's Room Motion Automations
