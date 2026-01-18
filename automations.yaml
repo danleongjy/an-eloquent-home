@@ -7835,10 +7835,6 @@
     - binary_sensor.living_room_presence
     - binary_sensor.study_room_radar_occupancy
     - binary_sensor.kitchen_radar_occupancy
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 30
     id: motion
   - trigger: template
     value_template: '{{ ''on'' not in [states(''media_player.google_speakers''), states(''media_player.kitchen_speaker''),
@@ -7849,18 +7845,18 @@
       minutes: 5
       seconds: 0
     id: no_motion
-  conditions:
-  - alias: If a player is playing
-    condition: template
-    value_template: '{{ ''playing'' in [states(''media_player.dining_room_speaker''),
-      states(''media_player.study_room_speaker''), states(''media_player.kitchen_speaker'')]
-      }}'
+  conditions: []
   actions:
   - if:
     - condition: trigger
       id:
       - motion
     then:
+    - condition: template
+      value_template: "\n  {{ 'playing' in [states('media_player.dining_room_speaker'),\n
+        \ states('media_player.study_room_speaker'),\n  states('media_player.kitchen_speaker')]
+        }}\n  "
+      alias: Test if a player is playing
     - choose:
       - conditions:
         - condition: state
