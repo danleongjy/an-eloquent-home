@@ -1288,9 +1288,9 @@
             "navigation_path": "/lovelace/transit"
           },
           "custom_fields": {
-            "nextbus1": "[[[\n  if (entity.state == 'unavailable') {\n    return `No service`\n  } else {\n    let bus = `<b>` + variables.timings[0].split('/')[0] + `</b>: `\n    let min = variables.timings[0].split('/')[1]\n    if (isNaN(min)) {\n      bus = bus + 'No Service' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n]]]\n",
-            "nextbus2": "[[[\n  if (entity.state == 'unavailable') {\n    return ``\n  } else if (variables.timings.length < 2) {\n    return ``\n  } else {\n    let bus = `<b>` + variables.timings[1].split('/')[0] + `</b>: `\n    let min = variables.timings[1].split('/')[1]\n    if (isNaN(min)) {\n      bus = bus + 'No Service' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n]]]\n",
-            "nextbus3": "[[[\n  if (entity.state == 'unavailable') {\n    return ``\n  } else if (variables.timings.length < 3) {\n    return ``\n  } else {\n    let bus = `<b>` + variables.timings[2].split('/')[0] + `</b>: `\n    let min = variables.timings[2].split('/')[1]\n    if (isNaN(min)) {\n      bus = bus + 'No Service' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n]]]\n"
+            "nextbus1": "[[[\n  if (entity.state == 'unavailable' || entity.state == 'unknown') {\n    return `No info`\n  } else {\n    let bus = `<b>` + variables.timings[0].split('/')[0] + `</b>: `\n    let min = variables.timings[0].split('/')[1]\n    if (isNaN(min)) {\n      bus = bus + 'No Service' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n]]]\n",
+            "nextbus2": "[[[\n  if (entity.state == 'unavailable' || entity.state == 'unknown') {\n    return ``\n  } else if (variables.timings.length < 2) {\n    return ``\n  } else {\n    let bus = `<b>` + variables.timings[1].split('/')[0] + `</b>: `\n    let min = variables.timings[1].split('/')[1]\n    if (isNaN(min)) {\n      bus = bus + 'No Service' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n]]]\n",
+            "nextbus3": "[[[\n  if (entity.state == 'unavailable' || entity.state == 'unknown') {\n    return ``\n  } else if (variables.timings.length < 3) {\n    return ``\n  } else {\n    let bus = `<b>` + variables.timings[2].split('/')[0] + `</b>: `\n    let min = variables.timings[2].split('/')[1]\n    if (isNaN(min)) {\n      bus = bus + 'No Service' \n    } else if (min < 2) {\n      bus = bus + `<font color = 'red'>Arr</font>`\n    } else {\n      if (min <= variables.min_walk_time) {\n        bus = bus + `<font color = 'red'>` + min + `min</font>`\n      } else if (min <= variables.comfortable_walk_time) {\n        bus = bus + `<font color = 'orange'>` + min + `min</font>`\n      } else {\n        bus = bus + min + `min`\n      }\n    }\n    return bus\n  }\n]]]\n"
           },
           "styles": {
             "grid": [
@@ -4450,20 +4450,20 @@
                             "type": "custom:button-card",
                             "entity": "sensor.bus_stop_sims_drive_market",
                             "template": "top_row",
-                            "label": "[[[ if (entity.state != 'unavailable') { return entity.state.split(',')[0].split('/')[0] } else { return '' } ]]]",
+                            "label": "[[[ if (entity.state != 'unavailable' && entity.state != 'unknown') { return entity.state.split(',')[0].split('/')[0] } else { return '' } ]]]",
                             "show_label": true,
                             "styles": {
                               "icon": [
                                 {
-                                  "color": "[[[\n  if (entity.state == 'unavailable') {\n    return 'var(--disabled-color)'\n  } else if (entity.state.split(',')[0].split('/')[1] <= 5) {\n    return 'var(--state-binary-sensor-color)'\n  } else {\n     return 'var(--state-inactive-color)'\n  }\n]]]\n"
+                                  "color": "[[[\n  if (entity.state == 'unavailable' || entity.state == 'unknown') {\n    return 'var(--disabled-color)'\n  } else if (entity.state.split(',')[0].split('/')[1] <= 5) {\n    return 'var(--state-binary-sensor-color)'\n  } else {\n     return 'var(--state-inactive-color)'\n  }\n]]]\n"
                                 }
                               ],
                               "label": [
                                 {
-                                  "color": "[[[\n  if (entity.state != 'unavailable') {\n    if (entity.state.split(',')[0].split('/')[1] <= 5) {\n      return 'var(--state-binary-sensor-color)'\n    } else {\n      return 'var(--state-inactive-color)'\n    }\n  }\n]]]\n"
+                                  "color": "[[[\n  if (entity.state != 'unavailable' && entity.state != 'unknown') {\n    if (entity.state.split(',')[0].split('/')[1] <= 5) {\n      return 'var(--state-binary-sensor-color)'\n    } else {\n      return 'var(--state-inactive-color)'\n    }\n  }\n]]]\n"
                                 },
                                 {
-                                  "animation": "[[[\n  if (entity.state != 'unavailable') {\n    if (entity.state.split(',')[0].split('/')[1] <= 3)  {\n      return 'blink 2s ease infinite'\n    }\n  }\n]]]\n"
+                                  "animation": "[[[\n  if (entity.state != 'unavailable' && entity.state != 'unknown') {\n    if (entity.state.split(',')[0].split('/')[1] <= 3)  {\n      return 'blink 2s ease infinite'\n    }\n  }\n]]]\n"
                                 }
                               ]
                             },
@@ -6311,12 +6311,12 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.elis_room_controller_lqi",
-                          "template": "zigbee_endpoint"
+                          "entity": "sensor.elis_room_floor_lamp_lqi",
+                          "template": "zigbee_router"
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.elis_room_floor_lamp_controller_lqi",
+                          "entity": "sensor.elis_room_controller_lqi",
                           "template": "zigbee_endpoint"
                         },
                         {
