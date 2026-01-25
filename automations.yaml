@@ -10,23 +10,25 @@
       action_button_up_short:
       - if:
         - condition: state
-          entity_id: input_boolean.away_mode
-          state: 'on'
+          entity_id: input_select.home_mode
+          state:
+          - Away Mode
         then:
-        - data: {}
-          target:
-            entity_id: input_boolean.away_mode
-          action: input_boolean.turn_off
-        else:
-        - action: script.lights_controller
+        - action: input_select.select_option
           metadata: {}
+          target:
+            entity_id: input_select.home_mode
           data:
-            lights:
-            - light.dining_room_lights
-            - light.dining_room_pendant_light_entity
-            - light.living_room_lights
-            - light.living_room_pendant_light_entity
-            command: set_recommended_room_scene
+            option: Normal Mode
+      - action: script.lights_controller
+        metadata: {}
+        data:
+          lights:
+          - light.dining_room_lights
+          - light.dining_room_pendant_light_entity
+          - light.living_room_lights
+          - light.living_room_pendant_light_entity
+          command: set_recommended_room_scene
       action_button_up_long:
       - action: script.lights_controller
         metadata: {}
@@ -62,12 +64,15 @@
       button_down_long_loop: true
       button_down_long_max_loop_repeats: 50
       action_button_down_double:
-      - action: input_boolean.turn_on
-        data: {}
+      - action: input_select.select_option
+        metadata: {}
         target:
-          entity_id: input_boolean.away_mode
+          entity_id: input_select.home_mode
+        data:
+          option: Away Mode
       button_down_double_press: true
       helper_double_press_delay: 500
+      action_button_up_double: []
 - id: '1643641631013'
   alias: Playroom Lights Controller
   description: Control the Playroom Lights
@@ -441,23 +446,26 @@
 - id: '1648798677481'
   alias: Coming Home
   description: Set light, fan and AC levels in the Dining Room when coming home
-  trigger:
-  - platform: state
-    entity_id: binary_sensor.main_door
+  triggers:
+  - entity_id: binary_sensor.main_door
     to: 'on'
-  condition:
+    trigger: state
+  conditions:
   - condition: state
-    state: 'on'
+    state:
+    - Away Mode
     for:
       hours: 0
       minutes: 5
       seconds: 0
-    entity_id: input_boolean.away_mode
-  action:
-  - data: {}
+    entity_id: input_select.home_mode
+  actions:
+  - action: input_select.select_option
+    metadata: {}
     target:
-      entity_id: input_boolean.away_mode
-    action: input_boolean.turn_off
+      entity_id: input_select.home_mode
+    data:
+      option: Normal Mode
   - data:
       room:
       - dining_room
@@ -782,15 +790,21 @@
     trigger: state
   - trigger: state
     entity_id:
-    - input_boolean.away_mode
-    to: 'off'
-    from: 'on'
+    - input_select.home_mode
+    to:
+    - Normal Mode
+    - Party Mode
+    from:
+    - Away Mode
     id: away_mode_off
-    for: 2
+    for:
+      seconds: 2
   conditions:
   - condition: state
-    entity_id: input_boolean.away_mode
-    state: 'off'
+    entity_id: input_select.home_mode
+    state:
+    - Normal Mode
+    - Party Mode
   actions:
   - choose:
     - conditions:
@@ -1171,230 +1185,352 @@
   mode: single
   max_exceeded: silent
 - id: '1667350498199'
-  alias: Away Mode
-  description: Set automated controls and devices for away mode
+  alias: Home Mode
+  description: Set automated controls and devices to Normal, Away or Party Modes
   triggers:
   - entity_id:
-    - input_boolean.away_mode
+    - input_select.home_mode
     trigger: state
+    from:
+    - Normal Mode
+    id: normal_to_away
+    to:
+    - Away Mode
+  - entity_id:
+    - input_select.home_mode
+    trigger: state
+    id: away_to_normal
+    from:
+    - Away Mode
+    to:
+    - Normal Mode
+  - trigger: state
+    entity_id:
+    - input_select.home_mode
+    from:
+    - Normal Mode
+    to:
+    - Party Mode
+    id: normal_to_party
+  - trigger: state
+    entity_id:
+    - input_select.home_mode
+    from:
+    - Party Mode
+    to:
+    - Normal Mode
+    id: party_to_normal
+  - trigger: state
+    entity_id:
+    - input_select.home_mode
+    from:
+    - Party Mode
+    id: party_to_away
+    to:
+    - Away Mode
+  - trigger: state
+    entity_id:
+    - input_select.home_mode
+    to:
+    - Party Mode
+    id: away_to_party
+    from:
+    - Away Mode
   conditions: []
   actions:
-  - if:
-    - condition: state
-      entity_id: input_boolean.away_mode
-      state: 'on'
-    then:
-    - data:
-        stop_actions: true
-      target:
-        entity_id:
-        - automation.auto_cooling_at_night
-        - automation.elenas_room_fan_auto_control
-        - automation.elis_room_fan_auto_control
-        - automation.parents_room_fan_auto_control
-        - automation.dining_room_fan_auto_control
-        - automation.living_room_fan_auto_control
-        - automation.study_room_fan_auto_control
-        - automation.hallway_motion_lights
-        - automation.junior_bathroom_motion_lights
-        - automation.kitchen_blind_auto_control
-        - automation.master_bathroom_motion_light
-        - automation.master_bathroom_motion_pendant_light
-        - automation.powder_room_motion_pendant_light
-        - automation.water_heater_motion
-        - automation.south_facing_blinds_auto_control
-        - automation.lights_for_wind_down
-        - automation.lights_for_sleep_hours_start
-        - automation.daniels_alarm
-        - automation.elis_alarm
-        - automation.graces_alarm
-        - automation.parents_room_motion_ac
-        - automation.parents_room_motion_fan
-        - automation.parents_room_motion_lights
-        - automation.parents_room_motion_bedside_lamp
-        - automation.elenas_room_motion_ac
-        - automation.elenas_room_motion_fan
-        - automation.elenas_room_motion_lights
-        - automation.elenas_room_motion_bedside_lamp
-        - automation.elis_room_motion_ac
-        - automation.elis_room_motion_fan
-        - automation.elis_room_motion_lights
-        - automation.elis_room_motion_floor_lamp
-        - automation.kitchen_motion_lights
-        - automation.study_walkway_motion_light
-        - automation.playroom_motion_lights
-        - automation.yard_motion_light
-        - automation.dining_room_motion_ac
-        - automation.dining_room_motion_fan
-        - automation.dining_room_motion_lights
-        - automation.dining_room_motion_pendant_light
-        - automation.living_room_motion_ac
-        - automation.living_room_motion_fan
-        - automation.living_room_motion_lights
-        - automation.living_room_motion_pendant_light
-        - automation.study_room_motion_ac
-        - automation.study_room_motion_fan
-        - automation.study_room_motion_lights
-        - automation.doorbell
-        - automation.study_room_voice_assistant_listening_for_wake_word
-        - automation.kitchen_voice_assistant_listening_for_wake_word
-        - automation.elenas_room_curtains_auto_control
-        - automation.elis_room_curtains_auto_control
-        - automation.media_player_occupancy_following
-        - automation.yard_motion_automations
-        - automation.playroom_motion_automations
-        - automation.junior_bathroom_motion_automations
-        - automation.powder_room_motion_automations
-        - automation.hallway_motion_automations
-        - automation.elenas_room_motion_automations
-        - automation.elis_room_motion_automations
-        - automation.dining_room_motion_automations
-        - automation.living_room_motion_automations
-        - automation.study_room_motion_automations
-        - automation.kitchen_motion_automations
-        - automation.master_bathroom_motion_automations
-        - automation.parents_room_motion_automations
-      enabled: true
-      action: automation.turn_off
-    - data: {}
-      target:
-        entity_id: cover.kitchen_blind
-      action: cover.close_cover
-    - data: {}
-      action: script.turn_off_all
-    - repeat:
-        for_each:
-        - cover.elenas_room_curtains
-        - cover.elis_room_curtains
-        - cover.dining_room_right_blind
-        - cover.dining_room_middle_blind
-        - cover.dining_room_left_blind
-        - cover.living_room_right_blind
-        - cover.living_room_middle_blind
-        - cover.living_room_left_blind
-        - cover.study_room_right_blind
-        - cover.study_room_left_blind
-        - cover.master_bathroom_blind
-        sequence:
-        - target:
-            entity_id: '{{ repeat.item }}'
-          action: cover.close_cover
-          continue_on_error: true
-        - delay:
-            hours: 0
-            minutes: 0
-            seconds: 2
-            milliseconds: 0
-    - metadata: {}
-      data: {}
-      target:
-        entity_id:
-        - switch.study_room_voice_assistant_use_wake_word
-        - switch.kitchen_core_use_wake_word
-      action: switch.turn_off
-    else:
-    - data: {}
-      target:
-        entity_id:
-        - automation.auto_cooling_at_night
-        - automation.elenas_room_fan_auto_control
-        - automation.elis_room_fan_auto_control
-        - automation.parents_room_fan_auto_control
-        - automation.dining_room_fan_auto_control
-        - automation.living_room_fan_auto_control
-        - automation.study_room_fan_auto_control
-        - automation.hallway_motion_lights
-        - automation.junior_bathroom_motion_lights
-        - automation.kitchen_blind_auto_control
-        - automation.master_bathroom_motion_light
-        - automation.master_bathroom_motion_pendant_light
-        - automation.powder_room_motion_pendant_light
-        - automation.water_heater_motion
-        - automation.south_facing_blinds_auto_control
-        - automation.lights_for_wind_down
-        - automation.lights_for_sleep_hours_start
-        - automation.daniels_alarm
-        - automation.elis_alarm
-        - automation.graces_alarm
-        - automation.parents_room_motion_ac
-        - automation.parents_room_motion_fan
-        - automation.parents_room_motion_lights
-        - automation.parents_room_motion_bedside_lamp
-        - automation.elenas_room_motion_ac
-        - automation.elenas_room_motion_fan
-        - automation.elenas_room_motion_lights
-        - automation.elenas_room_motion_bedside_lamp
-        - automation.elis_room_motion_ac
-        - automation.elis_room_motion_fan
-        - automation.elis_room_motion_lights
-        - automation.elis_room_motion_floor_lamp
-        - automation.kitchen_motion_lights
-        - automation.study_walkway_motion_light
-        - automation.playroom_motion_lights
-        - automation.yard_motion_light
-        - automation.dining_room_motion_ac
-        - automation.dining_room_motion_fan
-        - automation.dining_room_motion_lights
-        - automation.dining_room_motion_pendant_light
-        - automation.living_room_motion_ac
-        - automation.living_room_motion_fan
-        - automation.living_room_motion_lights
-        - automation.living_room_motion_pendant_light
-        - automation.study_room_motion_ac
-        - automation.study_room_motion_fan
-        - automation.study_room_motion_lights
-        - automation.doorbell
-        - automation.study_room_voice_assistant_listening_for_wake_word
-        - automation.kitchen_voice_assistant_listening_for_wake_word
-        - automation.elenas_room_curtains_auto_control
-        - automation.elis_room_curtains_auto_control
-        - automation.media_player_occupancy_following
-        - automation.yard_motion_automations
-        - automation.playroom_motion_automations
-        - automation.junior_bathroom_motion_automations
-        - automation.powder_room_motion_automations
-        - automation.hallway_motion_automations
-        - automation.elenas_room_motion_automations
-        - automation.elis_room_motion_automations
-        - automation.dining_room_motion_automations
-        - automation.living_room_motion_automations
-        - automation.study_room_motion_automations
-        - automation.kitchen_motion_automations
-        - automation.master_bathroom_motion_automations
-        - automation.parents_room_motion_automations
-      action: automation.turn_on
-      enabled: true
-    - repeat:
-        sequence:
-        - action: automation.trigger
-          metadata: {}
-          data:
-            skip_condition: true
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - normal_to_away
+        - party_to_away
+      sequence:
+      - data:
+          stop_actions: true
+        target:
+          entity_id:
+          - automation.auto_cooling_at_night
+          - automation.elenas_room_fan_auto_control
+          - automation.elis_room_fan_auto_control
+          - automation.parents_room_fan_auto_control
+          - automation.dining_room_fan_auto_control
+          - automation.living_room_fan_auto_control
+          - automation.study_room_fan_auto_control
+          - automation.hallway_motion_lights
+          - automation.junior_bathroom_motion_lights
+          - automation.kitchen_blind_auto_control
+          - automation.master_bathroom_motion_light
+          - automation.master_bathroom_motion_pendant_light
+          - automation.powder_room_motion_pendant_light
+          - automation.water_heater_motion
+          - automation.south_facing_blinds_auto_control
+          - automation.lights_for_wind_down
+          - automation.lights_for_sleep_hours_start
+          - automation.daniels_alarm
+          - automation.elis_alarm
+          - automation.graces_alarm
+          - automation.parents_room_motion_ac
+          - automation.parents_room_motion_fan
+          - automation.parents_room_motion_lights
+          - automation.parents_room_motion_bedside_lamp
+          - automation.elenas_room_motion_ac
+          - automation.elenas_room_motion_fan
+          - automation.elenas_room_motion_lights
+          - automation.elenas_room_motion_bedside_lamp
+          - automation.elis_room_motion_ac
+          - automation.elis_room_motion_fan
+          - automation.elis_room_motion_lights
+          - automation.elis_room_motion_floor_lamp
+          - automation.kitchen_motion_lights
+          - automation.study_walkway_motion_light
+          - automation.playroom_motion_lights
+          - automation.yard_motion_light
+          - automation.dining_room_motion_ac
+          - automation.dining_room_motion_fan
+          - automation.dining_room_motion_lights
+          - automation.dining_room_motion_pendant_light
+          - automation.living_room_motion_ac
+          - automation.living_room_motion_fan
+          - automation.living_room_motion_lights
+          - automation.living_room_motion_pendant_light
+          - automation.study_room_motion_ac
+          - automation.study_room_motion_fan
+          - automation.study_room_motion_lights
+          - automation.doorbell
+          - automation.study_room_voice_assistant_listening_for_wake_word
+          - automation.kitchen_voice_assistant_listening_for_wake_word
+          - automation.elenas_room_curtains_auto_control
+          - automation.elis_room_curtains_auto_control
+          - automation.media_player_occupancy_following
+          - automation.yard_motion_automations
+          - automation.playroom_motion_automations
+          - automation.junior_bathroom_motion_automations
+          - automation.powder_room_motion_automations
+          - automation.hallway_motion_automations
+          - automation.elenas_room_motion_automations
+          - automation.elis_room_motion_automations
+          - automation.dining_room_motion_automations
+          - automation.living_room_motion_automations
+          - automation.study_room_motion_automations
+          - automation.kitchen_motion_automations
+          - automation.master_bathroom_motion_automations
+          - automation.parents_room_motion_automations
+        enabled: true
+        action: automation.turn_off
+      - data: {}
+        target:
+          entity_id: cover.kitchen_blind
+        action: cover.close_cover
+      - data: {}
+        action: script.turn_off_all
+      - repeat:
+          for_each:
+          - cover.elenas_room_curtains
+          - cover.elis_room_curtains
+          - cover.dining_room_right_blind
+          - cover.dining_room_middle_blind
+          - cover.dining_room_left_blind
+          - cover.living_room_right_blind
+          - cover.living_room_middle_blind
+          - cover.living_room_left_blind
+          - cover.study_room_right_blind
+          - cover.study_room_left_blind
+          - cover.master_bathroom_blind
+          sequence:
+          - target:
+              entity_id: '{{ repeat.item }}'
+            action: cover.close_cover
+            continue_on_error: true
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+      - metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - switch.study_room_voice_assistant_use_wake_word
+          - switch.kitchen_core_use_wake_word
+        action: switch.turn_off
+    - conditions:
+      - condition: trigger
+        id:
+        - away_to_normal
+      sequence:
+      - data: {}
+        target:
+          entity_id:
+          - automation.auto_cooling_at_night
+          - automation.elenas_room_fan_auto_control
+          - automation.elis_room_fan_auto_control
+          - automation.parents_room_fan_auto_control
+          - automation.dining_room_fan_auto_control
+          - automation.living_room_fan_auto_control
+          - automation.study_room_fan_auto_control
+          - automation.hallway_motion_lights
+          - automation.junior_bathroom_motion_lights
+          - automation.kitchen_blind_auto_control
+          - automation.master_bathroom_motion_light
+          - automation.master_bathroom_motion_pendant_light
+          - automation.powder_room_motion_pendant_light
+          - automation.water_heater_motion
+          - automation.south_facing_blinds_auto_control
+          - automation.lights_for_wind_down
+          - automation.lights_for_sleep_hours_start
+          - automation.daniels_alarm
+          - automation.elis_alarm
+          - automation.graces_alarm
+          - automation.parents_room_motion_ac
+          - automation.parents_room_motion_fan
+          - automation.parents_room_motion_lights
+          - automation.parents_room_motion_bedside_lamp
+          - automation.elenas_room_motion_ac
+          - automation.elenas_room_motion_fan
+          - automation.elenas_room_motion_lights
+          - automation.elenas_room_motion_bedside_lamp
+          - automation.elis_room_motion_ac
+          - automation.elis_room_motion_fan
+          - automation.elis_room_motion_lights
+          - automation.elis_room_motion_floor_lamp
+          - automation.kitchen_motion_lights
+          - automation.study_walkway_motion_light
+          - automation.playroom_motion_lights
+          - automation.yard_motion_light
+          - automation.dining_room_motion_ac
+          - automation.dining_room_motion_fan
+          - automation.dining_room_motion_lights
+          - automation.dining_room_motion_pendant_light
+          - automation.living_room_motion_ac
+          - automation.living_room_motion_fan
+          - automation.living_room_motion_lights
+          - automation.living_room_motion_pendant_light
+          - automation.study_room_motion_ac
+          - automation.study_room_motion_fan
+          - automation.study_room_motion_lights
+          - automation.doorbell
+          - automation.study_room_voice_assistant_listening_for_wake_word
+          - automation.kitchen_voice_assistant_listening_for_wake_word
+          - automation.elenas_room_curtains_auto_control
+          - automation.elis_room_curtains_auto_control
+          - automation.media_player_occupancy_following
+          - automation.yard_motion_automations
+          - automation.playroom_motion_automations
+          - automation.junior_bathroom_motion_automations
+          - automation.powder_room_motion_automations
+          - automation.hallway_motion_automations
+          - automation.elenas_room_motion_automations
+          - automation.elis_room_motion_automations
+          - automation.dining_room_motion_automations
+          - automation.living_room_motion_automations
+          - automation.study_room_motion_automations
+          - automation.kitchen_motion_automations
+          - automation.master_bathroom_motion_automations
+          - automation.parents_room_motion_automations
+        action: automation.turn_on
+        enabled: true
+      - repeat:
+          sequence:
+          - action: automation.trigger
+            metadata: {}
+            data:
+              skip_condition: true
+            target:
+              entity_id: '{{ repeat.item }}'
+          - delay: 5
+          for_each:
+          - automation.south_facing_blinds_auto_control
+          - automation.kitchen_blind_auto_control
+          - automation.elis_room_curtains_auto_control
+          - automation.elenas_room_curtains_auto_control
+      - action: media_player.turn_on
+        metadata: {}
+        target:
+          entity_id:
+          - media_player.study_room_speaker
+          - media_player.kitchen_speaker
+          - media_player.dining_room_speaker
+        data: {}
+      - action: media_player.volume_set
+        metadata: {}
+        target:
+          entity_id:
+          - media_player.study_room_speaker
+          - media_player.kitchen_speaker
+          - media_player.dining_room_speaker
+        data:
+          volume_level: 0.5
+    - conditions:
+      - condition: trigger
+        id:
+        - party_to_normal
+        - normal_to_party
+        - away_to_party
+      sequence:
+      - if:
+        - condition: state
+          entity_id: input_select.home_mode
+          state:
+          - Party Mode
+        then:
+        - data:
+            time: '{{ states(''input_datetime.dim_hours_end'') }}'
           target:
-            entity_id: '{{ repeat.item }}'
-        - delay: 5
-        for_each:
-        - automation.south_facing_blinds_auto_control
-        - automation.kitchen_blind_auto_control
-        - automation.elis_room_curtains_auto_control
-        - automation.elenas_room_curtains_auto_control
-    - action: media_player.turn_on
-      metadata: {}
-      target:
-        entity_id:
-        - media_player.study_room_speaker
-        - media_player.kitchen_speaker
-        - media_player.dining_room_speaker
-      data: {}
-    - action: media_player.volume_set
-      metadata: {}
-      target:
-        entity_id:
-        - media_player.study_room_speaker
-        - media_player.kitchen_speaker
-        - media_player.dining_room_speaker
-      data:
-        volume_level: 0.5
+            entity_id: input_datetime.dim_hours_start
+          action: input_datetime.set_datetime
+        - delay: 1
+        - action: homeassistant.turn_off
+          metadata: {}
+          data: {}
+          target:
+            entity_id:
+            - automation.kitchen_voice_assistant_listening_for_wake_word
+            - automation.study_room_voice_assistant_listening_for_wake_word
+            - switch.kitchen_core_use_wake_word
+            - switch.study_room_voice_assistant_use_wake_word
+        else:
+        - action: homeassistant.turn_on
+          target:
+            entity_id:
+            - automation.kitchen_voice_assistant_listening_for_wake_word
+            - automation.study_room_voice_assistant_listening_for_wake_word
+          data: {}
+        - data:
+            time: '{{ states(''input_datetime.wind_down'') }}'
+          target:
+            entity_id: input_datetime.dim_hours_start
+          action: input_datetime.set_datetime
+        - delay: 1
+        - if:
+          - condition: state
+            entity_id: binary_sensor.kitchen_radar_occupancy
+            state: 'on'
+          then:
+          - action: switch.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: switch.kitchen_core_use_wake_word
+        - if:
+          - condition: state
+            entity_id: binary_sensor.study_room_radar_occupancy
+            state: 'on'
+          then:
+          - action: switch.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: switch.study_room_voice_assistant_use_wake_word
+      - repeat:
+          for_each:
+          - dining_room
+          - living_room
+          - study_room
+          sequence:
+          - data:
+              room: '{{ [repeat.item] }}'
+            action: script.set_recommended_scene
+          - delay: 1
   mode: single
 - id: '1670838907474'
   alias: System Housekeeping
@@ -1431,8 +1567,10 @@
             }} {{ now().hour }}:{{ now().minute }}
         action: script.git_push
       - condition: state
-        entity_id: input_boolean.away_mode
-        state: 'off'
+        entity_id: input_select.home_mode
+        state:
+        - Normal Mode
+        - Party Mode
       - data: {}
         target:
           entity_id:
@@ -1723,17 +1861,20 @@
   - at: input_datetime.wind_down
     trigger: time
   - entity_id:
-    - input_boolean.party_mode
-    from: 'on'
-    to: 'off'
+    - input_select.home_mode
+    to:
+    - Normal Mode
     trigger: state
+    from:
+    - Party Mode
   conditions:
   - condition: template
     value_template: '{{ now() > today_at(states(''input_datetime.wind_down'')) - timedelta(minutes
       = 1) }}'
   - condition: state
-    entity_id: input_boolean.party_mode
-    state: 'off'
+    entity_id: input_select.home_mode
+    state:
+    - Normal Mode
   actions:
   - if:
     - condition: state
@@ -2271,8 +2412,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.kitchen_radar_occupancy
+      motion_sensor: binary_sensor.kitchen_radar_occupancy
       turnoff_entities_list:
       - light.kitchen_lights
 - id: '1678321703771'
@@ -2297,8 +2437,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.study_walkway_motion
+      motion_sensor: binary_sensor.study_room_motion
       entities_list:
       - light.study_room_bulb_2_entity
       - light.study_room_bulb_3_entity
@@ -2324,8 +2463,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.playroom_presence
+      motion_sensor: binary_sensor.playroom_presence
       turnoff_entities_list:
       - light.playroom_lights
 - id: '1678323204367'
@@ -2347,8 +2485,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.yard_motion
+      motion_sensor: binary_sensor.yard_motion
       turnoff_entities_list:
       - light.yard_light_entity
 - id: '1679619343225'
@@ -2391,8 +2528,7 @@
       - light.living_room_pendant_light_entity
       - fan.living_room_fan
       - climate.living_room_ac
-      entities_list:
-      - input_boolean.party_mode
+      entities_list: []
 - id: '1679619826696'
   alias: Dining Room Motion Lights
   description: Control the Dining Room Lights when motion is detected, depending on
@@ -2426,15 +2562,13 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.dining_room_presence
+      motion_sensor: binary_sensor.dining_room_presence
       turnoff_entities_list:
       - light.dining_room_lights
       - light.dining_room_pendant_light_entity
       - fan.dining_room_fan
       - climate.dining_room_ac
-      entities_list:
-      - input_boolean.party_mode
+      entities_list: []
 - id: '1679620287237'
   alias: Living Room Motion Fan
   description: Control the Living Room Fan when motion is detected, depending on whether
@@ -2581,80 +2715,6 @@
       lights_debounce: false
       blackout_hours_start: input_datetime.sleep_hours_start
       blackout_hours_end: input_datetime.sleep_hours_end
-- id: '1681735193653'
-  alias: Party Mode
-  description: Set recommended scenes in public areas and prevent lights dimming when
-    Party Mode is on
-  triggers:
-  - entity_id:
-    - input_boolean.party_mode
-    trigger: state
-  conditions: []
-  actions:
-  - if:
-    - condition: state
-      entity_id: input_boolean.party_mode
-      state: 'on'
-    then:
-    - data:
-        time: '{{ states(''input_datetime.dim_hours_end'') }}'
-      target:
-        entity_id: input_datetime.dim_hours_start
-      action: input_datetime.set_datetime
-    - delay: 1
-    - action: homeassistant.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id:
-        - automation.kitchen_voice_assistant_listening_for_wake_word
-        - automation.study_room_voice_assistant_listening_for_wake_word
-        - switch.kitchen_core_use_wake_word
-        - switch.study_room_voice_assistant_use_wake_word
-    else:
-    - action: homeassistant.turn_on
-      target:
-        entity_id:
-        - automation.kitchen_voice_assistant_listening_for_wake_word
-        - automation.study_room_voice_assistant_listening_for_wake_word
-      data: {}
-    - data:
-        time: '{{ states(''input_datetime.wind_down'') }}'
-      target:
-        entity_id: input_datetime.dim_hours_start
-      action: input_datetime.set_datetime
-    - delay: 1
-    - if:
-      - condition: state
-        entity_id: binary_sensor.kitchen_radar_occupancy
-        state: 'on'
-      then:
-      - action: switch.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: switch.kitchen_core_use_wake_word
-    - if:
-      - condition: state
-        entity_id: binary_sensor.study_room_radar_occupancy
-        state: 'on'
-      then:
-      - action: switch.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: switch.study_room_voice_assistant_use_wake_word
-  - repeat:
-      for_each:
-      - dining_room
-      - living_room
-      - study_room
-      sequence:
-      - data:
-          room: '{{ [repeat.item] }}'
-        action: script.set_recommended_scene
-      - delay: 1
-  mode: single
 - id: '1681736538604'
   alias: Hallway Motion Timeout
   description: Turn off Hallway Lights when no motion is detected for a certain amount
@@ -2662,8 +2722,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.hallway_motion
+      motion_sensor: binary_sensor.hallway_motion
       number_of_minutes: input_number.motion_timeout_walking_areas
       turnoff_entities_list:
       - light.hallway_lights
@@ -2704,8 +2763,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: binary_sensor.study_room_radar_occupancy
-      entities_list:
-      - input_boolean.party_mode
+      entities_list: []
       turnoff_entities_list:
       - light.study_room_lights
       - fan.study_room_fan
@@ -2776,18 +2834,19 @@
   alias: Notify When Kitchen Appliances On while Away
   description: Send a notification if the Rice Cooker or Stove is on when Away Mode
     is active.
-  trigger:
-  - platform: state
-    entity_id:
-    - input_boolean.away_mode
+  triggers:
+  - entity_id:
     - switch.stove_main_power
     - binary_sensor.rice_cooker
-  condition: []
-  action:
+    - input_select.home_mode
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: state
-      entity_id: input_boolean.away_mode
-      state: 'on'
+      entity_id: input_select.home_mode
+      state:
+      - Away Mode
     - condition: or
       conditions:
       - condition: state
@@ -2797,33 +2856,33 @@
         entity_id: binary_sensor.rice_cooker
         state: 'on'
     then:
-    - service: notify.mobile_app_aurora
-      data:
+    - data:
         title: Turn off kitchen appliances?
         data:
           tag: appliances_on
         message: "{% if is_state('binary_sensor.rice_cooker', 'on')  and is_state('switch.stove_main_power',
           'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker',
           'on') %}\n  Rice cooker is on.\n{% else %}\n  Stove is on.\n{% endif %}"
-    - service: notify.mobile_app_grace
-      data:
+      action: notify.mobile_app_aurora
+    - data:
         title: Turn off kitchen appliances?
         data:
           tag: appliances_on
         message: "{% if is_state('binary_sensor.rice_cooker', 'on')  and is_state('switch.stove_main_power',
           'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker',
           'on') %}\n  Rice cooker is on.\n{% else %}\n  Stove is on.\n{% endif %}"
+      action: notify.mobile_app_grace
     else:
-    - service: notify.mobile_app_aurora
-      data:
+    - data:
         message: clear_notification
         data:
           tag: appliances_on
-    - service: notify.mobile_app_grace
-      data:
+      action: notify.mobile_app_aurora
+    - data:
         message: clear_notification
         data:
           tag: appliances_on
+      action: notify.mobile_app_grace
   mode: single
   max_exceeded: silent
 - id: '1659256881015'
@@ -3614,8 +3673,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.junior_bathroom_occupancy
+      motion_sensor: binary_sensor.junior_bathroom_occupancy
       turnoff_entities_list:
       - light.junior_bathroom_lights
 - id: '1699177618893'
@@ -3636,8 +3694,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.powder_room_occupancy
+      motion_sensor: binary_sensor.powder_room_occupancy
       turnoff_entities_list:
       - light.powder_room_pendant_light_entity
 - id: '1699233038725'
@@ -3669,8 +3726,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor:
-      - binary_sensor.master_bathroom_occupancy
+      motion_sensor: binary_sensor.master_bathroom_occupancy
       turnoff_entities_list:
       - light.master_bathroom_lights
 - id: '1702255296989'
@@ -3699,34 +3755,36 @@
   alias: Kitchen Voice Assistant Listening for Wake Word
   description: Turn on wake word listening on Kitchen Voice Assistant when presence
     detected in kitchen
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.kitchen_radar_occupancy
-  - platform: state
-    entity_id:
-    - input_boolean.away_mode
-  condition: []
-  action:
+    trigger: state
+  - entity_id:
+    - input_select.home_mode
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: state
       entity_id: binary_sensor.kitchen_radar_occupancy
       state: 'on'
     - condition: state
-      entity_id: input_boolean.away_mode
-      state: 'off'
+      entity_id: input_select.home_mode
+      state:
+      - Normal Mode
+      - Party Mode
     then:
-    - service: switch.turn_on
-      data: {}
+    - data: {}
       target:
         entity_id:
         - switch.kitchen_core_use_wake_word
+      action: switch.turn_on
     else:
-    - service: switch.turn_off
-      data: {}
+    - data: {}
       target:
         entity_id:
         - switch.kitchen_core_use_wake_word
+      action: switch.turn_off
   mode: single
   max_exceeded: silent
 - id: '1702898924227'
@@ -3799,11 +3857,9 @@
     trigger: template
   conditions:
   - condition: state
-    entity_id: input_boolean.party_mode
-    state: 'off'
-  - condition: state
-    entity_id: input_boolean.away_mode
-    state: 'off'
+    entity_id: input_select.home_mode
+    state:
+    - Normal Mode
   actions:
   - parallel:
     - if:
@@ -5116,7 +5172,7 @@
       data:
         brightness_pct: "{{ 66 if (now() >= today_at(states('input_datetime.dim_hours_start'))
           or\n          now() <= today_at(states('input_datetime.dim_hours_end')))
-          and\n      is_state('input_boolean.party_mode','off') else 100 }}"
+          and\n      is_state('input_select.home_mode','Normal Mode') else 100 }}"
       target:
         entity_id: light.study_room_floor_lamp
   mode: restart
@@ -6990,11 +7046,12 @@
     id: 'off'
   conditions: []
   actions:
-  - action: input_boolean.turn_{{ trigger.id }}
+  - action: input_select.select_option
     metadata: {}
-    data: {}
+    data:
+      option: '{{ ''Party Mode'' if trigger.id == ''on'' else ''Normal Mode'' }}'
     target:
-      entity_id: input_boolean.party_mode
+      entity_id: input_select.home_mode
   - set_conversation_response: "{% if trigger.id == 'on' %}\n  {{ ['Initiating', 'Activating']
       | random }} party mode.\n{% else %}\n  {{ ['Turning off', 'Dectivating'] | random
       }} party mode.\n{% endif %}"
@@ -7016,12 +7073,12 @@
       minutes: 1
       seconds: 0
       milliseconds: 0
-  - action: input_boolean.turn_on
+  - action: input_select.select_option
     metadata: {}
-    data: {}
     target:
-      entity_id: input_boolean.away_mode
-    enabled: true
+      entity_id: input_select.home_mode
+    data:
+      option: Away Mode
   mode: single
 - id: '1743848999796'
   alias: Voice Control for Vacuum
@@ -7374,8 +7431,10 @@
         - motion
       sequence:
       - condition: state
-        entity_id: input_boolean.away_mode
-        state: 'off'
+        entity_id: input_select.home_mode
+        state:
+        - Party Mode
+        - Normal Mode
       - action: fully_kiosk.load_url
         metadata: {}
         data:
@@ -7427,10 +7486,13 @@
         - visitor
       sequence:
       - condition: state
-        entity_id:
-        - binary_sensor.main_door
-        - input_boolean.away_mode
+        entity_id: binary_sensor.main_door
         state: 'off'
+      - condition: state
+        state:
+        - Normal Mode
+        - Party Mode
+        entity_id: input_select.home_mode
       - if:
         - condition: not
           conditions:

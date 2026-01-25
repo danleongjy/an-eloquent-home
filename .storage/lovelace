@@ -106,7 +106,7 @@
                       "width": "100%"
                     },
                     {
-                      "color": "[[[\n  if (states[variables.auto_control_automation].state == 'on' || states['input_boolean.away_mode'].state == 'on' )\n    return 'rgba(0,0,0,0)'\n  else if (['unavailable','unknown'].includes(entity.state))\n    return 'var(--state-inactive-color)';\n  else if (['off','closed'].includes(entity.state))\n    return 'var(--state-icon-color)';\n  else if (typeof entity.attributes.rgb_color !== 'undefined' && entity.attributes.rgb_color !== null)\n    return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n    entity.attributes.rgb_color[1] + \",\" +\n    entity.attributes.rgb_color[2] + \")\"\n  else\n    return 'var(--state-binary_sensor-active-color)'\n]]]\n"
+                      "color": "[[[\n  if (states[variables.auto_control_automation].state == 'on' || states['input_select.home_mode'].state == 'Away Mode' )\n    return 'rgba(0,0,0,0)'\n  else if (['unavailable','unknown'].includes(entity.state))\n    return 'var(--state-inactive-color)';\n  else if (['off','closed'].includes(entity.state))\n    return 'var(--state-icon-color)';\n  else if (typeof entity.attributes.rgb_color !== 'undefined' && entity.attributes.rgb_color !== null)\n    return \"rgb(\" + entity.attributes.rgb_color[0] + \",\" +\n    entity.attributes.rgb_color[1] + \",\" +\n    entity.attributes.rgb_color[2] + \")\"\n  else\n    return 'var(--state-binary_sensor-active-color)'\n]]]\n"
                     }
                   ]
                 }
@@ -1461,22 +1461,35 @@
         "main_door": {
           "card": {
             "type": "custom:state-switch",
-            "entity": "input_boolean.away_mode",
-            "default": "off",
+            "entity": "input_select.home_mode",
+            "default": "default",
             "states": {
-              "on": {
+              "Away Mode": {
                 "type": "custom:button-card",
-                "entity": "input_boolean.away_mode",
+                "entity": "input_select.home_mode",
                 "template": "top_row",
                 "double_tap_action": {
-                  "action": "toggle"
+                  "action": "call-service",
+                  "service": "input_select.select_option",
+                  "service_data": {
+                    "entity_id": "input_select.home_mode",
+                    "option": "Normal Mode"
+                  }
                 },
                 "tap_action": {
                   "action": "navigate",
                   "navigation_path": "/lovelace/main-door"
+                },
+                "icon": "mdi:home-export-outline",
+                "styles": {
+                  "icon": [
+                    {
+                      "color": "[[[\n  return 'var(--state-binary-sensor-color)'\n]]]\n"
+                    }
+                  ]
                 }
               },
-              "off": {
+              "default": {
                 "type": "custom:button-card",
                 "entity": "binary_sensor.main_door",
                 "template": "top_row",
@@ -1486,9 +1499,10 @@
                 },
                 "double_tap_action": {
                   "action": "call-service",
-                  "service": "input_boolean.turn_on",
+                  "service": "input_select.select_option",
                   "service_data": {
-                    "entity_id": "input_boolean.away_mode"
+                    "entity_id": "input_select.home_mode",
+                    "option": "Away Mode"
                   }
                 }
               }
@@ -6055,29 +6069,18 @@
               "cards": [
                 {
                   "type": "tile",
-                  "entity": "input_boolean.away_mode",
-                  "features_position": "bottom",
-                  "vertical": false,
+                  "entity": "input_select.home_mode",
                   "hide_state": true,
+                  "vertical": false,
                   "icon_tap_action": {
                     "action": "more-info"
                   },
-                  "double_tap_action": {
-                    "action": "toggle"
-                  }
-                },
-                {
-                  "type": "tile",
-                  "entity": "input_boolean.party_mode",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "hide_state": true,
-                  "icon_tap_action": {
-                    "action": "more-info"
-                  },
-                  "double_tap_action": {
-                    "action": "toggle"
-                  }
+                  "features": [
+                    {
+                      "type": "select-options"
+                    }
+                  ],
+                  "features_position": "inline"
                 },
                 {
                   "type": "custom:button-card",

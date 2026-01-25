@@ -41,8 +41,9 @@ turn_off_all:
     - condition: or
       conditions:
       - condition: state
-        entity_id: input_boolean.away_mode
-        state: 'on'
+        entity_id: input_select.home_mode
+        state:
+        - Away Mode
       - condition: state
         entity_id: binary_sensor.elenas_room_door
         state:
@@ -68,8 +69,9 @@ turn_off_all:
     - condition: or
       conditions:
       - condition: state
-        entity_id: input_boolean.away_mode
-        state: 'on'
+        entity_id: input_select.home_mode
+        state:
+        - Away Mode
       - condition: state
         entity_id: binary_sensor.parents_room_doors
         state:
@@ -90,8 +92,9 @@ turn_off_all:
     - condition: or
       conditions:
       - condition: state
-        entity_id: input_boolean.away_mode
-        state: 'on'
+        entity_id: input_select.home_mode
+        state:
+        - Away Mode
       - condition: state
         entity_id: binary_sensor.elis_room_door
         state:
@@ -132,12 +135,14 @@ turn_off_all:
       minutes: 0
       seconds: 0
       milliseconds: 300
-  - if:
+  - alias: Conditionally turn off Study Room
+    if:
     - condition: or
       conditions:
       - condition: state
-        entity_id: input_boolean.away_mode
-        state: 'on'
+        entity_id: input_select.home_mode
+        state:
+        - Away Mode
       - condition: and
         conditions:
         - condition: state
@@ -153,7 +158,6 @@ turn_off_all:
         skip_condition: true
       target:
         entity_id: automation.study_room_motion_timeout
-    alias: Conditionally turn off Study Room
   - data:
       skip_condition: true
     target:
