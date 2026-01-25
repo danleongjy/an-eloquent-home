@@ -23,6 +23,18 @@
       yard_window_1: "{{ states('binary_sensor.yard_window_1') }}"
       yard_window_2: "{{ states('binary_sensor.yard_window_2') }}"
 
+  - name: Elena's Room Windows
+    unique_id: binary_sensor.elenas_room_windows
+    device_class: window
+    state: >
+      {{ is_state('binary_sensor.elenas_room_left_window', 'on') or 
+         is_state('binary_sensor.elenas_room_right_window','on') }}
+    attributes:
+      total_panes_open: "{{ is_state('binary_sensor.elenas_room_left_window','on') + is_state('binary_sensor.elenas_room_right_window','on') }}/2"
+      total_panes: 2
+      elenas_room_left_window: "{{ states('binary_sensor.elenas_room_left_window') }}"
+      elenas_room_right_window: "{{ states('binary_sensor.elenas_room_right_window') }}"
+
   - name: Dining Room Windows
     unique_id: binary_sensor.dining_room_windows
     device_class: window
