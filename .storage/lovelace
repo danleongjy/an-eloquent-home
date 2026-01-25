@@ -11835,7 +11835,7 @@
                 {
                   "type": "heading",
                   "icon": "mdi:vacuum",
-                  "heading": "Cleaning Statistics",
+                  "heading": "Cleaning Progress",
                   "heading_style": "title"
                 },
                 {
@@ -11858,7 +11858,45 @@
                     {
                       "condition": "numeric_state",
                       "entity": "sensor.valetudo_hestia_battery_level",
+                      "below": 98.5
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "binary_sensor.vacuum_battery_charging",
+                      "state": "off"
+                    }
+                  ],
+                  "card": {
+                    "type": "custom:button-card",
+                    "template": "tile_status_bar",
+                    "entity": "sensor.valetudo_hestia_battery_level",
+                    "name": " ",
+                    "tap_action": {
+                      "action": "more-info",
+                      "entity": "sensor.valetudo_hestia_battery_level"
+                    },
+                    "section_mode": true,
+                    "grid_options": {
+                      "rows": null
+                    }
+                  },
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "sensor.valetudo_hestia_battery_level",
                       "below": 99.5
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "binary_sensor.vacuum_battery_charging",
+                      "state": "on"
                     }
                   ],
                   "card": {
@@ -12811,6 +12849,11 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.elenas_room_left_window",
+                      "template": "square_cell_background"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.elenas_room_right_window",
                       "template": "square_cell_background"
                     },
                     {

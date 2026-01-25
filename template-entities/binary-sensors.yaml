@@ -298,3 +298,17 @@
         junior_bathroom_motion: "{{ states('binary_sensor.junior_bathroom_motion') }}"
         junior_shower_motion: "{{ states('binary_sensor.junior_shower_motion') }}"
 
+- trigger:
+  - platform: state
+    entity_id: sensor.valetudo_hestia_battery_level
+    not_from:
+      - unavailable
+      - unknown
+    not_to:
+      - unavailable
+      - unknown
+  binary_sensor:
+    - name: Vacuum Battery Charging
+      unique_id: binary_sensor.vacuum_battery_charging
+      state: "{{ trigger.from_state.state | float(0) < trigger.to_state.state | float(0) }}"
+      availability: "{{ not states('sensor.valetudo_hestia_battery_level') in ['unavailable','unknown'] }}"
