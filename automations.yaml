@@ -5921,24 +5921,17 @@
   - parallel:
     - sequence:
       - delay: 1
-      - target:
-          entity_id: media_player.main_door_display
-        data:
+      - data:
           media:
             media_content_id: media-source://media_source/local/doorbells/{{ doorbell_track
               }}
             media_content_type: music
             announce: true
         action: media_player.play_media
-      - target:
-          entity_id: media_player.kitchen_speaker
-        data:
-          media:
-            media_content_id: media-source://media_source/local/doorbells/{{ doorbell_track
-              }}
-            media_content_type: music
-          announce: true
-        action: media_player.play_media
+        target:
+          entity_id:
+          - media_player.dining_room_speaker
+          - media_player.kitchen_speaker
     - sequence:
       - delay:
           hours: 0
@@ -5973,7 +5966,14 @@
         target:
           entity_id:
           - button.kitchen_core_ring_doorbell
-          - button.study_room_core_ring_doorbell
+      - condition: state
+        state:
+        - 'off'
+        entity_id: binary_sensor.study_room_ethernet_connection
+      - data: {}
+        action: button.press
+        target:
+          entity_id: button.study_room_core_ring_doorbell
     - sequence:
       - condition: state
         entity_id: binary_sensor.study_room_ethernet_connection
