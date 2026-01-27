@@ -2462,6 +2462,21 @@
                           },
                           {
                             "type": "image",
+                            "image": "/local/floorplan/floorplan_openings/floorplan_elis_room_left_window.png",
+                            "entity": "binary_sensor.elis_room_left_window",
+                            "state_filter": {
+                              "off": "hue-rotate(245deg) saturate(2000%) brightness(90%)",
+                              "unavailable": "grayscale(100%)"
+                            },
+                            "style": {
+                              "top": "50%",
+                              "left": "50%",
+                              "height": "100%",
+                              "width": "100%"
+                            }
+                          },
+                          {
+                            "type": "image",
                             "image": "/local/floorplan/floorplan_openings/floorplan_main_door.png",
                             "entity": "binary_sensor.main_door",
                             "state_filter": {
@@ -5227,7 +5242,9 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.elis_room_right_window",
+                          "entity": "binary_sensor.elis_room_windows",
+                          "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
+                          "show_label": true,
                           "template": "sensor_binary"
                         },
                         {
@@ -5739,7 +5756,9 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.elis_room_right_window",
+                          "entity": "binary_sensor.elis_room_windows",
+                          "label": "[[[\n  if (entity.attributes.total_panes_open == \"0/2\")\n    return ''\n  else\n    return entity.attributes.total_panes_open \n]]]\n",
+                          "show_label": true,
                           "template": "sensor_binary"
                         },
                         {
@@ -6486,6 +6505,11 @@
                         },
                         {
                           "type": "custom:button-card",
+                          "entity": "sensor.elis_room_left_window_lqi",
+                          "template": "zigbee_endpoint"
+                        },
+                        {
+                          "type": "custom:button-card",
                           "entity": "sensor.elis_room_right_window_lqi",
                           "template": "zigbee_endpoint"
                         },
@@ -6493,10 +6517,6 @@
                           "type": "custom:button-card",
                           "entity": "sensor.elis_room_motion_lqi",
                           "template": "zigbee_endpoint"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "color_type": "blank-card"
                         },
                         {
                           "type": "custom:button-card",
@@ -7535,6 +7555,14 @@
                         {
                           "type": "custom:button-card",
                           "entity": "sensor.elis_room_door_lqi",
+                          "template": [
+                            "zigbee_endpoint",
+                            "square_cell"
+                          ]
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elis_room_left_window_lqi",
                           "template": [
                             "zigbee_endpoint",
                             "square_cell"
@@ -13106,6 +13134,11 @@
                     {
                       "type": "custom:button-card",
                       "entity": "binary_sensor.elis_room_door",
+                      "template": "square_cell_background"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "binary_sensor.elis_room_left_window",
                       "template": "square_cell_background"
                     },
                     {
