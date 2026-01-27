@@ -1301,6 +1301,7 @@
           - automation.kitchen_voice_assistant_listening_for_wake_word
           - automation.elenas_room_curtains_auto_control
           - automation.elis_room_curtains_auto_control
+          - automation.parents_room_curtains_auto_control
           - automation.media_player_occupancy_following
           - automation.yard_motion_automations
           - automation.playroom_motion_automations
@@ -1335,6 +1336,7 @@
           - cover.living_room_left_blind
           - cover.study_room_right_blind
           - cover.study_room_left_blind
+          - cover.parents_room_curtains
           - cover.master_bathroom_blind
           sequence:
           - target:
@@ -1413,6 +1415,7 @@
           - automation.kitchen_voice_assistant_listening_for_wake_word
           - automation.elenas_room_curtains_auto_control
           - automation.elis_room_curtains_auto_control
+          - automation.parents_room_curtains_auto_control
           - automation.media_player_occupancy_following
           - automation.yard_motion_automations
           - automation.playroom_motion_automations
@@ -1441,6 +1444,7 @@
           for_each:
           - automation.south_facing_blinds_auto_control
           - automation.kitchen_blind_auto_control
+          - automation.parents_room_curtains_auto_control
           - automation.elis_room_curtains_auto_control
           - automation.elenas_room_curtains_auto_control
       - action: media_player.turn_on
@@ -1479,6 +1483,16 @@
             entity_id: input_datetime.dim_hours_start
           action: input_datetime.set_datetime
         - delay: 1
+        - repeat:
+            for_each:
+            - dining_room
+            - living_room
+            - study_room
+            sequence:
+            - data:
+                room: '{{ [repeat.item] }}'
+              action: script.set_recommended_scene
+            - delay: 1
         - action: homeassistant.turn_off
           metadata: {}
           data: {}
@@ -1521,16 +1535,6 @@
             data: {}
             target:
               entity_id: switch.study_room_voice_assistant_use_wake_word
-      - repeat:
-          for_each:
-          - dining_room
-          - living_room
-          - study_room
-          sequence:
-          - data:
-              room: '{{ [repeat.item] }}'
-            action: script.set_recommended_scene
-          - delay: 1
   mode: single
 - id: '1670838907474'
   alias: System Housekeeping
@@ -3750,7 +3754,7 @@
       core_room: parents_room
       sleep_hours_start: input_datetime.sleep_hours_start
       sleep_hours_end: input_datetime.sleep_hours_end
-      cover: cover.master_bathroom_blind
+      cover: cover.parents_room_curtains
 - id: '1702652446399'
   alias: Kitchen Voice Assistant Listening for Wake Word
   description: Turn on wake word listening on Kitchen Voice Assistant when presence
@@ -5612,7 +5616,7 @@
       - choose:
         - conditions:
           - condition: state
-            entity_id: cover.master_bathroom_blind
+            entity_id: cover.parents_room_curtains
             state:
             - closed
             - closing
@@ -5620,66 +5624,66 @@
           - action: script.cover_controller
             metadata: {}
             data:
-              cover: cover.master_bathroom_blind
+              cover: cover.parents_room_curtains
               command: cover_open
         - conditions:
           - condition: state
-            entity_id: cover.master_bathroom_blind
+            entity_id: cover.parents_room_curtains
             state:
             - opening
           sequence:
           - action: script.cover_controller
             metadata: {}
             data:
-              cover: cover.master_bathroom_blind
+              cover: cover.parents_room_curtains
               command: cover_close
         default:
         - if:
           - condition: numeric_state
-            entity_id: cover.master_bathroom_blind
+            entity_id: cover.parents_room_curtains
             attribute: current_position
             above: 50.5
           then:
           - action: script.cover_controller
             metadata: {}
             data:
-              cover: cover.master_bathroom_blind
+              cover: cover.parents_room_curtains
               command: cover_close
           else:
           - action: script.cover_controller
             metadata: {}
             data:
-              cover: cover.master_bathroom_blind
+              cover: cover.parents_room_curtains
               command: cover_open
         enabled: true
       action_button_left_long:
       - if:
         - condition: template
-          value_template: '{{ states(''cover.master_bathroom_blind'') in [''opening'',''closing'']
+          value_template: '{{ states(''cover.parents_room_curtains'') in [''opening'',''closing'']
             }}'
         then:
         - action: cover.stop_cover
           metadata: {}
           data: {}
           target:
-            entity_id: cover.master_bathroom_blind
+            entity_id: cover.parents_room_curtains
         - delay: 1
       - if:
         - condition: numeric_state
-          entity_id: cover.master_bathroom_blind
+          entity_id: cover.parents_room_curtains
           attribute: current_position
           above: 50.5
         then:
         - action: script.cover_controller
           metadata: {}
           data:
-            cover: cover.master_bathroom_blind
+            cover: cover.parents_room_curtains
             command: cover_close
         else:
         - action: script.cover_controller
           metadata: {}
           data:
-            cover: cover.master_bathroom_blind
+            cover: cover.parents_room_curtains
             command: cover_open
       button_up_long_loop: false
       button_up_long_max_loop_repeats: 50
@@ -8332,3 +8336,13 @@
       - climate.study_room_ac
       doors_list:
       - binary_sensor.parents_room_door
+- id: '1769524283058'
+  alias: Parents' Room Curtains Auto Control
+  description: Open or close Parents' Room Curtains based on time and windows state.
+  use_blueprint:
+    path: danleongjy/bedroom_curtains_auto_control.yaml
+    input:
+      curtains: cover.parents_room_curtains
+      windows: binary_sensor.parents_room_left_window
+      doors: binary_sensor.parents_room_doors
+      motion: binary_sensor.parents_room_presence
