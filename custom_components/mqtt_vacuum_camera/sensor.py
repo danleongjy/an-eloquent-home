@@ -34,6 +34,7 @@ class VacuumSensorDescription(SensorEntityDescription):
     parent_key: str = None
     keys: list[str] = None
     value: Callable = None
+    native_unit_of_measurement: str = None
 
 
 SENSOR_TYPES = {
@@ -193,8 +194,8 @@ class VacuumSensor(CoordinatorEntity, SensorEntity):
         self.entity_description = description
         self.coordinator = coordinator
         self._attr_native_value = None
-        self._attr_unique_id = f"{coordinator.file_name}_{sensor_type}"
-        self.entity_id = f"sensor.{coordinator.file_name}_{sensor_type}"
+        self._attr_unique_id = f"{coordinator.context.file_name}_{sensor_type}"
+        self.entity_id = f"sensor.{coordinator.context.file_name}_{sensor_type}"
         self._identifiers = vacuum_identifier
 
     async def async_will_remove_from_hass(self) -> None:
