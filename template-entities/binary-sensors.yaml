@@ -83,6 +83,18 @@
       study_room_left_window: "{{ states('binary_sensor.study_room_left_window') }}"
       study_room_right_window: "{{ states('binary_sensor.study_room_right_window') }}"
 
+  - name: Parents' Room Windows
+    unique_id: binary_sensor.parents_room_windows
+    device_class: window
+    state: >
+      {{ is_state('binary_sensor.parents_room_left_window', 'on') or 
+         is_state('binary_sensor.parents_room_right_window','on') }}
+    attributes:
+      total_openings_open: "{{ is_state('binary_sensor.parents_room_left_window','on') + is_state('binary_sensor.parents_room_right_window','on') }}/2"
+      total_openings: 2
+      parents_room_left_window: "{{ states('binary_sensor.parents_room_left_window') }}"
+      parents_room_right_window: "{{ states('binary_sensor.parents_room_right_window') }}"
+
   - name: Hallway Doors
     unique_id: binary_sensor.hallway_doors
     device_class: door
