@@ -342,6 +342,21 @@
        and value_json.Services is defined and value_json.Services | length > 0 }}
 
 - platform: rest
+  resource: https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=92049
+  name: Bus Stop Parkway Parade
+  unique_id: sensor.bus_stop_parkway_parade
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: >
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['134'], 4) }}
+  availability: >
+    {{ (states('zone.marine_parade_outer_perimeter') | int(0) > 0
+        or states('zone.parkway_parade_bus_stop') | int(0) > 0)
+       and value_json.Services is defined and value_json.Services | length > 0 }}
+
+- platform: rest
   resource: https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=83141
   name: Bus Stop After Lorong G Telok Kurau
   unique_id: sensor.bus_stop_after_lorong_g_telok_kurau
