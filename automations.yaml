@@ -7041,55 +7041,36 @@
         target:
           entity_id: cover.dining_room_blinds
 - id: '1743847597456'
-  alias: Voice Control for Party Mode
-  description: Turn on or off Party Mode with voice commands
+  alias: Voice Control for Home Mode
+  description: Set Home Mode with voice commands
   triggers:
   - trigger: conversation
     command:
     - (I'm | I am | We're | We are) (having | throwing) a party
     - (Turn on | Activate | Initiate) party mode
-    id: 'on'
+    id: Party Mode
   - trigger: conversation
     command:
     - (I'm | I am | We're | We are) (finishing | finished with | ending) the party
     - (I have | I've | We have | We've) (finished | ended) the party
     - (Turn off | Deactivate) party mode
-    id: 'off'
-  conditions: []
-  actions:
-  - action: input_select.select_option
-    metadata: {}
-    data:
-      option: '{{ ''Party Mode'' if trigger.id == ''on'' else ''Normal Mode'' }}'
-    target:
-      entity_id: input_select.home_mode
-  - set_conversation_response: "{% if trigger.id == 'on' %}\n  {{ ['Initiating', 'Activating']
-      | random }} party mode.\n{% else %}\n  {{ ['Turning off', 'Dectivating'] | random
-      }} party mode.\n{% endif %}"
-  mode: single
-- id: '1743848105840'
-  alias: Voice Control for Away Mode
-  description: Turn on Away Mode with voice commands
-  triggers:
+    - (We are | I'm) home
+    id: Normal Mode
   - trigger: conversation
     command:
     - (I'm | I am | We're | We are) (leaving | going out)
     - (Turn on | Activate | Initiate) (shutdown | away mode) [sequence] [procedure]
+    id: Away Mode
   conditions: []
   actions:
-  - set_conversation_response: '{{ [''Initiating'', ''Activating''] | random }} {{
-      [''Away Mode'', ''shutdown sequence''] | random }}.'
-  - delay:
-      hours: 0
-      minutes: 1
-      seconds: 0
-      milliseconds: 0
   - action: input_select.select_option
     metadata: {}
+    data:
+      option: '{{ trigger.id }}'
     target:
       entity_id: input_select.home_mode
-    data:
-      option: Away Mode
+  - set_conversation_response: '{{ [''Initiating'', ''Activating''] | random }} {{
+      trigger.id }}.'
   mode: single
 - id: '1743848999796'
   alias: Voice Control for Vacuum
