@@ -4144,10 +4144,9 @@
 - id: '1715733470037'
   alias: Windows Set AC
   description: Set AC state when windows are opened or closed
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.parents_room_left_window
+  triggers:
+  - entity_id:
+    - binary_sensor.parents_room_windows
     id: parents_room
     from:
     - 'on'
@@ -4155,9 +4154,9 @@
     to:
     - 'on'
     - 'off'
-  - platform: state
-    entity_id:
-    - binary_sensor.elis_room_right_window
+    trigger: state
+  - entity_id:
+    - binary_sensor.elis_room_windows
     from:
     - 'on'
     - 'off'
@@ -4165,9 +4164,9 @@
     - 'on'
     - 'off'
     id: elis_room
-  - platform: state
-    entity_id:
-    - binary_sensor.elenas_room_left_window
+    trigger: state
+  - entity_id:
+    - binary_sensor.elenas_room_windows
     from:
     - 'on'
     - 'off'
@@ -4175,13 +4174,14 @@
     - 'on'
     - 'off'
     id: elenas_room
-  condition: []
-  action:
-  - service: automation.trigger
-    target:
+    trigger: state
+  conditions: []
+  actions:
+  - target:
       entity_id: automation.{{ trigger.id }}_motion_ac
     data:
       skip_condition: true
+    action: automation.trigger
   mode: single
 - id: '1722233345556'
   alias: Kitchen Core
