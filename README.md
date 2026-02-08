@@ -26,7 +26,7 @@ Domain | Quantity
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 145
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 179
-[`button`](https://www.home-assistant.io/components/button) | 185
+[`button`](https://www.home-assistant.io/components/button) | 186
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 7
 [`climate`](https://www.home-assistant.io/components/climate) | 6
@@ -49,18 +49,18 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 3
 [`script`](https://www.home-assistant.io/components/script) | 13
 [`select`](https://www.home-assistant.io/components/select) | 66
-[`sensor`](https://www.home-assistant.io/components/sensor) | 686
+[`sensor`](https://www.home-assistant.io/components/sensor) | 693
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 71
-[`text`](https://www.home-assistant.io/components/text) | 32
+[`text`](https://www.home-assistant.io/components/text) | 33
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 118
+[`update`](https://www.home-assistant.io/components/update) | 119
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1880
+Total | 1890
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -115,6 +115,7 @@ Total | 1880
 - [Pyscript](https://github.com/custom-components/pyscript)
 - [Smartthinq Lge Sensors](https://github.com/ollo69/ha-smartthinq-sensors)
 - [SSH](https://github.com/zhbjsh/homeassistant-ssh)
+- [Valetudo](https://github.com/Hypfer/hass-valetudo)
 - [Watchman](https://github.com/dummylabs/thewatchman)
 
 ### Custom dashboard cards
