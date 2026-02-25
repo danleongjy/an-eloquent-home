@@ -144,3 +144,4 @@ class CameraSettings:
     should_poll: bool = False
     frame_interval: float = 6.0
     event_listener: Optional[Callable] = None
+    timeout_counter: int = 0

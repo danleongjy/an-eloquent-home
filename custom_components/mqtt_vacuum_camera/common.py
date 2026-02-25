@@ -7,13 +7,14 @@ from __future__ import annotations
 
 import functools
 import re
-from typing import Any
+from typing import Any, Optional
 
 from homeassistant.components.mqtt import DOMAIN as MQTT_DOMAIN
 from homeassistant.components.vacuum import DOMAIN as VACUUM_DOMAIN
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.device_registry import DeviceEntry
+from valetudo_map_parser import FloorData
 
 from .const import DEFAULT_VALUES, KEYS_TO_UPDATE, LOGGER
 from .hass_types import GET_MQTT_DATA
@@ -234,3 +235,28 @@ def redact_ip_filter(func):
         return result
 
     return wrapper
+
+
+def create_floor_data(
+    floor_name: str,
+    trim_up: int,
+    trim_down: int,
+    trim_left: int,
+    trim_right: int,
+    map_name: str = "",
+    rotation: Optional[int] = None,
+) -> FloorData:
+    """Create FloorData object from trim values."""
+    floor_dict = {
+        "trims": {
+            "floor": floor_name,
+            "trim_up": trim_up,
+            "trim_left": trim_left,
+            "trim_down": trim_down,
+            "trim_right": trim_right,
+        },
+        "map_name": map_name,
+    }
+    if rotation is not None:
+        floor_dict["rotation"] = rotation
+    return FloorData.from_dict(floor_dict)

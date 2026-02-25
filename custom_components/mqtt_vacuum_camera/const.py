@@ -40,6 +40,7 @@ CONF_VACUUM_ENTITY_ID = "vacuum_entity"
 CONF_VACUUM_CONFIG_ENTRY_ID = "vacuum_config_entry"
 CONF_VACUUM_IDENTIFIERS = "vacuum_identifiers"
 CONF_ROBOT_SIZE = "robot_size"
+CONF_MOP_PATH_WIDTH = "mop_path_width"
 CONF_AUTO_ZOOM = "auto_zoom"
 CONF_ZOOM_LOCK_RATIO = "zoom_lock_ratio"
 CONF_TRIMS_SAVE = "save_trims"
@@ -53,6 +54,11 @@ CONF_TRIM_DOWN = "trim_down"
 CONF_TRIM_LEFT = "trim_left"
 CONF_TRIM_RIGHT = "trim_right"
 CONF_TRIM_ACTION = "trim_action"
+
+# Obstacle image link configuration
+CONF_OBSTACLE_LINK_PROTOCOL = "obstacle_link_protocol"
+CONF_OBSTACLE_LINK_PORT = "obstacle_link_port"
+CONF_OBSTACLE_LINK_IP = "obstacle_link_ip"
 
 # Trim Actions
 TRIM_ACTION_SAVE = "save"
@@ -164,9 +170,12 @@ DEFAULT_VALUES = {
     "vac_status_position": True,
     "robot_size": 25,
     "save_trims": True,
-    "trims_data": {"trim_left": 0, "trim_up": 0, "trim_right": 0, "trim_down": 0},
+    "trims_data": {"trim_up": 0, "trim_left": 0, "trim_down": 0, "trim_right": 0},
     "floors_data": {},
     "current_floor": "floor_0",
+    "obstacle_link_protocol": "http",
+    "obstacle_link_port": 80,
+    "obstacle_link_ip": "",
     "disable_floor": False,
     "disable_wall": False,
     "disable_robot": False,
@@ -198,6 +207,7 @@ DEFAULT_VALUES = {
     "color_charger": [255, 128, 0],
     "color_carpet": [255, 192, 203],
     "color_move": [238, 247, 255],
+    "color_mop_move": [238, 247, 255],
     "color_wall": [255, 255, 0],
     "color_robot": [255, 255, 204],
     "color_go_to": [0, 255, 0],
@@ -210,6 +220,7 @@ DEFAULT_VALUES = {
     "alpha_charger": 255.0,
     "alpha_carpet": 255.0,
     "alpha_move": 255.0,
+    "alpha_mop_move": 100.0,
     "alpha_wall": 255.0,
     "alpha_robot": 255.0,
     "alpha_go_to": 255.0,
@@ -219,6 +230,7 @@ DEFAULT_VALUES = {
     "alpha_text": 255.0,
     "alpha_material_wood": 38.0,
     "alpha_material_tile": 45.0,
+    "mop_path_width": 10,
     "color_room_0": [135, 206, 250],
     "color_room_1": [176, 226, 255],
     "color_room_2": [165, 105, 18],
@@ -269,6 +281,9 @@ KEYS_TO_UPDATE = [
     "show_vac_status",
     "vac_status_size",
     "vac_status_position",
+    "obstacle_link_protocol",
+    "obstacle_link_port",
+    "obstacle_link_ip",
     "vac_status_font",
     "robot_size",
     "disable_floor",
@@ -302,6 +317,7 @@ KEYS_TO_UPDATE = [
     "color_charger",
     "color_carpet",
     "color_move",
+    "color_mop_move",
     "color_wall",
     "color_robot",
     "color_go_to",
@@ -314,6 +330,7 @@ KEYS_TO_UPDATE = [
     "alpha_charger",
     "alpha_carpet",
     "alpha_move",
+    "alpha_mop_move",
     "alpha_wall",
     "alpha_robot",
     "alpha_go_to",
@@ -323,6 +340,7 @@ KEYS_TO_UPDATE = [
     "alpha_text",
     "alpha_material_wood",
     "alpha_material_tile",
+    "mop_path_width",
     "color_room_0",
     "color_room_1",
     "color_room_2",
@@ -441,6 +459,11 @@ FONTS_AVAILABLE = [
     },
 ]
 
+PROTOCOL_VALUES = [
+    {"label": "HTTP", "value": "http"},
+    {"label": "HTTPS", "value": "https"},
+]
+
 NOT_STREAMING_STATES = {
     "idle",
     "paused",
@@ -489,6 +512,7 @@ IS_OFFSET = "add_offset"
 COLOR_CHARGER = "color_charger"
 COLOR_CARPET = "color_carpet"
 COLOR_MOVE = "color_move"
+COLOR_MOP_MOVE = "color_mop_move"
 COLOR_ROBOT = "color_robot"
 COLOR_NO_GO = "color_no_go"
 COLOR_GO_TO = "color_go_to"
@@ -523,6 +547,7 @@ COLOR_ROOM_15 = "color_room_15"
 ALPHA_CHARGER = "alpha_charger"
 ALPHA_CARPET = "alpha_carpet"
 ALPHA_MOVE = "alpha_move"
+ALPHA_MOP_MOVE = "alpha_mop_move"
 ALPHA_ROBOT = "alpha_robot"
 ALPHA_NO_GO = "alpha_no_go"
 ALPHA_GO_TO = "alpha_go_to"
@@ -572,6 +597,7 @@ DOWNLOAD_TIMEOUT = 6
 CAMERA_SCAN_INTERVAL_S = 3.0
 RENDER_TIMEOUT_S = 2.9
 FRAME_INTERVAL_S = 0.2
+MJPEG_INTERVAL_S = 1.0
 
 # Obstacle detection
 OBSTACLE_SEARCH_RADIUS_MULTIPLIER = (

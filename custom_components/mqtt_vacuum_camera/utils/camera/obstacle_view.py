@@ -71,7 +71,7 @@ class ObstacleView:
         self._latest_obstacle_event: Optional[Event] = None
 
         # Event listener handles
-        self._event_listener = None
+        self._event_listener: Optional[Callable[[], None]] = None
 
         # Initialize debouncer for obstacle view events
         self._debouncer = Debouncer(
@@ -157,8 +157,8 @@ class ObstacleView:
             return None
 
         nearest_obstacle = None
-        min_distance = max(
-            1, round(OBSTACLE_SEARCH_RADIUS_MULTIPLIER * (width / height))
+        min_distance: float = float(
+            max(1, round(OBSTACLE_SEARCH_RADIUS_MULTIPLIER * (width / height)))
         )
 
         LOGGER.debug(
@@ -231,9 +231,11 @@ class ObstacleView:
 
         if mode == CameraModes.OBSTACLE_VIEW:
             self._shared.image_grab = False
+            self._shared.set_content_type("png")
             self._processing = True
         elif mode == CameraModes.MAP_VIEW:
             self._obstacle_image = None
+            self._shared.set_content_type("jpeg")
             self._processing = False
             self._shared.image_grab = True
 

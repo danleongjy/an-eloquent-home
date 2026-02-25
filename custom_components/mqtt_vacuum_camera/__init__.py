@@ -4,9 +4,8 @@ Version: 2025.10.0
 """
 
 from functools import partial
-import os
 from pathlib import Path
-from typing import Optional
+from typing import Any
 import zipfile
 
 from homeassistant import config_entries, core
@@ -55,7 +54,7 @@ from .utils.vacuum.mqtt_vacuum_services import (
 )
 
 PLATFORMS = [Platform.CAMERA, Platform.SENSOR]
-CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)  # pylint: disable=invalid-name
 
 
 def init_shared_data(
@@ -74,7 +73,7 @@ def init_shared_data(
     shared_manager = CameraSharedManager(file_name, dict(device_info))
     shared = shared_manager.get_instance()
     shared.vacuum_status_font = f"{get_default_font_path()}/FiraSans.ttf"
-
+    shared.set_content_type("jpeg")
     return shared, file_name
 
 
@@ -119,9 +118,14 @@ async def async_setup_entry(hass: core.HomeAssistant, entry: ConfigEntry) -> boo
     hass.data.setdefault(DOMAIN, {})
     hass_data = dict(entry.data)
 
-    vacuum_entity_id, vacuum_device = get_vacuum_device_info(
-        hass_data[CONF_VACUUM_CONFIG_ENTRY_ID], hass
-    )
+    device_info = get_vacuum_device_info(hass_data[CONF_VACUUM_CONFIG_ENTRY_ID], hass)
+
+    if device_info is None:
+        raise ConfigEntryNotReady(
+            "Vacuum device not found. Please check your vacuum integration."
+        )
+
+    vacuum_entity_id, vacuum_device = device_info
 
     if not vacuum_entity_id:
         raise ConfigEntryNotReady(
@@ -145,6 +149,7 @@ async def async_setup_entry(hass: core.HomeAssistant, entry: ConfigEntry) -> boo
             CONF_UNIQUE_ID: entry.unique_id,
             "coordinator": data_coordinator,
             "is_rand256": is_rand256,
+            "file_name": data_coordinator.context.file_name,
         }
     )
     # Register Services
@@ -190,8 +195,22 @@ async def async_unload_entry(
         entry_data["unsub_options_update_listener"]()
 
         # Shutdown thread pool for this entry only
-        thread_pool = ThreadPoolManager.get_instance(entry.entry_id)
-        await thread_pool.shutdown_instance()  # Shutdown pools only for this vacuum
+        # Use file_name (from MQTT topic) instead of entry.entry_id to match pool creation
+        file_name = entry_data.get("file_name")
+        if file_name:
+            LOGGER.debug(
+                "Shutting down thread pools using file_name: %s (entry_id: %s)",
+                file_name,
+                entry.entry_id,
+            )
+            thread_pool = ThreadPoolManager.get_instance(file_name)
+            await thread_pool.shutdown_instance()
+        else:
+            # Backward compatibility: if file_name not in entry_data (old installations)
+            # Camera entity cleanup will handle thread pool shutdown
+            LOGGER.debug(
+                "file_name not found in entry_data, relying on camera entity cleanup"
+            )
 
         # Remove services
         if not hass.data[DOMAIN]:
@@ -226,6 +245,8 @@ async def async_setup(hass: core.HomeAssistant, _config: dict) -> bool:
 
 async def async_migrate_entry(hass, config_entry: config_entries.ConfigEntry):
     """Migrate old entry."""
+    # pylint: disable=too-many-return-statements,too-many-statements
+    # Migration functions are inherently complex due to multiple version checks
     # as it loads at every rebot, the logs stay in the migration steps
     if config_entry.version == 3.1:
         LOGGER.debug("Migrating config entry from version %s", config_entry.version)
@@ -234,7 +255,7 @@ async def async_migrate_entry(hass, config_entry: config_entries.ConfigEntry):
         LOGGER.debug(dict(new_data))
         old_options = {**config_entry.options}
         if len(old_options) != 0:
-            tmp_option = {
+            tmp_option: dict[str, Any] = {
                 "trims_data": {
                     "trim_left": 0,
                     "trim_up": 0,
@@ -243,6 +264,7 @@ async def async_migrate_entry(hass, config_entry: config_entries.ConfigEntry):
                 },
             }
             new_options = await update_options(old_options, tmp_option)
+            del tmp_option  # Clear for mypy
             LOGGER.debug("Migration data: %s", dict(new_options))
             hass.config_entries.async_update_entry(
                 config_entry, version=3.2, data=new_data, options=new_options
@@ -258,7 +280,7 @@ async def async_migrate_entry(hass, config_entry: config_entries.ConfigEntry):
         LOGGER.debug(dict(new_data))
         old_options = {**config_entry.options}
         if len(old_options) != 0:
-            tmp_option = {
+            tmp_option: dict[str, Any] = {  # type: ignore[no-redef]
                 "disable_floor": False,  # Show floor
                 "disable_wall": False,  # Show walls
                 "disable_robot": False,  # Show robot
@@ -287,6 +309,7 @@ async def async_migrate_entry(hass, config_entry: config_entries.ConfigEntry):
                 "disable_room_15": False,
             }
             new_options = await update_options(old_options, tmp_option)
+            del tmp_option  # Clear for mypy
             LOGGER.debug("Migration data: %s", dict(new_options))
             hass.config_entries.async_update_entry(
                 config_entry, version=3.3, data=new_data, options=new_options
@@ -363,11 +386,12 @@ async def async_migrate_entry(hass, config_entry: config_entries.ConfigEntry):
             old_options.pop("enable_www_snapshots", None)
             old_options.pop("get_svg_file", None)
             # Add new options with defaults
-            tmp_option = {
+            tmp_option: dict[str, Any] = {  # type: ignore[no-redef]
                 "robot_size": 25,
             }
             # Merge tmp_option into old_options
             old_options.update(tmp_option)
+            del tmp_option  # Clear for mypy
             # Now process with update_options
             new_options = await update_options(old_options, {})
             LOGGER.debug("Migration data: %s", dict(new_options))
@@ -392,7 +416,7 @@ async def async_migrate_entry(hass, config_entry: config_entries.ConfigEntry):
         old_options = {**config_entry.options}
         if len(old_options) != 0:
             # Add carpet mode and floor materials options
-            tmp_option = {
+            tmp_option: dict[str, Any] = {  # type: ignore[no-redef]
                 "disable_carpets": False,
                 "disable_material_overlay": False,
                 "color_carpet": [255, 192, 203],
@@ -403,9 +427,43 @@ async def async_migrate_entry(hass, config_entry: config_entries.ConfigEntry):
                 "alpha_material_tile": 45.0,
             }
             new_options = await update_options(old_options, tmp_option)
+            del tmp_option  # Clear for mypy
             LOGGER.debug("Migration data: %s", dict(new_options))
             hass.config_entries.async_update_entry(
                 config_entry, version=3.5, data=new_data, options=new_options
+            )
+            LOGGER.info(
+                "Migration to config entry version %s successful",
+                config_entry.version,
+            )
+            return True
+
+        LOGGER.error(
+            "Migration failed: No options found in config entry. Please reconfigure the camera."
+        )
+        return False
+    if config_entry.version == 3.5:
+        LOGGER.info("Migrating config entry from version %s", config_entry.version)
+        old_data = {**config_entry.data}
+        new_data = {"vacuum_config_entry": old_data["vacuum_config_entry"]}
+        old_options = {**config_entry.options}
+        if len(old_options) != 0:
+            # Add mop mode, obstacle link, and floor management options
+            tmp_option: dict[str, Any] = {  # type: ignore[no-redef]
+                "mop_path_width": 10,
+                "color_mop_move": [238, 247, 255],
+                "alpha_mop_move": 100.0,
+                "obstacle_link_protocol": "http",
+                "obstacle_link_port": 80,
+                "obstacle_link_ip": "",
+                "floors_data": {},
+                "current_floor": "floor_0",
+            }
+            new_options = await update_options(old_options, tmp_option)
+            del tmp_option  # Clear for mypy
+            LOGGER.debug("Migration data: %s", dict(new_options))
+            hass.config_entries.async_update_entry(
+                config_entry, version=3.6, data=new_data, options=new_options
             )
             LOGGER.info(
                 "Migration to config entry version %s successful",

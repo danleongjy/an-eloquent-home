@@ -14,7 +14,6 @@ from typing import Any
 
 from PIL import Image
 import aiohttp
-from aiohttp.abc import HTTPException
 from valetudo_map_parser.config.types import JsonType, PilPNG
 from valetudo_map_parser.hypfer_handler import HypferMapImageHandler
 from valetudo_map_parser.rand256_handler import ReImageHandler
@@ -137,19 +136,21 @@ class CameraProcessor:
                     if response.status == 200:
                         obstacle_image = await response.read()
                         return obstacle_image
-                    raise HTTPException(
-                        text="Failed to download the Obstacle image.",
-                        reason=response.reason,
+                    LOGGER.warning(
+                        "Failed to download obstacle image. Status: %s, Reason: %s",
+                        response.status,
+                        response.reason,
                     )
+                    return None
         except aiohttp.ClientError as e:
             LOGGER.warning(
-                "Timeout error occurred: %s",
+                "Client error occurred: %s",
                 e,
                 exc_info=True,
             )
             return None
         except asyncio.TimeoutError as e:
-            LOGGER.error("Error downloading image: %s", e, exc_info=True)
+            LOGGER.warning("Timeout downloading image: %s", e)
             return None
 
     async def async_open_image(self, obstacle_image: Any) -> Image.Image:

@@ -325,6 +325,18 @@ class ValetudoConnector:
     async def _hypfer_handle_dock_status(self, status) -> None:
         """Handle dock status."""
         self.mqtt_data.dock_status = str(status)
+        # Convert dock status to user-friendly text
+        match str(status):
+            case "emptying":
+                dock_text = "Dustbin Emptying"
+            case "cleaning":
+                dock_text = "Cleaning Mop Pads"
+            case "drying":
+                dock_text = "Drying Mop Pads"
+            case _:
+                # idle, error, pause, and unknown values pass through as-is
+                dock_text = str(status)
+        self.config.shared.dock_state = dock_text
 
     async def _hypfer_handle_valetudo_events(self, events) -> None:
         """Handle Valetudo events (errors, warnings, etc.)."""
