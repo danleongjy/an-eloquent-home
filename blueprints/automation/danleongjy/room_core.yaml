@@ -15,8 +15,6 @@ blueprint:
               value: elis_room
             - label: Elena's Room
               value: elenas_room
-            - label: Study Room
-              value: study_room
     sleep_hours_start:
       name: Sleep Hours Start
       description: Input datetime indicating when sleep hours start
@@ -76,6 +74,13 @@ action:
       core_display_backlight: "{{ 'light.' + room + '_core_display_backlight' }}"
       core_current_command: "{{ 'sensor.' + room + '_core_current_command' }}"
       room: !input core_room
+      lights_command:
+        lamp_on: lights_on
+        lamp_off: lights_off
+        lamp_brighten: lights_brighten
+        lamp_darken: lights_darken
+        lamp_auto_control: lights_auto_control
+        lamp_manual_control: lights_manual_control
       lights:
         parents_room:
           - light.parents_room_lights
@@ -83,8 +88,6 @@ action:
           - light.elis_room_lights
         elenas_room:
           - light.elenas_room_lights
-        study_room:
-          - light.study_room_lights
       lamp:
         parents_room:
           - light.parents_room_bedside_lamp
@@ -92,11 +95,8 @@ action:
           - light.elis_room_floor_lamp
         elenas_room:
           - light.elenas_room_bedside_lamp
-        study_room:
-          - light.study_room_floor_lamp
       doors:
         parents_room: binary_sensor.parents_room_doors
-        study_room: binary_sensor.parents_room_door
         elis_room: binary_sensor.elis_room_door
         elenas_room: binary_sensor.elenas_room_door
       fan: "{{ 'fan.' + room + '_fan' }}"
@@ -185,7 +185,7 @@ action:
               - action: script.lights_controller
                 data:
                   lights: "{{ lamp[room] }}"
-                  command: "{{ states(core_current_command) }}"
+                  command: "{{ lights_command[states(core_current_command)] }}"
           - conditions: "{{ states(core_current_command) in ['fan_on', 'fan_off', 'fan_speed_up', 'fan_slow_down', 'fan_reverse', 'fan_forward', 'fan_auto_control', 'fan_manual_control'] }}"
             sequence:
               - action: script.fan_controller

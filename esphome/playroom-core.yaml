@@ -1,0 +1,258 @@
+substitutions:
+  core_room: playroom
+  hostname_room: playroom
+  capitalised_room_name: Playroom
+  lamp_entity: light.yard_light_entity
+  lamp_auto_control: automation.yard_motion_light
+  lamp_type: light-recessed
+  display_rotation: 270°
+  rtttl_output_pin: GPIO25
+  volume: "0.003" # 0.005 generally loud enough
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+    
+esphome:
+  name: ${hostname_room}-core
+  friendly_name: ${capitalised_room_name} Core
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret playroom_core_api_key
+
+ota:
+  - platform: esphome
+    id: my_ota
+    password: !secret playroom_core_ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  manual_ip:
+    static_ip: 192.168.18.17
+    gateway: 192.168.18.1
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Playroom-Core Fallback Hotspot"
+    password: !secret ap_password
+
+captive_portal:
+
+packages:
+  core: !include packages/room_core.yaml
+  rtttl: !include packages/room_core_rtttl.yaml
+  
+script:
+  - id: !remove doorbell
+  - id: doorbell
+    then:
+      - select.set:
+          id: ringtone
+          option: Doorbell
+      - button.press: play_ringtone
+      - display.page.show: main_door
+      - delay: 10s
+      - display.page.show: current_time
+  - id: !remove draw_display_main_time
+  - id: draw_display_main_time
+    then:
+      - lambda: |
+          // display time
+          id(interface_display).strftime(id(width) * 0.25, id(height) * 0.35, id(main_time), TextAlign::CENTER, "%H", id(homeassistant_time).now());
+          id(interface_display).strftime(id(width) * 0.75, id(height) * 0.35, id(main_time), TextAlign::CENTER, "%M", id(homeassistant_time).now());
+          if (id(homeassistant_time).now().second % 2 == 0) {
+            id(interface_display).print(id(width) * 0.5, id(height) * 0.325, id(main_time), TextAlign::CENTER, ":");
+          }
+  - id: !remove draw_display_main_fan
+  - id: !remove draw_display_main_ac
+  - id: !remove draw_display_main_cover
+
+text_sensor:
+  - id: !remove fan_direction
+  - id: !remove ac_mode
+  - id: !remove next_alarm_timing
+
+i2c: !remove
+
+sensor:  
+  - platform: homeassistant
+    id: room_temp
+    entity_id: sensor.${core_room}_temperature
+  - platform: homeassistant
+    id: room_hum
+    entity_id: sensor.${core_room}_humidity
+  - id: !extend room_lux
+    entity_id: sensor.playroom_radar_lux
+  - id: !extend lamp_brightness
+    entity_id: ${lamp_entity}
+  - id: !remove fan_speed
+  - id: !remove ac_temp
+  - id: !remove ac_min_temp
+  - id: !remove ac_max_temp
+  - id: !remove cover_position
+
+binary_sensor:
+  - platform: homeassistant
+    id: playroom_presence
+    entity_id: binary_sensor.playroom_presence
+    on_state:
+      then:
+        if:
+          condition:
+            binary_sensor.is_on: playroom_presence
+          then:
+            - light.turn_on: backlight
+            - display.page.show: current_time
+          else:
+            light.turn_off: backlight
+  - id: !extend lamp_power
+    entity_id: ${lamp_entity}
+  - id: !extend lamp_auto_control
+    entity_id: ${lamp_auto_control}
+  - id: !remove fan_power
+  - id: !remove fan_auto_control
+  - id: !remove ac_auto_control
+  - id: !remove cover_auto_control
+  - id: !remove room_next_alarm_imminent
+  - id: !remove room_next_alarm_dismissable
+  - id: !remove room_next_alarm_armed
+  - id: !remove middle_button
+  - platform: gpio
+    pin: 38
+    name: 'Middle Button'
+    id: middle_button
+    filters:
+      - invert:
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                light.is_on: backlight
+              then:
+                - if:
+                    condition:
+                      display.is_displaying_page: current_time
+                    then:
+                      display.page.show: lights
+                    else:
+                      display.page.show_next: interface_display
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                light.is_on: backlight
+              then:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(lights_auto_control).state;'
+                          then:
+                            lambda: 'id(current_command).publish_state("lights_manual_control");'
+                          else:
+                            lambda: 'id(current_command).publish_state("lights_auto_control");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(lamp_auto_control).state;'
+                          then:
+                            lambda: 'id(current_command).publish_state("lamp_manual_control");'
+                          else:
+                            lambda: 'id(current_command).publish_state("lamp_auto_control");'
+
+image:
+  binary:
+    chroma_key:
+      - id: !remove main_cover
+      - id: !remove tab_cover
+
+light:
+  - id: !remove led_strips
+
+display:
+  - id: !remove interface_display
+  - platform: ili9xxx
+    id: interface_display
+    model: m5stack
+    dc_pin: 27
+    reset_pin: 33
+    cs_pin: 14
+    invert_colors: true
+    color_palette: 8BIT
+    rotation: ${display_rotation}
+    on_page_change:
+      - to: current_time
+        then:
+          lambda: 'id(current_view).publish_state("current_time");'
+      - to: main_door
+        then:
+          lambda: 'id(current_view).publish_state("main_door");'
+      - to: lights
+        then:
+          lambda: 'id(current_view).publish_state("lights");'
+      - to: lamp
+        then:
+          lambda: 'id(current_view).publish_state("lamp");'
+    pages:
+      - id: current_time
+        lambda: |-
+          // tabs
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
+
+          id(draw_display_bottom_status_bar).execute();
+          id(draw_display_main_time).execute();
+          id(draw_display_borders).execute();
+          
+          // display date
+          id(interface_display).strftime(id(width) * 0.5, id(height) * 0.6, id(small_time), TextAlign::CENTER, "%a %d %b %Y", id(homeassistant_time).now());
+      - id: main_door
+        lambda: |-
+          // tabs
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
+
+          id(draw_display_bottom_status_bar).execute();
+          id(draw_display_main_doorbell).execute();
+          id(draw_display_borders).execute();
+      - id: lights
+        lambda: |-
+          // tabs
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
+
+          id(draw_display_bottom_status_bar).execute();
+          id(draw_display_main_lights).execute();
+          id(draw_display_borders).execute();
+      - id: lamp
+        lambda: |-
+          // tabs
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
+
+          id(draw_display_bottom_status_bar).execute();
+          id(draw_display_main_lamp).execute();
+          id(draw_display_borders).execute();

@@ -4156,17 +4156,6 @@
             command: turn_on
         action: notify.mobile_app_aurora
   mode: single
-- id: '1712999157282'
-  alias: Study Room Core
-  description: Interface between Study Room devices and Home Assistant via ESPHome
-    and M5Stack Basic
-  use_blueprint:
-    path: danleongjy/room_core.yaml
-    input:
-      core_room: study_room
-      sleep_hours_start: input_datetime.sleep_hours_start
-      sleep_hours_end: input_datetime.sleep_hours_end
-      cover: cover.study_room_blinds
 - id: '1715733470037'
   alias: Windows Set AC
   description: Set AC state when windows are opened or closed
@@ -8531,3 +8520,44 @@
           url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
             CustomEvent("location-changed"));
   mode: restart
+- id: '1772340673509'
+  alias: Playroom Core
+  description: Interface between Playroom and Yard devices and Home Assistant via
+    ESPHome and M5Stack Core
+  triggers:
+  - entity_id:
+    - sensor.playroom_core_current_command
+    trigger: state
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ ''lights'' in states(''sensor.playroom_core_current_command'')
+          }}'
+      sequence:
+      - action: script.lights_controller
+        data:
+          lights:
+          - light.playroom_lights
+          command: '{{ states(''sensor.playroom_core_current_command'') }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ ''lamp'' in states(''sensor.playroom_core_current_command'')
+          }}'
+      sequence:
+      - variables:
+          lights_command:
+            lamp_on: lights_on
+            lamp_off: lights_off
+            lamp_brighten: lights_brighten
+            lamp_darken: lights_darken
+            lamp_auto_control: lights_auto_control
+            lamp_manual_control: lights_manual_control
+      - action: script.lights_controller
+        data:
+          lights:
+          - light.yard_light_entity
+          command: '{{ lights_command[states(''sensor.playroom_core_current_command'')]
+            }}'
+  mode: single

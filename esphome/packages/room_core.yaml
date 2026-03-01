@@ -453,6 +453,7 @@ binary_sensor:
   - platform: gpio
     pin: 38
     name: 'Middle Button'
+    id: middle_button
     filters:
       - invert:
     on_multi_click:
@@ -514,9 +515,9 @@ binary_sensor:
                           condition:
                             lambda: 'return id(lamp_auto_control).state;'
                           then:
-                            lambda: 'id(current_command).publish_state("lights_manual_control");'
+                            lambda: 'id(current_command).publish_state("lamp_manual_control");'
                           else:
-                            lambda: 'id(current_command).publish_state("lights_auto_control");'
+                            lambda: 'id(current_command).publish_state("lamp_auto_control");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "fan";'
