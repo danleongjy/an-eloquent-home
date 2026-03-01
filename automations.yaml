@@ -8358,3 +8358,176 @@
       windows: binary_sensor.parents_room_windows
       doors: binary_sensor.parents_room_doors
       motion: binary_sensor.parents_room_presence
+- id: '1772334104585'
+  alias: Study Table Display
+  description: Charge or turn on the Study Table Display
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.study_table_display_battery
+    below: 10
+    id: low
+  - trigger: numeric_state
+    entity_id:
+    - sensor.study_table_display_battery
+    below: 25
+    id: low
+  - trigger: numeric_state
+    entity_id:
+    - sensor.study_table_display_battery
+    above: 80
+    id: high
+  - trigger: numeric_state
+    entity_id:
+    - sensor.study_table_display_battery
+    above: 90
+    id: high
+  - trigger: state
+    entity_id:
+    - binary_sensor.study_room_radar_occupancy
+    from:
+    - 'off'
+    id: motion
+    to:
+    - 'on'
+  - alias: When the screen is on with no motion in the Study Room for 5min
+    trigger: template
+    value_template: '{{ is_state(''switch.study_table_display_screen'', ''on'') and
+      is_state(''binary_sensor.study_room_radar_occupancy'', ''off'') }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: no_motion
+  - trigger: state
+    entity_id:
+    - binary_sensor.doorbell_motion
+    from: 'off'
+    to: 'on'
+    id: visitor
+  - alias: When the view has been left not on the homepage for 5min
+    trigger: template
+    value_template: '{{ not ''/lovelace/0'' in states(''sensor.study_table_display_current_page'')
+      and now() - states.sensor.study_table_display_current_page.last_updated > timedelta(minutes
+      = 5) }}'
+    id: reset_view
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - low
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.study_table_display_charger
+    - conditions:
+      - condition: trigger
+        id:
+        - high
+      sequence:
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.study_table_display_charger
+    - conditions:
+      - condition: trigger
+        id:
+        - motion
+      sequence:
+      - condition: state
+        entity_id: input_select.home_mode
+        state:
+        - Party Mode
+        - Normal Mode
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          device_id: 91c3f2ae8457bca3fca5b6c2fa73a48e
+          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.study_table_display_screen
+      - if:
+        - condition: time
+          after: input_datetime.dim_hours_start
+          before: input_datetime.dim_hours_end
+        then:
+        - action: number.set_value
+          metadata: {}
+          data:
+            value: '60'
+          target:
+            entity_id: number.study_table_display_screen_brightness
+        else:
+        - action: number.set_value
+          metadata: {}
+          data:
+            value: '255'
+          target:
+            entity_id: number.study_table_display_screen_brightness
+    - conditions:
+      - condition: trigger
+        id:
+        - no_motion
+      sequence:
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.study_table_display_screen
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+          device_id: 91c3f2ae8457bca3fca5b6c2fa73a48e
+    - conditions:
+      - condition: trigger
+        id:
+        - visitor
+      sequence:
+      - condition: state
+        entity_id: binary_sensor.main_door
+        state: 'off'
+      - condition: state
+        state:
+        - Normal Mode
+        - Party Mode
+        entity_id: input_select.home_mode
+      - if:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: sensor.study_table_display_current_page
+            state:
+            - http://192.168.18.101:8123/lovelace/0
+        then:
+        - action: fully_kiosk.load_url
+          metadata: {}
+          data:
+            url: javascript:history.pushState(null,"","/lovelace/main-door");window.dispatchEvent(new
+              CustomEvent("location-changed"));
+            device_id: 91c3f2ae8457bca3fca5b6c2fa73a48e
+    - conditions:
+      - condition: trigger
+        id:
+        - reset_view
+      sequence:
+      - condition: template
+        value_template: '{{ ''music_assistant'' not in states(''sensor.study_table_display_current_page'')
+          }}'
+      - action: fully_kiosk.load_url
+        metadata: {}
+        data:
+          device_id: 91c3f2ae8457bca3fca5b6c2fa73a48e
+          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+            CustomEvent("location-changed"));
+  mode: restart
