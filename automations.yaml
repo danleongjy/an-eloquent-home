@@ -8400,6 +8400,14 @@
       and now() - states.sensor.study_table_display_current_page.last_updated > timedelta(minutes
       = 5) }}'
     id: reset_view
+  - alias: When screen is on the homepage and the floorplan panel view has not changed
+      for 1min
+    trigger: template
+    value_template: '{{ is_state(''switch.study_table_display_screen'', ''on'') and
+      is_state(''sensor.study_table_display_current_page'', ''http://192.168.18.101:8123/lovelace/study-table'')
+      and now() - states.input_select.study_table_display_panel_view.last_updated
+      > timedelta(minutes = 1) }}'
+    id: change_view
   conditions: []
   actions:
   - choose:
@@ -8437,7 +8445,7 @@
         metadata: {}
         data:
           device_id: 91c3f2ae8457bca3fca5b6c2fa73a48e
-          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+          url: javascript:history.pushState(null,"","/lovelace/study-table");window.dispatchEvent(new
             CustomEvent("location-changed"));
       - action: switch.turn_on
         metadata: {}
@@ -8497,14 +8505,20 @@
           - condition: state
             entity_id: sensor.study_table_display_current_page
             state:
-            - http://192.198.18.101:8123/lovelace/main-door
+            - http://192.168.18.101:8123/lovelace/study-table
         then:
         - action: fully_kiosk.load_url
           metadata: {}
           data:
-            url: javascript:history.pushState(null,"","/lovelace/main-door");window.dispatchEvent(new
+            url: javascript:history.pushState(null,"","/lovelace/study-table");window.dispatchEvent(new
               CustomEvent("location-changed"));
             device_id: 91c3f2ae8457bca3fca5b6c2fa73a48e
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          entity_id: input_select.study_table_display_panel_view
+        data:
+          option: main-door
     - conditions:
       - condition: trigger
         id:
@@ -8517,8 +8531,32 @@
         metadata: {}
         data:
           device_id: 91c3f2ae8457bca3fca5b6c2fa73a48e
-          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
+          url: javascript:history.pushState(null,"","/lovelace/study-table");window.dispatchEvent(new
             CustomEvent("location-changed"));
+    - conditions:
+      - condition: trigger
+        id:
+        - change_view
+      sequence:
+      - if:
+        - condition: state
+          entity_id: input_select.study_table_display_panel_view
+          state:
+          - transit
+        then:
+        - action: input_select.select_option
+          metadata: {}
+          data:
+            option: weather
+          target:
+            entity_id: input_select.study_table_display_panel_view
+        else:
+        - action: input_select.select_next
+          metadata: {}
+          data:
+            cycle: true
+          target:
+            entity_id: input_select.study_table_display_panel_view
   mode: restart
 - id: '1772340673509'
   alias: Playroom Core

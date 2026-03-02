@@ -1992,6 +1992,9 @@
             },
             {
               "user": "361884c4dcb94d5f9d7e583d64844264"
+            },
+            {
+              "user": "40adad28a2844903ae8cea12f3857d46"
             }
           ],
           "type": "panel",
@@ -5014,6 +5017,653 @@
           ]
         },
         {
+          "type": "sections",
+          "max_columns": 1,
+          "title": "Study Table",
+          "path": "study-table",
+          "icon": "mdi:bookshelf",
+          "theme": "no_border",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.local_two_hour_forecast",
+                      "template": "top_row",
+                      "icon": "[[[\n  if (entity.state.includes('Fair'))\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-sunny\";\n    else\n      return \"mdi:weather-night\";\n  else if (entity.state == 'Partly Cloudy')\n    if (states['sun.sun'].state == 'above_horizon')\n      return \"mdi:weather-partly-cloudy\";\n    else\n      return \"mdi:weather-night-partly-cloudy\";\n  else if (entity.state == 'Cloudy')\n    return \"mdi:weather-cloudy\";\n  else if (entity.state.includes('Thunder'))\n    return \"mdi:weather-lightning-rainy\";\n  else if (entity.state.includes('Shower'))\n    return \"mdi:weather-pouring\";\n  else if (entity.state.includes('Rain'))\n    return \"mdi:weather-rainy\";\n  else if (entity.state.includes('Wind'))\n    return \"mdi:weather-windy\";\n  else\n    return \"mdi:weather-cloudy-alert\"\n]]]\n",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "[[[\n  if (states['sensor.raining_with_windows_open'].state == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_windows_open'].state == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                          }
+                        ]
+                      },
+                      "tap_action": {
+                        "action": "navigate",
+                        "navigation_path": "/lovelace/weather"
+                      },
+                      "hold_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    {
+                      "type": "grid",
+                      "columns": 2,
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "template": "top_row",
+                          "icon": "mdi:magic-staff",
+                          "tap_action": {
+                            "action": "perform-action",
+                            "perform_action": "script.set_recommended_scene",
+                            "data": {
+                              "room": [
+                                "study_room"
+                              ]
+                            }
+                          },
+                          "hold_action": {
+                            "action": "perform-action",
+                            "perform_action": "automation.trigger",
+                            "data": {
+                              "entity_id": "automation.study_room_motion_timeout"
+                            }
+                          },
+                          "double_tap_action": {
+                            "action": "perform-action",
+                            "perform_action": "script.turn_on",
+                            "data": {
+                              "entity_id": "script.turn_off_all"
+                            }
+                          }
+                        },
+                        {
+                          "type": "custom:state-switch",
+                          "entity": "binary_sensor.all_players",
+                          "default": "in_use",
+                          "states": {
+                            "unavailable": {
+                              "type": "custom:button-card",
+                              "entity": "binary_sensor.all_players",
+                              "template": "error",
+                              "tap_action": {
+                                "action": "navigate",
+                                "navigation_path": "/d5369777_music_assistant/ingress"
+                              },
+                              "custom_fields": {
+                                "indicator_manual_control": {
+                                  "card": {
+                                    "tap_action": {
+                                      "action": "navigate",
+                                      "navigation_path": "/d5369777_music_assistant/ingress"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "unknown": {
+                              "type": "custom:button-card",
+                              "entity": "binary_sensor.all_players",
+                              "template": "error",
+                              "tap_action": {
+                                "action": "navigate",
+                                "navigation_path": "/d5369777_music_assistant/ingress"
+                              },
+                              "custom_fields": {
+                                "indicator_manual_control": {
+                                  "card": {
+                                    "tap_action": {
+                                      "action": "navigate",
+                                      "navigation_path": "/d5369777_music_assistant/ingress"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "off": {
+                              "type": "custom:button-card",
+                              "entity": "binary_sensor.all_players",
+                              "template": [
+                                "manual_control_indicator",
+                                "top_row"
+                              ],
+                              "variables": {
+                                "auto_control_automation": "automation.media_player_occupancy_following"
+                              },
+                              "tap_action": {
+                                "action": "navigate",
+                                "navigation_path": "/d5369777_music_assistant/ingress"
+                              },
+                              "custom_fields": {
+                                "indicator_manual_control": {
+                                  "card": {
+                                    "tap_action": {
+                                      "action": "navigate",
+                                      "navigation_path": "/d5369777_music_assistant/ingress"
+                                    }
+                                  }
+                                }
+                              },
+                              "double_tap_action": {
+                                "action": "assist",
+                                "start_listening": true
+                              }
+                            },
+                            "in_use": {
+                              "type": "custom:state-switch",
+                              "entity": "{% set players = [states('media_player.kitchen_speaker'),states('media_player.study_room_speaker'),states('media_player.dining_room_speaker')] %} {% if players[0] not in ['idle','off'] and players[1] in ['idle','off'] and players[2] in ['idle','off'] %}\n  kitchen_speaker\n{% elif players[0] in ['idle','off'] and players[1] not in ['idle','off'] and players[2] in ['idle','off'] %}\n  study_room_speaker\n{% elif players[0] in ['idle','off'] and players[1] in ['idle','off'] and players[2] not in ['idle','off'] %}\n  dining_room_speaker\n{% elif players[0] not in ['idle','off'] and players[1] in ['idle','off'] and players[2] not in ['idle','off'] %}\n  multiple\n{% endif %}",
+                              "default": "multiple",
+                              "states": {
+                                "study_room_speaker": {
+                                  "type": "custom:button-card",
+                                  "template": [
+                                    "media_player_slider",
+                                    "top_row"
+                                  ],
+                                  "entity": "media_player.study_room_speaker",
+                                  "variables": {
+                                    "auto_control_automation": "automation.media_player_occupancy_following"
+                                  }
+                                },
+                                "kitchen_speaker": {
+                                  "type": "custom:button-card",
+                                  "template": [
+                                    "media_player_slider",
+                                    "top_row"
+                                  ],
+                                  "entity": "media_player.kitchen_speaker",
+                                  "variables": {
+                                    "auto_control_automation": "automation.media_player_occupancy_following"
+                                  }
+                                },
+                                "dining_room_speaker": {
+                                  "type": "custom:button-card",
+                                  "template": [
+                                    "media_player_slider",
+                                    "top_row"
+                                  ],
+                                  "entity": "media_player.dining_room_speaker",
+                                  "variables": {
+                                    "auto_control_automation": "automation.media_player_occupancy_following"
+                                  }
+                                },
+                                "multiple": {
+                                  "type": "custom:button-card",
+                                  "template": [
+                                    "media_player_slider",
+                                    "top_row"
+                                  ],
+                                  "entity": "media_player.google_speakers",
+                                  "variables": {
+                                    "auto_control_automation": "automation.media_player_occupancy_following"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.bus_stop_sims_drive_market",
+                          "template": "top_row",
+                          "label": "[[[ if (entity.state != 'unavailable' && entity.state != 'unknown') { return entity.state.split(',')[0].split('/')[0] } else { return '' } ]]]",
+                          "show_label": true,
+                          "styles": {
+                            "icon": [
+                              {
+                                "color": "[[[\n  if (entity.state == 'unavailable' || entity.state == 'unknown') {\n    return 'var(--disabled-color)'\n  } else if (entity.state.split(',')[0].split('/')[1] <= 5) {\n    return 'var(--state-binary-sensor-color)'\n  } else {\n     return 'var(--state-inactive-color)'\n  }\n]]]\n"
+                              }
+                            ],
+                            "label": [
+                              {
+                                "color": "[[[\n  if (entity.state != 'unavailable' && entity.state != 'unknown') {\n    if (entity.state.split(',')[0].split('/')[1] <= 5) {\n      return 'var(--state-binary-sensor-color)'\n    } else {\n      return 'var(--state-inactive-color)'\n    }\n  }\n]]]\n"
+                              },
+                              {
+                                "animation": "[[[\n  if (entity.state != 'unavailable' && entity.state != 'unknown') {\n    if (entity.state.split(',')[0].split('/')[1] <= 3)  {\n      return 'blink 2s ease infinite'\n    }\n  }\n]]]\n"
+                              }
+                            ]
+                          },
+                          "tap_action": {
+                            "action": "navigate",
+                            "navigation_path": "/lovelace/transit"
+                          }
+                        },
+                        {
+                          "type": "custom:decluttering-card",
+                          "template": "main_door"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": [
+                        "alarms_imminent",
+                        "top_row"
+                      ],
+                      "show_icon": false,
+                      "custom_fields": {
+                        "clockface": {
+                          "card": {
+                            "type": "clock",
+                            "clock_style": "analog",
+                            "clock_size": "small",
+                            "show_seconds": true,
+                            "no_background": true,
+                            "border": false,
+                            "ticks": "minute",
+                            "face_style": "markers",
+                            "seconds_motion": "continuous"
+                          }
+                        }
+                      },
+                      "styles": {
+                        "card": [
+                          {
+                            "padding": "0px"
+                          }
+                        ],
+                        "custom_fields": {
+                          "clockface": [
+                            {
+                              "position": "absolute"
+                            },
+                            {
+                              "align-self": "center"
+                            },
+                            {
+                              "justify-self": "center"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "picture",
+                  "image": {
+                    "media_content_id": "https://demo.home-assistant.io/stub_config/t-shirt-promo.png"
+                  },
+                  "image_entity": "image.rain_radar_animation",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/weather"
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "input_select.study_table_display_panel_view",
+                  "state": "weather"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "show_state": true,
+                  "show_name": true,
+                  "camera_view": "auto",
+                  "fit_mode": "cover",
+                  "type": "picture-entity",
+                  "entity": "binary_sensor.doorbell_motion",
+                  "image": {
+                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
+                  },
+                  "camera_image": "camera.main_door_camera",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/main-door"
+                  }
+                },
+                {
+                  "show_state": false,
+                  "show_name": false,
+                  "camera_view": "auto",
+                  "fit_mode": "cover",
+                  "type": "picture-entity",
+                  "entity": "camera.recent_main_door_snapshot_1",
+                  "image": {
+                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
+                  },
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "show_state": false,
+                  "show_name": false,
+                  "camera_view": "auto",
+                  "fit_mode": "cover",
+                  "type": "picture-entity",
+                  "entity": "camera.recent_main_door_snapshot_2",
+                  "image": {
+                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
+                  },
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "show_state": false,
+                  "show_name": false,
+                  "camera_view": "auto",
+                  "fit_mode": "cover",
+                  "type": "picture-entity",
+                  "entity": "camera.recent_main_door_snapshot_3",
+                  "image": {
+                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
+                  },
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": "auto"
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "input_select.study_table_display_panel_view",
+                  "state": "main-door"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "picture-elements",
+                  "elements": [
+                    {
+                      "type": "custom:button-card",
+                      "style": {
+                        "top": "12%",
+                        "left": "15%",
+                        "height": "20%",
+                        "width": "25%"
+                      },
+                      "template": "floorplan_nextbus",
+                      "entity": "sensor.bus_stop_sims_drive_market"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "style": {
+                        "top": "12%",
+                        "left": "50%",
+                        "height": "20%",
+                        "width": "25%"
+                      },
+                      "template": "floorplan_nextbus",
+                      "entity": "sensor.bus_stop_opposite_aljunied_station",
+                      "variables": {
+                        "stop_no": 2
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "style": {
+                        "top": "12%",
+                        "left": "85%",
+                        "height": "20%",
+                        "width": "25%"
+                      },
+                      "template": "floorplan_nextbus",
+                      "entity": "sensor.bus_stop_aljunied_station",
+                      "variables": {
+                        "stop_no": 3
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "style": {
+                        "top": "88%",
+                        "left": "85%",
+                        "height": "20%",
+                        "width": "25%"
+                      },
+                      "template": "floorplan_nextbus",
+                      "entity": "sensor.bus_stop_before_lorong_23_geylang",
+                      "variables": {
+                        "stop_no": 4
+                      }
+                    }
+                  ],
+                  "image": {
+                    "media_content_id": "/local/floorplan/transit_basemap_numbered.png",
+                    "media_content_type": "",
+                    "metadata": {
+                      "navigateIds": [
+                        {},
+                        {
+                          "media_content_type": "",
+                          "media_content_id": "__MANUAL_ENTRY__"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "input_select.study_table_display_panel_view",
+                  "state": "transit"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "light.study_room_lights",
+                      "template": "light_slider",
+                      "variables": {
+                        "auto_control_automation": "automation.study_room_motion_lights"
+                      },
+                      "styles": {
+                        "card": [
+                          {
+                            "height": "180px"
+                          }
+                        ],
+                        "icon": [
+                          {
+                            "position": "absolute"
+                          },
+                          {
+                            "top": "60%"
+                          }
+                        ],
+                        "custom_fields": {
+                          "indicator_manual_control": [
+                            {
+                              "top": "70%"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "light.study_room_floor_lamp",
+                      "template": "light_slider",
+                      "variables": {
+                        "auto_control_automation": "automation.study_room_motion_floor_lamp"
+                      },
+                      "styles": {
+                        "card": [
+                          {
+                            "height": "180px"
+                          }
+                        ],
+                        "icon": [
+                          {
+                            "position": "absolute"
+                          },
+                          {
+                            "top": "60%"
+                          }
+                        ],
+                        "custom_fields": {
+                          "indicator_manual_control": [
+                            {
+                              "top": "70%"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "fan.study_room_fan",
+                      "template": "fan_slider",
+                      "variables": {
+                        "auto_control_automation": "automation.study_room_motion_fan"
+                      },
+                      "styles": {
+                        "card": [
+                          {
+                            "height": "180px"
+                          }
+                        ],
+                        "icon": [
+                          {
+                            "position": "absolute"
+                          },
+                          {
+                            "top": "60%"
+                          }
+                        ],
+                        "custom_fields": {
+                          "indicator_manual_control": [
+                            {
+                              "top": "70%"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "climate.study_room_ac",
+                      "template": "device_slider",
+                      "variables": {
+                        "auto_control_automation": "automation.study_room_motion_ac"
+                      },
+                      "styles": {
+                        "card": [
+                          {
+                            "height": "180px"
+                          }
+                        ],
+                        "icon": [
+                          {
+                            "position": "absolute"
+                          },
+                          {
+                            "top": "60%"
+                          }
+                        ],
+                        "custom_fields": {
+                          "indicator_manual_control": [
+                            {
+                              "top": "70%"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "cover.study_room_blinds",
+                      "template": "device_slider",
+                      "variables": {
+                        "auto_control_automation": "automation.south_facing_blinds_auto_control"
+                      },
+                      "styles": {
+                        "card": [
+                          {
+                            "height": "180px"
+                          }
+                        ],
+                        "icon": [
+                          {
+                            "position": "absolute"
+                          },
+                          {
+                            "top": "60%"
+                          }
+                        ],
+                        "custom_fields": {
+                          "indicator_manual_control": [
+                            {
+                              "top": "70%"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "media_player.study_room_speaker",
+                      "template": "media_player_slider",
+                      "variables": {
+                        "auto_control_automation": "automation.media_player_occupancy_following"
+                      },
+                      "styles": {
+                        "card": [
+                          {
+                            "height": "180px"
+                          }
+                        ],
+                        "icon": [
+                          {
+                            "position": "absolute"
+                          },
+                          {
+                            "top": "60%"
+                          }
+                        ],
+                        "custom_fields": {
+                          "indicator_manual_control": [
+                            {
+                              "top": "70%"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "visible": [
+            {
+              "user": "40adad28a2844903ae8cea12f3857d46"
+            }
+          ],
+          "cards": []
+        },
+        {
           "theme": "no_border",
           "title": "Sensors",
           "path": "sensors",
@@ -6393,7 +7043,24 @@
             }
           ],
           "max_columns": 2,
-          "path": "settings"
+          "path": "settings",
+          "visible": [
+            {
+              "user": "ad2bcce775894550affb6dfef93a2a36"
+            },
+            {
+              "user": "2651cb9042dd41acb0b54327457a9a14"
+            },
+            {
+              "user": "991e26502d6844dea64362276571d6c1"
+            },
+            {
+              "user": "361884c4dcb94d5f9d7e583d64844264"
+            },
+            {
+              "user": "40adad28a2844903ae8cea12f3857d46"
+            }
+          ]
         },
         {
           "theme": "no_border",
