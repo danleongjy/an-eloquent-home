@@ -8,23 +8,6 @@ turn_off_all:
       - automation.yard_motion_timeout
       - automation.kitchen_motion_timeout
     action: automation.trigger
-  - if:
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: media_player.kitchen_speaker
-        state: 'off'
-    then:
-    - data: {}
-      target:
-        entity_id: media_player.kitchen_speaker
-      action: media_player.media_stop
-      continue_on_error: true
-    - action: media_player.turn_off
-      metadata: {}
-      target:
-        entity_id: media_player.kitchen_speaker
-      data: {}
   - delay:
       hours: 0
       minutes: 0
@@ -164,6 +147,39 @@ turn_off_all:
       entity_id:
       - automation.powder_room_motion_timeout
     action: automation.trigger
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 0
+      milliseconds: 300
+  - data:
+      skip_condition: true
+    target:
+      entity_id:
+      - automation.dining_room_motion_timeout
+      - automation.living_room_motion_timeout
+    action: automation.trigger
+  - data: {}
+    target:
+      entity_id: switch.water_heater
+    action: switch.turn_off
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: media_player.kitchen_speaker
+        state: 'off'
+    then:
+    - data: {}
+      target:
+        entity_id: media_player.kitchen_speaker
+      action: media_player.media_stop
+      continue_on_error: true
+    - action: media_player.turn_off
+      metadata: {}
+      target:
+        entity_id: media_player.kitchen_speaker
+      data: {}
   - if:
     - condition: not
       conditions:
@@ -181,22 +197,6 @@ turn_off_all:
       target:
         entity_id: media_player.study_room_speaker
       data: {}
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 0
-      milliseconds: 300
-  - data:
-      skip_condition: true
-    target:
-      entity_id:
-      - automation.dining_room_motion_timeout
-      - automation.living_room_motion_timeout
-    action: automation.trigger
-  - data: {}
-    target:
-      entity_id: switch.water_heater
-    action: switch.turn_off
   - if:
     - condition: not
       conditions:

@@ -96,15 +96,19 @@ class CameraDeviceInfo:
     brand: str = "MQTT Vacuum Camera"
     name: str = "Camera"
     unique_id: Optional[str] = None
-    identifiers: Optional[tuple] = None
+    identifiers: Optional[tuple] = ()
 
 
 @dataclass
 class CameraMQTTConfig:
-    """MQTT connection configuration for camera."""
+    """Config of Camera.py"""
 
     topic: str
     connector: Any  # ValetudoConnector
+
+    def __post_init__(self):
+        if self.connector is None:
+            raise ValueError("Connector cannot be None")
 
 
 @dataclass
@@ -120,8 +124,8 @@ class CameraImageState:
     """Current image state and dimensions."""
 
     main_image: Optional[bytes] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
+    width: int = 0
+    height: int = 0
     json_data: Optional[dict] = None
 
 
@@ -132,7 +136,7 @@ class CameraProcessors:
     processor: Any  # CameraProcessor
     decompression: Any  # DecompressionManager
     thread_pool: Any  # ThreadPoolManager
-    colours: Any  # ColorsManagement
+    colors: Any  # ColorsManagement
     obstacle_view: Any  # ObstacleView
 
 

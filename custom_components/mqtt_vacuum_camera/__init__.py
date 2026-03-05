@@ -229,7 +229,6 @@ async def async_setup(hass: core.HomeAssistant, _config: dict) -> bool:
         """Handle Home Assistant stop event."""
         LOGGER.info("Home Assistant is stopping. Writing down the rooms data.")
         await ThreadPoolManager.shutdown_all()
-        await hass.async_block_till_done()
         LOGGER.info("Home Assistant stopped. Mqtt Vacuum Camera exit complete.")
         return True
 

@@ -158,7 +158,8 @@ class MQTTCameraOptionsFlowHandler(OptionsFlow):
         return floor_options
 
     async def async_step_init(
-        self, user_input=None  # pylint: disable=unused-argument
+        self,
+        user_input=None,  # pylint: disable=unused-argument
     ) -> ConfigFlowResult:
         """Start the options menu configuration."""
         rooms_data = RoomStore(self.file_name)
@@ -179,13 +180,15 @@ class MQTTCameraOptionsFlowHandler(OptionsFlow):
         )
 
     async def async_step_main_menu(
-        self, user_input=None  # pylint: disable=unused-argument
+        self,
+        user_input=None,  # pylint: disable=unused-argument
     ) -> ConfigFlowResult:
         """Return to main menu."""
         return await self.async_step_init()
 
     async def async_step_image_opt(
-        self, user_input=None  # pylint: disable=unused-argument
+        self,
+        user_input=None,  # pylint: disable=unused-argument
     ) -> ConfigFlowResult:
         """Handle image options menu."""
         return self.async_show_menu(
@@ -201,7 +204,8 @@ class MQTTCameraOptionsFlowHandler(OptionsFlow):
         )
 
     async def async_step_draw_elements(
-        self, user_input=None  # pylint: disable=unused-argument
+        self,
+        user_input=None,  # pylint: disable=unused-argument
     ) -> ConfigFlowResult:
         """Handle draw elements menu."""
         return self.async_show_menu(
@@ -214,7 +218,8 @@ class MQTTCameraOptionsFlowHandler(OptionsFlow):
         )
 
     async def async_step_colours(
-        self, user_input=None  # pylint: disable=unused-argument
+        self,
+        user_input=None,  # pylint: disable=unused-argument
     ) -> ConfigFlowResult:
         """Handle colours menu."""
         menu_options = ["base_colours"]
@@ -238,7 +243,8 @@ class MQTTCameraOptionsFlowHandler(OptionsFlow):
         )
 
     async def async_step_transparency(
-        self, user_input=None  # pylint: disable=unused-argument
+        self,
+        user_input=None,  # pylint: disable=unused-argument
     ) -> ConfigFlowResult:
         """Handle transparency menu"""
 
@@ -309,7 +315,8 @@ class MQTTCameraOptionsFlowHandler(OptionsFlow):
         )
 
     async def async_step_floor_management(
-        self, user_input=None  # pylint: disable=unused-argument
+        self,
+        user_input=None,  # pylint: disable=unused-argument
     ) -> ConfigFlowResult:
         """Handle floor management menu."""
         return self.async_show_menu(
@@ -602,7 +609,8 @@ class MQTTCameraOptionsFlowHandler(OptionsFlow):
     # Floor Management Steps
 
     async def async_step_update_floor_data(
-        self, user_input=None  # pylint: disable=unused-argument
+        self,
+        user_input=None,  # pylint: disable=unused-argument
     ):
         """Update floor data with current trims."""
         entry = self.camera_config.entry_id
@@ -626,8 +634,7 @@ class MQTTCameraOptionsFlowHandler(OptionsFlow):
             # Get current rotation from camera options or config
             current_rotation = int(
                 self.camera_options.get(
-                    "rotate_image",
-                    self.camera_config.options.get("rotate_image", "0")
+                    "rotate_image", self.camera_config.options.get("rotate_image", "0")
                 )
             )
 
@@ -741,9 +748,7 @@ class MQTTCameraOptionsFlowHandler(OptionsFlow):
 
         description = "Add a new floor. "
         if not self.floors_data:
-            description += (
-                "Existing auto-calculated trim values will be used for this first floor."
-            )
+            description += "Existing auto-calculated trim values will be used for this first floor."
         else:
             description += (
                 "Enter trim values or leave at 0 to auto-calculate "
@@ -892,7 +897,8 @@ class MQTTCameraOptionsFlowHandler(OptionsFlow):
         )
 
     async def async_step_save_options(
-        self, user_input=None  # pylint: disable=unused-argument
+        self,
+        user_input=None,  # pylint: disable=unused-argument
     ):
         """Save the options in a sorted way. It stores all the options."""
         try:

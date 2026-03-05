@@ -165,9 +165,9 @@ class MQTTCamera(CoordinatorEntity, Camera):  # pylint: disable=too-many-instanc
 
     def _init_processors(self, device_info) -> CameraProcessors:
         """Initialize all processing components."""
-        # Get the colours used in the maps
-        colours = ColorsManagement(self.context.shared)
-        colours.set_initial_colours(device_info)
+        # Get the colors used in the maps
+        colors = ColorsManagement(self.context.shared)
+        colors.set_initial_colours(device_info)
 
         # Get thread pool and decompression manager
         thread_pool = ThreadPoolManager.get_instance(self.context.file_name)
@@ -191,7 +191,7 @@ class MQTTCamera(CoordinatorEntity, Camera):  # pylint: disable=too-many-instanc
             processor=processor,
             decompression=decompression,
             thread_pool=thread_pool,
-            colours=colours,
+            colors=colors,
             obstacle_view=obstacle_view,
         )
 

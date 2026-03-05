@@ -12,7 +12,6 @@ from __future__ import annotations
 import asyncio
 import glob
 import json
-import os
 from pathlib import Path
 import re
 from typing import Any, List, Optional
@@ -156,7 +155,7 @@ async def async_write_file_to_disk(
             with open(file_path, "wb") as datafile:
                 datafile.write(data_to_write)
         else:
-            with open(file_path, "w") as datafile:
+            with open(file_path, "w", encoding="utf-8") as datafile:
                 datafile.write(data_to_write)
 
     try:
@@ -172,7 +171,7 @@ async def async_write_json_to_disk(file_to_write: str, json_data) -> None:
 
     def _write_to_file(file_path, data):
         """Helper function to write data to a file."""
-        with open(file_path, "w") as datafile:
+        with open(file_path, "w", encoding="utf-8") as datafile:
             json.dump(data, datafile, indent=2)
 
     try:
@@ -190,10 +189,10 @@ async def async_load_file(file_to_load: str, is_json: bool = False) -> Any:
         """Helper function to read data from a file."""
         try:
             if read_json:
-                with open(my_file) as file:
+                with open(my_file, encoding="utf-8") as file:
                     return json.load(file)
             else:
-                with open(my_file) as file:
+                with open(my_file, encoding="utf-8") as file:
                     return file.read()
         except (FileNotFoundError, json.JSONDecodeError):
             LOGGER.warning("%s does not exist.", my_file, exc_info=True)
@@ -249,7 +248,7 @@ async def async_clean_up_all_auto_crop_files(hass: HomeAssistant) -> None:
         try:
             Path(file_path).unlink()
             LOGGER.debug("Deleted: %s", file_path)
-        except Exception as e:
+        except OSError as e:
             LOGGER.error("Error deleting %s: %s", file_path, e)
 
 
