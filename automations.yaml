@@ -8599,3 +8599,25 @@
           command: '{{ lights_command[states(''sensor.playroom_core_current_command'')]
             }}'
   mode: single
+- id: '1772756162121'
+  alias: Auto Away Mode
+  description: Set Away Mode when no motion is detected and devices are off for 30min
+  triggers:
+  - trigger: template
+    value_template: '{{ states.sensor | selectattr(''entity_id'', ''contains'', ''_status'')
+      | selectattr(''entity_id'', ''contains'', ''floorplan_'') | map(attribute =
+      ''state'') | unique | list == [''A''] }}'
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+    alias: When no motion is detected and devices are off for 30min
+  conditions: []
+  actions:
+  - action: input_select.select_option
+    metadata: {}
+    target:
+      entity_id: input_select.home_mode
+    data:
+      option: Away Mode
+  mode: single
