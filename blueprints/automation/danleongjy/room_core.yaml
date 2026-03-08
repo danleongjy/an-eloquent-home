@@ -143,19 +143,19 @@ action:
               - button_pressed
         sequence:
           - if:
-              - condition: time
-                after: !input sleep_hours_end
-                before: !input sleep_hours_start
+              - "{{ states('sensor.' + room + '_lux') | int(0) < states('input_number.minimum_lux') | int }}"
+              - "{{ is_state(lights[room], 'off') }}"
+              - "{{ is_state(lamp[room], 'off') }}"
             then:
               - action: light.turn_on
                 data:
-                  brightness_pct: 100
+                  brightness_pct: 30
                 target:
                   entity_id: "{{ core_display_backlight }}"
             else:
               - action: light.turn_on
                 data:
-                  brightness_pct: 30
+                  brightness_pct: 100
                 target:
                   entity_id: "{{ core_display_backlight }}"
       - conditions:
