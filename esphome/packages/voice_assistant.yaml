@@ -12,6 +12,43 @@ script:
                 effect: none
           else:
             - light.turn_off: led
+  - id: start_wake_word
+    then:
+      - if:
+          condition:
+            and:
+              - not:
+                  - voice_assistant.is_running:
+              - lambda: |-
+                  return id(wake_word_engine_location).current_option() == "On device";
+          then:
+            - lambda: id(va).set_use_wake_word(false);
+            - micro_wake_word.start:
+      - if:
+          condition:
+            and:
+              - not:
+                  - voice_assistant.is_running:
+              - lambda: |-
+                  return id(wake_word_engine_location).current_option() == "In Home Assistant";
+          then:
+            - lambda: id(va).set_use_wake_word(true);
+            - voice_assistant.start_continuous:
+  - id: stop_wake_word
+    then:
+      - if:
+          condition:
+            lambda: |-
+                  return id(wake_word_engine_location).current_option() == "In Home Assistant";
+          then:
+            - lambda: id(va).set_use_wake_word(false);
+            - voice_assistant.stop:
+      - if:
+          condition:
+            lambda: |-
+              return id(wake_word_engine_location).current_option() == "On device";
+          then:
+            - micro_wake_word.stop:
   - id: check_timers
     then:
       - lambda: |
@@ -60,16 +97,11 @@ switch:
     entity_category: config
     on_turn_on:
       - lambda: id(va).set_use_wake_word(true);
-      - if:
-          condition:
-            not:
-              - voice_assistant.is_running
-          then:
-            - voice_assistant.start_continuous
+      - script.execute: start_wake_word
       - script.execute: reset_led
     on_turn_off:
       - voice_assistant.stop
-      - lambda: id(va).set_use_wake_word(false);
+      - script.execute: stop_wake_word
       - script.execute: reset_led
   - platform: template
     name: Use Listen Light
@@ -92,6 +124,7 @@ microphone:
 voice_assistant:
   id: va
   microphone: mic
+  micro_wake_word:
   noise_suppression_level: 2
   auto_gain: 31dBFS
   volume_multiplier: 2.0
@@ -146,7 +179,18 @@ voice_assistant:
           chime_path: " {{ '/media/1_error.mp3' if error_response == 'true' else '/media/1_ok.wav' }}"
           announce: "{{ is_state('${voice_assistant_media_player}', 'playing') or is_state('media_player.google_speakers', 'playing') }}"
   on_end:
-    - delay: 100ms
+    - delay: 500ms
+    # Restart only mWW if enabled; streaming wake words automatically restart
+    - if:
+        condition:
+          - lambda: |-
+              return id(wake_word_engine_location).current_option() == "On device";
+        then:
+          - wait_until:
+              - not:
+                  voice_assistant.is_running:
+          - lambda: id(va).set_use_wake_word(false);
+          - micro_wake_word.start:
     - script.execute: reset_led
   on_error:
     - light.turn_on:
@@ -181,14 +225,46 @@ voice_assistant:
         condition:
           switch.is_on: use_wake_word
         then:
-          - voice_assistant.start_continuous:
-          - script.execute: reset_led
+          - script.execute: start_wake_word
+        else:
+          - script.execute: stop_wake_word
   on_client_disconnected:
-    - if:
-        condition:
-          switch.is_on: use_wake_word
-        then:
-          - voice_assistant.stop:
-          - light.turn_off: led
-          
-          
+    - script.execute: stop_wake_word
+         
+select:
+  - platform: template
+    entity_category: config
+    name: Wake word engine location
+    id: wake_word_engine_location
+    optimistic: true
+    restore_value: true
+    options:
+      - In Home Assistant
+      - On device
+    initial_option: On device
+    on_value:
+      - if:
+          condition:
+            lambda: return x == "In Home Assistant";
+          then:
+            - micro_wake_word.stop:
+            - delay: 500ms
+            - lambda: id(va).set_use_wake_word(true);
+            - voice_assistant.start_continuous:
+      - if:
+          condition:
+            lambda: return x == "On device";
+          then:
+            - lambda: id(va).set_use_wake_word(false);
+            - voice_assistant.stop:
+            - delay: 500ms
+            - micro_wake_word.start:
+
+micro_wake_word:
+  on_wake_word_detected:
+    - voice_assistant.start:
+        wake_word: !lambda return wake_word;
+  vad:
+  models:
+    - id: Computer
+      model: github://JohnnyPrimus/Custom_V2_MicroWakeWords/models/computer/computer.json@main
