@@ -587,7 +587,7 @@
         },
         "media_player_slider": {
           "template": "auto_control_slider",
-          "entity_picture": "[[[ \n  if (typeof entity.attributes.entity_picture_local !== 'undefined' && entity.attributes.entity_picture_local !== null && !entity.attributes.entity_picture.includes('imageproxy?')) {\n      return \"http://192.168.18.101:8123\" + entity.attributes.entity_picture_local\n     }\n]]]",
+          "entity_picture": "[[[ \n  if (user == 'hometablet' || user == 'studytabledisplay') {\n    if (typeof entity.attributes.entity_picture_local !== 'undefined' && entity.attributes.entity_picture_local !== null && !entity.attributes.entity_picture.includes('imageproxy?')) {\n        return \"http://192.168.18.101:8123\" + entity.attributes.entity_picture_local\n    }\n  } else {\n    return entity.attributes.entity_picture\n  }\n]]]",
           "show_entity_picture": true,
           "tap_action": {
             "action": "navigate",
@@ -5299,185 +5299,6 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "picture",
-                  "image": {
-                    "media_content_id": "https://demo.home-assistant.io/stub_config/t-shirt-promo.png"
-                  },
-                  "image_entity": "image.rain_radar_animation",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/weather"
-                  }
-                }
-              ],
-              "visibility": [
-                {
-                  "condition": "state",
-                  "entity": "input_select.study_table_display_panel_view",
-                  "state": "weather"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "show_state": true,
-                  "show_name": true,
-                  "camera_view": "auto",
-                  "fit_mode": "cover",
-                  "type": "picture-entity",
-                  "entity": "binary_sensor.doorbell_motion",
-                  "image": {
-                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
-                  },
-                  "camera_image": "camera.main_door_camera",
-                  "tap_action": {
-                    "action": "navigate",
-                    "navigation_path": "/lovelace/main-door"
-                  }
-                },
-                {
-                  "show_state": false,
-                  "show_name": false,
-                  "camera_view": "auto",
-                  "fit_mode": "cover",
-                  "type": "picture-entity",
-                  "entity": "camera.recent_main_door_snapshot_1",
-                  "image": {
-                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
-                  },
-                  "grid_options": {
-                    "columns": 4,
-                    "rows": "auto"
-                  }
-                },
-                {
-                  "show_state": false,
-                  "show_name": false,
-                  "camera_view": "auto",
-                  "fit_mode": "cover",
-                  "type": "picture-entity",
-                  "entity": "camera.recent_main_door_snapshot_2",
-                  "image": {
-                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
-                  },
-                  "grid_options": {
-                    "columns": 4,
-                    "rows": "auto"
-                  }
-                },
-                {
-                  "show_state": false,
-                  "show_name": false,
-                  "camera_view": "auto",
-                  "fit_mode": "cover",
-                  "type": "picture-entity",
-                  "entity": "camera.recent_main_door_snapshot_3",
-                  "image": {
-                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
-                  },
-                  "grid_options": {
-                    "columns": 4,
-                    "rows": "auto"
-                  }
-                }
-              ],
-              "visibility": [
-                {
-                  "condition": "state",
-                  "entity": "input_select.study_table_display_panel_view",
-                  "state": "main-door"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "picture-elements",
-                  "elements": [
-                    {
-                      "type": "custom:button-card",
-                      "style": {
-                        "top": "12%",
-                        "left": "15%",
-                        "height": "20%",
-                        "width": "30%"
-                      },
-                      "template": "floorplan_nextbus",
-                      "entity": "sensor.bus_stop_sims_drive_market"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "style": {
-                        "top": "12%",
-                        "left": "50%",
-                        "height": "20%",
-                        "width": "30%"
-                      },
-                      "template": "floorplan_nextbus",
-                      "entity": "sensor.bus_stop_opposite_aljunied_station",
-                      "variables": {
-                        "stop_no": 2
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "style": {
-                        "top": "12%",
-                        "left": "85%",
-                        "height": "20%",
-                        "width": "30%"
-                      },
-                      "template": "floorplan_nextbus",
-                      "entity": "sensor.bus_stop_aljunied_station",
-                      "variables": {
-                        "stop_no": 3
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "style": {
-                        "top": "88%",
-                        "left": "85%",
-                        "height": "20%",
-                        "width": "30%"
-                      },
-                      "template": "floorplan_nextbus",
-                      "entity": "sensor.bus_stop_before_lorong_23_geylang",
-                      "variables": {
-                        "stop_no": 4
-                      }
-                    }
-                  ],
-                  "image": {
-                    "media_content_id": "/local/floorplan/transit_basemap_numbered.png",
-                    "media_content_type": "",
-                    "metadata": {
-                      "navigateIds": [
-                        {},
-                        {
-                          "media_content_type": "",
-                          "media_content_id": "__MANUAL_ENTRY__"
-                        }
-                      ]
-                    }
-                  }
-                }
-              ],
-              "visibility": [
-                {
-                  "condition": "state",
-                  "entity": "input_select.study_table_display_panel_view",
-                  "state": "transit"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
                   "type": "custom:slider-button-card",
                   "entity": "light.study_room_lights",
                   "slider": {
@@ -5816,6 +5637,185 @@
                     "rows": 1,
                     "columns": 2
                   }
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "picture",
+                  "image": {
+                    "media_content_id": "https://demo.home-assistant.io/stub_config/t-shirt-promo.png"
+                  },
+                  "image_entity": "image.rain_radar_animation",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/weather"
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "input_select.study_table_display_panel_view",
+                  "state": "weather"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "show_state": true,
+                  "show_name": true,
+                  "camera_view": "auto",
+                  "fit_mode": "cover",
+                  "type": "picture-entity",
+                  "entity": "binary_sensor.doorbell_motion",
+                  "image": {
+                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
+                  },
+                  "camera_image": "camera.main_door_camera",
+                  "tap_action": {
+                    "action": "navigate",
+                    "navigation_path": "/lovelace/main-door"
+                  }
+                },
+                {
+                  "show_state": false,
+                  "show_name": false,
+                  "camera_view": "auto",
+                  "fit_mode": "cover",
+                  "type": "picture-entity",
+                  "entity": "camera.recent_main_door_snapshot_1",
+                  "image": {
+                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
+                  },
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "show_state": false,
+                  "show_name": false,
+                  "camera_view": "auto",
+                  "fit_mode": "cover",
+                  "type": "picture-entity",
+                  "entity": "camera.recent_main_door_snapshot_2",
+                  "image": {
+                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
+                  },
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "show_state": false,
+                  "show_name": false,
+                  "camera_view": "auto",
+                  "fit_mode": "cover",
+                  "type": "picture-entity",
+                  "entity": "camera.recent_main_door_snapshot_3",
+                  "image": {
+                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
+                  },
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": "auto"
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "input_select.study_table_display_panel_view",
+                  "state": "main-door"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "picture-elements",
+                  "elements": [
+                    {
+                      "type": "custom:button-card",
+                      "style": {
+                        "top": "12%",
+                        "left": "15%",
+                        "height": "20%",
+                        "width": "30%"
+                      },
+                      "template": "floorplan_nextbus",
+                      "entity": "sensor.bus_stop_sims_drive_market"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "style": {
+                        "top": "12%",
+                        "left": "50%",
+                        "height": "20%",
+                        "width": "30%"
+                      },
+                      "template": "floorplan_nextbus",
+                      "entity": "sensor.bus_stop_opposite_aljunied_station",
+                      "variables": {
+                        "stop_no": 2
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "style": {
+                        "top": "12%",
+                        "left": "85%",
+                        "height": "20%",
+                        "width": "30%"
+                      },
+                      "template": "floorplan_nextbus",
+                      "entity": "sensor.bus_stop_aljunied_station",
+                      "variables": {
+                        "stop_no": 3
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "style": {
+                        "top": "88%",
+                        "left": "85%",
+                        "height": "20%",
+                        "width": "30%"
+                      },
+                      "template": "floorplan_nextbus",
+                      "entity": "sensor.bus_stop_before_lorong_23_geylang",
+                      "variables": {
+                        "stop_no": 4
+                      }
+                    }
+                  ],
+                  "image": {
+                    "media_content_id": "/local/floorplan/transit_basemap_numbered.png",
+                    "media_content_type": "",
+                    "metadata": {
+                      "navigateIds": [
+                        {},
+                        {
+                          "media_content_type": "",
+                          "media_content_id": "__MANUAL_ENTRY__"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "input_select.study_table_display_panel_view",
+                  "state": "transit"
                 }
               ]
             }
