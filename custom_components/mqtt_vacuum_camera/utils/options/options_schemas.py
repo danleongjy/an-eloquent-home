@@ -20,6 +20,7 @@ from homeassistant.helpers.selector import (
 )
 
 from ...const import (
+    ALLOWED_IMAGE_FORMAT,
     ALPHA_BACKGROUND,
     ALPHA_CARPET,
     ALPHA_CHARGER,
@@ -54,6 +55,7 @@ from ...const import (
     CONF_ASPECT_RATIO,
     CONF_AUTO_ZOOM,
     CONF_CURRENT_FLOOR,
+    CONF_DEF_CONTEXT_TYPE,
     CONF_DISABLE_CARPETS,
     CONF_DISABLE_MATERIAL_OVERLAY,
     CONF_FLOOR_NAME,
@@ -120,6 +122,10 @@ class OptionsSchemas:
             options=RATIO_VALUES,
             mode=SelectSelectorMode.DROPDOWN,
         )
+        self.image_format_selector = SelectSelectorConfig(
+            options=list(ALLOWED_IMAGE_FORMAT.keys()),
+            mode=SelectSelectorMode.DROPDOWN,
+        )
 
     @property
     def image_schema(self) -> vol.Schema:
@@ -152,6 +158,10 @@ class OptionsSchemas:
                     CONF_MOP_PATH_WIDTH,
                     default=self.config_entry.options.get("mop_path_width", 10),
                 ): NumberSelector(self.mop_path_selector),
+                vol.Required(
+                    CONF_DEF_CONTEXT_TYPE,
+                    default=self.config_entry.options.get("def_context_type", "jpeg"),
+                ): SelectSelector(self.image_format_selector),
             }
         )
 

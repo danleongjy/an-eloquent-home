@@ -51,6 +51,9 @@ def get_camera_device_info(hass, entry):
         hass.config_entries.async_get_entry(str(entry.entry_id)).options
     )
     camera_entry.update(camera_entry_options)
+    # Ensure def_context_type has a default value if missing
+    if "def_context_type" not in camera_entry:
+        camera_entry["def_context_type"] = "jpeg"
     return camera_entry
 
 
@@ -134,6 +137,17 @@ def extract_file_name(unique_id: str) -> str:
     file_name = re.sub(r"_camera$", "", unique_id)
     return file_name.lower()
 
+def is_congaduto_vacuum(vacuum_device: DeviceEntry) -> bool:
+    """
+    Check if the vacuum is running Congaduto firmware.
+    """
+    sof_version = str(vacuum_device.sw_version)
+    manufacturer = str(vacuum_device.manufacturer)
+    if (sof_version.lower()).startswith("congaduto") or (
+        manufacturer.lower()
+    ).startswith("cecotec"):
+        return True  # This is a Concaduto vacuum (Valetudo)
+    return False
 
 def is_rand256_vacuum(vacuum_device: DeviceEntry) -> bool:
     """
@@ -146,6 +160,10 @@ def is_rand256_vacuum(vacuum_device: DeviceEntry) -> bool:
         manufacturer.lower()
     ).startswith("valetudo"):
         return False  # This is a Hypfer vacuum (Valetudo)
+    if (sof_version.lower()).startswith("congaduto") or (
+        manufacturer.lower()
+    ).startswith("cecotec"):
+        return False  # This is a Conga vacuum (Congaduto)
     return True
 
 

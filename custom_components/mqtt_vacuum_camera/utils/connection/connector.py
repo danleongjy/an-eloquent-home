@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 import json
 from typing import Any, Dict, List
 
-from homeassistant.components import mqtt
+from homeassistant.components import mqtt, persistent_notification
 from homeassistant.core import EventOrigin, HomeAssistant, callback
 from valetudo_map_parser.config.types import RoomStore
 
@@ -68,6 +68,8 @@ class MQTTData:
     mqtt_vac_err: Any = None
     img_payload: Any = None
     mop_attached: bool = False
+    dustbin_attached: bool = False
+    watertank_attached: bool = False
     operation_mode: str = ""
     water_usage: str = ""
     dock_status: str = ""
@@ -229,6 +231,14 @@ class ValetudoConnector:
         """Return mop attachment status."""
         return self.mqtt_data.mop_attached
 
+    async def get_dustbin_attachment_status(self) -> bool:
+        """Return dustbin attachment status."""
+        return self.mqtt_data.dustbin_attached
+
+    async def get_watertank_attachment_status(self) -> bool:
+        """Return watertank attachment status."""
+        return self.mqtt_data.watertank_attached
+
     async def get_operation_mode(self) -> str:
         """Return operation mode preset."""
         return self.mqtt_data.operation_mode
@@ -310,6 +320,21 @@ class ValetudoConnector:
                 and "mop" in self.mqtt_data.operation_mode.lower()
             )
 
+    async def _hypfer_handle_dustbin_attachment(self, dustbin_state) -> None:
+        """Handle dustbin attachment state."""
+        if dustbin_state is not None:
+            self.mqtt_data.dustbin_attached = _str_to_bool(dustbin_state)
+
+    async def _hypfer_handle_watertank_attachment(self, watertank_state) -> None:
+        """Handle watertank attachment state."""
+        if watertank_state is not None:
+            self.mqtt_data.watertank_attached = _str_to_bool(watertank_state)
+            # Update shared mop_mode - watertank implies mopping capability
+            self.config.shared.mop_mode = (
+                self.mqtt_data.watertank_attached
+                and "mop" in self.mqtt_data.operation_mode.lower()
+            )
+
     async def _hypfer_handle_operation_mode(self, mode) -> None:
         """Handle operation mode preset."""
         self.mqtt_data.operation_mode = str(mode)
@@ -350,10 +375,11 @@ class ValetudoConnector:
                     if event_data.get("__class") == "ErrorStateValetudoEvent":
                         error_message = event_data.get("message", "Unknown error")
                         self.mqtt_data.mqtt_vac_err = error_message
-                        LOGGER.warning(
-                            "%s: Valetudo error event: %s",
-                            self.connector_data.file_name,
-                            error_message,
+                        persistent_notification.async_create(
+                            self.connector_data.hass,
+                            message=f"**{self.connector_data.file_name}**\n\n{error_message}",
+                            title="Valetudo Error",
+                            notification_id=f"valetudo_error_{event_id}",
                         )
 
     async def _rand256_handle_image_payload(self, msg) -> None:
@@ -553,6 +579,14 @@ class ValetudoConnector:
             case t if t == f"{self.config.mqtt_topic}/AttachmentStateAttribute/mop":
                 decoded_mop_state = await self._async_decode_mqtt_payload(msg)
                 await self._hypfer_handle_mop_attachment(decoded_mop_state)
+            case t if t == f"{self.config.mqtt_topic}/AttachmentStateAttribute/dustbin":
+                decoded_dustbin_state = await self._async_decode_mqtt_payload(msg)
+                await self._hypfer_handle_dustbin_attachment(decoded_dustbin_state)
+            case t if (
+                t == f"{self.config.mqtt_topic}/AttachmentStateAttribute/watertank"
+            ):
+                decoded_watertank_state = await self._async_decode_mqtt_payload(msg)
+                await self._hypfer_handle_watertank_attachment(decoded_watertank_state)
             case t if (
                 t == f"{self.config.mqtt_topic}/OperationModeControlCapability/preset"
             ):
@@ -597,9 +631,14 @@ class ValetudoConnector:
                 await self._handle_pkohelrs_maploader_state(msg)
             case t if t == self.config.mqtt_hass_vacuum:
                 temp_json = await self._async_decode_mqtt_payload(msg)
-                self.config.shared.vacuum_api = temp_json.get("device", {}).get(
-                    "configuration_url", None
-                )
+                if isinstance(temp_json, dict):
+                    self.config.shared.vacuum_api = temp_json.get("device", {}).get(
+                        "configuration_url", None
+                    )
+                elif isinstance(temp_json, str):
+                    self.config.shared.vacuum_api = temp_json
+                else:
+                    self.config.shared.vacuum_api = None
                 LOGGER.debug(
                     "%s: Vacuum API URL: %s",
                     self.connector_data.file_name,

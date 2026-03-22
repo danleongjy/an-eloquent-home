@@ -48,6 +48,7 @@ from .const import (
     CONF_CURRENT_FLOOR,
     CONF_DISABLE_CARPETS,
     CONF_DISABLE_MATERIAL_OVERLAY,
+    CONF_DEF_CONTEXT_TYPE,
     CONF_FLOOR_NAME,
     CONF_FLOORS_DATA,
     CONF_MAP_NAME,
@@ -305,6 +306,7 @@ class MQTTCameraOptionsFlowHandler(OptionsFlow):
                     "auto_zoom": user_input.get(CONF_AUTO_ZOOM),
                     "robot_size": user_input.get(CONF_ROBOT_SIZE),
                     "mop_path_width": user_input.get(CONF_MOP_PATH_WIDTH),
+                    "def_context_type": user_input.get(CONF_DEF_CONTEXT_TYPE),
                 }
             )
             return await self.async_step_image_opt()

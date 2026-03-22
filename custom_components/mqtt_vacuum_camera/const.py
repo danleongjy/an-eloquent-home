@@ -43,6 +43,14 @@ CONF_ROBOT_SIZE = "robot_size"
 CONF_MOP_PATH_WIDTH = "mop_path_width"
 CONF_AUTO_ZOOM = "auto_zoom"
 CONF_ZOOM_LOCK_RATIO = "zoom_lock_ratio"
+CONF_DEF_CONTEXT_TYPE = "def_context_type"
+
+# Image format options (MIME types) - only valid PIL formats
+ALLOWED_IMAGE_FORMAT: dict[str, str] = {
+    "png": "image/png",
+    "jpeg": "image/jpeg",
+}
+
 CONF_TRIMS_SAVE = "save_trims"
 CONF_TRIMS_DATA = "trims_data"
 CONF_FLOORS_DATA = "floors_data"
@@ -278,6 +286,7 @@ KEYS_TO_UPDATE = [
     "current_floor",
     "auto_zoom",
     "zoom_lock_ratio",
+    "def_context_type",
     "show_vac_status",
     "vac_status_size",
     "vac_status_position",
@@ -482,6 +491,8 @@ DECODED_TOPICS = {
     "/BatteryStateAttribute/level",
     "/WifiConfigurationCapability/ips",
     "/AttachmentStateAttribute/mop",
+    "/AttachmentStateAttribute/dustbin",
+    "/AttachmentStateAttribute/watertank",
     "/OperationModeControlCapability/preset",
     "/WaterUsageControlCapability/preset",
     "/DockStatusStateAttribute/status",

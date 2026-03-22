@@ -43,7 +43,6 @@ class MQTTVacuumCoordinator(DataUpdateCoordinator):
 
         # Initialize context with grouped attributes
         device_info = get_camera_device_info(config.hass, config.device_entity)
-        config.shared.is_rand = self.is_rand256
 
         self.context = CoordinatorContext(
             shared=config.shared,
