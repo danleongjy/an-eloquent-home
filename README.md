@@ -26,7 +26,7 @@ Domain | Quantity
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 147
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 183
-[`button`](https://www.home-assistant.io/components/button) | 195
+[`button`](https://www.home-assistant.io/components/button) | 196
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 8
 [`climate`](https://www.home-assistant.io/components/climate) | 6
@@ -42,7 +42,7 @@ Domain | Quantity
 [`input_select`](https://www.home-assistant.io/components/input_select) | 11
 [`input_text`](https://www.home-assistant.io/components/input_text) | 19
 [`light`](https://www.home-assistant.io/components/light) | 72
-[`media_player`](https://www.home-assistant.io/components/media_player) | 6
+[`media_player`](https://www.home-assistant.io/components/media_player) | 7
 [`notify`](https://www.home-assistant.io/components/notify) | 4
 [`number`](https://www.home-assistant.io/components/number) | 143
 [`person`](https://www.home-assistant.io/components/person) | 3
@@ -60,7 +60,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1902
+Total | 1904
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
