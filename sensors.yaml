@@ -419,6 +419,48 @@
        and value_json.Services is defined and value_json.Services | length > 0 }}
 
 - platform: rest
+  resource: https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=04168
+  name: Bus Stop After City Hall Station Exit B
+  unique_id: sensor.bus_stop_after_city_hall_station_exit_b
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: >
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['32','51'], 4) }}
+  availability: >
+    {{ states('zone.city_hall') | int(0) > 0
+       and value_json.Services is defined and value_json.Services | length > 0 }}
+
+- platform: rest
+  resource: https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=04249
+  name: Bus Stop Opposite the Treasury
+  unique_id: sensor.bus_stop_opposite_the_treasury
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: >
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['51','61','80','145','166','197'], 4) }}
+  availability: >
+    {{ states('zone.city_hall') | int(0) > 0
+       and value_json.Services is defined and value_json.Services | length > 0 }}
+
+- platform: rest
+  resource: https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=04142
+  name: Bus Stop Armenian Church
+  unique_id: sensor.bus_stop_armenian_church
+  headers:
+    accountKey: !secret lta_datamall_apikey
+  scan_interval: 172800
+  value_template: >
+    {% from 'transit.jinja' import bus_stop_next_buses %}
+    {{ bus_stop_next_buses(value_json, ['2','51','63','80'], 4) }}
+  availability: >
+    {{ states('zone.city_hall') | int(0) > 0
+       and value_json.Services is defined and value_json.Services | length > 0 }}
+
+- platform: rest
   resource: http://192.168.18.35/api/v2/robot/state/map
   name: Vacuum Current Run Total Area
   unique_id: sensor.vacuum_current_run_total_area

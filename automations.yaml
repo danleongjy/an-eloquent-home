@@ -3519,6 +3519,7 @@
     - zone.kallang_station_bus_stop
     - zone.telok_kurau
     - zone.newton_station_exit_c_bus_stop
+    - zone.city_hall
     above: 0
     id: location_entered
   - trigger: numeric_state
@@ -3537,6 +3538,7 @@
     - zone.kallang_station_bus_stop
     - zone.telok_kurau
     - zone.newton_station_exit_c_bus_stop
+    - zone.city_hall
     id: location_exited
     below: 1
   conditions: []
@@ -3578,6 +3580,10 @@
         - sensor.bus_stop_after_lorong_g_telok_kurau
         zone.newton_station_exit_c_bus_stop:
         - sensor.bus_stop_newton_station_exit_c
+        zone.city_hall:
+        - sensor.bus_stop_after_city_hall_station_exit_b
+        - sensor.bus_stop_opposite_the_treasury
+        - sensor.bus_stop_armenian_church
   - choose:
     - conditions:
       - condition: trigger
@@ -3665,6 +3671,20 @@
             - sensor.bus_stop_roxy_square
             - sensor.bus_stop_holy_family_church
             - sensor.bus_stop_parkway_parade
+      - if:
+        - condition: template
+          value_template: '{{ states(''zone.city_hall'') | int(0) > 0 }}'
+        then:
+        - repeat:
+            sequence:
+            - action: homeassistant.update_entity
+              metadata: {}
+              data:
+                entity_id: '{{ repeat.item }}'
+            for_each:
+            - sensor.bus_stop_after_city_hall_station_exit_b
+            - sensor.bus_stop_opposite_the_treasury
+            - sensor.bus_stop_armenian_church
     - conditions:
       - condition: trigger
         id:
