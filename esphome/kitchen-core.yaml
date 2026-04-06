@@ -124,9 +124,9 @@ script:
           if (id(env_value_display).current_option() == "current_date") {
             id(interface_display).strftime(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "%a %d %b", id(homeassistant_time).now());
           } else if (id(env_value_display).current_option() == "temperature") {
-            id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000e846 %.1f°C", id(room_temp).state);
+            id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000e846 %.1f°C", id(temp).state);
           } else if (id(env_value_display).current_option() == "humidity") {
-            id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000f164 %.1f%%", id(room_hum).state);
+            id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000f164 %.1f%%", id(hum).state);
           } else if (id(env_value_display).current_option() == "lux") {
             id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000f7e8 %.0flx", id(room_lux).state);
           }
@@ -411,18 +411,21 @@ sensor:
     entity_id: light.${core_room}_lights
     attribute: brightness
   - platform: homeassistant
-    id: room_temp
-    entity_id: sensor.${core_room}_temperature
-  - platform: homeassistant
-    id: room_hum
-    entity_id: sensor.${core_room}_humidity
-  - platform: homeassistant
     id: room_lux
     entity_id: sensor.${core_room}_radar_lux
   - platform: homeassistant
     id: blinds_position
     entity_id: ${blinds_entity}
     attribute: current_position
+  - platform: dht
+    pin: 25
+    temperature:
+      id: temp
+      name: Temperature
+    humidity:
+      id: hum
+      name: Humidity
+      accuracy_decimals: 1
 
 output:
   - platform: ledc
