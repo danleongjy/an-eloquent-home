@@ -84,12 +84,15 @@ text_sensor:
 i2c: !remove
 
 sensor:  
-  - platform: homeassistant
-    id: room_temp
-    entity_id: sensor.${core_room}_temperature
-  - platform: homeassistant
-    id: room_hum
-    entity_id: sensor.${core_room}_humidity
+  - platform: dht
+    pin: 21
+    temperature:
+      id: room_temp
+      name: Temperature
+    humidity:
+      id: room_hum
+      name: Humidity
+      accuracy_decimals: 1
   - id: !extend room_lux
     entity_id: sensor.playroom_radar_lux
   - id: !extend lamp_brightness
