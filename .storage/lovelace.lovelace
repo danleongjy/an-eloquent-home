@@ -15062,6 +15062,212 @@
                   }
                 }
               ]
+            },
+            {
+              "type": "conditional",
+              "conditions": [
+                {
+                  "condition": "user",
+                  "users": [
+                    "ad2bcce775894550affb6dfef93a2a36"
+                  ]
+                },
+                {
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "binary_sensor.parents_room_radar_shaver_connected",
+                      "state": "off"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.philips_shaver_activity",
+                      "state": "initializing"
+                    }
+                  ]
+                }
+              ],
+              "card": {
+                "type": "markdown",
+                "content": "<ha-alert alert-type='error'>Shaver disconnected.</ha-alert>",
+                "text_only": true
+              }
+            },
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "heading",
+                  "icon": "mdi:face-man-shimmer",
+                  "heading_style": "title",
+                  "heading": "Shaver"
+                },
+                {
+                  "square": false,
+                  "type": "grid",
+                  "columns": 2,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "template": "button_card_tile",
+                      "entity": "sensor.philips_shaver_activity",
+                      "name": " ",
+                      "styles": {
+                        "icon": [
+                          {
+                            "color": "[[[ return 'var(--state-inactive-color)' ]]]"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "button_card_tile",
+                      "entity": "sensor.philips_shaver_days_since_last_use",
+                      "name": " ",
+                      "state_display": "[[[ \n  if (entity.state == '1') {\n    return '1 day ago'\n  } else {\n    return entity.state + ' days ago'\n  }\n]]]\n",
+                      "styles": {
+                        "icon": [
+                          {
+                            "color": "[[[ return 'var(--state-inactive-color)' ]]]"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "binary_sensor.philips_shaver_charging",
+                          "state": "on"
+                        }
+                      ],
+                      "card": {
+                        "type": "custom:button-card",
+                        "template": "tile_progress_bar",
+                        "entity": "sensor.philips_shaver_battery",
+                        "name": "Battery"
+                      },
+                      "grid_options": {
+                        "columns": 6,
+                        "rows": "auto"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "binary_sensor.philips_shaver_charging",
+                          "state": "off"
+                        }
+                      ],
+                      "card": {
+                        "type": "custom:button-card",
+                        "template": "tile_status_bar",
+                        "entity": "sensor.philips_shaver_battery",
+                        "name": "Battery"
+                      },
+                      "grid_options": {
+                        "columns": 6,
+                        "rows": "auto"
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "tile_status_bar",
+                      "entity": "sensor.shaver_maintenance",
+                      "name": "Cleanliness",
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "input_button.press",
+                        "service_data": {
+                          "entity_id": "input_button.shaver_reset_maintenance"
+                        },
+                        "confirmation": {
+                          "text": "Confirm shaver has been thoroughly cleaned."
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "tile_status_bar",
+                      "entity": "sensor.philips_shaver_shaver_head_remaining",
+                      "name": "Blades",
+                      "double_tap_action": {
+                        "action": "call-service",
+                        "service": "button.press",
+                        "service_data": {
+                          "entity_id": "button.philips_shaver_blade_replacement"
+                        },
+                        "confirmation": {
+                          "text": "Confirm shaver blades have been replaced."
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "sensor.philips_shaver_battery",
+                      "below": 15
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"{{'alert' if is_state('sensor.philips_shaver_remaining_shaves','0') else 'warning'}}\">{{ 'Battery will be depleted after ' + states('sensor.philips_shaver_remaining_shaves') + ' more shaves.  ' if not is_state('sensor.philips_shaver_remaining_shaves', '0') else 'Battery depleted.  ' }}Please charge the shaver.</ha-alert>",
+                    "text_only": true
+                  }
+                },
+                {
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "sensor.philips_shaver_battery",
+                      "above": 99
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "binary_sensor.philips_shaver_charging",
+                      "state": "on"
+                    }
+                  ],
+                  "card": {
+                    "type": "markdown",
+                    "content": "<ha-alert alert-type=\"success\">Recharge completed.  Please unplug the shaver.</ha-alert>",
+                    "text_only": true
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "user",
+                  "users": [
+                    "ad2bcce775894550affb6dfef93a2a36"
+                  ]
+                },
+                {
+                  "condition": "state",
+                  "entity": "binary_sensor.esp_bridge_shaver_ble",
+                  "state": "on"
+                },
+                {
+                  "condition": "not",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.philips_shaver_activity",
+                      "state": "initializing"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },

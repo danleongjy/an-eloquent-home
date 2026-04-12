@@ -4004,45 +4004,45 @@
           entity_id: media_player.dining_room_speaker
   mode: single
 - id: '1707352533395'
-  alias: Notify When Server Load High
-  description: Send a notification when server load has been persistently high
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - sensor.node_proxmox_cpu_used
+  alias: Notify When Router RAM Low
+  description: Send a notification when router available RAM is low
+  triggers:
+  - entity_id:
+    - sensor.router_used_memory_percent
     for:
       hours: 1
       minutes: 0
       seconds: 0
-    above: 20
+    above: 75
     id: high
-  - platform: numeric_state
-    entity_id:
-    - sensor.node_proxmox_cpu_used
-    below: 20
+    trigger: numeric_state
+  - entity_id:
+    - sensor.router_used_memory_percent
+    below: 29.9
     id: low
-  condition: []
-  action:
+    trigger: numeric_state
+  conditions: []
+  actions:
   - if:
     - condition: trigger
       id:
       - high
     then:
-    - service: notify.mobile_app_aurora
-      metadata: {}
+    - metadata: {}
       data:
-        message: CPU load exceeded 20% for at least 1h
+        message: Router RAM usage exceeded 70% for at least 1h
         title: Check server
         data:
           tag: high
           clickAction: /lovelace/network
+      action: notify.mobile_app_aurora
     else:
-    - service: notify.mobile_app_aurora
-      metadata: {}
+    - metadata: {}
       data:
         message: clear_notification
         data:
           tag: high
+      action: notify.mobile_app_aurora
   mode: single
 - id: '1708242484217'
   alias: Notify When Zigbee Devices Have Issues
@@ -8656,4 +8656,207 @@
       entity_id: input_select.home_mode
     data:
       option: Away Mode
+  mode: single
+- id: '1775987938434'
+  alias: Notify on Shaver Status
+  description: Notify when shaver needs attention or is in use
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.philips_shaver_battery
+    id: batt_low
+    below: 15
+  - trigger: state
+    entity_id:
+    - binary_sensor.philips_shaver_charging
+    to:
+    - 'on'
+    id: batt_charging
+  - trigger: template
+    value_template: '{{ is_state(''sensor.philips_shaver_battery'', ''100'') and is_state(''binary_sensor.philips_shaver_charging'',
+      ''on'') }}'
+    id: batt_charged
+  - trigger: state
+    entity_id:
+    - binary_sensor.philips_shaver_charging
+    to:
+    - 'off'
+    id: batt_not_charging
+  - trigger: numeric_state
+    entity_id:
+    - sensor.philips_shaver_shaver_head_remaining
+    below: 10
+    id: replace_head
+  - trigger: state
+    entity_id:
+    - sensor.philips_shaver_shaver_head_remaining
+    to:
+    - '100'
+    id: head_replaced
+  - trigger: state
+    entity_id:
+    - sensor.philips_shaver_activity
+    to:
+    - shaving
+    id: shaving
+  - trigger: state
+    entity_id:
+    - sensor.philips_shaver_activity
+    from:
+    - shaving
+    id: shaving_stopped
+  - trigger: numeric_state
+    entity_id:
+    - sensor.shaver_maintenance
+    below: 10
+    id: maintenance_needed
+  - trigger: state
+    entity_id:
+    - input_button.shaver_reset_maintenance
+    id: maintenance_completed
+  - trigger: template
+    value_template: '{{ states(''sensor.philips_shaver_number_of_uses'') | int(0)
+      % 7 == 0 }}'
+    id: quick_clean_pod
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - batt_low
+      sequence:
+      - action: notify.mobile_app_aurora
+        metadata: {}
+        data:
+          message: Shaver battery below 15%
+          title: Please charge the shaver
+          data:
+            tag: batt_low
+            clickAction: /lovelace/parents_bathroom
+    - conditions:
+      - condition: trigger
+        id:
+        - batt_charging
+      sequence:
+      - action: notify.mobile_app_aurora
+        metadata: {}
+        data:
+          message: clear_notification
+          data:
+            tag: batt_low
+    - conditions:
+      - condition: trigger
+        id:
+        - batt_charged
+      sequence:
+      - action: notify.mobile_app_aurora
+        metadata: {}
+        data:
+          message: Charging completed at {{ (now() | string)[11:16] }}
+          title: Please unplug the shaver
+          data:
+            tag: batt_charged
+            clickAction: /lovelace/parents_bathroom
+    - conditions:
+      - condition: trigger
+        id:
+        - batt_not_charging
+      sequence:
+      - action: notify.mobile_app_aurora
+        metadata: {}
+        data:
+          message: clear_notification
+          data:
+            tag: batt_charged
+    - conditions:
+      - condition: trigger
+        id:
+        - replace_head
+      sequence:
+      - action: notify.mobile_app_aurora
+        metadata: {}
+        data:
+          message: Shaver head condition at less than 10%
+          title: Please replace the shaver head
+          data:
+            tag: replace_head
+            clickAction: /lovelace/parents_bathroom
+    - conditions:
+      - condition: trigger
+        id:
+        - head_replaced
+      sequence:
+      - action: notify.mobile_app_aurora
+        metadata: {}
+        data:
+          message: clear_notification
+          data:
+            tag: replace_head
+    - conditions:
+      - condition: trigger
+        id:
+        - maintenance_needed
+      sequence:
+      - action: notify.mobile_app_aurora
+        metadata: {}
+        data:
+          message: Shaver cleanliness at less than 10%
+          title: Please thoroughly clean the shaver
+          data:
+            tag: maintenance_needed
+            clickAction: /lovelace/parents_bathroom
+    - conditions:
+      - condition: trigger
+        id:
+        - maintenance_completed
+      sequence:
+      - action: notify.mobile_app_aurora
+        metadata: {}
+        data:
+          message: clear_notification
+          data:
+            tag: maintenance_needed
+    - conditions:
+      - condition: trigger
+        id:
+        - quick_clean_pod
+      sequence:
+      - action: notify.mobile_app_aurora
+        metadata: {}
+        data:
+          message: Time to use the cleaning solution for added hygiene
+          title: Please use the quick clean pod
+          data:
+            tag: maintenance_needed
+            clickAction: /lovelace/parents_bathroom
+    - conditions:
+      - condition: trigger
+        id:
+        - shaving
+      sequence:
+      - condition: state
+        state:
+        - 'on'
+        entity_id: input_boolean.master_bathroom_occupancy
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.master_bathroom_light_entity
+        data:
+          brightness_pct: 100
+    - conditions:
+      - condition: trigger
+        id:
+        - shaving_stopped
+      sequence:
+      - condition: state
+        state:
+        - 'on'
+        entity_id: input_boolean.master_bathroom_occupancy
+      - action: script.recommended_light_level
+        metadata: {}
+        data:
+          turn_on: true
+          light: light.master_bathroom_light_entity
   mode: single
