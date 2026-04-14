@@ -342,11 +342,13 @@
 
 - trigger:
   - platform: state
-    entity_id: sensor.philips_shaver_activity
-    from: shaving
-    to: 'off'
+    entity_id: sensor.philips_shaver_last_session_duration
+    from: '0'
+    not_to:
+      - unavailable
+      - unknown
     for:
-      minutes: 10
+      minutes: 1
     id: shaving_completed
   - platform: state
     entity_id: input_button.shaver_reset_maintenance
@@ -354,7 +356,7 @@
   sensor:
     - name: Shaver Maintenance
       unique_id: sensor.shaver_maintenance
-      state: "{{ (max(this.state | int(0) - states('sensor.philips_shaver_last_session_duration') | int(0), 0) if trigger.id == 'shaving_completed' else 1350) / 1350 * 100 }}"
+      state: "{{ this.state | float(0) - (states('sensor.philips_shaver_last_session_duration') | float(0)) / 1350 if trigger.id == 'shaving_completed' else 100 }}"
       unit_of_measurement: '%'
       attributes:
         timestamp: "{{ now() }}"
