@@ -1,8 +1,9 @@
 esphome:
   name: main-door-camera
   friendly_name: Main Door Camera
-#  libraries:
-#    - Wire
+  devices: 
+    - id: main_door
+      name: Main Door
 
 esp32:
   board: esp32dev
@@ -37,6 +38,13 @@ wifi:
     password: !secret ap_password
 
 captive_portal:
+
+binary_sensor:
+  - platform: gpio
+    pin: 13
+    name: Main Door
+    device_class: door
+    device_id: main_door
     
 output:
   - platform: ledc
