@@ -1,0 +1,74 @@
+substitutions:
+  name: study_room_ac
+  friendly_name: "Study Room AC"
+  min_temp: 16
+  max_temp: 29
+  tx: 1
+  rx: 3
+  external_temp_sensor: sensor.study_room_voice_assistant_temperature
+  external_hum_sensor: sensor.study_room_voice_assistant_humidity
+  
+esphome:
+  name: study-room-ac
+  friendly_name: Study Room AC
+
+esp32:
+  board: esp32doit-devkit-v1
+  framework:
+    type: esp-idf
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret study_room_ac_api_key
+
+ota:
+  - platform: esphome
+    password: !secret study_room_ac_ota_password
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+      bssid: 10:7B:44:AE:4C:A8
+
+  manual_ip:
+    static_ip: 192.168.18.64
+    gateway: 192.168.18.1
+    subnet: 255.255.255.0
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Study Room AC"
+    password: !secret ap_password
+
+captive_portal:
+    
+# Enable logging
+logger:
+  baud_rate: 0
+  level: DEBUG
+
+packages:
+  aircon: !include packages/aircon.yaml
+
+uart:
+  id: HP_UART
+  tx_pin: 1
+  rx_pin: 
+    number: 3
+    mode:
+      pullup: true
+      input: true
+  data_bits: 8
+  baud_rate: 2400
+  parity: EVEN
+  stop_bits: 1
+  
+climate:
+  - id: !extend ac
+    update_interval: 20s
+    stage_sensor:
+      name: Stage
+      use_as_operating_fallback: true
+      entity_category: diagnostic
