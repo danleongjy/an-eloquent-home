@@ -57,21 +57,27 @@ uart:
   tx_pin: 1
   rx_pin: 
     number: 3
-    mode:
-      pullup: true
-      input: true
+#    mode:
+#      pullup: true
+#      input: true
   data_bits: 8
   baud_rate: 2400
   parity: EVEN
   stop_bits: 1
   
-sensor:
-  - id: !remove remote_temp_sensor
+#sensor:
+#  - id: !remove remote_temp_sensor
+
+#climate:
+#  - id: !extend ac
+#    update_interval: 20s
+#    stage_sensor:
+#      name: Stage
+#      use_as_operating_fallback: true
+#      entity_category: diagnostic
 
 climate:
-  - id: !extend ac
-    update_interval: 20s
-    stage_sensor:
-      name: Stage
-      use_as_operating_fallback: true
-      entity_category: diagnostic
+  - platform: mitsubishi_cn105
+    name: "Study Room AC"
+    uart_id: HP_UART
+    update_interval: 1s
