@@ -10,13 +10,17 @@ import abc
 import asyncio
 import logging
 import time
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Callable
 
 from bleak import BleakClient
 from bleak_retry_connector import establish_connection as bleak_establish
 
-from homeassistant.components.bluetooth import async_last_service_info
+from homeassistant.components.bluetooth import (
+    async_last_service_info,
+    async_scanner_by_source,
+    async_scanner_devices_by_address,
+)
 from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.event import async_track_time_interval
@@ -33,6 +37,107 @@ ESP_STATUS_EVENT_NAME = "esphome.philips_shaver_ble_status"
 ESP_READ_TIMEOUT = 5.0
 # Heartbeat timeout: if no heartbeat received within this time, ESP is considered offline
 ESP_HEARTBEAT_TIMEOUT = 45.0  # 3x heartbeat interval (15s)
+
+
+def _scanner_name_by_source(hass: HomeAssistant, source: str) -> str | None:
+    """Look up a scanner by source MAC — works for ESPHome proxies."""
+    try:
+        scanner = async_scanner_by_source(hass, source)
+        if scanner is not None:
+            return getattr(scanner, "name", None)
+    except Exception:  # noqa: BLE001
+        return None
+    return None
+
+
+def _host_scanner_name_by_adapter(
+    hass: HomeAssistant, address: str, adapter_id: str
+) -> str | None:
+    """Find the HA Host scanner bound to a BlueZ adapter (e.g. "hci0").
+
+    The HA scanner registry keys Host scanners by their BT-MAC, not by the
+    adapter name, so we look the scanner up indirectly via the devices it can
+    see and match on the `adapter` attribute.
+    """
+    try:
+        for sd in async_scanner_devices_by_address(hass, address, connectable=True):
+            if getattr(sd.scanner, "adapter", None) == adapter_id:
+                return getattr(sd.scanner, "name", None)
+    except Exception:  # noqa: BLE001
+        return None
+    return None
+
+
+def describe_connection_path(
+    hass: HomeAssistant, client: BleakClient, device
+) -> str:
+    """Return the adapter label used for a BleakClient connection.
+
+    Matches the name shown in Settings -> Devices -> Bluetooth. Uses private
+    Bleak attributes to identify the backend; any upstream rename falls back
+    to a best-effort label instead of breaking the connect flow.
+    """
+    try:
+        # Primary: habluetooth's HaBleakClientWrapper sets _connected_scanner
+        # on the client after a successful connect. This is the scanner that
+        # actually carried the connection — more reliable than backend
+        # introspection, and works for both host (BlueZ) and remote (ESPHome)
+        # scanners without branching on backend type.
+        connected_scanner = getattr(client, "_connected_scanner", None)
+        if connected_scanner is not None:
+            name = getattr(connected_scanner, "name", None)
+            if name:
+                return name
+            source = getattr(connected_scanner, "source", None)
+            if source:
+                return source
+
+        backend = getattr(client, "_backend", None)
+        if backend is None:
+            return "unknown"
+        mod = type(backend).__module__ or ""
+        address = getattr(device, "address", None) or "?"
+
+        if "bluezdbus" in mod:
+            adapter_id = "?"
+            try:
+                info = getattr(backend, "_device_info", None)
+                if info and "Adapter" in info:
+                    adapter_id = info["Adapter"].rsplit("/", 1)[-1]
+            except Exception:  # noqa: BLE001
+                pass
+            if adapter_id == "?":
+                try:
+                    details = getattr(device, "details", None)
+                    path = details.get("path") if isinstance(details, dict) else None
+                    if isinstance(path, str) and path.startswith("/org/bluez/"):
+                        adapter_id = path.split("/")[3]
+                except Exception:  # noqa: BLE001
+                    pass
+            if adapter_id == "?":
+                try:
+                    adapter_attr = getattr(backend, "_adapter", None)
+                    if isinstance(adapter_attr, str) and adapter_attr:
+                        adapter_id = adapter_attr
+                except Exception:  # noqa: BLE001
+                    pass
+            name = _host_scanner_name_by_adapter(hass, address, adapter_id)
+            return name or adapter_id
+
+        if "esphome" in mod:
+            source = "?"
+            try:
+                details = getattr(device, "details", None)
+                if isinstance(details, dict):
+                    source = details.get("source") or "?"
+            except Exception:  # noqa: BLE001
+                pass
+            name = _scanner_name_by_source(hass, source) if source != "?" else None
+            return name or source
+
+        return type(backend).__name__
+    except Exception as err:  # noqa: BLE001
+        return f"unknown ({err})"
 
 
 class ShaverTransport(abc.ABC):
@@ -60,6 +165,22 @@ class ShaverTransport(abc.ABC):
     def is_shaver_connected(self) -> bool:
         """Return True if the shaver BLE link is active. Same as is_connected for direct BLE."""
         return self.is_connected
+
+    @property
+    def connection_path(self) -> str | None:
+        """Label of the adapter/bridge currently carrying the connection."""
+        return None
+
+    @property
+    def connection_rssi(self) -> int | None:
+        """RSSI seen by the scanner currently carrying the connection.
+
+        Distinct from ``async_last_service_info`` which returns the RSSI from
+        whichever scanner has the freshest advertisement — that scanner may
+        differ from the one serving the active link when multiple scanners
+        see the device with different RSSI.
+        """
+        return None
 
     @abc.abstractmethod
     async def read_char(self, char_uuid: str) -> bytes | None:
@@ -108,10 +229,34 @@ class BleakTransport(ShaverTransport):
         self._client: BleakClient | None = None
         self._disconnect_cb: Callable[[], None] | None = None
         self._last_read_errors: dict[str, str] = {}
+        self._connection_path: str | None = None
+        self._connected_scanner = None
 
     @property
     def is_connected(self) -> bool:
         return self._client is not None and self._client.is_connected
+
+    @property
+    def connection_path(self) -> str | None:
+        return self._connection_path if self.is_connected else None
+
+    @property
+    def connection_rssi(self) -> int | None:
+        if not self.is_connected or self._connected_scanner is None:
+            return None
+        try:
+            result = self._connected_scanner.get_discovered_device_advertisement_data(
+                self._address
+            )
+        except Exception:  # noqa: BLE001
+            return None
+        if not result:
+            return None
+        _device, adv = result
+        rssi = getattr(adv, "rssi", None)
+        if rssi is None or rssi <= -127:
+            return None
+        return int(rssi)
 
     async def connect(self) -> None:
         service_info = async_last_service_info(self._hass, self._address)
@@ -121,6 +266,8 @@ class BleakTransport(ShaverTransport):
         def _on_disconnect(_client):
             _LOGGER.info("%s: connection lost", self._address)
             self._client = None
+            self._connection_path = None
+            self._connected_scanner = None
             if self._disconnect_cb:
                 self._disconnect_cb()
 
@@ -131,6 +278,11 @@ class BleakTransport(ShaverTransport):
             disconnected_callback=_on_disconnect,
             timeout=15.0,
         )
+        self._connected_scanner = getattr(self._client, "_connected_scanner", None)
+        self._connection_path = describe_connection_path(
+            self._hass, self._client, service_info.device
+        )
+        _LOGGER.info("%s: connected via %s", self._address, self._connection_path)
 
     async def disconnect(self) -> None:
         if self._client and self._client.is_connected:
@@ -259,6 +411,8 @@ class EspBridgeTransport(ShaverTransport):
         self._pending_info: asyncio.Future[dict[str, str]] | None = None
         self._needs_resubscribe = False
         self._ready_event = asyncio.Event()
+        self._last_uptime: int | None = None
+        self._boot_time: datetime | None = None
 
     def _svc_name(self, action: str) -> str:
         """Full ESPHome service name, e.g. 'atom_lite_ble_read_char_shaver'."""
@@ -299,6 +453,15 @@ class EspBridgeTransport(ShaverTransport):
         return self._bridge_version
 
     @property
+    def bridge_boot_time(self) -> datetime | None:
+        """Return the ESP bridge boot timestamp.
+
+        Computed from uptime on first sighting and refreshed only on
+        detected restart (uptime regression) — stable during runtime.
+        """
+        return self._boot_time
+
+    @property
     def is_bridge_alive(self) -> bool:
         """Return True if the ESP bridge is reachable (heartbeat within timeout)."""
         if not self._setup_done:
@@ -315,6 +478,10 @@ class EspBridgeTransport(ShaverTransport):
     @property
     def is_connected(self) -> bool:
         return self.is_bridge_alive and self._shaver_connected
+
+    @property
+    def connection_path(self) -> str | None:
+        return self._device_name if self._esp_alive else None
 
     @property
     def needs_resubscribe(self) -> bool:
@@ -421,6 +588,37 @@ class EspBridgeTransport(ShaverTransport):
 
             if not self._esp_alive:
                 self._esp_alive = True
+
+            # Detect ESP restart via uptime regression.  After reboot the
+            # bridge loses all BLE subscriptions, but HA's notify_callbacks
+            # still hold stale entries.  Clear them so the "ready" handler
+            # below flags a resubscribe.  Fires on info/heartbeat/ready
+            # events (all include uptime_s).
+            uptime_str = event.data.get("uptime_s")
+            if uptime_str is not None:
+                try:
+                    new_uptime = int(uptime_str)
+                    is_restart = (
+                        self._last_uptime is not None
+                        and new_uptime < self._last_uptime
+                    )
+                    if is_restart:
+                        _LOGGER.info(
+                            "ESP bridge restarted (uptime %ds → %ds) — "
+                            "clearing stale subscriptions",
+                            self._last_uptime, new_uptime,
+                        )
+                        self._notify_callbacks.clear()
+                        self._needs_resubscribe = True
+                    # Set boot_time on first sighting and on every restart —
+                    # keeps the timestamp stable during normal runtime.
+                    if is_restart or self._boot_time is None:
+                        self._boot_time = datetime.now(timezone.utc) - timedelta(
+                            seconds=new_uptime
+                        )
+                    self._last_uptime = new_uptime
+                except ValueError:
+                    pass
 
             if status == "info":
                 # Filter by bridge_id if present (multi-device ESP)

@@ -356,7 +356,7 @@
   sensor:
     - name: Shaver Maintenance
       unique_id: sensor.shaver_maintenance
-      state: "{{ this.state | float(0) - (states('sensor.philips_shaver_last_session_duration') | float(0)) / 1350 * 100 if trigger.id == 'shaving_completed' else 100 }}"
+      state: "{{ this.state | float(0) - ((states('sensor.philips_shaver_last_session_duration') | float(0)) / 1350) * 100 if trigger.id == 'shaving_completed' else 100 }}"
       unit_of_measurement: '%'
       attributes:
         timestamp: "{{ now() }}"

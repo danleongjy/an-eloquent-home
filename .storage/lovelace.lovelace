@@ -15007,37 +15007,6 @@
               ]
             },
             {
-              "type": "conditional",
-              "conditions": [
-                {
-                  "condition": "user",
-                  "users": [
-                    "ad2bcce775894550affb6dfef93a2a36"
-                  ]
-                },
-                {
-                  "condition": "or",
-                  "conditions": [
-                    {
-                      "condition": "state",
-                      "entity": "binary_sensor.parents_room_radar_shaver_connected",
-                      "state": "off"
-                    },
-                    {
-                      "condition": "state",
-                      "entity": "sensor.philips_shaver_activity",
-                      "state": "initializing"
-                    }
-                  ]
-                }
-              ],
-              "card": {
-                "type": "markdown",
-                "content": "<ha-alert alert-type='info'>Shaver last connected {{ time_since(states.sensor.philips_shaver_activity.last_updated) }} ago. Awaiting connection...</ha-alert>",
-                "text_only": true
-              }
-            },
-            {
               "type": "vertical-stack",
               "cards": [
                 {
@@ -15199,10 +15168,26 @@
                   "condition": "state",
                   "entity": "binary_sensor.esp_bridge_shaver_ble",
                   "state": "on"
+                }
+              ]
+            },
+            {
+              "type": "conditional",
+              "conditions": [
+                {
+                  "condition": "user",
+                  "users": [
+                    "ad2bcce775894550affb6dfef93a2a36"
+                  ]
                 },
                 {
-                  "condition": "not",
+                  "condition": "or",
                   "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "binary_sensor.parents_room_radar_shaver_connected",
+                      "state": "off"
+                    },
                     {
                       "condition": "state",
                       "entity": "sensor.philips_shaver_activity",
@@ -15210,7 +15195,12 @@
                     }
                   ]
                 }
-              ]
+              ],
+              "card": {
+                "type": "markdown",
+                "content": "<ha-alert alert-type='info'>Last connected {{ time_since(states.sensor.philips_shaver_activity.last_updated) }} ago. Awaiting connection...</ha-alert>",
+                "text_only": true
+              }
             }
           ]
         },
