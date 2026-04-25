@@ -985,21 +985,21 @@
 - id: '1661601576517'
   alias: Washer Load Clean
   description: Indicate when the washer load is clean and needs unloading
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.washer_wash_completed
     to: 'on'
     id: finished
     from: 'off'
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - binary_sensor.washer_door
     from: 'off'
     to: 'on'
     id: opened
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: trigger
       id: finished
