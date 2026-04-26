@@ -15021,16 +15021,30 @@
                   "columns": 2,
                   "cards": [
                     {
-                      "type": "custom:button-card",
-                      "template": "button_card_tile",
-                      "entity": "sensor.philips_shaver_activity",
-                      "name": " ",
-                      "styles": {
-                        "icon": [
-                          {
-                            "color": "[[[ return 'var(--state-inactive-color)' ]]]"
-                          }
-                        ]
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.philips_shaver_activity",
+                          "state_not": [
+                            "initializing",
+                            "unavailable",
+                            "unknown"
+                          ]
+                        }
+                      ],
+                      "card": {
+                        "type": "custom:button-card",
+                        "template": "button_card_tile",
+                        "entity": "sensor.philips_shaver_activity",
+                        "name": " ",
+                        "styles": {
+                          "icon": [
+                            {
+                              "color": "[[[ return 'var(--state-inactive-color)' ]]]"
+                            }
+                          ]
+                        }
                       }
                     },
                     {
