@@ -58,6 +58,8 @@ triggers:
     at: !input sleep_hours_end
   - trigger: state
     entity_id: !input doors
+    for: 
+      minutes: "{{ states('input_number.motion_timeout_presence') }}"
   - trigger: state
     entity_id: !input motion
     from: 'on'
@@ -82,6 +84,8 @@ actions:
           - condition: state
             entity_id: !input doors
             state: 'on'
+            for: 
+              minutes: "{{ states('input_number.motion_timeout_presence') }}"
           - condition: state
             entity_id: !input motion
             state: 'off'
