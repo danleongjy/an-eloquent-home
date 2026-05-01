@@ -8716,10 +8716,16 @@
     entity_id:
     - input_button.shaver_reset_maintenance
     id: maintenance_completed
-  - trigger: template
-    value_template: '{{ states(''sensor.philips_shaver_number_of_uses'') | int(1)
-      % 5 == 0 }}'
+  - trigger: state
+    entity_id:
+    - sensor.philips_shaver_number_of_uses
     id: quick_clean_pod
+    not_from:
+    - unavailable
+    - unknown
+    not_to:
+    - unavailable
+    - unknown
   conditions: []
   actions:
   - choose:
@@ -8824,6 +8830,9 @@
         id:
         - quick_clean_pod
       sequence:
+      - condition: template
+        value_template: '{{ states(''sensor.philips_shaver_number_of_uses'') % 5 ==
+          0}}'
       - action: notify.mobile_app_aurora
         metadata: {}
         data:

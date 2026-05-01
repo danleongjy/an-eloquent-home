@@ -42,6 +42,8 @@ from .const import (
 from .coordinator import MQTTVacuumCoordinator
 from .types import CoordinatorConfig
 from .utils.camera.camera_services import (
+    camera_select_floor,
+    camera_update_floor_data,
     obstacle_view,
     reload_camera_config,
     reset_trims,
@@ -166,6 +168,12 @@ async def async_setup_entry(hass: core.HomeAssistant, entry: ConfigEntry) -> boo
         hass.services.async_register(
             DOMAIN, "obstacle_view", partial(obstacle_view, hass=hass)
         )
+        hass.services.async_register(
+            DOMAIN, "camera_select_floor", partial(camera_select_floor, hass=hass)
+        )
+        hass.services.async_register(
+            DOMAIN, "camera_update_floor_data", partial(camera_update_floor_data, hass=hass)
+        )
         await async_register_vacuums_services(hass, data_coordinator)
     # Registers update listener to update config entry when options are updated.
     unsub_options_update_listener = entry.add_update_listener(options_update_listener)
@@ -219,6 +227,8 @@ async def async_unload_entry(
         if not hass.data[DOMAIN]:
             hass.services.async_remove(DOMAIN, "reset_trims")
             hass.services.async_remove(DOMAIN, "obstacle_view")
+            hass.services.async_remove(DOMAIN, "camera_select_floor")
+            hass.services.async_remove(DOMAIN, "camera_update_floor_data")
             hass.services.async_remove(DOMAIN, SERVICE_RELOAD)
             await async_remove_vacuums_services(hass)
     return unload_ok
