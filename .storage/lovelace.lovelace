@@ -710,6 +710,24 @@
             ]
           }
         },
+        "wifi_device_connectivity": {
+          "template": "square_cell",
+          "tap_action": {
+            "action": "none"
+          },
+          "styles": {
+            "icon": [
+              {
+                "color": "[[[\n  if (entity.state == 'unavailable') {\n    return 'grey'\n  } else {\n    return 'var(--state-active-color)'\n  }\n]]]\n"
+              }
+            ],
+            "card": [
+              {
+                "background-color": "[[[\n  if (entity.state == 'unavailable') {\n    return '#9e110d'\n  }\n]]]\n"
+              }
+            ]
+          }
+        },
         "sensor_view": {
           "aspect_ratio": "1.1/1",
           "show_name": false
@@ -7152,16 +7170,31 @@
                   }
                 },
                 {
-                  "type": "custom:button-card",
-                  "template": "tile_nav_button",
-                  "name": "Network",
-                  "state_display": " ",
-                  "icon": "mdi:server-security",
-                  "grid_options": {
-                    "rows": null
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "user",
+                      "users": [
+                        "ad2bcce775894550affb6dfef93a2a36",
+                        "361884c4dcb94d5f9d7e583d64844264",
+                        "40adad28a2844903ae8cea12f3857d46",
+                        "2651cb9042dd41acb0b54327457a9a14"
+                      ]
+                    }
+                  ],
+                  "card": {
+                    "type": "custom:button-card",
+                    "template": "tile_nav_button",
+                    "name": "Wifi",
+                    "state_display": " ",
+                    "icon": "mdi:wifi",
+                    "tap_action": {
+                      "navigation_path": "/lovelace/wifi"
+                    }
                   },
-                  "tap_action": {
-                    "navigation_path": "/lovelace/network"
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
                   }
                 },
                 {
@@ -7189,6 +7222,19 @@
                   "grid_options": {
                     "columns": 6,
                     "rows": "auto"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_nav_button",
+                  "name": "Network",
+                  "state_display": " ",
+                  "icon": "mdi:server-security",
+                  "grid_options": {
+                    "rows": null
+                  },
+                  "tap_action": {
+                    "navigation_path": "/lovelace/network"
                   }
                 },
                 {
@@ -16573,6 +16619,372 @@
               ]
             }
           ]
+        },
+        {
+          "type": "sections",
+          "max_columns": 2,
+          "title": "Wifi",
+          "path": "wifi",
+          "icon": "mdi:wifi",
+          "theme": "no_border",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.router_extsw_mb_out_within_1min",
+                          "icon": "mdi:wifi",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elenas_room_radar_occupancy",
+                          "icon": "mdi:target-account",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "climate.elenas_room_ac",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "light.elenas_room_bedside_lamp",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elenas_room_core_current_command",
+                          "icon": "mdi:button-pointer",
+                          "template": "wifi_device_connectivity"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.elis_room_radar_occupancy",
+                          "icon": "mdi:target-account",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "remote.elis_room_universal_remote",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "climate.elis_room_ac",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.elis_room_core_current_command",
+                          "icon": "mdi:button-pointer",
+                          "template": "wifi_device_connectivity"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:toilet",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "switch.water_heater",
+                          "template": "wifi_device_connectivity"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:teddy-bear",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.playroom_radar_occupancy",
+                          "icon": "mdi:target-account",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.washer_ssid",
+                          "icon": "mdi:washing-machine",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "vacuum.valetudo_hestia",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.playroom_core_current_command",
+                          "icon": "mdi:button-pointer",
+                          "template": "wifi_device_connectivity"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:pasta",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.dining_room_radar_occupancy",
+                          "icon": "mdi:target-account",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "climate.dining_room_ac",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "media_player.dining_room_speaker",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.doorbell_button",
+                          "icon": "mdi:doorbell-video",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.main_door",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "camera.main_door_camera",
+                          "icon": "mdi:cctv",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "fan.dining_room_fan",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "switch.main_door_display_screen",
+                          "template": "wifi_device_connectivity"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:sofa",
+                          "template": "square_cell",
+                          "styles": {
+                            "card": [
+                              {
+                                "border-color": "#b4fab4"
+                              },
+                              {
+                                "border-width": "2px"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.router_2_4ghz_wifi_mb_out_within_1min",
+                          "icon": "mdi:wifi",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.living_room_radar_occupancy",
+                          "icon": "mdi:target-account",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "climate.living_room_ac",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "fan.living_room_fan",
+                          "template": "wifi_device_connectivity"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:pot-steam",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.kitchen_radar_occupancy",
+                          "icon": "mdi:target-account",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "remote.kitchen_universal_remote",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "media_player.kitchen_speaker",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "cover.kitchen_blind",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "switch.rice_cooker",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "switch.stove_main_power",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.kitchen_core_current_command",
+                          "icon": "mdi:button-pointer",
+                          "template": "wifi_device_connectivity"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bookshelf",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "remote.study_room_universal_remote",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.study_room_radar_occupancy",
+                          "icon": "mdi:target-account",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "media_player.study_room_speaker",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "light.study_room_floor_lamp",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "assist_satellite.study_room_voice_assistant_assist_satellite",
+                          "icon": "mdi:microphone",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "switch.study_table_display_screen",
+                          "template": "wifi_device_connectivity"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "vertical-stack",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "template": "square_cell"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.router_lan2_mb_out_within_1min",
+                          "icon": "mdi:wifi",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "binary_sensor.parents_room_radar_occupancy",
+                          "icon": "mdi:target-account",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "climate.parents_room_ac",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "light.parents_room_bedside_lamp",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "entity": "sensor.parents_room_core_current_command",
+                          "icon": "mdi:button-pointer",
+                          "template": "wifi_device_connectivity"
+                        }
+                      ]
+                    }
+                  ],
+                  "grid_options": {
+                    "columns": "full"
+                  }
+                }
+              ],
+              "column_span": 1
+            }
+          ],
+          "cards": [],
+          "subview": true
         }
       ]
     }
