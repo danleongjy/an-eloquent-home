@@ -25,8 +25,8 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 148
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 191
-[`button`](https://www.home-assistant.io/components/button) | 194
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 195
+[`button`](https://www.home-assistant.io/components/button) | 196
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 8
 [`climate`](https://www.home-assistant.io/components/climate) | 6
@@ -50,10 +50,10 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 3
 [`script`](https://www.home-assistant.io/components/script) | 13
 [`select`](https://www.home-assistant.io/components/select) | 70
-[`sensor`](https://www.home-assistant.io/components/sensor) | 683
+[`sensor`](https://www.home-assistant.io/components/sensor) | 741
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 79
+[`switch`](https://www.home-assistant.io/components/switch) | 81
 [`text`](https://www.home-assistant.io/components/text) | 33
 [`tts`](https://www.home-assistant.io/components/tts) | 1
 [`update`](https://www.home-assistant.io/components/update) | 120
@@ -61,7 +61,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1924
+Total | 1990
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)

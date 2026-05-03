@@ -1,0 +1,11 @@
+{% macro client_rssi(client_mac) %}
+{% set clients = namespace(json = []) %}
+{% if integration_entities('ssh') | select('search', 'sensor.*' + (client_mac | lower).replace(':','_')) | list | length > 0 %}
+  {% for client in integration_entities('ssh') | select('search', 'sensor.*' + (client_mac | lower).replace(':','_')) | list %}
+    {% set clients.json = clients.json + [{'mac': client_mac, 'ap': client.split('.')[1].split('_')[2], 'rssi': states(client) | int(-100)}] %}
+  {% endfor %}
+{% else %}
+  {% set clients.json = clients.json + [{'mac': client_mac, 'ap': 'none', 'rssi': -100}] %}
+{% endif %}
+{{ (clients.json | sort(attribute = 'rssi'))[0] | to_json }}
+{% endmacro %}
