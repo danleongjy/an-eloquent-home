@@ -76,7 +76,7 @@ action:
   - delay: 1
   - condition: template
     value_template: >
-      {{ trigger.id == "timeout_doors_closed"
+      {{ trigger.id != "timeout_doors_open"
          or (doors | length == 0 
              or ('on' in states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'state') | list 
                  and now() - (states.binary_sensor | selectattr('entity_id', 'in', doors) | map(attribute = 'last_changed') | list | sort)[-1] >= timedelta(minutes = states(minutes_doors_open) | int ))) }}
