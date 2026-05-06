@@ -10758,38 +10758,169 @@
                   "heading": "Internet"
                 },
                 {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "header_only",
-                  "header": {
-                    "title": "Wifi Clients"
-                  },
-                  "all_series_config": {
-                    "unit": " "
-                  },
-                  "series": [
+                  "type": "vertical-stack",
+                  "cards": [
                     {
-                      "entity": "sensor.wifi_device_rssis",
-                      "attribute": "clients_west",
-                      "name": "AP West",
-                      "color": "#3498DB"
+                      "type": "custom:apexcharts-card",
+                      "config_templates": "header_only",
+                      "header": {
+                        "title": "Wifi Clients"
+                      },
+                      "all_series_config": {
+                        "unit": " "
+                      },
+                      "series": [
+                        {
+                          "entity": "sensor.wifi_device_rssis",
+                          "attribute": "clients_west",
+                          "name": "AP West",
+                          "color": "#3498DB"
+                        },
+                        {
+                          "entity": "sensor.wifi_device_rssis",
+                          "attribute": "clients_central",
+                          "name": "AP Central",
+                          "color": "#E74C3C"
+                        },
+                        {
+                          "entity": "sensor.wifi_device_rssis",
+                          "attribute": "clients_east",
+                          "name": "AP East",
+                          "color": "#9B59B6"
+                        }
+                      ],
+                      "section_mode": true
                     },
                     {
-                      "entity": "sensor.wifi_device_rssis",
-                      "attribute": "clients_central",
-                      "name": "AP Central",
-                      "color": "#E74C3C"
+                      "type": "custom:button-card",
+                      "template": "bar_chart",
+                      "variables": {
+                        "all_total": "[[[ return parseInt(states['sensor.wifi_device_rssis'].attributes.clients_west) + parseInt(states['sensor.wifi_device_rssis'].attributes.clients_central) +  parseInt(states['sensor.wifi_device_rssis'].attributes.clients_east)]]]",
+                        "bar_segment_clients_west_percent": "[[[ return parseInt(states['sensor.wifi_device_rssis'].attributes.clients_west)/variables.all_total * 100 ]]]",
+                        "bar_segment_clients_central_percent": "[[[ return parseInt(states['sensor.wifi_device_rssis'].attributes.clients_central)/variables.all_total * 100 ]]]",
+                        "bar_segment_clients_east_percent": "[[[ return parseInt(states['sensor.wifi_device_rssis'].attributes.clients_east)/variables.all_total * 100 ]]]"
+                      },
+                      "custom_fields": {
+                        "bar_segment_clients_east": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_clients_east_percent) ]]]"
+                            },
+                            "entity": "sensor.wifi_device_rssis",
+                            "attribute": "clients_east",
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#9B59B6"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_clients_central": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_clients_central_percent) ]]]"
+                            },
+                            "entity": "sensor.wifi_device_rssis",
+                            "attribute": "clients_central",
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#E74C3C"
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "bar_segment_clients_west": {
+                          "card": {
+                            "type": "custom:button-card",
+                            "variables": {
+                              "percent": "[[[ return Math.round(variables.bar_segment_clients_west_percent) ]]]"
+                            },
+                            "entity": "sensor.wifi_device_rssis",
+                            "attribute": "clients_west",
+                            "template": "bar_chart_segment",
+                            "styles": {
+                              "card": [
+                                {
+                                  "background": "#3498DB"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "styles": {
+                        "grid": [
+                          {
+                            "grid-template-areas": "\"bar_segment_clients_west bar_segment_clients_central bar_segment_clients_east\""
+                          },
+                          {
+                            "grid-template-columns": "[[[ return variables.bar_segment_clients_west_percent.toString() + '% ' + variables.bar_segment_clients_central_percent.toString() + '%' +  variables.bar_segment_clients_east_percent.toString() + '%']]]"
+                          },
+                          {
+                            "grid-template-rows": "min-content"
+                          }
+                        ]
+                      }
                     },
                     {
-                      "entity": "sensor.wifi_device_rssis",
-                      "attribute": "clients_east",
-                      "name": "AP East",
-                      "color": "#9B59B6"
+                      "type": "heading",
+                      "icon": "mdi:memory",
+                      "heading": "RAM Available",
+                      "heading_style": "subtitle",
+                      "grid_options": {
+                        "columns": 12,
+                        "rows": 1
+                      }
+                    },
+                    {
+                      "square": false,
+                      "type": "grid",
+                      "cards": [
+                        {
+                          "type": "custom:button-card",
+                          "template": "tile_status_bar",
+                          "entity": "sensor.access_point_west_free_memory",
+                          "name": "AP West",
+                          "variables": {
+                            "denominator": 128,
+                            "cap_medium": 0.5,
+                            "cap_low": 0.3
+                          }
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "tile_status_bar",
+                          "entity": "sensor.access_point_east_free_memory",
+                          "name": "AP East",
+                          "variables": {
+                            "denominator": 509.255,
+                            "cap_medium": 0.5,
+                            "cap_low": 0.3
+                          }
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "template": "tile_status_bar",
+                          "entity": "sensor.router_free_memory",
+                          "name": "Router",
+                          "variables": {
+                            "denominator": 509.255,
+                            "cap_medium": 0.5,
+                            "cap_low": 0.3
+                          }
+                        }
+                      ],
+                      "columns": 2
                     }
-                  ],
-                  "section_mode": true,
-                  "grid_options": {
-                    "rows": 2
-                  }
+                  ]
                 },
                 {
                   "type": "custom:apexcharts-card",
@@ -10816,134 +10947,14 @@
                       "duration": "5min",
                       "func": "sum"
                     }
-                  },
-                  "section_mode": true
-                },
-                {
-                  "type": "custom:button-card",
-                  "template": "bar_chart",
-                  "variables": {
-                    "all_total": "[[[ return parseInt(states['sensor.wifi_device_rssis'].attributes.clients_west) + parseInt(states['sensor.wifi_device_rssis'].attributes.clients_central) +  parseInt(states['sensor.wifi_device_rssis'].attributes.clients_east)]]]",
-                    "bar_segment_clients_west_percent": "[[[ return parseInt(states['sensor.wifi_device_rssis'].attributes.clients_west)/variables.all_total * 100 ]]]",
-                    "bar_segment_clients_central_percent": "[[[ return parseInt(states['sensor.wifi_device_rssis'].attributes.clients_central)/variables.all_total * 100 ]]]",
-                    "bar_segment_clients_east_percent": "[[[ return parseInt(states['sensor.wifi_device_rssis'].attributes.clients_east)/variables.all_total * 100 ]]]"
-                  },
-                  "custom_fields": {
-                    "bar_segment_clients_east": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_clients_east_percent) ]]]"
-                        },
-                        "entity": "sensor.wifi_device_rssis",
-                        "attribute": "clients_east",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#9B59B6"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_clients_central": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_clients_central_percent) ]]]"
-                        },
-                        "entity": "sensor.wifi_device_rssis",
-                        "attribute": "clients_central",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#E74C3C"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "bar_segment_clients_west": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "variables": {
-                          "percent": "[[[ return Math.round(variables.bar_segment_clients_west_percent) ]]]"
-                        },
-                        "entity": "sensor.wifi_device_rssis",
-                        "attribute": "clients_west",
-                        "template": "bar_chart_segment",
-                        "styles": {
-                          "card": [
-                            {
-                              "background": "#3498DB"
-                            }
-                          ]
-                        }
-                      }
-                    }
-                  },
-                  "styles": {
-                    "grid": [
-                      {
-                        "grid-template-areas": "\"bar_segment_clients_west bar_segment_clients_central bar_segment_clients_east\""
-                      },
-                      {
-                        "grid-template-columns": "[[[ return variables.bar_segment_clients_west_percent.toString() + '% ' + variables.bar_segment_clients_central_percent.toString() + '%' +  variables.bar_segment_clients_east_percent.toString() + '%']]]"
-                      },
-                      {
-                        "grid-template-rows": "min-content"
-                      }
-                    ]
                   }
-                },
-                {
-                  "type": "heading",
-                  "icon": "mdi:memory",
-                  "heading": "RAM Available",
-                  "heading_style": "subtitle",
-                  "grid_options": {
-                    "columns": 12,
-                    "rows": 1
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "template": "tile_status_bar",
-                  "entity": "sensor.access_point_west_free_memory",
-                  "name": "AP West",
-                  "variables": {
-                    "denominator": 128
-                  },
-                  "grid_options": {
-                    "rows": 1
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "template": "tile_status_bar",
-                  "entity": "sensor.access_point_east_free_memory",
-                  "name": "AP East",
-                  "variables": {
-                    "denominator": 509.255
-                  },
-                  "grid_options": {
-                    "rows": 1
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "template": "tile_status_bar",
-                  "entity": "sensor.router_free_memory",
-                  "name": "Router",
-                  "variables": {
-                    "denominator": 509.255
-                  },
-                  "grid_options": {
-                    "rows": 1
-                  }
-                },
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
