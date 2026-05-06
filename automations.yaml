@@ -4010,25 +4010,25 @@
   description: Send a notification when router available RAM is low
   triggers:
   - entity_id:
-    - sensor.router_used_memory_percent
+    - sensor.router_free_memory
     for:
       hours: 1
       minutes: 0
       seconds: 0
-    above: 75
-    id: high
-    trigger: numeric_state
-  - entity_id:
-    - sensor.router_used_memory_percent
-    below: 29.9
     id: low
     trigger: numeric_state
+    below: 152.78
+  - entity_id:
+    - sensor.router_free_memory
+    id: high
+    trigger: numeric_state
+    above: 152.78
   conditions: []
   actions:
   - if:
     - condition: trigger
       id:
-      - high
+      - low
     then:
     - metadata: {}
       data:
