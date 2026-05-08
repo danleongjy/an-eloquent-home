@@ -985,11 +985,11 @@
             "cap_low": 0.05,
             "cap_medium": 0.25,
             "denominator": 100,
-            "status_color": "[[[\n  if (parseFloat(entity.state) / variables.denominator > variables.cap_medium)\n    return '#b4fab4'\n  else if (parseFloat(entity.state) / variables.denominator > variable.cap_low)\n    return '#f2900f'\n  else\n    return '#eb4034'\n]]]\n",
-            "status_color_background": "[[[\n  if (parseFloat(entity.state) / variables.denominator > variables.cap_medium)\n    return '#5a7d5a'\n  else if (parseFloat(entity.state) / variables.denominator > variables.cap_low)\n    return '#794807'\n  else\n    return '#9e110d'\n]]]\n"
+            "status_color": "[[[\n  if (parseFloat(entity.state) / variables.denominator > variables.cap_medium) {\n    return '#b4fab4'\n  } else if (parseFloat(entity.state) / variables.denominator > variables.cap_low) {\n    return '#f2900f'\n  } else {\n    return '#eb4034'\n  }\n]]]\n",
+            "status_color_background": "[[[\n  if (parseFloat(entity.state) / variables.denominator > variables.cap_medium) {\n    return '#5a7d5a'\n  } else if (parseFloat(entity.state) / variables.denominator > variables.cap_low) {\n    return '#794807'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
           },
           "custom_fields": {
-            "indicator": "[[[\n  if (parseFloat(entity.state) / variables.denominator > variables.cap_medium) \n    return \"<ha-icon icon='mdi:check-circle-outline'></ha-icon>\"\n  else \n    return \"<ha-icon icon='mdi:alert-circle-outline'></ha-icon>\"\n]]]\n"
+            "indicator": "[[[\n  if (parseFloat(entity.state) / variables.denominator > variables.cap_medium) {\n    return \"<ha-icon icon='mdi:check-circle-outline'></ha-icon>\"\n  } else {\n    return \"<ha-icon icon='mdi:alert-circle-outline'></ha-icon>\"\n  }\n]]]\n"
           },
           "styles": {
             "icon": [
@@ -1013,7 +1013,7 @@
                   "color": "[[[ return variables.status_color ]]]"
                 },
                 {
-                  "animation": "[[[\n  if (parseFloat(entity.state) / variables.denominator <= variables.cap_low) \n    return 'blink 3s ease infinite'\n]]]\n"
+                  "animation": "[[[\n  if (parseFloat(entity.state) / variables.denominator <= variables.cap_low) {\n    return 'blink 3s ease infinite'\n  }\n]]]\n"
                 }
               ]
             },
@@ -7140,6 +7140,19 @@
                 {
                   "type": "custom:button-card",
                   "template": "tile_nav_button",
+                  "name": "Motion",
+                  "state_display": " ",
+                  "icon": "mdi:motion-sensor",
+                  "grid_options": {
+                    "rows": null
+                  },
+                  "tap_action": {
+                    "navigation_path": "/lovelace/motion"
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_nav_button",
                   "name": "Lighting",
                   "state_display": " ",
                   "icon": "mdi:home-lightbulb-outline",
@@ -7164,17 +7177,10 @@
                   }
                 },
                 {
-                  "type": "custom:button-card",
-                  "template": "tile_nav_button",
-                  "name": "Motion",
-                  "state_display": " ",
-                  "icon": "mdi:motion-sensor",
-                  "grid_options": {
-                    "rows": null
-                  },
-                  "tap_action": {
-                    "navigation_path": "/lovelace/motion"
-                  }
+                  "type": "heading",
+                  "icon": "mdi:hammer-wrench",
+                  "heading": "System Diagnostics",
+                  "heading_style": "subtitle"
                 },
                 {
                   "type": "conditional",
@@ -7192,7 +7198,7 @@
                   "card": {
                     "type": "custom:button-card",
                     "template": "tile_nav_button",
-                    "name": "Wifi",
+                    "name": "Wifi Devices",
                     "state_display": " ",
                     "icon": "mdi:wifi",
                     "tap_action": {
@@ -7219,7 +7225,7 @@
                   "card": {
                     "type": "custom:button-card",
                     "template": "tile_nav_button",
-                    "name": "Zigbee",
+                    "name": "ZB Devices",
                     "state_display": " ",
                     "icon": "mdi:zigbee",
                     "tap_action": {
@@ -7234,7 +7240,7 @@
                 {
                   "type": "custom:button-card",
                   "template": "tile_nav_button",
-                  "name": "Network",
+                  "name": "Server & APs",
                   "state_display": " ",
                   "icon": "mdi:server-security",
                   "grid_options": {
