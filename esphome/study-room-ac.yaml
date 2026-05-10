@@ -3,8 +3,8 @@ substitutions:
   friendly_name: "Study Room AC"
   min_temp: 16
   max_temp: 29
-  tx: 17
-  rx: 16
+  tx: 1
+  rx: 3
   external_temp_sensor: sensor.study_room_voice_assistant_temperature
   external_hum_sensor: sensor.study_room_voice_assistant_humidity
   
@@ -57,9 +57,9 @@ uart:
   tx_pin: 1
   rx_pin: 
     number: 3
-#    mode:
-#      pullup: true
-#      input: true
+    mode:
+      pullup: true
+      input: true
   data_bits: 8
   baud_rate: 2400
   parity: EVEN
@@ -68,16 +68,16 @@ uart:
 #sensor:
 #  - id: !remove remote_temp_sensor
 
-#climate:
-#  - id: !extend ac
-#    update_interval: 20s
-#    stage_sensor:
-#      name: Stage
-#      use_as_operating_fallback: true
-#      entity_category: diagnostic
-
 climate:
-  - platform: mitsubishi_cn105
-    name: "Study Room AC"
-    uart_id: HP_UART
-    update_interval: 1s
+  - id: !extend ac
+    update_interval: 20s
+    stage_sensor:
+      name: Stage
+      use_as_operating_fallback: true
+      entity_category: diagnostic
+
+#climate:
+#  - platform: mitsubishi_cn105
+#    name: "Study Room AC"
+#    uart_id: HP_UART
+#    update_interval: 1s

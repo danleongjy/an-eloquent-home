@@ -172,7 +172,9 @@ async def async_setup_entry(hass: core.HomeAssistant, entry: ConfigEntry) -> boo
             DOMAIN, "camera_select_floor", partial(camera_select_floor, hass=hass)
         )
         hass.services.async_register(
-            DOMAIN, "camera_update_floor_data", partial(camera_update_floor_data, hass=hass)
+            DOMAIN,
+            "camera_update_floor_data",
+            partial(camera_update_floor_data, hass=hass),
         )
         await async_register_vacuums_services(hass, data_coordinator)
     # Registers update listener to update config entry when options are updated.

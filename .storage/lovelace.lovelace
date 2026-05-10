@@ -9696,6 +9696,14 @@
                         {
                           "type": "custom:button-card",
                           "variables": {
+                            "client": "dining_room_fan"
+                          },
+                          "icon": "mdi:fan",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "variables": {
                             "client": "dining_room_ac"
                           },
                           "icon": "mdi:snowflake",
@@ -9723,14 +9731,6 @@
                             "client": "main_door_camera"
                           },
                           "icon": "mdi:cctv",
-                          "template": "wifi_device_connectivity"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "variables": {
-                            "client": "dining_room_fan"
-                          },
-                          "icon": "mdi:fan",
                           "template": "wifi_device_connectivity"
                         },
                         {
@@ -9772,17 +9772,17 @@
                         {
                           "type": "custom:button-card",
                           "variables": {
-                            "client": "living_room_ac"
+                            "client": "living_room_fan"
                           },
-                          "icon": "mdi:snowflake",
+                          "icon": "mdi:fan",
                           "template": "wifi_device_connectivity"
                         },
                         {
                           "type": "custom:button-card",
                           "variables": {
-                            "client": "living_room_fan"
+                            "client": "living_room_ac"
                           },
-                          "icon": "mdi:fan",
+                          "icon": "mdi:snowflake",
                           "template": "wifi_device_connectivity"
                         },
                         {
@@ -9876,17 +9876,17 @@
                         {
                           "type": "custom:button-card",
                           "variables": {
-                            "client": "study_room_universal_remote"
+                            "client": "study_room_radar"
                           },
-                          "icon": "mdi:remote",
+                          "icon": "mdi:target-account",
                           "template": "wifi_device_connectivity"
                         },
                         {
                           "type": "custom:button-card",
                           "variables": {
-                            "client": "study_room_radar"
+                            "client": "study_room_universal_remote"
                           },
-                          "icon": "mdi:target-account",
+                          "icon": "mdi:remote",
                           "template": "wifi_device_connectivity"
                         },
                         {
@@ -15765,17 +15765,29 @@
                       }
                     },
                     {
-                      "type": "custom:button-card",
-                      "template": "button_card_tile",
-                      "entity": "sensor.philips_shaver_days_since_last_use",
-                      "name": " ",
-                      "state_display": "[[[ \n  if (entity.state == '1') {\n    return '1 day ago'\n  } else {\n    return entity.state + ' days ago'\n  }\n]]]\n",
-                      "styles": {
-                        "icon": [
-                          {
-                            "color": "[[[ return 'var(--state-inactive-color)' ]]]"
-                          }
-                        ]
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.philips_shaver_activity",
+                          "state_not": [
+                            "Shaving"
+                          ]
+                        }
+                      ],
+                      "card": {
+                        "type": "custom:button-card",
+                        "template": "button_card_tile",
+                        "entity": "sensor.philips_shaver_days_since_last_use",
+                        "name": " ",
+                        "state_display": "[[[ \n  if (entity.state == '1') {\n    return '1 day ago'\n  } else {\n    return entity.state + ' days ago'\n  }\n]]]\n",
+                        "styles": {
+                          "icon": [
+                            {
+                              "color": "[[[ return 'var(--state-inactive-color)' ]]]"
+                            }
+                          ]
+                        }
                       }
                     },
                     {

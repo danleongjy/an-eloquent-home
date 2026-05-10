@@ -130,8 +130,15 @@ class LanguageCache:
                                 "Cached language for user %s: %s", user_id, language
                             )
                     except (KeyError, json.JSONDecodeError) as e:
-                        _LOGGER.warning(
-                            "Error processing user data for %s: %s", user_id, str(e)
+                        _LOGGER.debug(
+                            "User language data unavailable for %s, defaulting to en: %s",
+                            user_id,
+                            str(e),
+                        )
+                        self._user_languages[user_id] = "en"
+                        self._all_languages.add("en")
+                        await user_language_store.set_user_language(
+                            user_id, "en"
                         )
 
             # Mark UserLanguageStore as initialized using the proper method

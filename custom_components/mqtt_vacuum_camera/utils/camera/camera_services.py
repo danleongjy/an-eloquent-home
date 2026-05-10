@@ -4,6 +4,7 @@ from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import SERVICE_RELOAD
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import issue_registry as ir
 
 from ...common import create_floor_data, get_entity_id
 from ...const import CONF_CURRENT_FLOOR, CONF_FLOORS_DATA, DOMAIN, LOGGER
@@ -13,6 +14,17 @@ from ...utils.files_operations import async_clean_up_all_auto_crop_files
 async def reset_trims(call: ServiceCall, hass: HomeAssistant) -> None:
     """Action Reset Map Trims."""
     LOGGER.debug("Resetting trims for %s", DOMAIN)
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        "reset_trims_deprecated",
+        breaks_in_ha_version="2026.8.0",
+        is_fixable=True,
+        is_persistent=True,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key="reset_trims_deprecated",
+        translation_placeholders={"domain": DOMAIN},
+    )
     try:
         await async_clean_up_all_auto_crop_files(hass)
         await hass.services.async_call(DOMAIN, SERVICE_RELOAD)
@@ -81,14 +93,14 @@ async def obstacle_view(call: ServiceCall, hass: HomeAssistant) -> None:
     )
 
 
-def _get_config_entry_from_camera(
-    camera_entity_id: str, hass: HomeAssistant
-):
+def _get_config_entry_from_camera(camera_entity_id: str, hass: HomeAssistant):
     """Return the ConfigEntry for a camera entity_id, or None if not found."""
     entity_reg = er.async_get(hass)
     entity_entry = entity_reg.async_get(camera_entity_id)
     if not entity_entry or not entity_entry.config_entry_id:
-        LOGGER.warning("Camera entity %s not found in entity registry", camera_entity_id)
+        LOGGER.warning(
+            "Camera entity %s not found in entity registry", camera_entity_id
+        )
         return None
     entry = hass.config_entries.async_get_entry(entity_entry.config_entry_id)
     if not entry:
@@ -153,10 +165,15 @@ async def camera_update_floor_data(call: ServiceCall, hass: HomeAssistant) -> No
     hass_data = hass.data.get(DOMAIN, {}).get(entry.entry_id, {})
     coordinator = hass_data.get("coordinator")
     if not coordinator:
-        LOGGER.warning("camera_update_floor_data: coordinator not available for %s", camera_entity_id)
+        LOGGER.warning(
+            "camera_update_floor_data: coordinator not available for %s",
+            camera_entity_id,
+        )
         return
 
-    floor_id = call.data.get("floor_id") or entry.options.get(CONF_CURRENT_FLOOR, "floor_0")
+    floor_id = call.data.get("floor_id") or entry.options.get(
+        CONF_CURRENT_FLOOR, "floor_0"
+    )
     floors_data = dict(entry.options.get(CONF_FLOORS_DATA, {}))
     floor_data_dict = floors_data.get(floor_id, {})
 

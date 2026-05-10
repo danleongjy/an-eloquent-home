@@ -774,7 +774,7 @@
     id: no_motion
     trigger: state
   - at: input_datetime.wind_down
-    id: sleep_hours_start
+    id: wind_down
     trigger: time
   - entity_id:
     - binary_sensor.parents_room_door
@@ -852,7 +852,7 @@
             seconds: 0
         - condition: time
           after: input_datetime.sleep_hours_end
-          before: input_datetime.sleep_hours_start
+          before: input_datetime.wind_down
           weekday:
           - sun
           - fri
@@ -876,7 +876,8 @@
         action: cover.open_cover
     - conditions:
       - condition: trigger
-        id: sleep_hours_start
+        id:
+        - wind_down
       sequence:
       - condition: not
         conditions:
