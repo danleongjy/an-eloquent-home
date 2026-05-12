@@ -3,8 +3,6 @@ substitutions:
   friendly_name: "Study Room AC"
   min_temp: 16
   max_temp: 29
-  tx: 1
-  rx: 3
   external_temp_sensor: sensor.study_room_voice_assistant_temperature
   external_hum_sensor: sensor.study_room_voice_assistant_humidity
   
@@ -46,38 +44,58 @@ captive_portal:
     
 # Enable logging
 logger:
-  baud_rate: 0
-  level: DEBUG
 
-packages:
-  aircon: !include packages/aircon.yaml
+sensor:
+  - platform: homeassistant
+    id: temp_sensor
+    entity_id: ${external_temp_sensor}
+    on_value:
+      then:
+        - if:
+            condition:
+              - lambda: 'return id(ac).mode != CLIMATE_MODE_OFF;'
+            then:
+              - if:
+                  condition:
+                    - lambda: 'return (x - id(ac).target_temperature) > 2;'
+                  then:
+                    - if:
+                        condition:
+                          - lambda: 'return id(ac).fan_mode != CLIMATE_FAN_HIGH;'
+                        then:
+                          - climate.control:
+                              id: ac
+                              fan_mode: HIGH
+                              target_temperature: !lambda 'return id(ac).target_temperature;'
+                  else:
+                    if:
+                        condition: 
+                          - lambda: 'return id(ac).fan_mode != CLIMATE_FAN_LOW;'
+                        then:
+                          - climate.control:
+                              id: ac
+                              fan_mode: LOW
+                              target_temperature: !lambda 'return id(ac).target_temperature;'
+  - platform: homeassistant
+    id: hum_sensor
+    entity_id: ${external_hum_sensor}
 
-uart:
-  id: HP_UART
-  tx_pin: 1
-  rx_pin: 
-    number: 3
-    mode:
-      pullup: true
-      input: true
-  data_bits: 8
-  baud_rate: 2400
-  parity: EVEN
-  stop_bits: 1
-  
-#sensor:
-#  - id: !remove remote_temp_sensor
+remote_transmitter:
+  pin: 23
+  carrier_duty_percent: 50%
 
 climate:
-  - id: !extend ac
-    update_interval: 20s
-    stage_sensor:
-      name: Stage
-      use_as_operating_fallback: true
-      entity_category: diagnostic
-
-#climate:
-#  - platform: mitsubishi_cn105
-#    name: "Study Room AC"
-#    uart_id: HP_UART
-#    update_interval: 1s
+  - platform: mitsubishi
+    name: AC
+    id: ac
+    sensor: temp_sensor
+    humidity_sensor: hum_sensor
+    set_fan_mode: quiet_4levels
+    supports_heat: False
+    supports_dry: True
+    supports_fan_only: True
+    vertical_default: up
+    visual: 
+      min_temperature: ${min_temp}
+      max_temperature: ${max_temp}
+      temperature_step: 0.5
