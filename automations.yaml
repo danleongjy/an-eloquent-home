@@ -2093,37 +2093,6 @@
           continue_on_error: true
           action: light.turn_on
         - delay: 2
-  - parallel:
-    - if:
-      - condition: state
-        entity_id: light.powder_room_pendant_light_entity
-        state: 'on'
-      then:
-      - data:
-          transition: 10
-          brightness_pct: '{{ states(''input_number.night_light_brightness'') }}'
-        target:
-          entity_id: light.powder_room_pendant_light_entity
-        continue_on_error: true
-        action: light.turn_on
-    - repeat:
-        for_each:
-        - light.junior_bathroom_ceiling_light_entity
-        - light.junior_bathroom_pendant_light_entity
-        sequence:
-        - if:
-          - condition: template
-            value_template: '{{ is_state(repeat.item, ''on'') }}'
-          then:
-          - target:
-              entity_id: '{{ repeat.item }}'
-            data:
-              transition: 10
-              brightness_pct: '{{ states(''input_number.night_light_brightness'')
-                }}'
-            continue_on_error: true
-            action: light.turn_on
-          - delay: 2
   mode: single
 - id: '1674045954399'
   alias: Lights for Sleep Hours Start
