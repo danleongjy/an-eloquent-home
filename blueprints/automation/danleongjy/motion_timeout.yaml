@@ -50,7 +50,6 @@ blueprint:
 trigger_variables:
   minutes_door_open: !input number_of_minutes_door_open
   minutes_door_closed: !input number_of_minutes_door_closed
-  door_entity: !input door
   entities: !input entities_list
 trigger:
   - platform: state
@@ -72,13 +71,15 @@ condition:
     value_template: >
       {{ not 'on' in states | selectattr('entity_id', 'in', entities) | map(attribute = 'state') | list }}
 action:
+  - variables:
+      door_entity: !input door
   - delay: 1
   - condition: template
     value_template: >
       {{ trigger.id != "timeout_doors_open"
          or (door_entity | length == 0 
              or (is_state(door_entity, 'on')
-                 and now() - states[door].last_changed >= timedelta(minutes = states(minutes_door_open) | int ))) }}
+                 and now() - states[door_entity].last_changed >= timedelta(minutes = (states(minutes_door_open) | int )))) }}
   - repeat:
       for_each: !input turnoff_entities_list
       sequence:
