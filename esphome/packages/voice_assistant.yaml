@@ -130,10 +130,18 @@ voice_assistant:
   on_listening:
     - microphone.stop_capture:
     - delay: 0.3s
+#    - homeassistant.service:
+#        service: chime_tts.say
+#        data:
+#          chime_path: '/media/1_start.wav'
+#        data_template:
+#          entity_id: "{{ '${voice_assistant_media_player}' if not is_state('media_player.google_speakers', 'playing') else 'media_player.google_speakers' }}"
+#          announce: "{{ is_state('${voice_assistant_media_player}', 'playing') or is_state('media_player.google_speakers', 'playing') }}"
     - homeassistant.service:
-        service: chime_tts.say
+        service: media_player.play_media
         data:
-          chime_path: '/media/1_start.wav'
+          media_content_id: media-source://media_source/local/1_start.wav
+          media_content_type: music
         data_template:
           entity_id: "{{ '${voice_assistant_media_player}' if not is_state('media_player.google_speakers', 'playing') else 'media_player.google_speakers' }}"
           announce: "{{ is_state('${voice_assistant_media_player}', 'playing') or is_state('media_player.google_speakers', 'playing') }}"
