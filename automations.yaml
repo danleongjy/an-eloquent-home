@@ -3292,14 +3292,14 @@
           entity_id: input_datetime.elis_next_alarm
         action: input_datetime.set_datetime
       - if:
-        - condition: template
+        - alias: If today is a Mon or Wed
+          condition: template
           value_template: '{{ as_datetime(states(''input_datetime.elis_next_alarm'')).weekday()
-            in [0,3] }}'
-          alias: If today is a Mon or Thu
+            in [0,2] }}'
         then:
         - data:
             time: '{{ ((states(''input_datetime.elis_next_alarm'') | as_datetime)
-              - timedelta(minutes = 5)).time() }}'
+              - timedelta(minutes = 10)).time() }}'
           target:
             entity_id: input_datetime.elis_next_alarm
           action: input_datetime.set_datetime
@@ -4602,10 +4602,10 @@
             entity_id: input_datetime.daniels_next_alarm
           alias: Set Daniel's Next Alarm to Eli's School Day Alarm
           action: input_datetime.set_datetime
-        - alias: Set Daniel's Next Alarm 10min before Eli's alarm
+        - alias: Set Daniel's Next Alarm 15min before Eli's alarm
           data:
             datetime: '{{ as_datetime(states(''input_datetime.daniels_next_alarm''))
-              - timedelta(minutes = 10) }}'
+              - timedelta(minutes = 15) }}'
           target:
             entity_id: input_datetime.daniels_next_alarm
           action: input_datetime.set_datetime
