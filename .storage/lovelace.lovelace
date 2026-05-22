@@ -1711,15 +1711,15 @@
         "washer": {
           "card": {
             "type": "custom:state-switch",
-            "entity": "sensor.washer_status",
-            "default": "Washing",
+            "entity": "sensor.washer_current_status",
+            "default": "washing",
             "states": {
               "unavailable": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "template": "error"
               },
-              "Off": {
+              "power_off": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "color": "rgb(68,115,158)",
@@ -1733,35 +1733,49 @@
                   ]
                 }
               },
-              "Standby": {
+              "sleep": {
+                "type": "custom:button-card",
+                "entity": "switch.washer_power",
+                "color": "rgb(68,115,158)",
+                "template": "washer_more_info",
+                "label": "",
+                "styles": {
+                  "card": [
+                    {
+                      "background-color": "[[[\n  if (states['input_boolean.washer_load_clean'].state == 'on')\n    return '#b4fab4';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                    }
+                  ]
+                }
+              },
+              "initial": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "template": "washer_more_info",
                 "label": "..."
               },
-              "Detecting Load Level": {
+              "detecting": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "template": "washer_more_info",
                 "label": "..."
               },
-              "Delay Set": {
+              "reserved": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "template": "washer_more_info"
               },
-              "Washing": {
+              "washing": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "template": "washer_more_info"
               },
-              "Finished": {
+              "end": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "template": "washer_more_info",
                 "label": "Done!"
               },
-              "Paused": {
+              "pause": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "template": "washer_more_info",
@@ -1778,7 +1792,7 @@
                   ]
                 }
               },
-              "Error": {
+              "error": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
                 "template": "washer_more_info",
@@ -12424,28 +12438,8 @@
                   "conditions": [
                     {
                       "condition": "state",
-                      "entity": "sensor.washer_current_status",
-                      "state_not": "end"
-                    },
-                    {
-                      "condition": "state",
-                      "entity": "sensor.washer_current_status",
-                      "state_not": "sleep"
-                    },
-                    {
-                      "condition": "state",
-                      "entity": "sensor.washer_current_status",
-                      "state_not": "power_off"
-                    },
-                    {
-                      "condition": "state",
-                      "entity": "sensor.washer_current_status",
+                      "entity": "sensor.washer_wash_progress",
                       "state_not": "unavailable"
-                    },
-                    {
-                      "condition": "state",
-                      "entity": "sensor.washer_current_status",
-                      "state_not": "unknown"
                     }
                   ],
                   "card": {
