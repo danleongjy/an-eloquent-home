@@ -219,11 +219,11 @@
 
 - trigger:
   - platform: state
-    entity_id: sensor.washer_run_state
-    to: Washing
+    entity_id: sensor.washer_current_status
+    to: detecting
   - platform: state
-    entity_id: sensor.washer_run_state
-    to: Delay Set
+    entity_id: sensor.washer_current_status
+    to: reserved
   sensor:
     - name: Washer Last Wash Started
       unique_id: sensor.washer_last_wash_started
@@ -232,13 +232,8 @@
 
 - trigger:
   - platform: state
-    entity_id: binary_sensor.washer_wash_completed
-    from: "off"
-    to: "on"
-  - platform: state
-    entity_id: sensor.washer_run_state
-    from: "Spinning"
-    to: "Standby"
+    entity_id: sensor.washer_current_status
+    to: "end"
   sensor:
     - name: Washer Last Wash Completed
       unique_id: sensor.washer_last_wash_completed
@@ -247,7 +242,8 @@
 
 - trigger:
   - platform: state
-    entity_id: binary_sensor.washer_wash_completed
+    entity_id: sensor.washer_current_status
+    to: "end"
     for: 1
   sensor:
     - name: Washer Last Wash Duration

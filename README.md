@@ -25,15 +25,15 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 148
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 195
-[`button`](https://www.home-assistant.io/components/button) | 198
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 192
+[`button`](https://www.home-assistant.io/components/button) | 196
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 8
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 16
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 2
-[`event`](https://www.home-assistant.io/components/event) | 1
+[`event`](https://www.home-assistant.io/components/event) | 3
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`image`](https://www.home-assistant.io/components/image) | 5
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 12
@@ -45,23 +45,23 @@ Domain | Quantity
 [`light`](https://www.home-assistant.io/components/light) | 72
 [`media_player`](https://www.home-assistant.io/components/media_player) | 7
 [`notify`](https://www.home-assistant.io/components/notify) | 4
-[`number`](https://www.home-assistant.io/components/number) | 143
+[`number`](https://www.home-assistant.io/components/number) | 144
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 3
 [`script`](https://www.home-assistant.io/components/script) | 13
 [`select`](https://www.home-assistant.io/components/select) | 70
-[`sensor`](https://www.home-assistant.io/components/sensor) | 776
+[`sensor`](https://www.home-assistant.io/components/sensor) | 768
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 80
 [`text`](https://www.home-assistant.io/components/text) | 33
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 120
+[`update`](https://www.home-assistant.io/components/update) | 119
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 2025
+Total | 2014
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -115,7 +115,6 @@ Total | 2025
 - [Philips Shaver](https://github.com/mtheli/philips_shaver)
 - [Proxmox Ve](https://github.com/dougiteixeira/proxmoxve)
 - [Pyscript](https://github.com/custom-components/pyscript)
-- [Smartthinq Lge Sensors](https://github.com/ollo69/ha-smartthinq-sensors)
 - [SSH](https://github.com/zhbjsh/homeassistant-ssh)
 - [Valetudo](https://github.com/Hypfer/hass-valetudo)
 - [Watchman](https://github.com/dummylabs/thewatchman)

@@ -653,13 +653,8 @@
             "navigation_path": "/lovelace/washer"
           },
           "show_label": true,
-          "label": "[[[ \n  var parse_time = {hours: Math.floor(parseFloat(states['sensor.washer_countdown'].state)),\n                    minutes: Math.round((parseFloat(states['sensor.washer_countdown'].state) % 1) * 60, 0)};\n  if (parse_time.minutes >= 10) {\n    return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n  } else {\n    return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n  }\n]]]\n",
+          "label": "[[[ \n  if (states['sensor.washer_remaining_time'].state != 'unknown') {\n    var parse_time = {hours: Math.floor((Date.parse(states['sensor.washer_remaining_time'].state) - Date.now()) / 3600000),\n                      minutes: Math.round(((Date.parse(states['sensor.washer_remaining_time'].state) - Date.now()) / 60000), 0)};\n    if (parse_time.minutes >= 10) {\n      return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n    } else {\n      return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n    }\n  }\n]]]\n",
           "styles": {
-            "icon": [
-              {
-                "color": "[[[ \n  if (entity.state == 'unavailable') {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-active-color)'\n  }\n]]]\n"
-              }
-            ],
             "label": [
               {
                 "color": "var(--state-binary-sensor-color)"
@@ -667,7 +662,7 @@
             ],
             "card": [
               {
-                "background": "[[[ \n  if (['Delay Set','Washing','Rinsing','Spinning'].includes(states['sensor.washer_status'].state) &&\n      states['sensor.washer_wash_progress'].state != '100') {\n    return \"linear-gradient(0deg, #009AC7 0%, #009AC7 \" +\n    states['sensor.washer_wash_progress'].state + \"%, #1c1c1c \" +\n    states['sensor.washer_wash_progress'].state + \"%, #1c1c1c 100%)\"\n  } else {\n    return 'var(--card-background-color)'\n  }\n]]] \n"
+                "background": "[[[ \n  if (['drying', 'refreshing', 'spinning', 'running', 'rinsing', 'steam_softening', 'rinse_hold', 'cool_down', 'initial', 'detecting'].includes(states['sensor.washer_current_status'].state) &&\n      states['sensor.washer_wash_progress'].state != '100') {\n    return \"linear-gradient(0deg, #009AC7 0%, #009AC7 \" +\n    states['sensor.washer_wash_progress'].state + \"%, #1c1c1c \" +\n    states['sensor.washer_wash_progress'].state + \"%, #1c1c1c 100%)\"\n  } else {\n    return 'var(--card-background-color)'\n  }\n]]] \n"
               }
             ]
           }
@@ -12419,38 +12414,38 @@
                 },
                 {
                   "type": "tile",
-                  "entity": "sensor.washer_status",
-                  "features_position": "bottom",
+                  "entity": "sensor.washer_current_status",
+                  "name": " ",
                   "vertical": false,
-                  "name": " "
+                  "features_position": "bottom"
                 },
                 {
                   "type": "conditional",
                   "conditions": [
                     {
-                      "condition": "or",
-                      "conditions": [
-                        {
-                          "condition": "state",
-                          "entity": "sensor.washer_status",
-                          "state": "Washing"
-                        },
-                        {
-                          "condition": "state",
-                          "entity": "sensor.washer_status",
-                          "state": "Rinsing"
-                        },
-                        {
-                          "condition": "state",
-                          "entity": "sensor.washer_status",
-                          "state": "Spinning"
-                        },
-                        {
-                          "condition": "state",
-                          "entity": "sensor.washer_status",
-                          "state": "Delay Set"
-                        }
-                      ]
+                      "condition": "state",
+                      "entity": "sensor.washer_current_status",
+                      "state_not": "end"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.washer_current_status",
+                      "state_not": "sleep"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.washer_current_status",
+                      "state_not": "power_off"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.washer_current_status",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.washer_current_status",
+                      "state_not": "unknown"
                     }
                   ],
                   "card": {
@@ -12476,58 +12471,24 @@
                 },
                 {
                   "type": "tile",
-                  "features_position": "bottom",
+                  "entity": "sensor.washer_remaining_time",
+                  "name": " ",
                   "vertical": false,
-                  "entity": "sensor.washer_countdown",
-                  "name": " "
-                },
-                {
-                  "type": "heading",
-                  "icon": "mdi:tshirt-crew",
-                  "heading": "Settings",
-                  "heading_style": "title"
-                },
-                {
-                  "type": "tile",
-                  "entity": "sensor.washer_current_course",
                   "features_position": "bottom",
-                  "vertical": false,
-                  "name": "Current Course"
-                },
-                {
-                  "type": "tile",
-                  "entity": "sensor.washer_water_temp",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "name": "Water Temperature"
-                },
-                {
-                  "type": "tile",
-                  "entity": "sensor.washer_spin_speed",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "name": "Spin Speed"
-                },
-                {
-                  "type": "tile",
-                  "entity": "binary_sensor.washer_door_lock",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "name": "Door Lock"
-                },
-                {
-                  "type": "tile",
-                  "entity": "binary_sensor.washer_child_lock",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "name": "Child Lock"
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.washer_remaining_time",
+                      "state_not": "unknown"
+                    }
+                  ]
                 }
               ],
               "visibility": [
                 {
                   "condition": "state",
-                  "entity": "sensor.washer_status",
-                  "state_not": "Off"
+                  "entity": "sensor.washer_current_status",
+                  "state_not": "power_off"
                 }
               ]
             },
@@ -12536,10 +12497,10 @@
               "cards": [
                 {
                   "type": "tile",
-                  "entity": "sensor.washer_status",
+                  "entity": "sensor.washer_current_status",
                   "name": " ",
-                  "features_position": "bottom",
-                  "vertical": false
+                  "vertical": false,
+                  "features_position": "bottom"
                 },
                 {
                   "type": "tile",
@@ -12564,12 +12525,13 @@
                 },
                 {
                   "type": "markdown",
-                  "content": "<ha-alert alert-type=\"error\">{{ state_attr(\"sensor.washer\", \"error_message\") }}</ha-alert>",
+                  "content": "<ha-alert alert-type=\"error\">{{ state_attr('event.washer_error','event_type') | replace('_', ' ') | capitalize }}.</ha-alert>",
                   "text_only": true,
                   "visibility": [
                     {
-                      "entity": "binary_sensor.washer_error_state",
-                      "state": "on"
+                      "condition": "state",
+                      "entity": "sensor.washer_current_status",
+                      "state": "error"
                     }
                   ]
                 },
@@ -12586,12 +12548,12 @@
                 },
                 {
                   "type": "markdown",
-                  "content": "<ha-alert alert-type=\"info\">{{ states('sensor.washer_tub_clean_counter') }} loads since last tub cleaning</ha-alert>",
+                  "content": "<ha-alert alert-type=\"info\">{{ states('sensor.washer_cycles') }} loads since last tub cleaning</ha-alert>",
                   "text_only": true,
                   "visibility": [
                     {
                       "condition": "numeric_state",
-                      "entity": "sensor.washer_tub_clean_counter",
+                      "entity": "sensor.washer_cycles",
                       "above": 30
                     }
                   ]
@@ -12600,8 +12562,8 @@
               "visibility": [
                 {
                   "condition": "state",
-                  "entity": "sensor.washer_status",
-                  "state": "Off"
+                  "entity": "sensor.washer_current_status",
+                  "state": "power_off"
                 }
               ]
             }
