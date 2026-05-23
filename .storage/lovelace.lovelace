@@ -13463,6 +13463,41 @@
                         "content": "<ha-alert alert-type=\"error\">{{ states('sensor.valetudo_hestia_error').capitalize().replace('_', ' ') + '.' }}</ha-alert>",
                         "text_only": true
                       }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "or",
+                          "conditions": [
+                            {
+                              "condition": "state",
+                              "entity": "sensor.valetudo_hestia_detergent_dock_component",
+                              "state_not": "ok"
+                            },
+                            {
+                              "condition": "state",
+                              "entity": "sensor.valetudo_hestia_dustbag_dock_component",
+                              "state_not": "ok"
+                            },
+                            {
+                              "condition": "state",
+                              "entity": "sensor.valetudo_hestia_freshwater_dock_component",
+                              "state_not": "ok"
+                            },
+                            {
+                              "condition": "state",
+                              "entity": "sensor.valetudo_hestia_wastewater_dock_component",
+                              "state_not": "ok"
+                            }
+                          ]
+                        }
+                      ],
+                      "card": {
+                        "type": "markdown",
+                        "content": "{% set dock_component_errors = namespace(components = '') %}\n{% for component in states.sensor | selectattr('entity_id', 'in', ['sensor.valetudo_hestia_detergent_dock_component', 'sensor.valetudo_hestia_dustbag_dock_component', 'sensor.valetudo_hestia_freshwater_dock_component', 'sensor.valetudo_hestia_wastewater_dock_component']) | selectattr('state', 'ne', 'ok') | map(attribute = 'name') | list %}\n  {% set dock_component_errors.components = dock_component_errors.components + component.split(' ')[1] | lower  + ', ' %}\n{% endfor %}\n<ha-alert alert-type=\"error\">Dock error: check {{ dock_component_errors.components[:-2] }}.</ha-alert>",
+                        "text_only": true
+                      }
                     }
                   ]
                 }
