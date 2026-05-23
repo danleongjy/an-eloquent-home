@@ -653,8 +653,13 @@
             "navigation_path": "/lovelace/washer"
           },
           "show_label": true,
-          "label": "[[[ \n  if (states['sensor.washer_remaining_time'].state != 'unknown') {\n    var parse_time = {hours: Math.floor((Date.parse(states['sensor.washer_remaining_time'].state) - Date.now()) / 3600000),\n                      minutes: Math.round(((Date.parse(states['sensor.washer_remaining_time'].state) - Date.now()) / 60000), 0)};\n    if (parse_time.minutes >= 10) {\n      return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n    } else {\n      return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n    }\n  }\n]]]\n",
+          "label": "[[[ \n  if (states['sensor.washer_remaining_time'].state != 'unknown' && states['sensor.washer_remaining_time'].state != 'unavailable') {\n    var parse_time = {hours: Math.floor((Date.parse(states['sensor.washer_remaining_time'].state) - Date.now()) / 3600000),\n                      minutes: Math.round(((Date.parse(states['sensor.washer_remaining_time'].state) - Date.now()) / 60000 % 60), 0)};\n    if (parse_time.minutes >= 10) {\n      return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n    } else {\n      return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n    }\n  }\n]]]\n",
           "styles": {
+            "icon": [
+              {
+                "color": "[[[\n  if (states['sensor.washer_current_status'].state == 'power_off') {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-binary-sensor-color)'\n  }\n]]]\n"
+              }
+            ],
             "label": [
               {
                 "color": "var(--state-binary-sensor-color)"
@@ -12440,6 +12445,11 @@
                       "condition": "state",
                       "entity": "sensor.washer_wash_progress",
                       "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.washer_wash_progress",
+                      "state_not": "unknown"
                     }
                   ],
                   "card": {
