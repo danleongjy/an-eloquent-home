@@ -233,6 +233,10 @@
 - trigger:
   - platform: state
     entity_id: sensor.washer_current_status
+    from: "spinning"
+    to: "power_off"
+  - platform: state
+    entity_id: sensor.washer_current_status
     to: "end"
   sensor:
     - name: Washer Last Wash Completed
@@ -241,6 +245,11 @@
       device_class: timestamp
 
 - trigger:
+  - platform: state
+    entity_id: sensor.washer_current_status
+    from: "spinning"
+    to: "power_off"
+    for: 1
   - platform: state
     entity_id: sensor.washer_current_status
     to: "end"
