@@ -73,6 +73,7 @@ Total | 2022
 - [Fully Kiosk](https://home-assistant.io/integrations/fully_kiosk)
 - [Generic Camera](https://home-assistant.io/integrations/generic)
 - [Google Assistant](https://home-assistant.io/integrations/google_assistant)
+- [Google Drive](https://home-assistant.io/integrations/google_drive)
 - [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
 - [Local File Camera](https://home-assistant.io/integrations/local_file)
@@ -91,6 +92,7 @@ Total | 2022
 - [Template Switch](https://home-assistant.io/integrations/switch.template)
 - [Template Weather](https://home-assistant.io/integrations/weather.template)
 - [Time & Date](https://home-assistant.io/integrations/time_date)
+- [Wyoming Protocol](https://home-assistant.io/integrations/wyoming)
 - [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
 ## Extensions
 
