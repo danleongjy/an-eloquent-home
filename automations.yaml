@@ -8641,17 +8641,6 @@
   alias: Notify on Shaver Status
   description: Notify when shaver needs attention or is in use
   triggers:
-  - trigger: numeric_state
-    entity_id:
-    - sensor.philips_shaver_battery
-    id: batt_low
-    below: 15
-  - trigger: state
-    entity_id:
-    - binary_sensor.philips_shaver_charging
-    to:
-    - 'on'
-    id: batt_charging
   - trigger: template
     value_template: '{{ is_state(''sensor.philips_shaver_battery'', ''100'') and is_state(''binary_sensor.philips_shaver_charging'',
       ''on'') }}'
@@ -8707,30 +8696,6 @@
   conditions: []
   actions:
   - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - batt_low
-      sequence:
-      - action: notify.mobile_app_aurora
-        metadata: {}
-        data:
-          message: Shaver battery below 15%
-          title: Please charge the shaver
-          data:
-            tag: batt_low
-            clickAction: /lovelace/parents_bathroom
-    - conditions:
-      - condition: trigger
-        id:
-        - batt_charging
-      sequence:
-      - action: notify.mobile_app_aurora
-        metadata: {}
-        data:
-          message: clear_notification
-          data:
-            tag: batt_low
     - conditions:
       - condition: trigger
         id:
@@ -8848,4 +8813,52 @@
         data:
           turn_on: true
           light: light.master_bathroom_light_entity
+  mode: single
+- id: '1779680368344'
+  alias: Notify When Bluetooth Devices Batteries Low
+  description: Send a notification if at least one Bluetooth device needs charging
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.elenas_room_curtains_battery
+    - sensor.elis_room_curtains_battery
+    - sensor.parents_room_curtains_battery
+    - sensor.philips_shaver_battery
+    below: 10
+  - trigger: numeric_state
+    entity_id:
+    - sensor.elenas_room_curtains_battery
+    - sensor.elis_room_curtains_battery
+    - sensor.parents_room_curtains_battery
+    - sensor.philips_shaver_battery
+    above: 33
+  conditions: []
+  actions:
+  - variables:
+      low_batt: "{% set low_batteries = namespace(str = '') %}\n  {% set bt_batteries
+        = states.sensor | selectattr('entity_id', 'in', (integration_entities('switchbot')
+        + integration_entities('philips_shaver'))) | selectattr('attributes.device_class',
+        'eq', 'battery') | list %}\n  {% for battery in bt_batteries %}\n    {% if
+        battery.state | int(0) <= 50 %}\n      {% set low_batteries.str = low_batteries.str
+        + device_attr(battery.entity_id, 'name') + ', ' %}\n    {% endif %}\n  {%
+        endfor %}\n  {{ low_batteries.str[:-2] }}\n"
+  - if:
+    - condition: template
+      value_template: '{{ low_batt | length > 0 }}'
+      alias: If there are devices with low battery
+    then:
+    - action: notify.mobile_app_aurora
+      metadata: {}
+      data:
+        message: Check {{ variables.low_batt }}.
+        title: Please charge bluetooth devices
+        data:
+          tag: batt_low
+    else:
+    - action: notify.mobile_app_aurora
+      metadata: {}
+      data:
+        message: clear_notification
+        data:
+          tag: batt_low
   mode: single
