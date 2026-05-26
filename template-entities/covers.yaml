@@ -20,10 +20,12 @@
             - cover.dining_room_middle_blind
             - cover.dining_room_left_blind
           sequence:
-            - service: cover.open_cover
+            - service: cover.set_cover_position
               target:
                 entity_id: "{{ repeat.item }}"
               continue_on_error: true
+              data:
+                position: 100
             - delay: "{{ states('input_number.blinds_command_deconflict' ) | int(2) }}"
       close_cover:
         repeat:
@@ -32,10 +34,12 @@
             - cover.dining_room_middle_blind
             - cover.dining_room_left_blind
           sequence:
-            - service: cover.close_cover
+            - service: cover.set_cover_position
               target:
                 entity_id: "{{ repeat.item }}"
               continue_on_error: true
+              data:
+                position: 0
             - delay: "{{ states('input_number.blinds_command_deconflict' ) | int(2) }}"
       stop_cover:
         repeat:
@@ -78,10 +82,12 @@
             - cover.living_room_middle_blind
             - cover.living_room_left_blind
           sequence:
-            - service: cover.open_cover
+            - service: cover.set_cover_position
               target:
                 entity_id: "{{ repeat.item }}"
               continue_on_error: true
+              data:
+                position: 100
             - delay: "{{ states('input_number.blinds_command_deconflict' ) | int(2) }}"
       close_cover:
         repeat:
@@ -90,10 +96,12 @@
             - cover.living_room_middle_blind
             - cover.living_room_left_blind
           sequence:
-            - service: cover.close_cover
+            - service: cover.set_cover_position
               target:
                 entity_id: "{{ repeat.item }}"
               continue_on_error: true
+              data:
+                position: 0
             - delay: "{{ states('input_number.blinds_command_deconflict' ) | int(2) }}"
       stop_cover:
         repeat:
@@ -135,10 +143,12 @@
             - cover.study_room_right_blind
             - cover.study_room_left_blind
           sequence:
-            - service: cover.open_cover
+            - service: cover.set_cover_position
               target:
                 entity_id: "{{ repeat.item }}"
               continue_on_error: true
+              data:
+                position: 100
             - delay: "{{ states('input_number.blinds_command_deconflict' ) | int(2) }}"
       close_cover:
         repeat:
@@ -146,10 +156,12 @@
             - cover.study_room_right_blind
             - cover.study_room_left_blind
           sequence:
-            - service: cover.close_cover
+            - service: cover.set_cover_position
               target:
                 entity_id: "{{ repeat.item }}"
               continue_on_error: true
+              data:
+                position: 0
             - delay: "{{ states('input_number.blinds_command_deconflict' ) | int(2) }}"
       stop_cover:
         repeat:

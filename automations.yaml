@@ -1765,10 +1765,11 @@
           - cover.study_room_right_blind
           - cover.study_room_left_blind
           sequence:
-          - target:
+          - action: cover.set_cover_position
+            target:
               entity_id: '{{ repeat.item }}'
-            continue_on_error: true
-            action: cover.open_cover
+            data:
+              position: 100
           - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
               }}'
     - conditions:
@@ -1791,10 +1792,11 @@
           - cover.study_room_right_blind
           - cover.study_room_left_blind
           sequence:
-          - target:
+          - action: cover.set_cover_position
+            target:
               entity_id: '{{ repeat.item }}'
-            continue_on_error: true
-            action: cover.close_cover
+            data:
+              position: 0
           - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
               }}'
   mode: single
