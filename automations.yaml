@@ -993,6 +993,7 @@
     trigger: state
     from:
     - spinning
+    - end
     to:
     - power_off
   - entity_id:
@@ -1770,6 +1771,7 @@
               entity_id: '{{ repeat.item }}'
             data:
               position: 100
+            continue_on_error: true
           - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
               }}'
     - conditions:
@@ -1797,6 +1799,7 @@
               entity_id: '{{ repeat.item }}'
             data:
               position: 0
+            continue_on_error: true
           - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
               }}'
   mode: single
@@ -8689,9 +8692,6 @@
     entity_id:
     - sensor.philips_shaver_number_of_uses
     id: quick_clean_pod
-    not_from:
-    - unavailable
-    - unknown
     not_to:
     - unavailable
     - unknown
