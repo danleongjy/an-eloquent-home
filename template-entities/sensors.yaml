@@ -220,10 +220,9 @@
 - trigger:
   - platform: state
     entity_id: sensor.washer_current_status
-    to: detecting
-  - platform: state
-    entity_id: sensor.washer_current_status
-    to: reserved
+    to: 
+      - detecting
+      - reserved
   sensor:
     - name: Washer Last Wash Started
       unique_id: sensor.washer_last_wash_started
@@ -234,7 +233,9 @@
   - platform: state
     entity_id: sensor.washer_current_status
     from: "spinning"
-    to: "power_off"
+    to: 
+      - "power_off"
+      - sleep
   - platform: state
     entity_id: sensor.washer_current_status
     to: "end"
@@ -248,7 +249,9 @@
   - platform: state
     entity_id: sensor.washer_current_status
     from: "spinning"
-    to: "power_off"
+    to:
+      - "power_off"
+      - sleep
     for: 1
   - platform: state
     entity_id: sensor.washer_current_status

@@ -996,6 +996,7 @@
     - end
     to:
     - power_off
+    - sleep
   - entity_id:
     - binary_sensor.washer_door
     from: 'off'
@@ -7616,9 +7617,9 @@
       off)
   conditions: []
   actions:
-  - set_conversation_response: "The washer is {{ states('sensor.washer_current_status')
-      | lower }}.\n{% if states('sensor.washer_current_status') == 'power_off' %}\n
-      \ {% set wash_time = namespace(hours = states('sensor.washer_last_wash_duration').split(':')[0],\n
+  - set_conversation_response: "The washer is {{ state_translated('sensor.washer_current_status')
+      | lower }}.\n{% if states('sensor.washer_current_status') in ['power_off', 'sleep']
+      %}\n  {% set wash_time = namespace(hours = states('sensor.washer_last_wash_duration').split(':')[0],\n
       \                              minutes = states('sensor.washer_last_wash_duration').split(':')[1])
       %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours | int(0)
       > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
@@ -7628,7 +7629,7 @@
       'on') }}\n{% else %}\n  {% set countdown = namespace(hours = (as_datetime(states('sensor.washer_remaining_time'))
       - now()) // timedelta(hours = 1),\n                               minutes =
       (as_datetime(states('sensor.washer_remaining_time')) - now()) // timedelta(minutes
-      = 1)) %}\n  The current run started {{ time_since(as_datetime(states('sensor.washer_last_wash_started')))
+      = 1) % 60) %}\n  The current run started {{ time_since(as_datetime(states('sensor.washer_last_wash_started')))
       }} ago.\n  {% if countdown.hours > 0 or countdown.minutes > 0 %}\n  The remaining
       {{ 100 - states('sensor.washer_wash_progress') | int(0) }}% of the run will
       complete in {{ countdown.hours if countdown.hours > 0 }}{{ ' hours' if countdown.hours
