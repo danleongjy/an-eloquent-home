@@ -657,7 +657,7 @@
           "styles": {
             "icon": [
               {
-                "color": "[[[\n  if (states['sensor.washer_current_status'].state == 'power_off') {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-binary-sensor-color)'\n  }\n]]]\n"
+                "color": "[[[\n  if (['power_off', 'sleep'].includes(states['sensor.washer_current_status'].state)) {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-binary-sensor-color)'\n  }\n]]]\n"
               }
             ],
             "label": [
@@ -1727,7 +1727,6 @@
               "power_off": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
-                "color": "rgb(68,115,158)",
                 "template": "washer_more_info",
                 "label": "",
                 "styles": {
@@ -1741,7 +1740,6 @@
               "sleep": {
                 "type": "custom:button-card",
                 "entity": "switch.washer_power",
-                "color": "rgb(68,115,158)",
                 "template": "washer_more_info",
                 "label": "",
                 "styles": {
@@ -12517,6 +12515,11 @@
                   "condition": "state",
                   "entity": "sensor.washer_current_status",
                   "state_not": "power_off"
+                },
+                {
+                  "condition": "state",
+                  "entity": "sensor.washer_current_status",
+                  "state_not": "sleep"
                 }
               ]
             },
@@ -12589,9 +12592,19 @@
               ],
               "visibility": [
                 {
-                  "condition": "state",
-                  "entity": "sensor.washer_current_status",
-                  "state": "power_off"
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.washer_current_status",
+                      "state": "power_off"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.washer_current_status",
+                      "state": "sleep"
+                    }
+                  ]
                 }
               ]
             }
