@@ -8842,7 +8842,7 @@
         = states.sensor | selectattr('entity_id', 'in', (integration_entities('switchbot')
         + integration_entities('philips_shaver'))) | selectattr('attributes.device_class',
         'eq', 'battery') | list %}\n  {% for battery in bt_batteries %}\n    {% if
-        battery.state | int(0) <= 50 %}\n      {% set low_batteries.str = low_batteries.str
+        battery.state | int(0) <= 10 %}\n      {% set low_batteries.str = low_batteries.str
         + device_attr(battery.entity_id, 'name') + ', ' %}\n    {% endif %}\n  {%
         endfor %}\n  {{ low_batteries.str[:-2] }}\n"
   - if:
@@ -8853,7 +8853,7 @@
     - action: notify.mobile_app_aurora
       metadata: {}
       data:
-        message: Check {{ variables.low_batt }}.
+        message: Check {{ low_batt }}.
         title: Please charge bluetooth devices
         data:
           tag: batt_low
