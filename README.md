@@ -16,7 +16,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
 * [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [17.3](https://github.com/home-assistant/operating-system/releases/tag/17.3) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core 2026.4.4](https://github.com/home-assistant/core/releases/tag/2026.4.4)
+* [Home Assistant Core 2026.5.4](https://github.com/home-assistant/core/releases/tag/2026.5.4)
 * 4 cores, 6GB RAM, 32GB storage
 
 ## Entities
@@ -36,6 +36,7 @@ Domain | Quantity
 [`event`](https://www.home-assistant.io/components/event) | 3
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`image`](https://www.home-assistant.io/components/image) | 5
+[`infrared`](https://www.home-assistant.io/components/infrared) | 3
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 12
 [`input_button`](https://www.home-assistant.io/components/input_button) | 1
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
@@ -44,13 +45,14 @@ Domain | Quantity
 [`input_text`](https://www.home-assistant.io/components/input_text) | 19
 [`light`](https://www.home-assistant.io/components/light) | 72
 [`media_player`](https://www.home-assistant.io/components/media_player) | 7
-[`notify`](https://www.home-assistant.io/components/notify) | 4
+[`notify`](https://www.home-assistant.io/components/notify) | 6
 [`number`](https://www.home-assistant.io/components/number) | 144
 [`person`](https://www.home-assistant.io/components/person) | 3
+[`radio_frequency`](https://www.home-assistant.io/components/radio_frequency) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 3
 [`script`](https://www.home-assistant.io/components/script) | 13
 [`select`](https://www.home-assistant.io/components/select) | 70
-[`sensor`](https://www.home-assistant.io/components/sensor) | 777
+[`sensor`](https://www.home-assistant.io/components/sensor) | 778
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 80
@@ -61,7 +63,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 2024
+Total | 2033
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
