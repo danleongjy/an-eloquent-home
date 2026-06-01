@@ -1346,3 +1346,73 @@ cover_controller:
   icon: mdi:blinds
   mode: parallel
   max: 8
+vacuum_cleaning_areas:
+  sequence:
+  - condition: state
+    state:
+    - docked
+    entity_id: vacuum.valetudo_hestia
+  - if:
+    - condition: template
+      value_template: '{{ add_or_remove_area == ''add'' }}'
+      alias: If the area is to be added
+    then:
+    - condition: template
+      value_template: '{{ area not in states(''input_text.vacuum_cleaning_areas'')
+        }}'
+      alias: If area is not already in the cleaning areas
+    - action: input_text.set_value
+      metadata: {}
+      target:
+        entity_id: input_text.vacuum_cleaning_areas
+      data:
+        value: '{{ states(''input_text.vacuum_cleaning_areas'') + area + '','' }}'
+    else:
+    - alias: If area is in the cleaning areas
+      condition: template
+      value_template: '{{ area in states(''input_text.vacuum_cleaning_areas'') }}'
+    - action: input_text.set_value
+      metadata: {}
+      target:
+        entity_id: input_text.vacuum_cleaning_areas
+      data:
+        value: '{{ states(''input_text.vacuum_cleaning_areas'').replace(area + '','',
+          '''') }}'
+  fields:
+    add_or_remove_area:
+      selector:
+        select:
+          options:
+          - label: Add
+            value: add
+          - label: Remove
+            value: remove
+      default: add
+    area:
+      selector:
+        select:
+          options:
+          - label: Elena's Room
+            value: elena_s_room
+          - label: Eli's Room
+            value: eli_s_room
+          - label: Hallway
+            value: hallway
+          - label: Dining Room
+            value: dining_room
+          - label: Living Room
+            value: living_room
+          - label: Study Room
+            value: study_room
+          - label: Parents' Room
+            value: parents_room
+          - label: Kitchen
+            value: kitchen
+          - label: Playroom
+            value: playroom
+          - label: Yard
+            value: yard
+      required: true
+  alias: Vacuum Cleaning Areas
+  description: Add or remove areas from the vacuum cleaning areas
+  icon: mdi:robot-vacuum

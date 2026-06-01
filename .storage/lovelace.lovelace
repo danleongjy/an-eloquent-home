@@ -1509,6 +1509,69 @@
               }
             ]
           }
+        },
+        "vacuum_clean_area": {
+          "tap_action": {
+            "action": "perform-action",
+            "perform_action": "script.vacuum_cleaning_areas",
+            "data": {
+              "area": "[[[ return variables.area ]]]"
+            }
+          },
+          "styles": {
+            "card": [
+              {
+                "height": "24px"
+              },
+              {
+                "width": "24px"
+              },
+              {
+                "corner-radius": "4px"
+              }
+            ],
+            "icon": [
+              {
+                "height": "20px"
+              },
+              {
+                "width": "20px"
+              },
+              {
+                "color": "var(--card-background-color)"
+              }
+            ]
+          }
+        },
+        "vacuum_clean_area_included": {
+          "template": "vacuum_clean_area",
+          "styles": {
+            "card": [
+              {
+                "background-color": "var(--state-binary-sensor-color)"
+              }
+            ]
+          },
+          "tap_action": {
+            "data": {
+              "add_or_remove_area": "remove"
+            }
+          }
+        },
+        "vacuum_clean_area_excluded": {
+          "template": "vacuum_clean_area",
+          "styles": {
+            "card": [
+              {
+                "background-color": "var(--state-inactive-color)"
+              }
+            ]
+          },
+          "tap_action": {
+            "data": {
+              "add_or_remove_area": "add"
+            }
+          }
         }
       },
       "decluttering_templates": {
@@ -12851,6 +12914,23 @@
                 },
                 {
                   "type": "tile",
+                  "visibility": [
+                    {
+                      "condition": "or",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "input_select.vacuum_run_type",
+                          "state": "Whole Home"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "input_select.vacuum_run_type",
+                          "state": "Custom"
+                        }
+                      ]
+                    }
+                  ],
                   "entity": "vacuum.valetudo_hestia",
                   "name": "Hestia",
                   "vertical": false,
@@ -12860,18 +12940,11 @@
                       "commands": [
                         "start_pause",
                         "stop",
-                        "locate"
+                        "return_home"
                       ]
                     }
                   ],
-                  "features_position": "inline",
-                  "visibility": [
-                    {
-                      "condition": "state",
-                      "entity": "input_select.vacuum_run_type",
-                      "state": "Whole Home"
-                    }
-                  ]
+                  "features_position": "inline"
                 },
                 {
                   "show_state": false,
@@ -12890,574 +12963,326 @@
                   ]
                 },
                 {
-                  "type": "custom:xiaomi-vacuum-map-card",
-                  "map_source": {
-                    "camera": "camera.hestia_camera"
-                  },
-                  "calibration_source": {
-                    "camera": true
-                  },
-                  "entity": "vacuum.valetudo_hestia",
-                  "vacuum_platform": "Hypfer/Valetudo",
-                  "map_locked": true,
-                  "internal_variables": {
-                    "topic": "vacuum/hestia"
-                  },
-                  "tiles": [],
-                  "map_modes": [
+                  "type": "picture-elements",
+                  "camera_image": "camera.hestia_camera",
+                  "elements": [
                     {
-                      "template": "vacuum_clean_segment",
-                      "predefined_selections": [
-                        {
-                          "id": "1",
-                          "icon": {
-                            "name": "mdi:bed",
-                            "x": 3802,
-                            "y": 1907
-                          },
-                          "label": {
-                            "text": "D&G",
-                            "x": 3802,
-                            "y": 1907,
-                            "offset_y": 35
-                          },
-                          "outline": [
-                            [
-                              3595,
-                              2075
-                            ],
-                            [
-                              3610,
-                              1780
-                            ],
-                            [
-                              3620,
-                              1770
-                            ],
-                            [
-                              3995,
-                              1770
-                            ],
-                            [
-                              4010,
-                              1850
-                            ],
-                            [
-                              4010,
-                              1910
-                            ],
-                            [
-                              3995,
-                              2010
-                            ],
-                            [
-                              3695,
-                              2160
-                            ],
-                            [
-                              3640,
-                              2165
-                            ],
-                            [
-                              3630,
-                              2165
-                            ],
-                            [
-                              3595,
-                              2150
-                            ],
-                            [
-                              3595,
-                              2075
-                            ]
-                          ]
+                      "type": "custom:state-switch",
+                      "entity": "{{ 'included' if 'yard' in states('input_text.vacuum_cleaning_areas') else 'excluded' }}",
+                      "states": {
+                        "included": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:tshirt-crew",
+                          "template": "vacuum_clean_area_included",
+                          "variables": {
+                            "area": "yard"
+                          }
                         },
-                        {
-                          "id": "3",
-                          "icon": {
-                            "name": "mdi:bookshelf",
-                            "x": 3807,
-                            "y": 2210
-                          },
-                          "outline": [
-                            [
-                              3605,
-                              2350
-                            ],
-                            [
-                              3605,
-                              2230
-                            ],
-                            [
-                              3610,
-                              2180
-                            ],
-                            [
-                              3730,
-                              2070
-                            ],
-                            [
-                              4010,
-                              2070
-                            ],
-                            [
-                              4010,
-                              2335
-                            ],
-                            [
-                              4000,
-                              2340
-                            ],
-                            [
-                              3720,
-                              2350
-                            ],
-                            [
-                              3605,
-                              2350
-                            ]
-                          ]
-                        },
-                        {
-                          "id": "5",
-                          "icon": {
-                            "name": "mdi:pot-steam",
-                            "x": 3320,
-                            "y": 2285
-                          },
-                          "outline": [
-                            [
-                              3380,
-                              2105
-                            ],
-                            [
-                              3385,
-                              2360
-                            ],
-                            [
-                              3385,
-                              2465
-                            ],
-                            [
-                              3290,
-                              2465
-                            ],
-                            [
-                              3275,
-                              2460
-                            ],
-                            [
-                              3255,
-                              2370
-                            ],
-                            [
-                              3255,
-                              2110
-                            ],
-                            [
-                              3260,
-                              2105
-                            ],
-                            [
-                              3380,
-                              2105
-                            ]
-                          ]
-                        },
-                        {
-                          "id": "6",
-                          "icon": {
-                            "name": "mdi:sofa",
-                            "x": 3607,
-                            "y": 2525
-                          },
-                          "outline": [
-                            [
-                              3865,
-                              2375
-                            ],
-                            [
-                              3865,
-                              2680
-                            ],
-                            [
-                              3735,
-                              2695
-                            ],
-                            [
-                              3460,
-                              2695
-                            ],
-                            [
-                              3400,
-                              2670
-                            ],
-                            [
-                              3390,
-                              2650
-                            ],
-                            [
-                              3350,
-                              2555
-                            ],
-                            [
-                              3350,
-                              2545
-                            ],
-                            [
-                              3390,
-                              2380
-                            ],
-                            [
-                              3395,
-                              2375
-                            ],
-                            [
-                              3605,
-                              2355
-                            ],
-                            [
-                              3725,
-                              2355
-                            ],
-                            [
-                              3840,
-                              2370
-                            ],
-                            [
-                              3865,
-                              2375
-                            ]
-                          ]
-                        },
-                        {
-                          "id": "7",
-                          "icon": {
-                            "name": "mdi:pasta",
-                            "x": 3617,
-                            "y": 2872
-                          },
-                          "outline": [
-                            [
-                              3860,
-                              2725
-                            ],
-                            [
-                              3860,
-                              3030
-                            ],
-                            [
-                              3700,
-                              3045
-                            ],
-                            [
-                              3605,
-                              3045
-                            ],
-                            [
-                              3420,
-                              3030
-                            ],
-                            [
-                              3375,
-                              2900
-                            ],
-                            [
-                              3375,
-                              2745
-                            ],
-                            [
-                              3460,
-                              2700
-                            ],
-                            [
-                              3745,
-                              2700
-                            ],
-                            [
-                              3860,
-                              2725
-                            ]
-                          ]
-                        },
-                        {
-                          "id": "8",
-                          "icon": {
-                            "name": "mdi:bed",
-                            "x": 3807,
-                            "y": 3197
-                          },
-                          "label": {
-                            "text": "E",
-                            "x": 3807,
-                            "y": 3197,
-                            "offset_y": 35
-                          },
-                          "outline": [
-                            [
-                              3995,
-                              3135
-                            ],
-                            [
-                              3995,
-                              3315
-                            ],
-                            [
-                              3980,
-                              3320
-                            ],
-                            [
-                              3840,
-                              3340
-                            ],
-                            [
-                              3815,
-                              3340
-                            ],
-                            [
-                              3755,
-                              3325
-                            ],
-                            [
-                              3725,
-                              3310
-                            ],
-                            [
-                              3720,
-                              3305
-                            ],
-                            [
-                              3720,
-                              3235
-                            ],
-                            [
-                              3725,
-                              3075
-                            ],
-                            [
-                              3745,
-                              3055
-                            ],
-                            [
-                              3845,
-                              3055
-                            ],
-                            [
-                              3910,
-                              3070
-                            ],
-                            [
-                              3985,
-                              3105
-                            ],
-                            [
-                              3995,
-                              3135
-                            ]
-                          ]
-                        },
-                        {
-                          "id": "9",
-                          "icon": {
-                            "name": "mdi:tshirt-crew",
-                            "x": 3302,
-                            "y": 3300
-                          },
-                          "outline": [
-                            [
-                              3385,
-                              3290
-                            ],
-                            [
-                              3385,
-                              3355
-                            ],
-                            [
-                              3260,
-                              3355
-                            ],
-                            [
-                              3225,
-                              3290
-                            ],
-                            [
-                              3220,
-                              3280
-                            ],
-                            [
-                              3220,
-                              3245
-                            ],
-                            [
-                              3380,
-                              3245
-                            ],
-                            [
-                              3385,
-                              3290
-                            ]
-                          ]
-                        },
-                        {
-                          "id": "11",
-                          "icon": {
-                            "name": "mdi:swap-horizontal-circle-outline",
-                            "x": 3650,
-                            "y": 3260
-                          },
-                          "outline": [
-                            [
-                              3585,
-                              3265
-                            ],
-                            [
-                              3605,
-                              3050
-                            ],
-                            [
-                              3705,
-                              3050
-                            ],
-                            [
-                              3715,
-                              3240
-                            ],
-                            [
-                              3715,
-                              3310
-                            ],
-                            [
-                              3705,
-                              3460
-                            ],
-                            [
-                              3675,
-                              3470
-                            ],
-                            [
-                              3620,
-                              3470
-                            ],
-                            [
-                              3605,
-                              3465
-                            ],
-                            [
-                              3585,
-                              3330
-                            ],
-                            [
-                              3585,
-                              3265
-                            ]
-                          ]
-                        },
-                        {
-                          "id": "13",
-                          "icon": {
-                            "name": "mdi:bed",
-                            "x": 3807,
-                            "y": 3500
-                          },
-                          "label": {
-                            "text": "A",
-                            "x": 3807,
-                            "y": 3500,
-                            "offset_y": 35
-                          },
-                          "outline": [
-                            [
-                              3990,
-                              3365
-                            ],
-                            [
-                              4005,
-                              3500
-                            ],
-                            [
-                              4005,
-                              3515
-                            ],
-                            [
-                              3990,
-                              3605
-                            ],
-                            [
-                              3805,
-                              3635
-                            ],
-                            [
-                              3725,
-                              3635
-                            ],
-                            [
-                              3710,
-                              3455
-                            ],
-                            [
-                              3710,
-                              3410
-                            ],
-                            [
-                              3735,
-                              3380
-                            ],
-                            [
-                              3795,
-                              3365
-                            ],
-                            [
-                              3990,
-                              3365
-                            ]
-                          ]
-                        },
-                        {
-                          "id": "15",
-                          "icon": {
-                            "name": "mdi:teddy-bear",
-                            "x": 3295,
-                            "y": 3087
-                          },
-                          "outline": [
-                            [
-                              3380,
-                              3240
-                            ],
-                            [
-                              3220,
-                              3240
-                            ],
-                            [
-                              3175,
-                              3195
-                            ],
-                            [
-                              3175,
-                              2960
-                            ],
-                            [
-                              3280,
-                              2935
-                            ],
-                            [
-                              3415,
-                              2935
-                            ],
-                            [
-                              3415,
-                              3030
-                            ],
-                            [
-                              3380,
-                              3240
-                            ]
-                          ]
+                        "excluded": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:tshirt-crew",
+                          "template": "vacuum_clean_area_excluded",
+                          "variables": {
+                            "area": "yard"
+                          }
                         }
-                      ]
+                      },
+                      "style": {
+                        "top": "20%",
+                        "left": "19%"
+                      }
                     },
                     {
-                      "template": "vacuum_clean_zone"
+                      "type": "custom:state-switch",
+                      "entity": "{{ 'included' if 'playroom' in states('input_text.vacuum_cleaning_areas') else 'excluded' }}",
+                      "states": {
+                        "included": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:teddy-bear",
+                          "template": "vacuum_clean_area_included",
+                          "variables": {
+                            "area": "playroom"
+                          }
+                        },
+                        "excluded": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:teddy-bear",
+                          "template": "vacuum_clean_area_excluded",
+                          "variables": {
+                            "area": "playroom"
+                          }
+                        }
+                      },
+                      "style": {
+                        "top": "17%",
+                        "left": "30%"
+                      }
+                    },
+                    {
+                      "type": "custom:state-switch",
+                      "entity": "{{ 'included' if 'dining_room' in states('input_text.vacuum_cleaning_areas') else 'excluded' }}",
+                      "states": {
+                        "included": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:pasta",
+                          "template": "vacuum_clean_area_included",
+                          "variables": {
+                            "area": "dining_room"
+                          }
+                        },
+                        "excluded": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:pasta",
+                          "template": "vacuum_clean_area_excluded",
+                          "variables": {
+                            "area": "dining_room"
+                          }
+                        }
+                      },
+                      "style": {
+                        "top": "56%",
+                        "left": "41%"
+                      }
+                    },
+                    {
+                      "type": "custom:state-switch",
+                      "entity": "{{ 'included' if 'hallway' in states('input_text.vacuum_cleaning_areas') else 'excluded' }}",
+                      "states": {
+                        "included": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:swap-horizontal-circle-outline",
+                          "template": "vacuum_clean_area_included",
+                          "variables": {
+                            "area": "hallway"
+                          }
+                        },
+                        "excluded": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:swap-horizontal-circle-outline",
+                          "template": "vacuum_clean_area_excluded",
+                          "variables": {
+                            "area": "hallway"
+                          }
+                        }
+                      },
+                      "style": {
+                        "top": "57%",
+                        "left": "22%"
+                      }
+                    },
+                    {
+                      "type": "custom:state-switch",
+                      "entity": "{{ 'included' if 'elena_s_room' in states('input_text.vacuum_cleaning_areas') else 'excluded' }}",
+                      "states": {
+                        "included": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "template": "vacuum_clean_area_included",
+                          "variables": {
+                            "area": "elena_s_room"
+                          }
+                        },
+                        "excluded": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "template": "vacuum_clean_area_excluded",
+                          "variables": {
+                            "area": "elena_s_room"
+                          }
+                        }
+                      },
+                      "style": {
+                        "top": "80%",
+                        "left": "9%"
+                      }
+                    },
+                    {
+                      "type": "custom:state-switch",
+                      "entity": "{{ 'included' if 'eli_s_room' in states('input_text.vacuum_cleaning_areas') else 'excluded' }}",
+                      "states": {
+                        "included": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "template": "vacuum_clean_area_included",
+                          "variables": {
+                            "area": "eli_s_room"
+                          }
+                        },
+                        "excluded": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "template": "vacuum_clean_area_excluded",
+                          "variables": {
+                            "area": "eli_s_room"
+                          }
+                        }
+                      },
+                      "style": {
+                        "top": "80%",
+                        "left": "24%"
+                      }
+                    },
+                    {
+                      "type": "custom:state-switch",
+                      "entity": "{{ 'included' if 'living_room' in states('input_text.vacuum_cleaning_areas') else 'excluded' }}",
+                      "states": {
+                        "included": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:sofa",
+                          "template": "vacuum_clean_area_included",
+                          "variables": {
+                            "area": "living_room"
+                          }
+                        },
+                        "excluded": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:sofa",
+                          "template": "vacuum_clean_area_excluded",
+                          "variables": {
+                            "area": "living_room"
+                          }
+                        }
+                      },
+                      "style": {
+                        "top": "56%",
+                        "left": "58%"
+                      }
+                    },
+                    {
+                      "type": "custom:state-switch",
+                      "entity": "{{ 'included' if 'parents_room' in states('input_text.vacuum_cleaning_areas') else 'excluded' }}",
+                      "states": {
+                        "included": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "template": "vacuum_clean_area_included",
+                          "variables": {
+                            "area": "parents_room"
+                          }
+                        },
+                        "excluded": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bed",
+                          "template": "vacuum_clean_area_excluded",
+                          "variables": {
+                            "area": "parents_room"
+                          }
+                        }
+                      },
+                      "style": {
+                        "top": "80%",
+                        "left": "91%"
+                      }
+                    },
+                    {
+                      "type": "custom:state-switch",
+                      "entity": "{{ 'included' if 'study_room' in states('input_text.vacuum_cleaning_areas') else 'excluded' }}",
+                      "states": {
+                        "included": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bookshelf",
+                          "template": "vacuum_clean_area_included",
+                          "variables": {
+                            "area": "study_room"
+                          }
+                        },
+                        "excluded": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:bookshelf",
+                          "template": "vacuum_clean_area_excluded",
+                          "variables": {
+                            "area": "study_room"
+                          }
+                        }
+                      },
+                      "style": {
+                        "top": "80%",
+                        "left": "76%"
+                      }
+                    },
+                    {
+                      "type": "custom:state-switch",
+                      "entity": "{{ 'included' if 'kitchen' in states('input_text.vacuum_cleaning_areas') else 'excluded' }}",
+                      "states": {
+                        "included": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:pot-steam",
+                          "template": "vacuum_clean_area_included",
+                          "variables": {
+                            "area": "kitchen"
+                          }
+                        },
+                        "excluded": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:pot-steam",
+                          "template": "vacuum_clean_area_excluded",
+                          "variables": {
+                            "area": "kitchen"
+                          }
+                        }
+                      },
+                      "style": {
+                        "top": "20%",
+                        "left": "72%"
+                      }
+                    },
+                    {
+                      "type": "custom:state-switch",
+                      "entity": "{{ 'ready_to_run' if states('input_text.vacuum_cleaning_areas') | length > 0 and is_state('vacuum.valetudo_hestia', 'docked') and not is_state('sensor.valetudo_hestia_dock_status', 'cleaning') else 'not_ready_to_run' }}",
+                      "states": {
+                        "not_ready_to_run": {
+                          "type": "custom:button-card",
+                          "styles": {
+                            "card": [
+                              {
+                                "background-color": "rgba(0,0,0,0)"
+                              }
+                            ]
+                          }
+                        },
+                        "ready_to_run": {
+                          "type": "custom:button-card",
+                          "icon": "mdi:broom",
+                          "styles": {
+                            "card": [
+                              {
+                                "background-color": "var(--state-binary-sensor-color)"
+                              },
+                              {
+                                "height": "40px"
+                              },
+                              {
+                                "width": "40px"
+                              }
+                            ],
+                            "icon": [
+                              {
+                                "color": "var(--card-background-color)"
+                              },
+                              {
+                                "height": "40px"
+                              },
+                              {
+                                "width": "40px"
+                              }
+                            ]
+                          },
+                          "tap_action": {
+                            "action": "perform-action",
+                            "perform_action": "vacuum.clean_area",
+                            "target": {
+                              "entity_id": "vacuum.valetudo_hestia"
+                            },
+                            "data": {
+                              "cleaning_area_id": "[[[ return states['input_text.vacuum_cleaning_areas'].state.split(',').slice(0,-1) ]]]"
+                            }
+                          }
+                        }
+                      },
+                      "style": {
+                        "top": "15%",
+                        "left": "90%"
+                      }
                     }
                   ],
                   "visibility": [
@@ -13561,16 +13386,35 @@
                   "icon": "mdi:cog"
                 },
                 {
-                  "type": "custom:button-card",
-                  "entity": "input_select.vacuum_run_type",
-                  "template": "tile_select_button",
-                  "name": "Run Type",
-                  "section_mode": true,
-                  "tap_action": {
-                    "service": "input_select.select_next"
+                  "type": "conditional",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.valetudo_hestia",
+                      "state": "docked"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.valetudo_hestia_dock_status",
+                      "state_not": "cleaning"
+                    }
+                  ],
+                  "card": {
+                    "type": "custom:button-card",
+                    "entity": "input_select.vacuum_run_type",
+                    "template": "tile_select_button",
+                    "name": "Run Type",
+                    "section_mode": true,
+                    "tap_action": {
+                      "service": "input_select.select_next"
+                    },
+                    "grid_options": {
+                      "rows": null
+                    }
                   },
                   "grid_options": {
-                    "rows": null
+                    "columns": 6,
+                    "rows": "auto"
                   }
                 },
                 {

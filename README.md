@@ -42,7 +42,7 @@ Domain | Quantity
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
 [`input_number`](https://www.home-assistant.io/components/input_number) | 24
 [`input_select`](https://www.home-assistant.io/components/input_select) | 11
-[`input_text`](https://www.home-assistant.io/components/input_text) | 19
+[`input_text`](https://www.home-assistant.io/components/input_text) | 20
 [`light`](https://www.home-assistant.io/components/light) | 72
 [`media_player`](https://www.home-assistant.io/components/media_player) | 7
 [`notify`](https://www.home-assistant.io/components/notify) | 6
@@ -50,20 +50,20 @@ Domain | Quantity
 [`person`](https://www.home-assistant.io/components/person) | 3
 [`radio_frequency`](https://www.home-assistant.io/components/radio_frequency) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 3
-[`script`](https://www.home-assistant.io/components/script) | 13
+[`script`](https://www.home-assistant.io/components/script) | 14
 [`select`](https://www.home-assistant.io/components/select) | 70
-[`sensor`](https://www.home-assistant.io/components/sensor) | 778
+[`sensor`](https://www.home-assistant.io/components/sensor) | 790
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 80
 [`text`](https://www.home-assistant.io/components/text) | 33
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 119
+[`update`](https://www.home-assistant.io/components/update) | 118
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 2033
+Total | 2046
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -128,7 +128,6 @@ Total | 2033
 - [Decluttering Card](https://github.com/custom-cards/decluttering-card)
 - [Slider Button Card](https://github.com/custom-cards/slider-button-card)
 - [State Switch](https://github.com/thomasloven/lovelace-state-switch)
-- [Xiaomi Vacuum Map Card](https://github.com/PiotrMachowski/lovelace-xiaomi-vacuum-map-card)
 
 ## Dashboards
 In addition to providing direct control and visual feedback on the state of each controllable device in our house, our dashboards are also designed to be _infographics_ that provide insights into the usage trends of multiple devices of the same type, across different rooms and throughout the whole house.  They are maps in the spirit of the Tube maps - providing a stripped-down view of the components with just enough information to appreciate how the parts relate to the whole.  And the entire graphic fits on one screen on a mobile device, so all information is available at a glance.  The design principles are:
