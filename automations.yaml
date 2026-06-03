@@ -5958,12 +5958,10 @@
         parents_room:
           door: binary_sensor.parents_room_doors
           button: button.parents_room_core_ring_doorbell
-      doorbell_track: "{{ ['JR DDG Final Osaka Loop', \n                                                               'JR
-        DDG nDS e231 Door Chime',\n                                                               'JR
-        Station Notification 2',\n                                                               'JR
-        Sunny Spot V1',\n                                                               'JR
-        Cosmos V1',\n                                                               'JR
-        Susuki Heights V2'] | random }}.mp3\n"
+      doorbell_track: "{{ [\"Eli's Doorbell.wav\",\n    'JR DDG Final Osaka Loop.mp3',
+        \n    'JR DDG nDS e231 Door Chime.mp3',\n    'JR Station Notification 2.mp3',\n
+        \   'JR Sunny Spot V1.mp3',\n    'JR Cosmos V1.mp3',\n    'JR Susuki Heights
+        V2.mp3'] | random }}\n"
   - parallel:
     - sequence:
       - delay: 1
@@ -5973,11 +5971,10 @@
               }}
             media_content_type: music
             announce: true
+          announce: true
         action: media_player.play_media
         target:
-          entity_id:
-          - media_player.dining_room_speaker
-          - media_player.kitchen_speaker
+          entity_id: media_player.google_speakers
     - sequence:
       - delay:
           hours: 0
@@ -6012,10 +6009,6 @@
         target:
           entity_id:
           - button.kitchen_core_ring_doorbell
-      - condition: state
-        state:
-        - 'off'
-        entity_id: binary_sensor.study_room_ethernet_connection
     - sequence:
       - condition: state
         entity_id: binary_sensor.study_room_ethernet_connection
