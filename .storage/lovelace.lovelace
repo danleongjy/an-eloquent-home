@@ -13045,23 +13045,6 @@
                 },
                 {
                   "type": "tile",
-                  "visibility": [
-                    {
-                      "condition": "or",
-                      "conditions": [
-                        {
-                          "condition": "state",
-                          "entity": "input_select.vacuum_run_type",
-                          "state": "Whole Home"
-                        },
-                        {
-                          "condition": "state",
-                          "entity": "input_select.vacuum_run_type",
-                          "state": "Selected Rooms"
-                        }
-                      ]
-                    }
-                  ],
                   "entity": "vacuum.valetudo_hestia",
                   "name": "Hestia",
                   "vertical": false,
@@ -13075,7 +13058,14 @@
                       ]
                     }
                   ],
-                  "features_position": "inline"
+                  "features_position": "inline",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "input_boolean.vacuum_manual_control",
+                      "state_not": "on"
+                    }
+                  ]
                 },
                 {
                   "type": "conditional",
