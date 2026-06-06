@@ -2122,6 +2122,212 @@
                         "conditions": [
                           {
                             "entity": "input_select.floorplan_panel_view",
+                            "state_not": "weather"
+                          }
+                        ],
+                        "elements": [
+                          {
+                            "type": "custom:button-card",
+                            "style": {
+                              "top": "10%",
+                              "left": "91.5%",
+                              "height": "19%",
+                              "width": "16.5%"
+                            },
+                            "aspect_ratio": "33/19",
+                            "entity": "sensor.date",
+                            "label": "[[[ \n  return (helpers.formatDateWeekdayShort(entity.state) + ' ' + \n          helpers.formatDateShort(entity.state).split(' ')[1] + ' ' + \n          helpers.formatDateShort(entity.state).split(' ')[0] + ' ' + \n          helpers.formatDateYear(entity.state))\n]]]\n",
+                            "show_name": false,
+                            "show_icon": false,
+                            "show_state": true,
+                            "show_label": true,
+                            "state_display": "[[[ \n  if (states['calendar.public_holidays'].state == 'on') {\n    return '🎉 Happy ' + states['calendar.public_holidays'].attributes.message + '!'\n  } else {\n    return ' '\n  } \n]]]\n",
+                            "tap_action": {
+                              "action": "navigate",
+                              "navigation_path": "/lovelace/settings-sleep"
+                            },
+                            "custom_fields": {
+                              "greeting": "[[[\n  if (parseInt(states['sensor.time'].state.split(':')[0]) < 12) {\n    return 'Good morning 🌅'\n  } else if (parseInt(states['sensor.time'].state.split(':')[0]) < 18) {\n    return 'Good afternoon 🌇'\n  } else {\n    return 'Good evening 🌃'\n  }\n]]]\n"
+                            },
+                            "styles": {
+                              "state": [
+                                {
+                                  "white-space": "initial"
+                                },
+                                {
+                                  "text-overflow": "initial"
+                                },
+                                {
+                                  "overflow": "initial"
+                                }
+                              ],
+                              "grid": [
+                                {
+                                  "grid-template-areas": "\"greeting\" \"l\" \"s\""
+                                },
+                                {
+                                  "grid-template-rows": "1fr 1fr min-content"
+                                },
+                                {
+                                  "grid_template-columns": "1fr"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "style": {
+                              "top": "8.5%",
+                              "left": "77%",
+                              "height": "19%",
+                              "width": "12%"
+                            },
+                            "custom_fields": {
+                              "clock": {
+                                "card": {
+                                  "type": "clock",
+                                  "clock_style": "analog",
+                                  "show_seconds": true,
+                                  "no_background": true,
+                                  "border": false,
+                                  "ticks": "minute",
+                                  "face_style": "markers",
+                                  "seconds_motion": "continuous"
+                                }
+                              }
+                            },
+                            "styles": {
+                              "card": [
+                                {
+                                  "background-color": "rgba(0,0,0,0)"
+                                }
+                              ],
+                              "grid": [
+                                {
+                                  "grid-template-rows": "1fr"
+                                },
+                                {
+                                  "grid-template-columns": "1fr"
+                                },
+                                {
+                                  "grid-template-areas": "clock"
+                                }
+                              ]
+                            },
+                            "tap_action": {
+                              "action": "navigate",
+                              "navigation_path": "/lovelace/settings-sleep"
+                            }
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "style": {
+                              "top": "10%",
+                              "left": "77%",
+                              "height": "19%",
+                              "width": "12%"
+                            },
+                            "template": "alarms_imminent",
+                            "aspect_ratio": "24/19",
+                            "show_icon": false,
+                            "show_name": false,
+                            "show_state": false,
+                            "styles": {
+                              "card": [
+                                {
+                                  "background-color": "rgba(0,0,0,0)"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "conditional",
+                        "conditions": [
+                          {
+                            "entity": "input_select.floorplan_panel_view",
+                            "state": "weather"
+                          }
+                        ],
+                        "elements": [
+                          {
+                            "type": "custom:button-card",
+                            "style": {
+                              "top": "10%",
+                              "left": "85%",
+                              "height": "19%",
+                              "width": "29.5%"
+                            },
+                            "entity": "weather.local_weather",
+                            "show_name": false,
+                            "show_state": true,
+                            "custom_fields": {
+                              "temp": "[[[ return states[\"sensor.local_outdoor_temperature\"].state + states[\"sensor.local_outdoor_temperature\"].attributes.unit_of_measurement]]]",
+                              "otherdata": "[[[ return `<ha-icon icon=\"mdi:weather-rainy\" style=\"width: 12px; height: 12px;\"></ha-icon> ` + parseFloat(states[\"sensor.local_rainfall\"].state).toFixed(0).toString() + states[\"sensor.local_rainfall\"].attributes.unit_of_measurement + ` <ha-icon icon=\"mdi:water-percent\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_outdoor_humidity\"].state).toFixed(0).toString() + \"%\" + ` <ha-icon icon=\"mdi:weather-windy\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_wind_speed\"].state).toFixed(0).toString() + states[\"sensor.local_wind_speed\"].attributes.unit_of_measurement +  ` <ha-icon icon=\"mdi:navigation-variant\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_wind_bearing\"].state).toFixed(0).toString() + '°' ]]]"
+                            },
+                            "styles": {
+                              "grid": [
+                                {
+                                  "grid-template-areas": "\"i s\" \"i temp\" \"i otherdata\""
+                                },
+                                {
+                                  "grid-template-rows": "min-content min-content min-content"
+                                },
+                                {
+                                  "grid-template-columns": "0.7fr min-content"
+                                }
+                              ],
+                              "icon": [
+                                {
+                                  "height": "50px"
+                                },
+                                {
+                                  "width": "50px"
+                                }
+                              ],
+                              "state": [
+                                {
+                                  "justify-self": "start"
+                                }
+                              ],
+                              "custom_fields": {
+                                "temp": [
+                                  {
+                                    "font-size": "36px"
+                                  },
+                                  {
+                                    "text-align": "left"
+                                  }
+                                ],
+                                "otherdata": [
+                                  {
+                                    "font-size": "12px"
+                                  },
+                                  {
+                                    "color": "#777777"
+                                  },
+                                  {
+                                    "align-self": "middle"
+                                  },
+                                  {
+                                    "text-align": "right"
+                                  }
+                                ]
+                              }
+                            },
+                            "tap_action": {
+                              "action": "navigate",
+                              "navigation_path": "/lovelace/weather"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "conditional",
+                        "conditions": [
+                          {
+                            "entity": "input_select.floorplan_panel_view",
                             "state": "weather"
                           }
                         ],
@@ -2980,87 +3186,6 @@
                         "conditions": [
                           {
                             "entity": "input_select.floorplan_panel_view",
-                            "state": "weather"
-                          }
-                        ],
-                        "elements": [
-                          {
-                            "type": "custom:button-card",
-                            "style": {
-                              "top": "10%",
-                              "left": "85%",
-                              "height": "19%",
-                              "width": "29.5%"
-                            },
-                            "entity": "weather.local_weather",
-                            "show_name": false,
-                            "show_state": true,
-                            "custom_fields": {
-                              "temp": "[[[ return states[\"sensor.local_outdoor_temperature\"].state + states[\"sensor.local_outdoor_temperature\"].attributes.unit_of_measurement]]]",
-                              "otherdata": "[[[ return `<ha-icon icon=\"mdi:weather-rainy\" style=\"width: 12px; height: 12px;\"></ha-icon> ` + parseFloat(states[\"sensor.local_rainfall\"].state).toFixed(0).toString() + states[\"sensor.local_rainfall\"].attributes.unit_of_measurement + ` <ha-icon icon=\"mdi:water-percent\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_outdoor_humidity\"].state).toFixed(0).toString() + \"%\" + ` <ha-icon icon=\"mdi:weather-windy\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_wind_speed\"].state).toFixed(0).toString() + states[\"sensor.local_wind_speed\"].attributes.unit_of_measurement +  ` <ha-icon icon=\"mdi:navigation-variant\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_wind_bearing\"].state).toFixed(0).toString() + '°' ]]]"
-                            },
-                            "styles": {
-                              "grid": [
-                                {
-                                  "grid-template-areas": "\"i s\" \"i temp\" \"i otherdata\""
-                                },
-                                {
-                                  "grid-template-rows": "min-content min-content min-content"
-                                },
-                                {
-                                  "grid-template-columns": "0.7fr min-content"
-                                }
-                              ],
-                              "icon": [
-                                {
-                                  "height": "50px"
-                                },
-                                {
-                                  "width": "50px"
-                                }
-                              ],
-                              "state": [
-                                {
-                                  "justify-self": "start"
-                                }
-                              ],
-                              "custom_fields": {
-                                "temp": [
-                                  {
-                                    "font-size": "36px"
-                                  },
-                                  {
-                                    "text-align": "left"
-                                  }
-                                ],
-                                "otherdata": [
-                                  {
-                                    "font-size": "12px"
-                                  },
-                                  {
-                                    "color": "#777777"
-                                  },
-                                  {
-                                    "align-self": "middle"
-                                  },
-                                  {
-                                    "text-align": "right"
-                                  }
-                                ]
-                              }
-                            },
-                            "tap_action": {
-                              "action": "navigate",
-                              "navigation_path": "/lovelace/weather"
-                            }
-                          }
-                        ]
-                      },
-                      {
-                        "type": "conditional",
-                        "conditions": [
-                          {
-                            "entity": "input_select.floorplan_panel_view",
                             "state": "transit"
                           }
                         ],
@@ -3116,112 +3241,6 @@
                             "entity": "sensor.bus_stop_before_lorong_23_geylang",
                             "variables": {
                               "stop_no": 4
-                            }
-                          }
-                        ]
-                      },
-                      {
-                        "type": "conditional",
-                        "conditions": [
-                          {
-                            "entity": "input_select.floorplan_panel_view",
-                            "state_not": "weather"
-                          }
-                        ],
-                        "elements": [
-                          {
-                            "type": "custom:button-card",
-                            "style": {
-                              "top": "10%",
-                              "left": "91.5%",
-                              "height": "19%",
-                              "width": "16.5%"
-                            },
-                            "aspect_ratio": "33/19",
-                            "entity": "sensor.date",
-                            "label": "[[[ \n  return (helpers.formatDateWeekdayShort(entity.state) + ' ' + \n          helpers.formatDateShort(entity.state).split(' ')[1] + ' ' + \n          helpers.formatDateShort(entity.state).split(' ')[0] + ' ' + \n          helpers.formatDateYear(entity.state))\n]]]\n",
-                            "show_name": false,
-                            "show_icon": false,
-                            "show_state": true,
-                            "show_label": true,
-                            "state_display": "[[[ \n  if (states['calendar.public_holidays'].state == 'on') {\n    return '🎉 Happy ' + states['calendar.public_holidays'].attributes.message + '!'\n  } else {\n    return ' '\n  } \n]]]\n",
-                            "tap_action": {
-                              "action": "navigate",
-                              "navigation_path": "/lovelace/settings-sleep"
-                            },
-                            "custom_fields": {
-                              "greeting": "[[[\n  if (parseInt(states['sensor.time'].state.split(':')[0]) < 12) {\n    return 'Good morning 🌅'\n  } else if (parseInt(states['sensor.time'].state.split(':')[0]) < 18) {\n    return 'Good afternoon 🌇'\n  } else {\n    return 'Good evening 🌃'\n  }\n]]]\n"
-                            },
-                            "styles": {
-                              "state": [
-                                {
-                                  "white-space": "initial"
-                                },
-                                {
-                                  "text-overflow": "initial"
-                                },
-                                {
-                                  "overflow": "initial"
-                                }
-                              ],
-                              "grid": [
-                                {
-                                  "grid-template-areas": "\"greeting\" \"l\" \"s\""
-                                },
-                                {
-                                  "grid-template-rows": "1fr 1fr min-content"
-                                },
-                                {
-                                  "grid_template-columns": "1fr"
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "style": {
-                              "top": "10%",
-                              "left": "77%",
-                              "height": "19%",
-                              "width": "12%"
-                            },
-                            "template": "alarms_imminent",
-                            "aspect_ratio": "24/19",
-                            "show_icon": false,
-                            "show_name": false,
-                            "show_state": false
-                          },
-                          {
-                            "type": "image",
-                            "style": {
-                              "top": "10%",
-                              "left": "77%",
-                              "height": "19%",
-                              "width": "9.5%"
-                            },
-                            "entity": "binary_sensor.next_alarm_imminent",
-                            "image": "/local/clock_faces/blank_clock_face.png",
-                            "tap_action": {
-                              "action": "navigate",
-                              "navigation_path": "/lovelace/settings-sleep"
-                            },
-                            "state_filter": {
-                              "on": "grayscale(100%) contrast(0%) opacity(50%) drop-shadow(0 0 0 yellow) hue-rotate(330deg) saturate(400%) brightness(130%)",
-                              "off": "grayscale(100%) contrast(0%) opacity(50%) drop-shadow(0 0 0 blue) hue-rotate(330deg) brightness(150%) saturate(60%)"
-                            }
-                          },
-                          {
-                            "type": "image",
-                            "style": {
-                              "top": "10%",
-                              "left": "77%",
-                              "height": "19%",
-                              "width": "9.5%"
-                            },
-                            "entity": "image.clock_face",
-                            "tap_action": {
-                              "action": "navigate",
-                              "navigation_path": "/lovelace/settings-sleep"
                             }
                           }
                         ]

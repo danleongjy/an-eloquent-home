@@ -4,7 +4,6 @@ substitutions:
   min_temp: 16
   max_temp: 29
   external_temp_sensor: sensor.study_room_voice_assistant_temperature
-  external_hum_sensor: sensor.study_room_voice_assistant_humidity
   
 esphome:
   name: study-room-ac
@@ -76,9 +75,6 @@ sensor:
                               id: ac
                               fan_mode: LOW
                               target_temperature: !lambda 'return id(ac).target_temperature;'
-  - platform: homeassistant
-    id: hum_sensor
-    entity_id: ${external_hum_sensor}
 
 remote_transmitter:
   pin: 23
@@ -89,7 +85,6 @@ climate:
     name: AC
     id: ac
     sensor: temp_sensor
-    humidity_sensor: hum_sensor
     set_fan_mode: quiet_4levels
     supports_heat: False
     supports_dry: True
