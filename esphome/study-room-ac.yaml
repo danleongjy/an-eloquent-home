@@ -44,36 +44,42 @@ captive_portal:
 logger:
 
 sensor:
-  - platform: homeassistant
-    entity_id: sensor.study_room_temperature
-    id: temp_sensor
-    on_value:
-      then:
-        - if:
-            condition:
-              - lambda: 'return id(ac).mode != CLIMATE_MODE_OFF;'
-            then:
-              - if:
-                  condition:
-                    - lambda: 'return (x - id(ac).target_temperature) > 2;'
-                  then:
-                    - if:
-                        condition:
-                          - lambda: 'return id(ac).fan_mode != CLIMATE_FAN_HIGH;'
-                        then:
-                          - climate.control:
-                              id: ac
-                              fan_mode: HIGH
-                              target_temperature: !lambda 'return id(ac).target_temperature;'
-                  else:
-                    if:
-                        condition: 
-                          - lambda: 'return id(ac).fan_mode != CLIMATE_FAN_LOW;'
-                        then:
-                          - climate.control:
-                              id: ac
-                              fan_mode: LOW
-                              target_temperature: !lambda 'return id(ac).target_temperature;'
+  - platform: dht
+    pin: 22
+    model: DHT22
+    humidity:
+      name: Humidity
+      accuracy_decimals: 1
+    temperature:
+      name: Temperature
+      id: temp_sensor
+      on_value:
+        then:
+          - if:
+              condition:
+                - lambda: 'return id(ac).mode != CLIMATE_MODE_OFF;'
+              then:
+                - if:
+                    condition:
+                      - lambda: 'return (x - id(ac).target_temperature) > 2;'
+                    then:
+                      - if:
+                          condition:
+                            - lambda: 'return id(ac).fan_mode != CLIMATE_FAN_HIGH;'
+                          then:
+                            - climate.control:
+                                id: ac
+                                fan_mode: HIGH
+                                target_temperature: !lambda 'return id(ac).target_temperature;'
+                    else:
+                      if:
+                          condition: 
+                            - lambda: 'return id(ac).fan_mode != CLIMATE_FAN_LOW;'
+                          then:
+                            - climate.control:
+                                id: ac
+                                fan_mode: LOW
+                                target_temperature: !lambda 'return id(ac).target_temperature;'
 
 remote_transmitter:
   pin: 23
