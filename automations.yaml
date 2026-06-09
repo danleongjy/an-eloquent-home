@@ -70,6 +70,19 @@
           entity_id: input_select.home_mode
         data:
           option: Away Mode
+      - condition: state
+        state:
+        - Away Mode
+        entity_id: input_select.home_mode
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 10
+      - action: lock.unlock
+        metadata: {}
+        target:
+          entity_id: lock.main_door_lock
+        data: {}
       button_down_double_press: true
       helper_double_press_delay: 500
       action_button_up_double: []
@@ -7095,6 +7108,19 @@
       entity_id: input_select.home_mode
   - set_conversation_response: '{{ [''Initiating'', ''Activating''] | random }} {{
       trigger.id }}.'
+  - condition: state
+    state:
+    - Away Mode
+    entity_id: input_select.home_mode
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+  - action: lock.unlock
+    metadata: {}
+    target:
+      entity_id: lock.main_door_lock
+    data: {}
   mode: single
 - id: '1743848999796'
   alias: Voice Control for Vacuum
