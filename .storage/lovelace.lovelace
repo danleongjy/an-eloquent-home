@@ -1572,6 +1572,15 @@
               "add_or_remove_area": "add"
             }
           }
+        },
+        "main_door_unlocked": {
+          "styles": {
+            "card": [
+              {
+                "background-color": "[[[\n  if (states['lock.main_door_lock'].state != 'locked') {\n    return \"#9e110d\"\n  }\n]]]\n"
+              }
+            ]
+          }
         }
       },
       "decluttering_templates": {
@@ -1584,7 +1593,10 @@
               "Away Mode": {
                 "type": "custom:button-card",
                 "entity": "input_select.home_mode",
-                "template": "top_row",
+                "template": [
+                  "top_row",
+                  "main_door_unlocked"
+                ],
                 "double_tap_action": {
                   "action": "call-service",
                   "service": "input_select.select_option",
@@ -1609,7 +1621,10 @@
               "default": {
                 "type": "custom:button-card",
                 "entity": "binary_sensor.main_door",
-                "template": "top_row",
+                "template": [
+                  "top_row",
+                  "main_door_unlocked"
+                ],
                 "tap_action": {
                   "action": "navigate",
                   "navigation_path": "/lovelace/main-door"
@@ -11981,13 +11996,13 @@
                     },
                     {
                       "entity": "sensor.home_assistant_devices_by_integration",
-                      "attribute": "broadlink",
-                      "name": "Broadlink"
+                      "attribute": "switchbot",
+                      "name": "SwitchBot"
                     },
                     {
                       "entity": "sensor.home_assistant_devices_by_integration",
-                      "attribute": "switchbot",
-                      "name": "SwitchBot"
+                      "attribute": "broadlink",
+                      "name": "Broadlink"
                     },
                     {
                       "entity": "sensor.home_assistant_devices_by_integration",
@@ -12079,7 +12094,7 @@
                         "styles": {
                           "card": [
                             {
-                              "background": "#9B59B6"
+                              "background": "#F1C40F"
                             }
                           ]
                         }
@@ -12096,7 +12111,7 @@
                         "styles": {
                           "card": [
                             {
-                              "background": "#F1C40F"
+                              "background": "#9B59B6"
                             }
                           ]
                         }
@@ -12123,10 +12138,10 @@
                   "styles": {
                     "grid": [
                       {
-                        "grid-template-areas": "\"bar_segment_zigbee bar_segment_esphome bar_segment_music_assistant bar_segment_broadlink bar_segment_switchbot bar_segment_others\""
+                        "grid-template-areas": "\"bar_segment_zigbee bar_segment_esphome bar_segment_music_assistant bar_segment_switchbot bar_segment_broadlink bar_segment_others\""
                       },
                       {
-                        "grid-template-columns": "[[[ return variables.bar_segment_zigbee_percent.toString() + '% ' + variables.bar_segment_esphome_percent.toString() + '%' + variables.bar_segment_music_assistant_percent.toString() + '%' + variables.bar_segment_broadlink_percent.toString() + '%' + variables.bar_segment_switchbot_percent.toString() + '%' + variables.bar_segment_zz_others_percent.toString() + '%' ]]]"
+                        "grid-template-columns": "[[[ return variables.bar_segment_zigbee_percent.toString() + '% ' + variables.bar_segment_esphome_percent.toString() + '%' + variables.bar_segment_music_assistant_percent.toString() + '%' + variables.bar_segment_switchbot_percent.toString() + '%' + variables.bar_segment_broadlink_percent.toString() + '%' + variables.bar_segment_zz_others_percent.toString() + '%' ]]]"
                       },
                       {
                         "grid-template-rows": "min-content"
@@ -16774,19 +16789,21 @@
                   "icon": "mdi:cctv"
                 },
                 {
-                  "show_state": false,
-                  "show_name": false,
+                  "show_state": true,
+                  "show_name": true,
                   "camera_view": "live",
+                  "fit_mode": "cover",
                   "type": "picture-entity",
                   "camera_image": "camera.main_door_camera",
-                  "entity": "camera.main_door_camera",
+                  "entity": "binary_sensor.doorbell_motion",
                   "tap_action": {
                     "action": "more-info"
                   },
                   "hold_action": {
                     "action": "none"
                   },
-                  "aspect_ratio": "4:3"
+                  "aspect_ratio": "4:3",
+                  "name": "Main Door Motion"
                 }
               ],
               "column_span": 1
@@ -16802,10 +16819,16 @@
                 },
                 {
                   "type": "tile",
-                  "features_position": "bottom",
+                  "entity": "lock.main_door_lock",
+                  "name": " ",
                   "vertical": false,
-                  "entity": "binary_sensor.doorbell_motion",
-                  "name": " "
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  },
+                  "features_position": "bottom"
                 },
                 {
                   "type": "tile",
@@ -16816,7 +16839,7 @@
                 },
                 {
                   "type": "custom:slider-button-card",
-                  "entity": "light.doorbell_hex_light",
+                  "entity": "light.main_door_camera_hex_light",
                   "slider": {
                     "direction": "left-right",
                     "background": "solid",
@@ -16827,7 +16850,7 @@
                     "force_square": false,
                     "show_attribute": false
                   },
-                  "show_name": true,
+                  "show_name": false,
                   "show_state": true,
                   "compact": true,
                   "icon": {
@@ -16847,9 +16870,7 @@
                       "action": "toggle"
                     }
                   },
-                  "show_attribute": true,
-                  "name": " ",
-                  "attribute": "effect"
+                  "show_attribute": true
                 },
                 {
                   "type": "heading",
