@@ -232,22 +232,33 @@
     - platform: state
       entity_id: binary_sensor.dining_room_motion
     - platform: state
-      entity_id: binary_sensor.dining_room_radar_occupancy
+      entity_id: binary_sensor.dining_room_radar_zone_1_occupancy
       from: 'off'
       to: 'on'
       for:
         seconds: "{{ states('input_number.radar_occupancy_on_delay') | int(10) }}"
     - platform: state
-      entity_id: binary_sensor.dining_room_radar_occupancy
+      entity_id: binary_sensor.dining_room_radar_zone_2_occupancy
+      from: 'off'
+      to: 'on'
+      for:
+        seconds: "{{ states('input_number.radar_occupancy_on_delay') | int(10) }}"
+    - platform: state
+      entity_id: binary_sensor.dining_room_radar_zone_1_occupancy
+      from: 'on'
+      to: 'off'
+    - platform: state
+      entity_id: binary_sensor.dining_room_radar_zone_2_occupancy
       from: 'on'
       to: 'off'
   binary_sensor:
     - name: Dining Room Presence
       unique_id: binary_sensor.dining_room_presence
       device_class: occupancy
-      state: "{{ is_state('binary_sensor.dining_room_radar_occupancy', 'on') or is_state('binary_sensor.dining_room_motion', 'on') }}"
+      state: "{{ is_state('binary_sensor.dining_room_radar_zone_1_occupancy', 'on') or is_state('binary_sensor.dining_room_radar_zone_2_occupancy', 'on') or is_state('binary_sensor.dining_room_motion', 'on') }}"
       attributes:
-        dining_room_radar_occupancy: "{{ states('binary_sensor.dining_room_radar_occupancy') }}"
+        dining_room_radar_zone_1_occupancy: "{{ states('binary_sensor.dining_room_radar_zone_1_occupancy') }}"
+        dining_room_radar_zone_2_occupancy: "{{ states('binary_sensor.dining_room_radar_zone_2_occupancy') }}"
         dining_room_motion: "{{ states('binary_sensor.dining_room_motion') }}"
 
 - trigger:

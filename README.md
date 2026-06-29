@@ -25,7 +25,7 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 149
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 196
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 197
 [`button`](https://www.home-assistant.io/components/button) | 196
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 8
@@ -64,7 +64,7 @@ Domain | Quantity
 [`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 2014
+Total | 2015
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
