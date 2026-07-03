@@ -802,8 +802,9 @@
     id: door_open
     trigger: state
   - entity_id:
-    - binary_sensor.parents_room_motion
-    to: 'on'
+    - binary_sensor.parents_room_radar_zone_1_occupancy
+    to:
+    - 'on'
     id: parents_room_motion
     trigger: state
   - trigger: state
@@ -1757,7 +1758,8 @@
   - entity_id: sensor.sun_solar_elevation
     above: 65
     trigger: numeric_state
-  - entity_id: sensor.dining_room_lux
+  - entity_id:
+    - sensor.dining_room_radar_lux
     above: input_number.maximum_lux
     trigger: numeric_state
   conditions: []
@@ -1795,7 +1797,7 @@
               }}'
     - conditions:
       - condition: numeric_state
-        entity_id: sensor.dining_room_lux
+        entity_id: sensor.dining_room_radar_lux
         above: input_number.maximum_lux
       sequence:
       - condition: state
@@ -2266,7 +2268,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.parents_room_presence
+      motion_sensor: binary_sensor.parents_room_radar_zone_1_occupancy
       number_of_minutes_door_closed: input_number.motion_timeout_bedrooms
       door: binary_sensor.parents_room_doors
       turnoff_entities_list:
@@ -2280,7 +2282,7 @@
   use_blueprint:
     path: danleongjy/motion_fan.yaml
     input:
-      motion_sensor: binary_sensor.parents_room_presence
+      motion_sensor: binary_sensor.parents_room_radar_zone_1_occupancy
       fan: fan.parents_room_fan
       entities_list:
       - light.parents_room_lights
@@ -2296,7 +2298,7 @@
   use_blueprint:
     path: danleongjy/motion_ac.yaml
     input:
-      motion_sensor: binary_sensor.parents_room_presence
+      motion_sensor: binary_sensor.parents_room_radar_zone_1_occupancy
       ac: climate.parents_room_ac
       entities_list:
       - light.parents_room_lights
@@ -2311,8 +2313,8 @@
     input:
       lights_list:
       - light.parents_room_lights
-      motion_sensor: binary_sensor.parents_room_presence
-      lux_sensor: sensor.parents_room_lux
+      motion_sensor: binary_sensor.parents_room_radar_zone_1_occupancy
+      lux_sensor: sensor.parents_room_radar_lux
       entities_list:
       - light.parents_room_lights
       - fan.parents_room_fan
@@ -2330,7 +2332,7 @@
   use_blueprint:
     path: danleongjy/motion_ac.yaml
     input:
-      motion_sensor: binary_sensor.elenas_room_presence
+      motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
       ac: climate.elenas_room_ac
       entities_list:
       - light.elenas_room_lights
@@ -2342,7 +2344,7 @@
   use_blueprint:
     path: danleongjy/motion_fan.yaml
     input:
-      motion_sensor: binary_sensor.elenas_room_presence
+      motion_sensor: binary_sensor.elenas_room_radar_zone_1_occupancy
       fan: fan.elenas_room_fan
       entities_list:
       - light.elenas_room_lights
@@ -2359,8 +2361,8 @@
     input:
       lights_list:
       - light.elenas_room_lights
-      motion_sensor: binary_sensor.elenas_room_presence
-      lux_sensor: sensor.elenas_room_lux
+      motion_sensor: binary_sensor.elenas_room_radar_zone_1_occupancy
+      lux_sensor: sensor.elenas_room_radar_lux
       entities_list:
       - light.elenas_room_lights
       - fan.elenas_room_fan
@@ -2376,7 +2378,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.elenas_room_presence
+      motion_sensor: binary_sensor.elenas_room_radar_zone_1_occupancy
       number_of_minutes_door_closed: input_number.motion_timeout_bedrooms
       door: binary_sensor.elenas_room_door
       turnoff_entities_list:
@@ -2391,7 +2393,7 @@
   use_blueprint:
     path: danleongjy/motion_ac.yaml
     input:
-      motion_sensor: binary_sensor.elis_room_presence
+      motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
       ac: climate.elis_room_ac
       entities_list:
       - light.elis_room_lights
@@ -2403,7 +2405,7 @@
   use_blueprint:
     path: danleongjy/motion_fan.yaml
     input:
-      motion_sensor: binary_sensor.elis_room_presence
+      motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
       fan: fan.elis_room_fan
       entities_list:
       - light.elis_room_lights
@@ -2420,8 +2422,8 @@
     input:
       lights_list:
       - light.elis_room_lights
-      motion_sensor: binary_sensor.elis_room_presence
-      lux_sensor: sensor.elis_room_lux
+      motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
+      lux_sensor: sensor.elis_room_radar_lux
       entities_list:
       - light.elis_room_lights
       - fan.elis_room_fan
@@ -2437,7 +2439,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.elis_room_presence
+      motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
       number_of_minutes_door_closed: input_number.motion_timeout_bedrooms
       door: binary_sensor.elis_room_door
       turnoff_entities_list:
@@ -2594,8 +2596,8 @@
     input:
       lights_list:
       - light.dining_room_lights
-      motion_sensor: binary_sensor.dining_room_presence
-      lux_sensor: sensor.study_walkway_lux
+      motion_sensor: binary_sensor.dining_room_radar_zone_1_occupancy
+      lux_sensor: sensor.dining_room_radar_lux
       blackout_hours_start: input_datetime.dim_hours_start
       lights_debounce: false
 - id: '1679619906548'
@@ -2607,8 +2609,8 @@
     input:
       lights_list:
       - light.dining_room_pendant_light_entity
-      motion_sensor: binary_sensor.dining_room_presence
-      lux_sensor: sensor.study_walkway_lux
+      motion_sensor: binary_sensor.dining_room_radar_zone_1_occupancy
+      lux_sensor: sensor.dining_room_radar_lux
       doors_list: []
       blackout_hours_start: input_datetime.dim_hours_end
 - id: '1679619971749'
@@ -2618,7 +2620,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.dining_room_presence
+      motion_sensor: binary_sensor.dining_room_radar_zone_1_occupancy
       turnoff_entities_list:
       - light.dining_room_lights
       - light.dining_room_pendant_light_entity
@@ -2655,7 +2657,7 @@
   use_blueprint:
     path: danleongjy/motion_fan.yaml
     input:
-      motion_sensor: binary_sensor.dining_room_presence
+      motion_sensor: binary_sensor.dining_room_radar_zone_1_occupancy
       fan: fan.dining_room_fan
       doors_list:
       - binary_sensor.elenas_room_door
@@ -2711,7 +2713,7 @@
   use_blueprint:
     path: danleongjy/motion_ac.yaml
     input:
-      motion_sensor: binary_sensor.dining_room_presence
+      motion_sensor: binary_sensor.dining_room_radar_zone_1_occupancy
       ac: climate.dining_room_ac
       entities_list:
       - light.dining_room_lights
@@ -5197,8 +5199,8 @@
     input:
       lights_list:
       - light.elenas_room_bedside_lamp
-      motion_sensor: binary_sensor.elenas_room_presence
-      lux_sensor: sensor.elenas_room_lux
+      motion_sensor: binary_sensor.elenas_room_radar_zone_1_occupancy
+      lux_sensor: sensor.elenas_room_radar_lux
       entities_list:
       - light.elenas_room_lights
       - fan.elenas_room_fan
@@ -5249,8 +5251,8 @@
     input:
       lights_list:
       - light.elis_room_floor_lamp
-      motion_sensor: binary_sensor.elis_room_presence
-      lux_sensor: sensor.elis_room_lux
+      motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
+      lux_sensor: sensor.elis_room_radar_lux
       entities_list:
       - light.elis_room_lights
       - fan.elis_room_fan
@@ -7700,8 +7702,8 @@
     input:
       lights_list:
       - light.parents_room_bedside_lamp
-      motion_sensor: binary_sensor.parents_room_presence
-      lux_sensor: sensor.parents_room_lux
+      motion_sensor: binary_sensor.parents_room_radar_zone_1_occupancy
+      lux_sensor: sensor.parents_room_radar_lux
       entities_list:
       - light.parents_room_lights
       - fan.parents_room_fan
@@ -8217,7 +8219,7 @@
     input:
       room:
       - elenas_room
-      motion_sensor: binary_sensor.elenas_room_presence
+      motion_sensor: binary_sensor.elenas_room_radar_zone_1_occupancy
       entities_list:
       - light.elenas_room_lights
       - light.elenas_room_bedside_lamp
@@ -8233,7 +8235,7 @@
     input:
       room:
       - elis_room
-      motion_sensor: binary_sensor.elis_room_presence
+      motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
       entities_list:
       - light.elis_room_lights
       - light.elis_room_floor_lamp
@@ -8249,7 +8251,7 @@
     input:
       room:
       - parents_room
-      motion_sensor: binary_sensor.parents_room_presence
+      motion_sensor: binary_sensor.parents_room_radar_zone_1_occupancy
       entities_list:
       - light.parents_room_lights
       - light.parents_room_bedside_lamp
@@ -8350,7 +8352,7 @@
     input:
       room:
       - dining_room
-      motion_sensor: binary_sensor.dining_room_presence
+      motion_sensor: binary_sensor.dining_room_radar_zone_1_occupancy
       entities_list:
       - light.dining_room_lights
       - light.dining_room_pendant_light_entity
