@@ -83,12 +83,14 @@ action:
   - repeat:
       for_each: !input turnoff_entities_list
       sequence:
-        - if:
-            - condition: template
-              value_template: "{{ states(repeat.item) != 'off' }}"
-          then:
-            - action: homeassistant.turn_off
-              target:
-                entity_id: "{{ repeat.item }}"
+        - variables:
+            repeat_entity: "{{ repeat.item }}"
+        - repeat:
+            while: "{{ states(repeat_entity) != 'off' and repeat.index <= 10 }}"
+            sequence:
+              - action: homeassistant.turn_off
+                target:
+                  entity_id: "{{ repeat_entity }}"
+              - delay: 0.5
 mode: single
 max_exceeded: silent
