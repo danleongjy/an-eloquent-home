@@ -2556,7 +2556,7 @@
       lights_list:
       - light.living_room_lights
       motion_sensor: binary_sensor.living_room_presence
-      lux_sensor: sensor.study_walkway_lux
+      lux_sensor: sensor.living_room_radar_lux_calibrated
       blackout_hours_start: input_datetime.dim_hours_start
       lights_debounce: false
 - id: '1679619511575'
@@ -2569,7 +2569,7 @@
       lights_list:
       - light.living_room_pendant_light_entity
       motion_sensor: binary_sensor.living_room_presence
-      lux_sensor: sensor.study_walkway_lux
+      lux_sensor: sensor.living_room_radar_lux_calibrated
       blackout_hours_start: input_datetime.dim_hours_end
       doors_list: []
       lights_debounce: true
@@ -7413,14 +7413,16 @@
     id: high
   - trigger: state
     entity_id:
-    - binary_sensor.dining_room_presence
-    from: 'off'
+    - binary_sensor.dining_room_radar_zone_1_occupancy
+    from:
+    - 'off'
     id: motion
-    to: 'on'
+    to:
+    - 'on'
   - alias: When the screen is on with no motion in the Dining Room for 5min
     trigger: template
     value_template: '{{ is_state(''switch.main_door_display_screen'', ''on'') and
-      is_state(''binary_sensor.dining_room_presence'', ''off'') }}'
+      is_state(''binary_sensor.dining_room_radar_zone_1_occupancy'', ''off'') }}'
     for:
       hours: 0
       minutes: 5
