@@ -845,7 +845,7 @@
           ]
         },
         "sensor_multiple_openings": {
-          "label": "[[[\n  if (entity.attributes.total_openings_open.charAt(0) == \"0\")\n    return ''\n  else\n    return entity.attributes.total_openings_open\n]]]\n",
+          "label": "[[[\n  const entities = entity.attributes.entity_id;\n  const open = entities.map(x => states[x].state == 'on').reduce((acc, i) => acc + i, 0);\n  if (open > 0)\n    return open.toString() + '/' + entities.length.toString()\n  else\n    return ''\n]]]\n",
           "show_label": true
         },
         "button_card_tile": {
@@ -10807,15 +10807,6 @@
                     }
                   ],
                   "show_header_toggle": false
-                },
-                {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "input_number.radar_occupancy_on_delay",
-                      "name": "Radar Delay"
-                    }
-                  ]
                 }
               ]
             }
