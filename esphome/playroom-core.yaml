@@ -108,13 +108,13 @@ sensor:
 
 binary_sensor:
   - platform: homeassistant
-    id: playroom_presence
+    id: playroom_occupancy
     entity_id: binary_sensor.playroom_radar_occupancy
     on_state:
       then:
         if:
           condition:
-            binary_sensor.is_on: playroom_presence
+            binary_sensor.is_on: playroom_occupancy
           then:
             - light.turn_on: backlight
             - display.page.show: current_time
