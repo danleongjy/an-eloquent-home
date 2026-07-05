@@ -2509,7 +2509,7 @@
     input:
       lights_list:
       - light.playroom_lights
-      motion_sensor: binary_sensor.playroom_presence
+      motion_sensor: binary_sensor.playroom_radar_occupancy
       lux_sensor: sensor.playroom_radar_lux
       lights_debounce: false
 - id: '1678323081528'
@@ -2519,7 +2519,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.playroom_presence
+      motion_sensor: binary_sensor.playroom_radar_occupancy
       turnoff_entities_list:
       - light.playroom_lights
 - id: '1678323204367'
@@ -2555,7 +2555,7 @@
     input:
       lights_list:
       - light.living_room_lights
-      motion_sensor: binary_sensor.living_room_presence
+      motion_sensor: binary_sensor.living_room_radar_occupancy
       lux_sensor: sensor.living_room_radar_lux_calibrated
       blackout_hours_start: input_datetime.dim_hours_start
       lights_debounce: false
@@ -2568,7 +2568,7 @@
     input:
       lights_list:
       - light.living_room_pendant_light_entity
-      motion_sensor: binary_sensor.living_room_presence
+      motion_sensor: binary_sensor.living_room_radar_occupancy
       lux_sensor: sensor.living_room_radar_lux_calibrated
       blackout_hours_start: input_datetime.dim_hours_end
       doors_list: []
@@ -2580,7 +2580,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.living_room_presence
+      motion_sensor: binary_sensor.living_room_radar_occupancy
       turnoff_entities_list:
       - light.living_room_lights
       - light.living_room_pendant_light_entity
@@ -2634,7 +2634,7 @@
   use_blueprint:
     path: danleongjy/motion_fan.yaml
     input:
-      motion_sensor: binary_sensor.living_room_presence
+      motion_sensor: binary_sensor.living_room_radar_occupancy
       fan: fan.living_room_fan
       entities_list:
       - light.living_room_lights
@@ -2729,7 +2729,7 @@
   use_blueprint:
     path: danleongjy/motion_ac.yaml
     input:
-      motion_sensor: binary_sensor.living_room_presence
+      motion_sensor: binary_sensor.living_room_radar_occupancy
       ac: climate.living_room_ac
       entities_list:
       - light.living_room_lights
@@ -4459,7 +4459,7 @@
       curtains: cover.elenas_room_curtains
       windows: binary_sensor.elenas_room_windows
       doors: binary_sensor.elenas_room_door
-      motion: binary_sensor.elenas_room_presence
+      motion: binary_sensor.elenas_room_radar_zone_1_occupancy
       sleep_hours_start: input_datetime.wind_down
 - id: '1731678994131'
   alias: Eli's Room Curtains Auto Control
@@ -4470,7 +4470,7 @@
       curtains: cover.elis_room_curtains
       windows: binary_sensor.elis_room_windows
       doors: binary_sensor.elis_room_door
-      motion: binary_sensor.elis_room_presence
+      motion: binary_sensor.elis_room_radar_zone_1_occupancy
       sleep_hours_start: input_datetime.wind_down
 - id: '1735294884034'
   alias: Daniel's Next Alarm
@@ -7898,14 +7898,14 @@
   triggers:
   - trigger: state
     entity_id:
-    - binary_sensor.dining_room_presence
-    - binary_sensor.living_room_presence
     - binary_sensor.study_room_radar_occupancy
     - binary_sensor.kitchen_radar_occupancy
+    - binary_sensor.dining_room_radar_zone_1_occupancy
+    - binary_sensor.living_room_radar_occupancy
     id: motion
   - trigger: template
-    value_template: '{{ ''on'' not in [states(''binary_sensor.dining_room_presence''),
-      states(''binary_sensor.living_room_presence''), states(''binary_sensor.study_room_radar_occupancy''),
+    value_template: '    {{ ''on'' not in [states(''binary_sensor.dining_room_radar_zone_1_occupancy''),
+      states(''binary_sensor.living_room_radar_occupancy''), states(''binary_sensor.study_room_radar_occupancy''),
       states(''binary_sensor.kitchen_radar_occupancy'') ] }}'
     for:
       hours: 0
@@ -7933,11 +7933,11 @@
         - condition: or
           conditions:
           - condition: state
-            entity_id: binary_sensor.living_room_presence
+            entity_id: binary_sensor.living_room_radar_occupancy
             state:
             - 'on'
           - condition: state
-            entity_id: binary_sensor.dining_room_presence
+            entity_id: binary_sensor.dining_room_radar_zone_1_occupancy
             state:
             - 'on'
         - condition: state
@@ -7999,7 +7999,7 @@
           Connection is connected
       - conditions:
         - condition: state
-          entity_id: binary_sensor.dining_room_presence
+          entity_id: binary_sensor.dining_room_radar_zone_1_occupancy
           state:
           - 'on'
         - condition: state
@@ -8007,7 +8007,7 @@
           state:
           - 'off'
         - condition: state
-          entity_id: binary_sensor.living_room_presence
+          entity_id: binary_sensor.living_room_radar_occupancy
           state:
           - 'off'
         - condition: state
@@ -8051,11 +8051,11 @@
           state:
           - 'on'
         - condition: state
-          entity_id: binary_sensor.dining_room_presence
+          entity_id: binary_sensor.dining_room_radar_zone_1_occupancy
           state:
           - 'off'
         - condition: state
-          entity_id: binary_sensor.living_room_presence
+          entity_id: binary_sensor.living_room_radar_occupancy
           state:
           - 'off'
         - condition: or
@@ -8106,13 +8106,13 @@
           state:
           - 'off'
         - condition: state
-          entity_id: binary_sensor.dining_room_presence
+          entity_id: binary_sensor.dining_room_radar_zone_1_occupancy
           state:
           - 'off'
         - condition: or
           conditions:
           - condition: state
-            entity_id: binary_sensor.living_room_presence
+            entity_id: binary_sensor.living_room_radar_occupancy
             state:
             - 'on'
           - condition: state
@@ -8155,11 +8155,11 @@
             auto_play: true
       - conditions:
         - condition: state
-          entity_id: binary_sensor.dining_room_presence
+          entity_id: binary_sensor.dining_room_radar_zone_1_occupancy
           state:
           - 'off'
         - condition: state
-          entity_id: binary_sensor.living_room_presence
+          entity_id: binary_sensor.living_room_radar_occupancy
           state:
           - 'off'
         - condition: state
@@ -8320,7 +8320,7 @@
     input:
       room:
       - playroom
-      motion_sensor: binary_sensor.playroom_presence
+      motion_sensor: binary_sensor.playroom_radar_occupancy
       entities_list:
       - light.playroom_lights
 - id: '1766972609964'
@@ -8369,7 +8369,7 @@
     input:
       room:
       - living_room
-      motion_sensor: binary_sensor.living_room_presence
+      motion_sensor: binary_sensor.living_room_radar_occupancy
       entities_list:
       - light.living_room_lights
       - light.living_room_pendant_light_entity
@@ -8400,7 +8400,7 @@
       curtains: cover.parents_room_curtains
       windows: binary_sensor.parents_room_windows
       doors: binary_sensor.parents_room_doors
-      motion: binary_sensor.parents_room_presence
+      motion: binary_sensor.parents_room_radar_zone_1_occupancy
       sleep_hours_start: input_datetime.wind_down
 - id: '1772334104585'
   alias: Study Table Display
