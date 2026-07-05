@@ -587,7 +587,7 @@
         },
         "media_player_slider": {
           "template": "auto_control_slider",
-          "entity_picture": "[[[ \n  if (typeof entity.attributes.entity_picture_local !== 'undefined' && entity.attributes.entity_picture_local !== null && entity.attributes.entity_picture.includes('imageproxy?')) {\n    if (user.name == 'HomeTablet' || user.name == 'StudyRoomDisplay') {\n      return entity.attributes.entity_picture\n    } else {\n      return \"https://an-eloquent-home.duckdns.org\" + entity.attributes.entity_picture_local\n    }\n  }\n]]]",
+          "entity_picture": "[[[ \n  if (typeof entity.attributes.entity_picture_local !== 'undefined' && entity.attributes.entity_picture_local !== null && entity.attributes.entity_picture.includes('imageproxy/')) {\n    if (user.name == 'HomeTablet' || user.name == 'StudyRoomDisplay') {\n      return entity.attributes.entity_picture\n    } else {\n      return \"https://an-eloquent-home.duckdns.org\" + entity.attributes.entity_picture_local\n    }\n  }\n]]]",
           "show_entity_picture": true,
           "tap_action": {
             "action": "navigate",
@@ -653,7 +653,7 @@
             "navigation_path": "/lovelace/washer"
           },
           "show_label": true,
-          "label": "[[[ \n  var parse_time = {hours: 0, minutes: 0}\n  if (states['sensor.washer_current_status'].state == 'reserved') {\n    if (states['sensor.washer_delayed_end'].state != 'unknown' && states['sensor.washer_delayed_end'].state != 'unavailable') {\n      parse_time.hours = Math.floor((Date.parse(states['sensor.washer_delayed_end'].state) - Date.now()) / 3600000)\n      parse_time.minutes = Math.round(((Date.parse(states['sensor.washer_delayed_end'].state) - Date.now()) / 60000 % 60), 0)\n    }\n  } else {\n    if (states['sensor.washer_remaining_time'].state != 'unknown' && states['sensor.washer_remaining_time'].state != 'unavailable') {\n      parse_time.hours = Math.floor((Date.parse(states['sensor.washer_remaining_time'].state) - Date.now()) / 3600000)\n      parse_time.minutes = Math.round(((Date.parse(states['sensor.washer_remaining_time'].state) - Date.now()) / 60000 % 60), 0)\n    }\n  }\n  if (parse_time.minutes >= 10) {\n    return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n  } else {\n    return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n  }\n]]]\n",
+          "label": "[[[ \n  var parse_time = {hours: 0, minutes: 0}\n  if (states['sensor.washer_current_status'].state == 'reserved') {\n    if (states['sensor.washer_delayed_end'].state != 'unknown' && states['sensor.washer_delayed_end'].state != 'unavailable') {\n      parse_time.hours = Math.floor((Date.parse(states['sensor.washer_delayed_end'].state) - Date.now()) / 3600000)\n      parse_time.minutes = Math.round(((Date.parse(states['sensor.washer_delayed_end'].state) - Date.now()) / 60000 % 60), 0)\n    }\n  } else {\n    if (states['sensor.washer_remaining_time'].state != 'unknown' && states['sensor.washer_remaining_time'].state != 'unavailable') {\n      parse_time.hours = Math.floor((Date.parse(states['sensor.washer_remaining_time'].state) - Date.now()) / 3600000)\n      parse_time.minutes = Math.round(((Date.parse(states['sensor.washer_remaining_time'].state) - Date.now()) / 60000 % 60), 0)\n    }\n  }\n  if (parse_time.hours >=0 and parse_time.minutes >= 0) {\n    if (parse_time.minutes >= 10) {\n      return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n    } else {\n      return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n    }\n  } else {\n    return '0:00'\n  }\n]]]\n",
           "styles": {
             "icon": [
               {
@@ -5552,7 +5552,7 @@
                     "background": "solid",
                     "use_state_color": false,
                     "use_percentage_bg_opacity": false,
-                    "show_track": true,
+                    "show_track": false,
                     "toggle_on_click": false,
                     "force_square": false,
                     "show_attribute": false
@@ -5750,7 +5750,7 @@
                   "template": "manual_control_indicator",
                   "show_name": false,
                   "show_entity_picture": true,
-                  "entity_picture": "[[[ \n  if (typeof entity.attributes.entity_picture_local !== 'undefined' && entity.attributes.entity_picture_local !== null && entity.attributes.entity_picture.includes('imageproxy?')) {\n      return entity.attributes.entity_picture\n     }\n]]]",
+                  "entity_picture": "[[[ \n  if (typeof entity.attributes.entity_picture_local !== 'undefined' && entity.attributes.entity_picture_local !== null && entity.attributes.entity_picture.includes('imageproxy/')) {\n      return entity.attributes.entity_picture\n     }\n]]]",
                   "variables": {
                     "auto_control_automation": "automation.media_player_occupancy_following"
                   },

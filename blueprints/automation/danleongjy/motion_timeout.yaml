@@ -86,11 +86,11 @@ action:
         - variables:
             repeat_entity: "{{ repeat.item }}"
         - repeat:
-            while: "{{ states(repeat_entity) != 'off' and repeat.index <= 10 }}"
+            while: "{{ states(repeat_entity) != 'off' and repeat.index <= 5 }}"
             sequence:
               - action: homeassistant.turn_off
                 target:
                   entity_id: "{{ repeat_entity }}"
-              - delay: 0.5
+              - delay: 1
 mode: single
 max_exceeded: silent

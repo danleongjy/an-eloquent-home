@@ -172,6 +172,10 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self._live_task: asyncio.Task | None = None
         self._live_setup_done = False
         self._full_read_done = False
+        # transport.disconnect_count as of the last live setup — a later
+        # mismatch means a disconnect/reconnect happened that the monitor
+        # loop never observed (see _start_live_monitoring wait loop).
+        self._setup_disconnect_count = 0
         self._dbus_bus: MessageBus | None = None
         # HA >= 2026.5 exposes async_clear_advertisement_history — preferred over
         # the BlueZ D-Bus RSSI listener for waking on static-ADV devices.
@@ -637,6 +641,12 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                             if self.data:
                                 self.data["device_state"] = "off"
                                 self.data.pop("_connecting", None)
+                            # Wake the loop so it observes the disconnect
+                            # before the device reconnects (~0.3 s on the
+                            # shaver's hourly link drop) — otherwise the
+                            # 5 s poll below can miss the transition
+                            # entirely and never re-run live setup.
+                            self._wake_event.set()
                         self.async_set_updated_data(self.data)
 
                     self.transport.set_disconnect_callback(_on_state_change)
@@ -661,27 +671,43 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                             CONF_NOTIFY_THROTTLE, DEFAULT_NOTIFY_THROTTLE
                         )
                         await self.transport.set_notify_throttle(throttle_ms)
+                        # Stamp the disconnect counter BEFORE the reads: a
+                        # disconnect landing anywhere after this point makes
+                        # the wait loop below re-run the whole setup, even
+                        # when the device reconnected too fast for
+                        # is_connected to ever read False here.
+                        self._setup_disconnect_count = (
+                            self.transport.disconnect_count
+                        )
 
                     # Read characteristics first, then subscribe.
                     # First connect: read ALL chars (incl. static data like
                     # model, firmware). Subsequent: dynamic only.
-                    read_chars = (
+                    chars_to_read = (
                         self._poll_chars
                         if not self._full_read_done
                         else self._live_chars
                     )
 
-                    results = {}
-                    for uuid in read_chars:
-                        if not self.transport.is_connected:
-                            break
-                        try:
-                            value = await self.transport.read_char(uuid)
-                            results[uuid] = value
-                        except Exception as e:
-                            _LOGGER.debug(
-                                "Live initial read failed for %s: %s", uuid, e
-                            )
+                    if self._is_esp_bridge:
+                        # Batch through read_chars: pipelined via
+                        # asyncio.gather on bridge v1.10.0+, serial fallback
+                        # on older firmware. Not used for direct BLE — its
+                        # read_chars is a connect-read-disconnect poll and
+                        # would fight the live connection we just opened.
+                        results = await self.transport.read_chars(chars_to_read)
+                    else:
+                        results = {}
+                        for uuid in chars_to_read:
+                            if not self.transport.is_connected:
+                                break
+                            try:
+                                value = await self.transport.read_char(uuid)
+                                results[uuid] = value
+                            except Exception as e:
+                                _LOGGER.debug(
+                                    "Live initial read failed for %s: %s", uuid, e
+                                )
 
                     # For ESP bridge: if ALL reads failed, bridge is not ready
                     if self._is_esp_bridge:
@@ -777,6 +803,21 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     ):
                         self.transport.acknowledge_resubscribe()
                         _LOGGER.info("ESP bridge rebooted — forcing re-setup")
+                        break
+                    # A disconnect we never saw as is_connected == False:
+                    # the device dropped and reconnected between two wakes
+                    # of this loop. The bridge restored its subscriptions
+                    # itself, but HA still needs the fresh read batch (and
+                    # the "_connecting" flag cleared) — re-run live setup.
+                    if (
+                        self._is_esp_bridge
+                        and self.transport.disconnect_count
+                        != self._setup_disconnect_count
+                    ):
+                        _LOGGER.info(
+                            "%s: reconnect detected — forcing re-setup",
+                            self.address,
+                        )
                         break
                     self._wake_event.clear()
                     try:

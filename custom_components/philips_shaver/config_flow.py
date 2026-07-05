@@ -31,6 +31,7 @@ from bleak_retry_connector import (
 )
 
 from homeassistant.helpers.selector import (
+    BooleanSelector,
     NumberSelector,
     NumberSelectorConfig,
     NumberSelectorMode,
@@ -62,13 +63,17 @@ from .const import (
     CONF_CAPABILITIES,
     CONF_SERVICES,
     CONF_DEVICE_TYPE,
+    CONF_DEVICE_NAME,
+    CONF_AREA,
     CONF_TRANSPORT_TYPE,
     TRANSPORT_BLEAK,
     TRANSPORT_ESP_BRIDGE,
     CONF_ESP_DEVICE_NAME,
     CONF_ESP_BRIDGE_ID,
     CONF_NOTIFY_THROTTLE,
+    CONF_PIPELINED_READS,
     DEFAULT_NOTIFY_THROTTLE,
+    DEFAULT_PIPELINED_READS,
     MIN_NOTIFY_THROTTLE,
     MAX_NOTIFY_THROTTLE,
 )
@@ -113,6 +118,10 @@ class PhilipsShaverOptionsFlow(OptionsFlowWithReload):
                 entry_data[CONF_NOTIFY_THROTTLE] = int(
                     user_input[CONF_NOTIFY_THROTTLE]
                 )
+            if is_esp and CONF_PIPELINED_READS in user_input:
+                entry_data[CONF_PIPELINED_READS] = bool(
+                    user_input[CONF_PIPELINED_READS]
+                )
             return self.async_create_entry(data=entry_data)
 
         schema_fields: dict = {}
@@ -127,6 +136,7 @@ class PhilipsShaverOptionsFlow(OptionsFlowWithReload):
                     mode=NumberSelectorMode.BOX,
                 )
             )
+            schema_fields[vol.Required(CONF_PIPELINED_READS)] = BooleanSelector()
 
         if not schema_fields:
             # Direct BLE: no configurable options currently
@@ -139,6 +149,10 @@ class PhilipsShaverOptionsFlow(OptionsFlowWithReload):
             suggested_values[CONF_NOTIFY_THROTTLE] = self.config_entry.options.get(
                 CONF_NOTIFY_THROTTLE,
                 DEFAULT_NOTIFY_THROTTLE,
+            )
+            suggested_values[CONF_PIPELINED_READS] = self.config_entry.options.get(
+                CONF_PIPELINED_READS,
+                DEFAULT_PIPELINED_READS,
             )
 
         return self.async_show_form(
@@ -472,7 +486,10 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
             @callback
             def _on_status(event: Event, _did=did) -> None:
                 if (event.data.get("status") == "info"
-                        and event.data.get("bridge_id", "") == _did
+                        # HA lowercases service names, so an uppercase bridge_id
+                        # (e.g. a model number) yields a lowercase suffix while
+                        # the event echoes the original case — compare lowercased.
+                        and event.data.get("bridge_id", "").lower() == _did.lower()
                         and not info_future.done()):
                     info_future.set_result(dict(event.data))
 
@@ -501,7 +518,11 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="already_configured")
 
         _LOGGER.info("Zeroconf: found Shaver bridge on ESP device '%s'", device_name)
-        self.context["title_placeholders"] = {"name": device_name.replace("_", "-")}
+        # Tag the discovery card with the transport class so users can tell an
+        # ESP-bridge discovery apart from a direct-Bluetooth one at a glance.
+        self.context["title_placeholders"] = {
+            "name": f"ESP32 Bridge ({device_name.replace('_', '-')})"
+        }
 
         if len(bridge_ids) > 1:
             return await self.async_step_esp_select_device()
@@ -536,8 +557,16 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
                     self.discovery_info.address,
                 )
                 self.fetched_esp_device_name = esp["device_name"]
-                self.fetched_esp_bridge_id = esp.get("bridge_id", "")
+                # Lowercase: HA lowercases service names, so the bridge_id
+                # suffix is lowercase on the wire — keep our copy consistent.
+                self.fetched_esp_bridge_id = esp.get("bridge_id", "").lower()
                 self.fetched_bridge_info = esp["info"]
+                # Tag the discovery card so flow_title ("{name}") renders the
+                # transport class here too — this redirect bypasses the normal
+                # bluetooth_confirm path that would otherwise set it.
+                self.context["title_placeholders"] = {
+                    "name": f"ESP32 Bridge ({esp['device_name'].replace('_', '-')})"
+                }
                 return await self.async_step_esp_bridge_status()
 
         return await self._async_bluetooth_confirm(user_input, "bluetooth_confirm")
@@ -670,7 +699,7 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors["base"] = "unknown"
 
         self.context["title_placeholders"] = {
-            "name": self.discovery_info.name or self.discovery_info.address
+            "name": f"Bluetooth ({self.discovery_info.address})"
         }
 
         return self.async_show_form(
@@ -932,7 +961,8 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
             @callback
             def _on_status(event: Event, _did: str = did) -> None:
                 if (event.data.get("status") == "info"
-                        and event.data.get("bridge_id", "") == _did
+                        # bridge_id compared case-insensitively (see above)
+                        and event.data.get("bridge_id", "").lower() == _did.lower()
                         and not info_future.done()):
                     info_future.set_result(dict(event.data))
 
@@ -1054,7 +1084,8 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
             @callback
             def _on_info(event: Event) -> None:
                 if (event.data.get("status") == "info"
-                        and event.data.get("bridge_id", "") == did
+                        # bridge_id compared case-insensitively (see above)
+                        and event.data.get("bridge_id", "").lower() == did.lower()
                         and not info_future.done()):
                     info_future.set_result(dict(event.data))
 
@@ -1093,32 +1124,17 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
             self._esp_device_info[did] = info
             mac = info.get("mac", "").upper()
             has_mac = bool(mac) and mac != "00:00:00:00:00:00"
-            mac_suffix = f" — {mac}" if has_mac else ""
-            # The bridge has an identity bound (either YAML-pinned or
-            # NVS-persisted from a successful pair-mode run). Slot is not
-            # truly empty — submitting it imports the existing bond into HA
-            # rather than starting a fresh pair-flow. The 🟢 marker is
-            # reserved for genuinely unbonded slots so the user can tell
-            # them apart at a glance.
-            has_identity = info.get("identity_source", "none") != "none"
+            label = self._format_bridge_label(label_did, info)
 
             if has_mac and mac in configured_macs:
-                options.append(SelectOptionDict(
-                    value=did,
-                    label=f"✅ {label_did}{mac_suffix}",
-                ))
-            elif has_identity:
-                unconfigured_dids.append(did)
-                options.append(SelectOptionDict(
-                    value=did,
-                    label=f"🔵 {label_did}{mac_suffix}",
-                ))
+                # Already imported into HA — prepend the ✅ marker.
+                options.append(SelectOptionDict(value=did, label=f"✅ {label}"))
             else:
+                # Either a bonded-but-unimported slot (🔒, ready to import)
+                # or an empty Mode-B slot in pair-mode (no icons). Both are
+                # selectable.
                 unconfigured_dids.append(did)
-                options.append(SelectOptionDict(
-                    value=did,
-                    label=f"🟢 {label_did}{mac_suffix}",
-                ))
+                options.append(SelectOptionDict(value=did, label=label))
 
         if not options:
             return self.async_abort(reason="no_devices_found")
@@ -1132,27 +1148,72 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
                 return self.async_abort(reason="esp_not_reachable")
             return self.async_abort(reason="already_configured")
 
-        # Auto-select if exactly one unconfigured slot is available
-        # (regardless of how many configured slots also exist).
-        if len(unconfigured_dids) == 1:
+        # Auto-select only when there is a single device total and it is the
+        # free one (Sonicare-aligned). When occupied (✅) or offline (⚪) slots
+        # exist alongside the free one, show the picker so the user sees the
+        # full bridge state instead of silently skipping past it.
+        if len(unconfigured_dids) == 1 and len(options) == 1:
             sole = unconfigured_dids[0]
             self.fetched_esp_bridge_id = sole
             self.fetched_bridge_info = self._esp_device_info.get(sole)
             return await self._esp_bridge_health_check()
 
-        # Legend is embedded statically in the description (translated as
-        # part of the description string itself) — avoids the system-vs-
-        # user-language mismatch that hits dynamically-built placeholders.
+        # Pre-select the first free slot so the user doesn't have to deselect
+        # an already-configured ✅ entry every time.
+        default_value = unconfigured_dids[0]
+
+        # The legend + pair hint live as static, translated text in this
+        # step's description / data_description (see translations). They must
+        # NOT be built here as dynamic placeholders: config-flow descriptions
+        # render in the user's FRONTEND language, which a flow handler cannot
+        # read (hass.config.language is the *server* language and can differ),
+        # producing a mixed-language dialog. Static json keeps them in sync.
         return self.async_show_form(
             step_id="esp_select_device",
             data_schema=vol.Schema(
                 {
-                    vol.Required("esp_bridge_id"): SelectSelector(
+                    vol.Required(
+                        "esp_bridge_id", default=default_value
+                    ): SelectSelector(
                         SelectSelectorConfig(options=options)
                     ),
                 }
             ),
         )
+
+    @staticmethod
+    def _format_bridge_label(bridge_id: str, info: dict[str, str]) -> str:
+        """Human-readable label for a BLE device entry in the picker.
+
+        Mirrors the Sonicare picker: an empty Mode-B slot (``pair_capable``)
+        shows just its name with no status icons; a slot with an identity
+        shows a pairing-lock + connection-dot. The caller prepends ✅ when
+        the device is already configured in HA.
+        """
+        # Prefer the user's YAML friendly_name (always present, even before the
+        # bridge connects), then the device's advertised ble_name, then the
+        # bridge_id slot label.
+        friendly = (info.get("friendly_name") or "").strip()
+        ble_name = (info.get("ble_name") or "").strip()
+        name = friendly or ble_name or bridge_id or "default"
+        if info.get("pair_capable") == "true":
+            return name  # empty pair-mode slot — no status icons
+
+        mac = info.get("mac", "")
+        connected = info.get("ble_connected") == "true"
+        paired = info.get("paired", "")
+
+        icons: list[str] = []
+        if paired == "true":
+            icons.append("🔒")
+        elif paired == "false":
+            icons.append("🔓")
+        icons.append("🟢" if connected else "⚪")
+
+        body = [name]
+        if mac and mac != "00:00:00:00:00:00":
+            body.append(mac.upper())
+        return f"{' '.join(icons)} {' — '.join(body)}"
 
     async def _esp_bridge_health_check(self) -> ConfigFlowResult:
         """Run bridge health check and proceed to status step."""
@@ -1329,8 +1390,15 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
             if bridge_id
             else self.fetched_esp_device_name
         )
+        # Pick the matching translation variant: the "already connected" hint
+        # when the bridge holds a live BLE link, the "turn it on" hint
+        # otherwise. Both submit to async_step_esp_bridge_status.
+        ble_connected = info.get("ble_connected") == "true"
+        step_id = (
+            "esp_bridge_status_connected" if ble_connected else "esp_bridge_status"
+        )
         return self.async_show_form(
-            step_id="esp_bridge_status",
+            step_id=step_id,
             data_schema=vol.Schema({}),
             description_placeholders={
                 "device_name": self.fetched_esp_device_name,
@@ -1340,6 +1408,17 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
             },
             errors=errors,
         )
+
+    async def async_step_esp_bridge_status_connected(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Alias step rendered when the bridge is already BLE-connected.
+
+        HA routes submissions to async_step_<step_id>; the translations are
+        split across two step IDs (different action hints) but the
+        implementation is shared with async_step_esp_bridge_status.
+        """
+        return await self.async_step_esp_bridge_status(user_input)
 
     async def async_step_request_pair(
         self, user_input: dict[str, Any] | None = None
@@ -1379,7 +1458,8 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
 
         @callback
         def _on_status(event: Event) -> None:
-            if event.data.get("bridge_id", "") != bridge_id:
+            # bridge_id compared case-insensitively (HA lowercases service names)
+            if event.data.get("bridge_id", "").lower() != bridge_id.lower():
                 return
             status = event.data.get("status")
             if status not in ("pair_complete", "pair_timeout", "pair_failed"):
@@ -1624,6 +1704,30 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
             },
         )
 
+    def _build_default_name(self) -> str:
+        """Default device name for the new entry.
+
+        Priority: ESP ``friendly_name`` (Phase 2, when the bridge emits it)
+        wins verbatim; otherwise the model with a bridge_id / MAC-suffix
+        disambiguator so multi-device households stay distinguishable.
+        """
+        data = self.fetched_data or {}
+        yaml_name = (data.get("friendly_name") or "").strip()
+        if yaml_name:
+            return yaml_name
+        model = (data.get("model_number") or "").strip()
+        if (
+            self.fetched_transport_type == TRANSPORT_ESP_BRIDGE
+            and self.fetched_esp_bridge_id
+        ):
+            suffix = self.fetched_esp_bridge_id
+        elif self.fetched_address:
+            suffix = self.fetched_address.replace(":", "")[-4:].upper()
+        else:
+            suffix = ""
+        base = model or "Philips Shaver"
+        return f"{base} ({suffix})" if suffix else base
+
     async def async_step_show_capabilities(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
@@ -1632,14 +1736,33 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
         if self.fetched_data is None:
             return await self.async_step_user()
 
+        # Surface ESP per-slot friendly_name / area (from ble_get_info) into
+        # fetched_data so the default name and area assignment can use them.
+        # Empty on older bridges that don't emit these fields.
+        if self.fetched_bridge_info:
+            for key in ("friendly_name", "area"):
+                val = (self.fetched_bridge_info.get(key) or "").strip()
+                if val and not self.fetched_data.get(key):
+                    self.fetched_data[key] = val
+
+        default_name = self._build_default_name()
+
         if user_input is not None:
+            device_name = (
+                user_input.get(CONF_DEVICE_NAME) or ""
+            ).strip() or default_name
+
             entry_data: dict[str, Any] = {
                 CONF_CAPABILITIES: self.fetched_data.get("capabilities", 0),
                 CONF_SERVICES: self.fetched_data.get("services", []),
+                CONF_DEVICE_NAME: device_name,
             }
             device_type = self.fetched_data.get("device_type")
             if device_type:
                 entry_data[CONF_DEVICE_TYPE] = device_type
+            area = (self.fetched_data.get("area") or "").strip()
+            if area:
+                entry_data[CONF_AREA] = area
 
             if self.fetched_transport_type == TRANSPORT_ESP_BRIDGE:
                 entry_data[CONF_TRANSPORT_TYPE] = TRANSPORT_ESP_BRIDGE
@@ -1653,31 +1776,42 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
                 entry_data[CONF_ADDRESS] = self.fetched_address
 
             return self.async_create_entry(
-                title=f"Philips Shaver ({self.fetched_name})",
+                title=f"Philips Shaver ({device_name})",
                 data=entry_data,
             )
 
         device_type = self.fetched_data.get("device_type", "")
-        services_text = self._get_service_status_text(
-            self.fetched_data.get("services", []), device_type
+        device_info_text = self._get_device_info_text(
+            self.fetched_data, self.fetched_address
         )
 
         cap_val = self.fetched_data.get("capabilities", 0)
         groomer_cap = self.fetched_data.get("groomer_capabilities")
-        capabilities_text = self._get_capabilities_text(cap_val, groomer_cap)
+        caps_services_text = self._get_capabilities_services_text(
+            cap_val,
+            groomer_cap,
+            self.fetched_data.get("services", []),
+            device_type,
+        )
 
         # Connection info suffix — show adapter / bridge actually used
         path = self.fetched_data.get("connection_path") or self.fetched_esp_device_name
-        bridge_info = f" via **{path}**" if path else ""
+        connection_status = self._get_connection_status_text(
+            self.fetched_transport_type, path
+        )
 
         return self.async_show_form(
             step_id="show_capabilities",
-            data_schema=vol.Schema({}),
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_DEVICE_NAME, default=default_name): str,
+                }
+            ),
             description_placeholders={
                 "name": str(self.fetched_name),
-                "services": services_text,
-                "capabilities": capabilities_text,
-                "bridge_info": bridge_info,
+                "connection_status": connection_status,
+                "device_info": device_info_text,
+                "caps_services": caps_services_text,
             },
         )
 
@@ -1704,30 +1838,104 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
     ]
 
     @staticmethod
-    def _get_capabilities_text(
-        cap_val: int, groomer_cap: int | None = None
+    def _get_connection_status_text(transport_type: str | None, path: str | None) -> str:
+        """Connection status line shown above the device info.
+
+        Leads with the transport *class* (ESP32 Bridge / Direct Bluetooth) so
+        it reads the same as the other "via" dialogs, with the adapter/bridge
+        label appended in parentheses as a disambiguator.
+        """
+        transport_label = (
+            "ESP32 Bridge"
+            if transport_type == TRANSPORT_ESP_BRIDGE
+            else "Direct Bluetooth"
+        )
+        if path:
+            return f"✅ Connected via **{transport_label}** ({path})."
+        return f"✅ Connected via **{transport_label}**."
+
+    @staticmethod
+    def _get_device_info_text(
+        data: dict[str, Any], address: str | None = None
     ) -> str:
-        """Format capability flags as HTML table."""
-        if cap_val == 0 and groomer_cap is None:
-            return "No advanced capabilities detected (basic monitoring only)"
-
+        """Format the key device facts as an HTML table (no header)."""
         rows: list[str] = []
+        model = data.get("model_number")
+        if model:
+            rows.append(f"<tr><td><b>Model</b></td><td>{model}</td></tr>")
+        # Device class. The raw device_type characteristic returns cryptic
+        # codes ("m" for OneBlade) or just the model number for shavers, so
+        # never show it verbatim. Surface a friendly "OneBlade" label when the
+        # Smart Groomer service (or device_type text) marks this handle as a
+        # OneBlade; for regular shavers the Model row already says everything.
+        services = {s.lower() for s in data.get("services", [])}
+        is_oneblade = (
+            SVC_GROOMER.lower() in services
+            or "oneblade" in (data.get("device_type") or "").lower()
+        )
+        if is_oneblade:
+            rows.append("<tr><td><b>Type</b></td><td>OneBlade</td></tr>")
+        if firmware := data.get("firmware"):
+            rows.append(f"<tr><td><b>Firmware</b></td><td>{firmware}</td></tr>")
+        if (battery := data.get("battery")) is not None:
+            rows.append(f"<tr><td><b>Battery</b></td><td>{battery}%</td></tr>")
+        mac = data.get("shaver_mac") or address
+        if mac:
+            rows.append(
+                f"<tr><td><b>MAC</b></td><td><code>{mac.upper()}</code></td></tr>"
+            )
+        if not rows:
+            return ""
+        # Trailing <br/> separates this table from the capabilities table that
+        # follows. It lives in this runtime-generated value rather than the
+        # translation string because hassfest rejects HTML tags in static
+        # translation values (it does not inspect placeholder content).
+        return f"<table><tbody>{''.join(rows)}</tbody></table><br/>"
 
+    @staticmethod
+    def _capability_items(cap_val: int, groomer_cap: int | None = None) -> list[str]:
+        """Hardware-capability flags as a list of "icon name" strings."""
+        items: list[str] = []
         # Standard shaver capabilities (0x0302)
         if cap_val > 0:
             for bit, name in PhilipsShaverConfigFlow.CAPABILITY_FLAGS:
                 icon = "✅" if cap_val & (1 << bit) else "⬜"
-                rows.append(f"<tr><td>{icon}</td><td>{name}</td></tr>")
-
+                items.append(f"{icon} {name}")
         # OneBlade groomer capabilities (0x0702)
         if groomer_cap is not None:
             for bit, name in PhilipsShaverConfigFlow.GROOMER_CAPABILITY_FLAGS:
                 icon = "✅" if groomer_cap & (1 << bit) else "⬜"
-                rows.append(f"<tr><td>{icon}</td><td>{name}</td></tr>")
+                items.append(f"{icon} {name}")
+        return items
 
-        if not rows:
-            return "No advanced capabilities detected (basic monitoring only)"
-        return f"<table><tbody>{''.join(rows)}</tbody></table>"
+    def _get_capabilities_services_text(
+        self,
+        cap_val: int,
+        groomer_cap: int | None,
+        fetched_uuids: list[str],
+        device_type: str,
+    ) -> str:
+        """Hardware capabilities (left) and detected services (right) side by
+        side in one 2-column table, plus the family-aware footer explaining
+        any expectedly-absent service."""
+        cap_items = self._capability_items(cap_val, groomer_cap)
+        if not cap_items:
+            cap_items = ["⬜ Basic monitoring only"]
+        svc_items, notes = self._service_status_items(fetched_uuids, device_type)
+
+        rows = [
+            "<tr><td><b>Hardware Capabilities</b></td>"
+            "<td><b>Detected Services</b></td></tr>"
+        ]
+        for i in range(max(len(cap_items), len(svc_items))):
+            left = cap_items[i] if i < len(cap_items) else ""
+            right = svc_items[i] if i < len(svc_items) else ""
+            rows.append(f"<tr><td>{left}</td><td>{right}</td></tr>")
+
+        table = f"<table><tbody>{''.join(rows)}</tbody></table>"
+        if notes:
+            table += "\n\n" + "\n\n".join(notes)
+        return table
 
     # Standard BLE services present on every device — hide from display
     _STANDARD_BLE_SERVICES = {
@@ -1747,53 +1955,89 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
     }
 
     @staticmethod
-    def _uuid_short(uuid: str) -> str:
-        """Extract the short prefix from a UUID (e.g. '8d560100' or '0000180f')."""
-        return uuid.split("-")[0]
+    def _detect_family(fetched_lower: set[str], device_type: str) -> str:
+        """Return device family: 'oneblade' or 'shaver'.
 
-    def _get_service_status_text(self, fetched_uuids: list[str], device_type: str = "") -> str:
-        """Compare found services with expected services for this device type."""
+        The Smart Groomer service (0x0700) is the OneBlade marker — analogous
+        to how the Sonicare integration keys its newer-protocol family off the
+        transport service rather than a model string. Fall back to the
+        device-type text ("OneBlade" vs a model number like "XP9201") when
+        the service set is ambiguous.
+        """
+        if SVC_GROOMER.lower() in fetched_lower:
+            return "oneblade"
+        if "oneblade" in (device_type or "").lower():
+            return "oneblade"
+        return "shaver"
+
+    @staticmethod
+    def _missing_reason(uuid_lower: str, family: str) -> str:
+        """Why a service is absent on this family, if we can explain it."""
+        if family == "oneblade" and uuid_lower in (
+            SVC_CONTROL.lower(),
+            SVC_SERIAL.lower(),
+        ):
+            return "not on oneblade"
+        if family == "shaver" and uuid_lower == SVC_GROOMER.lower():
+            return "groomer oneblade only"
+        return ""
+
+    def _service_status_items(
+        self, fetched_uuids: list[str], device_type: str = ""
+    ) -> tuple[list[str], list[str]]:
+        """Detected services as "icon name" strings, plus family-aware footer
+        notes.
+
+        Returns ``(items, notes)``. Services absent for the detected family
+        (OneBlade vs shaver) are shown ❌; ``notes`` explains that their
+        absence is expected — not a fault — so users don't report "missing
+        service" issues for hardware that never had it.
+        """
         fetched_lower = {s.lower() for s in fetched_uuids} - self._STANDARD_BLE_SERVICES
         known_lower = {s.lower() for s in PHILIPS_SERVICE_UUIDS}
+        # Only assert ✅/❌ for services whose presence we can actually
+        # determine: the ESP bridge path probes one char per service and can
+        # only see the services in SERVICE_PROBE_CHARS. SVC_SERIAL (0x0600)
+        # has no readable characteristic, so it is never probeable via ESP —
+        # listing it as expected would show a false ❌ on bridge setups even
+        # though the device has it. The Direct-BLE path enumerates the full
+        # service list, so a present-but-unprobed service (e.g. Serial) still
+        # shows ✅ via the "extra services" loop below.
+        expected = {s.lower() for s in self.SERVICE_PROBE_CHARS}
 
-        # Expected services depend on device type
-        expected = {s.lower() for s in PHILIPS_SERVICE_UUIDS}
-        if device_type == "m":
-            # OneBlade: no Control Service (0x0300), no Serial/Diagnostic (0x0600)
-            expected.discard(SVC_CONTROL.lower())
-            expected.discard(SVC_SERIAL.lower())
-        else:
-            # Shaver: no Smart Groomer Service (0x0700)
-            expected.discard(SVC_GROOMER.lower())
+        family = self._detect_family(fetched_lower, device_type)
 
-        found_rows: list[str] = []
-        missing_rows: list[str] = []
-        unknown_rows: list[str] = []
+        found: list[str] = []
+        missing: list[str] = []
+        unknown: list[str] = []
+        used_reasons: set[str] = set()
 
         for uuid in sorted(expected):
             name = self.SERVICE_NAMES.get(uuid, "Unknown")
-            short = self._uuid_short(uuid)
             if uuid in fetched_lower:
-                found_rows.append(
-                    f"<tr><td>✅</td><td>{name}</td><td><code>{short}</code></td></tr>"
-                )
+                found.append(f"✅ {name}")
             else:
-                missing_rows.append(
-                    f"<tr><td>❌</td><td>{name}</td><td><code>{short}</code></td></tr>"
-                )
+                reason = self._missing_reason(uuid, family)
+                if reason:
+                    used_reasons.add(reason)
+                missing.append(f"❌ {name}")
 
         for uuid in sorted(fetched_lower - expected):
-            short = self._uuid_short(uuid)
+            name = self.SERVICE_NAMES.get(uuid, "Unknown")
             if uuid in known_lower:
-                name = self.SERVICE_NAMES.get(uuid, "Unknown")
-                found_rows.append(
-                    f"<tr><td>✅</td><td>{name}</td><td><code>{short}</code></td></tr>"
-                )
+                found.append(f"✅ {name}")
             else:
-                name = self.SERVICE_NAMES.get(uuid, "Unknown")
-                unknown_rows.append(
-                    f"<tr><td>❔</td><td>{name}</td><td><code>{short}</code></td></tr>"
-                )
+                unknown.append(f"❔ {name}")
 
-        rows = found_rows + missing_rows + unknown_rows
-        return f"<table><tbody>{''.join(rows)}</tbody></table>"
+        items = found + missing + unknown
+
+        footer_for = {
+            "not on oneblade":
+                "❌ Control and Serial/Diagnostic services are not present on "
+                "OneBlade models — this is expected.",
+            "groomer oneblade only":
+                "❌ The Smart Groomer service is only available on OneBlade / "
+                "QP models.",
+        }
+        notes = [footer_for[r] for r in sorted(used_reasons) if r in footer_for]
+        return items, notes

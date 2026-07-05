@@ -515,6 +515,12 @@ TRANSPORT_ESP_BRIDGE = "esp_bridge"
 
 CONF_ESP_DEVICE_NAME = "esp_device_name"
 CONF_ESP_BRIDGE_ID = "esp_bridge_id"
+# User-chosen device name set during setup (distinguishes multi-device
+# households). Falls back to a model + bridge_id/MAC default when unset.
+CONF_DEVICE_NAME = "device_name"
+# Optional area name pushed from the ESP bridge YAML (per-slot `area:`),
+# applied to the device's area_id at setup when unset.
+CONF_AREA = "area"
 # Legacy key — used for migration from v1.2 → v1.3
 CONF_ESP_DEVICE_ID_LEGACY = "esp_device_id"
 
@@ -523,6 +529,13 @@ CONF_ESP_DEVICE_ID_LEGACY = "esp_device_id"
 # requires the new ble_pair_mode/ble_unpair/ble_scan/ble_pair_mac services
 # and the pair_capable / identity_source fields in the heartbeat payload.
 MIN_BRIDGE_VERSION = "1.8.0"
+
+# Bridges from this version serialise overlapping GATT reads through their
+# pending-calls queue, so the transport may fire its poll cycle concurrently
+# (asyncio.gather). Older bridges have a single response slot that silently
+# drops all-but-the-last overlapping read — the transport reads sequentially
+# against those.
+BRIDGE_PIPELINED_READS_VERSION = "1.10.0"
 
 # ── ESP bridge firmware update entity ────────────────────────────────────────
 # The latest available bridge firmware version is read straight from the repo
@@ -541,6 +554,11 @@ CONF_NOTIFY_THROTTLE = "notify_throttle_ms"
 DEFAULT_NOTIFY_THROTTLE = 500
 MIN_NOTIFY_THROTTLE = 100
 MAX_NOTIFY_THROTTLE = 5000
+
+# Opt-out for pipelined poll reads (only effective on bridges >=
+# BRIDGE_PIPELINED_READS_VERSION; older bridges are always read serially).
+CONF_PIPELINED_READS = "pipelined_reads"
+DEFAULT_PIPELINED_READS = True
 
 # Service UUID for each BLE service
 SVC_BATTERY = "0000180f-0000-1000-8000-00805f9b34fb"

@@ -25,7 +25,9 @@ from homeassistant.core import Event, HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.event import async_track_time_interval
 
-from .const import CHAR_SERVICE_MAP
+from packaging.version import Version
+
+from .const import BRIDGE_PIPELINED_READS_VERSION, CHAR_SERVICE_MAP
 from .exceptions import TransportError
 
 _LOGGER = logging.getLogger(__name__)
@@ -35,6 +37,9 @@ TRACE = 5  # below DEBUG(10), for per-event tracing
 ESP_EVENT_NAME = "esphome.philips_shaver_ble_data"
 ESP_STATUS_EVENT_NAME = "esphome.philips_shaver_ble_status"
 ESP_READ_TIMEOUT = 5.0
+# Base budget for a pipelined poll batch: covers one bridge-side ATT
+# watchdog stall (10 s) with margin; per-read time is added on top.
+BATCH_READ_TIMEOUT_BASE = 15.0
 # Heartbeat timeout: if no heartbeat received within this time, ESP is considered offline
 ESP_HEARTBEAT_TIMEOUT = 45.0  # 3x heartbeat interval (15s)
 
@@ -389,11 +394,15 @@ class EspBridgeTransport(ShaverTransport):
         address: str,
         esphome_device_name: str,
         esp_bridge_id: str = "",
+        pipelined_reads_enabled: bool = True,
     ) -> None:
         self._hass = hass
         self._address = address
         self._device_name = esphome_device_name  # e.g. "atom_lite"
-        self._esp_bridge_id = esp_bridge_id  # e.g. "shaver" — suffix for multi-device ESP
+        # Lowercase: HA's ServiceRegistry lowercases service names, so the
+        # bridge_id suffix is always lowercase on the wire — canonicalize so
+        # service-name building and bridge_id event filtering stay consistent.
+        self._esp_bridge_id = (esp_bridge_id or "").lower()  # e.g. "shaver" — suffix for multi-device ESP
         self._setup_done = False  # event listeners registered
         self._shaver_connected = False  # ESP↔Shaver BLE link active
         self._esp_alive = False  # heartbeat received from ESP
@@ -402,7 +411,19 @@ class EspBridgeTransport(ShaverTransport):
         self._event_unsub: Callable | None = None
         self._status_unsub: Callable | None = None
         self._heartbeat_check_unsub: Callable | None = None
-        self._pending_reads: dict[str, asyncio.Future[bytes | None]] = {}
+        # Waiters per characteristic. A list, not a single slot: with the
+        # pipelined poll cycle a concurrent entity/service read of the
+        # same uuid must not clobber the poll's future (both waiters get
+        # resolved by the one bridge reply).
+        self._pending_reads: dict[str, list[asyncio.Future[bytes | None]]] = {}
+        # User opt-out from the options flow; the entry reloads on change,
+        # so this is fixed for the transport's lifetime.
+        self._pipelined_reads_enabled = pipelined_reads_enabled
+        # True once the bridge reported a firmware that serialises
+        # overlapping GATT reads (>= BRIDGE_PIPELINED_READS_VERSION) and the
+        # user hasn't disabled pipelining. Computed once per version report,
+        # not per poll.
+        self._pipelined_reads = False
         self._last_read_errors: dict[str, str] = {}
         self._notify_callbacks: dict[str, Callable[[str, bytes], None]] = {}
         # Pre-set MAC filter from config to prevent cross-device event mixing
@@ -411,6 +432,16 @@ class EspBridgeTransport(ShaverTransport):
         self._pending_info: asyncio.Future[dict[str, str]] | None = None
         self._needs_resubscribe = False
         self._ready_event = asyncio.Event()
+        # Counts "disconnected" status events. The coordinator compares
+        # this against the count it saw when live setup ran to detect
+        # reconnects it never observed: the shaver can drop the link and
+        # be back within ~0.3 s, faster than the monitor loop wakes, so
+        # is_connected never reads False from the loop's perspective and
+        # the fresh read batch never runs. "disconnected" fires exactly
+        # once per real disconnect — unlike "ready", which the bridge
+        # heartbeat re-fires while no subscriptions exist and which would
+        # oscillate with a teardown/re-setup cycle.
+        self._disconnect_count = 0
         self._last_uptime: int | None = None
         self._boot_time: datetime | None = None
 
@@ -435,12 +466,42 @@ class EspBridgeTransport(ShaverTransport):
         """Cancel all pending read futures (e.g. after ESP API disconnect)."""
         if not self._pending_reads:
             return
-        count = len(self._pending_reads)
-        for uuid, future in self._pending_reads.items():
-            if not future.done():
-                future.set_result(None)
+        count = sum(len(futures) for futures in self._pending_reads.values())
+        for futures in self._pending_reads.values():
+            for future in futures:
+                if not future.done():
+                    future.set_result(None)
         self._pending_reads.clear()
         _LOGGER.debug("Cancelled %d pending reads", count)
+
+    def _resolve_pending_reads(
+        self, uuid: str, result: bytes | None
+    ) -> bool:
+        """Resolve every waiter registered for ``uuid``.
+
+        Returns True if at least one waiter was resolved.
+        """
+        futures = self._pending_reads.pop(uuid, None)
+        if not futures:
+            return False
+        for future in futures:
+            if not future.done():
+                future.set_result(result)
+        return True
+
+    def _discard_pending_read(
+        self, uuid: str, future: asyncio.Future[bytes | None]
+    ) -> None:
+        """Remove one waiter without touching others for the same uuid."""
+        futures = self._pending_reads.get(uuid)
+        if not futures:
+            return
+        try:
+            futures.remove(future)
+        except ValueError:
+            pass
+        if not futures:
+            self._pending_reads.pop(uuid, None)
 
     @property
     def detected_mac(self) -> str | None:
@@ -482,6 +543,11 @@ class EspBridgeTransport(ShaverTransport):
     @property
     def connection_path(self) -> str | None:
         return self._device_name if self._esp_alive else None
+
+    @property
+    def disconnect_count(self) -> int:
+        """Number of BLE "disconnected" status events seen so far."""
+        return self._disconnect_count
 
     @property
     def needs_resubscribe(self) -> bool:
@@ -527,9 +593,7 @@ class EspBridgeTransport(ShaverTransport):
             # Handle error events from ESP (not_found, not_connected, gatt_err_*)
             if error and uuid and uuid in self._pending_reads:
                 self._last_read_errors[uuid] = error
-                future = self._pending_reads.pop(uuid)
-                if not future.done():
-                    future.set_result(None)
+                self._resolve_pending_reads(uuid, None)
                 _LOGGER.debug("ESP read error for %s: %s", uuid, error)
                 return
 
@@ -546,14 +610,9 @@ class EspBridgeTransport(ShaverTransport):
                 _LOGGER.warning("Invalid hex payload: %s", payload_hex)
                 return
 
-            # Resolve pending read
-            if uuid in self._pending_reads:
-                future = self._pending_reads.pop(uuid)
-                if not future.done():
-                    future.set_result(payload)
-                    _LOGGER.log(TRACE, "Resolved pending read for %s", uuid)
-                else:
-                    _LOGGER.debug("Future already done for %s", uuid)
+            # Resolve pending read(s)
+            if self._resolve_pending_reads(uuid, payload):
+                _LOGGER.log(TRACE, "Resolved pending read for %s", uuid)
             else:
                 _LOGGER.log(TRACE, "No pending read for %s", uuid)
 
@@ -583,7 +642,16 @@ class EspBridgeTransport(ShaverTransport):
                 # firmware that reports e.g. '"1.8.2"' still parses as 1.8.2.
                 if isinstance(version, str):
                     version = version.strip().strip("\"'").strip()
-                self._bridge_version = version
+                if version != self._bridge_version:
+                    self._bridge_version = version
+                    try:
+                        self._pipelined_reads = (
+                            self._pipelined_reads_enabled
+                            and Version(version)
+                            >= Version(BRIDGE_PIPELINED_READS_VERSION)
+                        )
+                    except Exception:  # noqa: BLE001 — unparseable (dev build)
+                        self._pipelined_reads = False
 
             # Every status event (including heartbeat) proves ESP is alive
             self._last_heartbeat = time.monotonic()
@@ -625,8 +693,9 @@ class EspBridgeTransport(ShaverTransport):
                     pass
 
             if status == "info":
-                # Filter by bridge_id if present (multi-device ESP)
-                event_bridge_id = event.data.get("bridge_id", "")
+                # Filter by bridge_id if present (multi-device ESP).
+                # Lowercase to match the canonicalized self._esp_bridge_id.
+                event_bridge_id = event.data.get("bridge_id", "").lower()
                 if event_bridge_id and self._esp_bridge_id and event_bridge_id != self._esp_bridge_id:
                     return
                 # Only set _detected_mac from info events (bridge_id filtered)
@@ -654,6 +723,7 @@ class EspBridgeTransport(ShaverTransport):
                 pass  # GATT discovery still in progress
             elif status == "disconnected":
                 self._shaver_connected = False
+                self._disconnect_count += 1
                 self._cancel_pending_reads()
 
             # Fire callback when any component of state changed
@@ -760,7 +830,9 @@ class EspBridgeTransport(ShaverTransport):
         """Return and clear the last read error for a characteristic, if any."""
         return self._last_read_errors.pop(char_uuid, None)
 
-    async def read_char(self, char_uuid: str) -> bytes | None:
+    async def read_char(
+        self, char_uuid: str, timeout: float = ESP_READ_TIMEOUT
+    ) -> bytes | None:
         if not self._setup_done:
             return None
 
@@ -768,7 +840,7 @@ class EspBridgeTransport(ShaverTransport):
         self._last_read_errors.pop(char_uuid, None)
 
         future: asyncio.Future[bytes | None] = self._hass.loop.create_future()
-        self._pending_reads[char_uuid] = future
+        self._pending_reads.setdefault(char_uuid, []).append(future)
 
         try:
             await self._hass.services.async_call(
@@ -778,30 +850,106 @@ class EspBridgeTransport(ShaverTransport):
                 blocking=True,
             )
         except HomeAssistantError as err:
-            self._pending_reads.pop(char_uuid, None)
+            self._discard_pending_read(char_uuid, future)
             _LOGGER.debug("ESP read_char failed for %s: %s", char_uuid, err)
             # Mark bridge as not alive so read_chars skips remaining reads
             self._esp_alive = False
             return None
 
         try:
-            return await asyncio.wait_for(future, timeout=ESP_READ_TIMEOUT)
+            return await asyncio.wait_for(future, timeout=timeout)
         except asyncio.TimeoutError:
-            self._pending_reads.pop(char_uuid, None)
+            self._discard_pending_read(char_uuid, future)
             _LOGGER.debug("Read timeout for %s (other reads continue)", char_uuid)
             return None
 
     async def read_chars(self, char_uuids: list[str]) -> dict[str, bytes | None]:
-        """Read multiple characteristics sequentially (ESP32 handles one at a time)."""
         if not self._setup_done:
             await self.connect()
-        results: dict[str, bytes | None] = {}
+        if not self.is_connected:
+            return {u: None for u in char_uuids}
+
+        if self._pipelined_reads:
+            # Fire all reads at once — the bridge serialises GATT ops via its
+            # pending-calls queue (drained one at a time on each completion),
+            # so we get back-to-back BLE reads without HA-loop overhead
+            # between them. read_char never raises (returns None on failure)
+            # so a bare gather is safe.
+            #
+            # The timeout must cover the whole queue, not one read: with N
+            # reads queued behind each other, the last one legitimately waits
+            # N × read-time. Budget for one bridge-side ATT watchdog stall
+            # (10 s) plus the slow connection interval right after an ESP
+            # reboot (~0.5–0.9 s/read observed) — bridge error events
+            # (read_timeout, queue_full, not_found) still resolve futures
+            # early, so a failure-free ceiling costs nothing in wall-clock.
+            batch_timeout = BATCH_READ_TIMEOUT_BASE + 1.0 * len(char_uuids)
+            started = time.monotonic()
+            offsets: dict[str, float] = {}
+
+            async def _timed_read(u: str) -> bytes | None:
+                value = await self.read_char(u, timeout=batch_timeout)
+                offsets[u] = time.monotonic() - started
+                return value
+
+            results = await asyncio.gather(
+                *(_timed_read(u) for u in char_uuids)
+            )
+            batch = dict(zip(char_uuids, results))
+            self._log_batch_timing("pipelined", batch, started)
+            # Completion timeline: uniform ~x-ms gaps mean the link paces the
+            # queue (connection interval); a burst at the end means delivery
+            # stalls elsewhere.
+            if _LOGGER.isEnabledFor(logging.DEBUG):
+                timeline = " ".join(
+                    f"{u[:8].lstrip('0') or '0'}={t:.2f}"
+                    for u, t in sorted(offsets.items(), key=lambda kv: kv[1])
+                )
+                _LOGGER.debug(
+                    "Read batch timeline for %s [%s]: %s",
+                    self._address,
+                    self._esp_bridge_id or self._device_name,
+                    timeline,
+                )
+            return batch
+
+        # Serial fallback: older bridges have a single response slot that
+        # silently drops all-but-the-last overlapping read.
+        started = time.monotonic()
+        sequential: dict[str, bytes | None] = {}
         for uuid in char_uuids:
             if not self.is_connected:
-                results[uuid] = None
+                sequential[uuid] = None
                 continue
-            results[uuid] = await self.read_char(uuid)
-        return results
+            sequential[uuid] = await self.read_char(uuid)
+        self._log_batch_timing("sequential", sequential, started)
+        return sequential
+
+    def _log_batch_timing(
+        self, mode: str, results: dict[str, bytes | None], started: float
+    ) -> None:
+        """One line per poll batch so pipelined vs. sequential is comparable."""
+        elapsed = time.monotonic() - started
+        ok = sum(1 for v in results.values() if v is not None)
+        slot = self._esp_bridge_id or self._device_name
+        _LOGGER.info(
+            "Read batch (%s) for %s [%s]: %d/%d chars in %.2f s (bridge %s)",
+            mode,
+            self._address,
+            slot,
+            ok,
+            len(results),
+            elapsed,
+            self._bridge_version or "unknown",
+        )
+        failed = [u for u, v in results.items() if v is None]
+        if failed:
+            _LOGGER.debug(
+                "Read batch for %s [%s]: no data for %s",
+                self._address,
+                slot,
+                ", ".join(failed),
+            )
 
     async def write_char(self, char_uuid: str, data: bytes) -> None:
         if not self._setup_done:

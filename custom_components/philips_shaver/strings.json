@@ -3,6 +3,10 @@
     "esp_bridge_outdated": {
       "title": "ESP bridge firmware update required",
       "description": "Your ESP bridge is running **v{version}**, but **v{min_version}** or newer is required for full functionality.\n\nRebuild and flash your ESPHome device to get the latest firmware.\n\nSee the ESP Bridge Setup Guide in the integration documentation for details."
+    },
+    "standalone_card_installed": {
+      "title": "Standalone Philips Shaver Card is still installed",
+      "description": "The Philips Shaver Card now ships with this integration and no longer needs to be installed separately.\n\nA standalone copy of the card is still registered as a dashboard resource (`{url}`). Both copies register the same card element and only one of them wins, so the standalone copy can silently shadow the bundled, up-to-date card.\n\nPlease remove the standalone installation:\n\n1. If installed via HACS: open HACS, find *Philips Shaver Card* and uninstall it (this also removes the dashboard resource).\n2. If added manually: delete the resource under *Settings → Dashboards → Resources* and remove the file from your `www` folder.\n\nYour dashboards keep working unchanged — the bundled card uses the same `custom:philips-shaver-card` type."
     }
   },
   "options": {
@@ -10,16 +14,18 @@
       "init": {
         "title": "Philips Shaver Settings",
         "data": {
-          "notify_throttle_ms": "Notification Throttle"
+          "notify_throttle_ms": "Notification Throttle",
+          "pipelined_reads": "Pipelined GATT reads"
         },
         "data_description": {
-          "notify_throttle_ms": "Minimum interval between BLE notification events forwarded by the ESP bridge (in milliseconds). Lower values give faster updates but may overload the ESP API buffer. Only applies to ESP32 bridge connections."
+          "notify_throttle_ms": "Minimum interval between BLE notification events forwarded by the ESP bridge (in milliseconds). Lower values give faster updates but may overload the ESP API buffer. Only applies to ESP32 bridge connections.",
+          "pipelined_reads": "Send the poll cycle's GATT reads to the ESP bridge as one batch instead of one at a time (much faster reconnects). Requires bridge firmware 1.10.0 or newer — on older firmware reads always stay sequential, regardless of this setting. Disable only if you see repeated read timeouts or ATT watchdog messages in the bridge logs. Only applies to ESP32 bridge connections."
         }
       }
     }
   },
   "config": {
-    "flow_title": "Philips Shaver ({name})",
+    "flow_title": "{name}",
     "step": {
       "user": {
         "title": "Add Philips Shaver",
@@ -52,18 +58,23 @@
         "submit": "Read capabilities"
       },
       "esp_select_device": {
-        "title": "Select bridge slot",
-        "description": "This ESP bridge has multiple slots. Select an available slot to bond a shaver to.",
+        "title": "Select BLE Device",
+        "description": "This ESP bridge has multiple Philips devices connected. Select the device you want to add.\n\n✅ already configured · 🔒 bonded · 🔓 unpaired · 🟢 online · ⚪ offline",
         "data": {
-          "esp_bridge_id": "Slot"
+          "esp_bridge_id": "BLE Device"
         },
         "data_description": {
-          "esp_bridge_id": "Legend: 🟢 available for bonding  •  🔵 bonded, ready to import  •  ✅ already configured  •  ⚪ offline"
+          "esp_bridge_id": "Entries without status icons are empty bridges in pair-mode. Switch on the shaver you want to bond before submitting."
         }
       },
       "esp_bridge_status": {
         "title": "Connection via ESP32 Bridge",
-        "description": "Setting up **{shaver_name}** via **ESP32 Bridge**.\n\n✅ Bridge **{target}** is reachable.\n\n{status}",
+        "description": "Setting up **{shaver_name}** via **ESP32 Bridge**.\n\n✅ Bridge **{target}** is reachable.\n\n{status}\n\nMake sure the shaver is **turned on** (press the power button or place it on its charging stand) and **keep it on**, then click **Read capabilities**.",
+        "submit": "Read capabilities"
+      },
+      "esp_bridge_status_connected": {
+        "title": "Connection via ESP32 Bridge",
+        "description": "Setting up **{shaver_name}** via **ESP32 Bridge**.\n\n✅ Bridge **{target}** is reachable.\n\n{status}\n\nThe bridge is already connected to your shaver. **Keep it switched on** — click **Read capabilities** to finish setup.",
         "submit": "Read capabilities"
       },
       "request_pair": {
@@ -82,8 +93,14 @@
         "submit": "Retry"
       },
       "show_capabilities": {
-        "title": "Hardware Capabilities detected",
-        "description": "Successfully connected to **{name}** {bridge_info}.\n\n**Hardware Capabilities:**\n{capabilities}\n\n**GATT Service Status:**\n{services}\n\n**Legend:**\n✅ Service found & supported\n❌ Expected service missing\n❔ Unknown service from device",
+        "title": "Philips Shaver — {name}",
+        "description": "{connection_status}\n\n**Device Information**\n\n{device_info}\n\n{caps_services}",
+        "data": {
+          "device_name": "Name"
+        },
+        "data_description": {
+          "device_name": "How this shaver appears in Home Assistant. Pick something that distinguishes it from any other shavers you have (e.g., \"Bathroom\", \"John's\")."
+        },
         "submit": "Set up"
       }
     },
