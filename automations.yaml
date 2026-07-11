@@ -7456,7 +7456,7 @@
     - binary_sensor.main_door
     from: 'off'
     to: 'on'
-    id: leaving
+    id: door_opened
   - alias: When screen is on the homepage and the floorplan panel view has not changed
       for 1min
     trigger: template
@@ -7493,11 +7493,10 @@
         id:
         - motion
       sequence:
-      - condition: state
-        entity_id: input_select.home_mode
-        state:
-        - Party Mode
-        - Normal Mode
+      - condition: template
+        value_template: '{{ states(''input_select.home_mode'') in [''Normal Mode'',
+          ''Party Mode''] }}'
+        alias: Test if Home Mode is Normal Mode or Party Mode
       - action: fully_kiosk.load_url
         metadata: {}
         data:
@@ -7593,8 +7592,13 @@
     - conditions:
       - condition: trigger
         id:
-        - leaving
+        - door_opened
       sequence:
+      - action: switch.turn_on
+        metadata: {}
+        target:
+          entity_id: switch.main_door_display_screen
+        data: {}
       - condition: not
         conditions:
         - condition: state
