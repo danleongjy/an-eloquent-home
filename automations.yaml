@@ -4340,15 +4340,15 @@
       seconds: 0
   - trigger: state
     entity_id:
-    - binary_sensor.main_door
-    from: 'off'
-    to: 'on'
+    - lock.main_door_lock
+    to:
+    - unlocked
     id: door_opened
   - trigger: state
     entity_id:
-    - binary_sensor.main_door
-    from: 'on'
-    to: 'off'
+    - lock.main_door_lock
+    to:
+    - locked
     id: door_closed
   - trigger: state
     entity_id:
@@ -7447,16 +7447,16 @@
     alias: When the view has been left not on the homepage for 5min
   - trigger: state
     entity_id:
-    - binary_sensor.main_door
-    from: 'on'
-    to: 'off'
+    - lock.main_door_lock
+    to:
+    - locked
     id: reset_view
   - trigger: state
     entity_id:
-    - binary_sensor.main_door
-    from: 'off'
-    to: 'on'
-    id: door_opened
+    - lock.main_door_lock
+    to:
+    - unlocked
+    id: leaving
   - alias: When screen is on the homepage and the floorplan panel view has not changed
       for 1min
     trigger: template
@@ -7497,12 +7497,6 @@
         value_template: '{{ states(''input_select.home_mode'') in [''Normal Mode'',
           ''Party Mode''] }}'
         alias: Test if Home Mode is Normal Mode or Party Mode
-      - action: fully_kiosk.load_url
-        metadata: {}
-        data:
-          device_id: a5d73504748daf7290dcf724d4c02a5a
-          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
-            CustomEvent("location-changed"));
       - action: switch.turn_on
         metadata: {}
         data: {}
@@ -7592,7 +7586,7 @@
     - conditions:
       - condition: trigger
         id:
-        - door_opened
+        - leaving
       sequence:
       - action: switch.turn_on
         metadata: {}
@@ -7608,7 +7602,7 @@
           for:
             hours: 0
             minutes: 0
-            seconds: 5
+            seconds: 1
       - if:
         - condition: not
           conditions:
