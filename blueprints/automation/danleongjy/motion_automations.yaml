@@ -102,9 +102,7 @@ action:
           target:
             entity_id: >
               {{ states.automation | selectattr('entity_id', 'search',
-              repeat.item + '_motion') |
-              rejectattr('entity_id','search','timeout') | map(attribute =
-              'entity_id') | list }}
+              repeat.item + '_motion') | map(attribute = 'entity_id') | list }}
         - if:
             - condition: template
               value_template: "{{ room_cover_automation[repeat.item] is defined }}"

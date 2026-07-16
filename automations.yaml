@@ -1429,10 +1429,8 @@
           - cover.elenas_room_curtains
           - cover.elis_room_curtains
           - cover.dining_room_right_blind
-          - cover.dining_room_middle_blind
           - cover.dining_room_left_blind
           - cover.living_room_right_blind
-          - cover.living_room_middle_blind
           - cover.living_room_left_blind
           - cover.study_room_right_blind
           - cover.study_room_left_blind
@@ -1778,14 +1776,9 @@
       sequence:
       - repeat:
           for_each:
-          - cover.dining_room_right_blind
-          - cover.dining_room_middle_blind
-          - cover.dining_room_left_blind
-          - cover.living_room_right_blind
-          - cover.living_room_middle_blind
-          - cover.living_room_left_blind
-          - cover.study_room_right_blind
-          - cover.study_room_left_blind
+          - cover.dining_room_blinds
+          - cover.living_room_blinds
+          - cover.study_room_blinds
           sequence:
           - action: cover.set_cover_position
             target:
@@ -1793,8 +1786,8 @@
             data:
               position: 100
             continue_on_error: true
-          - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
-              }}'
+          - delay: '{{ (states(''input_number.blinds_command_deconflict'' ) | int(2))
+              * 2 }}'
     - conditions:
       - condition: numeric_state
         entity_id: sensor.dining_room_radar_lux
@@ -1806,14 +1799,9 @@
         state: true
       - repeat:
           for_each:
-          - cover.dining_room_right_blind
-          - cover.dining_room_middle_blind
-          - cover.dining_room_left_blind
-          - cover.living_room_right_blind
-          - cover.living_room_middle_blind
-          - cover.living_room_left_blind
-          - cover.study_room_right_blind
-          - cover.study_room_left_blind
+          - cover.dining_room_blinds
+          - cover.living_room_blinds
+          - cover.study_room_blinds
           sequence:
           - action: cover.set_cover_position
             target:
@@ -1821,8 +1809,8 @@
             data:
               position: 0
             continue_on_error: true
-          - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
-              }}'
+          - delay: '{{ (states(''input_number.blinds_command_deconflict'' ) | int(2))
+              * 2 }}'
   mode: single
 - id: '1672722028985'
   alias: Rice Cooker Auto Control
@@ -4406,6 +4394,10 @@
       - condition: state
         entity_id: binary_sensor.main_door
         state: 'off'
+      - condition: state
+        state:
+        - 'off'
+        entity_id: light.doorbell_hex_light
       - action: light.turn_on
         metadata: {}
         data:
