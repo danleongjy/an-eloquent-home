@@ -1419,6 +1419,21 @@ vacuum_cleaning_areas:
 cover_group_actions:
   sequence:
   - repeat:
+      while:
+      - alias: If the window is not closed and this has looped <= 12 times
+        condition: template
+        value_template: '{{ not is_state(window, ''off'') and repeat.index <= 12 }}'
+      sequence:
+      - action: script.automation_on_off_indicator_light
+        metadata: {}
+        data:
+          flash_once: false
+          indicator_light: '{{ indicator_light }}'
+      - delay: 5
+  - condition: template
+    value_template: '{{ is_state(window, ''off'') }}'
+    alias: Test if the window is closed
+  - repeat:
       for_each: '{{ covers }}'
       sequence:
       - if:
@@ -1473,7 +1488,25 @@ cover_group_actions:
           step: 1
       default: 0
       name: Position
+    window:
+      selector:
+        entity:
+          filter:
+            domain:
+            - binary_sensor
+            device_class:
+            - window
+      name: Window
+      required: true
+    indicator_light:
+      selector:
+        entity:
+          filter:
+            domain:
+            - light
+      name: Indicator Light
+      required: true
   mode: queued
   max: 10
   alias: Cover Group Actions
-  description: Set position for cover groups
+  description: Set position for cover groups if the window is closed
