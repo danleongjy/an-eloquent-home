@@ -1439,6 +1439,7 @@ cover_group_actions:
       - if:
         - condition: template
           value_template: '{{ action == ''Stop'' }}'
+          alias: If requested action is to stop the cover
         then:
         - action: cover.stop_cover
           metadata: {}
@@ -1449,6 +1450,10 @@ cover_group_actions:
         - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
             }}'
         else:
+        - condition: template
+          value_template: '{{ state_attr(repeat.item, ''current_position'') != position
+            }}'
+          alias: Test if cover is not already at the requested position
         - action: cover.set_cover_position
           metadata: {}
           target:

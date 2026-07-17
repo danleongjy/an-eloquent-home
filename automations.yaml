@@ -1760,6 +1760,11 @@
     - sensor.dining_room_radar_lux
     above: input_number.maximum_lux
     trigger: numeric_state
+  - alias: When Living, Dining and Study Room Windows are all closed
+    trigger: template
+    value_template: '{{ is_state(''binary_sensor.dining_room_windows'', ''off'') and
+      is_state(''binary_sensor.living_room_windows'', ''off'') and is_state(''binary_sensor.study_room_windows'',
+      ''off'') }}'
   conditions: []
   actions:
   - choose:
@@ -1780,11 +1785,9 @@
           - cover.living_room_blinds
           - cover.study_room_blinds
           sequence:
-          - action: cover.set_cover_position
+          - action: cover.open_cover
             target:
               entity_id: '{{ repeat.item }}'
-            data:
-              position: 100
             continue_on_error: true
           - delay: '{{ (states(''input_number.blinds_command_deconflict'' ) | int(2))
               * 2 }}'
@@ -1803,11 +1806,9 @@
           - cover.living_room_blinds
           - cover.study_room_blinds
           sequence:
-          - action: cover.set_cover_position
+          - action: cover.close_cover
             target:
               entity_id: '{{ repeat.item }}'
-            data:
-              position: 0
             continue_on_error: true
           - delay: '{{ (states(''input_number.blinds_command_deconflict'' ) | int(2))
               * 2 }}'
