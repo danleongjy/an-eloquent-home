@@ -1416,3 +1416,64 @@ vacuum_cleaning_areas:
   alias: Vacuum Cleaning Areas
   description: Add or remove areas from the vacuum cleaning areas
   icon: mdi:robot-vacuum
+cover_group_actions:
+  sequence:
+  - repeat:
+      for_each: '{{ covers }}'
+      sequence:
+      - if:
+        - condition: template
+          value_template: '{{ action == ''Stop'' }}'
+        then:
+        - action: cover.stop_cover
+          metadata: {}
+          target:
+            entity_id: '{{ repeat.item }}'
+          data: {}
+          continue_on_error: true
+        - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
+            }}'
+        else:
+        - action: cover.set_cover_position
+          metadata: {}
+          target:
+            entity_id: '{{ repeat.item }}'
+          data:
+            position: '{{ 100 if action == ''Open'' else 0 if action == ''Close''
+              else position }}'
+          continue_on_error: true
+        - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
+            }}'
+  fields:
+    covers:
+      selector:
+        entity:
+          multiple: true
+          reorder: true
+          filter:
+            domain:
+            - cover
+      required: true
+      name: Covers
+    action:
+      selector:
+        select:
+          options:
+          - Open
+          - Close
+          - Stop
+          - Set Position
+      default: Stop
+      name: Action
+    position:
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 1
+      default: 0
+      name: Position
+  mode: queued
+  max: 10
+  alias: Cover Group Actions
+  description: Set position for cover groups
