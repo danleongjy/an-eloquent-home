@@ -1450,10 +1450,10 @@ cover_group_actions:
         - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
             }}'
         else:
-        - condition: template
-          value_template: '{{ state_attr(repeat.item, ''current_position'') != position
-            }}'
-          alias: Test if cover is not already at the requested position
+        - alias: Test if cover is not already at the requested position
+          condition: template
+          value_template: '{{ state_attr(repeat.item, ''current_position'') != 100
+            if action == ''Open'' else 0 if action == ''Close'' else position }}'
         - action: cover.set_cover_position
           metadata: {}
           target:
@@ -1511,7 +1511,7 @@ cover_group_actions:
             - light
       name: Indicator Light
       required: true
-  mode: queued
+  mode: parallel
   max: 10
   alias: Cover Group Actions
   description: Set position for cover groups if the window is closed

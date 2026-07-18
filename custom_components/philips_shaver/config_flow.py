@@ -239,12 +239,22 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
         # (including deduplicated identical ones — dedup only suppresses callback
         # dispatch, not the history write), so an awake shaver is never misread.
         last = async_last_service_info(self.hass, address, connectable=True)
+        # A BlueZ RSSI-invalidation event (RSSI -127) also bumps the history
+        # timestamp without a packet on the air — treat it as "not seen", or
+        # the sentinel keeps the entry fresh and a stale BLEDevice slips past
+        # the gate (seen after an adapter power-cycle, where the doomed
+        # connects were then misread as a stale bond).
+        stale_rssi = (
+            last is not None and last.rssi is not None and last.rssi <= -127
+        )
         age = None if last is None else (time.monotonic() - last.time)
-        if last is None or age > _STALE_ADV_MAX_SECONDS:
+        if last is None or stale_rssi or age > _STALE_ADV_MAX_SECONDS:
             _LOGGER.info(
                 "%s: no recent connectable advertisement (%s) — device asleep",
                 address,
-                "never seen" if last is None else f"{age:.0f}s ago",
+                "never seen" if last is None
+                else "stale RSSI -127" if stale_rssi
+                else f"{age:.0f}s ago",
             )
             raise DeviceAsleepException
 
@@ -575,6 +585,27 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
         """Check if any ESP bridge is connected to the given MAC."""
         esphome_entries = self.hass.config_entries.async_entries("esphome")
         for entry in esphome_entries:
+            # Disabled bridges cannot hold a connection — probing them only
+            # burns the 10 s bridge timeout (their stale services may still
+            # be registered, so the service-based detection alone would
+            # wrongly pick them up).
+            if entry.disabled_by:
+                _LOGGER.debug(
+                    "%s: bridge check — skipping disabled ESPHome entry '%s'",
+                    mac, entry.title,
+                )
+                continue
+            # Same for bridges whose ESPHome API link is down: the probe
+            # runs over that link, so it can only time out. runtime_data is
+            # ESPHome's RuntimeEntryData; fall back to probing if the
+            # attribute layout ever changes.
+            runtime = getattr(entry, "runtime_data", None)
+            if runtime is not None and getattr(runtime, "available", True) is False:
+                _LOGGER.debug(
+                    "%s: bridge check — skipping offline ESPHome entry '%s'",
+                    mac, entry.title,
+                )
+                continue
             device_name = entry.data.get("device_name")
             if not device_name:
                 continue
@@ -892,6 +923,14 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
         esphome_entries = self.hass.config_entries.async_entries("esphome")
         options: list[SelectOptionDict] = []
         for entry in esphome_entries:
+            # A disabled entry cannot serve as a bridge — offering it would
+            # only fail later with a generic cannot_connect.
+            if entry.disabled_by:
+                _LOGGER.debug(
+                    "esp_select: skipping disabled ESPHome entry '%s'",
+                    entry.title,
+                )
+                continue
             device_name = entry.data.get("device_name")
             if not device_name:
                 continue
@@ -899,9 +938,20 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
             bridge_ids = self._detect_esp_bridge_ids(esp_service_id)
             if not bridge_ids:
                 continue
-            probe_results = await self._probe_shaver_bridges(
-                esp_service_id, bridge_ids
-            )
+            # When ESPHome already knows the link is down, don't burn the
+            # probe timeout — fall through to the offline branch directly
+            # (the ESP stays visible with the ⚪ marker by design).
+            runtime = getattr(entry, "runtime_data", None)
+            if runtime is not None and getattr(runtime, "available", True) is False:
+                _LOGGER.debug(
+                    "esp_select: ESPHome entry '%s' is offline — skipping probe",
+                    entry.title,
+                )
+                probe_results = []
+            else:
+                probe_results = await self._probe_shaver_bridges(
+                    esp_service_id, bridge_ids
+                )
             slot_info = ""
             is_offline = False
             if probe_results:
