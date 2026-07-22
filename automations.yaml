@@ -589,14 +589,13 @@
 - id: '1654959141053'
   alias: Water Heater Motion
   description: Turn on water heater if motion detected in Junior Shower
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.junior_shower_motion
     id: motion
     to: 'on'
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - binary_sensor.junior_shower_motion
     id: no_motion
     to: 'off'
@@ -604,21 +603,23 @@
       hours: 0
       minutes: 15
       seconds: 0
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: trigger
       id: motion
     then:
-    - service: switch.turn_on
-      data: {}
+    - action: homeassistant.turn_on
       target:
-        entity_id: switch.water_heater
+        entity_id: light.water_heater
+      data: {}
     else:
-    - service: switch.turn_off
-      data: {}
+    - action: homeassistant.turn_off
       target:
-        entity_id: switch.water_heater
+        entity_id:
+        - light.water_heater
+      data: {}
   mode: single
 - id: '1659256178839'
   alias: Master Bathroom Lights Controller
