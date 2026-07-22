@@ -43,7 +43,7 @@ Domain | Quantity
 [`input_number`](https://www.home-assistant.io/components/input_number) | 24
 [`input_select`](https://www.home-assistant.io/components/input_select) | 12
 [`input_text`](https://www.home-assistant.io/components/input_text) | 20
-[`light`](https://www.home-assistant.io/components/light) | 73
+[`light`](https://www.home-assistant.io/components/light) | 72
 [`lock`](https://www.home-assistant.io/components/lock) | 1
 [`media_player`](https://www.home-assistant.io/components/media_player) | 7
 [`notify`](https://www.home-assistant.io/components/notify) | 6
@@ -56,7 +56,7 @@ Domain | Quantity
 [`sensor`](https://www.home-assistant.io/components/sensor) | 793
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 73
+[`switch`](https://www.home-assistant.io/components/switch) | 74
 [`text`](https://www.home-assistant.io/components/text) | 33
 [`tts`](https://www.home-assistant.io/components/tts) | 1
 [`update`](https://www.home-assistant.io/components/update) | 114
