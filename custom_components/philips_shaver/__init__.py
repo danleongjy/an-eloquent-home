@@ -31,7 +31,13 @@ from .frontend import (
     async_register_card,
     async_remove_card_resource,
 )
-from .transport import BleakTransport, EspBridgeTransport
+from .transport import (
+    UNPAIR_OK,
+    UNPAIR_UNAVAILABLE,
+    BleakTransport,
+    EspBridgeTransport,
+    async_unpair_bridge_slot,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -507,14 +513,15 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Best-effort cleanup on entry removal: drop the ESP bridge's BLE bond.
+    """Best-effort cleanup on entry removal: drop the transport's BLE bond.
 
-    Fires only when the user explicitly removes the integration entry. For
-    Mode B (auto-discovery, NVS-persisted identity) this clears the bond so
-    the next setup starts fresh; for Mode A (YAML-pinned MAC) the bridge
-    re-bonds automatically on the next connect, so this is a no-op there.
-    Coord-side `unpair()` early-returns when mode != standalone, so calling
-    `ble_unpair` against a Mode A bridge is a harmless silent no-op.
+    Fires only when the user explicitly removes the integration entry.
+    ESP transport: clears the bridge's NVS bond (Mode B; Mode A re-bonds
+    automatically, coord-side `unpair()` is a designed no-op there).
+    Direct BLE: releases the host-side BlueZ bond so a later re-add
+    starts clean — the D-Bus pre-check then routes straight to the
+    pairing step instead of burning ~85 s of connect attempts against a
+    bond the shaver may no longer honour (Sonicare parity).
     """
     await async_remove_stored_data(hass, entry.entry_id)
 
@@ -529,24 +536,52 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
         await async_remove_card_resource(hass)
 
     if entry.data.get(CONF_TRANSPORT_TYPE) != TRANSPORT_ESP_BRIDGE:
+        # Direct BLE — release the host-side BlueZ bond.
+        address = entry.data.get(CONF_ADDRESS)
+        if not address:
+            return
+        from .dbus_pairing import async_remove_device, is_dbus_available
+
+        if not is_dbus_available():
+            _LOGGER.debug(
+                "D-Bus unavailable — skipping host-side unpair for %s", address
+            )
+            return
+        try:
+            await async_remove_device(address)
+        except Exception as err:  # noqa: BLE001 — removal must not fail
+            _LOGGER.warning(
+                "Host-side unpair failed during entry removal for %s: %s",
+                address, err,
+            )
         return
+
     esp_device_name = entry.data.get(CONF_ESP_DEVICE_NAME)
     if not esp_device_name:
         return
     bridge_id = entry.data.get(CONF_ESP_BRIDGE_ID, "")
-    svc = f"{esp_device_name}_ble_unpair"
-    if bridge_id:
-        svc = f"{svc}_{bridge_id}"
-    try:
-        await hass.services.async_call("esphome", svc, {}, blocking=True)
+    # Best-effort: clear the bridge-side bond, waiting for the `unpaired`
+    # confirmation. Entry removal must not fail regardless of the outcome
+    # (HA deletes the entry either way); an offline bridge leaves its bond
+    # in place until the slot is unpaired or re-paired later.
+    outcome = await async_unpair_bridge_slot(hass, esp_device_name, bridge_id)
+    if outcome == UNPAIR_OK:
         _LOGGER.info(
-            "Called esphome.%s on entry removal — bridge NVS bond cleared "
-            "(Mode B) or no-op (Mode A)", svc,
+            "Removed bond on ESP bridge %s for %s",
+            esp_device_name,
+            entry.unique_id or entry.data.get(CONF_ADDRESS, "<unknown>"),
         )
-    except Exception as err:  # pylint: disable=broad-except
-        # Older bridge firmware (< 1.8.0) doesn't have ble_unpair registered;
-        # service-not-found is expected and harmless. Log at debug.
+    elif outcome == UNPAIR_UNAVAILABLE:
+        # Bridge offline, or firmware < 1.8.0 without ble_unpair — expected
+        # and harmless (Mode A re-bonds automatically anyway).
+        _LOGGER.info(
+            "ESP bridge %s offline at remove time — skipping ble_unpair "
+            "(bond on bridge stays)", esp_device_name,
+        )
+    else:
+        # UNPAIR_UNCONFIRMED covers Mode A bridges (ble_unpair is a
+        # designed no-op there, never confirmed) — keep it quiet.
         _LOGGER.debug(
-            "esphome.%s call failed on entry removal: %s "
-            "(safe to ignore on bridge < 1.8.0)", svc, err,
+            "ble_unpair on %s during entry removal: %s",
+            esp_device_name, outcome,
         )

@@ -1418,11 +1418,20 @@ vacuum_cleaning_areas:
   icon: mdi:robot-vacuum
 cover_group_actions:
   sequence:
+  - alias: Test if cover is not already at the requested position
+    condition: template
+    value_template: '{% set cover_positions = states.cover | selectattr(''entity_id'',
+      ''in'', covers) | map(attribute = ''attributes.current_position'') | list %}
+
+      {{ true if action == ''Stop'' else average(cover_positions) != 100 if action
+      == ''Open'' else average(cover_positions) != 0 if action == ''Close'' else average(cover_positions)
+      != position }}'
   - repeat:
       while:
       - alias: If the window is not closed and this has looped <= 12 times
         condition: template
-        value_template: '{{ not is_state(window, ''off'') and repeat.index <= 12 }}'
+        value_template: '{{ action != ''Stop'' and (not is_state(window, ''off'')
+          and repeat.index <= 12) }}'
       sequence:
       - action: script.automation_on_off_indicator_light
         metadata: {}
@@ -1430,9 +1439,9 @@ cover_group_actions:
           flash_once: false
           indicator_light: '{{ indicator_light }}'
       - delay: 5
-  - condition: template
-    value_template: '{{ is_state(window, ''off'') }}'
-    alias: Test if the window is closed
+  - alias: Test if the window is closed
+    condition: template
+    value_template: '{{ action == ''Stop'' or is_state(window, ''off'') }}'
   - repeat:
       for_each: '{{ covers }}'
       sequence:
@@ -1450,10 +1459,6 @@ cover_group_actions:
         - delay: '{{ states(''input_number.blinds_command_deconflict'' ) | int(2)
             }}'
         else:
-        - alias: Test if cover is not already at the requested position
-          condition: template
-          value_template: '{{ state_attr(repeat.item, ''current_position'') != 100
-            if action == ''Open'' else 0 if action == ''Close'' else position }}'
         - action: cover.set_cover_position
           metadata: {}
           target:
