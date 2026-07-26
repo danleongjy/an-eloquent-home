@@ -329,26 +329,6 @@ binary_sensor:
                           then:
                             - lambda: 'id(current_command).publish_state("lamp_brighten");'
                             - delay: 0.75s
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "fan";'
-                    then:
-                      - while:
-                          condition:
-                            binary_sensor.is_on: left_button
-                          then:
-                            - lambda: 'id(current_command).publish_state("fan_speed_up");'
-                            - delay: 0.75s
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "ac";'
-                    then:
-                      - while:
-                          condition:
-                            binary_sensor.is_on: left_button
-                          then:
-                            - lambda: 'id(current_command).publish_state("ac_warmer");'
-                            - delay: 0.75s
       - timing:
           - ON for at most 1s
           - OFF for at most 1s
@@ -377,11 +357,6 @@ binary_sensor:
                       lambda: 'return id(current_view).state == "lamp";'
                     then:
                       - lambda: 'id(current_command).publish_state("set_recommended_room_scene");'
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "fan";'
-                    then:
-                      - lambda: 'id(current_command).publish_state("fan_reverse");'
   - platform: gpio
     pin: 38
     name: 'Middle Button'
@@ -513,26 +488,6 @@ binary_sensor:
                           then:
                             - lambda: 'id(current_command).publish_state("lamp_darken");'
                             - delay: 0.75s
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "fan";'
-                    then:
-                      - while:
-                          condition:
-                            binary_sensor.is_on: right_button
-                          then:
-                            - lambda: 'id(current_command).publish_state("fan_slow_down");'
-                            - delay: 0.75s
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "ac";'
-                    then:
-                      - while:
-                          condition:
-                            binary_sensor.is_on: right_button
-                          then:
-                            - lambda: 'id(current_command).publish_state("ac_colder");'
-                            - delay: 0.75s
       - timing:
           - ON for at most 1s
           - OFF for at most 1s
@@ -562,11 +517,6 @@ binary_sensor:
                       lambda: 'return id(current_view).state == "lamp";'
                     then:
                       - lambda: 'id(current_command).publish_state("turn_off_room");'
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "fan";'
-                    then:
-                      - lambda: 'id(current_command).publish_state("fan_forward");'
 
 button:
   - platform: template
