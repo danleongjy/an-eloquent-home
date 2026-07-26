@@ -155,18 +155,18 @@ script:
     then:
       - lambda: |
           // tab
-          if (strcmp(id(vacuum_current_state).state.c_str(), 'paused') == 0 || strcmp(id(vacuum_current_state).state.c_str(), 'idle') == 0) {
+          if (strcmp(id(vacuum_current_state).state.c_str(), "paused") == 0 || strcmp(id(vacuum_current_state).state.c_str(), "idle") == 0) {
             id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(alarm_dismissable));
             id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(alarm_dismissable));
-          } else if (strcmp(id(vacuum_current_state).state.c_str(), 'cleaning') == 0 || strcmp(id(vacuum_current_state).state.c_str(), 'returning') == 0 || id(vacuum_battery_charging).state) {
+          } else if (strcmp(id(vacuum_current_state).state.c_str(), "cleaning") == 0 || strcmp(id(vacuum_current_state).state.c_str(), "returning") == 0 || id(vacuum_battery_charging).state) {
             id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
             id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
           }
           // main display
-          if (strcmp(id(vacuum_current_state).state, 'paused').c_str() == 0 || strcmp(id(vacuum_current_state).state.c_str(), 'idle') == 0) {
+          if (strcmp(id(vacuum_current_state).state, "paused").c_str() == 0 || strcmp(id(vacuum_current_state).state.c_str(), "idle") == 0) {
             id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(vacuum_battery_level).state) / 100)), id(width), id(height) * (0.75 * (id(vacuum_battery_level).state) / 100), id(alarm_dismissable));
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_vacuum), ImageAlign::CENTER, id(device_off));
-          } else if (strcmp(id(vacuum_current_state).state.c_str(), 'cleaning') == 0 || strcmp(id(vacuum_current_state).state.c_str(), 'returning') == 0) {
+          } else if (strcmp(id(vacuum_current_state).state.c_str(), "cleaning") == 0 || strcmp(id(vacuum_current_state).state.c_str(), "returning") == 0) {
             id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(vacuum_cleaning_progress).state) / 100)), id(width), id(height) * (0.75 * (id(vacuum_cleaning_progress).state) / 100), id(slider));
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_vacuum), ImageAlign::CENTER, id(device_on));            
           } else if (id(vacuum_battery_charging).state) {
