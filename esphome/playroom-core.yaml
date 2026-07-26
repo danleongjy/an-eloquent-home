@@ -295,19 +295,12 @@ binary_sensor:
                       - lambda: 'id(current_command).publish_state("lamp_on");'
                 - if:
                     condition:
-                      lambda: 'return id(current_view).state == "fan";'
+                      lambda: 'return id(current_view).state == "vacuum";'
                     then:
-                      - lambda: 'id(current_command).publish_state("fan_on");'
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "ac";'
-                    then:
-                      - lambda: 'id(current_command).publish_state("ac_on");'
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "cover";'
-                    then:
-                      - lambda: 'id(current_command).publish_state("cover_open");'
+                      - homeassistant.service:
+                          service: vacuum.start
+                          data:
+                            entity_id: vacuum.valetudo_hestia
       - timing:
           - ON for at least 1.5s
         then:
@@ -445,6 +438,14 @@ binary_sensor:
                             lambda: 'id(current_command).publish_state("lamp_manual_control");'
                           else:
                             lambda: 'id(current_command).publish_state("lamp_auto_control");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "vacuum";'
+                    then:
+                      - homeassistant.service:
+                          service: vacuum.return_to_base
+                          data:
+                            entity_id: vacuum.valetudo_hestia
   - platform: gpio
     pin: 39
     name: 'Right Button'
@@ -478,19 +479,12 @@ binary_sensor:
                       - lambda: 'id(current_command).publish_state("lamp_off");'
                 - if:
                     condition:
-                      lambda: 'return id(current_view).state == "fan";'
+                      lambda: 'return id(current_view).state == "vacuum";'
                     then:
-                      - lambda: 'id(current_command).publish_state("fan_off");'
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "ac";'
-                    then:
-                      - lambda: 'id(current_command).publish_state("ac_off");'
-                - if:
-                    condition:
-                      lambda: 'return id(current_view).state == "cover";'
-                    then:
-                      - lambda: 'id(current_command).publish_state("cover_close");'
+                      - homeassistant.service:
+                          service: vacuum.pause
+                          data:
+                            entity_id: vacuum.valetudo_hestia
       - timing:
           - ON for at least 1.5s
         then:
