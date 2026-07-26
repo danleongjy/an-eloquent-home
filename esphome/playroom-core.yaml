@@ -42,15 +42,51 @@ wifi:
   ap:
     ssid: "Playroom-Core Fallback Hotspot"
     password: !secret ap_password
+  
+  on_connect:
+    - lambda: 'id(current_view).publish_state("current_time");'
+    - lambda: 'id(current_command).publish_state("none");'
 
 captive_portal:
 
 packages:
-  core: !include packages/room_core.yaml
   rtttl: !include packages/room_core_rtttl.yaml
-  
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+globals:
+  - id: height
+    type: int
+    initial_value: '320'
+  - id: width
+    type: int
+    initial_value: '240'
+  - id: initial_volume
+    type: double
+    initial_value: ${volume}
+
 script:
-  - id: !remove doorbell
+  - id: reset_command
+    then:
+      - delay: 0.5s
+      - if:
+          condition:
+            lambda: 'return id(current_command).state != "none";'
+          then:
+            - lambda: 'id(current_command).publish_state("none");'
+    mode: queued
+  - id: reset_view
+    mode: restart
+    then:
+      - if:
+          condition:
+            rtttl.is_playing
+          then:
+            - rtttl.stop
+      - delay: 120s
+      - display.page.show: current_time
   - id: doorbell
     then:
       - select.set:
@@ -60,7 +96,6 @@ script:
       - display.page.show: main_door
       - delay: 10s
       - display.page.show: current_time
-  - id: !remove draw_display_main_time
   - id: draw_display_main_time
     then:
       - lambda: |
@@ -70,18 +105,93 @@ script:
           if (id(homeassistant_time).now().second % 2 == 0) {
             id(interface_display).print(id(width) * 0.5, id(height) * 0.325, id(main_time), TextAlign::CENTER, ":");
           }
-  - id: !remove draw_display_main_fan
-  - id: !remove draw_display_main_ac
-  - id: !remove draw_display_main_cover
+  - id: draw_display_main_lights
+    then:
+      - lambda: |
+          // tab
+          if (id(lights_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
+          }
+          // main display
+          if (id(lights_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(lights_brightness).state) / 255)), id(width), id(height) * (0.75 * (id(lights_brightness).state) / 255), id(slider));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_on));
+          } else {
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lights), ImageAlign::CENTER, id(device_off));
+          }
+          // auto control indicator
+          if (!id(lights_auto_control).state) {
+            if (id(lights_power).state) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_on));
+            } else {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
+          }
+  - id: draw_display_main_lamp
+    then:
+      - lambda: |
+          // tab
+          if (id(lamp_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
+          }
+          // main display
+          if (id(lamp_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(lamp_brightness).state) / 255)), id(width), id(height) * (0.75 * (id(lamp_brightness).state) / 255), id(slider));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lamp), ImageAlign::CENTER, id(device_on));
+          } else {
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_lamp), ImageAlign::CENTER, id(device_off));
+          }
+          // auto control indicator
+          if (!id(lamp_auto_control).state) {
+            if (id(lamp_power).state) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_on));
+            } else {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
+          }
+  - id: draw_display_main_doorbell
+    then:
+      - lambda: |
+          id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_doorbell), ImageAlign::CENTER, id(device_on));
+  - id: draw_display_borders
+    then:
+      - lambda: |
+          id(interface_display).rectangle(0, 0, id(width), id(height), id(border));
+          id(interface_display).line(id(width) * 0.25, id(height) * 0.75, id(width) * 0.25, id(height) * 0.9, id(border));
+          id(interface_display).line(id(width) * 0.5, id(height) * 0.75, id(width) * 0.5, id(height) * 0.9, id(border));
+          id(interface_display).line(id(width) * 0.75, id(height) * 0.75, id(width) * 0.75, id(height) * 0.9, id(border));
+          id(interface_display).line(id(width) * 0.25, id(height) * 0.75, id(width), id(height) * 0.75, id(border));
+          id(interface_display).line(0, id(height) * 0.9, id(width), id(height) * 0.9, id(border));
+  - id: draw_display_bottom_status_bar
+    then:
+      - lambda: |
+          id(interface_display).printf(id(width) * 0.5, id(height) * 0.95, id(status_bar), TextAlign::CENTER, "\U0000e846%.1f°C \U0000f164%.1f%% \U0000f7e8%.0flx", id(room_temp).state, id(room_hum).state, id(room_lux).state);
 
 text_sensor:
-  - id: !remove fan_direction
-  - id: !remove ac_mode
-  - id: !remove next_alarm_timing
+  - platform: template
+    id: current_view
+    name: 'Current View'
+  - platform: template
+    id: current_command
+    name: 'Current Command'
+    on_value:
+      - script.execute: 
+          id: reset_command
 
-i2c: !remove
-
-sensor:  
+sensor:
+  - platform: homeassistant
+    id: lights_brightness
+    entity_id: light.${core_room}_lights
+    attribute: brightness
+  - platform: homeassistant
+    id: lamp_brightness
+    entity_id: ${lamp_entity}
+    attribute: brightness
+  - platform: homeassistant
+    id: room_lux
+    entity_id: sensor.playroom_radar_lux
   - platform: dht
     pin: 21
     model: DHT22
@@ -94,15 +204,6 @@ sensor:
       id: room_hum
       name: Humidity
       accuracy_decimals: 1
-  - id: !extend room_lux
-    entity_id: sensor.playroom_radar_lux
-  - id: !extend lamp_brightness
-    entity_id: ${lamp_entity}
-  - id: !remove fan_speed
-  - id: !remove ac_temp
-  - id: !remove ac_min_temp
-  - id: !remove ac_max_temp
-  - id: !remove cover_position
 
 binary_sensor:
   - platform: homeassistant
@@ -118,22 +219,140 @@ binary_sensor:
             - display.page.show: current_time
           else:
             light.turn_off: backlight
-  - id: !extend lamp_power
+  - platform: homeassistant
+    id: lights_power
+    entity_id: light.${core_room}_lights
+  - platform: homeassistant
+    id: lamp_power
     entity_id: ${lamp_entity}
-  - id: !extend lamp_auto_control
+  - platform: homeassistant
+    id: lights_auto_control
+    entity_id: automation.${core_room}_motion_lights
+  - platform: homeassistant
+    id: lamp_auto_control
     entity_id: ${lamp_auto_control}
-  - id: !remove fan_power
-  - id: !remove fan_auto_control
-  - id: !remove ac_auto_control
-  - id: !remove cover_auto_control
-  - id: !remove room_next_alarm_imminent
-  - id: !remove room_next_alarm_dismissable
-  - id: !remove room_next_alarm_armed
-  - id: !remove middle_button
-  - id: !extend left_button
+  - platform: gpio
     pin: 37
-  - id: !extend right_button
-    pin: 39
+    name: 'Left Button'
+    id: left_button
+    filters:
+      - invert:
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                light.is_on: backlight
+              then:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("lights_on");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("lamp_on");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("fan_on");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "ac";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("ac_on");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "cover";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("cover_open");'
+      - timing:
+          - ON for at least 1.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                light.is_on: backlight
+              then:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: left_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("lights_brighten");'
+                            - delay: 0.75s
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: left_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("lamp_brighten");'
+                            - delay: 0.75s
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: left_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("fan_speed_up");'
+                            - delay: 0.75s
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "ac";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: left_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("ac_warmer");'
+                            - delay: 0.75s
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                light.is_on: backlight
+              then:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "current_time";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("set_special_scene");'
+                      - delay: 0.5s
+                      - light.turn_off: backlight
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("set_recommended_room_scene");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("set_recommended_room_scene");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("fan_reverse");'
   - platform: gpio
     pin: 38
     name: 'Middle Button'
@@ -190,12 +409,302 @@ binary_sensor:
                             lambda: 'id(current_command).publish_state("lamp_manual_control");'
                           else:
                             lambda: 'id(current_command).publish_state("lamp_auto_control");'
+  - platform: gpio
+    pin: 39
+    name: 'Right Button'
+    id: right_button
+    filters:
+      - invert:
+    on_multi_click:
+      - timing:
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                light.is_on: backlight
+              then:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "current_time";'
+                    then:
+                      - light.turn_off: backlight
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("lights_off");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("lamp_off");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("fan_off");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "ac";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("ac_off");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "cover";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("cover_close");'
+      - timing:
+          - ON for at least 1.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                light.is_on: backlight
+              then:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: right_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("lights_darken");'
+                            - delay: 0.75s
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: right_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("lamp_darken");'
+                            - delay: 0.75s
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: right_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("fan_slow_down");'
+                            - delay: 0.75s
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "ac";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: right_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("ac_colder");'
+                            - delay: 0.75s
+      - timing:
+          - ON for at most 1s
+          - OFF for at most 1s
+          - ON for at most 1s
+          - OFF for at least 0.5s
+        then:
+          - script.execute: reset_view
+          - if:
+              condition:
+                light.is_on: backlight
+              then:
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "current_time";'
+                    then:
+                      - homeassistant.service:
+                          service: script.turn_on
+                          data:
+                            entity_id: script.turn_off_all
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lights";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("turn_off_room");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "lamp";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("turn_off_room");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("fan_forward");'
+
+button:
+  - platform: template
+    name: Ring Doorbell
+    id: ring_doorbell
+    icon: "mdi:bell-ring-outline"
+    on_press:
+      then:
+        - script.execute: doorbell
+
+output:
+  - platform: ledc
+    pin: 32
+    id: backlight_pwm
+
+color:
+  - id: border
+    red: 50%
+    green: 50%
+    blue: 50%
+  - id: device_on
+    hex: FFC107
+  - id: device_off
+    hex: 4D729D
+  - id: slider
+    hex: 4D729D #41A7F2
+  - id: alarm_dismissable
+    hex: F2900F
+  - id: black
+    hex: '000000'
+
+font:
+  - file: 
+      type: gfonts
+      family: Roboto
+      weight: bold
+    id: main_time
+    size: 80
+  - file: 
+      type: gfonts
+      family: Roboto
+    id: small_time
+    size: 30
+    extras:
+      - file: "gfonts://Material+Symbols+Outlined"
+        glyphs: ["\U0000e425"] # mdi-timer
+  - file: 
+      type: gfonts
+      family: Roboto
+      weight: light
+    id: status_bar
+    size: 20
+    extras:
+      - file: "gfonts://Material+Symbols+Outlined"
+        glyphs: ["\U0000e846","\U0000f164","\U0000f7e8"] #mdi-thermometer, mdi-humidity, mdi-brightness
+
+image:
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:clock-outline
+    id: tab_current_time
+    resize: 30x30
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:lightbulb-group
+    id: tab_lights
+    resize: 30x30
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:light-recessed
+    id: tab_lamp
+    resize: 30x30
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:fan
+    id: tab_fan
+    resize: 30x30
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:snowflake
+    id: tab_ac
+    resize: 30x30
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:curtains
+    id: tab_cover
+    resize: 30x30
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:alarm
+    id: main_alarm
+    resize: 30x30
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:alarm-off
+    id: main_alarm_off
+    resize: 30x30
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:lightbulb-group
+    id: main_lights
+    resize: 160x160
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:light-recessed
+    id: main_lamp
+    resize: 160x160
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:fan-chevron-down
+    id: main_fan_forward
+    resize: 160x160
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:fan-chevron-up
+    id: main_fan_reverse
+    resize: 160x160
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:snowflake
+    id: main_ac
+    resize: 160x160
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:curtains
+    id: main_cover
+    resize: 160x160
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:bell-ring-outline
+    id: main_doorbell
+    resize: 160x160
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:alpha-m-box
+    id: manual_control
+    resize: 50x50
+    
+spi:
+  clk_pin: 18
+  mosi_pin: 23
 
 light:
-  - id: !remove led_strips
+  - platform: monochromatic
+    output: backlight_pwm
+    name: "Display Backlight"
+    id: backlight
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_off:
+      - display.page.show: current_time
 
 display:
-  - id: !remove interface_display
   - platform: mipi_spi
     id: interface_display
     model: M5CORE
