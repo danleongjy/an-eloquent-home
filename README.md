@@ -59,12 +59,11 @@ Domain | Quantity
 [`switch`](https://www.home-assistant.io/components/switch) | 74
 [`text`](https://www.home-assistant.io/components/text) | 33
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 114
+[`update`](https://www.home-assistant.io/components/update) | 113
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
-[`wake_word`](https://www.home-assistant.io/components/wake_word) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1967
+Total | 1965
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -89,11 +88,7 @@ Total | 1967
 - [Statistics Sensor](https://home-assistant.io/integrations/statistics)
 - [Switchbot Bluetooth](https://home-assistant.io/integrations/switchbot)
 - [System Monitor](https://home-assistant.io/integrations/systemmonitor)
-- [Template Binary Sensors, Buttons, Sensors & Images](https://home-assistant.io/integrations/template)
-- [Template Cover](https://home-assistant.io/integrations/cover.template)
-- [Template Fan](https://home-assistant.io/integrations/fan.template)
-- [Template Switch](https://home-assistant.io/integrations/switch.template)
-- [Template Weather](https://home-assistant.io/integrations/weather.template)
+- [Template](https://home-assistant.io/integrations/template)
 - [Time & Date](https://home-assistant.io/integrations/time_date)
 - [Wyoming Protocol](https://home-assistant.io/integrations/wyoming)
 - [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
@@ -105,7 +100,6 @@ Total | 1967
 - File editor
 - Mosquitto broker
 - Music Assistant
-- openWakeWord
 - Piper
 - Samba share
 - Whisper
