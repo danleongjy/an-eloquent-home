@@ -151,6 +151,30 @@ script:
               id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
             }
           }
+  - id: draw_display_main_vacuum
+    then:
+      - lambda: |
+          // tab
+          if (id(vacuum_current_state).state == 'paused' || id(vacuum_current_state).state == 'idle') {
+            id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(alarm_dismissable));
+            id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(alarm_dismissable));
+          } else if (id(vacuum_current_state).state == 'cleaning' || id(vacuum_current_state).state == 'returning' || id(vacuum_battery_charging).state) {
+            id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
+          }
+          // main display
+          if (id(vacuum_current_state).state == 'paused' || id(vacuum_current_state).state == 'idle') {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(vacuum_battery_level).state) / 100)), id(width), id(height) * (0.75 * (id(vacuum_battery_level).state) / 100), id(alarm_dismissable));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_vacuum), ImageAlign::CENTER, id(device_off));
+          } else if (id(vacuum_current_state).state == 'cleaning' || id(vacuum_current_state).state == 'returning') {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(vacuum_cleaning_progress).state) / 100)), id(width), id(height) * (0.75 * (id(vacuum_cleaning_progress).state) / 100), id(slider));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_vacuum), ImageAlign::CENTER, id(device_on));            
+          } else if (id(vacuum_battery_charging).state) {
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * (id(vacuum_battery_level).state) / 100)), id(width), id(height) * (0.75 * (id(vacuum_battery_level).state) / 100), id(slider));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_vacuum_charging), ImageAlign::CENTER, id(device_on));            
+          } else {
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_vacuum), ImageAlign::CENTER, id(device_off));
+          }
   - id: draw_display_main_doorbell
     then:
       - lambda: |
@@ -179,6 +203,9 @@ text_sensor:
     on_value:
       - script.execute: 
           id: reset_command
+  - platform: homeassistant
+    id: vacuum_current_state
+    entity_id: vacuum.valetudo_hestia
 
 sensor:
   - platform: homeassistant
@@ -192,6 +219,12 @@ sensor:
   - platform: homeassistant
     id: room_lux
     entity_id: sensor.playroom_radar_lux
+  - platform: homeassistant
+    id: vacuum_cleaning_progress
+    entity_id: sensor.vacuum_current_run_cleaning_progress
+  - platform: homeassistant
+    id: vacuum_battery_level
+    entity_id: sensor.valetudo_hestia_battery_level
   - platform: dht
     pin: 21
     model: DHT22
@@ -231,6 +264,9 @@ binary_sensor:
   - platform: homeassistant
     id: lamp_auto_control
     entity_id: ${lamp_auto_control}
+  - platform: homeassistant
+    id: vacuum_battery_charging
+    entity_id: binary_sensor.vacuum_battery_charging
   - platform: gpio
     pin: 37
     name: 'Left Button'
@@ -615,32 +651,8 @@ image:
   - platform: file
     type: binary
     transparency: chroma_key
-    file: mdi:fan
-    id: tab_fan
-    resize: 30x30
-  - platform: file
-    type: binary
-    transparency: chroma_key
-    file: mdi:snowflake
-    id: tab_ac
-    resize: 30x30
-  - platform: file
-    type: binary
-    transparency: chroma_key
-    file: mdi:curtains
-    id: tab_cover
-    resize: 30x30
-  - platform: file
-    type: binary
-    transparency: chroma_key
-    file: mdi:alarm
-    id: main_alarm
-    resize: 30x30
-  - platform: file
-    type: binary
-    transparency: chroma_key
-    file: mdi:alarm-off
-    id: main_alarm_off
+    file: mdi:robot-vacuum
+    id: tab_vacuum
     resize: 30x30
   - platform: file
     type: binary
@@ -657,26 +669,14 @@ image:
   - platform: file
     type: binary
     transparency: chroma_key
-    file: mdi:fan-chevron-down
-    id: main_fan_forward
+    file: mdi:robot-vacuum
+    id: main_vacuum
     resize: 160x160
   - platform: file
     type: binary
     transparency: chroma_key
-    file: mdi:fan-chevron-up
-    id: main_fan_reverse
-    resize: 160x160
-  - platform: file
-    type: binary
-    transparency: chroma_key
-    file: mdi:snowflake
-    id: main_ac
-    resize: 160x160
-  - platform: file
-    type: binary
-    transparency: chroma_key
-    file: mdi:curtains
-    id: main_cover
+    file: mdi:lightning-bolt-circle
+    id: main_vacuum_charging
     resize: 160x160
   - platform: file
     type: binary
@@ -726,12 +726,16 @@ display:
       - to: lamp
         then:
           lambda: 'id(current_view).publish_state("lamp");'
+      - to: vacuum
+        then:
+          lambda: 'id(current_view).publish_state("vacuum");'
     pages:
       - id: current_time
         lambda: |-
           // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_vacuum), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
           id(draw_display_main_time).execute();
@@ -744,6 +748,7 @@ display:
           // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_vacuum), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
           id(draw_display_main_doorbell).execute();
@@ -752,7 +757,8 @@ display:
         lambda: |-
           // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_vacuum), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
           id(draw_display_main_lights).execute();
@@ -760,9 +766,20 @@ display:
       - id: lamp
         lambda: |-
           // tabs
-          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_vacuum), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
           id(draw_display_main_lamp).execute();
+          id(draw_display_borders).execute();
+      - id: vacuum
+        lambda: |-
+          // tabs
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
+
+          id(draw_display_bottom_status_bar).execute();
+          id(draw_display_main_vacuum).execute();
           id(draw_display_borders).execute();
