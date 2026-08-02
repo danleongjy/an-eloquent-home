@@ -25,15 +25,15 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 149
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 182
-[`button`](https://www.home-assistant.io/components/button) | 191
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 190
+[`button`](https://www.home-assistant.io/components/button) | 193
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 8
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 14
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 2
-[`event`](https://www.home-assistant.io/components/event) | 3
+[`event`](https://www.home-assistant.io/components/event) | 1
 [`fan`](https://www.home-assistant.io/components/fan) | 6
 [`image`](https://www.home-assistant.io/components/image) | 4
 [`infrared`](https://www.home-assistant.io/components/infrared) | 3
@@ -47,13 +47,13 @@ Domain | Quantity
 [`lock`](https://www.home-assistant.io/components/lock) | 1
 [`media_player`](https://www.home-assistant.io/components/media_player) | 7
 [`notify`](https://www.home-assistant.io/components/notify) | 6
-[`number`](https://www.home-assistant.io/components/number) | 94
+[`number`](https://www.home-assistant.io/components/number) | 93
 [`person`](https://www.home-assistant.io/components/person) | 2
 [`radio_frequency`](https://www.home-assistant.io/components/radio_frequency) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 3
 [`script`](https://www.home-assistant.io/components/script) | 15
-[`select`](https://www.home-assistant.io/components/select) | 70
-[`sensor`](https://www.home-assistant.io/components/sensor) | 737
+[`select`](https://www.home-assistant.io/components/select) | 69
+[`sensor`](https://www.home-assistant.io/components/sensor) | 743
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 73
@@ -63,7 +63,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1913
+Total | 1925
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
