@@ -12292,7 +12292,7 @@
                   "type": "heading",
                   "heading": "Progress",
                   "heading_style": "title",
-                  "icon": "mdi:washing-machine"
+                  "icon": "mdi:tshirt-crew"
                 },
                 {
                   "type": "tile",
@@ -12378,35 +12378,46 @@
                   "type": "heading",
                   "heading": "Settings",
                   "heading_style": "title",
-                  "icon": "mdi:washing-machine"
+                  "icon": "mdi:cog"
                 },
                 {
-                  "type": "tile",
-                  "entity": "sensor.lg_washer_course",
-                  "name": " ",
-                  "vertical": false,
-                  "features_position": "bottom"
-                },
-                {
-                  "type": "tile",
-                  "entity": "sensor.lg_washer_spin",
-                  "name": " ",
-                  "vertical": false,
-                  "features_position": "bottom"
-                },
-                {
-                  "type": "tile",
-                  "entity": "sensor.lg_washer_temperature",
-                  "name": " ",
-                  "vertical": false,
-                  "features_position": "bottom"
-                },
-                {
-                  "type": "tile",
-                  "entity": "binary_sensor.lg_washer_child_lock",
-                  "name": " ",
-                  "vertical": false,
-                  "features_position": "bottom"
+                  "type": "entities",
+                  "entities": [
+                    {
+                      "entity": "sensor.lg_washer_course",
+                      "name": "Course"
+                    },
+                    {
+                      "entity": "sensor.lg_washer_temperature",
+                      "name": "Water Temperature"
+                    },
+                    {
+                      "entity": "sensor.lg_washer_spin",
+                      "name": "Spin Speed"
+                    },
+                    {
+                      "entity": "binary_sensor.lg_washer_child_lock",
+                      "name": "Child Lock"
+                    },
+                    {
+                      "entity": "binary_sensor.lg_washer_extra_rinse",
+                      "name": "Extra Rinse"
+                    },
+                    {
+                      "entity": "binary_sensor.lg_washer_intensive_wash",
+                      "name": "Intensive Wash"
+                    },
+                    {
+                      "entity": "binary_sensor.lg_washer_pre_wash",
+                      "name": "Pre-Wash"
+                    },
+                    {
+                      "entity": "binary_sensor.lg_washer_steam",
+                      "name": {
+                        "type": "entity"
+                      }
+                    }
+                  ]
                 }
               ],
               "visibility": [
@@ -12418,7 +12429,12 @@
                 {
                   "condition": "state",
                   "entity": "sensor.lg_washer_status",
-                  "state_not": "Ready"
+                  "state_not": "unavailable"
+                },
+                {
+                  "condition": "state",
+                  "entity": "sensor.lg_washer_status",
+                  "state_not": "unknown"
                 }
               ]
             },
@@ -12452,27 +12468,43 @@
                   "name": " ",
                   "features_position": "bottom",
                   "vertical": false
-                },
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "sensor.lg_washer_status",
+                  "state": "Off"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
                 {
                   "type": "markdown",
                   "content": "<ha-alert alert-type=\"error\">{{ states('sensor.lg_washer_error_message') | replace('_', ' ') | capitalize }}.</ha-alert>",
                   "text_only": true,
                   "visibility": [
                     {
-                      "condition": "state",
-                      "entity": "sensor.lg_washer_status",
-                      "state": "Error"
-                    }
-                  ]
-                },
-                {
-                  "type": "markdown",
-                  "content": "<ha-alert alert-type=\"success\">Wash completed.  Please unload laundry.</ha-alert>",
-                  "text_only": true,
-                  "visibility": [
-                    {
-                      "entity": "input_boolean.washer_load_clean",
-                      "state": "on"
+                      "condition": "or",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "binary_sensor.lg_washer_error",
+                          "state": "on"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "binary_sensor.lg_washer_error",
+                          "state": "unavailable"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "binary_sensor.lg_washer_error",
+                          "state": "unknown"
+                        }
+                      ]
                     }
                   ]
                 },
@@ -12487,21 +12519,15 @@
                       "entity": "sensor.lg_washer_cycle_count"
                     }
                   ]
-                }
-              ],
-              "visibility": [
+                },
                 {
-                  "condition": "or",
-                  "conditions": [
+                  "type": "markdown",
+                  "content": "<ha-alert alert-type=\"success\">Wash completed.  Please unload laundry.</ha-alert>",
+                  "text_only": true,
+                  "visibility": [
                     {
-                      "condition": "state",
-                      "entity": "sensor.lg_washer_status",
-                      "state": "Off"
-                    },
-                    {
-                      "condition": "state",
-                      "entity": "sensor.lg_washer_status",
-                      "state": "Ready"
+                      "entity": "input_boolean.washer_load_clean",
+                      "state": "on"
                     }
                   ]
                 }
@@ -13217,7 +13243,7 @@
               "cards": [
                 {
                   "type": "heading",
-                  "heading": "Configuration",
+                  "heading": "Settings",
                   "heading_style": "title",
                   "icon": "mdi:cog"
                 },
