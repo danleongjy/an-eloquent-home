@@ -54,7 +54,13 @@
         },
         "error": {
           "template": "turn_on",
-          "tap_action": "more-info",
+          "tap_action": {
+            "action": "toast",
+            "toast": {
+              "message": "Device disconnected. Awaiting reconnection...",
+              "duration": 3000
+            }
+          },
           "styles": {
             "card": [
               {
@@ -657,7 +663,7 @@
           "styles": {
             "icon": [
               {
-                "color": "[[[\n  if (states['sensor.lg_washer_status'].state == 'Off') {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-binary-sensor-color)'\n  }\n]]]\n"
+                "color": "[[[\n  if (['Off', 'unavailable'].includes(states['sensor.lg_washer_status'].state)) {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-binary-sensor-color)'\n  }\n]]]\n"
               }
             ],
             "label": [
@@ -1695,7 +1701,7 @@
                 "entity": "vacuum.valetudo_hestia",
                 "template": "error",
                 "icon": "mdi:robot-vacuum",
-                "tap_action": {
+                "hold_action": {
                   "action": "navigate",
                   "navigation_path": "/lovelace/vacuum"
                 }
@@ -1843,7 +1849,15 @@
               "unavailable": {
                 "type": "custom:button-card",
                 "entity": "switch.lg_washer",
-                "template": "error"
+                "template": "washer_more_info",
+                "label": "",
+                "tap_action": {
+                  "action": "toast",
+                  "toast": {
+                    "message": "Washer is off. Awaiting reconnection...",
+                    "duration": 3000
+                  }
+                }
               },
               "Off": {
                 "type": "custom:button-card",
