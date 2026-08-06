@@ -663,7 +663,7 @@
           "styles": {
             "icon": [
               {
-                "color": "[[[\n  if (['Off', 'unavailable'].includes(states['sensor.lg_washer_status'].state)) {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-binary-sensor-color)'\n  }\n]]]\n"
+                "color": "[[[\n  if (['Ready', 'Off', 'unavailable'].includes(states['sensor.lg_washer_status'].state)) {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-binary-sensor-color)'\n  }\n]]]\n"
               }
             ],
             "label": [
@@ -12450,6 +12450,11 @@
                   "condition": "state",
                   "entity": "sensor.lg_washer_status",
                   "state_not": "unknown"
+                },
+                {
+                  "condition": "state",
+                  "entity": "sensor.lg_washer_status",
+                  "state_not": "Ready"
                 }
               ]
             },
@@ -12487,9 +12492,19 @@
               ],
               "visibility": [
                 {
-                  "condition": "state",
-                  "entity": "sensor.lg_washer_status",
-                  "state": "Off"
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.lg_washer_status",
+                      "state": "Off"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.lg_washer_status",
+                      "state": "Ready"
+                    }
+                  ]
                 }
               ]
             },
