@@ -345,11 +345,15 @@
     id: cleaning_completed
   - platform: state
     entity_id: button.vacuum_reset_dock_cleanliness
+    for: 60
     id: reset
   sensor:
     - name: Vacuum Dock Cleaning
       unique_id: sensor.vacuum_dock_cleaning
-      state: "{{ max(this.state | int(0) - states('sensor.valetudo_hestia_current_statistics_time') | int(0), 0) if trigger.id == 'cleaning_completed' else 1800 }}"
+      state: >-
+        {{ max(this.state | int(0) - states('sensor.valetudo_hestia_current_statistics_time') | int(0), 0) if trigger.id == 'cleaning_completed'
+           else 1800 if trigger.id == 'reset'
+        }}
       unit_of_measurement: min
       attributes:
         timestamp: "{{ now() }}"
