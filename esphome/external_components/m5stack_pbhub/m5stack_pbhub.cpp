@@ -124,10 +124,13 @@ void PBHUBGPIOPin::setup() { pin_mode(flags_); }
 void PBHUBGPIOPin::pin_mode(gpio::Flags flags) { this->parent_->pin_mode(this->pin_, flags); }
 bool PBHUBGPIOPin::digital_read() { return this->parent_->digital_read(this->pin_) != this->inverted_; }
 void PBHUBGPIOPin::digital_write(bool value) { this->parent_->digital_write(this->pin_, value != this->inverted_); }
-std::string PBHUBGPIOPin::dump_summary() const {
-  char buffer[32];
-  snprintf(buffer, sizeof(buffer), "%u via M5Stack PBHUB", pin_);
-  return buffer;
+// std::string PBHUBGPIOPin::dump_summary() const {
+//  char buffer[32];
+//  snprintf(buffer, sizeof(buffer), "%u via M5Stack PBHUB", pin_);
+//  return buffer;
+//}
+size_t PBHUBGPIOPin::dump_summary(char *buffer, size_t len) const {
+    return snprintf(buffer, len, "%u via M5Stack PBHUB", this->pin_);
 }
 
 }  // namespace m5stack_pbhub
