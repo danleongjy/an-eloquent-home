@@ -336,9 +336,8 @@
   alias: Notify When AC On With Doors Open
   description: Send a persistent notification when AC is on with doors open, and clear
     notification when no AC is on with doors open
-  trigger:
-  - platform: state
-    entity_id: binary_sensor.ac_on_with_doors_open
+  triggers:
+  - entity_id: binary_sensor.ac_on_with_doors_open
     id: notify
     from: 'off'
     to: 'on'
@@ -346,40 +345,41 @@
       hours: 0
       minutes: 1
       seconds: 0
-  - platform: state
-    entity_id: binary_sensor.ac_on_with_doors_open
+    trigger: state
+  - entity_id: binary_sensor.ac_on_with_doors_open
     id: clear
     from: 'on'
     to: 'off'
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: trigger
       id: notify
     then:
-    - service: notify.mobile_app_aurora
-      data:
+    - data:
         message: AC on with doors and windows open
         title: Please close the doors and windows
         data:
           tag: doors_open
-    - service: notify.mobile_app_grace
-      data:
+      action: notify.mobile_app_aurora
+    - data:
         message: AC on with doors and windows open
         title: Please close the doors and windows
         data:
           tag: doors_open
+      action: notify.mobile_app_grace_iphone_14
     else:
-    - service: notify.mobile_app_aurora
-      data:
+    - data:
         message: clear_notification
         data:
           tag: doors_open
-    - service: notify.mobile_app_grace
-      data:
+      action: notify.mobile_app_aurora
+    - data:
         message: clear_notification
         data:
           tag: doors_open
+      action: notify.mobile_app_grace_iphone_14
   mode: single
 - id: '1643979577174'
   alias: Notify When Wash Completed

@@ -334,15 +334,10 @@
       device_class: timestamp
 
 - trigger:
-  - platform: state
-    entity_id: vacuum.valetudo_hestia
-    from:
-      - cleaning
-      - returning
-    to: docked
-    for:
-      minutes: 5
-    id: cleaning_completed
+  - platform: numeric_state
+    entity_id: vacuum.valetudo_hestia_current_statistics_time
+    below: 1
+    id: cleaning_started
   - platform: state
     entity_id: button.vacuum_reset_dock_cleanliness
     for: 60
@@ -351,7 +346,7 @@
     - name: Vacuum Dock Cleaning
       unique_id: sensor.vacuum_dock_cleaning
       state: >-
-        {{ max(this.state | int(0) - states('sensor.valetudo_hestia_current_statistics_time') | int(0), 0) if trigger.id == 'cleaning_completed'
+        {{ max(this.state | int(0) - trigger.from_state.state | int(0), 0) if trigger.id == 'cleaning_started'
            else 1800 if trigger.id == 'reset'
         }}
       unit_of_measurement: min
