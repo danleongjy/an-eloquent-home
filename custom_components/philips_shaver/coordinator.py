@@ -43,6 +43,7 @@ from .const import (
     CHAR_DAYS_SINCE_LAST_USED,
     CHAR_DEVICE_STATE,
     CHAR_FIRMWARE_REVISION,
+    CHAR_HARDWARE_REVISION,
     CHAR_SOFTWARE_REVISION,
     CHAR_HEAD_REMAINING,
     CHAR_HEAD_REMAINING_MINUTES,
@@ -126,6 +127,24 @@ UNPERSISTED_KEYS = {
 
 # RGB tuples — JSON round-trips them as lists, so restore converts back.
 _COLOR_KEYS = ("color_low", "color_ok", "color_high", "color_motion")
+
+
+def _has_reported_value(value: str | None) -> bool:
+    """True when a Device Information string carries actual content.
+
+    Shavers answer characteristics they don't populate in several ways:
+    an empty string, a run of ASCII zeros, or a block of NUL bytes that
+    arrives as "\\x00\\x00…" once decoded. All of them mean "not
+    reported" rather than a value worth putting on the device page —
+    written through, they leave a row with a blank value that reads as
+    broken data.
+    """
+    if not value:
+        return False
+    # Drop anything unprintable (NUL padding, stray control bytes) before
+    # deciding; a field made only of those carries nothing.
+    cleaned = "".join(c for c in value if c.isprintable()).strip()
+    return bool(cleaned) and any(c not in "0:" for c in cleaned)
 
 
 def _storage_key(entry_id: str) -> str:
@@ -530,6 +549,9 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         if raw := results.get(CHAR_SERIAL_NUMBER):
             new_data["serial_number"] = raw.decode("utf-8", "ignore").strip()
 
+        if raw := results.get(CHAR_HARDWARE_REVISION):
+            new_data["hardware_revision"] = raw.decode("utf-8", "ignore").strip()
+
         # === Philips-specific Characteristics ===
         if raw := results.get(CHAR_HEAD_REMAINING):
             new_data["head_remaining"] = raw[0]
@@ -690,21 +712,39 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         return new_data
 
     def _update_device_registry(self, data: dict[str, Any]) -> None:
-        """Update device registry when model or firmware changed."""
+        """Update device registry when model, firmware, serial or hardware changed."""
         model = data.get("model_number")
-        if not model:
-            return
         firmware = data.get("firmware")
+        serial = data.get("serial_number")
+        hardware = data.get("hardware_revision")
+        if not model and not firmware and not serial and not hardware:
+            return
         dev_reg = dr.async_get(self.hass)
         device = dev_reg.async_get_device(
             identifiers={(DOMAIN, self.address)}
         )
-        if device and (device.model != model or device.sw_version != firmware):
-            dev_reg.async_update_device(
-                device.id,
-                model=model,
-                sw_version=firmware,
-            )
+        if device is None:
+            return
+
+        updates: dict[str, str] = {}
+        # Only ever fill a field we actually read — a partial read must not
+        # wipe what an earlier one established.
+        if model and device.model != model:
+            updates["model"] = model
+        if firmware and device.sw_version != firmware:
+            updates["sw_version"] = firmware
+        if _has_reported_value(serial):
+            if device.serial_number != serial:
+                updates["serial_number"] = serial
+        elif device.serial_number and not _has_reported_value(device.serial_number):
+            # An earlier version wrote a padding-only answer through; clear
+            # it so the page stops showing a row with a blank value.
+            updates["serial_number"] = None
+        if _has_reported_value(hardware) and device.hw_version != hardware:
+            updates["hw_version"] = hardware
+
+        if updates:
+            dev_reg.async_update_device(device.id, **updates)
 
     async def _start_live_monitoring(self) -> None:
         """Persistent live connection with notifications.

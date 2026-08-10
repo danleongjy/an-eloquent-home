@@ -3328,7 +3328,7 @@
         then:
         - data:
             time: '{{ ((states(''input_datetime.elis_next_alarm'') | as_datetime)
-              - timedelta(minutes = 10)).time() }}'
+              - timedelta(minutes = 15)).time() }}'
           target:
             entity_id: input_datetime.elis_next_alarm
           action: input_datetime.set_datetime
@@ -4342,15 +4342,15 @@
       seconds: 0
   - trigger: state
     entity_id:
-    - lock.main_door_lock
+    - binary_sensor.main_door
     to:
-    - unlocked
+    - 'on'
     id: door_opened
   - trigger: state
     entity_id:
-    - lock.main_door_lock
+    - binary_sensor.main_door
     to:
-    - locked
+    - 'off'
     id: door_closed
   - trigger: state
     entity_id:
@@ -7457,9 +7457,9 @@
     alias: When the view has been left not on the homepage for 5min
   - trigger: state
     entity_id:
-    - lock.main_door_lock
+    - binary_sensor.main_door
     to:
-    - locked
+    - 'off'
     id: reset_view
   - trigger: state
     entity_id:

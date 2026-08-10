@@ -36,6 +36,7 @@ from .const import (
     CONF_VACUUM_CONFIG_ENTRY_ID,
     CONF_VACUUM_CONNECTION_STRING,
     CONF_VACUUM_IDENTIFIERS,
+    DISABLE_MAP_ELEMENTS,
     DOMAIN,
     LOGGER,
 )
@@ -46,7 +47,6 @@ from .utils.camera.camera_services import (
     camera_update_floor_data,
     obstacle_view,
     reload_camera_config,
-    reset_trims,
 )
 from .utils.connection.connector import ValetudoConnector
 from .utils.files_operations import async_get_active_user_language
@@ -163,9 +163,6 @@ async def async_setup_entry(hass: core.HomeAssistant, entry: ConfigEntry) -> boo
             hass, DOMAIN, SERVICE_RELOAD, partial(reload_camera_config, hass=hass)
         )
         hass.services.async_register(
-            DOMAIN, "reset_trims", partial(reset_trims, hass=hass)
-        )
-        hass.services.async_register(
             DOMAIN, "obstacle_view", partial(obstacle_view, hass=hass)
         )
         hass.services.async_register(
@@ -227,7 +224,6 @@ async def async_unload_entry(
 
         # Remove services
         if not hass.data[DOMAIN]:
-            hass.services.async_remove(DOMAIN, "reset_trims")
             hass.services.async_remove(DOMAIN, "obstacle_view")
             hass.services.async_remove(DOMAIN, "camera_select_floor")
             hass.services.async_remove(DOMAIN, "camera_update_floor_data")
@@ -295,32 +291,7 @@ async def async_migrate_entry(hass, config_entry: config_entries.ConfigEntry):
         old_options = {**config_entry.options}
         if len(old_options) != 0:
             tmp_option: dict[str, Any] = {  # type: ignore[no-redef]
-                "disable_floor": False,  # Show floor
-                "disable_wall": False,  # Show walls
-                "disable_robot": False,  # Show robot
-                "disable_charger": False,  # Show charger
-                "disable_virtual_walls": False,  # Show virtual walls
-                "disable_restricted_areas": False,  # Show restricted areas
-                "disable_no_mop_areas": False,  # Show no-mop areas
-                "disable_obstacles": False,  # Hide obstacles
-                "disable_path": False,  # Hide path
-                "disable_predicted_path": False,  # Show predicted path
-                "disable_go_to_target": False,  # Show go-to target
-                "disable_room_1": False,
-                "disable_room_2": False,
-                "disable_room_3": False,
-                "disable_room_4": False,
-                "disable_room_5": False,
-                "disable_room_6": False,
-                "disable_room_7": False,
-                "disable_room_8": False,
-                "disable_room_9": False,
-                "disable_room_10": False,
-                "disable_room_11": False,
-                "disable_room_12": False,
-                "disable_room_13": False,
-                "disable_room_14": False,
-                "disable_room_15": False,
+                **DISABLE_MAP_ELEMENTS,
             }
             new_options = await update_options(old_options, tmp_option)
             del tmp_option  # Clear for mypy
