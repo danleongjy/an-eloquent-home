@@ -385,41 +385,41 @@
   alias: Notify When Wash Completed
   description: Send a persistent notification when washer is finished, and clear notification
     when washer is unloaded
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - input_boolean.washer_load_clean
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: state
       entity_id: input_boolean.washer_load_clean
       state: 'on'
     then:
-    - service: notify.mobile_app_aurora
-      data:
+    - data:
         title: Please unload laundry
         message: Wash completed at {{ (now() | string)[11:16] }}
         data:
           tag: washer_load_clean
           clickAction: /lovelace/washer
-    - service: notify.mobile_app_grace
-      data:
+      action: notify.mobile_app_aurora
+    - data:
         title: Please unload laundry
         message: Wash completed at {{ (now() | string)[11:16] }}
         data:
           tag: washer_load_clean
+      action: notify.mobile_app_grace_iphone_14
     else:
-    - service: notify.mobile_app_aurora
-      data:
+    - data:
         message: clear_notification
         data:
           tag: washer_load_clean
-    - service: notify.mobile_app_grace
-      data:
+      action: notify.mobile_app_aurora
+    - data:
         message: clear_notification
         data:
           tag: washer_load_clean
+      action: notify.mobile_app_grace_iphone_14
   mode: single
 - id: '1648784734226'
   alias: Notify When Dishwasher Cooldown Completed
@@ -2233,7 +2233,7 @@
         ''calendar.eli_no_school'': ''Eli has no school'', ''calendar.public_holidays'':
         ''Public holiday''} %} {{ preamble[trigger.id] }} due to {{ state_attr(trigger.id,''message'')
         }}.'
-    action: notify.mobile_app_grace
+    action: notify.mobile_app_grace_iphone_14
   - data:
       title: "{% set start_date = (state_attr(trigger.id,'start_time').split()[0]
         | as_datetime).date() %} {% set end_date = (state_attr(trigger.id,'end_time').split()[0]
@@ -2911,25 +2911,25 @@
           'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker',
           'on') %}\n  Rice cooker is on.\n{% else %}\n  Stove is on.\n{% endif %}"
       action: notify.mobile_app_aurora
-    - data:
+    - action: notify.mobile_app_grace_iphone_14
+      data:
         title: Turn off kitchen appliances?
         data:
           tag: appliances_on
         message: "{% if is_state('binary_sensor.rice_cooker', 'on')  and is_state('switch.stove_main_power',
           'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker',
           'on') %}\n  Rice cooker is on.\n{% else %}\n  Stove is on.\n{% endif %}"
-      action: notify.mobile_app_grace
     else:
     - data:
         message: clear_notification
         data:
           tag: appliances_on
       action: notify.mobile_app_aurora
-    - data:
+    - action: notify.mobile_app_grace_iphone_14
+      data:
         message: clear_notification
         data:
           tag: appliances_on
-      action: notify.mobile_app_grace
   mode: single
   max_exceeded: silent
 - id: '1659256881015'
