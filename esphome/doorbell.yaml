@@ -60,6 +60,12 @@ binary_sensor:
       inverted: True
       mode:
         input: true
+    on_press:
+      - then:
+          - light.turn_on:
+              id: hex_light
+              brightness: 50%
+              effect: Wait
   - platform: gpio
     name: Motion
     id: motion
@@ -71,6 +77,26 @@ binary_sensor:
         output: true
     filters:
       - delayed_off: 30s
+    on_press:
+      - then:
+          - if:
+              condition:
+                - binary_sensor.is_off: main_door
+                - light.is_off: hex_light
+              then:
+                - light.turn_on:
+                    id: hex_light
+                    effect: Right Arrow
+                    brightness: 50%
+    on_release:
+      - then:
+          - delay:
+              seconds: '60'
+          - if:
+              condition:
+                binary_sensor.is_off: motion
+              then:
+                - light.turn_off: hex_light
   - platform: gpio
     name: Main Door
     id: main_door
@@ -79,7 +105,15 @@ binary_sensor:
       number: 11
       mode:
         input: true
-
+    on_press:
+      - then:
+          - light.turn_on:
+              id: hex_light
+              brightness: 50%
+              effect: Heart
+    on_release:
+      - then:
+          - light.turn_off: hex_light
 light:
   - platform: neopixelbus
     id: hex_light
