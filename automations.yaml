@@ -425,41 +425,41 @@
   alias: Notify When Dishwasher Cooldown Completed
   description: Send a persistent notification when dishwasher load is clean, and clear
     notification when dishwasher is unloaded
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - input_boolean.dishwasher_load_clean
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: state
       entity_id: input_boolean.dishwasher_load_clean
       state: 'on'
     then:
-    - service: notify.mobile_app_aurora
-      data:
+    - data:
         message: Dishwasher cooled down at {{ (now().time()| string)[:5] }}.
         title: Please open dishwasher
         data:
           tag: dishwasher_load_clean
           clickAction: /lovelace/dishwasher
-    - service: notify.mobile_app_grace
-      data:
+      action: notify.mobile_app_aurora
+    - data:
         title: Please open dishwasher
         message: Dishwasher cooled down at {{ (now().time()| string)[:5] }}.
         data:
           tag: dishwasher_load_clean
+      action: notify.mobile_app_grace_iphone_14
     else:
-    - service: notify.mobile_app_aurora
-      data:
+    - data:
         message: clear_notification
         data:
           tag: dishwasher_load_clean
-    - service: notify.mobile_app_grace
-      data:
+      action: notify.mobile_app_aurora
+    - data:
         message: clear_notification
         data:
           tag: dishwasher_load_clean
+      action: notify.mobile_app_grace_iphone_14
   mode: single
 - id: '1648798677481'
   alias: Coming Home
@@ -1274,7 +1274,6 @@
           - automation.study_room_motion_ac
           - automation.study_room_motion_fan
           - automation.study_room_motion_lights
-          - automation.doorbell
           - automation.study_room_voice_assistant_listening_for_wake_word
           - automation.kitchen_voice_assistant_listening_for_wake_word
           - automation.elenas_room_curtains_auto_control
@@ -1400,7 +1399,6 @@
           - automation.study_room_motion_ac
           - automation.study_room_motion_fan
           - automation.study_room_motion_lights
-          - automation.doorbell
           - automation.study_room_voice_assistant_listening_for_wake_word
           - automation.kitchen_voice_assistant_listening_for_wake_word
           - automation.elenas_room_curtains_auto_control
@@ -4309,8 +4307,8 @@
         entity_id: switch.study_room_voice_assistant_use_wake_word
   mode: single
 - id: '1724106276332'
-  alias: Main Door Camera
-  description: Take a snapshot and animate camera hex light
+  alias: Doorbell
+  description: Take a snapshot, animate camera hex light and ring doorbell
   triggers:
   - entity_id:
     - binary_sensor.doorbell_motion
@@ -4437,6 +4435,94 @@
           brightness_pct: 50
         target:
           entity_id: light.doorbell_hex_light
+      - condition: not
+        conditions:
+        - condition: select.is_option_selected
+          target:
+            entity_id: input_select.home_mode
+          options:
+            behavior: any
+            for: 00:00:00
+            option:
+            - Away Mode
+      - variables:
+          rooms:
+            elis_room:
+              door: binary_sensor.elis_room_door
+              button: button.elis_room_core_ring_doorbell
+            elenas_room:
+              door: binary_sensor.elenas_room_door
+              button: button.elenas_room_core_ring_doorbell
+            parents_room:
+              door: binary_sensor.parents_room_doors
+              button: button.parents_room_core_ring_doorbell
+          doorbell_track: "{{ [\"Eli's Doorbell.wav\",\n    'JR DDG Final Osaka Loop.mp3',
+            \n    'JR DDG nDS e231 Door Chime.mp3',\n    'JR Station Notification
+            2.mp3',\n    'JR Sunny Spot V1.mp3',\n    'JR Cosmos V1.mp3',\n    'JR
+            Susuki Heights V2.mp3'] | random }}\n"
+      - parallel:
+        - sequence:
+          - delay: 1
+          - data:
+              media:
+                media_content_id: media-source://media_source/local/doorbells/{{ doorbell_track
+                  }}
+                media_content_type: music
+                announce: true
+              announce: true
+            action: media_player.play_media
+            target:
+              entity_id: media_player.google_speakers
+        - sequence:
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - metadata: {}
+            data:
+              message: Doorbell rung at {{ now().strftime('%H:%M') }}.
+              title: Please Check the Door
+              data:
+                image: /media/local/main_door_camera/{{ states('input_text.newest_main_door_camera_snapshot_filename')
+                  }}
+                clickAction: /lovelace/main-door
+            action: notify.mobile_app_aurora
+        - sequence:
+          - repeat:
+              for_each:
+              - elis_room
+              - elenas_room
+              - parents_room
+              sequence:
+                if:
+                - condition: template
+                  value_template: '{{ is_state(rooms[repeat.item][''door''], ''on'')
+                    }}'
+                then:
+                - target:
+                    entity_id: '{{ rooms[repeat.item][''button''] }}'
+                  action: button.press
+          - data: {}
+            action: button.press
+            target:
+              entity_id:
+              - button.kitchen_core_ring_doorbell
+        - sequence:
+          - condition: state
+            entity_id: binary_sensor.study_room_ethernet_connection
+            state: 'off'
+          - delay: 1
+          - target:
+              entity_id: media_player.study_room_speaker
+            data:
+              announce: true
+              media:
+                media_content_id: media-source://media_source/local/doorbells/{{ doorbell_track
+                  }}
+                media_content_type: music
+                metadata: {}
+            action: media_player.play_media
     - conditions:
       - condition: trigger
         id:
@@ -5970,96 +6056,6 @@
         data: {}
         target:
           entity_id: cover.master_bathroom_blind
-- id: '1739698582718'
-  alias: Doorbell
-  description: Play doorbell tones, flash Room Core lights and show Camera view on
-    Main Door Display when Main Door Camera Button is pressed
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.doorbell_button
-    from: 'off'
-    to: 'on'
-  conditions: []
-  actions:
-  - variables:
-      rooms:
-        elis_room:
-          door: binary_sensor.elis_room_door
-          button: button.elis_room_core_ring_doorbell
-        elenas_room:
-          door: binary_sensor.elenas_room_door
-          button: button.elenas_room_core_ring_doorbell
-        parents_room:
-          door: binary_sensor.parents_room_doors
-          button: button.parents_room_core_ring_doorbell
-      doorbell_track: "{{ [\"Eli's Doorbell.wav\",\n    'JR DDG Final Osaka Loop.mp3',
-        \n    'JR DDG nDS e231 Door Chime.mp3',\n    'JR Station Notification 2.mp3',\n
-        \   'JR Sunny Spot V1.mp3',\n    'JR Cosmos V1.mp3',\n    'JR Susuki Heights
-        V2.mp3'] | random }}\n"
-  - parallel:
-    - sequence:
-      - delay: 1
-      - data:
-          media:
-            media_content_id: media-source://media_source/local/doorbells/{{ doorbell_track
-              }}
-            media_content_type: music
-            announce: true
-          announce: true
-        action: media_player.play_media
-        target:
-          entity_id: media_player.google_speakers
-    - sequence:
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 2
-          milliseconds: 0
-      - metadata: {}
-        data:
-          message: Doorbell rung at {{ now().strftime('%H:%M') }}.
-          title: Please Check the Door
-          data:
-            image: /media/local/main_door_camera/{{ states('input_text.newest_main_door_camera_snapshot_filename')
-              }}
-            clickAction: /lovelace/main-door
-        action: notify.mobile_app_aurora
-    - sequence:
-      - repeat:
-          for_each:
-          - elis_room
-          - elenas_room
-          - parents_room
-          sequence:
-            if:
-            - condition: template
-              value_template: '{{ is_state(rooms[repeat.item][''door''], ''on'') }}'
-            then:
-            - target:
-                entity_id: '{{ rooms[repeat.item][''button''] }}'
-              action: button.press
-      - data: {}
-        action: button.press
-        target:
-          entity_id:
-          - button.kitchen_core_ring_doorbell
-    - sequence:
-      - condition: state
-        entity_id: binary_sensor.study_room_ethernet_connection
-        state: 'off'
-      - delay: 1
-      - target:
-          entity_id: media_player.study_room_speaker
-        data:
-          announce: true
-          media:
-            media_content_id: media-source://media_source/local/doorbells/{{ doorbell_track
-              }}
-            media_content_type: music
-            metadata: {}
-        action: media_player.play_media
-  mode: single
 - id: '1742085553481'
   alias: Study Room Controller
   description: Control Study Room Lights, Fan, AC and Blinds

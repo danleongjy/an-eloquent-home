@@ -24,7 +24,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
-[`automation`](https://www.home-assistant.io/components/automation) | 149
+[`automation`](https://www.home-assistant.io/components/automation) | 148
 [`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 190
 [`button`](https://www.home-assistant.io/components/button) | 193
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
@@ -53,7 +53,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 3
 [`script`](https://www.home-assistant.io/components/script) | 15
 [`select`](https://www.home-assistant.io/components/select) | 69
-[`sensor`](https://www.home-assistant.io/components/sensor) | 748
+[`sensor`](https://www.home-assistant.io/components/sensor) | 749
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 73
