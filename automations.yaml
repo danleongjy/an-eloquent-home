@@ -494,40 +494,40 @@
   alias: Notify When Raining With Windows Open
   description: Send a persistent notification if it is raining heavily with windows
     open, and dismiss it if the windows are closed or it is not raining heavily anymore
-  trigger:
-  - platform: state
-    entity_id: sensor.raining_with_windows_open
+  triggers:
+  - entity_id: sensor.raining_with_windows_open
     to:
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: state
       entity_id: sensor.raining_with_windows_open
       state: alert
     then:
-    - service: notify.mobile_app_aurora
-      data:
+    - data:
         title: Please close windows
         message: Windows open in heavy rain
         data:
           tag: windows_open_raining
-    - service: notify.mobile_app_grace
-      data:
+      action: notify.mobile_app_aurora
+    - data:
         message: Windows open in heavy rain
         title: Please close windows
         data:
           tag: windows_open_raining
+      action: notify.mobile_app_grace_iphone_14
     else:
-    - service: notify.mobile_app_aurora
-      data:
+    - data:
         message: clear_notification
         data:
           tag: windows_open_raining
-    - service: notify.mobile_app_grace
-      data:
+      action: notify.mobile_app_aurora
+    - data:
         message: clear_notification
         data:
           tag: windows_open_raining
+      action: notify.mobile_app_grace_iphone_14
   mode: single
   max_exceeded: silent
 - id: '1653280933582'
@@ -1616,6 +1616,9 @@
     - added
     notification_id: config_entry_discovery
     id: device_discovered
+  - event: start
+    trigger: homeassistant
+    id: startup
   conditions: []
   actions:
   - choose:
@@ -1735,6 +1738,29 @@
         metadata: {}
         data:
           notification_id: config_entry_discovery
+    - conditions:
+      - condition: trigger
+        id:
+        - startup
+      sequence:
+      - delay: 10
+      - data: {}
+        action: shell_command.sshsetup
+      - data:
+          entity_id: camera.recent_main_door_snapshot_1
+          file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list')
+            |   sort)[-1][7:] }}
+        action: local_file.update_file_path
+      - data:
+          entity_id: camera.recent_main_door_snapshot_2
+          file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list')
+            |   sort)[-2][7:] }}
+        action: local_file.update_file_path
+      - data:
+          entity_id: camera.recent_main_door_snapshot_3
+          file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list')
+            |   sort)[-3][7:] }}
+        action: local_file.update_file_path
   mode: single
 - id: '1672302011128'
   alias: South-Facing Blinds Auto Control
@@ -3897,33 +3923,6 @@
     target:
       entity_id: input_boolean.elenas_room_next_alarm_armed
     data: {}
-  mode: single
-- id: '1704932786787'
-  alias: System Startup
-  description: Run setup actions 5min after startup
-  trigger:
-  - platform: homeassistant
-    event: start
-  condition: []
-  action:
-  - delay: 10
-  - data: {}
-    action: shell_command.sshsetup
-  - data:
-      entity_id: camera.recent_main_door_snapshot_1
-      file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list') |   sort)[-1][7:]
-        }}
-    action: local_file.update_file_path
-  - data:
-      entity_id: camera.recent_main_door_snapshot_2
-      file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list') |   sort)[-2][7:]
-        }}
-    action: local_file.update_file_path
-  - data:
-      entity_id: camera.recent_main_door_snapshot_3
-      file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list') |   sort)[-3][7:]
-        }}
-    action: local_file.update_file_path
   mode: single
 - id: '1705228748219'
   alias: Notify 15min Before Wind Down
@@ -7061,258 +7060,324 @@
       entity_id: lock.main_door_lock
     data: {}
   mode: single
-- id: '1743848999796'
-  alias: Voice Control for Vacuum
-  description: Control the vacuum or request for vacuum status with voice commands
+- id: '1743851351763'
+  alias: Voice Control for Appliances
+  description: Control or request for status of the Stove, Dishwasher, Washer or Vacuum
+    with voice commands
   triggers:
   - trigger: conversation
+    command:
+    - '{cooking_preset} on [the] {side} (cooker | stove | burner)'
+    id: Stove_CookingPreset
+  - trigger: conversation
+    command:
+    - Set [the] {side} (cooker | stove | burner) to [level] {power}
+    id: Stove_SetCookerPower
+  - trigger: conversation
+    command:
+    - Set [the] {side} (cooker | stove | burner) timer to {time} minute[s]
+    id: Stove_SetCookerTimer
+  - trigger: conversation
+    command:
+    - Turn off [the] {side} (cooker | stove | burner)
+    id: Stove_TurnOffCooker
+  - trigger: conversation
+    command:
+    - Is the {side} (cooker | stove | burner) (on | off)
+    - (What is | What's) the (status | condition) of the {side} (cooker | stove |
+      burner)
+    id: Stove_CookerStatus
+  - trigger: conversation
+    command:
+    - What is the (washer | washing machine) doing
+    - What is the status of the (washer | washing machine)
+    - Is the (washer | washing machine) (running | spinning | rinsing | washing |
+      off)
+    id: Washer
+  - trigger: conversation
+    command:
+    - What is the dishwasher doing
+    - What is the status of the dishwasher
+    - Is the dishwasher (running | washing | cooling | off)
+    id: Dishwasher
+  - trigger: conversation
     command: '{command} [the] (vacuum | vacuuming)'
-    id: execute_command
+    id: Vacuum_ExecuteCommand
   - trigger: conversation
     command:
     - (what is | whats) the vacuum doing
     - is the vacuum (on | off | running | vacuuming | cleaning | active | paused |
       stopped | returning | docked)
     - (what is | whats) the status of the vacuum
-    id: get_status
-  conditions: []
-  actions:
-  - if:
-    - condition: trigger
-      id:
-      - execute_command
-    then:
-    - variables:
-        commands:
-          Turn on: start
-          Run: start
-          Activate: start
-          Initiate: start
-          Start: start
-          Pause: pause
-          Stop: stop
-          Turn off: stop
-          Deactivate: stop
-          Terminate: stop
-          Dock: return_to_base
-          Return: return_to_base
-    - target:
-        entity_id: vacuum.valetudo_hestia
-      action: vacuum.{{ commands[trigger.slots.command] }}
-    - set_conversation_response: "{% if commands[trigger.slots.command] == 'start'
-        %}\n  {{ ['Starting','Running','Initiating','Activating'] | random }} the
-        vacuum.\n{% elif commands[trigger.slots.command] == 'pause' %}\n  Vacuum paused.\n{%
-        elif commands[trigger.slots.command] == 'stop' %}\n  {{ ['Stopping','Deactivating']
-        | random }} the vacuum.\n{% else %}\n  Returning vacuum to dock.\n{% endif
-        %}"
-    else:
-    - set_conversation_response: "{% set clean_time = namespace(hours = (states('sensor.valetudo_hestia_current_statistics_time')
-        | float(0) // 60),\n                              minutes = (states('sensor.valetudo_hestia_current_statistics_time')
-        | float(0) % 60)) %}\n{% set remaining = namespace(area = (states('sensor.valetudo_hestia_current_statistics_area')
-        | float(0) / states('sensor.vacuum_current_run_cleaning_progress') | float(1)
-        | round(0)), \n                             hours = (states('sensor.valetudo_hestia_current_statistics_time')
-        | float(0) / states('sensor.vacuum_current_run_cleaning_progress') | float(1)
-        * (100 - states('sensor.vacuum_current_run_cleaning_progress') | float(1))
-        // 60), \n                             minutes = (states('sensor.valetudo_hestia_current_statistics_time')
-        | float(0) / states('sensor.vacuum_current_run_cleaning_progress') | float(1)
-        * (100 - states('sensor.vacuum_current_run_cleaning_progress') | float(1))
-        % 60)) %}\nThe vacuum is {{ 'in trouble' if not is_state('sensor.valetudo_hestia_error',
-        'No error') else state_translated('vacuum.valetudo_hestia').lower() if states('vacuum.valetudo_hestia')
-        != 'docked' else 'docked' }} in {{ 'the ' if states('sensor.valetudo_hestia_estimated_segment')
-        not in [\"Elena's Room\", \"Eli's Room\"] }}{{ states('sensor.valetudo_hestia_estimated_segment')
-        }}. \nIts {{ 'current' if states('vacuum.valetudo_hestia') in ['cleaning',
-        'returning', 'paused'] or is_state('sensor.valetudo_hestia_dock_status', 'cleaning')
-        else 'last' }} run started {{ time_since(as_datetime(states('sensor.vacuum_last_run_started')))
-        }} ago.\n{% if states('sensor.valetudo_hestia_current_statistics_area') |
-        int(0) > 0 %}\n  It cleaned {{ states('sensor.valetudo_hestia_current_statistics_area')
-        | int(0) }} square meters over {{ clean_time.hours | int(0) if clean_time.hours
-        > 0 }} {{ 'hour' if clean_time.hours > 0 }}{{ 's' if clean_time.hours > 1
-        }}{{ ' and ' if clean_time.hours > 0 and clean_time.minutes > 0 }}{{ clean_time.minutes
-        | int(0) if clean_time.minutes > 0 }}{{ ' minute' if clean_time.minutes >
-        0}}{{ 's' if clean_time.minutes > 1 }}.\n{% endif %}\n{% if states('sensor.vacuum_current_run_cleaning_progress')
-        | int(0) > 0 %}\n  It will finish cleaning the remaining {{ 100 - states('sensor.vacuum_current_run_cleaning_progress')
-        | int(0) }}% of the run in{{ remaining.hours | int(0) if remaining.hours >
-        0 }} {{ 'hour' if remaining.hours > 0 }}{{ 's' if remaining.hours > 1 }}{{
-        ' and ' if remaining.hours > 0 and remaining.minutes > 0 }}{{ remaining.minutes
-        | int(0) if remaining.minutes > 0 }}{{ ' minute' if remaining.minutes > 0}}{{
-        's' if remaining.minutes > 1 }} at {{ (now() + timedelta(hours = remaining.hours,
-        minutes = remaining.minutes)).strftime('%I:%M%p') }}.\n{% endif %}\n{% if
-        is_state('sensor.valetudo_hestia_dock_status', 'drying') %}\n  Its mops will
-        finish drying at {{ as_local(as_datetime(states('sensor.vacuum_mop_drying_started'))
-        + timedelta(hours = 3)).strftime('%I:%M%p') }}.\n{% endif %}\n"
-  mode: single
-- id: '1743851351763'
-  alias: Voice Control for Stove
-  description: Control the stove or request for stove status with voice commands
-  triggers:
-  - trigger: conversation
-    command:
-    - '{cooking_preset} on [the] {side} (cooker | stove | burner)'
-    id: CookingPreset
-  - trigger: conversation
-    command:
-    - Set [the] {side} (cooker | stove | burner) to [level] {power}
-    id: SetCookerPower
-  - trigger: conversation
-    command:
-    - Set [the] {side} (cooker | stove | burner) timer to {time} minute[s]
-    id: SetCookerTimer
-  - trigger: conversation
-    command:
-    - Turn off [the] {side} (cooker | stove | burner)
-    id: TurnOffCooker
-  - trigger: conversation
-    command:
-    - Is the {side} (cooker | stove | burner) (on | off)
-    - (What is | What's) the (status | condition) of the {side} (cooker | stove |
-      burner)
-    id: CookerStatus
+    id: Vacuum_GetStatus
   conditions: []
   actions:
   - choose:
     - conditions:
-      - condition: trigger
-        id:
-        - CookingPreset
-      - condition: state
-        entity_id: switch.stove_main_power
-        state: 'on'
+      - condition: template
+        value_template: '{{ trigger.id.split(''_'')[0] == ''Stove'' }}'
+        alias: If it is one of the Stove triggers
       sequence:
-      - set_conversation_response: '{{ trigger.slots.side | capitalize }} cooker set
-          to {{ trigger.slots.cooking_preset }}.'
-      - variables:
-          presets:
-            boil water:
-              power: 7
-              time: 6
-            cook rice:
-              power: 1
-              time: 16
-            stir fry:
-              power: 4
-              time: 0
-            simmer:
-              power: 3
-              time: 60
-            steam fish:
-              power: 3
-              time: 16
-      - action: select.select_option
-        metadata: {}
-        data:
-          option: '{{ trigger.slots.side }}'
-        target:
-          entity_id: select.stove_current_burner
-      - action: script.stove_settings
-        metadata: {}
-        data:
-          current_burner_power: '{{ presets[trigger.slots.cooking_preset].power }}'
-          current_burner_timer: '{{ presets[trigger.slots.cooking_preset].time }}'
+      - choose:
+        - conditions:
+          - condition: trigger
+            id:
+            - Stove_CookingPreset
+          - condition: state
+            entity_id: switch.stove_main_power
+            state: 'on'
+          sequence:
+          - set_conversation_response: '{{ trigger.slots.side | capitalize }} cooker
+              set to {{ trigger.slots.cooking_preset }}.'
+          - variables:
+              presets:
+                Boil water:
+                  power: 7
+                  time: 6
+                Cook rice:
+                  power: 1
+                  time: 16
+                Stir fry:
+                  power: 4
+                  time: 0
+                Simmer:
+                  power: 3
+                  time: 60
+                Steam fish:
+                  power: 3
+                  time: 16
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: '{{ trigger.slots.side }}'
+            target:
+              entity_id: select.stove_current_burner
+          - action: script.stove_settings
+            metadata: {}
+            data:
+              current_burner_power: '{{ presets[trigger.slots.cooking_preset | capitalize].power
+                }}'
+              current_burner_timer: '{{ presets[trigger.slots.cooking_preset | capitalize].time
+                }}'
+        - conditions:
+          - condition: trigger
+            id:
+            - Stove_SetCookerPower
+          - condition: state
+            entity_id: switch.stove_main_power
+            state: 'on'
+          sequence:
+          - set_conversation_response: '{{ trigger.slots.side | capitalize }} cooker
+              set to level {{ trigger.slots.power }}.'
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: '{{ trigger.slots.side }}'
+            target:
+              entity_id: select.stove_current_burner
+          - if:
+            - condition: template
+              value_template: '{{ trigger.slots.power | length == 1 }}'
+            then:
+            - action: script.stove_settings
+              metadata: {}
+              data:
+                current_burner_power: '{{ trigger.slots.power | int(0) }}'
+            else:
+            - action: script.stove_settings
+              metadata: {}
+              data:
+                current_burner_power: '{{ trigger.slots.power.split('' '')[0] | int(0)
+                  }}'
+                current_burner_timer: '{{ trigger.slots.power.split('' '')[2] | int(0)
+                  }}'
+        - conditions:
+          - condition: trigger
+            id:
+            - Stove_SetCookerTimer
+          - condition: state
+            entity_id: switch.stove_main_power
+            state: 'on'
+          sequence:
+          - set_conversation_response: "{% if trigger.slots.time | int(0) == 0 %}\n
+              \ {{ trigger.slots.side | capitalize }} cooker timer deactivated.\n{%
+              else %}\n  {{ trigger.slots.side | capitalize }} cooker timer set to
+              {{ trigger.slots.time }} {{ 'minutes' if trigger.slots.time | int(0)
+              > 1 else 'minute' }}.\n{% endif %}"
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: '{{ trigger.slots.side }}'
+            target:
+              entity_id: select.stove_current_burner
+          - action: script.stove_settings
+            metadata: {}
+            data:
+              current_burner_timer: '{{ trigger.slots.time | int(0) }}'
+        - conditions:
+          - condition: trigger
+            id:
+            - Stove_TurnOffCooker
+          - condition: state
+            entity_id: switch.stove_main_power
+            state: 'on'
+          sequence:
+          - set_conversation_response: '{{ trigger.slots.side | capitalize }} cooker
+              deactivated.'
+          - action: select.select_option
+            metadata: {}
+            data:
+              option: '{{ trigger.slots.side }}'
+            target:
+              entity_id: select.stove_current_burner
+          - action: script.stove_settings
+            metadata: {}
+            data:
+              current_burner_power: 0
+        - conditions:
+          - condition: trigger
+            id:
+            - Stove_CookerStatus
+          sequence:
+          - if:
+            - condition: state
+              entity_id: switch.stove_main_power
+              state: 'on'
+            then:
+            - action: select.select_option
+              metadata: {}
+              data:
+                option: '{{ trigger.slots.side }}'
+              target:
+                entity_id: select.stove_current_burner
+            - delay: 1
+            - set_conversation_response: "{% set text = namespace(output = '') %}\n{%
+                set text.output = 'The ' + states('select.stove_current_burner') +
+                ' cooker is on level ' + states('select.stove_current_burner_power')
+                %}\n{% if states('number.stove_current_burner_timer') | int(0) ==
+                0 %}\n  {% set text.output = text.output + '.' %}\n{% elif states('number.stove_current_burner_timer')
+                | int(0) == 1 %}\n  {% set text.output = text.output + ' with 1 minute
+                remaining.' %}\n{% else %}\n  {% set text.output = text.output + '
+                with ' + states('number.stove_current_burner_timer') + ' minutes remaining.'
+                %}\n{% endif %}\n{{ text.output }}\n"
+            else:
+            - set_conversation_response: The {{ trigger.slots.side }} cooker is off.
+        default:
+        - set_conversation_response: Unable to comply! Stove must be manually turned
+            on first.
     - conditions:
-      - condition: trigger
-        id:
-        - SetCookerPower
-      - condition: state
-        entity_id: switch.stove_main_power
-        state: 'on'
+      - alias: If it is one of the Washer triggers
+        condition: template
+        value_template: '{{ trigger.id.split(''_'')[0] == ''Washer'' }}'
       sequence:
-      - set_conversation_response: '{{ trigger.slots.side | capitalize }} cooker set
-          to level {{ trigger.slots.power }}.'
-      - action: select.select_option
-        metadata: {}
-        data:
-          option: '{{ trigger.slots.side }}'
-        target:
-          entity_id: select.stove_current_burner
-      - if:
-        - condition: template
-          value_template: '{{ trigger.slots.power | length == 1 }}'
-        then:
-        - action: script.stove_settings
-          metadata: {}
-          data:
-            current_burner_power: '{{ trigger.slots.power | int(0) }}'
-        else:
-        - action: script.stove_settings
-          metadata: {}
-          data:
-            current_burner_power: '{{ trigger.slots.power.split('' '')[0] | int(0)
-              }}'
-            current_burner_timer: '{{ trigger.slots.power.split('' '')[2] | int(0)
-              }}'
-    - conditions:
-      - condition: trigger
-        id:
-        - SetCookerTimer
-      - condition: state
-        entity_id: switch.stove_main_power
-        state: 'on'
-      sequence:
-      - set_conversation_response: "{% if trigger.slots.time | int(0) == 0 %}\n  {{
-          trigger.slots.side | capitalize }} cooker timer deactivated.\n{% else %}\n
-          \ {{ trigger.slots.side | capitalize }} cooker timer set to {{ trigger.slots.time
-          }} {{ 'minutes' if trigger.slots.time | int(0) > 1 else 'minute' }}.\n{%
+      - set_conversation_response: "The washer is {{ state_translated('sensor.lg_washer_status')
+          | lower }}.\n{% if states('sensor.lg_washer_status') in ['Off', 'Ready']
+          %}\n  {% set wash_time = namespace(hours = states('sensor.washer_last_wash_duration').split(':')[0],\n
+          \                              minutes = states('sensor.washer_last_wash_duration').split(':')[1])
+          %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours
+          | int(0) > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
+          + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
+          {{ time_since(as_datetime(states('sensor.washer_last_wash_completed')))
+          }} ago.\n  {{ 'Please unload the laundry.' if is_state('input_boolean.washer_load_clean',
+          'on') }}\n{% else %}\n  {% set countdown = namespace(hours = (states('sensor.lg_washer_remaining_time')
+          | int(0)) // 60,\n                               minutes = (states('sensor.lg_washer_remaining_time')
+          | int(0)) % 60) %}\n  The current run started {{ time_since(as_datetime(states('sensor.washer_last_wash_started')))
+          }} ago.\n  {% if countdown.hours > 0 or countdown.minutes > 0 %}\n  The
+          remaining {{ 100 - states('sensor.washer_wash_progress') | int(0) }}% of
+          the run will complete in {{ countdown.hours if countdown.hours > 0 }}{{
+          ' hours' if countdown.hours > 1 else ' hour' if countdown.hours == 1 }}{{
+          ' and ' if countdown.hours > 0 and countdown.minutes > 0 }}{{ countdown.minutes
+          if countdown.minutes > 0 }}{{ ' minutes' if countdown.minutes > 1 else '
+          minute' if countdown.minutes == 1 }} at {{ (now() + timedelta(hours = countdown.hours,
+          minutes = countdown.minutes)).strftime('%I:%M%p') }}\n  {% endif %}\n{%
           endif %}"
-      - action: select.select_option
-        metadata: {}
-        data:
-          option: '{{ trigger.slots.side }}'
-        target:
-          entity_id: select.stove_current_burner
-      - action: script.stove_settings
-        metadata: {}
-        data:
-          current_burner_timer: '{{ trigger.slots.time | int(0) }}'
     - conditions:
-      - condition: trigger
-        id:
-        - TurnOffCooker
-      - condition: state
-        entity_id: switch.stove_main_power
-        state: 'on'
+      - alias: If it is one of the Stove triggers
+        condition: template
+        value_template: '{{ trigger.id.split(''_'')[0] == ''Dishwasher'' }}'
       sequence:
-      - set_conversation_response: '{{ trigger.slots.side | capitalize }} cooker deactivated.'
-      - action: select.select_option
-        metadata: {}
-        data:
-          option: '{{ trigger.slots.side }}'
-        target:
-          entity_id: select.stove_current_burner
-      - action: script.stove_settings
-        metadata: {}
-        data:
-          current_burner_power: 0
+      - set_conversation_response: "The dishwasher is {{ states('input_select.dishwasher_status')
+          | lower }}.\n{% if states('input_select.dishwasher_status') == 'Off' %}\n
+          \ {% set wash_time = namespace(hours = states('sensor.dishwasher_last_run_duration').split(':')[0],\n
+          \                              minutes = states('sensor.dishwasher_last_run_duration').split(':')[1])
+          %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours
+          | int(0) > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
+          + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
+          {{ time_since(as_datetime(states('sensor.dishwasher_last_run_ended'))) }}
+          ago.\n  {{ 'Please open the dishwasher door.' if is_state('input_boolean.dishwasher_load_clean',
+          'on') }}\n{% else %}\n  The current run started {{ time_since(as_datetime(states('sensor.dishwasher_last_run_started')))
+          }} ago.\n{% endif %}"
+      alias: If it is one of the Dishwasher triggers
     - conditions:
-      - condition: trigger
-        id:
-        - CookerStatus
+      - alias: If it is one of the Vacuum triggers
+        condition: template
+        value_template: '{{ trigger.id.split(''_'')[0] == ''Vacuum'' }}'
       sequence:
       - if:
-        - condition: state
-          entity_id: switch.stove_main_power
-          state: 'on'
+        - condition: trigger
+          id:
+          - Vacuum_ExecuteCommand
         then:
-        - action: select.select_option
-          metadata: {}
-          data:
-            option: '{{ trigger.slots.side }}'
-          target:
-            entity_id: select.stove_current_burner
-        - delay: 1
-        - set_conversation_response: "{% set text = namespace(output = '') %}\n{%
-            set text.output = 'The ' + states('select.stove_current_burner') + ' cooker
-            is on level ' + states('select.stove_current_burner_power') %}\n{% if
-            states('number.stove_current_burner_timer') | int(0) == 0 %}\n  {% set
-            text.output = text.output + '.' %}\n{% elif states('number.stove_current_burner_timer')
-            | int(0) == 1 %}\n  {% set text.output = text.output + ' with 1 minute
-            remaining.' %}\n{% else %}\n  {% set text.output = text.output + ' with
-            ' + states('number.stove_current_burner_timer') + ' minutes remaining.'
-            %}\n{% endif %}\n{{ text.output }}\n"
+        - variables:
+            commands:
+              Turn on: start
+              Run: start
+              Activate: start
+              Initiate: start
+              Start: start
+              Pause: pause
+              Stop: stop
+              Turn off: stop
+              Deactivate: stop
+              Terminate: stop
+              Dock: return_to_base
+              Return: return_to_base
+        - target:
+            entity_id: vacuum.valetudo_hestia
+          action: vacuum.{{ commands[trigger.slots.command] }}
+        - set_conversation_response: "{% if commands[trigger.slots.command] == 'start'
+            %}\n  {{ ['Starting','Running','Initiating','Activating'] | random }}
+            the vacuum.\n{% elif commands[trigger.slots.command] == 'pause' %}\n  Vacuum
+            paused.\n{% elif commands[trigger.slots.command] == 'stop' %}\n  {{ ['Stopping','Deactivating']
+            | random }} the vacuum.\n{% else %}\n  Returning vacuum to dock.\n{% endif
+            %}"
         else:
-        - set_conversation_response: The {{ trigger.slots.side }} cooker is off.
-    default:
-    - set_conversation_response: Unable to comply! Stove must be manually turned on
-        first.
+        - set_conversation_response: "{% set clean_time = namespace(hours = (states('sensor.valetudo_hestia_current_statistics_time')
+            | float(0) // 60),\n                              minutes = (states('sensor.valetudo_hestia_current_statistics_time')
+            | float(0) % 60)) %}\n{% set remaining = namespace(area = (states('sensor.valetudo_hestia_current_statistics_area')
+            | float(0) / states('sensor.vacuum_current_run_cleaning_progress') | float(1)
+            | round(0)), \n                             hours = (states('sensor.valetudo_hestia_current_statistics_time')
+            | float(0) / states('sensor.vacuum_current_run_cleaning_progress') | float(1)
+            * (100 - states('sensor.vacuum_current_run_cleaning_progress') | float(1))
+            // 60), \n                             minutes = (states('sensor.valetudo_hestia_current_statistics_time')
+            | float(0) / states('sensor.vacuum_current_run_cleaning_progress') | float(1)
+            * (100 - states('sensor.vacuum_current_run_cleaning_progress') | float(1))
+            % 60)) %}\nThe vacuum is {{ 'in trouble' if not is_state('sensor.valetudo_hestia_error',
+            'No error') else state_translated('vacuum.valetudo_hestia').lower() if
+            states('vacuum.valetudo_hestia') != 'docked' else 'docked' }} in {{ 'the
+            ' if states('sensor.valetudo_hestia_estimated_segment') not in [\"Elena's
+            Room\", \"Eli's Room\"] }}{{ states('sensor.valetudo_hestia_estimated_segment')
+            }}. \nIts {{ 'current' if states('vacuum.valetudo_hestia') in ['cleaning',
+            'returning', 'paused'] or is_state('sensor.valetudo_hestia_dock_status',
+            'cleaning') else 'last' }} run started {{ time_since(as_datetime(states('sensor.vacuum_last_run_started')))
+            }} ago.\n{% if states('sensor.valetudo_hestia_current_statistics_area')
+            | int(0) > 0 %}\n  It cleaned {{ states('sensor.valetudo_hestia_current_statistics_area')
+            | int(0) }} square meters over {{ clean_time.hours | int(0) if clean_time.hours
+            > 0 }} {{ 'hour' if clean_time.hours > 0 }}{{ 's' if clean_time.hours
+            > 1 }}{{ ' and ' if clean_time.hours > 0 and clean_time.minutes > 0 }}{{
+            clean_time.minutes | int(0) if clean_time.minutes > 0 }}{{ ' minute' if
+            clean_time.minutes > 0}}{{ 's' if clean_time.minutes > 1 }}.\n{% endif
+            %}\n{% if states('sensor.vacuum_current_run_cleaning_progress') | int(0)
+            > 0 %}\n  It will finish cleaning the remaining {{ 100 - states('sensor.vacuum_current_run_cleaning_progress')
+            | int(0) }}% of the run in{{ remaining.hours | int(0) if remaining.hours
+            > 0 }} {{ 'hour' if remaining.hours > 0 }}{{ 's' if remaining.hours >
+            1 }}{{ ' and ' if remaining.hours > 0 and remaining.minutes > 0 }}{{ remaining.minutes
+            | int(0) if remaining.minutes > 0 }}{{ ' minute' if remaining.minutes
+            > 0}}{{ 's' if remaining.minutes > 1 }} at {{ (now() + timedelta(hours
+            = remaining.hours, minutes = remaining.minutes)).strftime('%I:%M%p') }}.\n{%
+            endif %}\n{% if is_state('sensor.valetudo_hestia_dock_status', 'drying')
+            %}\n  Its mops will finish drying at {{ as_local(as_datetime(states('sensor.vacuum_mop_drying_started'))
+            + timedelta(hours = 3)).strftime('%I:%M%p') }}.\n{% endif %}\n"
   mode: single
 - id: '1744446876391'
   alias: Main Door Display
@@ -7564,62 +7629,6 @@
           target:
             entity_id: input_select.floorplan_panel_view
   mode: restart
-- id: '1751186099654'
-  alias: Voice Control for Washer
-  description: Get the washer status via voice assistants
-  triggers:
-  - trigger: conversation
-    command:
-    - What is the (washer | washing machine) doing
-    - What is the status of the (washer | washing machine)
-    - Is the (washer | washing machine) (running | spinning | rinsing | washing |
-      off)
-  conditions: []
-  actions:
-  - set_conversation_response: "The washer is {{ state_translated('sensor.lg_washer_status')
-      | lower }}.\n{% if states('sensor.lg_washer_status') in ['Off', 'Ready'] %}\n
-      \ {% set wash_time = namespace(hours = states('sensor.washer_last_wash_duration').split(':')[0],\n
-      \                              minutes = states('sensor.washer_last_wash_duration').split(':')[1])
-      %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours | int(0)
-      > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
-      + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
-      {{ time_since(as_datetime(states('sensor.washer_last_wash_completed'))) }} ago.\n
-      \ {{ 'Please unload the laundry.' if is_state('input_boolean.washer_load_clean',
-      'on') }}\n{% else %}\n  {% set countdown = namespace(hours = (states('sensor.lg_washer_remaining_time')
-      | int(0)) // 60,\n                               minutes = (states('sensor.lg_washer_remaining_time')
-      | int(0)) % 60) %}\n  The current run started {{ time_since(as_datetime(states('sensor.washer_last_wash_started')))
-      }} ago.\n  {% if countdown.hours > 0 or countdown.minutes > 0 %}\n  The remaining
-      {{ 100 - states('sensor.washer_wash_progress') | int(0) }}% of the run will
-      complete in {{ countdown.hours if countdown.hours > 0 }}{{ ' hours' if countdown.hours
-      > 1 else ' hour' if countdown.hours == 1 }}{{ ' and ' if countdown.hours > 0
-      and countdown.minutes > 0 }}{{ countdown.minutes if countdown.minutes > 0 }}{{
-      ' minutes' if countdown.minutes > 1 else ' minute' if countdown.minutes == 1
-      }} at {{ (now() + timedelta(hours = countdown.hours, minutes = countdown.minutes)).strftime('%I:%M%p')
-      }}\n  {% endif %}\n{% endif %}"
-  mode: single
-- id: '1751186563137'
-  alias: Voice Control for Dishwasher
-  description: Get the dishwasher status via voice assistants
-  triggers:
-  - trigger: conversation
-    command:
-    - What is the dishwasher doing
-    - What is the status of the dishwasher
-    - Is the dishwasher (running | washing | cooling | off)
-  conditions: []
-  actions:
-  - set_conversation_response: "The dishwasher is {{ states('input_select.dishwasher_status')
-      | lower }}.\n{% if states('input_select.dishwasher_status') == 'Off' %}\n  {%
-      set wash_time = namespace(hours = states('sensor.dishwasher_last_run_duration').split(':')[0],\n
-      \                              minutes = states('sensor.dishwasher_last_run_duration').split(':')[1])
-      %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours | int(0)
-      > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
-      + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
-      {{ time_since(as_datetime(states('sensor.dishwasher_last_run_ended'))) }} ago.\n
-      \ {{ 'Please open the dishwasher door.' if is_state('input_boolean.dishwasher_load_clean',
-      'on') }}\n{% else %}\n  The current run started {{ time_since(as_datetime(states('sensor.dishwasher_last_run_started')))
-      }} ago.\n{% endif %}"
-  mode: single
 - id: '1753576863029'
   alias: Parents' Room Motion Bedside Lamp
   description: Set Parents' Room Bedside Lamp when motion is detected, the door is
