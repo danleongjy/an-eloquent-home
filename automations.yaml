@@ -1605,12 +1605,6 @@
   - at: '23:50:00'
     trigger: time
     id: daily
-  - trigger: time
-    at: 00:50:00
-    id: sunday_only_pmbackup_start
-  - trigger: time
-    at: 01:50:00
-    id: sunday_only_pmbackup_end
   - trigger: persistent_notification
     update_type:
     - added
@@ -1683,52 +1677,6 @@
           - switch.docker_container_immich_postgres
           - switch.docker_container_immich_redis
           - switch.docker_container_immich_machine_learning
-    - conditions:
-      - condition: trigger
-        id:
-        - sunday_only_pmbackup_start
-      sequence:
-      - condition: time
-        after: 00:49:00
-        before: 00:51:00
-        weekday:
-        - sun
-      - repeat:
-          sequence:
-          - action: switch.turn_off
-            metadata: {}
-            data: {}
-            target:
-              entity_id: '{{ repeat.item }}'
-          - delay: 60
-          for_each:
-          - switch.docker_container_immich_server
-          - switch.docker_container_immich_postgres
-          - switch.docker_container_immich_redis
-          - switch.docker_container_immich_machine_learning
-    - conditions:
-      - condition: trigger
-        id:
-        - sunday_only_pmbackup_end
-      sequence:
-      - condition: time
-        after: 01:49:00
-        before: 01:51:00
-        weekday:
-        - sun
-      - repeat:
-          sequence:
-          - action: switch.turn_on
-            metadata: {}
-            data: {}
-            target:
-              entity_id: '{{ repeat.item }}'
-          - delay: 60
-          for_each:
-          - switch.docker_container_immich_postgres
-          - switch.docker_container_immich_redis
-          - switch.docker_container_immich_machine_learning
-          - switch.docker_container_immich_server
     - conditions:
       - condition: trigger
         id:
@@ -8795,7 +8743,7 @@
     - sensor.parents_room_curtains_battery
     - sensor.philips_shaver_battery
     - sensor.main_door_lock_battery
-    below: 10
+    below: 20
   - trigger: numeric_state
     entity_id:
     - sensor.elenas_room_curtains_battery

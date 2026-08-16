@@ -1519,3 +1519,19 @@ cover_group_actions:
   max: 10
   alias: Cover Group Actions
   description: Set position for cover groups if the window is closed
+refresh_next_alarm_timings:
+  sequence:
+  - action: input_datetime.set_datetime
+    metadata: {}
+    target:
+      entity_id:
+      - input_datetime.daniels_next_alarm
+      - input_datetime.graces_next_alarm
+      - input_datetime.elis_next_alarm
+      - input_datetime.elenas_next_alarm
+    data:
+      date: '{{ now().date() - timedelta(days = 1) }}'
+  alias: Refresh Next Alarm Timings
+  description: Set next alarm timings to one day before today to retrigger Next Alarm
+    automations
+  icon: mdi:calendar-refresh
