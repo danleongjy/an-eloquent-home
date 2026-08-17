@@ -10047,8 +10047,18 @@
                       "icon": "mdi:refresh",
                       "tap_action": {
                         "action": "perform-action",
-                        "perform_action": "script.refresh_next_alarm_timings",
-                        "target": {}
+                        "perform_action": "input_datetime.set_datetime",
+                        "target": {
+                          "entity_id": [
+                            "input_datetime.daniels_next_alarm",
+                            "input_datetime.graces_next_alarm",
+                            "input_datetime.elis_next_alarm",
+                            "input_datetime.elenas_next_alarm"
+                          ]
+                        },
+                        "data": {
+                          "date": "1970-01-01"
+                        }
                       }
                     }
                   ]
@@ -16704,7 +16714,19 @@
                   "type": "heading",
                   "heading": "Main Door",
                   "heading_style": "title",
-                  "icon": "mdi:door-closed"
+                  "icon": "mdi:door-closed",
+                  "badges": [
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.main_door_lock_battery",
+                      "icon": "mdi:battery-lock",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    }
+                  ]
                 },
                 {
                   "type": "tile",

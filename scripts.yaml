@@ -195,8 +195,14 @@ increment_alarm_day:
     off_time:
       events: []
   sequence:
-  - service: calendar.get_events
+  - action: input_datetime.set_datetime
+    metadata: {}
+    target:
+      entity_id: '{{ alarm_datetime }}'
     data:
+      date: '{{ now().date() }}'
+    alias: Set date to today's date
+  - data:
       start_date_time: '{{ as_datetime(states(alarm_datetime)).replace(hour = 0, minute
         = 0) }}'
       end_date_time: '{{ as_datetime(states(alarm_datetime)).replace(hour = 0, minute
@@ -205,6 +211,7 @@ increment_alarm_day:
       entity_id: '{{ calendars }}'
     response_variable: work_school_day
     alias: List work/school days occurring on next alarm day
+    action: calendar.get_events
   - repeat:
       while:
       - or:
@@ -218,15 +225,14 @@ increment_alarm_day:
             | length %}\n{% endfor %} {{ events.quantity == 0 }}\n"
           alias: Alarm day is not a work/school day
       sequence:
-      - service: input_datetime.set_datetime
-        data:
+      - data:
           date: '{{ as_datetime(states(alarm_datetime)).date() + timedelta(days =
             1) }}'
         target:
           entity_id: '{{ alarm_datetime }}'
         alias: Increment alarm by 1 day
-      - service: calendar.get_events
-        data:
+        action: input_datetime.set_datetime
+      - data:
           start_date_time: '{{ as_datetime(states(alarm_datetime)).replace(hour =
             0, minute = 0) }}'
           end_date_time: '{{ as_datetime(states(alarm_datetime)).replace(hour = 0,
@@ -235,6 +241,7 @@ increment_alarm_day:
           entity_id: '{{ calendars }}'
         response_variable: work_school_day
         alias: List work/school days occurring on next alarm day
+        action: calendar.get_events
     alias: Increment alarm by 1 day until it is a future day that is not an off day
   mode: parallel
   icon: mdi:alarm
@@ -1519,19 +1526,3 @@ cover_group_actions:
   max: 10
   alias: Cover Group Actions
   description: Set position for cover groups if the window is closed
-refresh_next_alarm_timings:
-  sequence:
-  - action: input_datetime.set_datetime
-    metadata: {}
-    target:
-      entity_id:
-      - input_datetime.daniels_next_alarm
-      - input_datetime.graces_next_alarm
-      - input_datetime.elis_next_alarm
-      - input_datetime.elenas_next_alarm
-    data:
-      date: '{{ now().date() - timedelta(days = 1) }}'
-  alias: Refresh Next Alarm Timings
-  description: Set next alarm timings to one day before today to retrigger Next Alarm
-    automations
-  icon: mdi:calendar-refresh

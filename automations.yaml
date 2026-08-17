@@ -4470,6 +4470,7 @@
       response_variable: work_days
       alias: List Daniel's morning work days occurring on Daniel's Next Alarm
       action: calendar.get_events
+      enabled: false
     - data:
         start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
           = 0, minute = 0) }}'
@@ -4482,6 +4483,7 @@
       response_variable: school_days
       alias: List school days occurring on Daniel's Next Alarm
       action: calendar.get_events
+      enabled: false
     - repeat:
         until:
         - condition: template
@@ -4535,6 +4537,15 @@
           response_variable: school_days
           alias: List school days occurring on Daniel's Next Alarm
           action: calendar.get_events
+      enabled: false
+    - action: script.increment_alarm_day
+      metadata: {}
+      data:
+        alarm_datetime: input_datetime.daniels_next_alarm
+        calendars:
+        - calendar.daniel_work_days
+        - calendar.eli_school_days
+        - calendar.elena_school_days
   - data:
       start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
         = 0, minute = 0) }}'
@@ -4661,6 +4672,7 @@
       response_variable: work_days
       alias: List Grace's morning work days occurring on Grace's Next Alarm
       action: calendar.get_events
+      enabled: false
     - data:
         start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
           = 0, minute = 0) }}'
@@ -4673,6 +4685,7 @@
       response_variable: school_days
       alias: List school days occurring on Grace's Next Alarm
       action: calendar.get_events
+      enabled: false
     - repeat:
         until:
         - alias: Alarm day is in the future
@@ -4727,6 +4740,15 @@
           response_variable: school_days
           alias: List school days occurring on Grace's Next Alarm
           action: calendar.get_events
+      enabled: false
+    - action: script.increment_alarm_day
+      metadata: {}
+      data:
+        alarm_datetime: input_datetime.graces_next_alarm
+        calendars:
+        - calendar.grace_work_days
+        - calendar.eli_school_days
+        - calendar.elena_school_days
   - data:
       start_date_time: '{{ as_datetime(states(''input_datetime.graces_next_alarm'')).replace(hour
         = 0, minute = 0) }}'
