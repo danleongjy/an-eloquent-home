@@ -582,7 +582,7 @@
               "direction": "[[[\n  if (entity.attributes.direction == 'reverse') {\n    return 'forward'\n  } else {\n    return 'reverse'\n  }\n]]]\n"
             }
           },
-          "icon": "[[[ \n  if (entity.attributes.direction == 'forward') \n    return 'mdi:fan-chevron-down'; \n  else \n    return 'mdi:fan-chevron-up';\n]]]",
+          "icon": "[[[ \n  if (entity.attributes.direction == 'reverse') \n    return 'mdi:fan-chevron-up'; \n  else \n    return 'mdi:fan-chevron-down';\n]]]",
           "styles": {
             "icon": [
               {
@@ -626,7 +626,7 @@
         },
         "rice_cooker_more_info": {
           "template": "square_cell",
-          "tap_action": {
+          "hold_action": {
             "action": "navigate",
             "navigation_path": "/lovelace/kitchen_appliances"
           },
@@ -5197,13 +5197,17 @@
                                     "template": "rice_cooker"
                                   },
                                   "not_on": {
-                                    "type": "custom:button_card",
+                                    "type": "custom:button-card",
                                     "template": "square_cell",
                                     "icon": "mdi:pot-steam",
+                                    "hold_action": {
+                                      "action": "navigate",
+                                      "navigation_path": "/lovelace/kitchen_appliances"
+                                    },
                                     "styles": {
                                       "icon": [
                                         {
-                                          "color": "[[[ return var(--state-inactive-color) ]]]"
+                                          "color": "[[[ return 'var(--state-inactive-color)' ]]]"
                                         }
                                       ]
                                     }
@@ -15829,7 +15833,7 @@
         {
           "title": "Kitchen",
           "path": "kitchen",
-          "icon": "mdi:pot-steam",
+          "icon": "mdi:chef-hat",
           "theme": "no_border",
           "subview": true,
           "badges": [],
@@ -15916,7 +15920,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "type": "masonry"
         },
         {
           "title": "Weather",
