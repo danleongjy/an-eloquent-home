@@ -419,7 +419,7 @@
           }
         },
         "area_button_kitchen": {
-          "icon": "mdi:pot-steam",
+          "icon": "mdi:chef-hat",
           "template": "area_button",
           "tap_action": {
             "data": {
@@ -628,7 +628,7 @@
           "template": "square_cell",
           "tap_action": {
             "action": "navigate",
-            "navigation_path": "/lovelace/rice_cooker"
+            "navigation_path": "/lovelace/kitchen_appliances"
           },
           "double_tap_action": {
             "action": "toggle"
@@ -638,7 +638,7 @@
           "template": "square_cell",
           "hold_action": {
             "action": "navigate",
-            "navigation_path": "/lovelace/stove"
+            "navigation_path": "/lovelace/kitchen_appliances"
           }
         },
         "vacuum_more_info": {
@@ -5179,12 +5179,42 @@
                             }
                           },
                           {
-                            "type": "custom:decluttering-card",
-                            "template": "rice_cooker"
+                            "type": "custom:state-switch",
+                            "entity": "switch.stove_main_power",
+                            "default": "not_on",
+                            "states": {
+                              "on": {
+                                "type": "custom:decluttering-card",
+                                "template": "stove"
+                              },
+                              "not_on": {
+                                "type": "custom:state-switch",
+                                "entity": "switch.rice_cooker",
+                                "default": "not_on",
+                                "states": {
+                                  "on": {
+                                    "type": "custom:decluttering-card",
+                                    "template": "rice_cooker"
+                                  },
+                                  "not_on": {
+                                    "type": "custom:button_card",
+                                    "template": "square_cell",
+                                    "icon": "mdi:pot-steam",
+                                    "styles": {
+                                      "icon": [
+                                        {
+                                          "color": "[[[ return var(--state-inactive-color) ]]]"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
                           },
                           {
-                            "type": "custom:decluttering-card",
-                            "template": "stove"
+                            "type": "custom:button-card",
+                            "color_type": "blank-card"
                           },
                           {
                             "type": "custom:decluttering-card",
@@ -13898,9 +13928,8 @@
           "max_columns": 1
         },
         {
-          "title": "Rice Cooker",
-          "path": "rice_cooker",
-          "icon": "mdi:rice",
+          "title": "Kitchen Appliances",
+          "icon": "mdi:pot-steam",
           "theme": "no_border",
           "subview": true,
           "badges": [],
@@ -13911,106 +13940,11 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "tile",
-                  "entity": "input_select.rice_cooker_status",
-                  "name": " ",
-                  "vertical": false,
-                  "tap_action": {
-                    "action": "call-service",
-                    "service": "switch.turn_on",
-                    "service_data": {
-                      "entity_id": "switch.rice_cooker"
-                    }
-                  },
-                  "icon_tap_action": {
-                    "action": "more-info"
-                  },
-                  "features_position": "bottom"
+                  "type": "heading",
+                  "icon": "mdi:stove",
+                  "heading_style": "title",
+                  "heading": "Stove"
                 },
-                {
-                  "type": "tile",
-                  "entity": "binary_sensor.rice_cooker_lid",
-                  "name": " ",
-                  "vertical": false,
-                  "features_position": "bottom"
-                },
-                {
-                  "type": "tile",
-                  "entity": "sensor.rice_cooker_last_run_ended",
-                  "name": " ",
-                  "vertical": false,
-                  "features_position": "bottom"
-                },
-                {
-                  "type": "tile",
-                  "entity": "sensor.rice_cooker_last_run_duration",
-                  "name": " ",
-                  "vertical": false,
-                  "features_position": "bottom"
-                }
-              ],
-              "visibility": [
-                {
-                  "entity": "switch.rice_cooker",
-                  "state": "off"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "tile",
-                  "entity": "input_select.rice_cooker_status",
-                  "name": " ",
-                  "vertical": false,
-                  "features_position": "bottom"
-                },
-                {
-                  "type": "tile",
-                  "entity": "sensor.rice_cooker_last_run_started",
-                  "name": " ",
-                  "vertical": false,
-                  "features_position": "bottom"
-                },
-                {
-                  "type": "custom:apexcharts-card",
-                  "config_templates": "standard",
-                  "graph_span": "30min",
-                  "header": {
-                    "title": "Rice Cooker Watts"
-                  },
-                  "series": [
-                    {
-                      "entity": "sensor.rice_cooker_watts",
-                      "name": " ",
-                      "stroke_width": 2
-                    }
-                  ]
-                }
-              ],
-              "visibility": [
-                {
-                  "entity": "switch.rice_cooker",
-                  "state": "on"
-                }
-              ]
-            }
-          ],
-          "max_columns": 1
-        },
-        {
-          "title": "Stove",
-          "icon": "mdi:stove",
-          "theme": "no_border",
-          "subview": true,
-          "badges": [],
-          "cards": [],
-          "type": "sections",
-          "sections": [
-            {
-              "type": "grid",
-              "cards": [
                 {
                   "show_name": false,
                   "show_icon": true,
@@ -14224,6 +14158,17 @@
                       }
                     }
                   ]
+                },
+                {
+                  "type": "markdown",
+                  "content": "<ha-alert alert-type=\"error\">{{ states(\"select.stove_error_code\") }}</ha-alert>",
+                  "text_only": true,
+                  "visibility": [
+                    {
+                      "entity": "select.stove_error_code",
+                      "state_not": "None"
+                    }
+                  ]
                 }
               ],
               "visibility": [
@@ -14236,6 +14181,12 @@
             {
               "type": "grid",
               "cards": [
+                {
+                  "type": "heading",
+                  "icon": "mdi:stove",
+                  "heading_style": "title",
+                  "heading": "Stove"
+                },
                 {
                   "type": "tile",
                   "entity": "switch.stove_main_power",
@@ -14263,6 +14214,17 @@
                   "name": " ",
                   "vertical": false,
                   "features_position": "bottom"
+                },
+                {
+                  "type": "markdown",
+                  "content": "<ha-alert alert-type=\"error\">{{ states(\"select.stove_error_code\") }}</ha-alert>",
+                  "text_only": true,
+                  "visibility": [
+                    {
+                      "entity": "select.stove_error_code",
+                      "state_not": "None"
+                    }
+                  ]
                 }
               ],
               "visibility": [
@@ -14276,21 +14238,106 @@
               "type": "grid",
               "cards": [
                 {
-                  "type": "markdown",
-                  "content": "<ha-alert alert-type=\"error\">{{ states(\"select.stove_error_code\") }}</ha-alert>",
-                  "text_only": true
+                  "type": "heading",
+                  "heading_style": "title",
+                  "heading": "Rice Cooker",
+                  "icon": "mdi:rice"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_select.rice_cooker_status",
+                  "name": " ",
+                  "vertical": false,
+                  "tap_action": {
+                    "action": "call-service",
+                    "service": "switch.turn_on",
+                    "service_data": {
+                      "entity_id": "switch.rice_cooker"
+                    }
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  },
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "binary_sensor.rice_cooker_lid",
+                  "name": " ",
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.rice_cooker_last_run_ended",
+                  "name": " ",
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.rice_cooker_last_run_duration",
+                  "name": " ",
+                  "vertical": false,
+                  "features_position": "bottom"
                 }
               ],
               "visibility": [
                 {
-                  "entity": "select.stove_error_code",
-                  "state_not": "None"
+                  "entity": "switch.rice_cooker",
+                  "state": "off"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading_style": "title",
+                  "heading": "Rice Cooker",
+                  "icon": "mdi:rice"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_select.rice_cooker_status",
+                  "name": " ",
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.rice_cooker_last_run_started",
+                  "name": " ",
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "graph_span": "30min",
+                  "header": {
+                    "title": "Rice Cooker Watts"
+                  },
+                  "series": [
+                    {
+                      "entity": "sensor.rice_cooker_watts",
+                      "name": " ",
+                      "stroke_width": 2
+                    }
+                  ]
+                }
+              ],
+              "visibility": [
+                {
+                  "entity": "switch.rice_cooker",
+                  "state": "on"
                 }
               ]
             }
           ],
-          "max_columns": 1,
-          "path": "stove"
+          "max_columns": 2,
+          "path": "kitchen_appliances"
         },
         {
           "title": "Playroom",
