@@ -626,7 +626,7 @@
         },
         "rice_cooker_more_info": {
           "template": "square_cell",
-          "hold_action": {
+          "tap_action": {
             "action": "navigate",
             "navigation_path": "/lovelace/kitchen_appliances"
           },
@@ -636,7 +636,7 @@
         },
         "stove_more_info": {
           "template": "square_cell",
-          "hold_action": {
+          "tap_action": {
             "action": "navigate",
             "navigation_path": "/lovelace/kitchen_appliances"
           }
@@ -2033,7 +2033,7 @@
                 "icon": "[[[\n  if (states['switch.stove_pause'].state == 'on') {\n    return 'mdi:pause-circle-outline'\n  } else {\n    return 'mdi:chevron-' + states['select.stove_current_burner'].state + '-circle-outline' \n  }\n]]]\n",
                 "label": "[[[\n  if (parseInt(states['number.stove_current_burner_timer'].state) >= 70)\n    return '1:' + (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 60)\n    return '1:0' + (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 10)\n    return '0:' + states['number.stove_current_burner_timer'].state\n  else if (parseInt(states['number.stove_current_burner_timer'].state) > 0)\n    return '0:0' + states['number.stove_current_burner_timer'].state\n  else\n    return ''\n]]]\n",
                 "show_label": true,
-                "tap_action": {
+                "double_tap_action": {
                   "action": "call-service",
                   "service": "select.select_next",
                   "service_data": {
@@ -5200,9 +5200,12 @@
                                     "type": "custom:button-card",
                                     "template": "square_cell",
                                     "icon": "mdi:pot-steam",
-                                    "hold_action": {
+                                    "tap_action": {
                                       "action": "navigate",
                                       "navigation_path": "/lovelace/kitchen_appliances"
+                                    },
+                                    "hold_action": {
+                                      "action": "none"
                                     },
                                     "styles": {
                                       "icon": [
