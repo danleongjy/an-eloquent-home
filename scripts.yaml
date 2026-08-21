@@ -221,8 +221,9 @@ increment_alarm_day:
           alias: Alarm day is not in the future
         - condition: template
           value_template: "{% set events = namespace(quantity = 0) %} {% for calendar
-            in work_school_day %}\n  {% set events.quantity = events.quantity + work_school_day[calendar].events
-            | length %}\n{% endfor %} {{ events.quantity == 0 }}\n"
+            in work_school_day %}\n    {% set events.quantity = events.quantity +
+            work_school_day[calendar].events | length %}\n{% endfor %} {{ events.quantity
+            == 0 }}\n"
           alias: Alarm day is not a work/school day
       sequence:
       - data:
