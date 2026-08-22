@@ -191,9 +191,6 @@ increment_alarm_day:
           multiple: true
           filter:
           - domain: calendar
-  variables:
-    off_time:
-      events: []
   sequence:
   - action: input_datetime.set_datetime
     metadata: {}
@@ -219,12 +216,31 @@ increment_alarm_day:
           value_template: '{{ now().date() >= as_datetime(states(alarm_datetime)).date()
             }}'
           alias: Alarm day is not in the future
-        - condition: template
-          value_template: "{% set events = namespace(quantity = 0) %} {% for calendar
-            in work_school_day %}\n    {% set events.quantity = events.quantity +
-            work_school_day[calendar].events | length %}\n{% endfor %} {{ events.quantity
-            == 0 }}\n"
-          alias: Alarm day is not a work/school day
+        - and:
+          - condition: template
+            value_template: '{{ alarm_datetime in [''input_datetime.elis_next_alarm'',
+              ''input_datetime.elenas_next_alarm''] }}'
+          - condition: template
+            value_template: "{% set events = namespace(quantity = 0) %} {% for calendar
+              in work_school_day %}\n  {% set events.quantity = events.quantity +
+              work_school_day[calendar].events | length %}\n{% endfor %} {{ events.quantity
+              == 0 }}\n"
+            alias: Eli or Elena's alarm day is not a work/school day
+        - and:
+          - condition: template
+            value_template: '{{ alarm_datetime in [''input_datetime.daniels_next_alarm'',
+              ''input_datetime.graces_next_alarm''] }}'
+          - condition: template
+            value_template: "{% set events = namespace(quantity = 0) %} {% for calendar
+              in work_school_day %}\n  {% if calendar in ['calendar.eli_school_days',
+              'calendar.elena_school_days'] %}\n    {% if work_school_day[calendar].events
+              | length > 0 %}\n      {% if alarm_datetime.split('.')[1][0].capitalize()
+              == work_school_day[calendar].events[0].description %}\n        {% set
+              events.quantity = events.quantity + work_school_day[calendar].events
+              | length %}\n      {% endif %}\n    {% endif %}\n  {% else %}\n    {%
+              set events.quantity = events.quantity + work_school_day[calendar].events
+              | length %}\n  {% endif %}\n{% endfor %} {{ events.quantity == 0 }}\n"
+            alias: Daniel's or Grace's alarm day is not a work/school day
       sequence:
       - data:
           date: '{{ as_datetime(states(alarm_datetime)).date() + timedelta(days =
