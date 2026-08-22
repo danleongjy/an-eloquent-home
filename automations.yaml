@@ -3694,18 +3694,44 @@
   alias: NEA Rain Radar Animation
   description: Update NEA Rain Radar Animation 5min past every hour if it is not during
     Sleep Hours
-  trigger:
-  - platform: time_pattern
-    minutes: '5'
-  condition:
+  triggers:
+  - minutes: '5'
+    trigger: time_pattern
+  conditions:
   - condition: not
     conditions:
     - condition: time
       after: input_datetime.sleep_hours_start
       before: input_datetime.sleep_hours_end
-  action:
-  - service: script.nea_rain_radar_animation
-    data: {}
+  actions:
+  - repeat:
+      for_each: "{% set start_time = (now() - timedelta(days = 1, minutes = 15)).replace(minute
+        = (now() - timedelta(minutes = 15)).minute // 15 * 15) %} {% set missing_frames
+        = namespace(frames = []) %} {% for i in range(97) %}\n  {% set current_frame
+        = '/config/www/rain_radar/frames/dpsri_240km_' + (start_time + timedelta(minutes
+        = 15 * i)).strftime('%Y%m%d%H%M') + '0000dBR.dpsri.png' %}\n  {% if current_frame
+        not in state_attr('sensor.frames','file_list') %}\n    {% set missing_frames.frames
+        = missing_frames.frames + [current_frame] %}\n  {% endif %}\n{% endfor %}
+        {{ missing_frames.frames }}\n"
+      sequence:
+      - data:
+          overwrite: false
+          url: https://www.nea.gov.sg/docs/default-source/rain-area-240km/{{ repeat.item.split('/')[-1]
+            }}
+          filename: '{{ repeat.item.split(''/'')[-1] }}'
+        action: downloader.download_file
+      - delay: 2
+  - data: {}
+    action: shell_command.removeoldrainradar
+  - data: {}
+    action: shell_command.removeoldrainradaranimation
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
+  - data: {}
+    action: pyscript.compile_rain_radar_animation
   mode: single
 - id: '1699176933163'
   alias: Junior Bathroom Motion Lights
