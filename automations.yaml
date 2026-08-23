@@ -4466,13 +4466,6 @@
     id: alarm_fired
     trigger: template
   - entity_id:
-    - calendar.daniel_work_days
-    - calendar.elena_school_days
-    - calendar.eli_school_days
-    id: calendar_changed
-    trigger: state
-    enabled: false
-  - entity_id:
     - input_datetime.eca_day_alarm
     - input_datetime.elenas_school_day_alarm
     - input_datetime.elis_school_day_alarm
@@ -4572,7 +4565,8 @@
         - calendar.daniel_work_days
         - calendar.eli_school_days
         - calendar.elena_school_days
-  - data:
+  - alias: List events occurring on Daniel's Next Alarm
+    data:
       start_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
         = 0, minute = 0) }}'
       end_date_time: '{{ as_datetime(states(''input_datetime.daniels_next_alarm'')).replace(hour
@@ -4581,8 +4575,8 @@
       entity_id:
       - calendar.eli_school_days
       - calendar.elena_school_days
+      - calendar.daniel_work_days
     response_variable: school_days
-    alias: List school days occurring on Daniel's Next Alarm
     action: calendar.get_events
   - choose:
     - conditions:
@@ -4650,11 +4644,12 @@
           action: input_datetime.set_datetime
       alias: If Daniel is sending Eli to school
     default:
-    - data:
-        time: '{{ states(''input_datetime.daniels_work_day_alarm'') }}'
+    - alias: Set Daniel's Next Alarm to 90min before Daniel's event
+      data:
+        time: '{{ as_datetime(school_days[''calendar.daniel_work_days''].events[0].start)
+          - timedelta(minutes = 90) }}'
       target:
         entity_id: input_datetime.daniels_next_alarm
-      alias: Set Daniel's Next Alarm to Daniel's Work Day Alarm
       action: input_datetime.set_datetime
   mode: single
   max_exceeded: silent
@@ -4667,13 +4662,6 @@
       + timedelta(minutes = 6) }}'
     id: alarm_fired
     trigger: template
-  - entity_id:
-    - calendar.grace_work_days
-    - calendar.elena_school_days
-    - calendar.eli_school_days
-    id: calendar_changed
-    trigger: state
-    enabled: false
   - entity_id:
     - input_datetime.eca_day_alarm
     - input_datetime.elenas_school_day_alarm
