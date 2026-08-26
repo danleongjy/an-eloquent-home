@@ -151,6 +151,29 @@ script:
               id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
             }
           }
+  - id: draw_display_main_fan
+    then:
+      - lambda: |
+          // tab
+          if (id(fan_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.15, id(slider));
+            id(interface_display).line(0, id(height) * 0.75, id(width) * 0.25, id(height) * 0.75, id(slider));
+          }
+          // main display
+          if (id(fan_power).state) {
+            id(interface_display).filled_rectangle(0, id(height) * 0, id(width), id(height) * 0.75, id(slider));
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_on));
+          } else {
+            id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_off));
+          }
+          // auto control indicator
+          if (!id(fan_auto_control).state) {
+            if (id(fan_power).state) {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_on));
+            } else {
+              id(interface_display).image(id(width) * 0.85, id(height) * 0.23, id(manual_control), ImageAlign::CENTER, id(device_off));
+            }
+          }
   - id: draw_display_main_vacuum
     then:
       - lambda: |
@@ -259,11 +282,17 @@ binary_sensor:
     id: lamp_power
     entity_id: ${lamp_entity}
   - platform: homeassistant
+    id: fan_power
+    entity_id: fan.${core_room}_fan
+  - platform: homeassistant
     id: lights_auto_control
     entity_id: automation.${core_room}_motion_lights
   - platform: homeassistant
     id: lamp_auto_control
     entity_id: ${lamp_auto_control}
+  - platform: homeassistant
+    id: fan_auto_control
+    entity_id: automation.${core_room}_motion_fan
   - platform: homeassistant
     id: vacuum_battery_charging
     entity_id: binary_sensor.vacuum_battery_charging
@@ -293,6 +322,11 @@ binary_sensor:
                       lambda: 'return id(current_view).state == "lamp";'
                     then:
                       - lambda: 'id(current_command).publish_state("lamp_on");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("fan_on");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "vacuum";'
@@ -415,6 +449,17 @@ binary_sensor:
                             lambda: 'id(current_command).publish_state("lamp_auto_control");'
                 - if:
                     condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - if:
+                          condition:
+                            lambda: 'return id(fan_auto_control).state;'
+                          then:
+                            lambda: 'id(current_command).publish_state("fan_manual_control");'
+                          else:
+                            lambda: 'id(current_command).publish_state("fan_auto_control");'
+                - if:
+                    condition:
                       lambda: 'return id(current_view).state == "vacuum";'
                     then:
                       - homeassistant.action:
@@ -452,6 +497,11 @@ binary_sensor:
                       lambda: 'return id(current_view).state == "lamp";'
                     then:
                       - lambda: 'id(current_command).publish_state("lamp_off");'
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - lambda: 'id(current_command).publish_state("fan_off");'
                 - if:
                     condition:
                       lambda: 'return id(current_view).state == "vacuum";'
@@ -595,6 +645,12 @@ image:
   - platform: file
     type: binary
     transparency: chroma_key
+    file: mdi:fan
+    id: tab_fan
+    resize: 30x30
+  - platform: file
+    type: binary
+    transparency: chroma_key
     file: mdi:robot-vacuum
     id: tab_vacuum
     resize: 30x30
@@ -609,6 +665,12 @@ image:
     transparency: chroma_key
     file: mdi:light-recessed
     id: main_lamp
+    resize: 160x160
+  - platform: file
+    type: binary
+    transparency: chroma_key
+    file: mdi:fan-chevron-down
+    id: main_fan_forward
     resize: 160x160
   - platform: file
     type: binary
@@ -679,7 +741,7 @@ display:
           // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_vacuum), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
           id(draw_display_main_time).execute();
@@ -692,7 +754,7 @@ display:
           // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_vacuum), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
           id(draw_display_main_doorbell).execute();
@@ -701,8 +763,8 @@ display:
         lambda: |-
           // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_lamp), ImageAlign::CENTER);
-          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_vacuum), ImageAlign::CENTER);
-          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_vacuum), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
           id(draw_display_main_lights).execute();
@@ -710,12 +772,22 @@ display:
       - id: lamp
         lambda: |-
           // tabs
+          it.image(id(width) * 0.375, id(height) * 0.825, id(tab_fan), ImageAlign::CENTER);
+          it.image(id(width) * 0.625, id(height) * 0.825, id(tab_vacuum), ImageAlign::CENTER);
+          it.image(id(width) * 0.875, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
+
+          id(draw_display_bottom_status_bar).execute();
+          id(draw_display_main_lamp).execute();
+          id(draw_display_borders).execute();
+      - id: fan
+        lambda: |-
+          // tabs
           it.image(id(width) * 0.375, id(height) * 0.825, id(tab_vacuum), ImageAlign::CENTER);
           it.image(id(width) * 0.625, id(height) * 0.825, id(tab_current_time), ImageAlign::CENTER);
           it.image(id(width) * 0.875, id(height) * 0.825, id(tab_lights), ImageAlign::CENTER);
 
           id(draw_display_bottom_status_bar).execute();
-          id(draw_display_main_lamp).execute();
+          id(draw_display_main_fan).execute();
           id(draw_display_borders).execute();
       - id: vacuum
         lambda: |-
