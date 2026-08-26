@@ -1263,6 +1263,7 @@
           - automation.kitchen_motion_fan
           - automation.study_walkway_motion_light
           - automation.playroom_motion_lights
+          - automation.playroom_motion_fan
           - automation.yard_motion_light
           - automation.dining_room_motion_ac
           - automation.dining_room_motion_fan
@@ -1492,6 +1493,7 @@
           - automation.kitchen_motion_lights
           - automation.study_walkway_motion_light
           - automation.playroom_motion_lights
+          - automation.playroom_motion_fan
           - automation.yard_motion_light
           - automation.dining_room_motion_ac
           - automation.dining_room_motion_fan
@@ -2429,7 +2431,6 @@
       turnoff_entities_list:
       - light.kitchen_lights
       - fan.kitchen_fan
-      - light.kitchen_fan_light
 - id: '1678321703771'
   alias: Study Walkway Motion Light
   description: Control Study Room Bulb 4 when motion is detected, depending on lux
@@ -2483,6 +2484,7 @@
       motion_sensor: binary_sensor.playroom_radar_occupancy
       turnoff_entities_list:
       - light.playroom_lights
+      - fan.playroom_fan
 - id: '1678323204367'
   alias: Yard Motion Light
   description: Control the Yard Light when motion is detected, depending on lux level
@@ -8245,6 +8247,7 @@
       motion_sensor: binary_sensor.playroom_radar_occupancy
       entities_list:
       - light.playroom_lights
+      - fan.playroom_fan
 - id: '1766972609964'
   alias: Kitchen Motion Automations
   description: Turn on Kitchen motion automations when motion is detected
@@ -8577,6 +8580,17 @@
           - light.yard_light_entity
           command: '{{ lights_command[states(''sensor.playroom_core_current_command'')]
             }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ ''fan'' in states(''sensor.playroom_core_current_command'')
+          }}'
+      sequence:
+      - action: fan.turn_{{ states('sensor.playroom_core_current_command').split('_')[1]
+          }}
+        metadata: {}
+        target:
+          entity_id: fan.playroom_fan
+        data: {}
   mode: single
 - id: '1772756162121'
   alias: Auto Away Mode
@@ -8844,29 +8858,15 @@
     id: no_motion
     from:
     - 'on'
-  - trigger: time
-    at: input_datetime.dim_hours_start
-    id: dim_hours_start
+    for:
+      minutes: '{{ states(''input_number.motion_timeout_presence'') | int }}'
   conditions: []
   actions:
   - if:
     - condition: trigger
       id:
       - no_motion
-      - dim_hours_start
     then:
-    - condition: state
-      state:
-      - 'on'
-      entity_id: light.kitchen_fan_light
-    - action: light.turn_off
-      metadata: {}
-      target:
-        entity_id: light.kitchen_fan_light
-      data: {}
-    - condition: trigger
-      id:
-      - no_motion
     - condition: state
       state:
       - 'on'
@@ -8877,30 +8877,62 @@
         entity_id: fan.kitchen_fan
       data: {}
     else:
-    - if:
-      - condition: state
-        entity_id: fan.kitchen_fan
-        state:
-        - 'off'
-      then:
-      - action: fan.turn_on
-        metadata: {}
-        target:
-          entity_id: fan.kitchen_fan
-        data: {}
     - condition: state
       state:
       - 'off'
-      entity_id: light.kitchen_fan_light
-    - condition: time
-      after: input_datetime.dim_hours_end
-      before: input_datetime.dim_hours_start
-    - condition: numeric_state
-      entity_id: sensor.kitchen_radar_lux
-      below: input_number.minimum_lux
-    - action: light.turn_on
+      entity_id: fan.kitchen_fan
+    - action: fan.turn_on
       metadata: {}
       target:
-        entity_id: light.kitchen_fan_light
+        entity_id: fan.kitchen_fan
+      data: {}
+  mode: single
+- id: '1787740290330'
+  alias: Playroom Motion Fan
+  description: Turn on or off the Playroom Fan based on occupancy
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.playroom_radar_occupancy
+    from:
+    - 'off'
+    to:
+    - 'on'
+    id: motion
+  - trigger: state
+    entity_id:
+    - binary_sensor.playroom_radar_occupancy
+    id: no_motion
+    from:
+    - 'on'
+    to:
+    - 'off'
+    for:
+      minutes: '{{ states(''input_number.motion_timeout_presence'') | int }}'
+  conditions: []
+  actions:
+  - if:
+    - condition: trigger
+      id:
+      - no_motion
+    then:
+    - condition: state
+      state:
+      - 'on'
+      entity_id: fan.playroom_fan
+    - action: fan.turn_off
+      metadata: {}
+      target:
+        entity_id: fan.playroom_fan
+      data: {}
+    else:
+    - condition: state
+      state:
+      - 'off'
+      entity_id: fan.playroom_fan
+    - action: fan.turn_on
+      metadata: {}
+      target:
+        entity_id: fan.playroom_fan
       data: {}
   mode: single
