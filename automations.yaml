@@ -1260,6 +1260,7 @@
           - automation.elis_room_motion_lights
           - automation.elis_room_motion_floor_lamp
           - automation.kitchen_motion_lights
+          - automation.kitchen_motion_fan
           - automation.study_walkway_motion_light
           - automation.playroom_motion_lights
           - automation.yard_motion_light
@@ -1385,6 +1386,7 @@
           - automation.elis_room_motion_lights
           - automation.elis_room_motion_floor_lamp
           - automation.kitchen_motion_lights
+          - automation.kitchen_motion_fan
           - automation.study_walkway_motion_light
           - automation.playroom_motion_lights
           - automation.yard_motion_light
@@ -2426,6 +2428,8 @@
       motion_sensor: binary_sensor.kitchen_radar_occupancy
       turnoff_entities_list:
       - light.kitchen_lights
+      - fan.kitchen_fan
+      - light.kitchen_fan_light
 - id: '1678321703771'
   alias: Study Walkway Motion Light
   description: Control Study Room Bulb 4 when motion is detected, depending on lux
@@ -8252,6 +8256,8 @@
       motion_sensor: binary_sensor.kitchen_radar_occupancy
       entities_list:
       - light.kitchen_lights
+      - switch.kitchen_fan_light
+      - fan.kitchen_fan
       time_period: 40
 - id: '1766972717203'
   alias: Hallway Motion Automations
@@ -8817,4 +8823,84 @@
         message: clear_notification
         data:
           tag: batt_low
+  mode: single
+- id: '1787730098400'
+  alias: Kitchen Motion Fan
+  description: Turn on or off the Kitchen Fan based on occupancy
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.kitchen_radar_occupancy
+    from:
+    - 'off'
+    to:
+    - 'on'
+    id: motion
+  - trigger: state
+    entity_id:
+    - binary_sensor.kitchen_radar_occupancy
+    to:
+    - 'off'
+    id: no_motion
+    from:
+    - 'on'
+  - trigger: time
+    at: input_datetime.dim_hours_start
+    id: dim_hours_start
+  conditions: []
+  actions:
+  - if:
+    - condition: trigger
+      id:
+      - no_motion
+      - dim_hours_start
+    then:
+    - condition: state
+      state:
+      - 'on'
+      entity_id: light.kitchen_fan_light
+    - action: light.turn_off
+      metadata: {}
+      target:
+        entity_id: light.kitchen_fan_light
+      data: {}
+    - condition: trigger
+      id:
+      - no_motion
+    - condition: state
+      state:
+      - 'on'
+      entity_id: fan.kitchen_fan
+    - action: fan.turn_off
+      metadata: {}
+      target:
+        entity_id: fan.kitchen_fan
+      data: {}
+    else:
+    - if:
+      - condition: state
+        entity_id: fan.kitchen_fan
+        state:
+        - 'off'
+      then:
+      - action: fan.turn_on
+        metadata: {}
+        target:
+          entity_id: fan.kitchen_fan
+        data: {}
+    - condition: state
+      state:
+      - 'off'
+      entity_id: light.kitchen_fan_light
+    - condition: time
+      after: input_datetime.dim_hours_end
+      before: input_datetime.dim_hours_start
+    - condition: numeric_state
+      entity_id: sensor.kitchen_radar_lux
+      below: input_number.minimum_lux
+    - action: light.turn_on
+      metadata: {}
+      target:
+        entity_id: light.kitchen_fan_light
+      data: {}
   mode: single

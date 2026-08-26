@@ -280,7 +280,7 @@ set_recommended_scene:
           skip_condition: true
         target:
           entity_id: '{{ states.automation | selectattr(''entity_id'', ''search'',
-            repeat.item + ''_motion'') | rejectattr(''entity_id'',''search'',''timeout'')
+            repeat.item) | selectattr(''entity_id'', ''search'', ''_motion'') | rejectattr(''entity_id'',''search'',''timeout'')
             | rejectattr(''entity_id'',''search'',''_automations'') | map(attribute
             = ''entity_id'') | list }}
 

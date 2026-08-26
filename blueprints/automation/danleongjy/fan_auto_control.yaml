@@ -69,8 +69,11 @@ condition:
     state: "on"
 action:
   - variables:
+      fan_entity: !input fan
+  - variables:
       low_fan_speed: !input low_speed
       high_fan_speed: !input high_speed
+      speed_count: "{{ int(100 / state_attr(fan_entity, 'percentage_step')) }}"
   - choose:
       - conditions:
           - condition: numeric_state
@@ -83,11 +86,11 @@ action:
                   - condition: state
                     entity_id: !input fan
                     attribute: percentage
-                    state: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+                    state: "{{ (states(low_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
             then:
               - action: fan.set_percentage
                 data:
-                  percentage: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+                  percentage: "{{ (states(low_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
                 target:
                   entity_id: !input fan
           - delay: 2
@@ -114,11 +117,11 @@ action:
                   - condition: state
                     entity_id: !input fan
                     attribute: percentage
-                    state: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+                    state: "{{ (states(low_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
             then:
               - action: fan.set_percentage
                 data:
-                  percentage: "{{ (states(low_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+                  percentage: "{{ (states(low_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
                 target:
                   entity_id: !input fan
           - delay: 2
@@ -140,11 +143,11 @@ action:
               - condition: state
                 entity_id: !input fan
                 attribute: percentage
-                state: "{{ (states(high_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+                state: "{{ (states(high_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
         then:
           - action: fan.set_percentage
             data:
-              percentage: "{{ (states(high_fan_speed) | int(4) / 6 * 100) | round(2) | int }}"
+              percentage: "{{ (states(high_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
             target:
               entity_id: !input fan
       - delay: 2

@@ -585,7 +585,7 @@
           "styles": {
             "icon": [
               {
-                "animation": "[[[ \n  if (entity.state == 'on') {\n    return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n  } else {\n    return ''\n  }\n]]]"
+                "animation": "[[[ \n  if (entity.state == 'on') {\n    if (typeof entity.attributes.percentage !== 'undefined') {\n      return 'rotating ' + 1 / (entity.attributes.percentage / 100) + 's linear infinite'\n    } else {\n      return 'rotating 1s linear infinite'\n    }\n  } else {\n    return ''\n  }\n]]]"
               }
             ]
           }
@@ -3055,7 +3055,7 @@
                           "height": "100%",
                           "width": "100%"
                         },
-                        "image": "/local/floorplan/pointers_transparent_background_20260823.png",
+                        "image": "/local/floorplan/pointers_transparent_background_20260826.png",
                         "tap_action": {
                           "action": "none"
                         },
@@ -3196,10 +3196,24 @@
                         "template": "stove"
                       },
                       {
-                        "type": "custom:decluttering-card",
+                        "type": "custom:button-card",
+                        "entity": "fan.kitchen_fan",
+                        "template": "fan_slider",
+                        "variables": {
+                          "auto_control_automation": "automation.kitchen_motion_fan"
+                        },
                         "style": {
                           "top": "5%",
                           "left": "47.5%",
+                          "height": "9%",
+                          "width": "4.5%"
+                        }
+                      },
+                      {
+                        "type": "custom:decluttering-card",
+                        "style": {
+                          "top": "5%",
+                          "left": "52.5%",
                           "height": "9%",
                           "width": "4.5%"
                         },
@@ -3209,7 +3223,7 @@
                         "type": "custom:button-card",
                         "style": {
                           "top": "5%",
-                          "left": "52.5%",
+                          "left": "57.5%",
                           "height": "9%",
                           "width": "4.5%"
                         },
@@ -3231,7 +3245,7 @@
                         },
                         "style": {
                           "top": "5%",
-                          "left": "57.5%",
+                          "left": "62.5%",
                           "height": "9%",
                           "width": "4.5%"
                         }
@@ -3430,7 +3444,7 @@
                         "type": "custom:decluttering-card",
                         "style": {
                           "top": "25%",
-                          "left": "52.5%",
+                          "left": "57.5%",
                           "height": "9%",
                           "width": "4.5%"
                         },
@@ -3448,7 +3462,7 @@
                         "type": "custom:button-card",
                         "style": {
                           "top": "22.5%",
-                          "left": "56.25%",
+                          "left": "61.25%",
                           "height": "4%",
                           "width": "2%"
                         },
@@ -3459,7 +3473,7 @@
                         "type": "custom:button-card",
                         "style": {
                           "top": "22.5%",
-                          "left": "58.75%",
+                          "left": "63.75%",
                           "height": "4%",
                           "width": "2%"
                         },
@@ -3470,7 +3484,7 @@
                         "type": "custom:button-card",
                         "style": {
                           "top": "27.5%",
-                          "left": "56.25%",
+                          "left": "61.25%",
                           "height": "4%",
                           "width": "2%"
                         },
@@ -3481,7 +3495,7 @@
                         "type": "custom:button-card",
                         "style": {
                           "top": "27.5%",
-                          "left": "58.75%",
+                          "left": "63.75%",
                           "height": "4%",
                           "width": "2%"
                         },
@@ -4553,7 +4567,7 @@
                       }
                     ],
                     "image": {
-                      "media_content_id": "/local/floorplan/floorplan_pointers_boxes_20260823.png",
+                      "media_content_id": "/local/floorplan/floorplan_pointers_boxes_20260826.png",
                       "media_content_type": "",
                       "metadata": {
                         "navigateIds": [
@@ -5230,7 +5244,11 @@
                           },
                           {
                             "type": "custom:button-card",
-                            "color_type": "blank-card"
+                            "entity": "fan.kitchen_fan",
+                            "template": "fan_slider",
+                            "variables": {
+                              "auto_control_automation": "automation.kitchen_motion_fan"
+                            }
                           },
                           {
                             "type": "custom:decluttering-card",
