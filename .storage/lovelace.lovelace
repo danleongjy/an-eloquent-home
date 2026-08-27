@@ -1112,19 +1112,11 @@
             ]
           }
         },
-        "home_mode_selector": {
-          "double_tap_action": {
-            "action": "perform-action",
-            "perform_action": "input_select.select_option",
-            "data": {
-              "entity_id": "input_select.home_mode",
-              "option": "[[[ return variables.home_mode_option ]]]"
-            }
-          },
+        "mode_selector": {
           "styles": {
             "card": [
               {
-                "background-color": "[[[\n  if (states['input_select.home_mode'].state != variables.home_mode_option) {\n    return 'var(--primary-background-color)'\n  } else {\n    return '#009AC7'\n  }\n]]]\n"
+                "background-color": "[[[\n  if (variables.mode_option.includes(states[variables.mode_entity].state)) {\n    return '#009AC7'\n  } else {\n    return 'var(--primary-background-color)'\n  }\n]]]\n"
               }
             ],
             "icon": [
@@ -1132,9 +1124,44 @@
                 "height": "24px"
               },
               {
-                "color": "[[[\n  if (states['input_select.home_mode'].state != variables.home_mode_option) {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-active-color)'\n  }\n]]]\n"
+                "color": "[[[\n  if (variables.mode_option.includes(states[variables.mode_entity].state)) {\n    return 'var(--state-active-color)'\n  } else {\n    return 'var(--state-inactive-color)'\n  }\n]]]\n"
               }
             ]
+          }
+        },
+        "home_mode_selector": {
+          "template": "mode_selector",
+          "variables": {
+            "mode_entity": "input_select.home_mode"
+          },
+          "double_tap_action": {
+            "action": "perform-action",
+            "perform_action": "input_select.select_option",
+            "data": {
+              "entity_id": "input_select.home_mode",
+              "option": "[[[ return variables.mode_option ]]]"
+            }
+          }
+        },
+        "vacuum_mode_selector": {
+          "template": "mode_selector",
+          "variables": {
+            "mode_entity": "vacuum.valetudo_hestia"
+          },
+          "double_tap_action": {
+            "action": "perform-action",
+            "data": {
+              "entity_id": "vacuum.valetudo_hestia"
+            }
+          }
+        },
+        "vacuum_dock_mode_selector": {
+          "template": "mode_selector",
+          "double_tap_action": {
+            "action": "perform-action"
+          },
+          "variables": {
+            "mode_entity": "sensor.valetudo_hestia_dock_status"
           }
         },
         "floorplan_square_cell": {
@@ -7289,7 +7316,7 @@
                         "icon": "mdi:home-export-outline",
                         "template": "home_mode_selector",
                         "variables": {
-                          "home_mode_option": "Away Mode"
+                          "mode_option": "Away Mode"
                         },
                         "styles": {
                           "card": [
@@ -7306,7 +7333,7 @@
                         "icon": "mdi:home-account",
                         "template": "home_mode_selector",
                         "variables": {
-                          "home_mode_option": "Normal Mode"
+                          "mode_option": "Normal Mode"
                         },
                         "styles": {
                           "card": [
@@ -7323,7 +7350,7 @@
                         "icon": "mdi:party-popper",
                         "template": "home_mode_selector",
                         "variables": {
-                          "home_mode_option": "Party Mode"
+                          "mode_option": "Party Mode"
                         },
                         "styles": {
                           "card": [
@@ -13058,26 +13085,538 @@
                   ]
                 },
                 {
-                  "type": "tile",
+                  "type": "custom:button-card",
                   "entity": "vacuum.valetudo_hestia",
                   "name": "Hestia",
-                  "vertical": false,
-                  "features": [
+                  "tap_action": {
+                    "action": "none"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  },
+                  "custom_fields": {
+                    "running": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:play",
+                        "template": "vacuum_mode_selector",
+                        "variables": {
+                          "mode_option": "cleaning, returning"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "vacuum.start"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-right-shape": "square"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "paused": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:pause",
+                        "template": "vacuum_mode_selector",
+                        "variables": {
+                          "mode_option": "paused"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "vacuum.pause"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-shape": "square"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "idle": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:stop",
+                        "template": "vacuum_mode_selector",
+                        "variables": {
+                          "mode_option": "idle, error"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "vacuum.stop"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-shape": "square"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "docked": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:home-import-outline",
+                        "template": "vacuum_mode_selector",
+                        "variables": {
+                          "mode_option": "docked"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "vacuum.return_to_base"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-left-shape": "square"
+                            }
+                          ]
+                        },
+                        "right_pad": " "
+                      }
+                    }
+                  },
+                  "styles": {
+                    "grid": [
+                      {
+                        "grid-template-areas": "\"i n running paused idle docked right_pad\""
+                      },
+                      {
+                        "grid-template-rows": "1fr"
+                      },
+                      {
+                        "grid-template-columns": "56px 1fr 16% 16% 16% 16% 2%"
+                      }
+                    ],
+                    "icon": [
+                      {
+                        "height": "24px"
+                      },
+                      {
+                        "color": "[[[ return 'var(--state-inactive-color)']]]"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "justify-self": "start"
+                      },
+                      {
+                        "margin-top": 0
+                      },
+                      {
+                        "margin-bottom": 0
+                      },
+                      {
+                        "font-size": "14px"
+                      },
+                      {
+                        "font-weight": 500
+                      },
+                      {
+                        "align-self": "center"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 12
+                  },
+                  "visibility": [
                     {
-                      "type": "vacuum-commands",
-                      "commands": [
-                        "start_pause",
-                        "stop",
-                        "return_home"
+                      "condition": "or",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.valetudo_hestia",
+                          "state": "cleaning"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.valetudo_hestia",
+                          "state": "returning"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.valetudo_hestia",
+                          "state": "paused"
+                        }
                       ]
                     }
-                  ],
-                  "features_position": "inline",
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "vacuum.valetudo_hestia",
+                  "name": "Hestia",
+                  "tap_action": {
+                    "action": "none"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  },
+                  "custom_fields": {
+                    "running": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:play",
+                        "template": "vacuum_mode_selector",
+                        "variables": {
+                          "mode_option": "cleaning, returning"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "vacuum.start"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-right-shape": "square"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "idle": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:stop",
+                        "template": "vacuum_mode_selector",
+                        "variables": {
+                          "mode_option": "idle, error"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "vacuum.stop"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-shape": "square"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "docked": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:home-import-outline",
+                        "template": "vacuum_mode_selector",
+                        "variables": {
+                          "mode_option": "docked"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "vacuum.return_to_base"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-left-shape": "square"
+                            }
+                          ]
+                        },
+                        "right_pad": " "
+                      }
+                    }
+                  },
+                  "styles": {
+                    "grid": [
+                      {
+                        "grid-template-areas": "\"i n running idle docked right_pad\""
+                      },
+                      {
+                        "grid-template-rows": "1fr"
+                      },
+                      {
+                        "grid-template-columns": "56px 1fr 16% 16% 16% 2%"
+                      }
+                    ],
+                    "icon": [
+                      {
+                        "height": "24px"
+                      },
+                      {
+                        "color": "[[[ return 'var(--state-inactive-color)']]]"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "justify-self": "start"
+                      },
+                      {
+                        "margin-top": 0
+                      },
+                      {
+                        "margin-bottom": 0
+                      },
+                      {
+                        "font-size": "14px"
+                      },
+                      {
+                        "font-weight": 500
+                      },
+                      {
+                        "align-self": "center"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 12
+                  },
+                  "visibility": [
+                    {
+                      "condition": "or",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.valetudo_hestia",
+                          "state": "idle"
+                        },
+                        {
+                          "condition": "state",
+                          "entity": "vacuum.valetudo_hestia",
+                          "state": "error"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "vacuum.valetudo_hestia",
+                  "name": "Hestia",
+                  "tap_action": {
+                    "action": "none"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  },
+                  "custom_fields": {
+                    "running": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:play",
+                        "template": "vacuum_mode_selector",
+                        "variables": {
+                          "mode_option": "cleaning, returning"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "vacuum.start"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-right-shape": "square"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "docked": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:home-import-outline",
+                        "template": "vacuum_mode_selector",
+                        "variables": {
+                          "mode_option": "docked"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "vacuum.return_to_base"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-left-shape": "square"
+                            }
+                          ]
+                        },
+                        "right_pad": " "
+                      }
+                    }
+                  },
+                  "styles": {
+                    "grid": [
+                      {
+                        "grid-template-areas": "\"i n running docked right_pad\""
+                      },
+                      {
+                        "grid-template-rows": "1fr"
+                      },
+                      {
+                        "grid-template-columns": "56px 1fr 16% 16% 2%"
+                      }
+                    ],
+                    "icon": [
+                      {
+                        "height": "24px"
+                      },
+                      {
+                        "color": "[[[ return 'var(--state-inactive-color)']]]"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "justify-self": "start"
+                      },
+                      {
+                        "margin-top": 0
+                      },
+                      {
+                        "margin-bottom": 0
+                      },
+                      {
+                        "font-size": "14px"
+                      },
+                      {
+                        "font-weight": 500
+                      },
+                      {
+                        "align-self": "center"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 12
+                  },
                   "visibility": [
                     {
                       "condition": "state",
-                      "entity": "input_boolean.vacuum_manual_control",
-                      "state_not": "on"
+                      "entity": "vacuum.valetudo_hestia",
+                      "state": "docked"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.valetudo_hestia_dock_status",
+                  "name": "Dock Actions",
+                  "tap_action": {
+                    "action": "none"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  },
+                  "custom_fields": {
+                    "emptying": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:trash-can",
+                        "template": "vacuum_dock_mode_selector",
+                        "variables": {
+                          "mode_option": "emptying"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "button.press",
+                          "data": {
+                            "entity_id": "button.valetudo_hestia_trigger_auto_empty_dock"
+                          }
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-right-shape": "square"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cleaning": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:water",
+                        "template": "vacuum_dock_mode_selector",
+                        "variables": {
+                          "mode_option": "cleaning"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "rest_command.vacuum_mop_washing"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-shape": "square"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "drying": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:hair-dryer",
+                        "template": "vacuum_dock_mode_selector",
+                        "variables": {
+                          "mode_option": "drying"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "rest_command.vacuum_mop_drying"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-left-shape": "square"
+                            }
+                          ]
+                        },
+                        "right_pad": " "
+                      }
+                    }
+                  },
+                  "styles": {
+                    "grid": [
+                      {
+                        "grid-template-areas": "\"i n emptying cleaning drying right_pad\""
+                      },
+                      {
+                        "grid-template-rows": "1fr"
+                      },
+                      {
+                        "grid-template-columns": "56px 1fr 16% 16% 16% 2%"
+                      }
+                    ],
+                    "icon": [
+                      {
+                        "height": "24px"
+                      },
+                      {
+                        "color": "[[[ return 'var(--state-inactive-color)']]]"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "justify-self": "start"
+                      },
+                      {
+                        "margin-top": 0
+                      },
+                      {
+                        "margin-bottom": 0
+                      },
+                      {
+                        "font-size": "14px"
+                      },
+                      {
+                        "font-weight": 500
+                      },
+                      {
+                        "align-self": "center"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 12
+                  },
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.valetudo_hestia",
+                      "state": "docked"
                     }
                   ]
                 },
