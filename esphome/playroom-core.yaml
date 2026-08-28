@@ -161,7 +161,7 @@ script:
           }
           // main display
           if (id(fan_power).state) {
-            id(interface_display).filled_rectangle(0, id(height) * 0, id(width), id(height) * 0.75, id(slider));
+            id(interface_display).filled_rectangle(0, id(height) * (0.75 - (0.75 * id(fan_speed).state / 100)), id(width), id(height) * (0.75 * id(fan_speed).state / 100), id(slider));
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_on));
           } else {
             id(interface_display).image(id(width) * 0.5, id(height) * 0.375, id(main_fan_forward), ImageAlign::CENTER, id(device_off));
@@ -242,6 +242,10 @@ sensor:
   - platform: homeassistant
     id: room_lux
     entity_id: sensor.playroom_radar_lux
+  - platform: homeassistant
+    id: fan_speed
+    entity_id: fan.${core_room}_fan
+    attribute: percentage
   - platform: homeassistant
     id: vacuum_cleaning_progress
     entity_id: sensor.vacuum_current_run_cleaning_progress
@@ -358,6 +362,16 @@ binary_sensor:
                             binary_sensor.is_on: left_button
                           then:
                             - lambda: 'id(current_command).publish_state("lamp_brighten");'
+                            - delay: 0.75s
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: left_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("fan_speed_up");'
                             - delay: 0.75s
       - timing:
           - ON for at most 1s
@@ -533,6 +547,16 @@ binary_sensor:
                             binary_sensor.is_on: right_button
                           then:
                             - lambda: 'id(current_command).publish_state("lamp_darken");'
+                            - delay: 0.75s
+                - if:
+                    condition:
+                      lambda: 'return id(current_view).state == "fan";'
+                    then:
+                      - while:
+                          condition:
+                            binary_sensor.is_on: right_button
+                          then:
+                            - lambda: 'id(current_command).publish_state("fan_slow_down");'
                             - delay: 0.75s
       - timing:
           - ON for at most 1s
