@@ -248,18 +248,14 @@ sensor:
   - platform: homeassistant
     id: vacuum_battery_level
     entity_id: sensor.valetudo_hestia_battery_level
-  - platform: dht
-    pin: 21
-    model: DHT22
-    temperature:
-      id: room_temp
-      name: Temperature
-      filters: 
-        - offset: -1
-    humidity:
-      id: room_hum
-      name: Humidity
-      accuracy_decimals: 1
+  - platform: homeassistant
+    id: room_temp
+    entity_id: sensor.${core_room}_temperature
+    attribute: brightness
+  - platform: homeassistant
+    id: room_hum
+    entity_id: sensor.${core_room}_humidity
+    attribute: brightness
 
 binary_sensor:
   - platform: homeassistant
