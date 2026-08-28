@@ -128,6 +128,9 @@ action:
                 entity_id: !input lux_sensor
                 above: !input sufficient_lux
         sequence:
+          - condition: state
+            entity_id: !input lights_list
+            state: "on"
           - action: light.turn_off
             target:
               entity_id: !input lights_list
@@ -140,6 +143,9 @@ action:
                 entity_id: !input lux_sensor
                 below: !input insufficient_lux
         sequence:
+          - condition: state
+            entity_id: !input lights_list
+            state: "off"
           - action: script.lights_controller
             data:
               lights: !input lights_list

@@ -107,6 +107,7 @@
           lights:
           - light.playroom_lights
           - light.yard_light_entity
+          - light.playroom_fan_light
           command: lights_on
       action_button_up_long:
       - action: script.lights_controller
@@ -123,6 +124,7 @@
           lights:
           - light.playroom_lights
           - light.yard_light_entity
+          - light.playroom_fan_light
           command: lights_off
       action_button_down_long:
       - action: script.lights_controller
@@ -150,6 +152,7 @@
             lights:
             - light.yard_light_entity
             - light.playroom_lights
+            - light.playroom_fan_light
             command: lights_manual_control
         else:
         - action: script.lights_controller
@@ -158,8 +161,18 @@
             lights:
             - light.yard_light_entity
             - light.playroom_lights
+            - light.playroom_fan_light
             command: lights_auto_control
       button_up_double_press: true
+      action_button_down_double:
+      - action: script.lights_controller
+        metadata: {}
+        data:
+          lights:
+          - light.playroom_lights
+          - light.yard_light_entity
+          - light.playroom_fan_light
+          command: turn_off_room
 - id: '1643644178195'
   alias: Powder Room Lights Controller
   description: Control the Powder Room Lights
@@ -711,6 +724,7 @@
         data:
           lights:
           - light.kitchen_lights
+          - light.kitchen_fan_light
           command: lights_on
       action_button_up_long:
       - action: script.lights_controller
@@ -725,6 +739,7 @@
         data:
           lights:
           - light.kitchen_lights
+          - light.kitchen_fan_light
           command: lights_off
       action_button_down_long:
       - action: script.lights_controller
@@ -751,6 +766,7 @@
           data:
             lights:
             - light.kitchen_lights
+            - light.kitchen_fan_light
             command: lights_manual_control
         - action: script.cover_controller
           metadata: {}
@@ -763,12 +779,21 @@
           data:
             lights:
             - light.kitchen_lights
+            - light.kitchen_fan_light
             command: lights_auto_control
         - action: script.cover_controller
           metadata: {}
           data:
             cover: cover.kitchen_blind
             command: cover_auto_control
+      action_button_down_double:
+      - action: script.lights_controller
+        metadata: {}
+        data:
+          lights:
+          - light.kitchen_lights
+          - light.kitchen_fan_light
+          command: turn_off_room
 - id: '1660034693952'
   alias: Master Bathroom Blind Auto Control
   description: Control the Master Bathroom Blind based on whether there is motion
@@ -4260,6 +4285,16 @@
         metadata: {}
         data:
           cover: cover.kitchen_blind
+          command: '{{ states(''sensor.kitchen_core_current_command'') }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ states(''sensor.kitchen_core_current_command'') in [''fan_on'',''fan_off'',''fan_speed_up'',''fan_slow_down'']
+          }}'
+      sequence:
+      - action: script.fan_controller
+        metadata: {}
+        data:
+          fan: fan.kitchen_fan
           command: '{{ states(''sensor.kitchen_core_current_command'') }}'
   mode: single
 - id: '1722382955872'
@@ -8567,6 +8602,7 @@
         data:
           lights:
           - light.playroom_lights
+          - light.playroom_fan_light
           command: '{{ states(''sensor.playroom_core_current_command'') }}'
     - conditions:
       - condition: template
@@ -8592,12 +8628,10 @@
         value_template: '{{ ''fan'' in states(''sensor.playroom_core_current_command'')
           }}'
       sequence:
-      - action: fan.turn_{{ states('sensor.playroom_core_current_command').split('_')[1]
-          }}
-        metadata: {}
-        target:
-          entity_id: fan.playroom_fan
-        data: {}
+      - action: script.fan_controller
+        data:
+          fan: fan.playroom_fan
+          command: '{{ states(''sensor.playroom_core_current_command'') }}'
   mode: single
 - id: '1772756162121'
   alias: Auto Away Mode
