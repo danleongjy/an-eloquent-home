@@ -1261,9 +1261,11 @@
           - automation.elis_room_motion_floor_lamp
           - automation.kitchen_motion_lights
           - automation.kitchen_motion_fan
+          - automation.kitchen_fan_motion_light
           - automation.study_walkway_motion_light
           - automation.playroom_motion_lights
           - automation.playroom_motion_fan
+          - automation.playroom_fan_motion_light
           - automation.yard_motion_light
           - automation.dining_room_motion_ac
           - automation.dining_room_motion_fan
@@ -1276,6 +1278,7 @@
           - automation.study_room_motion_ac
           - automation.study_room_motion_fan
           - automation.study_room_motion_lights
+          - automation.doorbell
           - automation.study_room_voice_assistant_listening_for_wake_word
           - automation.kitchen_voice_assistant_listening_for_wake_word
           - automation.elenas_room_curtains_auto_control
@@ -1491,9 +1494,12 @@
           - automation.elis_room_motion_lights
           - automation.elis_room_motion_floor_lamp
           - automation.kitchen_motion_lights
+          - automation.kitchen_motion_fan
+          - automation.kitchen_fan_motion_light
           - automation.study_walkway_motion_light
           - automation.playroom_motion_lights
           - automation.playroom_motion_fan
+          - automation.playroom_fan_motion_light
           - automation.yard_motion_light
           - automation.dining_room_motion_ac
           - automation.dining_room_motion_fan
@@ -2431,6 +2437,7 @@
       turnoff_entities_list:
       - light.kitchen_lights
       - fan.kitchen_fan
+      - light.kitchen_fan_light
 - id: '1678321703771'
   alias: Study Walkway Motion Light
   description: Control Study Room Bulb 4 when motion is detected, depending on lux
@@ -2485,6 +2492,7 @@
       turnoff_entities_list:
       - light.playroom_lights
       - fan.playroom_fan
+      - light.playroom_fan_light
 - id: '1678323204367'
   alias: Yard Motion Light
   description: Control the Yard Light when motion is detected, depending on lux level
@@ -8837,101 +8845,66 @@
         data:
           tag: batt_low
   mode: single
-- id: '1787730098400'
+- id: '1787912986750'
+  alias: Kitchen Fan Auto Control
+  description: Set the Kitchen Fan speed based on temperature
+  use_blueprint:
+    path: danleongjy/fan_auto_control.yaml
+    input:
+      fan: fan.kitchen_fan
+      temp_sensor: sensor.kitchen_core_temperature
+      low_temp: 16
+- id: '1787913094123'
+  alias: Playroom Fan Auto Control
+  description: Set the Playroom Fan speed based on temperature
+  use_blueprint:
+    path: danleongjy/fan_auto_control.yaml
+    input:
+      fan: fan.playroom_fan
+      temp_sensor: sensor.playroom_temperature
+      low_temp: 16
+- id: '1787913272253'
   alias: Kitchen Motion Fan
-  description: Turn on or off the Kitchen Fan based on occupancy
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.kitchen_radar_occupancy
-    from:
-    - 'off'
-    to:
-    - 'on'
-    id: motion
-  - trigger: state
-    entity_id:
-    - binary_sensor.kitchen_radar_occupancy
-    to:
-    - 'off'
-    id: no_motion
-    from:
-    - 'on'
-    for:
-      minutes: '{{ states(''input_number.motion_timeout_presence'') | int }}'
-  conditions: []
-  actions:
-  - if:
-    - condition: trigger
-      id:
-      - no_motion
-    then:
-    - condition: state
-      state:
-      - 'on'
-      entity_id: fan.kitchen_fan
-    - action: fan.turn_off
-      metadata: {}
-      target:
-        entity_id: fan.kitchen_fan
-      data: {}
-    else:
-    - condition: state
-      state:
-      - 'off'
-      entity_id: fan.kitchen_fan
-    - action: fan.turn_on
-      metadata: {}
-      target:
-        entity_id: fan.kitchen_fan
-      data: {}
-  mode: single
-- id: '1787740290330'
+  description: Control the Kitchen Fan when motion is detected
+  use_blueprint:
+    path: danleongjy/motion_fan.yaml
+    input:
+      motion_sensor: binary_sensor.kitchen_radar_occupancy
+      fan: fan.kitchen_fan
+      off_hours_start: input_datetime.sleep_hours_start
+      respect_closed_doors: false
+- id: '1787913409307'
   alias: Playroom Motion Fan
-  description: Turn on or off the Playroom Fan based on occupancy
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.playroom_radar_occupancy
-    from:
-    - 'off'
-    to:
-    - 'on'
-    id: motion
-  - trigger: state
-    entity_id:
-    - binary_sensor.playroom_radar_occupancy
-    id: no_motion
-    from:
-    - 'on'
-    to:
-    - 'off'
-    for:
-      minutes: '{{ states(''input_number.motion_timeout_presence'') | int }}'
-  conditions: []
-  actions:
-  - if:
-    - condition: trigger
-      id:
-      - no_motion
-    then:
-    - condition: state
-      state:
-      - 'on'
-      entity_id: fan.playroom_fan
-    - action: fan.turn_off
-      metadata: {}
-      target:
-        entity_id: fan.playroom_fan
-      data: {}
-    else:
-    - condition: state
-      state:
-      - 'off'
-      entity_id: fan.playroom_fan
-    - action: fan.turn_on
-      metadata: {}
-      target:
-        entity_id: fan.playroom_fan
-      data: {}
-  mode: single
+  description: Control the Playroom Fan when motion is detected
+  use_blueprint:
+    path: danleongjy/motion_fan.yaml
+    input:
+      motion_sensor: binary_sensor.playroom_radar_occupancy
+      fan: fan.playroom_fan
+      off_hours_start: input_datetime.sleep_hours_start
+      respect_closed_doors: false
+- id: '1787914525156'
+  alias: Playroom Fan Motion Light
+  description: Control the Playroom Fan Light when motion is detected, depending on
+    lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      blackout_hours_start: input_datetime.dim_hours_start
+      lights_debounce: false
+      lights_list:
+      - light.playroom_fan_light
+      motion_sensor: binary_sensor.playroom_radar_occupancy
+      lux_sensor: sensor.playroom_radar_lux
+- id: '1787914580216'
+  alias: Kitchen Fan Motion Light
+  description: Control the Kitchen Fan Light when motion is detected, depending on
+    lux level and time.
+  use_blueprint:
+    path: danleongjy/motion_lights.yaml
+    input:
+      lights_list:
+      - light.kitchen_fan_light
+      motion_sensor: binary_sensor.kitchen_radar_occupancy
+      lux_sensor: sensor.kitchen_radar_lux
+      blackout_hours_start: input_datetime.dim_hours_start
