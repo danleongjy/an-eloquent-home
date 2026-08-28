@@ -205,3 +205,58 @@
             command: Reverse
       speed_count: 6
       
+    - name: "Kitchen Fan"
+      unique_id: fan.kitchen_fan
+      state: "{{ states('input_number.kitchen_fan_speed') | int > 0 }}"
+      percentage: "{{ states('input_number.kitchen_fan_speed') | int }}"
+      turn_on:
+        - action: automation.trigger
+          target:
+            entity_id: automation.kitchen_fan_auto_control
+      turn_off:
+        - action: fan.set_percentage
+          target:
+            entity_id: fan.kitchen_fan
+          data:
+            percentage: 0
+      set_percentage:
+        - action: input_number.set_value
+          target:
+            entity_id: input_number.kitchen_fan_speed
+          data:
+            value: "{{ percentage }}"
+        - action: remote.send_command
+          target:
+            entity_id: remote.kitchen_universal_remote
+          data:
+            device: Kitchen Fan
+            command: "{{ 'Off' if percentage | int == 0 else ((percentage | int) / 100 * 3) | round(0) }}"
+      speed_count: 3
+
+    - name: "Playroom Fan"
+      unique_id: fan.playroom_fan
+      state: "{{ states('input_number.playroom_fan_speed') | int > 0 }}"
+      percentage: "{{ states('input_number.playroom_fan_speed') | int }}"
+      turn_on:
+        - action: automation.trigger
+          target:
+            entity_id: automation.playroom_fan_auto_control
+      turn_off:
+        - action: fan.set_percentage
+          target:
+            entity_id: fan.playroom_fan
+          data:
+            percentage: 0
+      set_percentage:
+        - action: input_number.set_value
+          target:
+            entity_id: input_number.playroom_fan_speed
+          data:
+            value: "{{ percentage }}"
+        - action: remote.send_command
+          target:
+            entity_id: remote.playroom_universal_remote
+          data:
+            device: Playroom Fan
+            command: "{{ 'Off' if percentage | int == 0 else ((percentage | int) / 100 * 3) | round(0) }}"
+      speed_count: 3

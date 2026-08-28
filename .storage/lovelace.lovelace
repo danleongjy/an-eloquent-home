@@ -1657,7 +1657,7 @@
           "styles": {
             "card": [
               {
-                "background-color": "[[[\n  if (states['lock.main_door_lock'].state != 'locked') {\n    return \"#9e110d\"\n  }\n]]]\n"
+                "background-color": "[[[\n  if ((states['lock.main_door_lock'].state != 'locked' && states['binary_sensor.main_door'].state == 'off') ||\n      (states['lock.main_door_lock'].state != 'unlocked' && states['binary_sensor.main_door'].state == 'on')) {\n    return \"#9e110d\"\n  }\n]]]\n"
               }
             ]
           }
@@ -6499,7 +6499,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.playroom_core_temperature",
+                          "entity": "sensor.playroom_temperature",
                           "template": "sensor_temperature"
                         },
                         {
@@ -6567,7 +6567,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.playroom_core_humidity",
+                          "entity": "sensor.playroom_humidity",
                           "template": "sensor_humidity"
                         },
                         {
@@ -6801,12 +6801,12 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.playroom_core_temperature",
+                          "entity": "sensor.playroom_temperature",
                           "template": "sensor_temperature"
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.playroom_core_humidity",
+                          "entity": "sensor.playroom_humidity",
                           "template": "sensor_humidity"
                         },
                         {
@@ -13116,6 +13116,175 @@
                         }
                       }
                     },
+                    "docked": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:home-import-outline",
+                        "template": "vacuum_mode_selector",
+                        "variables": {
+                          "mode_option": "docked"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "vacuum.return_to_base"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-left-shape": "square"
+                            }
+                          ]
+                        },
+                        "right_pad": " "
+                      }
+                    },
+                    "emptying": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:trash-can",
+                        "template": "vacuum_dock_mode_selector",
+                        "variables": {
+                          "mode_option": "emptying"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "button.press",
+                          "data": {
+                            "entity_id": "button.valetudo_hestia_trigger_auto_empty_dock"
+                          }
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-right-shape": "square"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "cleaning": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:water",
+                        "template": "vacuum_dock_mode_selector",
+                        "variables": {
+                          "mode_option": "cleaning"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "rest_command.vacuum_mop_washing"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-shape": "square"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "drying": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:hair-dryer",
+                        "template": "vacuum_dock_mode_selector",
+                        "variables": {
+                          "mode_option": "drying"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "rest_command.vacuum_mop_drying"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-left-shape": "square"
+                            }
+                          ]
+                        },
+                        "right_pad": " "
+                      }
+                    }
+                  },
+                  "styles": {
+                    "grid": [
+                      {
+                        "grid-template-areas": "\"i n running docked pad emptying cleaning drying right_pad\""
+                      },
+                      {
+                        "grid-template-rows": "1fr"
+                      },
+                      {
+                        "grid-template-columns": "56px 1fr 12% 12% 4% 12% 12% 12% 2%"
+                      }
+                    ],
+                    "icon": [
+                      {
+                        "height": "24px"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "justify-self": "start"
+                      },
+                      {
+                        "margin-top": 0
+                      },
+                      {
+                        "margin-bottom": 0
+                      },
+                      {
+                        "font-size": "14px"
+                      },
+                      {
+                        "font-weight": 500
+                      },
+                      {
+                        "align-self": "center"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 12
+                  },
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.valetudo_hestia",
+                      "state": "docked"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "vacuum.valetudo_hestia",
+                  "name": "Hestia",
+                  "color": "auto",
+                  "tap_action": {
+                    "action": "none"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  },
+                  "custom_fields": {
+                    "running": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:play",
+                        "template": "vacuum_mode_selector",
+                        "variables": {
+                          "mode_option": "cleaning, returning"
+                        },
+                        "double_tap_action": {
+                          "perform_action": "vacuum.start"
+                        },
+                        "styles": {
+                          "card": [
+                            {
+                              "corner-right-shape": "square"
+                            }
+                          ]
+                        }
+                      }
+                    },
                     "paused": {
                       "card": {
                         "type": "custom:button-card",
@@ -13376,175 +13545,6 @@
                           "state": "error"
                         }
                       ]
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "vacuum.valetudo_hestia",
-                  "name": "Hestia",
-                  "color": "auto",
-                  "tap_action": {
-                    "action": "none"
-                  },
-                  "icon_tap_action": {
-                    "action": "more-info"
-                  },
-                  "custom_fields": {
-                    "running": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "icon": "mdi:play",
-                        "template": "vacuum_mode_selector",
-                        "variables": {
-                          "mode_option": "cleaning, returning"
-                        },
-                        "double_tap_action": {
-                          "perform_action": "vacuum.start"
-                        },
-                        "styles": {
-                          "card": [
-                            {
-                              "corner-right-shape": "square"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "docked": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "icon": "mdi:home-import-outline",
-                        "template": "vacuum_mode_selector",
-                        "variables": {
-                          "mode_option": "docked"
-                        },
-                        "double_tap_action": {
-                          "perform_action": "vacuum.return_to_base"
-                        },
-                        "styles": {
-                          "card": [
-                            {
-                              "corner-left-shape": "square"
-                            }
-                          ]
-                        },
-                        "right_pad": " "
-                      }
-                    },
-                    "emptying": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "icon": "mdi:trash-can",
-                        "template": "vacuum_dock_mode_selector",
-                        "variables": {
-                          "mode_option": "emptying"
-                        },
-                        "double_tap_action": {
-                          "perform_action": "button.press",
-                          "data": {
-                            "entity_id": "button.valetudo_hestia_trigger_auto_empty_dock"
-                          }
-                        },
-                        "styles": {
-                          "card": [
-                            {
-                              "corner-right-shape": "square"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "cleaning": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "icon": "mdi:water",
-                        "template": "vacuum_dock_mode_selector",
-                        "variables": {
-                          "mode_option": "cleaning"
-                        },
-                        "double_tap_action": {
-                          "perform_action": "rest_command.vacuum_mop_washing"
-                        },
-                        "styles": {
-                          "card": [
-                            {
-                              "corner-shape": "square"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "drying": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "icon": "mdi:hair-dryer",
-                        "template": "vacuum_dock_mode_selector",
-                        "variables": {
-                          "mode_option": "drying"
-                        },
-                        "double_tap_action": {
-                          "perform_action": "rest_command.vacuum_mop_drying"
-                        },
-                        "styles": {
-                          "card": [
-                            {
-                              "corner-left-shape": "square"
-                            }
-                          ]
-                        },
-                        "right_pad": " "
-                      }
-                    }
-                  },
-                  "styles": {
-                    "grid": [
-                      {
-                        "grid-template-areas": "\"i n running docked pad emptying cleaning drying right_pad\""
-                      },
-                      {
-                        "grid-template-rows": "1fr"
-                      },
-                      {
-                        "grid-template-columns": "56px 1fr 12% 12% 4% 12% 12% 12% 2%"
-                      }
-                    ],
-                    "icon": [
-                      {
-                        "height": "24px"
-                      }
-                    ],
-                    "name": [
-                      {
-                        "justify-self": "start"
-                      },
-                      {
-                        "margin-top": 0
-                      },
-                      {
-                        "margin-bottom": 0
-                      },
-                      {
-                        "font-size": "14px"
-                      },
-                      {
-                        "font-weight": 500
-                      },
-                      {
-                        "align-self": "center"
-                      }
-                    ]
-                  },
-                  "section_mode": true,
-                  "grid_options": {
-                    "rows": 1,
-                    "columns": 12
-                  },
-                  "visibility": [
-                    {
-                      "condition": "state",
-                      "entity": "vacuum.valetudo_hestia",
-                      "state": "docked"
                     }
                   ]
                 },
@@ -16161,14 +16161,7 @@
                         "type": "custom:button-card",
                         "template": "button_card_tile",
                         "entity": "sensor.philips_shaver_activity",
-                        "name": " ",
-                        "styles": {
-                          "icon": [
-                            {
-                              "color": "[[[ return 'var(--state-inactive-color)' ]]]"
-                            }
-                          ]
-                        }
+                        "name": " "
                       }
                     },
                     {
@@ -16187,14 +16180,7 @@
                         "template": "button_card_tile",
                         "entity": "sensor.philips_shaver_days_since_last_use",
                         "name": " ",
-                        "state_display": "[[[ \n  if (entity.state == '1') {\n    return '1 day ago'\n  } else {\n    return entity.state + ' days ago'\n  }\n]]]\n",
-                        "styles": {
-                          "icon": [
-                            {
-                              "color": "[[[ return 'var(--state-inactive-color)' ]]]"
-                            }
-                          ]
-                        }
+                        "state_display": "[[[ \n  if (entity.state == '1') {\n    return '1 day ago'\n  } else {\n    return entity.state + ' days ago'\n  }\n]]]\n"
                       }
                     },
                     {
