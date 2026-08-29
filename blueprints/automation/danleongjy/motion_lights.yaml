@@ -114,6 +114,7 @@ action:
   - variables:
       blackout_start: !input blackout_hours_start
       blackout_end: !input blackout_hours_end
+      lights: !input lights_list
   - delay: 0.05
   - choose:
       - conditions:
@@ -128,9 +129,12 @@ action:
                 entity_id: !input lux_sensor
                 above: !input sufficient_lux
         sequence:
-          - condition: state
-            entity_id: !input lights_list
-            state: "on"
+          - or:
+              - condition: template
+                value_template: "{{ 'light.kitchen_fan_light' not in lights and 'light.playroom_fan_light' not in lights }}"
+              - condition: state
+                entity_id: !input lights_list
+                state: "on"
           - action: light.turn_off
             target:
               entity_id: !input lights_list
@@ -143,9 +147,12 @@ action:
                 entity_id: !input lux_sensor
                 below: !input insufficient_lux
         sequence:
-          - condition: state
-            entity_id: !input lights_list
-            state: "off"
+          - or:
+              - condition: template
+                value_template: "{{ 'light.kitchen_fan_light' not in lights and 'light.playroom_fan_light' not in lights }}"
+              - condition: state
+                entity_id: !input lights_list
+                state: "off"
           - action: script.lights_controller
             data:
               lights: !input lights_list
