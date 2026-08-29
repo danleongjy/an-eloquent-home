@@ -110,7 +110,9 @@ action:
             {% endif %}
           {% endfor %}
           {% for opening in ac_on.openings %}
-            {% if is_state(opening, 'on') %}
+            {% if ('window' in opening 
+                   or ('door' in opening and not is_state('input_select.home_mode', 'Party Mode'))) 
+                   and is_state(opening, 'on') %}
               {% for room in openings[opening] %}
                 {% if room != ac_on.room %}
                   {% if room not in acs.keys() %}

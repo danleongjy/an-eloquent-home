@@ -4695,8 +4695,8 @@
     default:
     - alias: Set Daniel's Next Alarm to 90min before Daniel's event
       data:
-        time: '{{ as_datetime(school_days[''calendar.daniel_work_days''].events[0].start)
-          - timedelta(minutes = 90) }}'
+        time: '{{ (as_datetime(school_days[''calendar.daniel_work_days''].events[0].start)
+          - timedelta(minutes = 90)).time() }}'
       target:
         entity_id: input_datetime.daniels_next_alarm
       action: input_datetime.set_datetime
