@@ -1113,6 +1113,7 @@
           }
         },
         "mode_selector": {
+          "show_name": false,
           "styles": {
             "card": [
               {
@@ -1168,6 +1169,31 @@
           },
           "variables": {
             "mode_entity": "sensor.valetudo_hestia_dock_status"
+          }
+        },
+        "stove_preset": {
+          "show_name": false,
+          "tap_action": {
+            "action": "perform-action",
+            "perform_action": "script.stove_settings"
+          },
+          "styles": {
+            "card": [
+              {
+                "height": "56px"
+              },
+              {
+                "corner-shape": "square"
+              }
+            ],
+            "icon": [
+              {
+                "height": "24px"
+              },
+              {
+                "color": "[[[ return 'var(--state-inactive-color)' ]]]"
+              }
+            ]
           }
         },
         "floorplan_square_cell": {
@@ -2361,7 +2387,7 @@
                             "show_name": false,
                             "show_state": true,
                             "custom_fields": {
-                              "temp": "[[[ return states[\"sensor.local_outdoor_temperature\"].state + states[\"sensor.local_outdoor_temperature\"].attributes.unit_of_measurement]]]",
+                              "temp": "[[[ return parseFloat(states[\"sensor.local_outdoor_temperature\"].state).toFixed(1) + states[\"sensor.local_outdoor_temperature\"].attributes.unit_of_measurement]]]",
                               "otherdata": "[[[ return `<ha-icon icon=\"mdi:weather-rainy\" style=\"width: 12px; height: 12px;\"></ha-icon> ` + parseFloat(states[\"sensor.local_rainfall\"].state).toFixed(0).toString() + states[\"sensor.local_rainfall\"].attributes.unit_of_measurement + ` <ha-icon icon=\"mdi:water-percent\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_outdoor_humidity\"].state).toFixed(0).toString() + \"%\" + ` <ha-icon icon=\"mdi:weather-windy\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_wind_speed\"].state).toFixed(0).toString() + states[\"sensor.local_wind_speed\"].attributes.unit_of_measurement +  ` <ha-icon icon=\"mdi:navigation-variant\" style=\"width: 12px; height: 12px;\"></ha-icon>` + parseFloat(states[\"sensor.local_wind_bearing\"].state).toFixed(0).toString() + '°' ]]]"
                             },
                             "styles": {
@@ -12545,6 +12571,12 @@
                       "name": "Spin Speed"
                     },
                     {
+                      "entity": "binary_sensor.lg_washer_door_lock",
+                      "name": {
+                        "type": "entity"
+                      }
+                    },
+                    {
                       "entity": "binary_sensor.lg_washer_child_lock",
                       "name": "Child Lock"
                     },
@@ -14378,44 +14410,127 @@
                   "heading": "Stove"
                 },
                 {
-                  "show_name": false,
-                  "show_icon": true,
-                  "type": "button",
+                  "type": "custom:button-card",
                   "entity": "switch.stove_main_power",
-                  "icon": "mdi:power",
+                  "name": "Controls",
+                  "color": "auto",
+                  "tap_action": {
+                    "action": "none"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  },
+                  "custom_fields": {
+                    "power": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:power",
+                        "template": "mode_selector",
+                        "entity": "switch.stove_main_power",
+                        "variables": {
+                          "mode_entity": "switch.stove_main_power",
+                          "mode_option": "on"
+                        },
+                        "tap_action": {
+                          "action": "toggle"
+                        }
+                      }
+                    },
+                    "left_burner": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:chevron-left-circle-outline",
+                        "template": "mode_selector",
+                        "variables": {
+                          "mode_entity": "select.stove_current_burner",
+                          "mode_option": "left"
+                        },
+                        "tap_action": {
+                          "action": "perform-action",
+                          "perform_action": "select.select_option",
+                          "data": {
+                            "entity_id": "select.stove_current_burner",
+                            "option": "left"
+                          }
+                        }
+                      }
+                    },
+                    "right_burner": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:chevron-right-circle-outline",
+                        "template": "mode_selector",
+                        "variables": {
+                          "mode_entity": "select.stove_current_burner",
+                          "mode_option": "right"
+                        },
+                        "tap_action": {
+                          "action": "perform-action",
+                          "perform_action": "select.select_option",
+                          "data": {
+                            "entity_id": "select.stove_current_burner",
+                            "option": "right"
+                          }
+                        }
+                      }
+                    },
+                    "pause": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "template": "mode_selector",
+                        "entity": "switch.stove_pause",
+                        "variables": {
+                          "mode_entity": "switch.stove_pause",
+                          "mode_option": "on"
+                        },
+                        "tap_action": {
+                          "action": "toggle"
+                        }
+                      }
+                    }
+                  },
+                  "styles": {
+                    "grid": [
+                      {
+                        "grid-template-areas": "\"i n power pad1 left_burner right_burner pad2 pause right_pad\""
+                      },
+                      {
+                        "grid-template-rows": "1fr"
+                      },
+                      {
+                        "grid-template-columns": "56px 1fr 12% 4% 12% 12% 4% 12% 2%"
+                      }
+                    ],
+                    "icon": [
+                      {
+                        "height": "24px"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "justify-self": "start"
+                      },
+                      {
+                        "margin-top": 0
+                      },
+                      {
+                        "margin-bottom": 0
+                      },
+                      {
+                        "font-size": "14px"
+                      },
+                      {
+                        "font-weight": 500
+                      },
+                      {
+                        "align-self": "center"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
                   "grid_options": {
-                    "columns": 3,
-                    "rows": 2
-                  }
-                },
-                {
-                  "show_name": false,
-                  "show_icon": true,
-                  "type": "button",
-                  "entity": "input_boolean.stove_select_left_burner",
-                  "grid_options": {
-                    "columns": 3,
-                    "rows": 2
-                  }
-                },
-                {
-                  "show_name": false,
-                  "show_icon": true,
-                  "type": "button",
-                  "entity": "input_boolean.stove_select_right_burner",
-                  "grid_options": {
-                    "columns": 3,
-                    "rows": 2
-                  }
-                },
-                {
-                  "show_name": false,
-                  "show_icon": true,
-                  "type": "button",
-                  "entity": "switch.stove_pause",
-                  "grid_options": {
-                    "columns": 3,
-                    "rows": 2
+                    "rows": 1,
+                    "columns": 12
                   }
                 },
                 {
@@ -14450,7 +14565,11 @@
                       "action": "toggle"
                     }
                   },
-                  "name": "Power:"
+                  "name": "Power:",
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
                 },
                 {
                   "type": "custom:slider-button-card",
@@ -14484,112 +14603,11 @@
                       "action": "toggle"
                     }
                   },
-                  "name": "Timer (min):"
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "show_name": true,
-                      "show_icon": true,
-                      "type": "custom:button-card",
-                      "color": "var(--state-icon-color)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.stove_settings",
-                        "target": {},
-                        "data": {
-                          "current_burner_power": 7,
-                          "current_burner_timer": 6
-                        }
-                      },
-                      "name": "Boil<br>Water",
-                      "icon": "mdi:kettle",
-                      "hold_action": {
-                        "action": "none"
-                      }
-                    },
-                    {
-                      "show_name": true,
-                      "show_icon": true,
-                      "type": "custom:button-card",
-                      "color": "var(--state-icon-color)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.stove_settings",
-                        "target": {},
-                        "data": {
-                          "current_burner_power": 1,
-                          "current_burner_timer": 16
-                        }
-                      },
-                      "name": "Cook<br>Rice",
-                      "icon": "mdi:rice",
-                      "hold_action": {
-                        "action": "none"
-                      }
-                    },
-                    {
-                      "show_name": true,
-                      "show_icon": true,
-                      "type": "custom:button-card",
-                      "color": "var(--state-icon-color)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.stove_settings",
-                        "target": {},
-                        "data": {
-                          "current_burner_power": 4,
-                          "current_burner_timer": 0
-                        }
-                      },
-                      "name": "Stir<br>Fry",
-                      "icon": "mdi:silverware-fork",
-                      "hold_action": {
-                        "action": "none"
-                      }
-                    },
-                    {
-                      "show_name": true,
-                      "show_icon": true,
-                      "type": "custom:button-card",
-                      "color": "var(--state-icon-color)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.stove_settings",
-                        "target": {},
-                        "data": {
-                          "current_burner_power": 3,
-                          "current_burner_timer": 16
-                        }
-                      },
-                      "name": "Steam<br>Fish",
-                      "icon": "mdi:fish",
-                      "hold_action": {
-                        "action": "none"
-                      }
-                    },
-                    {
-                      "show_name": true,
-                      "show_icon": true,
-                      "type": "custom:button-card",
-                      "color": "var(--state-icon-color)",
-                      "tap_action": {
-                        "action": "call-service",
-                        "service": "script.stove_settings",
-                        "target": {},
-                        "data": {
-                          "current_burner_power": 1,
-                          "current_burner_timer": 60
-                        }
-                      },
-                      "name": "<br>Simmer",
-                      "icon": "mdi:pot-steam",
-                      "hold_action": {
-                        "action": "none"
-                      }
-                    }
-                  ]
+                  "name": "Timer (min):",
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": "auto"
+                  }
                 },
                 {
                   "type": "markdown",
@@ -14599,6 +14617,135 @@
                     {
                       "entity": "select.stove_error_code",
                       "state_not": "None"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "script.stove_settings",
+                  "name": "Presets",
+                  "color": "auto",
+                  "tap_action": {
+                    "action": "none"
+                  },
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  },
+                  "custom_fields": {
+                    "boil_water": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:kettle",
+                        "template": "stove_preset",
+                        "tap_action": {
+                          "data": {
+                            "current_burner_power": 7,
+                            "current_burner_timer": 6
+                          }
+                        }
+                      }
+                    },
+                    "cook_rice": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:rice",
+                        "template": "stove_preset",
+                        "tap_action": {
+                          "data": {
+                            "current_burner_power": 7,
+                            "current_burner_timer": 6
+                          }
+                        }
+                      }
+                    },
+                    "stir_fry": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:silverware-fork",
+                        "template": "stove_preset",
+                        "tap_action": {
+                          "data": {
+                            "current_burner_power": 4,
+                            "current_burner_timer": 0
+                          }
+                        }
+                      }
+                    },
+                    "steam_fish": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:fish",
+                        "template": "stove_preset",
+                        "tap_action": {
+                          "data": {
+                            "current_burner_power": 3,
+                            "current_burner_timer": 16
+                          }
+                        }
+                      }
+                    },
+                    "simmer": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "icon": "mdi:pot-steam",
+                        "template": "stove_preset",
+                        "tap_action": {
+                          "data": {
+                            "current_burner_power": 1,
+                            "current_burner_timer": 60
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "styles": {
+                    "grid": [
+                      {
+                        "grid-template-areas": "\"i n boil_water cook_rice stir_fry steam_fish simmer right_pad\""
+                      },
+                      {
+                        "grid-template-rows": "1fr"
+                      },
+                      {
+                        "grid-template-columns": "56px 1fr 12% 12% 12% 12% 12% 2%"
+                      }
+                    ],
+                    "icon": [
+                      {
+                        "height": "24px"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "justify-self": "start"
+                      },
+                      {
+                        "margin-top": 0
+                      },
+                      {
+                        "margin-bottom": 0
+                      },
+                      {
+                        "font-size": "14px"
+                      },
+                      {
+                        "font-weight": 500
+                      },
+                      {
+                        "align-self": "center"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 12
+                  },
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "vacuum.valetudo_hestia",
+                      "state": "docked"
                     }
                   ]
                 }
