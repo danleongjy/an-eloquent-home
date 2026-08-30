@@ -1174,8 +1174,24 @@
         "stove_preset": {
           "show_name": false,
           "tap_action": {
-            "action": "perform-action",
-            "perform_action": "script.stove_settings"
+            "action": "multi-actions",
+            "actions": [
+              {
+                "action": "perform-action",
+                "perform_action": "script.stove_settings",
+                "data": {
+                  "current_burner_power": "[[[ return variables.power ]]]",
+                  "current_burner_timer": "[[[ return variables.timer ]]]"
+                }
+              },
+              {
+                "action": "toast",
+                "toast": {
+                  "message": "Stove preset activated.",
+                  "duration": 3000
+                }
+              }
+            ]
           },
           "styles": {
             "card": [
@@ -14637,11 +14653,9 @@
                         "type": "custom:button-card",
                         "icon": "mdi:kettle",
                         "template": "stove_preset",
-                        "tap_action": {
-                          "data": {
-                            "current_burner_power": 7,
-                            "current_burner_timer": 6
-                          }
+                        "variables": {
+                          "power": 7,
+                          "timer": 6
                         }
                       }
                     },
@@ -14650,11 +14664,9 @@
                         "type": "custom:button-card",
                         "icon": "mdi:rice",
                         "template": "stove_preset",
-                        "tap_action": {
-                          "data": {
-                            "current_burner_power": 7,
-                            "current_burner_timer": 6
-                          }
+                        "variables": {
+                          "power": 1,
+                          "timer": 16
                         }
                       }
                     },
@@ -14663,11 +14675,9 @@
                         "type": "custom:button-card",
                         "icon": "mdi:silverware-fork",
                         "template": "stove_preset",
-                        "tap_action": {
-                          "data": {
-                            "current_burner_power": 4,
-                            "current_burner_timer": 0
-                          }
+                        "variables": {
+                          "power": 4,
+                          "timer": 0
                         }
                       }
                     },
@@ -14676,11 +14686,9 @@
                         "type": "custom:button-card",
                         "icon": "mdi:fish",
                         "template": "stove_preset",
-                        "tap_action": {
-                          "data": {
-                            "current_burner_power": 3,
-                            "current_burner_timer": 16
-                          }
+                        "variables": {
+                          "power": 3,
+                          "timer": 16
                         }
                       }
                     },
@@ -14689,11 +14697,9 @@
                         "type": "custom:button-card",
                         "icon": "mdi:pot-steam",
                         "template": "stove_preset",
-                        "tap_action": {
-                          "data": {
-                            "current_burner_power": 1,
-                            "current_burner_timer": 60
-                          }
+                        "variables": {
+                          "power": 1,
+                          "timer": 60
                         }
                       }
                     }
