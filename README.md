@@ -15,8 +15,8 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [18.1](https://github.com/home-assistant/operating-system/releases/tag/18.2) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core 2026.7.3](https://github.com/home-assistant/core/releases/tag/2026.7.3)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [18.2](https://github.com/home-assistant/operating-system/releases/tag/18.2) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Core 2026.8.3](https://github.com/home-assistant/core/releases/tag/2026.8.3)
 * 4 cores, 6GB RAM, 32GB storage
 
 ## Entities
