@@ -1362,6 +1362,16 @@
         target:
           entity_id: input_datetime.dim_hours_start
         action: input_datetime.set_datetime
+      - data:
+          time: '21:00:00'
+        target:
+          entity_id: input_datetime.sleep_hours_start
+        action: input_datetime.set_datetime
+      - data:
+          time: 05:45:00
+        target:
+          entity_id: input_datetime.sleep_hours_end
+        action: input_datetime.set_datetime
       - delay: 1
   - alias: Settings based on which mode was activated
     choose:
@@ -1613,6 +1623,16 @@
         target:
           entity_id: input_datetime.dim_hours_start
         action: input_datetime.set_datetime
+      - data:
+          time: '23:59:00'
+        target:
+          entity_id: input_datetime.sleep_hours_start
+        action: input_datetime.set_datetime
+      - data:
+          time: 00:00:10
+        target:
+          entity_id: input_datetime.sleep_hours_end
+        action: input_datetime.set_datetime
       - delay: 1
       - repeat:
           for_each:
@@ -1620,6 +1640,12 @@
           - living_room
           - study_room
           sequence:
+          - condition: template
+            value_template: '{{ ''on'' in states.binary_sensor | selectattr(''entity_id'',
+              ''search'', repeat.item) | selectattr(''entity_id'', ''search'', ''radar'')
+              | selectattr(''entity_id'', ''search'', ''occupancy'') | map(attribute
+              = ''state'') | list }}'
+            alias: Test if room is ovcupied
           - data:
               room: '{{ [repeat.item] }}'
             action: script.set_recommended_scene

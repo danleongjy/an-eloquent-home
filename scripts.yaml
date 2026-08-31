@@ -373,8 +373,9 @@ recommended_light_level:
         > today_at(states(dim_start)) and now() <= today_at('23:59')) or (now() >=
         today_at('00:00') and now() <= today_at(states(dim_end))) %}\n    {{ states('input_number.night_light_brightness')
         | float }}\n  {% elif is_state('sun.sun','below_horizon') and state_attr('sun.sun','rising')
-        %}\n    {{ states('input_number.morning_light_brightness') | float }}\n  {%
-        else %}\n    100\n  {% endif %}\n{% else %}\n  100\n{% endif %}"
+        %}\n    {% if not 'fan' in light %}\n      {{ states('input_number.morning_light_brightness')
+        | float }}\n    {% else %}\n      0\n    {% endif %}\n  {% else %}\n    100\n
+        \ {% endif %}\n{% else %}\n  100\n{% endif %}"
   - if:
     - condition: template
       value_template: '{{ turn_on | default(true) }}'
@@ -881,6 +882,7 @@ lights_controller:
         - automation.yard_motion_light
         Playroom:
         - automation.playroom_motion_lights
+        - automation.playroom_fan_motion_light
         Dining Room:
         - automation.dining_room_motion_lights
         - automation.dining_room_motion_pendant_light
@@ -898,6 +900,7 @@ lights_controller:
         - automation.master_bathroom_motion_pendant_light
         Kitchen:
         - automation.kitchen_motion_lights
+        - automation.kitchen_fan_motion_light
       indicator_lights:
         Elena's Room: light.elenas_room_bulb_2_entity
         Eli's Room: light.elis_room_bulb_2_entity
