@@ -10598,54 +10598,515 @@
               "cards": [
                 {
                   "type": "heading",
-                  "heading": "Fan Direction Helpers",
+                  "heading": "Fan Helpers",
                   "heading_style": "title",
-                  "icon": "mdi:rotate-3d-variant"
+                  "icon": "mdi:fan"
                 },
                 {
-                  "type": "custom:button-card",
-                  "entity": "input_select.elis_room_fan_direction",
-                  "name": "Eli's Room",
-                  "template": "fan_direction_helper",
-                  "grid_options": {
-                    "rows": null
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "input_select.elenas_room_fan_direction",
-                  "name": "Annika's Room",
-                  "template": "fan_direction_helper",
-                  "grid_options": {
-                    "rows": null
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "input_select.living_room_fan_direction",
-                  "name": "Living Room",
-                  "template": "fan_direction_helper",
-                  "grid_options": {
-                    "rows": null
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "input_select.study_room_fan_direction",
-                  "name": "Study Room",
-                  "template": "fan_direction_helper",
-                  "grid_options": {
-                    "rows": null
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "entity": "input_select.parents_room_fan_direction",
-                  "name": "Parents' Room",
-                  "template": "fan_direction_helper",
-                  "grid_options": {
-                    "rows": null
-                  }
+                  "square": true,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "aspect_ratio": 1,
+                      "icon": "mdi:bed",
+                      "name": "A"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_number.elenas_room_fan_speed",
+                      "template": "square_cell",
+                      "icon": "mdi:power",
+                      "state": [
+                        {
+                          "operator": ">",
+                          "value": 0,
+                          "color": "var(--state-active-color)"
+                        },
+                        {
+                          "operator": "==",
+                          "value": 0,
+                          "color": "var(--state-inactive-color)"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "multi-actions",
+                        "actions": [
+                          {
+                            "action": "perform-action",
+                            "perform_action": "input_number.set_value",
+                            "data": {
+                              "entity_id": "input_number.elenas_room_fan_speed",
+                              "value": 0
+                            }
+                          },
+                          {
+                            "action": "perform-action",
+                            "perform_action": "remote.send_command",
+                            "target": {
+                              "entity_id": "remote.elis_room_universal_remote"
+                            },
+                            "data": {
+                              "device": "Elena's Room Fan",
+                              "command": "Off"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_select.elenas_room_fan_direction",
+                      "template": "square_cell",
+                      "color": "var(--state-inactive-color)",
+                      "state": [
+                        {
+                          "value": "forward",
+                          "icon": "mdi:fan-chevron-down"
+                        },
+                        {
+                          "value": "reverse",
+                          "icon": "mdi:fan-chevron-up"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "input_select.select_next",
+                        "data": {
+                          "entity_id": "input_select.elenas_room_fan_direction"
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "aspect_ratio": 1,
+                      "icon": "mdi:bed",
+                      "name": "E"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_number.elis_room_fan_speed",
+                      "template": "square_cell",
+                      "icon": "mdi:power",
+                      "state": [
+                        {
+                          "operator": ">",
+                          "value": 0,
+                          "color": "var(--state-active-color)"
+                        },
+                        {
+                          "operator": "==",
+                          "value": 0,
+                          "color": "var(--state-inactive-color)"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "multi-actions",
+                        "actions": [
+                          {
+                            "action": "perform-action",
+                            "perform_action": "input_number.set_value",
+                            "data": {
+                              "entity_id": "input_number.elis_room_fan_speed",
+                              "value": 0
+                            }
+                          },
+                          {
+                            "action": "perform-action",
+                            "perform_action": "remote.send_command",
+                            "target": {
+                              "entity_id": "remote.elis_room_universal_remote"
+                            },
+                            "data": {
+                              "device": "Eli's Room Fan",
+                              "command": "Off"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_select.elis_room_fan_direction",
+                      "template": "square_cell",
+                      "color": "var(--state-inactive-color)",
+                      "state": [
+                        {
+                          "value": "forward",
+                          "icon": "mdi:fan-chevron-down"
+                        },
+                        {
+                          "value": "reverse",
+                          "icon": "mdi:fan-chevron-up"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "input_select.select_next",
+                        "data": {
+                          "entity_id": "input_select.elis_room_fan_direction"
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "aspect_ratio": 1,
+                      "icon": "mdi:teddy-bear"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_number.playroom_fan_speed",
+                      "template": "square_cell",
+                      "icon": "mdi:power",
+                      "state": [
+                        {
+                          "operator": ">",
+                          "value": 0,
+                          "color": "var(--state-active-color)"
+                        },
+                        {
+                          "operator": "==",
+                          "value": 0,
+                          "color": "var(--state-inactive-color)"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "multi-actions",
+                        "actions": [
+                          {
+                            "action": "perform-action",
+                            "perform_action": "input_number.set_value",
+                            "data": {
+                              "entity_id": "input_number.playroom_fan_speed",
+                              "value": 0
+                            }
+                          },
+                          {
+                            "action": "perform-action",
+                            "perform_action": "remote.send_command",
+                            "target": {
+                              "entity_id": "remote.playroom_universal_remote"
+                            },
+                            "data": {
+                              "device": "Playroom Fan",
+                              "command": "Off"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "light.playroom_fan_light",
+                      "template": "square_cell",
+                      "state": [
+                        {
+                          "value": "on",
+                          "color": "var(--state-active-color)"
+                        },
+                        {
+                          "value": "off",
+                          "color": "var(--state-inactive-color)"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "remote.send_command",
+                        "target": {
+                          "entity_id": "remote.playroom_universal_remote"
+                        },
+                        "data": {
+                          "device": "Playroom Fan",
+                          "command": "Light Off"
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "aspect_ratio": 1,
+                      "icon": "mdi:sofa"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_number.living_room_fan_speed",
+                      "template": "square_cell",
+                      "icon": "mdi:power",
+                      "state": [
+                        {
+                          "operator": ">",
+                          "value": 0,
+                          "color": "var(--state-active-color)"
+                        },
+                        {
+                          "operator": "==",
+                          "value": 0,
+                          "color": "var(--state-inactive-color)"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "multi-actions",
+                        "actions": [
+                          {
+                            "action": "perform-action",
+                            "perform_action": "input_number.set_value",
+                            "data": {
+                              "entity_id": "input_number.living_room_fan_speed",
+                              "value": 0
+                            }
+                          },
+                          {
+                            "action": "perform-action",
+                            "perform_action": "remote.send_command",
+                            "target": {
+                              "entity_id": "remote.study_room_universal_remote"
+                            },
+                            "data": {
+                              "device": "Living Room Fan",
+                              "command": "Off"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_select.living_room_fan_direction",
+                      "template": "square_cell",
+                      "color": "var(--state-inactive-color)",
+                      "state": [
+                        {
+                          "value": "forward",
+                          "icon": "mdi:fan-chevron-down"
+                        },
+                        {
+                          "value": "reverse",
+                          "icon": "mdi:fan-chevron-up"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "input_select.select_next",
+                        "data": {
+                          "entity_id": "input_select.living_room_fan_direction"
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "aspect_ratio": 1,
+                      "icon": "mdi:chef-hat"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_number.kitchen_fan_speed",
+                      "template": "square_cell",
+                      "icon": "mdi:power",
+                      "state": [
+                        {
+                          "operator": ">",
+                          "value": 0,
+                          "color": "var(--state-active-color)"
+                        },
+                        {
+                          "operator": "==",
+                          "value": 0,
+                          "color": "var(--state-inactive-color)"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "multi-actions",
+                        "actions": [
+                          {
+                            "action": "perform-action",
+                            "perform_action": "input_number.set_value",
+                            "data": {
+                              "entity_id": "input_number.kitchen_fan_speed",
+                              "value": 0
+                            }
+                          },
+                          {
+                            "action": "perform-action",
+                            "perform_action": "remote.send_command",
+                            "target": {
+                              "entity_id": "remote.kitchen_universal_remote"
+                            },
+                            "data": {
+                              "device": "Kitchen Fan",
+                              "command": "Off"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "light.kitchen_fan_light",
+                      "template": "square_cell",
+                      "state": [
+                        {
+                          "value": "on",
+                          "color": "var(--state-active-color)"
+                        },
+                        {
+                          "value": "off",
+                          "color": "var(--state-inactive-color)"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "remote.send_command",
+                        "target": {
+                          "entity_id": "remote.kitchen_universal_remote"
+                        },
+                        "data": {
+                          "device": "Kitchen Fan",
+                          "command": "Light Off"
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "aspect_ratio": 1,
+                      "icon": "mdi:bookshelf"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_number.study_room_fan_speed",
+                      "template": "square_cell",
+                      "icon": "mdi:power",
+                      "state": [
+                        {
+                          "operator": ">",
+                          "value": 0,
+                          "color": "var(--state-active-color)"
+                        },
+                        {
+                          "operator": "==",
+                          "value": 0,
+                          "color": "var(--state-inactive-color)"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "multi-actions",
+                        "actions": [
+                          {
+                            "action": "perform-action",
+                            "perform_action": "input_number.set_value",
+                            "data": {
+                              "entity_id": "input_number.study_room_fan_speed",
+                              "value": 0
+                            }
+                          },
+                          {
+                            "action": "perform-action",
+                            "perform_action": "remote.send_command",
+                            "target": {
+                              "entity_id": "remote.study_room_universal_remote"
+                            },
+                            "data": {
+                              "device": "Study Room Fan",
+                              "command": "Off"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_select.study_room_fan_direction",
+                      "template": "square_cell",
+                      "color": "var(--state-inactive-color)",
+                      "state": [
+                        {
+                          "value": "forward",
+                          "icon": "mdi:fan-chevron-down"
+                        },
+                        {
+                          "value": "reverse",
+                          "icon": "mdi:fan-chevron-up"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "input_select.select_next",
+                        "data": {
+                          "entity_id": "input_select.study_room_fan_direction"
+                        }
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "aspect_ratio": 1,
+                      "icon": "mdi:bed",
+                      "name": "D&G"
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_number.parents_room_fan_speed",
+                      "template": "square_cell",
+                      "icon": "mdi:power",
+                      "state": [
+                        {
+                          "operator": ">",
+                          "value": 0,
+                          "color": "var(--state-active-color)"
+                        },
+                        {
+                          "operator": "==",
+                          "value": 0,
+                          "color": "var(--state-inactive-color)"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "multi-actions",
+                        "actions": [
+                          {
+                            "action": "perform-action",
+                            "perform_action": "input_number.set_value",
+                            "data": {
+                              "entity_id": "input_number.parents_room_fan_speed",
+                              "value": 0
+                            }
+                          },
+                          {
+                            "action": "perform-action",
+                            "perform_action": "remote.send_command",
+                            "target": {
+                              "entity_id": "remote.study_room_universal_remote"
+                            },
+                            "data": {
+                              "device": "Parents' Room Fan",
+                              "command": "Off"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "input_select.parents_room_fan_direction",
+                      "template": "square_cell",
+                      "color": "var(--state-inactive-color)",
+                      "state": [
+                        {
+                          "value": "forward",
+                          "icon": "mdi:fan-chevron-down"
+                        },
+                        {
+                          "value": "reverse",
+                          "icon": "mdi:fan-chevron-up"
+                        }
+                      ],
+                      "double_tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "input_select.select_next",
+                        "data": {
+                          "entity_id": "input_select.parents_room_fan_direction"
+                        }
+                      }
+                    }
+                  ],
+                  "columns": 6
                 }
               ],
               "visibility": [
