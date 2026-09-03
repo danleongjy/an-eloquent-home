@@ -475,33 +475,60 @@
       action: notify.mobile_app_grace_iphone_14
   mode: single
 - id: '1648798677481'
-  alias: Coming Home
-  description: Set light, fan and AC levels in the Dining Room when coming home
+  alias: Set Home Mode
+  description: Set Away Mode or Normal Mode automatically
   triggers:
-  - entity_id: binary_sensor.main_door
-    to: 'on'
+  - entity_id:
+    - binary_sensor.main_door
+    to:
+    - 'on'
     trigger: state
-  conditions:
-  - condition: state
-    state:
-    - Away Mode
+    from:
+    - 'off'
+    id: door_opened
+  - trigger: template
+    value_template: '{{ states.sensor | selectattr(''entity_id'', ''contains'', ''_status'')
+      | selectattr(''entity_id'', ''contains'', ''floorplan_'') | map(attribute =
+      ''state'') | unique | list == [''A''] }}'
     for:
       hours: 0
-      minutes: 5
+      minutes: 30
       seconds: 0
-    entity_id: input_select.home_mode
+    alias: When no motion is detected and devices are off for 30min
+    id: no_motion
+  conditions: []
   actions:
-  - action: input_select.select_option
-    metadata: {}
-    target:
+  - if:
+    - condition: trigger
+      id:
+      - no_motion
+    then:
+    - action: input_select.select_option
+      metadata: {}
+      target:
+        entity_id: input_select.home_mode
+      data:
+        option: Away Mode
+    else:
+    - condition: state
+      state:
+      - Away Mode
       entity_id: input_select.home_mode
-    data:
-      option: Normal Mode
-  - data:
-      room:
-      - dining_room
-      - living_room
-    action: script.set_recommended_scene
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
+    - action: input_select.select_option
+      metadata: {}
+      target:
+        entity_id: input_select.home_mode
+      data:
+        option: Normal Mode
+    - data:
+        room:
+        - dining_room
+        - living_room
+      action: script.set_recommended_scene
   mode: single
 - id: '1653105007378'
   alias: Notify When Raining With Windows Open
@@ -8662,28 +8689,6 @@
         data:
           fan: fan.playroom_fan
           command: '{{ states(''sensor.playroom_core_current_command'') }}'
-  mode: single
-- id: '1772756162121'
-  alias: Auto Away Mode
-  description: Set Away Mode when no motion is detected and devices are off for 30min
-  triggers:
-  - trigger: template
-    value_template: '{{ states.sensor | selectattr(''entity_id'', ''contains'', ''_status'')
-      | selectattr(''entity_id'', ''contains'', ''floorplan_'') | map(attribute =
-      ''state'') | unique | list == [''A''] }}'
-    for:
-      hours: 0
-      minutes: 30
-      seconds: 0
-    alias: When no motion is detected and devices are off for 30min
-  conditions: []
-  actions:
-  - action: input_select.select_option
-    metadata: {}
-    target:
-      entity_id: input_select.home_mode
-    data:
-      option: Away Mode
   mode: single
 - id: '1775987938434'
   alias: Notify on Shaver Status

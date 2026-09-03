@@ -4,12 +4,6 @@
   "key": "lovelace.lovelace",
   "data": {
     "config": {
-      "resources": [
-        {
-          "url": "/local/decluttering-card.js",
-          "type": "module"
-        }
-      ],
       "button_card_templates": {
         "square_cell": {
           "aspect_ratio": "1/1",
@@ -950,6 +944,97 @@
             ]
           }
         },
+        "tile_slider": {
+          "template": "button_card_tile",
+          "custom_fields": {
+            "slider": {
+              "card": {
+                "type": "custom:slider-button-card",
+                "entity": "[[[ return entity.entity_id ]]]",
+                "slider": {
+                  "direction": "left-right",
+                  "background": "solid",
+                  "use_state_color": false,
+                  "use_percentage_bg_opacity": false,
+                  "show_track": false,
+                  "toggle_on_click": false,
+                  "invert": false
+                },
+                "show_name": false,
+                "show_state": false,
+                "compact": true,
+                "icon": {
+                  "show": false,
+                  "use_state_color": true,
+                  "tap_action": {
+                    "action": "more-info"
+                  },
+                  "icon": ""
+                },
+                "action_button": {
+                  "mode": "toggle",
+                  "icon": "mdi:power",
+                  "show": false,
+                  "show_spinner": true,
+                  "tap_action": {
+                    "action": null
+                  }
+                }
+              }
+            }
+          },
+          "styles": {
+            "icon": [
+              {
+                "color": "[[[ return variables.state_color ]]]"
+              },
+              {
+                "z-index": 2
+              }
+            ],
+            "name": [
+              {
+                "color": "[[[\n  if (variables.state_color != 'var(--state-inactive-color)') {\n    return variables.state_color\n  } else {\n    return '#ffffff'\n  }\n]]]\n"
+              },
+              {
+                "z-index": 2
+              }
+            ],
+            "state": [
+              {
+                "z-index": 2
+              },
+              {
+                "color": "[[[\n  if (variables.state_color != 'var(--state-inactive-color)') {\n    return variables.state_color\n  } else {\n    return '#ffffff'\n  }\n]]]\n"
+              }
+            ],
+            "custom_fields": {
+              "slider": [
+                {
+                  "position": "absolute"
+                },
+                {
+                  "left": "0%"
+                },
+                {
+                  "top": "0%"
+                },
+                {
+                  "height": "100%"
+                },
+                {
+                  "width": "100%"
+                },
+                {
+                  "z-index": 1
+                },
+                {
+                  "margin": 0
+                }
+              ]
+            }
+          }
+        },
         "tile_progress_bar": {
           "template": "button_card_tile",
           "custom_fields": {
@@ -1155,7 +1240,7 @@
           "variables": {
             "mode_entity": "vacuum.valetudo_hestia"
           },
-          "double_tap_action": {
+          "tap_action": {
             "action": "perform-action",
             "data": {
               "entity_id": "vacuum.valetudo_hestia"
@@ -1164,7 +1249,7 @@
         },
         "vacuum_dock_mode_selector": {
           "template": "mode_selector",
-          "double_tap_action": {
+          "tap_action": {
             "action": "perform-action"
           },
           "variables": {
@@ -13598,7 +13683,7 @@
                         "variables": {
                           "mode_option": "cleaning, returning"
                         },
-                        "double_tap_action": {
+                        "tap_action": {
                           "perform_action": "vacuum.start"
                         }
                       }
@@ -13611,7 +13696,7 @@
                         "variables": {
                           "mode_option": "docked"
                         },
-                        "double_tap_action": {
+                        "tap_action": {
                           "perform_action": "vacuum.return_to_base"
                         },
                         "right_pad": " "
@@ -13625,7 +13710,10 @@
                         "variables": {
                           "mode_option": "emptying"
                         },
-                        "double_tap_action": {
+                        "confirmation": {
+                          "text": "Empty the vacuum's dustbin?"
+                        },
+                        "tap_action": {
                           "perform_action": "button.press",
                           "data": {
                             "entity_id": "button.valetudo_hestia_trigger_auto_empty_dock"
@@ -13641,8 +13729,11 @@
                         "variables": {
                           "mode_option": "cleaning"
                         },
-                        "double_tap_action": {
+                        "tap_action": {
                           "perform_action": "rest_command.vacuum_mop_washing"
+                        },
+                        "confirmation": {
+                          "text": "Start cleaning the vacuum's mops?"
                         }
                       }
                     },
@@ -13654,8 +13745,11 @@
                         "variables": {
                           "mode_option": "drying"
                         },
-                        "double_tap_action": {
+                        "tap_action": {
                           "perform_action": "rest_command.vacuum_mop_drying"
+                        },
+                        "confirmation": {
+                          "text": "Start drying the vacuum's mops?"
                         },
                         "right_pad": " "
                       }
@@ -13732,7 +13826,7 @@
                         "variables": {
                           "mode_option": "cleaning"
                         },
-                        "double_tap_action": {
+                        "tap_action": {
                           "perform_action": "vacuum.start"
                         }
                       }
@@ -13745,7 +13839,7 @@
                         "variables": {
                           "mode_option": "paused"
                         },
-                        "double_tap_action": {
+                        "tap_action": {
                           "perform_action": "vacuum.pause"
                         }
                       }
@@ -13758,7 +13852,7 @@
                         "variables": {
                           "mode_option": "idle, error"
                         },
-                        "double_tap_action": {
+                        "tap_action": {
                           "perform_action": "vacuum.stop"
                         }
                       }
@@ -13771,7 +13865,7 @@
                         "variables": {
                           "mode_option": "docked, returning"
                         },
-                        "double_tap_action": {
+                        "tap_action": {
                           "perform_action": "vacuum.return_to_base"
                         },
                         "right_pad": " "
@@ -13864,7 +13958,7 @@
                         "variables": {
                           "mode_option": "cleaning"
                         },
-                        "double_tap_action": {
+                        "tap_action": {
                           "perform_action": "vacuum.start"
                         }
                       }
@@ -13877,7 +13971,7 @@
                         "variables": {
                           "mode_option": "idle, error"
                         },
-                        "double_tap_action": {
+                        "tap_action": {
                           "perform_action": "vacuum.stop"
                         }
                       }
@@ -13890,7 +13984,7 @@
                         "variables": {
                           "mode_option": "docked, returning"
                         },
-                        "double_tap_action": {
+                        "tap_action": {
                           "perform_action": "vacuum.return_to_base"
                         },
                         "right_pad": " "
@@ -15011,91 +15105,46 @@
                   }
                 },
                 {
-                  "type": "custom:slider-button-card",
+                  "type": "custom:button-card",
                   "entity": "input_number.stove_current_burner_power_slider",
-                  "slider": {
-                    "direction": "left-right",
-                    "background": "solid",
-                    "use_state_color": false,
-                    "use_percentage_bg_opacity": false,
-                    "show_track": false,
-                    "toggle_on_click": false,
-                    "force_square": false
+                  "template": "tile_slider",
+                  "name": "Power",
+                  "state_display": "[[[return \"Level \" + parseInt(entity.state) ]]]",
+                  "variables": {
+                    "state_color": "[[[\n  if (parseFloat(entity.state) > 0) {\n    return 'var(--state-binary-sensor-color)'\n  } else if (parseFloat(entity.state) == 0) {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-unavailable-color)'\n  }\n]]]\n"
                   },
-                  "show_name": true,
-                  "show_state": true,
-                  "compact": true,
-                  "icon": {
-                    "show": true,
-                    "use_state_color": true,
-                    "tap_action": {
-                      "action": "more-info"
-                    },
-                    "icon": ""
+                  "icon_tap_action": {
+                    "action": "toggle"
                   },
-                  "action_button": {
-                    "mode": "toggle",
-                    "icon": "mdi:power",
-                    "show": false,
-                    "show_spinner": true,
-                    "tap_action": {
-                      "action": "toggle"
-                    }
+                  "icon_hold_action": {
+                    "action": "more-info"
                   },
-                  "name": "Power:",
+                  "section_mode": true,
                   "grid_options": {
-                    "columns": 6,
-                    "rows": "auto"
+                    "rows": 1,
+                    "columns": 6
                   }
                 },
                 {
-                  "type": "custom:slider-button-card",
+                  "type": "custom:button-card",
                   "entity": "number.stove_current_burner_timer",
-                  "slider": {
-                    "direction": "left-right",
-                    "background": "solid",
-                    "use_percentage_bg_opacity": false,
-                    "use_state_color": false,
-                    "show_track": false,
-                    "toggle_on_click": false,
-                    "force_square": false
+                  "template": "tile_slider",
+                  "name": "Timer",
+                  "state_display": "[[[return parseInt(entity.state) + \" min\" ]]]",
+                  "variables": {
+                    "state_color": "[[[\n  if (parseFloat(entity.state) > 0) {\n    return 'var(--state-binary-sensor-color)'\n  } else if (parseFloat(entity.state) == 0) {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-unavailable-color)'\n  }\n]]]\n"
                   },
-                  "show_name": true,
-                  "show_state": true,
-                  "compact": true,
-                  "icon": {
-                    "show": true,
-                    "use_state_color": true,
-                    "tap_action": {
-                      "action": "more-info"
-                    },
-                    "icon": ""
+                  "icon_tap_action": {
+                    "action": "toggle"
                   },
-                  "action_button": {
-                    "mode": "toggle",
-                    "icon": "mdi:power",
-                    "show": false,
-                    "show_spinner": true,
-                    "tap_action": {
-                      "action": "toggle"
-                    }
+                  "icon_hold_action": {
+                    "action": "more-info"
                   },
-                  "name": "Timer (min):",
+                  "section_mode": true,
                   "grid_options": {
-                    "columns": 6,
-                    "rows": "auto"
+                    "rows": 1,
+                    "columns": 6
                   }
-                },
-                {
-                  "type": "markdown",
-                  "content": "<ha-alert alert-type=\"error\">{{ states(\"select.stove_error_code\") }}</ha-alert>",
-                  "text_only": true,
-                  "visibility": [
-                    {
-                      "entity": "select.stove_error_code",
-                      "state_not": "None"
-                    }
-                  ]
                 },
                 {
                   "type": "custom:button-card",
@@ -15213,6 +15262,17 @@
                       "condition": "state",
                       "entity": "vacuum.valetudo_hestia",
                       "state": "docked"
+                    }
+                  ]
+                },
+                {
+                  "type": "markdown",
+                  "content": "<ha-alert alert-type=\"error\">{{ states(\"select.stove_error_code\") }}</ha-alert>",
+                  "text_only": true,
+                  "visibility": [
+                    {
+                      "entity": "select.stove_error_code",
+                      "state_not": "None"
                     }
                   ]
                 }
@@ -17844,44 +17904,25 @@
                   }
                 },
                 {
-                  "type": "custom:slider-button-card",
+                  "type": "custom:button-card",
                   "entity": "light.doorbell_hex_light",
-                  "slider": {
-                    "direction": "left-right",
-                    "background": "solid",
-                    "use_state_color": true,
-                    "use_percentage_bg_opacity": false,
-                    "show_track": false,
-                    "toggle_on_click": false,
-                    "force_square": false,
-                    "show_attribute": false
+                  "template": "tile_slider",
+                  "name": " ",
+                  "state_display": "[[[ \n  if (![null, 'None'].includes(entity.attributes.effect)) {\n    return entity.attributes.effect\n  } else {\n    return entity.state.capitalize\n  }\n]]]\n",
+                  "variables": {
+                    "state_color": "[[[\n  if (entity.state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else if (entity.state == 'off') {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-unavailable-color)'\n  }\n]]]\n"
                   },
-                  "show_name": false,
-                  "show_state": true,
-                  "compact": true,
-                  "icon": {
-                    "show": true,
-                    "use_state_color": true,
-                    "tap_action": {
-                      "action": "more-info"
-                    },
-                    "icon": ""
+                  "icon_tap_action": {
+                    "action": "toggle"
                   },
-                  "action_button": {
-                    "mode": "toggle",
-                    "icon": "mdi:power",
-                    "show": false,
-                    "show_spinner": true,
-                    "tap_action": {
-                      "action": "toggle"
-                    }
+                  "icon_hold_action": {
+                    "action": "more-info"
                   },
-                  "show_attribute": true,
+                  "section_mode": true,
                   "grid_options": {
-                    "columns": 6,
-                    "rows": "auto"
-                  },
-                  "attribute": "effect"
+                    "rows": 1,
+                    "columns": 6
+                  }
                 },
                 {
                   "type": "heading",

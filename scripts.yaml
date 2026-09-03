@@ -373,12 +373,12 @@ recommended_light_level:
         > today_at(states(dim_start)) and now() <= today_at('23:59')) or (now() >=
         today_at('00:00') and now() <= today_at(states(dim_end))) %}\n    {{ states('input_number.night_light_brightness')
         | float }}\n  {% elif is_state('sun.sun','below_horizon') and state_attr('sun.sun','rising')
-        %}\n    {% if not 'fan' in light %}\n      {{ states('input_number.morning_light_brightness')
+        %}\n    {% if 'brightness' in states[light].attributes %}\n      {{ states('input_number.morning_light_brightness')
         | float }}\n    {% else %}\n      0\n    {% endif %}\n  {% else %}\n    100\n
         \ {% endif %}\n{% else %}\n  100\n{% endif %}"
   - if:
     - condition: template
-      value_template: '{{ turn_on | default(true) }}'
+      value_template: '{{ turn_on | default(true) and light_brightness > 0 }}'
     then:
     - target:
         entity_id: '{{ light }}'
