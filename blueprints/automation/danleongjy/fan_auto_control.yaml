@@ -40,18 +40,24 @@ blueprint:
       default: 28.5
     low_speed:
       name: Low Speed
-      description: A number helper indicating the speed of the fan when it should be turned on low.
+      description: The speed of the fan when it should be turned on low.
       selector:
-        entity:
-          domain: input_number
-      default: input_number.bedrooms_fan_speed_when_cool
+        number:
+          min: 0
+          max: 100
+          step: 16.6666666667
+          unit_of_measurement: '%'
+      default: 16.6666666667
     high_speed:
       name: High Speed
-      description: A number helper indicating the speed of the fan when it should be turned on high.
+      description: The speed of the fan when it should be turned on high.
       selector:
-        entity:
-          domain: input_number
-      default: input_number.bedrooms_fan_speed_when_warm
+        number:
+          min: 0
+          max: 100
+          step: 16.6666666667
+          unit_of_measurement: '%'
+      default: 50
 trigger:
   - platform: numeric_state
     entity_id: !input temp_sensor
@@ -86,11 +92,11 @@ action:
                   - condition: state
                     entity_id: !input fan
                     attribute: percentage
-                    state: "{{ (states(low_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
+                    state: "{{ low_fan_speed | round }}"
             then:
               - action: fan.set_percentage
                 data:
-                  percentage: "{{ (states(low_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
+                  percentage: "{{ (((low_fan_speed / 100 * speed_count) | round) / speed_count * 100) | int }}"
                 target:
                   entity_id: !input fan
           - delay: 2
@@ -117,11 +123,11 @@ action:
                   - condition: state
                     entity_id: !input fan
                     attribute: percentage
-                    state: "{{ (states(low_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
+                    state: "{{ low_fan_speed | round(2) }}"
             then:
               - action: fan.set_percentage
                 data:
-                  percentage: "{{ (states(low_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
+                  percentage: "{{ (((low_fan_speed / 100 * speed_count) | round) / speed_count * 100) | int }}"
                 target:
                   entity_id: !input fan
           - delay: 2
@@ -143,11 +149,11 @@ action:
               - condition: state
                 entity_id: !input fan
                 attribute: percentage
-                state: "{{ (states(high_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
+                state: "{{ high_fan_speed) | round(2) }}"
         then:
           - action: fan.set_percentage
             data:
-              percentage: "{{ (states(high_fan_speed) | int(4) / speed_count * 100) | round(2) | int }}"
+              percentage: "{{ (((high_fan_speed / 100 * speed_count) | round) / speed_count * 100) | int }}"
             target:
               entity_id: !input fan
       - delay: 2
