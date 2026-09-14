@@ -3091,7 +3091,7 @@
           state: cool
         - condition: numeric_state
           entity_id: sensor.pollutant_standards_index
-          above: 100
+          above: 80
       - condition: not
         conditions:
         - condition: state
@@ -3126,7 +3126,7 @@
           | int(0)) }}'
       - condition: numeric_state
         entity_id: sensor.pollutant_standards_index
-        below: 100
+        below: 80
       - condition: not
         conditions:
         - condition: state
@@ -3183,7 +3183,7 @@
             state_attr('sun.sun', 'azimuth') <= 105 }}"
       - condition: numeric_state
         entity_id: sensor.pollutant_standards_index
-        below: 100
+        below: 80
     - condition: template
       value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed > timedelta(minutes
         = states(''input_number.blinds_auto_control_debounce'') | int(0)) }}'
@@ -8741,7 +8741,7 @@
         = states.sensor | selectattr('entity_id', 'in', (integration_entities('switchbot')
         + integration_entities('philips_shaver'))) | selectattr('attributes.device_class',
         'eq', 'battery') | list %}\n  {% for battery in bt_batteries %}\n    {% if
-        battery.state | int(0) <= 10 %}\n      {% set low_batteries.str = low_batteries.str
+        battery.state | int(0) <= 20 %}\n      {% set low_batteries.str = low_batteries.str
         + device_attr(battery.entity_id, 'name') + ', ' %}\n    {% endif %}\n  {%
         endfor %}\n  {{ low_batteries.str[:-2] }}\n"
   - if:
