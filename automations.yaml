@@ -3089,6 +3089,9 @@
         - condition: state
           entity_id: climate.dining_room_ac
           state: cool
+        - condition: numeric_state
+          entity_id: sensor.pollutant_standards_index
+          above: 100
       - condition: not
         conditions:
         - condition: state
@@ -3121,6 +3124,9 @@
         value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed >
           timedelta(minutes = states(''input_number.blinds_auto_control_debounce'')
           | int(0)) }}'
+      - condition: numeric_state
+        entity_id: sensor.pollutant_standards_index
+        below: 100
       - condition: not
         conditions:
         - condition: state
@@ -3175,6 +3181,9 @@
           value_template: "{{ states('sun.sun') == 'above_horizon'\n   and state_attr('sun.sun',
             'elevation') <= 60\n   and state_attr('sun.sun', 'azimuth') >= 45\n   and
             state_attr('sun.sun', 'azimuth') <= 105 }}"
+      - condition: numeric_state
+        entity_id: sensor.pollutant_standards_index
+        below: 100
     - condition: template
       value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed > timedelta(minutes
         = states(''input_number.blinds_auto_control_debounce'') | int(0)) }}'

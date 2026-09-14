@@ -167,6 +167,30 @@
   headers:
     X-Api-Key: !secret data_gov_sg_apikey
   scan_interval: 600
+ 
+- platform: rest
+  resource: https://api-open.data.gov.sg/v2/real-time/api/psi
+  name: Pollutant Standards Index
+  unique_id: sensor.pollutant_standards_index
+  value_template: "{{ value_json.data['items'][0].readings.psi_twenty_four_hourly.values() | max }}"
+  json_attributes_path: "$.data['items'][0].readings"
+  json_attributes:
+    - o3_eight_hour_max
+    - co_sub_index
+    - pm25_twenty_four_hourly
+    - so2_twenty_four_hourly
+    - o3_sub_index
+    - pm10_sub_index
+    - co_eight_hour_max
+    - no2_one_hour_max
+    - pm10_twenty_four_hourly
+    - psi_twenty_four_hourly
+    - pm25_sub_index
+    - so2_sub_index
+  unit_of_measurement: points
+  headers:
+    X-Api-Key: !secret data_gov_sg_apikey
+  scan_interval: 600
 
 - platform: rest
   resource: https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=80249
