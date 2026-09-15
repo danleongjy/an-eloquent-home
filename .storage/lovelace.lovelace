@@ -10518,12 +10518,20 @@
                     },
                     {
                       "entity": "input_datetime.sleep_hours_end"
-                    },
-                    {
-                      "entity": "input_number.minimum_sleep_hours",
-                      "name": "Minimum Sleep"
                     }
                   ]
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_number.minimum_sleep_hours",
+                  "name": "Minimum Sleep",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "numeric-input"
+                    }
+                  ],
+                  "features_position": "inline"
                 }
               ]
             }
@@ -11234,6 +11242,51 @@
               "type": "grid",
               "cards": [
                 {
+                  "type": "tile",
+                  "entity": "input_number.motion_timeout_bedrooms",
+                  "name": "Bedroom Timeout",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "numeric-input"
+                    }
+                  ],
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_number.motion_timeout_walking_areas",
+                  "name": "Walking Timeout",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "numeric-input"
+                    }
+                  ],
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_number.motion_timeout_presence",
+                  "name": "Presence Timeout",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "numeric-input"
+                    }
+                  ],
+                  "features_position": "inline"
+                }
+              ],
+              "column_span": 1,
+              "background": {
+                "opacity": 50
+              }
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
                   "type": "heading",
                   "icon": "mdi:motion-sensor-off",
                   "heading_style": "title",
@@ -11328,65 +11381,9 @@
                 }
               ],
               "column_span": 1
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "heading",
-                  "icon": "mdi:motion-sensor-off",
-                  "heading_style": "title",
-                  "heading": "Motion Timeouts"
-                }
-              ]
-            },
-            {
-              "type": "grid",
-              "cards": [
-                {
-                  "type": "tile",
-                  "entity": "input_number.motion_timeout_bedrooms",
-                  "name": "Bedrooms",
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "numeric-input"
-                    }
-                  ],
-                  "features_position": "inline"
-                },
-                {
-                  "type": "tile",
-                  "entity": "input_number.motion_timeout_walking_areas",
-                  "name": "Walking Areas",
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "numeric-input"
-                    }
-                  ],
-                  "features_position": "inline"
-                },
-                {
-                  "type": "tile",
-                  "entity": "input_number.motion_timeout_presence",
-                  "name": "Presence",
-                  "vertical": false,
-                  "features": [
-                    {
-                      "type": "numeric-input"
-                    }
-                  ],
-                  "features_position": "inline"
-                }
-              ],
-              "column_span": 1,
-              "background": {
-                "opacity": 50
-              }
             }
           ],
-          "max_columns": 1
+          "max_columns": 2
         },
         {
           "title": "Server/APs",
@@ -17113,6 +17110,17 @@
                             "entity": "sensor.local_outdoor_humidity",
                             "name": "Humidity",
                             "yaxis_id": "hum"
+                          },
+                          {
+                            "entity": "sensor.pollutant_standards_index",
+                            "name": "PSI",
+                            "yaxis_id": "hum",
+                            "stroke_width": 0,
+                            "type": "area",
+                            "transform": "return x > 80 ? 100 : 0;",
+                            "show": {
+                              "in_header": "raw"
+                            }
                           }
                         ],
                         "yaxis": [
@@ -17178,6 +17186,163 @@
                   }
                 },
                 {
+                  "type": "tile",
+                  "entity": "sensor.pollutant_standards_index",
+                  "name": "PSI",
+                  "color": "#9e110d",
+                  "vertical": false,
+                  "features_position": "bottom",
+                  "visibility": [
+                    {
+                      "condition": "numeric_state",
+                      "above": 80
+                    }
+                  ]
+                },
+                {
+                  "type": "grid",
+                  "square": false,
+                  "cards": [
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.pollutant_standards_index",
+                      "show_icon": false,
+                      "name": "PM2.5",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.pm25_sub_index))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant <= 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
+                          }
+                        ],
+                        "name": [
+                          {
+                            "font-size": "10pt"
+                          },
+                          {
+                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.pm25_sub_index))\n  if (pollutant <= 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.pollutant_standards_index",
+                      "show_icon": false,
+                      "name": "PM10",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.pm10_sub_index))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant <= 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
+                          }
+                        ],
+                        "name": [
+                          {
+                            "font-size": "10pt"
+                          },
+                          {
+                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.pm10_sub_index))\n  if (pollutant <= 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.pollutant_standards_index",
+                      "show_icon": false,
+                      "name": "O3",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.o3_sub_index))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant <= 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
+                          }
+                        ],
+                        "name": [
+                          {
+                            "font-size": "10pt"
+                          },
+                          {
+                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.o3_sub_index))\n  if (pollutant <= 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.pollutant_standards_index",
+                      "show_icon": false,
+                      "name": "CO",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.co_sub_index))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant <= 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
+                          }
+                        ],
+                        "name": [
+                          {
+                            "font-size": "10pt"
+                          },
+                          {
+                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.co_sub_index))\n  if (pollutant <= 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.pollutant_standards_index",
+                      "show_icon": false,
+                      "name": "NO2",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.no2_one_hour_max))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant <= 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
+                          }
+                        ],
+                        "name": [
+                          {
+                            "font-size": "10pt"
+                          },
+                          {
+                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.no2_one_hour_max))\n  if (pollutant <= 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "entity": "sensor.pollutant_standards_index",
+                      "show_icon": false,
+                      "name": "SO2",
+                      "styles": {
+                        "card": [
+                          {
+                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.so2_sub_index))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant <= 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
+                          }
+                        ],
+                        "name": [
+                          {
+                            "font-size": "10pt"
+                          },
+                          {
+                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.so2_sub_index))\n  if (pollutant <= 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "visibility": [
+                    {
+                      "condition": "numeric_state",
+                      "above": 80,
+                      "entity": "sensor.pollutant_standards_index"
+                    }
+                  ],
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 1
+                  }
+                },
+                {
                   "type": "markdown",
                   "content": "<ha-alert alert-type=\"warning\">Raining with windows open</ha-alert>",
                   "text_only": true,
@@ -17186,7 +17351,11 @@
                       "entity": "sensor.raining_with_windows_open",
                       "state": "warning"
                     }
-                  ]
+                  ],
+                  "grid_options": {
+                    "columns": "full",
+                    "rows": "auto"
+                  }
                 },
                 {
                   "type": "markdown",
@@ -17197,9 +17366,13 @@
                       "entity": "sensor.raining_with_windows_open",
                       "state": "alert"
                     }
-                  ]
+                  ],
+                  "grid_options": {
+                    "columns": "full"
+                  }
                 }
-              ]
+              ],
+              "column_span": 1
             },
             {
               "type": "grid",
