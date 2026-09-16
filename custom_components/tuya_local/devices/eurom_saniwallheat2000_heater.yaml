@@ -1,0 +1,80 @@
+name: Heater
+products:
+  - id: keysjrn8pnr7mrd4
+    manufacturer: Eurom
+    model: Sani-Wall-Heat 2000
+entities:
+  - entity: climate
+    translation_only_key: heater
+    dps:
+      - id: 1
+        type: boolean
+        name: hvac_mode
+        mapping:
+          - dps_val: false
+            value: "off"
+          - dps_val: true
+            constraint: preset_mode
+            conditions:
+              - dps_val: "off"
+                value: fan_only
+              - dps_val: auto
+                value: heat
+              - dps_val: "50_per"
+                value: heat
+                hidden: true
+              - dps_val: "100_per"
+                value: heat
+                hidden: true
+      - id: 2
+        type: integer
+        name: temperature
+        unit: C
+        range:
+          min: 10
+          max: 35
+      - id: 3
+        type: integer
+        name: current_temperature
+      - id: 4
+        type: string
+        name: preset_mode
+        mapping:
+          - dps_val: "off"
+            value: none
+          - dps_val: "50_per"
+            value: eco
+          - dps_val: "100_per"
+            value: boost
+          - dps_val: auto
+            value: comfort
+      - id: 7
+        type: boolean
+        name: swing_mode
+        mapping:
+          - dps_val: true
+            value: vertical
+          - dps_val: false
+            value: "off"
+  - entity: text
+    translation_key: schedule
+    category: config
+    hidden: true
+    dps:
+      - id: 101
+        type: base64
+        optional: true
+        name: value
+  - entity: switch
+    name: Holiday mode
+    category: config
+    dps:
+      - id: 102
+        type: string
+        optional: true
+        name: switch
+        mapping:
+          - dps_val: holiday
+            value: true
+          - dps_val: program
+            value: false

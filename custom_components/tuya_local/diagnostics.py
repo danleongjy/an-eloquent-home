@@ -1,0 +1,197 @@
+"""Diagnostics support for tuya-local."""
+
+from __future__ import annotations
+
+from typing import Any
+
+from homeassistant.components.diagnostics import REDACTED
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_HOST
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.device_registry import DeviceEntry
+from tinytuya import __version__ as tinytuya_version
+
+from .const import (
+    API_PROTOCOL_VERSIONS,
+    CONF_DEVICE_CID,
+    CONF_PROTOCOL_VERSION,
+    CONF_TYPE,
+    DOMAIN,
+)
+from .device import TuyaLocalDevice
+from .helpers.config import get_device_id
+
+
+async def async_get_config_entry_diagnostics(
+    hass: HomeAssistant, entry: ConfigEntry
+) -> dict[str, Any]:
+    """Return diagnostics for a config entry."""
+    return _async_get_diagnostics(hass, entry)
+
+
+async def async_get_device_diagnostics(
+    hass: HomeAssistant, entry: ConfigEntry, device: DeviceEntry
+) -> dict[str, Any]:
+    """Return diagnostics for a device entry."""
+    return _async_get_diagnostics(hass, entry, device)
+
+
+@callback
+def _async_get_diagnostics(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    device: DeviceEntry | None = None,
+) -> dict[str, Any]:
+    """Return diagnostics for a tuya-local config entry."""
+    hass_data = hass.data[DOMAIN][get_device_id(entry.data)]
+    hostname = entry.data.get(CONF_HOST, "")
+
+    data = {
+        "name": entry.title,
+        "type": entry.data[CONF_TYPE],
+        "device_id": REDACTED,
+        "device_cid": REDACTED if entry.data.get(CONF_DEVICE_CID, "") != "" else "",
+        "local_key": REDACTED,
+        "host": REDACTED
+        if hostname != "" and hostname.casefold() != "auto"
+        else hostname,
+        "protocol_version": entry.data[CONF_PROTOCOL_VERSION],
+        "tinytuya_version": tinytuya_version,
+    }
+
+    # The DeviceEntry also has interesting looking data, but this
+    # integration does not publish anything to it other than some hardcoded
+    # values that don't change between devices. Instead get the live data
+    # from the running hass.
+    data |= _async_device_as_dict(hass, hass_data["device"])
+
+    return data
+
+
+def redact_dps(device: TuyaLocalDevice, dps: dict[str, Any]) -> dict[str, Any]:
+    """Redact any sensitive data from a list of dps"""
+    sensitive = []
+    for entity in device._children:
+        for dp in entity._config.dps():
+            if dp.sensitive:
+                sensitive.append(dp.id)
+    return {k: (REDACTED if k in sensitive else v) for (k, v) in dps.items()}
+
+
+def redact_entity(
+    device: TuyaLocalDevice,
+    entity_unique_id: str | None,
+    state_dict: dict[str, Any],
+) -> dict[str, Any]:
+    """Redact any sensitive dps from an entity's state.
+
+    Sensitive dps the entity publishes as extra attributes are redacted by
+    name. A sensitive dp consumed by the platform itself, such as a text
+    entity's `value`, is reported as the state instead, so the state is
+    redacted only when it actually carries that dp's value - blanking it
+    unconditionally would discard useful states such as a camera's
+    `recording`, whose sensitive `snapshot` dp is never the state.
+    """
+    names = []
+    values = []
+    redacted = dict(state_dict)
+    # Context is not useful information
+    redacted.pop("context", None)
+    # Redact entity_picture in case it is sensitive
+    if "entity_picture" in redacted.get("attributes"):
+        redacted["attributes"] = {
+            **redacted["attributes"],
+            "entity_picture": REDACTED,
+        }
+
+    for entity in device._children:
+        if entity._config.unique_id(device.unique_id) != entity_unique_id:
+            continue
+        for dp in entity._config.dps():
+            if not dp.sensitive:
+                continue
+            names.append(dp.name)
+            value = dp.get_value(device)
+            if value is not None:
+                values.append(str(value))
+
+    if not names:
+        return redacted
+
+    if isinstance(redacted.get("attributes"), dict):
+        redacted["attributes"] = {
+            k: (REDACTED if k in names else v)
+            for (k, v) in redacted["attributes"].items()
+        }
+    if "state" in redacted and str(redacted["state"]) in values:
+        redacted["state"] = REDACTED
+    return redacted
+
+
+@callback
+def _async_device_as_dict(
+    hass: HomeAssistant, device: TuyaLocalDevice
+) -> dict[str, Any]:
+    """Represent a Tuya Local device as a dictionary."""
+
+    # Base device information, without sensitive information
+    data = {
+        "name": device.name,
+        "api_version_set": device._api.version,
+        "api_version_used": (
+            "none"
+            if device._api_protocol_version_index is None
+            else API_PROTOCOL_VERSIONS[device._api_protocol_version_index]
+        ),
+        "api_working": device._api_protocol_working,
+        "status": device._api.dps_cache,
+        "cached_state": redact_dps(device, device._cached_state),
+        "pending_state": redact_dps(device, device._pending_updates),
+        "connected": device._running,
+        "force_dps": device._force_dps,
+    }
+
+    device_registry = dr.async_get(hass)
+    entity_registry = er.async_get(hass)
+    hass_device = device_registry.async_get_device(
+        identifiers={(DOMAIN, device.unique_id)}
+    )
+    if hass_device:
+        data["home_assistant"] = {
+            "name": hass_device.name,
+            "name_by_user": hass_device.name_by_user,
+            "disabled": hass_device.disabled,
+            "disabled_by": hass_device.disabled_by,
+            "entities": [],
+        }
+
+        hass_entities = er.async_entries_for_device(
+            entity_registry,
+            device_id=hass_device.id,
+            include_disabled_entities=True,
+        )
+        for entity_entry in hass_entities:
+            state = hass.states.get(entity_entry.entity_id)
+            state_dict = None
+            if state:
+                state_dict = redact_entity(
+                    device,
+                    entity_entry.unique_id,
+                    state.as_dict(),
+                )
+
+            data["home_assistant"]["entities"].append(
+                {
+                    "disabled": entity_entry.disabled,
+                    "disabled_by": entity_entry.disabled_by,
+                    "entity_category": entity_entry.entity_category,
+                    "device_class": entity_entry.device_class,
+                    "original_device_class": entity_entry.original_device_class,
+                    "icon": entity_entry.icon,
+                    "unit_of_measurement": entity_entry.unit_of_measurement,
+                    "state": state_dict,
+                }
+            )
+    return data

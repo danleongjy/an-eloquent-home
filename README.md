@@ -40,10 +40,10 @@ Domain | Quantity
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 12
 [`input_button`](https://www.home-assistant.io/components/input_button) | 1
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
-[`input_number`](https://www.home-assistant.io/components/input_number) | 22
-[`input_select`](https://www.home-assistant.io/components/input_select) | 12
+[`input_number`](https://www.home-assistant.io/components/input_number) | 21
+[`input_select`](https://www.home-assistant.io/components/input_select) | 11
 [`input_text`](https://www.home-assistant.io/components/input_text) | 20
-[`light`](https://www.home-assistant.io/components/light) | 74
+[`light`](https://www.home-assistant.io/components/light) | 75
 [`lock`](https://www.home-assistant.io/components/lock) | 1
 [`media_player`](https://www.home-assistant.io/components/media_player) | 7
 [`notify`](https://www.home-assistant.io/components/notify) | 6
@@ -52,18 +52,18 @@ Domain | Quantity
 [`radio_frequency`](https://www.home-assistant.io/components/radio_frequency) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 14
-[`select`](https://www.home-assistant.io/components/select) | 69
-[`sensor`](https://www.home-assistant.io/components/sensor) | 785
+[`select`](https://www.home-assistant.io/components/select) | 71
+[`sensor`](https://www.home-assistant.io/components/sensor) | 787
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 75
 [`text`](https://www.home-assistant.io/components/text) | 33
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 112
+[`update`](https://www.home-assistant.io/components/update) | 113
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1976
+Total | 1980
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -113,6 +113,7 @@ Total | 1976
 - [Proxmox Ve](https://github.com/dougiteixeira/proxmoxve)
 - [Pyscript](https://github.com/custom-components/pyscript)
 - [SSH](https://github.com/zhbjsh/homeassistant-ssh)
+- [Tuya Local](https://github.com/make-all/tuya-local)
 - [Valetudo](https://github.com/Hypfer/hass-valetudo)
 - [Watchman](https://github.com/dummylabs/thewatchman)
 

@@ -1,0 +1,112 @@
+name: Air purifier
+products:
+  - id: jiiagi6aamtgbffk
+    manufacturer: Proscenic
+    model: A8
+entities:
+  - entity: fan
+    translation_key: air_purifier
+    dps:
+      - id: 1
+        name: switch
+        type: boolean
+      - id: 4
+        name: preset_mode
+        type: string
+        mapping:
+          - dps_val: sleep
+            value: sleep
+          - dps_val: mid
+            value: medium
+          - dps_val: high
+            value: high
+          - dps_val: auto
+            value: auto
+      - id: 101
+        name: unknown_101
+        type: integer
+      - id: 102
+        name: unknown_102
+        type: string
+  - entity: sensor
+    class: pm25
+    dps:
+      - id: 2
+        name: sensor
+        class: measurement
+        type: integer
+        unit: ugm3
+  - entity: light
+    category: config
+    icon: "mdi:lightbulb-night"
+    dps:
+      - id: 8
+        name: switch
+        type: boolean
+  - entity: sensor
+    translation_key: filter_life
+    category: diagnostic
+    dps:
+      - id: 5
+        name: sensor
+        type: integer
+        unit: "%"
+  - entity: button
+    translation_key: filter_reset
+    category: config
+    dps:
+      - id: 11
+        name: button
+        type: boolean
+  - entity: sensor
+    name: Filter remaining
+    category: diagnostic
+    class: duration
+    icon: "mdi:air-filter"
+    dps:
+      - id: 16
+        name: sensor
+        type: integer
+        unit: d
+  - entity: lock
+    translation_key: child_lock
+    category: config
+    dps:
+      - id: 7
+        type: boolean
+        name: lock
+  - entity: sensor
+    name: Total runtime
+    category: diagnostic
+    icon: "mdi:data-matrix"
+    dps:
+      - id: 17
+        name: sensor
+        type: integer
+        unit: min
+  - entity: sensor
+    name: Total PM
+    category: diagnostic
+    icon: "mdi:data-matrix"
+    dps:
+      - id: 20
+        name: sensor
+        type: integer
+        optional: true
+        unit: ugm3
+  - entity: sensor
+    translation_key: air_quality
+    class: enum
+    dps:
+      - id: 21
+        name: sensor
+        type: string
+        mapping:
+          - dps_val: great
+            value: excellent
+          - dps_val: good
+            value: good
+          - dps_val: medium
+            value: poor
+          - dps_val: severe
+            value: severe

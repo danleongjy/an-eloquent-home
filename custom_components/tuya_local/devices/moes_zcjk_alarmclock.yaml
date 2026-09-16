@@ -1,0 +1,247 @@
+name: Alarm clock
+products:
+  - id: rslo8vqc1xjtaoy9
+    manufacturer: Moes House
+    model: Smart Wake Up Light
+    model_id: ZC-JK
+  - id: ya39qahrcdhvxowz
+    model: Wake Up Light II
+    model_id: ACA002-II-WWA
+entities:
+  - entity: light
+    dps:
+      - id: 101
+        type: boolean
+        name: switch
+      - id: 102
+        type: integer
+        name: brightness
+        range:
+          min: 10
+          max: 1000
+  - entity: time
+    icon: "mdi:clock-digital"
+    dps:
+      - id: 103
+        type: string
+        name: hms
+  - entity: select
+    translation_key: display_brightness
+    category: config
+    dps:
+      - id: 104
+        type: integer
+        name: option
+        mapping:
+          - dps_val: 0
+            value: "off"
+          - dps_val: 1
+            value: day
+          - dps_val: 2
+            value: night
+          - dps_val: 3
+            value: auto
+  - entity: switch
+    translation_key: radio
+    dps:
+      - id: 105
+        type: boolean
+        name: switch
+  - entity: number
+    translation_key: volume
+    dps:
+      - id: 106
+        type: integer
+        name: value
+        range:
+          min: 1
+          max: 16
+  - entity: text
+    translation_key: station_list
+    category: config
+    hidden: true
+    dps:
+      - id: 107
+        type: base64
+        optional: true
+        name: value
+  - entity: switch
+    translation_key: alarm_x
+    translation_placeholders:
+      x: "1"
+    category: config
+    dps:
+      - id: 109
+        type: boolean
+        name: switch
+  - entity: number
+    translation_key: snooze_duration
+    class: duration
+    category: config
+    dps:
+      - id: 116
+        type: integer
+        name: value
+        unit: min
+        range:
+          min: 8
+          max: 15
+  - entity: select
+    translation_key: snooze_action
+    category: config
+    dps:
+      - id: 117
+        type: string
+        name: option
+        mapping:
+          - dps_val: "1"
+            value: sound_radio
+          - dps_val: "2"
+            value: light
+          - dps_val: "3"
+            value: radio
+          - dps_val: "4"
+            value: radio_sound_light
+  - entity: switch
+    translation_key: sleep
+    dps:
+      - id: 121
+        type: boolean
+        name: switch
+  - entity: switch
+    translation_key: alarm_x
+    translation_placeholders:
+      x: "2"
+    category: config
+    dps:
+      - id: 122
+        type: boolean
+        name: switch
+  - entity: switch
+    translation_key: alarm_x
+    translation_placeholders:
+      x: "3"
+    category: config
+    dps:
+      - id: 123
+        type: boolean
+        name: switch
+  - entity: switch
+    translation_key: alarm_x
+    translation_placeholders:
+      x: "4"
+    category: config
+    dps:
+      - id: 124
+        type: boolean
+        name: switch
+  - entity: switch
+    translation_key: network_time
+    category: config
+    dps:
+      - id: 125
+        type: boolean
+        name: switch
+  - entity: button
+    translation_key: radio_seek
+    dps:
+      - id: 126
+        type: boolean
+        name: button
+      - id: 105
+        type: boolean
+        name: available
+        mapping:
+          - dps_val: true
+            value: false
+          - dps_val: false
+            value: true
+  - entity: button
+    translation_key: radio_stop
+    dps:
+      - id: 126
+        type: boolean
+        name: button
+        mapping:
+          - dps_val: true
+            value: false
+          - dps_val: false
+            value: true
+      - id: 105
+        type: boolean
+        name: available
+  - entity: text
+    translation_key: alarm_settings
+    category: config
+    hidden: true
+    dps:
+      - id: 127
+        type: base64
+        optional: true
+        name: value
+  - entity: text
+    translation_key: sleep_settings
+    category: config
+    hidden: true
+    dps:
+      - id: 128
+        type: base64
+        optional: true
+        name: value
+  - entity: light
+    translation_key: ambient_light
+    dps:
+      - id: 129
+        type: boolean
+        name: switch
+      - id: 132
+        type: string
+        name: named_color
+        mapping:
+          - dps_val: "1"
+            value: white
+            hidden: true
+          - dps_val: "2"
+            value: red
+          - dps_val: "3"
+            value: orange
+          - dps_val: "4"
+            value: yellow
+          - dps_val: "5"
+            value: lime
+          - dps_val: "6"
+            value: cyan
+          - dps_val: "7"
+            value: blue
+          - dps_val: "8"
+            value: magenta
+      - id: 132
+        type: string
+        name: effect
+        mapping:
+          - dps_val: "1"
+            value: Loop
+          - dps_val: "2"
+            value: "off"
+          - value: "off"
+            hidden: true
+  - entity: switch
+    translation_key: snooze
+    dps:
+      - id: 130
+        type: boolean
+        name: switch
+  - entity: select
+    translation_key: time_format
+    category: config
+    dps:
+      - id: 131
+        type: boolean
+        name: option
+        mapping:
+          - dps_val: false
+            value: 12_hour
+            icon: "mdi:hours-12"
+            icon_priority: 1
+          - dps_val: true
+            value: 24_hour

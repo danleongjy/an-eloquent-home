@@ -1,0 +1,79 @@
+name: CCT lightbulb
+products:
+  - id: dqs8oqdeccnqjfkx
+    model: A60
+  - id: znfxaaxc89zz6m5a
+    model: A65
+  - id: c59bbbt5xsm6fkkk
+    manufacturer: Laser
+    model: 10W smart white bulb E27
+  - id: t6kkutyhtbbohacx
+    manufacturer: Connect
+    model: 10W smart white bulb E27
+  - id: owzzoxsdudnxgije
+    manufacturer: Genio
+    name: CCT downlight
+  - id: 3szijijz5uwozmjm
+    model: Smart WiFi CCT
+entities:
+  - entity: light
+    dps:
+      - id: 20
+        type: boolean
+        name: switch
+      - id: 21
+        name: work_mode
+        type: string
+      - id: 22
+        name: brightness
+        type: integer
+        range:
+          min: 10
+          max: 1000
+      - id: 23
+        name: color_temp
+        type: integer
+        range:
+          min: 0
+          max: 1000
+        mapping:
+          - target_range:
+              min: 2700
+              max: 6500
+  - entity: time
+    translation_key: timer
+    category: config
+    dps:
+      - id: 26
+        type: integer
+        name: second
+        optional: true
+        range:
+          min: 0
+          max: 86400
+  - entity: text
+    translation_key: scene
+    category: config
+    hidden: true
+    dps:
+      - id: 25
+        type: hex
+        optional: true
+        name: value
+  - entity: switch
+    translation_key: do_not_disturb
+    category: config
+    hidden: unavailable
+    dps:
+      - id: 34
+        type: boolean
+        optional: true
+        name: switch
+      - id: 34
+        type: boolean
+        optional: true
+        name: available
+        mapping:
+          - dps_val: null
+            value: false
+          - value: true

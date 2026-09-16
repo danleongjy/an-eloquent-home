@@ -1,0 +1,91 @@
+name: Dehumidifier
+legacy_type: klarstein_dryfy_pro_connect_dehumidifier
+products:
+  - id: b07ueqf4ymelhbi9
+    manufacturer: Klarstein
+    model: DryFy Pro Connect
+  - id: 6cguug02fnygou5c
+    manufacturer: Klarstein
+    model: Dryfy Pro Connect
+  - id: m0wtqltrepknlpdj
+    manufacturer: Morris
+    model: Premier Plus
+  - id: lovfhvt2xkrexf8z
+    manufacturer: Electriq
+    model: CD12PRO-LE
+entities:
+  - entity: humidifier
+    class: dehumidifier
+    translation_only_key: extended
+    dps:
+      - id: 1
+        name: switch
+        type: boolean
+      - id: 2
+        name: mode
+        type: string
+        optional: true
+        mapping:
+          - dps_val: auto
+            value: auto
+          - dps_val: low
+            value: eco
+          - dps_val: high
+            value: laundry
+          - dps_val: fan
+            value: purify
+      - id: 3
+        type: integer
+        name: current_humidity
+      - id: 4
+        type: integer
+        name: humidity
+        range:
+          min: 35
+          max: 80
+        mapping:
+          - step: 5
+  - entity: select
+    name: Direction
+    category: config
+    icon: "mdi:sprinkler-variant"
+    dps:
+      - id: 102
+        name: option
+        type: string
+        optional: true
+        mapping:
+          - dps_val: "0_90"
+            value: "45°-90°"
+          - dps_val: "45"
+            value: "45°"
+          - dps_val: "90"
+            value: "90°"
+  - entity: switch
+    translation_key: uv_sterilization
+    dps:
+      - id: 10
+        name: switch
+        type: boolean
+  - entity: light
+    translation_key: display
+    category: config
+    dps:
+      - id: 101
+        type: boolean
+        name: switch
+  - entity: switch
+    translation_key: ionizer
+    dps:
+      - id: 5
+        name: switch
+        optional: true
+        type: boolean
+  - entity: sensor
+    class: temperature
+    dps:
+      - id: 103
+        type: integer
+        name: sensor
+        unit: C
+        class: measurement

@@ -984,6 +984,11 @@
             }
           },
           "styles": {
+            "grid": [
+              {
+                "grid-template-columns": "56px auto 0px"
+              }
+            ],
             "icon": [
               {
                 "color": "[[[ return variables.state_color ]]]"
@@ -11073,76 +11078,6 @@
                     {
                       "type": "custom:button-card",
                       "aspect_ratio": 1,
-                      "icon": "mdi:bookshelf"
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "input_number.study_room_fan_speed",
-                      "template": "square_cell",
-                      "icon": "mdi:power",
-                      "state": [
-                        {
-                          "operator": ">",
-                          "value": 0,
-                          "color": "var(--state-active-color)"
-                        },
-                        {
-                          "operator": "==",
-                          "value": 0,
-                          "color": "var(--state-inactive-color)"
-                        }
-                      ],
-                      "double_tap_action": {
-                        "action": "multi-actions",
-                        "actions": [
-                          {
-                            "action": "perform-action",
-                            "perform_action": "input_number.set_value",
-                            "data": {
-                              "entity_id": "input_number.study_room_fan_speed",
-                              "value": 0
-                            }
-                          },
-                          {
-                            "action": "perform-action",
-                            "perform_action": "remote.send_command",
-                            "target": {
-                              "entity_id": "remote.study_room_universal_remote"
-                            },
-                            "data": {
-                              "device": "Study Room Fan",
-                              "command": "Off"
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "input_select.study_room_fan_direction",
-                      "template": "square_cell",
-                      "color": "var(--state-inactive-color)",
-                      "state": [
-                        {
-                          "value": "forward",
-                          "icon": "mdi:fan-chevron-down"
-                        },
-                        {
-                          "value": "reverse",
-                          "icon": "mdi:fan-chevron-up"
-                        }
-                      ],
-                      "double_tap_action": {
-                        "action": "perform-action",
-                        "perform_action": "input_select.select_next",
-                        "data": {
-                          "entity_id": "input_select.study_room_fan_direction"
-                        }
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "aspect_ratio": 1,
                       "icon": "mdi:bed",
                       "name": "D&G"
                     },
@@ -17186,16 +17121,29 @@
                   }
                 },
                 {
-                  "type": "tile",
-                  "entity": "sensor.pollutant_standards_index",
-                  "name": "PSI",
-                  "color": "#9e110d",
-                  "vertical": false,
-                  "features_position": "bottom",
+                  "type": "custom:button-card",
+                  "template": "tile_status_bar",
+                  "entity": "sensor.psi_proportional_representation",
+                  "state_display": "[[[ return \"PSI \" + states['sensor.pollutant_standards_index'].state ]]]",
+                  "tap_action": {
+                    "action": "more-info",
+                    "entity": "sensor.pollutant_standards_index"
+                  },
+                  "name": "Air Quality",
+                  "variables": {
+                    "cap_medium": 0.5,
+                    "cap_low": 0.2
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 6
+                  },
                   "visibility": [
                     {
                       "condition": "numeric_state",
-                      "above": 50
+                      "above": 50,
+                      "entity": "sensor.pollutant_standards_index"
                     }
                   ]
                 },
@@ -18100,13 +18048,6 @@
                   "features_position": "bottom"
                 },
                 {
-                  "type": "tile",
-                  "features_position": "bottom",
-                  "vertical": false,
-                  "entity": "binary_sensor.main_door",
-                  "name": " "
-                },
-                {
                   "type": "custom:button-card",
                   "entity": "sensor.main_door_lock_battery",
                   "template": "tile_status_bar",
@@ -18116,6 +18057,13 @@
                     "rows": 1,
                     "columns": 6
                   }
+                },
+                {
+                  "type": "tile",
+                  "features_position": "bottom",
+                  "vertical": false,
+                  "entity": "binary_sensor.main_door",
+                  "name": " "
                 },
                 {
                   "type": "custom:button-card",

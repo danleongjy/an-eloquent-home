@@ -1,0 +1,198 @@
+name: Doorbell
+products:
+  - id: 0ukszkfaejkqpz9o
+    model: KW02
+    name: IP video doorbell
+entities:
+  - entity: button
+    icon: "mdi:gate"
+    name: Door
+    dps:
+      - id: 148
+        type: boolean
+        optional: true
+        name: button
+  - entity: siren
+    name: Doorbell
+    dps:
+      - id: 156
+        type: string
+        optional: true
+        name: tone
+        mapping:
+          - dps_val: "1"
+            value: Tone 1
+          - dps_val: "2"
+            value: Tone 2
+          - dps_val: "3"
+            value: Tone 3
+          - dps_val: "4"
+            value: Tone 4
+      - id: 157
+        type: integer
+        optional: true
+        name: volume_level
+        range:
+          min: 0
+          max: 10
+        mapping:
+          - scale: 10
+      - id: 166
+        type: integer
+        optional: true
+        name: duration
+        range:
+          min: 5
+          max: 60
+      - id: 186
+        type: string
+        optional: true
+        name: alarm_report
+  - entity: light
+    translation_key: indicator
+    category: config
+    dps:
+      - id: 101
+        type: boolean
+        name: switch
+  - entity: switch
+    translation_key: flip_image
+    category: config
+    dps:
+      - id: 103
+        type: boolean
+        optional: true
+        name: switch
+  - entity: select
+    translation_key: motion_sensitivity
+    category: config
+    dps:
+      - id: 106
+        type: string
+        name: option
+        optional: true
+        mapping:
+          - dps_val: "0"
+            value: low
+          - dps_val: "1"
+            value: medium
+          - dps_val: "2"
+            value: high
+  - entity: button
+    name: SD format
+    icon: "mdi:sd"
+    category: config
+    dps:
+      - id: 111
+        type: boolean
+        optional: true
+        name: button
+      - id: 109
+        type: string
+        optional: true
+        name: capacity
+      - id: 110
+        type: integer
+        optional: true
+        name: sd_status
+      - id: 117
+        type: integer
+        optional: true
+        name: formatting_status
+  - entity: event
+    class: motion
+    dps:
+      - id: 115
+        type: base64
+        name: event
+        optional: true
+        mapping:
+          - dps_val: null
+            value: null
+          - value: detected
+      - id: 115
+        type: base64
+        optional: true
+        name: snapshot
+  - entity: event
+    class: doorbell
+    name: Door image
+    dps:
+      - id: 154
+        type: base64
+        name: event
+        optional: true
+        mapping:
+          - dps_val: null
+            value: null
+          - value: ring
+      - id: 154
+        type: base64
+        optional: true
+        name: snapshot
+  - entity: switch
+    translation_key: motion_detection
+    category: config
+    dps:
+      - id: 134
+        type: boolean
+        optional: true
+        name: switch
+  - entity: camera
+    # 2026-06-08
+    deprecated: event_motion, event_door_image, switch_motion_detection
+    dps:
+      - id: 115
+        type: base64
+        optional: true
+        name: motion_detected
+      - id: 134
+        type: boolean
+        optional: true
+        name: motion_enable
+      - id: 154
+        type: base64
+        optional: true
+        name: snapshot
+        mapping:
+          - dps_val: null
+            value_redirect: motion_detected
+  - entity: event
+    class: doorbell
+    dps:
+      - id: 136
+        type: string
+        name: event
+        optional: true
+        mapping:
+          - dps_val: ""
+            value: null
+          - dps_val: null
+            value: null
+          - value: ring
+      - id: 136
+        type: string
+        optional: true
+        name: raw_event
+  - entity: number
+    translation_key: volume
+    category: config
+    dps:
+      - id: 160
+        type: integer
+        optional: true
+        name: value
+        unit: "%"
+        range:
+          min: 1
+          max: 10
+        mapping:
+          - scale: 0.1
+  - entity: button
+    class: restart
+    category: config
+    dps:
+      - id: 162
+        type: boolean
+        optional: true
+        name: button
