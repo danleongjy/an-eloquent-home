@@ -25,7 +25,7 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 149
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 192
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 191
 [`button`](https://www.home-assistant.io/components/button) | 195
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 8
@@ -47,23 +47,23 @@ Domain | Quantity
 [`lock`](https://www.home-assistant.io/components/lock) | 1
 [`media_player`](https://www.home-assistant.io/components/media_player) | 7
 [`notify`](https://www.home-assistant.io/components/notify) | 6
-[`number`](https://www.home-assistant.io/components/number) | 93
+[`number`](https://www.home-assistant.io/components/number) | 95
 [`person`](https://www.home-assistant.io/components/person) | 2
 [`radio_frequency`](https://www.home-assistant.io/components/radio_frequency) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 14
-[`select`](https://www.home-assistant.io/components/select) | 71
-[`sensor`](https://www.home-assistant.io/components/sensor) | 787
+[`select`](https://www.home-assistant.io/components/select) | 72
+[`sensor`](https://www.home-assistant.io/components/sensor) | 791
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 75
+[`switch`](https://www.home-assistant.io/components/switch) | 81
 [`text`](https://www.home-assistant.io/components/text) | 33
 [`tts`](https://www.home-assistant.io/components/tts) | 1
 [`update`](https://www.home-assistant.io/components/update) | 113
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1979
+Total | 1991
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -113,7 +113,7 @@ Total | 1979
 - [Proxmox Ve](https://github.com/dougiteixeira/proxmoxve)
 - [Pyscript](https://github.com/custom-components/pyscript)
 - [SSH](https://github.com/zhbjsh/homeassistant-ssh)
-- [Tuya Local](https://github.com/make-all/tuya-local)
+- [Tuya Local](https://github.com/danleongjy/tuya-local)
 - [Valetudo](https://github.com/Hypfer/hass-valetudo)
 - [Watchman](https://github.com/dummylabs/thewatchman)
 

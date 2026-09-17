@@ -13091,49 +13091,71 @@
                   "icon": "mdi:cog"
                 },
                 {
-                  "type": "entities",
-                  "entities": [
-                    {
-                      "entity": "sensor.lg_washer_course",
-                      "name": "Course"
-                    },
-                    {
-                      "entity": "sensor.lg_washer_temperature",
-                      "name": "Water Temperature"
-                    },
-                    {
-                      "entity": "sensor.lg_washer_spin",
-                      "name": "Spin Speed"
-                    },
-                    {
-                      "entity": "binary_sensor.lg_washer_door_lock",
-                      "name": {
-                        "type": "entity"
-                      }
-                    },
-                    {
-                      "entity": "binary_sensor.lg_washer_child_lock",
-                      "name": "Child Lock"
-                    },
-                    {
-                      "entity": "binary_sensor.lg_washer_extra_rinse",
-                      "name": "Extra Rinse"
-                    },
-                    {
-                      "entity": "binary_sensor.lg_washer_intensive_wash",
-                      "name": "Intensive Wash"
-                    },
-                    {
-                      "entity": "binary_sensor.lg_washer_pre_wash",
-                      "name": "Pre-Wash"
-                    },
-                    {
-                      "entity": "binary_sensor.lg_washer_steam",
-                      "name": {
-                        "type": "entity"
-                      }
-                    }
-                  ]
+                  "type": "tile",
+                  "entity": "sensor.lg_washer_course",
+                  "name": {
+                    "type": "entity"
+                  },
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.lg_washer_temperature",
+                  "name": "Water Temp",
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.lg_washer_spin",
+                  "name": "Spin Speed",
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "binary_sensor.lg_washer_door_lock",
+                  "name": "Door Lock",
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "binary_sensor.lg_washer_child_lock",
+                  "name": "Child Lock",
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "show_name": false,
+                  "show_icon": true,
+                  "type": "button",
+                  "grid_options": {
+                    "columns": 2,
+                    "rows": 1
+                  },
+                  "entity": "binary_sensor.lg_washer_intensive_wash"
+                },
+                {
+                  "show_name": false,
+                  "show_icon": true,
+                  "type": "button",
+                  "entity": "binary_sensor.lg_washer_extra_rinse",
+                  "grid_options": {
+                    "columns": 2,
+                    "rows": 1
+                  }
+                },
+                {
+                  "show_name": false,
+                  "show_icon": true,
+                  "type": "button",
+                  "grid_options": {
+                    "columns": 2,
+                    "rows": 1
+                  },
+                  "entity": "binary_sensor.lg_washer_pre_wash"
                 }
               ],
               "visibility": [
@@ -14956,30 +14978,16 @@
                 {
                   "type": "custom:button-card",
                   "entity": "switch.stove_main_power",
+                  "icon": "mdi:power",
                   "name": "Controls",
                   "color": "auto",
-                  "tap_action": {
-                    "action": "none"
-                  },
                   "icon_tap_action": {
+                    "action": "toggle"
+                  },
+                  "tap_action": {
                     "action": "more-info"
                   },
                   "custom_fields": {
-                    "power": {
-                      "card": {
-                        "type": "custom:button-card",
-                        "icon": "mdi:power",
-                        "template": "mode_selector",
-                        "entity": "switch.stove_main_power",
-                        "variables": {
-                          "mode_entity": "switch.stove_main_power",
-                          "mode_option": "on"
-                        },
-                        "tap_action": {
-                          "action": "toggle"
-                        }
-                      }
-                    },
                     "left_burner": {
                       "card": {
                         "type": "custom:button-card",
@@ -15031,18 +15039,46 @@
                           "action": "toggle"
                         }
                       }
+                    },
+                    "warm": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "template": "mode_selector",
+                        "entity": "switch.stove_keep_warm",
+                        "variables": {
+                          "mode_entity": "switch.stove_keep_warm",
+                          "mode_option": "on"
+                        },
+                        "tap_action": {
+                          "action": "toggle"
+                        }
+                      }
+                    },
+                    "boost": {
+                      "card": {
+                        "type": "custom:button-card",
+                        "template": "mode_selector",
+                        "entity": "switch.stove_boost",
+                        "variables": {
+                          "mode_entity": "switch.stove_boost",
+                          "mode_option": "on"
+                        },
+                        "tap_action": {
+                          "action": "toggle"
+                        }
+                      }
                     }
                   },
                   "styles": {
                     "grid": [
                       {
-                        "grid-template-areas": "\"i n power pad1 left_burner right_burner pad2 pause right_pad\""
+                        "grid-template-areas": "\"i n left_burner right_burner pad2 pause warm boost right_pad\""
                       },
                       {
                         "grid-template-rows": "1fr"
                       },
                       {
-                        "grid-template-columns": "56px 1fr 12% 4% 12% 12% 4% 12% 2%"
+                        "grid-template-columns": "56px 1fr 12% 12% 4% 12% 12% 12% 2%"
                       }
                     ],
                     "icon": [
@@ -17052,7 +17088,6 @@
                             "yaxis_id": "hum",
                             "stroke_width": 0,
                             "type": "area",
-                            "transform": "return x > 80 ? 100 : 0;",
                             "show": {
                               "in_header": "raw"
                             }
@@ -17071,6 +17106,7 @@
                             "id": "hum",
                             "opposite": true,
                             "min": 50,
+                            "max": 100,
                             "apex_config": {
                               "title": {
                                 "text": "%"
