@@ -16,7 +16,7 @@ entities:
     dps:
       - id: 102
         name: option
-        type: integer
+        type: string
         mapping:
           - dps_val: "0"
             value: Left
@@ -24,9 +24,12 @@ entities:
             value: Right
   - entity: number
     name: Current Burner Power
-    minimum: 0
-    maximum: 9
     dps:
+      - id: 103
+        name: maximum
+        type: string
+        mapping:
+          - value: 9
       - id: 103
         name: value
         type: string
@@ -94,7 +97,7 @@ entities:
           max: 99999
   - entity: sensor
     name: Total Power Consumed
-    class: duration
+    class: energy
     dps:
       - id: 111
         name: sensor
@@ -106,13 +109,14 @@ entities:
           max: 99999
   - entity: sensor
     name: Error Code
+    class: enum
     dps:
       - id: 120
         name: sensor
         type: string
         mapping:
           - dps_val: "0"
-            value: None
+            value: "No error"
           - dps_val: "1"
             value: "1"
           - dps_val: "2"

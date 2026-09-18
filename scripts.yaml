@@ -632,20 +632,20 @@ stove_settings:
     - condition: template
       value_template: '{{ current_burner_power is defined }}'
     then:
-    - service: select.select_option
-      data:
-        option: '{{ current_burner_power }}'
+    - data:
+        value: '{{ current_burner_power }}'
       target:
-        entity_id: select.stove_current_burner_power
+        entity_id: number.stove_current_burner_power
+      action: number.set_value
   - if:
     - condition: template
       value_template: '{{ current_burner_timer is defined }}'
     then:
-    - service: number.set_value
-      data:
+    - data:
         value: '{{ current_burner_timer }}'
       target:
         entity_id: number.stove_current_burner_timer
+      action: number.set_value
   mode: queued
   icon: mdi:stove
   fields:

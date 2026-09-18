@@ -1125,141 +1125,6 @@
       target:
         entity_id: input_boolean.dishwasher_load_clean
   mode: single
-- id: '1664539716957'
-  alias: Stove Set State
-  description: Set the state of the stove according to input_helpers
-  trigger:
-  - platform: state
-    entity_id:
-    - select.stove_current_burner_power
-    id: select
-  - platform: state
-    entity_id:
-    - input_number.stove_current_burner_power_slider
-    id: slider
-  - platform: state
-    entity_id:
-    - input_boolean.stove_select_left_burner
-    id: left_burner
-  - platform: state
-    entity_id:
-    - input_boolean.stove_select_right_burner
-    id: right_burner
-  - platform: state
-    entity_id:
-    - select.stove_current_burner
-    id: burner
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: select
-      sequence:
-      - service: input_number.set_value
-        data:
-          value: '{{ states(''select.stove_current_burner_power'') }}'
-        target:
-          entity_id: input_number.stove_current_burner_power_slider
-    - conditions:
-      - condition: trigger
-        id: slider
-      sequence:
-      - service: select.select_option
-        data:
-          option: '{{ states(''input_number.stove_current_burner_power_slider'') |
-            int(0) }}'
-        target:
-          entity_id: select.stove_current_burner_power
-    - conditions:
-      - condition: trigger
-        id: left_burner
-      sequence:
-      - if:
-        - condition: state
-          entity_id: input_boolean.stove_select_left_burner
-          state: 'on'
-        then:
-        - service: input_boolean.turn_off
-          data: {}
-          target:
-            entity_id: input_boolean.stove_select_right_burner
-        - service: select.select_option
-          data:
-            option: left
-          target:
-            entity_id: select.stove_current_burner
-        else:
-        - service: input_boolean.turn_on
-          data: {}
-          target:
-            entity_id: input_boolean.stove_select_right_burner
-        - service: select.select_option
-          data:
-            option: right
-          target:
-            entity_id: select.stove_current_burner
-    - conditions:
-      - condition: trigger
-        id: right_burner
-      sequence:
-      - if:
-        - condition: state
-          entity_id: input_boolean.stove_select_right_burner
-          state: 'on'
-        then:
-        - service: input_boolean.turn_off
-          data: {}
-          target:
-            entity_id: input_boolean.stove_select_left_burner
-        - service: select.select_option
-          data:
-            option: right
-          target:
-            entity_id: select.stove_current_burner
-        else:
-        - service: input_boolean.turn_on
-          data: {}
-          target:
-            entity_id: input_boolean.stove_select_left_burner
-        - service: select.select_option
-          data:
-            option: left
-          target:
-            entity_id: select.stove_current_burner
-    - conditions:
-      - condition: trigger
-        id: burner
-      sequence:
-      - if:
-        - condition: state
-          entity_id: select.stove_current_burner
-          state: left
-        then:
-        - service: input_boolean.turn_off
-          data: {}
-          target:
-            entity_id: input_boolean.stove_select_right_burner
-        - service: input_boolean.turn_on
-          data: {}
-          target:
-            entity_id: input_boolean.stove_select_left_burner
-        else:
-        - service: input_boolean.turn_on
-          data: {}
-          target:
-            entity_id: input_boolean.stove_select_right_burner
-        - service: input_boolean.turn_off
-          data: {}
-          target:
-            entity_id: input_boolean.stove_select_left_burner
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 0
-      milliseconds: 10
-  mode: single
-  max_exceeded: silent
 - id: '1667350498199'
   alias: Home Mode
   description: Set automated controls and devices to Normal, Away or Party Modes
@@ -7026,6 +6891,7 @@
     - Is the {side} (cooker | stove | burner) (on | off)
     - (What is | What's) the (status | condition) of the {side} (cooker | stove |
       burner)
+    - What is the (cooker | stove | burner) doing
     id: Stove_CookerStatus
   - trigger: conversation
     command:
@@ -7089,7 +6955,7 @@
           - action: select.select_option
             metadata: {}
             data:
-              option: '{{ trigger.slots.side }}'
+              option: '{{ trigger.slots.side | capitalize }}'
             target:
               entity_id: select.stove_current_burner
           - action: script.stove_settings
@@ -7112,7 +6978,7 @@
           - action: select.select_option
             metadata: {}
             data:
-              option: '{{ trigger.slots.side }}'
+              option: '{{ trigger.slots.side | capitalize }}'
             target:
               entity_id: select.stove_current_burner
           - if:
@@ -7147,7 +7013,7 @@
           - action: select.select_option
             metadata: {}
             data:
-              option: '{{ trigger.slots.side }}'
+              option: '{{ trigger.slots.side | capitalize }}'
             target:
               entity_id: select.stove_current_burner
           - action: script.stove_settings
@@ -7167,7 +7033,7 @@
           - action: select.select_option
             metadata: {}
             data:
-              option: '{{ trigger.slots.side }}'
+              option: '{{ trigger.slots.side | capitalize }}'
             target:
               entity_id: select.stove_current_burner
           - action: script.stove_settings
@@ -7187,13 +7053,13 @@
             - action: select.select_option
               metadata: {}
               data:
-                option: '{{ trigger.slots.side }}'
+                option: '{{ trigger.slots.side | capitalize }}'
               target:
                 entity_id: select.stove_current_burner
             - delay: 1
             - set_conversation_response: "{% set text = namespace(output = '') %}\n{%
-                set text.output = 'The ' + states('select.stove_current_burner') +
-                ' cooker is on level ' + states('select.stove_current_burner_power')
+                set text.output = 'The ' + states('select.stove_current_burner') |
+                lower + ' cooker is on level ' + states('number.stove_current_burner_power')
                 %}\n{% if states('number.stove_current_burner_timer') | int(0) ==
                 0 %}\n  {% set text.output = text.output + '.' %}\n{% elif states('number.stove_current_burner_timer')
                 | int(0) == 1 %}\n  {% set text.output = text.output + ' with 1 minute
@@ -7201,7 +7067,8 @@
                 with ' + states('number.stove_current_burner_timer') + ' minutes remaining.'
                 %}\n{% endif %}\n{{ text.output }}\n"
             else:
-            - set_conversation_response: The {{ trigger.slots.side }} cooker is off.
+            - set_conversation_response: The {{ trigger.slots.side | lower }} cooker
+                is off.
         default:
         - set_conversation_response: Unable to comply! Stove must be manually turned
             on first.

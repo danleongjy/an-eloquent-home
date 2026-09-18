@@ -2187,8 +2187,8 @@
                   "device_slider",
                   "stove_more_info"
                 ],
-                "entity": "input_number.stove_current_burner_power_slider",
-                "icon": "[[[\n  if (states['switch.stove_pause'].state == 'on') {\n    return 'mdi:pause-circle-outline'\n  } else {\n    return 'mdi:chevron-' + states['select.stove_current_burner'].state + '-circle-outline' \n  }\n]]]\n",
+                "entity": "number.stove_current_burner_power",
+                "icon": "[[[\n  if (states['switch.stove_pause'].state == 'on') {\n    return 'mdi:pause-circle-outline'\n  } else {\n    return 'mdi:chevron-' + states['select.stove_current_burner'].state.toLowerCase() + '-circle-outline' \n  }\n]]]\n",
                 "label": "[[[\n  if (parseInt(states['number.stove_current_burner_timer'].state) >= 70)\n    return '1:' + (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 60)\n    return '1:0' + (parseInt(states['number.stove_current_burner_timer'].state) - 60).toString()\n  else if (parseInt(states['number.stove_current_burner_timer'].state) >= 10)\n    return '0:' + states['number.stove_current_burner_timer'].state\n  else if (parseInt(states['number.stove_current_burner_timer'].state) > 0)\n    return '0:0' + states['number.stove_current_burner_timer'].state\n  else\n    return ''\n]]]\n",
                 "show_label": true,
                 "double_tap_action": {
@@ -14995,14 +14995,14 @@
                         "template": "mode_selector",
                         "variables": {
                           "mode_entity": "select.stove_current_burner",
-                          "mode_option": "left"
+                          "mode_option": "Left"
                         },
                         "tap_action": {
                           "action": "perform-action",
                           "perform_action": "select.select_option",
                           "data": {
                             "entity_id": "select.stove_current_burner",
-                            "option": "left"
+                            "option": "Left"
                           }
                         }
                       }
@@ -15014,14 +15014,14 @@
                         "template": "mode_selector",
                         "variables": {
                           "mode_entity": "select.stove_current_burner",
-                          "mode_option": "right"
+                          "mode_option": "Right"
                         },
                         "tap_action": {
                           "action": "perform-action",
                           "perform_action": "select.select_option",
                           "data": {
                             "entity_id": "select.stove_current_burner",
-                            "option": "right"
+                            "option": "Right"
                           }
                         }
                       }
@@ -15115,7 +15115,7 @@
                 },
                 {
                   "type": "custom:button-card",
-                  "entity": "input_number.stove_current_burner_power_slider",
+                  "entity": "number.stove_current_burner_power",
                   "template": "tile_slider",
                   "name": "Power",
                   "state_display": "[[[return \"Level \" + parseInt(entity.state) ]]]",
@@ -15265,23 +15265,17 @@
                   "grid_options": {
                     "rows": 1,
                     "columns": 12
-                  },
-                  "visibility": [
-                    {
-                      "condition": "state",
-                      "entity": "vacuum.valetudo_hestia",
-                      "state": "docked"
-                    }
-                  ]
+                  }
                 },
                 {
                   "type": "markdown",
-                  "content": "<ha-alert alert-type=\"error\">{{ states(\"select.stove_error_code\") }}</ha-alert>",
+                  "content": "<ha-alert alert-type=\"error\">{{ states(\"sensor.stove_error_code\") }}.</ha-alert>",
                   "text_only": true,
                   "visibility": [
                     {
-                      "entity": "select.stove_error_code",
-                      "state_not": "None"
+                      "condition": "state",
+                      "entity": "sensor.stove_error_code",
+                      "state_not": "No error"
                     }
                   ]
                 }
@@ -15332,12 +15326,13 @@
                 },
                 {
                   "type": "markdown",
-                  "content": "<ha-alert alert-type=\"error\">{{ states(\"select.stove_error_code\") }}</ha-alert>",
+                  "content": "<ha-alert alert-type=\"error\">{{ states(\"sensor.stove_error_code\") }}.</ha-alert>",
                   "text_only": true,
                   "visibility": [
                     {
-                      "entity": "select.stove_error_code",
-                      "state_not": "None"
+                      "condition": "state",
+                      "entity": "sensor.stove_error_code",
+                      "state_not": "No error"
                     }
                   ]
                 }
