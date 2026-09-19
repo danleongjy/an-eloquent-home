@@ -42,7 +42,7 @@ select:
             then:
               sensor.template.publish:
                 id: last_run_started
-                state: !lambda 'return id(sntp_time).now();'
+                state: !lambda 'return strftime("%Y-%m-%dT%H:%M:%SZ", id(sntp_time).utcnow());'
         - if:
             condition:
               select.is:
@@ -51,7 +51,7 @@ select:
             then:
               sensor.template.publish:
                 id: last_run_ended
-                state: !lambda 'return id(sntp_time).now();'
+                state: !lambda 'return strftime("%Y-%m-%dT%H:%M:%SZ", id(sntp_time).utcnow());'
 
 sensor:
   - platform: template
@@ -66,11 +66,11 @@ sensor:
       then:
         - if:
             condition:
-              lambda: "return id(last_run_ended).state() > id(last_run_started).state();"
+              lambda: "return strptime(id(last_run_ended).state()) > strptime(id(last_run_started).state());"
             then:
               sensor.template.publish:
                 id: last_run_duration
-                state: !lambda "return id(last_run_ended).state() - id(last_run_started).state();"
+                state: !lambda "return strptime(id(last_run_ended).state()) - strptime(id(last_run_started).state());"
   - platform: template
     name: Last Run Duration
     id: last_run_duration
