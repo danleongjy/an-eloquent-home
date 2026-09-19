@@ -65,6 +65,11 @@ select:
                   state: !lambda 'return  id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
               - lambda: "id(run_ended) = id(sntp_time).utcnow().timestamp;"
 
+binary_sensor:
+  - platform: template
+    name: Running
+    lambda: "return id(power_sensor).state > 0 "
+                
 text_sensor:
   - platform: template
     name: Last Run Started
