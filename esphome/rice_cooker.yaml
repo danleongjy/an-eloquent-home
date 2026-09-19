@@ -35,11 +35,9 @@ select:
 sensor:
   - platform: template
     id: watts_1min_mean
-    lambda: "return id(power_sensor).state"
+    lambda: "return id(power_sensor).state;"
+    update_interval: 10s
     filters:
-      - heartbeat:
-          period: 10s
-          optimistic: true
       - throttle_average: 60s
     on_value_range:
       - below: 1.1
@@ -49,11 +47,9 @@ sensor:
               option: Standby
   - platform: template
     id: watts_recent_max
-    lambda: "return id(power_sensor).state"
+    lambda: "return id(power_sensor).state;"
+    update_interval: 10s
     filters:
-      - heartbeat:
-          period: 10s
-          optimistic: true
       - max:
           window_size: 30
           send_every: 10
