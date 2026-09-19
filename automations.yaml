@@ -2830,15 +2830,16 @@
         entity_id: switch.stove_main_power
         state: 'on'
       - condition: state
-        entity_id: binary_sensor.rice_cooker
-        state: 'on'
+        entity_id: binary_sensor.rice_cooker_running
+        state:
+        - 'on'
     then:
     - data:
         title: Turn off kitchen appliances?
         data:
           tag: appliances_on
-        message: "{% if is_state('binary_sensor.rice_cooker', 'on')  and is_state('switch.stove_main_power',
-          'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker',
+        message: "{% if is_state('binary_sensor.rice_cooker_running', 'on')  and is_state('switch.stove_main_power',
+          'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker_running',
           'on') %}\n  Rice cooker is on.\n{% else %}\n  Stove is on.\n{% endif %}"
       action: notify.mobile_app_aurora
     - action: notify.mobile_app_grace_iphone_14
@@ -2846,8 +2847,8 @@
         title: Turn off kitchen appliances?
         data:
           tag: appliances_on
-        message: "{% if is_state('binary_sensor.rice_cooker', 'on')  and is_state('switch.stove_main_power',
-          'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker',
+        message: "{% if is_state('binary_sensor.rice_cooker_running', 'on')  and is_state('switch.stove_main_power',
+          'on') %}\n  Rice cooker and stove are on.\n{% elif is_state('binary_sensor.rice_cooker_running',
           'on') %}\n  Rice cooker is on.\n{% else %}\n  Stove is on.\n{% endif %}"
     else:
     - data:
