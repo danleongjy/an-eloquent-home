@@ -69,6 +69,42 @@ binary_sensor:
   - platform: template
     name: Running
     lambda: "return id(power_sensor).state > 0;"
+  - platform: homeassistant
+    entity_id: binary_sensor.rice_cooker_lid
+    id: lid
+    on_state:
+      then:
+        - if:
+            condition:
+              binary_sensor.is_on: lid
+            then:
+              - switch.turn_on: relay
+  - platform: template
+    id: cooking_to_standby
+    lambda: "return id(power_sensor).state < 1.1 && id(power_sensor).state >= 0.3"
+    filters:
+      - delayed_on: 60s
+    on_state:
+      then:
+        - if:
+            condition:
+              binary_sensor.is_on: cooking_to_standby
+            then:
+            - select.set: 
+                id: rice_cooker_status
+                option: Standby
+  - platform: template
+    id: turn_off
+    lambda: "return id(power_sensor).state <  0.3"
+    filters:
+      - delayed_on: 15min
+    on_state:
+      then:
+        - if:
+            condition:
+              binary_sensor.is_on: turn_off
+            then:
+            - switch.turn_off: relay
                 
 text_sensor:
   - platform: template
@@ -94,18 +130,6 @@ sensor:
     name: Last Run Duration
     id: last_run_duration
     device_class: duration
-  - platform: template
-    id: watts_1min_mean
-    lambda: "return id(power_sensor).state;"
-    update_interval: 10s
-    filters:
-      - throttle_average: 60s
-    on_value_range:
-      - below: 1.1
-        then:
-          - select.set: 
-              id: rice_cooker_status
-              option: Standby
   - platform: template
     id: watts_recent_max
     lambda: "return id(power_sensor).state;"
