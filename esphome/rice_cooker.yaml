@@ -80,22 +80,22 @@ binary_sensor:
             then:
               - switch.turn_on: relay
   - platform: template
-    id: cooking_to_standby
-    lambda: "return id(power_sensor).state < 1.1 && id(power_sensor).state >= 0.3;"
+    id: running_to_standby
+    lambda: "return id(power_sensor).state < 1.1 && id(power_sensor).state >= 0.4;"
     filters:
       - delayed_on: 60s
     on_state:
       then:
         - if:
             condition:
-              binary_sensor.is_on: cooking_to_standby
+              binary_sensor.is_on: running_to_standby
             then:
             - select.set: 
                 id: rice_cooker_status
                 option: Standby
   - platform: template
     id: turn_off
-    lambda: "return id(power_sensor).state <  0.3;"
+    lambda: "return id(power_sensor).state < 0.4;"
     filters:
       - delayed_on: 15min
     on_state:
