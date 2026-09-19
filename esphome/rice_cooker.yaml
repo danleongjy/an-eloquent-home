@@ -19,3 +19,64 @@ wifi:
     subnet: 255.255.255.0
 
 web_server: !remove
+
+select:
+  - platform: template
+    name: Status
+    id: rice_cooker_status
+    options:
+      - "Off"
+      - Cooking
+      - Warming
+      - Standby
+    optimistic: true
+    restore_value: true
+
+sensor:
+  - platform: template
+    id: watts_1min_mean
+    lambda: "return id(power_sensor).state"
+    filters:
+      - heartbeat:
+          period: 10s
+          optimistic: true
+      - throttle_average: 60s
+    on_value_range:
+      - below: 1.1
+        then:
+          - select.set: 
+              id: rice_cooker_status
+              option: Standby
+  - platform: template
+    id: watts_recent_max
+    lambda: "return id(power_sensor).state"
+    filters:
+      - heartbeat:
+          period: 10s
+          optimistic: true
+      - max:
+          window_size: 30
+          send_every: 10
+    on_value_range:
+      - above: 200
+        then:
+          - select.set: 
+              id: rice_cooker_status
+              option: Cooking
+      - above: 30
+        below: 140
+        then:
+          - select.set: 
+              id: rice_cooker_status
+              option: Warming
+
+switch:
+  - id: !extend relay
+    on_turn_on:
+      - select.set: 
+          id: rice_cooker_status
+          option: Standby
+    on_turn_off:
+      - select.set:
+          id: rice_cooker_status
+          option: "Off"
