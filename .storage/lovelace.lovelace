@@ -2117,7 +2117,7 @@
             "states": {
               "disabled": {
                 "type": "custom:button-card",
-                "entity": "binary_sensor.rice_cooker",
+                "entity": "binary_sensor.rice_cooker_running",
                 "template": "error"
               },
               "Off": {
@@ -2127,28 +2127,28 @@
               },
               "Cooking": {
                 "type": "custom:button-card",
-                "entity": "binary_sensor.rice_cooker",
+                "entity": "binary_sensor.rice_cooker_running",
                 "template": "rice_cooker_more_info",
                 "label": "Cook",
                 "show_label": true,
                 "styles": {
                   "label": [
                     {
-                      "color": "[[[\n  if (states['binary_sensor.rice_cooker'].state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else {\n    return 'var(--state-inactive-color)'\n  }\n]]]\n"
+                      "color": "[[[\n  if (states['binary_sensor.rice_cooker_running'].state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else {\n    return 'var(--state-inactive-color)'\n  }\n]]]\n"
                     }
                   ]
                 }
               },
               "Warming": {
                 "type": "custom:button-card",
-                "entity": "binary_sensor.rice_cooker",
+                "entity": "binary_sensor.rice_cooker_running",
                 "template": "rice_cooker_more_info",
                 "label": "Warm",
                 "show_label": true,
                 "styles": {
                   "label": [
                     {
-                      "color": "[[[\n  if (states['binary_sensor.rice_cooker'].state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else {\n    return 'var(--state-inactive-color)'\n  }\n]]]\n"
+                      "color": "[[[\n  if (states['binary_sensor.rice_cooker_running'].state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else {\n    return 'var(--state-inactive-color)'\n  }\n]]]\n"
                     }
                   ]
                 }
@@ -12633,7 +12633,7 @@
               "cards": [
                 {
                   "type": "heading",
-                  "heading": "Immich",
+                  "heading": "Docker",
                   "heading_style": "title",
                   "icon": "mdi:docker",
                   "badges": [
@@ -12667,14 +12667,20 @@
                 },
                 {
                   "type": "tile",
-                  "visibility": [
-                    {
-                      "condition": "user",
-                      "users": [
-                        "ad2bcce775894550affb6dfef93a2a36"
-                      ]
-                    }
-                  ],
+                  "entity": "switch.docker_container_rethink",
+                  "name": "Rethink",
+                  "state_content": "last_changed",
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "heading",
+                  "icon": "mdi:camera-iris",
+                  "heading": "Immich",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "type": "tile",
                   "entity": "switch.docker_container_immich_server",
                   "name": "Server",
                   "state_content": "last_changed",
@@ -12689,14 +12695,6 @@
                 },
                 {
                   "type": "tile",
-                  "visibility": [
-                    {
-                      "condition": "user",
-                      "users": [
-                        "ad2bcce775894550affb6dfef93a2a36"
-                      ]
-                    }
-                  ],
                   "entity": "switch.docker_container_immich_postgres",
                   "name": "Postgres",
                   "state_content": "last_changed",
@@ -12711,14 +12709,6 @@
                 },
                 {
                   "type": "tile",
-                  "visibility": [
-                    {
-                      "condition": "user",
-                      "users": [
-                        "ad2bcce775894550affb6dfef93a2a36"
-                      ]
-                    }
-                  ],
                   "entity": "switch.docker_container_immich_redis",
                   "name": "Redis",
                   "state_content": "last_changed",
@@ -12733,14 +12723,6 @@
                 },
                 {
                   "type": "tile",
-                  "visibility": [
-                    {
-                      "condition": "user",
-                      "users": [
-                        "ad2bcce775894550affb6dfef93a2a36"
-                      ]
-                    }
-                  ],
                   "entity": "switch.docker_container_immich_machine_learning",
                   "name": "Machine Learning",
                   "state_content": "last_changed",
@@ -12754,7 +12736,67 @@
                   "features_position": "bottom"
                 }
               ],
-              "column_span": 2
+              "column_span": 2,
+              "visibility": [
+                {
+                  "condition": "user",
+                  "users": [
+                    "ad2bcce775894550affb6dfef93a2a36"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Immich",
+                  "heading_style": "title",
+                  "icon": "mdi:camera-iris",
+                  "badges": [
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.qemu_docker_102_last_boot",
+                      "icon": "mdi:power"
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.qemu_docker_102_cpu_used",
+                      "icon": "mdi:cpu-64-bit",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    },
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.qemu_docker_102_memory_used_percentage",
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "not",
+                  "conditions": [
+                    {
+                      "condition": "user",
+                      "users": [
+                        "ad2bcce775894550affb6dfef93a2a36"
+                      ]
+                    }
+                  ]
+                }
+              ]
             },
             {
               "type": "grid",
