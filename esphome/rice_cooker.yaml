@@ -42,7 +42,7 @@ select:
             then:
               sensor.template.publish:
                 id: last_run_started
-                state: !lambda 'return strftime("%Y-%m-%dT%H:%M:%SZ", id(sntp_time).utcnow());'
+                state: !lambda 'return id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
         - if:
             condition:
               select.is:
@@ -51,7 +51,7 @@ select:
             then:
               sensor.template.publish:
                 id: last_run_ended
-                state: !lambda 'return strftime("%Y-%m-%dT%H:%M:%SZ", id(sntp_time).utcnow());'
+                state: !lambda 'return  id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
 
 sensor:
   - platform: template
