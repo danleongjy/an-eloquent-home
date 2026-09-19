@@ -40,7 +40,7 @@ select:
                 id: rice_cooker_status
                 options: Cooking
             then:
-              sensor.template.publish:
+              text_sensor.template.publish:
                 id: last_run_started
                 state: !lambda 'return id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
         - if:
@@ -49,11 +49,11 @@ select:
                 id: rice_cooker_status
                 options: Warming
             then:
-              sensor.template.publish:
+              text_sensor.template.publish:
                 id: last_run_ended
                 state: !lambda 'return  id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
 
-sensor:
+text_sensor:
   - platform: template
     name: Last Run Started
     id: last_run_started
@@ -71,6 +71,8 @@ sensor:
               sensor.template.publish:
                 id: last_run_duration
                 state: !lambda "return strptime(id(last_run_ended).state()) - strptime(id(last_run_started).state());"
+
+sensor:
   - platform: template
     name: Last Run Duration
     id: last_run_duration
