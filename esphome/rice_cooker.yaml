@@ -30,7 +30,29 @@ select:
       - Cooking
       - Warming
       - Standby
-
+    on_value:
+      then:
+        - if:
+            condition:
+              select.is:
+                id: status_sensor
+                options: Cooking
+            then:
+              - text_sensor.template.publish:
+                  id: last_run_started
+                  state: !lambda 'return id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
+              - lambda: "id(run_started) = id(sntp_time).utcnow().timestamp;"
+        - if:
+            condition:
+              select.is:
+                id: status_sensor
+                options: Warming
+            then:
+              - text_sensor.template.publish:
+                  id: last_run_ended
+                  state: !lambda 'return  id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
+              - lambda: "id(run_ended) = id(sntp_time).utcnow().timestamp;"
+                
 binary_sensor:
   - platform: template
     name: Running
@@ -93,27 +115,4 @@ sensor:
           - select.set: 
               id: status_sensor
               option: Warming
-  - id: !extend status_sensor
-    on_value:
-      then:
-        - if:
-            condition:
-              select.is:
-                id: status_sensor
-                options: Cooking
-            then:
-              - text_sensor.template.publish:
-                  id: last_run_started
-                  state: !lambda 'return id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
-              - lambda: "id(run_started) = id(sntp_time).utcnow().timestamp;"
-        - if:
-            condition:
-              select.is:
-                id: status_sensor
-                options: Warming
-            then:
-              - text_sensor.template.publish:
-                  id: last_run_ended
-                  state: !lambda 'return  id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
-              - lambda: "id(run_ended) = id(sntp_time).utcnow().timestamp;"
-                
+              
