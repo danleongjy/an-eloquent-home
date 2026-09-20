@@ -31,7 +31,7 @@ globals:
 select:
   - platform: template
     name: Status
-    id: dishwasher_status
+    id: status_sensor
     options:
       - "Off"
       - Washing
@@ -44,7 +44,7 @@ select:
         - if:
             condition:
               select.is:
-                id: dishwasher_status
+                id: status_sensor
                 options: Cooking
             then:
               - text_sensor.template.publish:
@@ -54,7 +54,7 @@ select:
         - if:
             condition:
               select.is:
-                id: dishwasher_status
+                id: status_sensor
                 options: Warming
             then:
               - text_sensor.template.publish:
@@ -93,7 +93,7 @@ binary_sensor:
               - if:
                   condition:
                     select.is:
-                      id: dishwasher_status
+                      id: status_sensor
                       options: Cooling
                   then:
                     switch.turn_on: load_clean
@@ -109,7 +109,7 @@ binary_sensor:
               - binary_sensor.is_on: washing
             then:
               - select.set:
-                  id: dishwasher_status
+                  id: status_sensor
                   option: Washing
             else:
               - if:
@@ -119,15 +119,15 @@ binary_sensor:
                     - if:
                         condition:
                           - select.is:
-                              id: dishwasher_status
+                              id: status_sensor
                               options: Washing
                         then:
                           - select.set:
-                              id: dishwasher_status
+                              id: status_sensor
                               option: Cooling
                         else:
                           - select.set:
-                              id: dishwasher_status
+                              id: status_sensor
                               option: Standby
 
 sensor:
@@ -169,5 +169,5 @@ switch:
               - switch.is_off: relay
             then:
               - select.set:
-                  id: dishwasher_status
+                  id: status_sensor
                   option: "Off"
