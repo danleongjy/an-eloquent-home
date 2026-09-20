@@ -36,7 +36,7 @@ select:
       - "Off"
       - Washing
       - Cooling
-      - standby
+      - Standby
     restore_value: true
     optimistic: true
     on_value:
@@ -162,12 +162,13 @@ switch:
     restore_mode: RESTORE_DEFAULT_OFF
     optimistic: true
   - id: !extend relay
-    on_state:
+    on_turn_on:
       then:
-        - if:
-            condition:
-              - switch.is_off: relay
-            then:
-              - select.set:
-                  id: status_sensor
-                  option: "Off"
+        - select.set:
+            id: status_sensor
+            option: Standby
+    on_turn_off:
+      then:
+        - select.set:
+            id: status_sensor
+            option: "Off"
