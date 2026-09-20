@@ -1,0 +1,55 @@
+globals:
+  - id: run_started
+    type: time_t
+    restore_value: true
+    initial_value: '0'
+  - id: run_ended
+    type: time_t
+    restore_value: true
+    initial_value: '0'
+
+select:
+  - platform: template
+    name: Status
+    id: status_sensor
+    restore_value: true
+    optimistic: true
+    
+sensor:
+  - platform: template
+    name: Last Run Duration
+    id: last_run_duration
+    device_class: duration
+    unit_of_measurement: s
+    
+text_sensor:
+  - platform: template
+    name: Last Run Started
+    id: last_run_started
+    device_class: timestamp
+  - platform: template
+    name: Last Run Ended
+    id: last_run_ended
+    device_class: timestamp
+    on_value:
+      then:
+        - if:
+            condition:
+              lambda: "return id(run_ended) > id(run_started);"
+            then:
+              sensor.template.publish:
+                id: last_run_duration
+                state: !lambda "return id(run_ended) - id(run_started);"
+
+switch:
+  - id: !extend relay
+    on_turn_on:
+      then:
+        - select.set:
+            id: status_sensor
+            option: Standby
+    on_turn_off:
+      then:
+        - select.set:
+            id: status_sensor
+            option: "Off"

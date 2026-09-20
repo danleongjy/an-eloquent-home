@@ -2594,35 +2594,35 @@
 - id: '1679732114538'
   alias: Dishwasher Auto Control
   description: Turn on or off the dishwasher based on door state and idle time
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.dishwasher_door
     to: 'off'
     id: door_closed
-  - platform: template
-    value_template: '{{ is_state(''switch.dishwasher'',''on'') and states(''sensor.dishwasher_watts'')
-      | float(0) <= 3 }}'
+    trigger: state
+  - value_template: '{{ is_state(''switch.dishwasher'',''on'') and states(''sensor.dishwasher_watts'')
+      | float(0) <= 5 }}'
     for:
       hours: 0
       minutes: 15
       seconds: 0
     id: idle
-  condition: []
-  action:
+    trigger: template
+  conditions: []
+  actions:
   - if:
     - condition: trigger
       id: door_closed
     then:
-    - service: switch.turn_on
-      data: {}
+    - data: {}
       target:
         entity_id: switch.dishwasher
+      action: switch.turn_on
     else:
-    - service: switch.turn_off
-      data: {}
+    - data: {}
       target:
         entity_id: switch.dishwasher
+      action: switch.turn_off
   mode: single
 - id: '1679819939741'
   alias: Dining Room Motion AC
