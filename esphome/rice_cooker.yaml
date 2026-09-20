@@ -34,7 +34,7 @@ globals:
 select:
   - platform: template
     name: Status
-    id: rice_cooker_status
+    id: status_sensor
     options:
       - "Off"
       - Cooking
@@ -47,7 +47,7 @@ select:
         - if:
             condition:
               select.is:
-                id: rice_cooker_status
+                id: status_sensor
                 options: Cooking
             then:
               - text_sensor.template.publish:
@@ -57,7 +57,7 @@ select:
         - if:
             condition:
               select.is:
-                id: rice_cooker_status
+                id: status_sensor
                 options: Warming
             then:
               - text_sensor.template.publish:
@@ -91,7 +91,7 @@ binary_sensor:
               binary_sensor.is_on: running_to_standby
             then:
             - select.set: 
-                id: rice_cooker_status
+                id: status_sensor
                 option: Standby
   - platform: template
     id: turn_off
@@ -142,22 +142,22 @@ sensor:
       - above: 200
         then:
           - select.set: 
-              id: rice_cooker_status
+              id: status_sensor
               option: Cooking
       - above: 30
         below: 140
         then:
           - select.set: 
-              id: rice_cooker_status
+              id: status_sensor
               option: Warming
 
 switch:
   - id: !extend relay
     on_turn_on:
       - select.set: 
-          id: rice_cooker_status
+          id: status_sensor
           option: Standby
     on_turn_off:
       - select.set:
-          id: rice_cooker_status
+          id: status_sensor
           option: "Off"
