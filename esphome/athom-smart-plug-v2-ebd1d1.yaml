@@ -39,7 +39,29 @@ select:
       - standby
     restore_value: true
     optimistic: true
-  
+    on_value:
+      then:
+        - if:
+            condition:
+              select.is:
+                id: dishwasher_status
+                options: Cooking
+            then:
+              - text_sensor.template.publish:
+                  id: last_run_started
+                  state: !lambda 'return id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
+              - lambda: "id(run_started) = id(sntp_time).utcnow().timestamp;"
+        - if:
+            condition:
+              select.is:
+                id: dishwasher_status
+                options: Warming
+            then:
+              - text_sensor.template.publish:
+                  id: last_run_ended
+                  state: !lambda 'return  id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
+              - lambda: "id(run_ended) = id(sntp_time).utcnow().timestamp;"
+
 binary_sensor:
   - platform: homeassistant
     id: door
