@@ -108,6 +108,25 @@ binary_sensor:
                               id: dishwasher_status
                               option: Standby
 
+text_sensor:
+  - platform: template
+    name: Last Run Started
+    id: last_run_started
+    device_class: timestamp
+  - platform: template
+    name: Last Run Ended
+    id: last_run_ended
+    device_class: timestamp
+    on_value:
+      then:
+        - if:
+            condition:
+              lambda: "return id(run_started) > id(run_ended);"
+            then:
+              sensor.template.publish:
+                id: last_run_duration
+                state: !lambda "return id(run_started) - id(run_ended);"
+
 switch:
   - platform: template
     id: load_clean
