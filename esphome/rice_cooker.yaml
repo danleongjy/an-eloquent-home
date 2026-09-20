@@ -3,6 +3,8 @@ substitutions:
   sntp_server_1: "192.168.18.1"
 packages:
   athom.smart-plug-v2: github://athom-tech/athom-configs/athom-smart-plug-v2.yaml
+  appliance_plug: !include packages/appliance_plug.yaml
+
 esphome:
   name: ${name}
   friendly_name: Rice Cooker
@@ -21,49 +23,13 @@ wifi:
 
 web_server: !remove
 
-globals:
-  - id: run_started
-    type: time_t
-    restore_value: true
-    initial_value: '0'
-  - id: run_ended
-    type: time_t
-    restore_value: true
-    initial_value: '0'
-
 select:
-  - platform: template
-    name: Status
-    id: status_sensor
+  - id: !extend status_sensor
     options:
       - "Off"
       - Cooking
       - Warming
       - Standby
-    optimistic: true
-    restore_value: true
-    on_value:
-      then:
-        - if:
-            condition:
-              select.is:
-                id: status_sensor
-                options: Cooking
-            then:
-              - text_sensor.template.publish:
-                  id: last_run_started
-                  state: !lambda 'return id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
-              - lambda: "id(run_started) = id(sntp_time).utcnow().timestamp;"
-        - if:
-            condition:
-              select.is:
-                id: status_sensor
-                options: Warming
-            then:
-              - text_sensor.template.publish:
-                  id: last_run_ended
-                  state: !lambda 'return  id(sntp_time).utcnow().strftime("%Y-%m-%dT%H:%M:%SZ");'
-              - lambda: "id(run_ended) = id(sntp_time).utcnow().timestamp;"
 
 binary_sensor:
   - platform: template
@@ -106,30 +72,7 @@ binary_sensor:
             then:
             - switch.turn_off: relay
                 
-text_sensor:
-  - platform: template
-    name: Last Run Started
-    id: last_run_started
-    device_class: timestamp
-  - platform: template
-    name: Last Run Ended
-    id: last_run_ended
-    device_class: timestamp
-    on_value:
-      then:
-        - if:
-            condition:
-              lambda: "return id(run_started) > id(run_ended);"
-            then:
-              sensor.template.publish:
-                id: last_run_duration
-                state: !lambda "return id(run_started) - id(run_ended);"
-
 sensor:
-  - platform: template
-    name: Last Run Duration
-    id: last_run_duration
-    device_class: duration
   - platform: template
     id: watts_recent_max
     lambda: "return id(power_sensor).state;"
@@ -150,14 +93,3 @@ sensor:
           - select.set: 
               id: status_sensor
               option: Warming
-
-switch:
-  - id: !extend relay
-    on_turn_on:
-      - select.set: 
-          id: status_sensor
-          option: Standby
-    on_turn_off:
-      - select.set:
-          id: status_sensor
-          option: "Off"
