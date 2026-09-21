@@ -101,15 +101,8 @@ binary_sensor:
                               option: Standby
 
 sensor:
-  - platform: duty_time
-    id: current_run_duration
-    name: Current Run Duration
-    unit_of_measurement: s
-    device_class: duration
+  - id: !extend current_run_duration
     lambda: "return id(status_sensor).state == 'Washing';"
-    last_time:
-      name: Last Run Started
-      device_class: timestamp
                               
 switch:
   - platform: template
