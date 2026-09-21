@@ -81,6 +81,9 @@ binary_sensor:
               - select.set:
                   id: status_sensor
                   option: Washing
+              - text_sensor.template.publish:
+                  id: latest_run_started
+                  state: !lambda 'return id(sntp_time).now().strftime("%Y-%m-%dT%H:%M:%S+08:00");'
             else:
               - if:
                   condition:
@@ -95,15 +98,28 @@ binary_sensor:
                           - select.set:
                               id: status_sensor
                               option: Cooling
+                          - text_sensor.template.publish:
+                              id: latest_run_ended
+                              state: !lambda 'return id(sntp_time).now().strftime("%Y-%m-%dT%H:%M:%S+08:00");'
                         else:
                           - select.set:
                               id: status_sensor
                               option: Standby
 
-sensor:
+sensor:    
   - id: !extend total_run_duration
     lambda: 'return id(status_sensor).current_option() == "Washing";'
-                              
+
+text_sensor:
+  - platform: template
+    id: latest_run_started
+    name: Last Run Started
+    device_class: timestamp
+  - platform: template
+    id: latest_run_ended
+    name: Last Run Ended
+    device_class: timestamp
+    
 switch:
   - platform: template
     id: load_clean
