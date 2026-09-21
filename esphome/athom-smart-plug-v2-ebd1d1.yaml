@@ -51,7 +51,7 @@ binary_sensor:
                     - switch.turn_off: load_clean
   - platform: template
     id: idle
-    lambda: "return id(relay).state == 'on' && id(power_sensor).state <= 5;"
+    lambda: "return id(relay).state && id(power_sensor).state <= 5;"
     filters:
       - delayed_on: 15min
     on_state:
