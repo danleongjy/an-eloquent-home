@@ -10111,6 +10111,14 @@
                         {
                           "type": "custom:button-card",
                           "variables": {
+                            "client": "dishwasher"
+                          },
+                          "icon": "mdi:dishwasher",
+                          "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "variables": {
                             "client": "rice_cooker"
                           },
                           "icon": "mdi:rice",
@@ -10130,14 +10138,6 @@
                             "client": "kitchen_core"
                           },
                           "icon": "mdi:dock-left",
-                          "template": "wifi_device_connectivity"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "variables": {
-                            "client": "dishwasher"
-                          },
-                          "icon": "mdi:dishwasher",
                           "template": "wifi_device_connectivity"
                         }
                       ]
@@ -16802,6 +16802,24 @@
                         "entity": "sensor.philips_shaver_days_since_last_use",
                         "name": " ",
                         "state_display": "[[[ \n  if (entity.state == '1') {\n    return '1 day ago'\n  } else {\n    return entity.state + ' days ago'\n  }\n]]]\n"
+                      }
+                    },
+                    {
+                      "type": "conditional",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity": "sensor.philips_shaver_activity",
+                          "state_not": [
+                            "shaving"
+                          ]
+                        }
+                      ],
+                      "card": {
+                        "type": "custom:button-card",
+                        "template": "button_card_tile",
+                        "entity": "sensor.philips_shaver_last_session_duration",
+                        "name": " "
                       }
                     },
                     {
