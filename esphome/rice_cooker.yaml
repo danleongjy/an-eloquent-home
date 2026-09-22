@@ -35,6 +35,8 @@ binary_sensor:
   - platform: template
     name: Running
     lambda: "return id(power_sensor).state > 1;"
+    filters:
+      - delayed_off: 60s
     on_press:
       then:
         - text.set:
