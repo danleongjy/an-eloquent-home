@@ -14,14 +14,30 @@ sensor:
     last_time:
       name: Latest Run Duration
 
+text:
+  - platform: template
+    id: latest_run_started_text
+    mode: text
+    max_length: 25
+    optimistic: true
+    restore_value: true
+  - platform: template
+    id: latest_run_ended_text
+    mode: text
+    max_length: 25
+    optimistic: true
+    restore_value: true
+    
 text_sensor:
   - platform: template
     id: latest_run_started
-    name: Last Run Started
+    name: Latest Run Started
+    lambda: 'return id(latest_run_started_text).state.c_str();'
     device_class: timestamp
   - platform: template
     id: latest_run_ended
-    name: Last Run Ended
+    name: Latest Run Ended
+    lambda: 'return id(latest_run_ended_text).state.c_str();'
     device_class: timestamp
     
 switch:
