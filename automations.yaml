@@ -440,14 +440,15 @@
     notification when dishwasher is unloaded
   triggers:
   - entity_id:
-    - input_boolean.dishwasher_load_clean
+    - switch.dishwasher_load_clean
     trigger: state
   conditions: []
   actions:
   - if:
     - condition: state
-      entity_id: input_boolean.dishwasher_load_clean
-      state: 'on'
+      entity_id: switch.dishwasher_load_clean
+      state:
+      - 'on'
     then:
     - data:
         message: Dishwasher cooled down at {{ (now().time()| string)[:5] }}.
@@ -570,62 +571,6 @@
       action: notify.mobile_app_grace_iphone_14
   mode: single
   max_exceeded: silent
-- id: '1653280933582'
-  alias: Dishwasher Set State
-  description: Set the state of the dishwasher based on its power consumption
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.dishwasher_watts
-    above: 5
-    id: washing
-  - platform: numeric_state
-    entity_id: sensor.dishwasher_watts
-    below: 5
-    id: idle
-  - platform: state
-    entity_id:
-    - switch.dishwasher
-    to: 'off'
-    id: 'off'
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: washing
-      sequence:
-      - service: input_select.select_option
-        data:
-          option: Washing
-        target:
-          entity_id: input_select.dishwasher_status
-    - conditions:
-      - condition: trigger
-        id: idle
-      sequence:
-      - if:
-        - condition: state
-          entity_id: input_select.dishwasher_status
-          state: Washing
-        then:
-        - service: input_select.select_option
-          data:
-            option: Cooling
-          target:
-            entity_id: input_select.dishwasher_status
-        else:
-        - service: input_select.select_option
-          data:
-            option: Standby
-          target:
-            entity_id: input_select.dishwasher_status
-    default:
-    - service: input_select.select_option
-      data:
-        option: 'Off'
-      target:
-        entity_id: input_select.dishwasher_status
-  mode: queued
 - id: '1654959141053'
   alias: Water Heater Motion
   description: Turn on water heater if motion detected in Junior Shower
@@ -1092,38 +1037,6 @@
       target:
         entity_id: input_boolean.washer_load_clean
       action: input_boolean.turn_off
-  mode: single
-- id: '1661612907662'
-  alias: Dishwasher Load Clean
-  description: Indicate when the dishwasher load is clean and needs unloading
-  trigger:
-  - platform: state
-    entity_id:
-    - input_select.dishwasher_status
-    id: finished
-    from: Cooling
-    to: 'Off'
-  - platform: state
-    entity_id:
-    - binary_sensor.dishwasher_door
-    from: 'off'
-    to: 'on'
-    id: opened
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: finished
-    then:
-    - service: input_boolean.turn_on
-      data: {}
-      target:
-        entity_id: input_boolean.dishwasher_load_clean
-    else:
-    - service: input_boolean.turn_off
-      data: {}
-      target:
-        entity_id: input_boolean.dishwasher_load_clean
   mode: single
 - id: '1667350498199'
   alias: Home Mode
@@ -1736,123 +1649,6 @@
           - delay: '{{ (states(''input_number.blinds_command_deconflict'' ) | int(2))
               * 2 }}'
             enabled: false
-  mode: single
-- id: '1672722028985'
-  alias: Rice Cooker Auto Control
-  description: Turn on or off the rice cooker based on lid state and idle time
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.rice_cooker_lid
-    to: 'off'
-    id: lid_closed
-  - platform: template
-    value_template: '{{ is_state(''switch.rice_cooker'',''on'') and states(''sensor.rice_cooker_watts'')
-      | float(0) <= 1 }}'
-    for:
-      hours: 0
-      minutes: 15
-      seconds: 0
-    id: idle
-  condition: []
-  action:
-  - if:
-    - condition: trigger
-      id: lid_closed
-    then:
-    - service: switch.turn_on
-      data: {}
-      target:
-        entity_id: switch.rice_cooker
-    else:
-    - service: switch.turn_off
-      data: {}
-      target:
-        entity_id: switch.rice_cooker
-  mode: single
-- id: '1672734021271'
-  alias: Rice Cooker Set State
-  description: Set the state of the rice cooker based on power consumption
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.rice_cooker_watts_recent_max
-    above: 200
-    id: cooking
-  - platform: numeric_state
-    entity_id: sensor.rice_cooker_watts_recent_max
-    above: 30
-    below: 140
-    id: warming
-  - platform: state
-    entity_id:
-    - sensor.rice_cooker_watts
-    to: '1'
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-    id: standby
-  - platform: state
-    entity_id:
-    - switch.rice_cooker
-    not_from:
-    - unavailable
-    - unknown
-    not_to:
-    - unavailable
-    - unknown
-    id: power
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: cooking
-      sequence:
-      - service: input_select.select_option
-        data:
-          option: Cooking
-        target:
-          entity_id: input_select.rice_cooker_status
-    - conditions:
-      - condition: trigger
-        id: warming
-      sequence:
-      - service: input_select.select_option
-        data:
-          option: Warming
-        target:
-          entity_id: input_select.rice_cooker_status
-    - conditions:
-      - condition: trigger
-        id: standby
-      sequence:
-      - service: input_select.select_option
-        data:
-          option: Standby
-        target:
-          entity_id: input_select.rice_cooker_status
-    - conditions:
-      - condition: trigger
-        id: power
-      sequence:
-      - if:
-        - condition: state
-          entity_id: switch.rice_cooker
-          state: 'on'
-        then:
-        - service: input_select.select_option
-          data:
-            option: Standby
-          target:
-            entity_id: input_select.rice_cooker_status
-        else:
-        - service: input_select.select_option
-          data:
-            option: 'Off'
-          target:
-            entity_id: input_select.rice_cooker_status
-    default: []
   mode: single
 - id: '1672898689403'
   alias: Lights for Wind Down
@@ -2591,39 +2387,6 @@
       - fan.dining_room_fan
       respect_closed_doors: false
       off_hours_start: input_datetime.sleep_hours_start
-- id: '1679732114538'
-  alias: Dishwasher Auto Control
-  description: Turn on or off the dishwasher based on door state and idle time
-  triggers:
-  - entity_id:
-    - binary_sensor.dishwasher_door
-    to: 'off'
-    id: door_closed
-    trigger: state
-  - value_template: '{{ is_state(''switch.dishwasher'',''on'') and states(''sensor.dishwasher_watts'')
-      | float(0) <= 5 }}'
-    for:
-      hours: 0
-      minutes: 15
-      seconds: 0
-    id: idle
-    trigger: template
-  conditions: []
-  actions:
-  - if:
-    - condition: trigger
-      id: door_closed
-    then:
-    - data: {}
-      target:
-        entity_id: switch.dishwasher
-      action: switch.turn_on
-    else:
-    - data: {}
-      target:
-        entity_id: switch.dishwasher
-      action: switch.turn_off
-  mode: single
 - id: '1679819939741'
   alias: Dining Room Motion AC
   description: Control the Dining Room AC when motion is detected, depending on whether
@@ -7100,20 +6863,20 @@
           minutes = countdown.minutes)).strftime('%I:%M%p') }}\n  {% endif %}\n{%
           endif %}"
     - conditions:
-      - alias: If it is one of the Stove triggers
+      - alias: If it is one of the Dishwasher triggers
         condition: template
         value_template: '{{ trigger.id.split(''_'')[0] == ''Dishwasher'' }}'
       sequence:
-      - set_conversation_response: "The dishwasher is {{ states('input_select.dishwasher_status')
-          | lower }}.\n{% if states('input_select.dishwasher_status') == 'Off' %}\n
-          \ {% set wash_time = namespace(hours = states('sensor.dishwasher_last_run_duration').split(':')[0],\n
-          \                              minutes = states('sensor.dishwasher_last_run_duration').split(':')[1])
+      - set_conversation_response: "The dishwasher is {{ states('select.dishwasher_status')
+          | lower }}.\n{% if states('select.dishwasher_status') == 'Off' %}\n  {%
+          set wash_time = namespace(hours = states('sensor.dishwasher_latest_run_duration').split(':')[0],\n
+          \                              minutes = states('sensor.dishwasher_latest_run_duration').split(':')[1])
           %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours
           | int(0) > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
           + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
-          {{ time_since(as_datetime(states('sensor.dishwasher_last_run_ended'))) }}
-          ago.\n  {{ 'Please open the dishwasher door.' if is_state('input_boolean.dishwasher_load_clean',
-          'on') }}\n{% else %}\n  The current run started {{ time_since(as_datetime(states('sensor.dishwasher_last_run_started')))
+          {{ time_since(as_datetime(states('sensor.dishwasher_latest_run_ended')))
+          }} ago.\n  {{ 'Please open the dishwasher door.' if is_state('switch.dishwasher_load_clean',
+          'on') }}\n{% else %}\n  The current run started {{ time_since(as_datetime(states('sensor.dishwasher_latest_run_started')))
           }} ago.\n{% endif %}"
       alias: If it is one of the Dishwasher triggers
     - conditions:
