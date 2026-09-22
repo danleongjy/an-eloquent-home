@@ -37,14 +37,14 @@ binary_sensor:
     lambda: "return id(power_sensor).state > 1;"
     on_press:
       then:
-        - text_sensor.template.publish:
-            id: latest_run_started
-            state: !lambda 'return id(sntp_time).now().strftime("%Y-%m-%dT%H:%M:%S+00:00");'
+        - text.set:
+            id: latest_run_started_text
+            value: !lambda 'return id(sntp_time).now().strftime("%Y-%m-%dT%H:%M:%S+00:00");'
     on_release:
       then:
-        - text_sensor.template.publish:
-            id: latest_run_ended
-            state: !lambda 'return id(sntp_time).now().strftime("%Y-%m-%dT%H:%M:%S+00:00");'
+        - text.set:
+            id: latest_run_ended_text
+            value: !lambda 'return id(sntp_time).now().strftime("%Y-%m-%dT%H:%M:%S+00:00");'
   - platform: homeassistant
     entity_id: binary_sensor.rice_cooker_lid
     id: lid
