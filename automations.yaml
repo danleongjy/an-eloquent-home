@@ -1482,6 +1482,16 @@
   - event: start
     trigger: homeassistant
     id: startup
+  - trigger: state
+    entity_id:
+    - sensor.daniel_leongjy_gmail_com_used_storage
+    to:
+    - unavailable
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: google_drive_reload
   conditions: []
   actions:
   - choose:
@@ -1578,6 +1588,16 @@
           file_path: /media/{{ (state_attr('sensor.main_door_camera', 'file_list')
             |   sort)[-3][7:] }}
         action: local_file.update_file_path
+    - conditions:
+      - condition: trigger
+        id:
+        - google_drive_reload
+      sequence:
+      - action: homeassistant.reload_config_entry
+        metadata: {}
+        target:
+          device_id: 79b0ce7b80d368f97631ea82663018bc
+        data: {}
   mode: single
 - id: '1672302011128'
   alias: South-Facing Blinds Auto Control
