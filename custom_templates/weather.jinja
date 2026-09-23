@@ -1,19 +1,19 @@
-{% macro raining_with_window_open(window_id) %}
-{% if is_state(window_id, 'on') %}
-    {% if states('sensor.local_rainfall') | float(0) > 1 
+{%- macro raining_with_window_open(window_id) %}
+{%- if is_state(window_id, 'on') %}
+    {%- if states('sensor.local_rainfall') | float(0) > 1 
        or 'Thunder' in states('sensor.local_two_hour_forecast') %}
-        {{ 'alert' }}
-    {% elif states('sensor.local_rainfall') | float(0) > 0 
+        {{- 'alert' }}
+    {%- elif states('sensor.local_rainfall') | float(0) > 0 
        or 'Shower' in states('sensor.local_two_hour_forecast')
        or 'Rain' in states('sensor.local_two_hour_forecast') %}
-        {{ 'warning' }}
-    {% else %}
-        {{ 'clear' }}
-    {% endif %}
-{% else %}
-    {{ 'clear' }}
-{% endif %}
-{% endmacro %}
+        {{- 'warning' }}
+    {%- else %}
+        {{- 'clear' }}
+    {%- endif %}
+{%- else %}
+    {{- 'clear' }}
+{%- endif %}
+{%- endmacro %}
 
 {%- macro weather_condition(condition, forecast) %}
 {%- if 'Fair' in condition or 'fair' in condition %}

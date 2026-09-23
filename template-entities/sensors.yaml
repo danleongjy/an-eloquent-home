@@ -57,6 +57,42 @@
       elenas_room_next_alarm_dismissable: "{{ states('sensor.next_alarm_timings')[7] == 'T' }}"
       elena_next_alarm_dismissed: "{{ states('sensor.next_alarm_timings')[3] == 'E' }}"
 
+  - name: Raining With Windows Open
+    unique_id: sensor.raining_with_windows_open
+    state: >
+      {% if 'alert' in this.attributes.values() %}
+        alert
+      {% elif 'warning' in this.attributes.values() %}
+        warning
+      {% else %}
+        clear
+      {% endif %}
+    attributes: 
+      dining_room: >
+        {% from 'weather.jinja' import raining_with_window_open %}
+        {{ raining_with_window_open('binary_sensor.dining_room_windows') }}
+      elenas_room: >
+        {% from 'weather.jinja' import raining_with_window_open %}
+        {{ raining_with_window_open('binary_sensor.elenas_room_windows') }}
+      elis_room: >
+        {% from 'weather.jinja' import raining_with_window_open %}
+        {{ raining_with_window_open('binary_sensor.elis_room_windows') }}
+      kitchen: >
+        {% from 'weather.jinja' import raining_with_window_open %}
+        {{ raining_with_window_open('binary_sensor.kitchen_window') }}
+      living_room: >
+        {% from 'weather.jinja' import raining_with_window_open %}
+        {{ raining_with_window_open('binary_sensor.living_room_windows') }}
+      parents_room: >
+        {% from 'weather.jinja' import raining_with_window_open %}
+        {{ raining_with_window_open('binary_sensor.parents_room_windows') }}
+      study_room: >
+        {% from 'weather.jinja' import raining_with_window_open %}
+        {{ raining_with_window_open('binary_sensor.study_room_windows') }}
+      yard: >
+        {% from 'weather.jinja' import raining_with_window_open %}
+        {{ raining_with_window_open('binary_sensor.yard_window') }}
+
 - trigger:
   - platform: time_pattern
     minutes: /10
