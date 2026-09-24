@@ -193,6 +193,14 @@
   scan_interval: 3600
 
 - platform: rest
+  resource: https://api-open.data.gov.sg/v2/real-time/api/pm25
+  name: One Hour PM2.5
+  unique_id: sensor.one_hour_pm2_5
+  value_template: "{{ value_json.data['items'][0].readings.pm25_one_hourly.values() | max }}"
+  unit_of_measurement: µg/m3
+  scan_interval: 900
+  
+- platform: rest
   resource: https://datamall2.mytransport.sg/ltaodataservice/v3/BusArrival?BusStopCode=80249
   name: Bus Stop Sims Drive Market
   unique_id: sensor.bus_stop_sims_drive_market

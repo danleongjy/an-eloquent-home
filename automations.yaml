@@ -346,23 +346,29 @@
   mode: parallel
   max: 5
 - id: '1643979293415'
-  alias: Notify When AC On With Doors Open
-  description: Send a persistent notification when AC is on with doors open, and clear
-    notification when no AC is on with doors open
+  alias: Notify When AC On With Doors and Windows Open
+  description: Send a persistent notification when AC is on with doors and windows
+    open, and clear notification when no AC is on with doors and windows open
   triggers:
-  - entity_id: binary_sensor.ac_on_with_doors_open
+  - entity_id:
+    - binary_sensor.ac_on_with_doors_and_windows_open
     id: notify
-    from: 'off'
-    to: 'on'
+    from:
+    - 'off'
+    to:
+    - 'on'
     for:
       hours: 0
       minutes: 1
       seconds: 0
     trigger: state
-  - entity_id: binary_sensor.ac_on_with_doors_open
+  - entity_id:
+    - binary_sensor.ac_on_with_doors_and_windows_open
     id: clear
-    from: 'on'
-    to: 'off'
+    from:
+    - 'on'
+    to:
+    - 'off'
     trigger: state
   conditions: []
   actions:
@@ -3913,10 +3919,20 @@
           data:
             command: turn_on
         action: notify.mobile_app_aurora
-      - delay:
+      - wait_for_trigger:
+        - trigger: state
+          entity_id:
+          - binary_sensor.aurora_device_locked
+          to:
+          - 'off'
+          for:
+            hours: 0
+            minutes: 0
+            seconds: 5
+        timeout:
           hours: 0
-          minutes: 0
-          seconds: 5
+          minutes: 30
+          seconds: 0
           milliseconds: 0
       - metadata: {}
         data:
