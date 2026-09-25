@@ -380,7 +380,7 @@
           "styles": {
             "card": [
               {
-                "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_doors_and_windows_open'].attributes.prents_room_door\n      || states['binary_sensor.ac_on_with_doors_and_windows_open'].attributes.master_bathroom_door\n      || states['binary_sensor.ac_on_with_doors_and_windows_open'].attributes.parents_room_windows)\n    return '#9e110d';\n  else if (states['sensor.raining_with_windows_open'].attributes.parents_room == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_windows_open'].attributes.parents_room == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
+                "background-color": "[[[\n  if (states['binary_sensor.ac_on_with_doors_and_windows_open'].attributes.parents_room_door\n      || states['binary_sensor.ac_on_with_doors_and_windows_open'].attributes.master_bathroom_door\n      || states['binary_sensor.ac_on_with_doors_and_windows_open'].attributes.parents_room_windows)\n    return '#9e110d';\n  else if (states['sensor.raining_with_windows_open'].attributes.parents_room == 'alert')\n    return '#9e110d';\n  else if (states['sensor.raining_with_windows_open'].attributes.parents_room == 'warning')\n    return '#f2900f';\n  else\n    return 'var(--card-background-color)';\n]]]\n"
               }
             ]
           }
@@ -652,7 +652,7 @@
             "navigation_path": "/lovelace/washer"
           },
           "show_label": true,
-          "label": "[[[ \n  var parse_time = {hours: 0, minutes: 0}\n  if (states['sensor.lg_washer_status'].state == 'Delayed') {\n    if (states['sensor.lg_washer_reserve_time'].state != 'unknown' && states['sensor.lg_washer_reserve_time'].state != 'unavailable') {\n      parse_time.hours = Math.floor(parseInt(states['sensor.lg_washer_reserve_time'].state) / 60)\n      parse_time.minutes = Math.round(parseInt(states['sensor.lg_washer_reserve_time'].state) % 60, 0)\n    }\n  } else {\n    if (states['sensor.lg_washer_remaining_time'].state != 'unknown' && states['sensor.lg_washer_remaining_time'].state != 'unavailable') {\n      parse_time.hours = Math.floor(parseInt(states['sensor.lg_washer_remaining_time'].state) / 60)\n      parse_time.minutes = Math.round(parseInt(states['sensor.lg_washer_remaining_time'].state) % 60, 0)\n    }\n  }\n  if (parse_time.hours >= 0 && parse_time.minutes >= 0) {\n    if (parse_time.minutes >= 10) {\n      return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n    } else {\n      return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n    }\n  } else {\n    return '0:00';\n  }\n]]]\n",
+          "label": "[[[ \n  var parse_time = {hours: 0, minutes: 0}\n  if (states['sensor.lg_washer_status'].state == 'Delayed') {\n    if (states['sensor.lg_washer_reserve_time'].state != 'unknown' && states['sensor.lg_washer_reserve_time'].state != 'unavailable') {\n      parse_time.hours = Math.floor(parseInt(states['sensor.lg_washer_reserve_time'].state) / 60)\n      parse_time.minutes = Math.round(parseInt(states['sensor.lg_washer_reserve_time'].state) % 60, 0)\n    }\n  } else {\n    if (states['sensor.lg_washer_remaining_time'].state != 'unknown' && states['sensor.lg_washer_remaining_time'].state != 'unavailable') {\n      parse_time.hours = Math.floor(parseInt(states['sensor.lg_washer_remaining_time'].state))\n      parse_time.minutes = Math.round(parseFloat(states['sensor.lg_washer_remaining_time'].state) * 60 % 60, 0)\n    }\n  }\n  if (parse_time.hours >= 0 && parse_time.minutes >= 0) {\n    if (parse_time.minutes >= 10) {\n      return parse_time.hours.toString() + ':' + parse_time.minutes.toString();\n    } else {\n      return parse_time.hours.toString() + ':0' + parse_time.minutes.toString();\n    }\n  } else {\n    return '0:00';\n  }\n]]]\n",
           "styles": {
             "icon": [
               {
@@ -13304,7 +13304,11 @@
                   "name": " "
                 },
                 {
-                  "type": "custom:button-card",
+                  "type": "tile",
+                  "entity": "sensor.lg_washer_remaining_time",
+                  "name": " ",
+                  "vertical": false,
+                  "features_position": "bottom",
                   "visibility": [
                     {
                       "condition": "state",
@@ -13316,17 +13320,14 @@
                       "entity": "sensor.lg_washer_status",
                       "state_not": "Delayed"
                     }
-                  ],
-                  "entity": "sensor.lg_washer_remaining_time",
-                  "name": " ",
-                  "template": "button_card_tile",
-                  "section_mode": true,
-                  "grid_options": {
-                    "rows": null
-                  }
+                  ]
                 },
                 {
                   "type": "tile",
+                  "entity": "sensor.lg_washer_reserve_time",
+                  "name": " ",
+                  "vertical": false,
+                  "features_position": "bottom",
                   "visibility": [
                     {
                       "condition": "state",
@@ -13337,11 +13338,7 @@
                       "condition": "numeric_state",
                       "above": 0
                     }
-                  ],
-                  "entity": "sensor.lg_washer_reserve_time",
-                  "name": " ",
-                  "vertical": false,
-                  "features_position": "bottom"
+                  ]
                 },
                 {
                   "type": "heading",
