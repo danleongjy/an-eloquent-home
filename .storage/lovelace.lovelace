@@ -2015,14 +2015,7 @@
                 "type": "custom:button-card",
                 "entity": "switch.lg_washer",
                 "template": "washer_more_info",
-                "label": "",
-                "tap_action": {
-                  "action": "toast",
-                  "toast": {
-                    "message": "Washer is off. Awaiting reconnection...",
-                    "duration": 3000
-                  }
-                }
+                "label": ""
               },
               "Off": {
                 "type": "custom:button-card",
@@ -13480,6 +13473,11 @@
                       "condition": "state",
                       "entity": "sensor.lg_washer_status",
                       "state": "Ready"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.lg_washer_status",
+                      "state": "unavailable"
                     }
                   ]
                 }
@@ -13500,11 +13498,6 @@
                           "condition": "state",
                           "entity": "binary_sensor.lg_washer_error",
                           "state": "on"
-                        },
-                        {
-                          "condition": "state",
-                          "entity": "binary_sensor.lg_washer_error",
-                          "state": "unavailable"
                         },
                         {
                           "condition": "state",
@@ -13535,6 +13528,18 @@
                     {
                       "entity": "input_boolean.washer_load_clean",
                       "state": "on"
+                    }
+                  ]
+                },
+                {
+                  "type": "markdown",
+                  "content": "<ha-alert alert-type=\"info\">Washer is offline. Awaiting reconnection...</ha-alert>",
+                  "text_only": true,
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.lg_washer_status",
+                      "state": "unavailable"
                     }
                   ]
                 }
@@ -17520,7 +17525,7 @@
                   "type": "custom:button-card",
                   "template": "tile_status_bar",
                   "entity": "sensor.pollutant_standards_index",
-                  "state_display": "[[[ return \"PSI \" + states['sensor.pollutant_standards_index'].state ]]]",
+                  "state_display": "[[[ return \"PSI \" + entity.state ]]]",
                   "name": "Air Quality",
                   "variables": {
                     "numerator": "[[[ return Math.min(100, 100 - entity.state) ]]]",
@@ -17536,6 +17541,34 @@
                     {
                       "condition": "numeric_state",
                       "above": 50,
+                      "entity": "sensor.pollutant_standards_index"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_status_bar",
+                  "entity": "sensor.one_hour_pm2_5",
+                  "name": "Hourly PM2.5",
+                  "variables": {
+                    "numerator": "[[[ return Math.min(100, 100 - entity.state) ]]]",
+                    "cap_medium": 0.5,
+                    "cap_low": 0.2
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 6
+                  },
+                  "visibility": [
+                    {
+                      "condition": "numeric_state",
+                      "above": 50,
+                      "entity": "sensor.one_hour_pm2_5"
+                    },
+                    {
+                      "condition": "numeric_state",
+                      "below": 50,
                       "entity": "sensor.pollutant_standards_index"
                     }
                   ]
@@ -17563,7 +17596,24 @@
                             "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.pm25_sub_index))\n  if (pollutant < 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
                           }
                         ]
-                      }
+                      },
+                      "visibility": [
+                        {
+                          "condition": "not",
+                          "conditions": [
+                            {
+                              "condition": "numeric_state",
+                              "above": 50,
+                              "entity": "sensor.one_hour_pm2_5"
+                            },
+                            {
+                              "condition": "numeric_state",
+                              "below": 50,
+                              "entity": "sensor.pollutant_standards_index"
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
                       "type": "custom:button-card",
