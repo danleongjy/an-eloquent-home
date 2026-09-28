@@ -11801,6 +11801,28 @@
                   "icon": "mdi:play",
                   "color": "amber",
                   "vertical": false,
+                  "features_position": "bottom",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "binary_sensor.nginx_status",
+                      "state": "on"
+                    }
+                  ]
+                },
+                {
+                  "type": "tile",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "binary_sensor.nginx_status",
+                      "state_not": "on"
+                    }
+                  ],
+                  "entity": "sensor.nginx_uptime",
+                  "name": "Nginx",
+                  "icon": "mdi:stop",
+                  "vertical": false,
                   "features_position": "bottom"
                 },
                 {
@@ -11809,6 +11831,28 @@
                   "name": "Samba",
                   "icon": "mdi:play",
                   "color": "amber",
+                  "vertical": false,
+                  "features_position": "bottom",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "binary_sensor.samba_status",
+                      "state": "on"
+                    }
+                  ]
+                },
+                {
+                  "type": "tile",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "binary_sensor.samba_status",
+                      "state_not": "on"
+                    }
+                  ],
+                  "entity": "sensor.samba_uptime",
+                  "name": "Samba",
+                  "icon": "mdi:stop",
                   "vertical": false,
                   "features_position": "bottom"
                 },
@@ -17414,7 +17458,7 @@
                         "name": "NEA via data.gov.sg"
                       }
                     },
-                    "weekly_stats": {
+                    "weekly_weather": {
                       "card": {
                         "type": "custom:apexcharts-card",
                         "config_templates": "standard",
@@ -17446,16 +17490,6 @@
                             "entity": "sensor.local_outdoor_humidity",
                             "name": "Humidity",
                             "yaxis_id": "hum"
-                          },
-                          {
-                            "entity": "sensor.pollutant_standards_index",
-                            "name": "PSI",
-                            "stroke_width": 0,
-                            "type": "area",
-                            "yaxis_id": "hum",
-                            "show": {
-                              "in_header": "raw"
-                            }
                           }
                         ],
                         "yaxis": [
@@ -17474,7 +17508,7 @@
                             "max": 100,
                             "apex_config": {
                               "title": {
-                                "text": "% or PSI"
+                                "text": "%"
                               }
                             }
                           }
@@ -17510,7 +17544,7 @@
                   "styles": {
                     "grid": [
                       {
-                        "grid-template-areas": "'current_weather' 'weekly_stats' 'forecast'"
+                        "grid-template-areas": "'current_weather' 'weekly_weather' 'forecast'"
                       },
                       {
                         "grid-template-columns": "1fr"
@@ -17519,219 +17553,6 @@
                         "grid-template-rows": "min-content min-content min-content"
                       }
                     ]
-                  }
-                },
-                {
-                  "type": "custom:button-card",
-                  "template": "tile_status_bar",
-                  "entity": "sensor.pollutant_standards_index",
-                  "state_display": "[[[ return \"PSI \" + entity.state ]]]",
-                  "name": "Air Quality",
-                  "variables": {
-                    "numerator": "[[[ return Math.min(100, 100 - entity.state) ]]]",
-                    "cap_medium": 0.5,
-                    "cap_low": 0.2
-                  },
-                  "section_mode": true,
-                  "grid_options": {
-                    "rows": 1,
-                    "columns": 6
-                  },
-                  "visibility": [
-                    {
-                      "condition": "numeric_state",
-                      "above": 50,
-                      "entity": "sensor.pollutant_standards_index"
-                    }
-                  ]
-                },
-                {
-                  "type": "custom:button-card",
-                  "template": "tile_status_bar",
-                  "entity": "sensor.one_hour_pm2_5",
-                  "name": "Hourly PM2.5",
-                  "state_display": "[[[ return entity.state + ' ' + entity.attributes.unit_of_measurement ]]]",
-                  "variables": {
-                    "numerator": "[[[ return Math.min(100, 100 - entity.state) ]]]",
-                    "cap_medium": 0.5,
-                    "cap_low": 0.2
-                  },
-                  "section_mode": true,
-                  "grid_options": {
-                    "rows": 1,
-                    "columns": 6
-                  },
-                  "visibility": [
-                    {
-                      "condition": "numeric_state",
-                      "above": 50,
-                      "entity": "sensor.one_hour_pm2_5"
-                    },
-                    {
-                      "condition": "numeric_state",
-                      "below": 50,
-                      "entity": "sensor.pollutant_standards_index"
-                    }
-                  ]
-                },
-                {
-                  "type": "grid",
-                  "square": false,
-                  "cards": [
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.pollutant_standards_index",
-                      "show_icon": false,
-                      "name": "PM2.5",
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.pm25_sub_index))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant < 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
-                          }
-                        ],
-                        "name": [
-                          {
-                            "font-size": "10pt"
-                          },
-                          {
-                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.pm25_sub_index))\n  if (pollutant < 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
-                          }
-                        ]
-                      },
-                      "visibility": [
-                        {
-                          "condition": "not",
-                          "conditions": [
-                            {
-                              "condition": "numeric_state",
-                              "above": 50,
-                              "entity": "sensor.one_hour_pm2_5"
-                            },
-                            {
-                              "condition": "numeric_state",
-                              "below": 50,
-                              "entity": "sensor.pollutant_standards_index"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.pollutant_standards_index",
-                      "show_icon": false,
-                      "name": "PM10",
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.pm10_sub_index))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant < 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
-                          }
-                        ],
-                        "name": [
-                          {
-                            "font-size": "10pt"
-                          },
-                          {
-                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.pm10_sub_index))\n  if (pollutant < 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.pollutant_standards_index",
-                      "show_icon": false,
-                      "name": "O3",
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.o3_sub_index))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant < 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
-                          }
-                        ],
-                        "name": [
-                          {
-                            "font-size": "10pt"
-                          },
-                          {
-                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.o3_sub_index))\n  if (pollutant < 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.pollutant_standards_index",
-                      "show_icon": false,
-                      "name": "CO",
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.co_sub_index))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant < 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
-                          }
-                        ],
-                        "name": [
-                          {
-                            "font-size": "10pt"
-                          },
-                          {
-                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.co_sub_index))\n  if (pollutant < 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.pollutant_standards_index",
-                      "show_icon": false,
-                      "name": "NO2",
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.no2_one_hour_max))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant < 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
-                          }
-                        ],
-                        "name": [
-                          {
-                            "font-size": "10pt"
-                          },
-                          {
-                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.no2_one_hour_max))\n  if (pollutant < 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "custom:button-card",
-                      "entity": "sensor.pollutant_standards_index",
-                      "show_icon": false,
-                      "name": "SO2",
-                      "styles": {
-                        "card": [
-                          {
-                            "background-color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.so2_sub_index))\n  if (pollutant <= 50) {\n    return '#b4fab4'\n  } else if (pollutant < 80) {\n    return '#f2900f'\n  } else {\n    return '#9e110d'\n  }\n]]]\n"
-                          }
-                        ],
-                        "name": [
-                          {
-                            "font-size": "10pt"
-                          },
-                          {
-                            "color": "[[[\n  const pollutant = Math.max(...Object.values(entity.attributes.so2_sub_index))\n  if (pollutant < 80) {\n    return 'var(--card-background-color)'\n  } else {\n    return 'white'\n  }\n]]]\n"
-                          }
-                        ]
-                      }
-                    }
-                  ],
-                  "visibility": [
-                    {
-                      "condition": "numeric_state",
-                      "above": 50,
-                      "entity": "sensor.pollutant_standards_index"
-                    }
-                  ],
-                  "grid_options": {
-                    "columns": 6,
-                    "rows": 1
                   }
                 },
                 {
@@ -17765,6 +17586,192 @@
                 }
               ],
               "column_span": 1
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "custom:apexcharts-card",
+                  "config_templates": "standard",
+                  "header": {
+                    "title": "Air Quality"
+                  },
+                  "all_series_config": {
+                    "stroke_width": 2
+                  },
+                  "graph_span": "7days",
+                  "series": [
+                    {
+                      "entity": "sensor.pollutant_standards_index",
+                      "name": "24h PSI",
+                      "yaxis_id": "psi",
+                      "color": "violet"
+                    },
+                    {
+                      "entity": "sensor.one_hour_pm2_5",
+                      "name": "1h PM2.5",
+                      "yaxis_id": "pm2_5",
+                      "color": "yellow"
+                    }
+                  ],
+                  "yaxis": [
+                    {
+                      "id": "psi",
+                      "apex_config": {
+                        "title": {
+                          "text": "PSI"
+                        }
+                      }
+                    },
+                    {
+                      "id": "pm2_5",
+                      "opposite": true,
+                      "apex_config": {
+                        "title": {
+                          "text": "µg/m3"
+                        }
+                      }
+                    }
+                  ],
+                  "apex_config": {
+                    "chart": {
+                      "height": "200px"
+                    },
+                    "xaxis": {
+                      "labels": {
+                        "datetimeFormatter": {
+                          "day": "ddd"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "heading",
+                  "icon": "mdi:weather-dust",
+                  "heading": "24h PSI Components",
+                  "heading_style": "subtitle"
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_status_bar",
+                  "entity": "sensor.pollutant_standards_index",
+                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.pm25_sub_index)) ]]]",
+                  "name": "PM2.5",
+                  "variables": {
+                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.pm25_sub_index))) ]]]",
+                    "cap_medium": 0.5,
+                    "cap_low": 0.2
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 6
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_status_bar",
+                  "entity": "sensor.pollutant_standards_index",
+                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.pm10_sub_index)) ]]]",
+                  "name": "PM10",
+                  "variables": {
+                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.pm10_sub_index))) ]]]",
+                    "cap_medium": 0.5,
+                    "cap_low": 0.2
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 6
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_status_bar",
+                  "entity": "sensor.pollutant_standards_index",
+                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.co_sub_index)) ]]]",
+                  "name": "CO",
+                  "variables": {
+                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.co_sub_index))) ]]]",
+                    "cap_medium": 0.5,
+                    "cap_low": 0.2
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 6
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_status_bar",
+                  "entity": "sensor.pollutant_standards_index",
+                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.no2_one_hour_max)) ]]]",
+                  "name": "NO2",
+                  "variables": {
+                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.no2_one_hour_max))) ]]]",
+                    "cap_medium": 0.5,
+                    "cap_low": 0.2
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 6
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_status_bar",
+                  "entity": "sensor.pollutant_standards_index",
+                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.so2_sub_index)) ]]]",
+                  "name": "SO2",
+                  "variables": {
+                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.so2_sub_index))) ]]]",
+                    "cap_medium": 0.5,
+                    "cap_low": 0.2
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 6
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "template": "tile_status_bar",
+                  "entity": "sensor.pollutant_standards_index",
+                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.o3_sub_index)) ]]]",
+                  "name": "O3",
+                  "variables": {
+                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.o3_sub_index))) ]]]",
+                    "cap_medium": 0.5,
+                    "cap_low": 0.2
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 6
+                  }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "numeric_state",
+                      "above": 50,
+                      "entity": "sensor.pollutant_standards_index"
+                    },
+                    {
+                      "condition": "numeric_state",
+                      "above": 50,
+                      "entity": "sensor.one_hour_pm2_5"
+                    }
+                  ]
+                }
+              ]
             },
             {
               "type": "grid",
