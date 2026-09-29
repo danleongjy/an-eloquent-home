@@ -1,11 +1,11 @@
-{% macro time_bucket(time_list, min_timedelta, max_timedelta) %}
-{% set output = namespace(qty = 0) %}
-{% for time in time_list %}
-  {% if time != none %}
-    {% if now() - time <= max_timedelta and now() - time > min_timedelta %}
-      {% set output.qty = output.qty + 1 %}
-    {% endif %}
-  {% endif %}
-{% endfor %}
-{{ output.qty }}
-{% endmacro %}
+{%- macro time_bucket(time_list, min_timedelta, max_timedelta) %}
+{%- set output = namespace(qty = 0) %}
+{%- for time in time_list %}
+  {%- if time != none %}
+    {%- if now() - time <= max_timedelta and now() - time > min_timedelta %}
+      {%- set output.qty = output.qty + 1 %}
+    {%- endif %}
+  {%- endif %}
+{%- endfor %}
+{{- output.qty }}
+{%- endmacro %}

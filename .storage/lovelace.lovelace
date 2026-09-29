@@ -11827,19 +11827,19 @@
                 },
                 {
                   "type": "tile",
-                  "entity": "sensor.samba_uptime",
-                  "name": "Samba",
-                  "icon": "mdi:play",
-                  "color": "amber",
-                  "vertical": false,
-                  "features_position": "bottom",
                   "visibility": [
                     {
                       "condition": "state",
                       "entity": "binary_sensor.samba_status",
                       "state": "on"
                     }
-                  ]
+                  ],
+                  "entity": "sensor.samba_uptime",
+                  "name": "Samba",
+                  "icon": "mdi:play",
+                  "color": "amber",
+                  "vertical": false,
+                  "features_position": "bottom"
                 },
                 {
                   "type": "tile",
@@ -17650,109 +17650,349 @@
                   "type": "heading",
                   "icon": "mdi:weather-dust",
                   "heading": "24h PSI Components",
-                  "heading_style": "subtitle"
+                  "heading_style": "subtitle",
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unknown"
+                    }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
-                  "template": "tile_status_bar",
                   "entity": "sensor.pollutant_standards_index",
-                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.pm25_sub_index)) ]]]",
                   "name": "PM2.5",
                   "variables": {
-                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.pm25_sub_index))) ]]]",
-                    "cap_medium": 0.5,
-                    "cap_low": 0.2
+                    "stat": "[[[ return Math.max(...Object.values(entity.attributes.pm25_sub_index)) ]]]",
+                    "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
+                  "state_display": "[[[ return variables.stat ]]]",
+                  "show_icon": false,
+                  "show_state": true,
                   "section_mode": true,
                   "grid_options": {
                     "rows": 1,
-                    "columns": 6
-                  }
+                    "columns": 2
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "background-color": "[[[\n  if (variables.stat > 80)\n    return \"#9e110d\"\n  else if (variables.stat > 50)\n    return \"#f2900f\"\n  else\n    return \"#b4fab4\"\n]]]\n"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "font-weight": "bold"
+                      },
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ],
+                    "state": [
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ]
+                  },
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unknown"
+                    }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
-                  "template": "tile_status_bar",
                   "entity": "sensor.pollutant_standards_index",
-                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.pm10_sub_index)) ]]]",
                   "name": "PM10",
                   "variables": {
-                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.pm10_sub_index))) ]]]",
-                    "cap_medium": 0.5,
-                    "cap_low": 0.2
+                    "stat": "[[[ return Math.max(...Object.values(entity.attributes.pm10_sub_index)) ]]]",
+                    "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
+                  "state_display": "[[[ return variables.stat ]]]",
+                  "show_icon": false,
+                  "show_state": true,
                   "section_mode": true,
                   "grid_options": {
                     "rows": 1,
-                    "columns": 6
-                  }
+                    "columns": 2
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "background-color": "[[[\n  if (variables.stat > 80)\n    return \"#9e110d\"\n  else if (variables.stat > 50)\n    return \"#f2900f\"\n  else\n    return \"#b4fab4\"\n]]]\n"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "font-weight": "bold"
+                      },
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ],
+                    "state": [
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ]
+                  },
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unknown"
+                    }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
-                  "template": "tile_status_bar",
                   "entity": "sensor.pollutant_standards_index",
-                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.co_sub_index)) ]]]",
                   "name": "CO",
                   "variables": {
-                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.co_sub_index))) ]]]",
-                    "cap_medium": 0.5,
-                    "cap_low": 0.2
+                    "stat": "[[[ return Math.max(...Object.values(entity.attributes.co_sub_index)) ]]]",
+                    "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
+                  "state_display": "[[[ return variables.stat ]]]",
+                  "show_icon": false,
+                  "show_state": true,
                   "section_mode": true,
                   "grid_options": {
                     "rows": 1,
-                    "columns": 6
-                  }
+                    "columns": 2
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "background-color": "[[[\n  if (variables.stat > 80)\n    return \"#9e110d\"\n  else if (variables.stat > 50)\n    return \"#f2900f\"\n  else\n    return \"#b4fab4\"\n]]]\n"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "font-weight": "bold"
+                      },
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ],
+                    "state": [
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ]
+                  },
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unknown"
+                    }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
-                  "template": "tile_status_bar",
                   "entity": "sensor.pollutant_standards_index",
-                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.no2_one_hour_max)) ]]]",
                   "name": "NO2",
                   "variables": {
-                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.no2_one_hour_max))) ]]]",
-                    "cap_medium": 0.5,
-                    "cap_low": 0.2
+                    "stat": "[[[ return Math.max(...Object.values(entity.attributes.no2_one_hour_max)) ]]]",
+                    "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
+                  "state_display": "[[[ return variables.stat ]]]",
+                  "show_icon": false,
+                  "show_state": true,
                   "section_mode": true,
                   "grid_options": {
                     "rows": 1,
-                    "columns": 6
-                  }
+                    "columns": 2
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "background-color": "[[[\n  if (variables.stat > 80)\n    return \"#9e110d\"\n  else if (variables.stat > 50)\n    return \"#f2900f\"\n  else\n    return \"#b4fab4\"\n]]]\n"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "font-weight": "bold"
+                      },
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ],
+                    "state": [
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ]
+                  },
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unknown"
+                    }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
-                  "template": "tile_status_bar",
                   "entity": "sensor.pollutant_standards_index",
-                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.so2_sub_index)) ]]]",
                   "name": "SO2",
                   "variables": {
-                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.so2_sub_index))) ]]]",
-                    "cap_medium": 0.5,
-                    "cap_low": 0.2
+                    "stat": "[[[ return Math.max(...Object.values(entity.attributes.so2_sub_index)) ]]]",
+                    "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
+                  "state_display": "[[[ return variables.stat ]]]",
+                  "show_icon": false,
+                  "show_state": true,
                   "section_mode": true,
                   "grid_options": {
                     "rows": 1,
-                    "columns": 6
-                  }
+                    "columns": 2
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "background-color": "[[[\n  if (variables.stat > 80)\n    return \"#9e110d\"\n  else if (variables.stat > 50)\n    return \"#f2900f\"\n  else\n    return \"#b4fab4\"\n]]]\n"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "font-weight": "bold"
+                      },
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ],
+                    "state": [
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ]
+                  },
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unknown"
+                    }
+                  ]
                 },
                 {
                   "type": "custom:button-card",
-                  "template": "tile_status_bar",
                   "entity": "sensor.pollutant_standards_index",
-                  "state_display": "[[[ return Math.max(...Object.values(entity.attributes.o3_sub_index)) ]]]",
                   "name": "O3",
                   "variables": {
-                    "numerator": "[[[ return Math.min(100, 100 - Math.max(...Object.values(entity.attributes.o3_sub_index))) ]]]",
-                    "cap_medium": 0.5,
-                    "cap_low": 0.2
+                    "stat": "[[[ return Math.max(...Object.values(entity.attributes.o3_sub_index)) ]]]",
+                    "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
+                  "state_display": "[[[ return variables.stat ]]]",
+                  "show_icon": false,
+                  "show_state": true,
                   "section_mode": true,
                   "grid_options": {
                     "rows": 1,
-                    "columns": 6
-                  }
+                    "columns": 2
+                  },
+                  "styles": {
+                    "card": [
+                      {
+                        "background-color": "[[[\n  if (variables.stat > 80)\n    return \"#9e110d\"\n  else if (variables.stat > 50)\n    return \"#f2900f\"\n  else\n    return \"#b4fab4\"\n]]]\n"
+                      }
+                    ],
+                    "name": [
+                      {
+                        "font-weight": "bold"
+                      },
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ],
+                    "state": [
+                      {
+                        "font-size": "10pt"
+                      },
+                      {
+                        "color": "[[[ return variables.font_color ]]]"
+                      }
+                    ]
+                  },
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.pollutant_standards_index",
+                      "state_not": "unknown"
+                    }
+                  ]
                 }
               ],
               "visibility": [

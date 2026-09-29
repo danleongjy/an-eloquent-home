@@ -67,31 +67,51 @@
       {% else %}
         clear
       {% endif %}
-    attributes: 
-      dining_room: >
-        {% from 'weather.jinja' import raining_with_window_open %}
-        {{ raining_with_window_open('binary_sensor.dining_room_windows') }}
-      elenas_room: >
-        {% from 'weather.jinja' import raining_with_window_open %}
-        {{ raining_with_window_open('binary_sensor.elenas_room_windows') }}
-      elis_room: >
-        {% from 'weather.jinja' import raining_with_window_open %}
-        {{ raining_with_window_open('binary_sensor.elis_room_windows') }}
-      kitchen: >
-        {% from 'weather.jinja' import raining_with_window_open %}
-        {{ raining_with_window_open('binary_sensor.kitchen_window') }}
-      living_room: >
-        {% from 'weather.jinja' import raining_with_window_open %}
-        {{ raining_with_window_open('binary_sensor.living_room_windows') }}
-      parents_room: >
-        {% from 'weather.jinja' import raining_with_window_open %}
-        {{ raining_with_window_open('binary_sensor.parents_room_windows') }}
-      study_room: >
-        {% from 'weather.jinja' import raining_with_window_open %}
-        {{ raining_with_window_open('binary_sensor.study_room_windows') }}
-      yard: >
-        {% from 'weather.jinja' import raining_with_window_open %}
-        {{ raining_with_window_open('binary_sensor.yard_window') }}
+    attributes: >
+      {% from 'weather.jinja' import raining_with_window_open %}
+      {% set ns = namespace(output = []) %}
+      {% for window in ['yard_window','elenas_room_windows','elis_room_windows','dining_room_windows','living_room_windows','study_room_windows','parents_roon_windows','kitchen_window'] %}
+        {% set ns.output = ns.output + [(window, raining_with_window_open('binary_sensor.' + window))] %}
+      {% endfor %}
+      {{ dict.from_values(ns.output) }}
+      
+  - name: Home Assistant Automations Trigger Time Distribution
+    unique_id: sensor.home_assistant_automations_trigger_time_distribution
+    state: "{{ states.automation | length }}"
+    unit_of_measurement: automations
+    attributes: >
+      {% from 'time.jinja' import time_bucket %}
+      {% set time_buckets = [('triggered_5min', 0, 5),
+                             ('triggered_30min', 5, 30),
+                             ('triggered_1h', 30, 60),
+                             ('triggered_12h', 60, 60*12),
+                             ('triggered_1d', 60*12, 60*24),
+                             ('triggered_1wk', 60*24, 60*24*7),
+                             ('triggered_1wk_up', 60*24*7, 60*24*10000)] %}
+      {% set ns = namespace(output = []) %}
+      {% for bucket in time_buckets %}
+        {% set ns.output = ns.output + [(bucket[0], time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = bucket[1]), timedelta(minutes = bucket[2])) | int )] %}
+      {% endfor %}
+      {{ dict.from_values(ns.output) }}
+  
+  - name: Home Assistant Scripts Trigger Time Distribution
+    unique_id: sensor.home_assistant_scripts_trigger_time_distribution
+    state: "{{ states.script | length }}"
+    unit_of_measurement: scripts
+    attributes: >
+      {% from 'time.jinja' import time_bucket %}
+      {% set time_buckets = [('triggered_5min', 0, 5),
+                             ('triggered_30min', 5, 30),
+                             ('triggered_1h', 30, 60),
+                             ('triggered_12h', 60, 60*12),
+                             ('triggered_1d', 60*12, 60*24),
+                             ('triggered_1wk', 60*24, 60*24*7),
+                             ('triggered_1wk_up', 60*24*7, 60*24*10000)] %}
+      {% set ns = namespace(output = []) %}
+      {% for bucket in time_buckets %}
+        {% set ns.output = ns.output + [(bucket[0], time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = bucket[1]), timedelta(minutes = bucket[2])) | int )] %}
+      {% endfor %}
+      {{ dict.from_values(ns.output) }}
 
 - trigger:
   - platform: time_pattern
@@ -132,58 +152,7 @@
             {% endif %}
           {% endfor %}
           {{ batteries.names }}
-    - name: Home Assistant Automations Trigger Time Distribution
-      unique_id: sensor.home_assistant_automations_trigger_time_distribution
-      state: "{{ states.automation | length }}"
-      unit_of_measurement: automations
-      attributes:
-        triggered_5min: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 0), timedelta(minutes = 5)) }}
-        triggered_30min: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 5), timedelta(minutes = 30)) }}
-        triggered_1h: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 30), timedelta(hours = 1)) }}
-        triggered_12h: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 1), timedelta(hours = 12)) }}
-        triggered_1d: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 12), timedelta(days = 1)) }}
-        triggered_1wk: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(days = 1), timedelta(weeks = 1)) }}
-        triggered_1wk_up: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.automation | map(attribute = 'attributes.last_triggered') | list, timedelta(weeks = 1), timedelta(days = 10000)) }}
-    - name: Home Assistant Scripts Trigger Time Distribution
-      unique_id: sensor.home_assistant_scripts_trigger_time_distribution
-      state: "{{ states.script | length }}"
-      unit_of_measurement: scripts
-      attributes:
-        triggered_5min: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 0), timedelta(minutes = 5)) }}
-        triggered_30min: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 5), timedelta(minutes = 30)) }}
-        triggered_1h: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(minutes = 30), timedelta(hours = 1)) }}
-        triggered_12h: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 1), timedelta(hours = 12)) }}
-        triggered_1d: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(hours = 12), timedelta(days = 1)) }}
-        triggered_1wk: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(days = 1), timedelta(weeks = 1)) }}
-        triggered_1wk_up: >
-          {% from 'time.jinja' import time_bucket %}
-          {{ time_bucket(states.script | map(attribute = 'attributes.last_triggered') | list, timedelta(weeks = 1), timedelta(days = 10000)) }}
+
     - name: Home Assistant Devices by Integration
       unique_id: sensor.home_assistant_devices_by_integration
       state: "{{ set(states | map(attribute = 'entity_id') | map('device_id') | reject('none')) | length }}"
