@@ -20,7 +20,6 @@
         'off'
       {% endif %}
     attributes: >
-      {% from 'ac.jinja' import ac_on_with_opening_open %}
       {% set openings = [('main_door', ['climate.dining_room_ac']),
                          ('junior_bathroom_door', ['climate.dining_room_ac']),
                          ('master_bathroom_door', ['climate.parents_room_ac']),
@@ -38,7 +37,11 @@
                          ('study_room_windows', ['climate.study_room_ac'])] %}
       {% set ns = namespace(output = []) %}
       {% for opening in openings %}
-        {% set ns.output = ns.output + [(opening[0], ac_on_with_opening_open('binary_sensor.' + opening[0], opening[1]) | bool )]%}
+        {% if opening[1] | length == 1 %}
+          {% set ns.output = ns.output + [(opening[0], (is_state('binary_sensor.' + opening[0], 'on') and is_state(opening[1][0], 'cool')) | bool)] %}
+        {% elif opening[1] | length == 2 %}
+          {% set ns.output = ns.output + [(opening[0], (is_state('binary_sensor.' + opening[0], 'on') and states(opening[1][0]) != states(opening[1][1])) | bool)] %}
+        {% endif %}
       {% endfor %}
       {{ dict.from_values(ns.output) }}
 

@@ -68,10 +68,19 @@
         clear
       {% endif %}
     attributes: >
-      {% from 'weather.jinja' import raining_with_window_open %}
       {% set ns = namespace(output = []) %}
       {% for window in ['yard_window','elenas_room_windows','elis_room_windows','dining_room_windows','living_room_windows','study_room_windows','parents_roon_windows','kitchen_window'] %}
-        {% set ns.output = ns.output + [(window, raining_with_window_open('binary_sensor.' + window))] %}
+        {%- if is_state(window, 'on') %}
+          {%- if states('sensor.local_rainfall') | float(0) > 1 or 'Thunder' in states('sensor.local_two_hour_forecast') %}
+            {% set ns.output = ns.output + [(window, 'alert')] %}
+          {%- elif states('sensor.local_rainfall') | float(0) > 0 or 'Shower' in states('sensor.local_two_hour_forecast') or 'Rain' in states('sensor.local_two_hour_forecast') %}
+            {% set ns.output = ns.output + [(window, 'warning')] %}
+          {%- else %}
+            {% set ns.output = ns.output + [(window, 'clear')] %}
+          {%- endif %}
+        {%- else %}
+          {% set ns.output = ns.output + [(window, 'clear')] %}
+        {%- endif %}
       {% endfor %}
       {{ dict.from_values(ns.output) }}
       
