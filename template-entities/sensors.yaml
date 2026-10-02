@@ -290,7 +290,7 @@
     - name: Vacuum Dock Cleaning
       unique_id: sensor.vacuum_dock_cleaning
       state: >-
-        {{ max(this.state | int(0) - trigger.from_state.state | int(0) * 60, 0) if trigger.id == 'cleaning_started'
+        {{ max(this.state | int(0) - (trigger.from_state.state | float(0)) * 60, 0) if trigger.id == 'cleaning_started'
            else 1800 if trigger.id == 'reset'
         }}
       unit_of_measurement: min

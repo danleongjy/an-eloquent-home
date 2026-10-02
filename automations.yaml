@@ -3931,33 +3931,21 @@
           data:
             command: turn_on
         action: notify.mobile_app_aurora
-      - if:
-        - condition: state
-          entity_id: binary_sensor.aurora_device_locked
-          state:
-          - 'on'
-        then:
-        - wait_for_trigger:
-          - trigger: state
-            entity_id:
-            - binary_sensor.aurora_device_locked
-            to:
-            - 'off'
-            for:
-              hours: 0
-              minutes: 0
-              seconds: 5
-          timeout:
-            hours: 0
-            minutes: 30
-            seconds: 0
-            milliseconds: 0
-        else:
-        - delay:
+      - wait_for_trigger:
+        - trigger: state
+          entity_id:
+          - binary_sensor.aurora_device_locked
+          to:
+          - 'off'
+          for:
             hours: 0
             minutes: 0
-            seconds: 10
-            milliseconds: 0
+            seconds: 5
+        timeout:
+          hours: 0
+          minutes: 30
+          seconds: 0
+          milliseconds: 0
       - metadata: {}
         data:
           message: command_ringer_mode
