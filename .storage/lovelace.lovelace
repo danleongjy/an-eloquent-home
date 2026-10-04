@@ -17445,12 +17445,12 @@
                   "show_forecast": true,
                   "type": "weather-forecast",
                   "entity": "weather.local_weather",
-                  "name": "NEA via data.gov.sg",
                   "forecast_type": "daily",
                   "grid_options": {
                     "columns": 12,
                     "rows": 4
-                  }
+                  },
+                  "name": "NEA, data.gov.sg"
                 },
                 {
                   "type": "custom:apexcharts-card",
@@ -17532,7 +17532,7 @@
                   "type": "custom:apexcharts-card",
                   "config_templates": "standard",
                   "header": {
-                    "title": "Air Quality"
+                    "title": "1h Air Quality"
                   },
                   "all_series_config": {
                     "stroke_width": 2
@@ -17542,19 +17542,41 @@
                     {
                       "entity": "sensor.pollutant_standards_index",
                       "name": "24h PSI",
-                      "yaxis_id": "psi",
-                      "color": "violet",
+                      "color": "#555555",
+                      "unit": " ",
+                      "show": {
+                        "in_header": false
+                      }
+                    },
+                    {
+                      "entity": "sensor.one_hour_pm2_5",
+                      "name": "PM2.5",
+                      "unit": " ",
+                      "color": "brown"
+                    },
+                    {
+                      "entity": "sensor.one_hour_pm10",
+                      "name": "PM10",
                       "unit": " "
                     },
                     {
-                      "entity": "sensor.one_hour_pollutant_standards_index",
-                      "name": "1h PSI",
-                      "color": "yellow",
+                      "entity": "sensor.one_hour_co",
+                      "name": "CO",
                       "unit": " "
                     },
                     {
-                      "entity": "sensor.local_particulate_matter",
-                      "name": "Local PM",
+                      "entity": "sensor.one_hour_so2",
+                      "name": "SO2",
+                      "unit": " "
+                    },
+                    {
+                      "entity": "sensor.one_hour_no2",
+                      "name": "NO2",
+                      "unit": " "
+                    },
+                    {
+                      "entity": "sensor.one_hour_o3",
+                      "name": "O3",
                       "unit": " "
                     }
                   ],
@@ -17591,10 +17613,10 @@
                 },
                 {
                   "type": "custom:button-card",
-                  "entity": "sensor.one_hour_pollutant_standards_index",
+                  "entity": "sensor.one_hour_pm2_5",
                   "name": "PM2.5",
                   "variables": {
-                    "stat": "[[[ return entity.attributes.pm25.v ]]]",
+                    "stat": "[[[ return entity.state ]]]",
                     "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
                   "state_display": "[[[ return variables.stat ]]]",
@@ -17646,10 +17668,10 @@
                 },
                 {
                   "type": "custom:button-card",
-                  "entity": "sensor.one_hour_pollutant_standards_index",
+                  "entity": "sensor.one_hour_pm10",
                   "name": "PM10",
                   "variables": {
-                    "stat": "[[[ return entity.attributes.pm10.v ]]]",
+                    "stat": "[[[ return entity.state ]]]",
                     "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
                   "state_display": "[[[ return variables.stat ]]]",
@@ -17701,10 +17723,10 @@
                 },
                 {
                   "type": "custom:button-card",
-                  "entity": "sensor.one_hour_pollutant_standards_index",
+                  "entity": "sensor.one_hour_co",
                   "name": "CO",
                   "variables": {
-                    "stat": "[[[ return entity.attributes.co.v ]]]",
+                    "stat": "[[[ return entity.state ]]]",
                     "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
                   "state_display": "[[[ return variables.stat ]]]",
@@ -17759,7 +17781,7 @@
                   "entity": "sensor.pollutant_standards_index",
                   "name": "NO2",
                   "variables": {
-                    "stat": "[[[ return Math.max(...Object.values(entity.attributes.no2_one_hour_max)) ]]]",
+                    "stat": "[[[ return entity.attributes.no2_one_hour_max.south ]]]",
                     "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
                   "state_display": "[[[ return variables.stat ]]]",
@@ -17811,10 +17833,10 @@
                 },
                 {
                   "type": "custom:button-card",
-                  "entity": "sensor.one_hour_pollutant_standards_index",
+                  "entity": "sensor.one_hour_so2",
                   "name": "SO2",
                   "variables": {
-                    "stat": "[[[ return entity.attributes.so2.v ]]]",
+                    "stat": "[[[ return entity.state ]]]",
                     "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
                   "state_display": "[[[ return variables.stat ]]]",
@@ -17866,10 +17888,10 @@
                 },
                 {
                   "type": "custom:button-card",
-                  "entity": "sensor.one_hour_pollutant_standards_index",
+                  "entity": "sensor.one_hour_o3",
                   "name": "O3",
                   "variables": {
-                    "stat": "[[[ return entity.attributes.o3.v ]]]",
+                    "stat": "[[[ return entity.state ]]]",
                     "font_color": "[[[\n  if (variables.stat > 80)\n    return \"white\"\n  else\n    return \"black\"\n]]]\n"
                   },
                   "state_display": "[[[ return variables.stat ]]]",
