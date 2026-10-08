@@ -8504,3 +8504,35 @@
       motion_sensor: binary_sensor.kitchen_radar_occupancy
       lux_sensor: sensor.kitchen_radar_lux
       blackout_hours_start: input_datetime.dim_hours_start
+- id: '1791464185100'
+  alias: Main Door Lock
+  description: Lock the Main Door Lock if it has not been locked for 5min
+  triggers:
+  - trigger: template
+    value_template: '{{ is_state(''binary_sensor.main_door'', ''off'') and is_state(''lock.main_door_lock'',
+      ''unlocked'') }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    alias: When the main door is closed but the lock is unlocked for 5min
+  conditions: []
+  actions:
+  - repeat:
+      while:
+      - condition: template
+        value_template: '{{ is_state(''binary_sensor.main_door'', ''off'') and is_state(''lock.main_door_lock'',
+          ''unlocked'') }}'
+        alias: Main door is closed but lock is unlocked
+      sequence:
+      - action: lock.lock
+        metadata: {}
+        target:
+          entity_id: lock.main_door_lock
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 5
+          seconds: 0
+          milliseconds: 0
+  mode: single
