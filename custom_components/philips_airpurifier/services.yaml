@@ -1,0 +1,51 @@
+filter_reset:
+  name: Reset Filter Life
+  description: >
+    Reset filter life counters for the specified air purifier. Use this after
+    replacing filters to reset usage tracking.
+  target:
+    entity:
+      integration: philips_airpurifier
+      domain:
+        - fan
+        - sensor
+  fields:
+    filter_type:
+      name: Filter Type
+      description: Type of filter to reset
+      required: false
+      default: all
+      example: hepa_filter
+      selector:
+        select:
+          options:
+            - all
+            - pre_filter
+            - hepa_filter
+            - active_carbon_filter
+            - nanoprotect_filter
+    reset_maintenance_schedule:
+      name: Reset Maintenance Schedule
+      description: Reserved for compatibility with existing automations
+      required: false
+      default: true
+      selector:
+        boolean:
+
+set_child_lock:
+  name: Set Child Lock
+  description: Enable or disable child lock on the air purifier.
+  target:
+    entity:
+      integration: philips_airpurifier
+      domain:
+        - fan
+        - switch
+  fields:
+    enabled:
+      name: Enabled
+      description: Whether to enable or disable child lock
+      required: true
+      example: true
+      selector:
+        boolean:

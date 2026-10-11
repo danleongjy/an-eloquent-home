@@ -1,0 +1,125 @@
+"""Type definitions for Philips AirPurifier integration."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import StrEnum
+from typing import Any
+
+from .const import DEFAULT_MISSED_PACKAGE_COUNT
+
+DeviceStatus = dict[str, Any]
+
+# Type aliases for entity description dicts used in const.py.
+# These replace the old TypedDict definitions and will be migrated to
+# proper EntityDescription subclasses as each platform is refactored.
+SensorDescription = dict[str, Any]
+FilterDescription = dict[str, Any]
+SwitchDescription = dict[str, Any]
+LightDescription = dict[str, Any]
+SelectDescription = dict[str, Any]
+NumberDescription = dict[str, Any]
+HumidifierDescription = dict[str, Any]
+HeaterDescription = dict[str, Any]
+
+
+def _default_nested_map() -> dict[str, dict[str, Any]]:
+    """Return a typed nested dict default."""
+    return {}
+
+
+def _default_string_list() -> list[str]:
+    """Return a typed list default."""
+    return []
+
+
+@dataclass
+class DeviceInformation:
+    """Device information class."""
+
+    model: str
+    name: str
+    device_id: str
+    host: str
+    mac: str | None = None
+
+
+class ApiGeneration(StrEnum):
+    """API generation of the device."""
+
+    GEN1 = "gen1"
+    GEN2 = "gen2"
+    GEN3 = "gen3"
+
+
+@dataclass
+class DeviceModelConfig:
+    """
+    Configuration for a specific device model.
+
+    This is the data-driven replacement for the per-model class hierarchy.
+    Each model's capabilities, preset modes, speeds, and available entities
+    are defined as data rather than through class inheritance.
+    """
+
+    api_generation: ApiGeneration
+    preset_modes: dict[str, dict[str, Any]] = field(default_factory=_default_nested_map)
+    speeds: dict[str, dict[str, Any]] = field(default_factory=_default_nested_map)
+    switches: list[str] = field(default_factory=_default_string_list)
+    lights: list[str] = field(default_factory=_default_string_list)
+    selects: list[str] = field(default_factory=_default_string_list)
+    numbers: list[str] = field(default_factory=_default_string_list)
+    humidifiers: list[str] = field(default_factory=_default_string_list)
+    heaters: list[str] = field(default_factory=_default_string_list)
+    binary_sensors: list[str] = field(default_factory=_default_string_list)
+    unavailable_filters: list[str] = field(default_factory=_default_string_list)
+    unavailable_sensors: list[str] = field(default_factory=_default_string_list)
+    oscillation: dict[str, dict[str, Any]] | None = None
+    # True when the oscillation key holds the rotation angle itself rather than
+    # a fixed on/off code (the AMF family: 0 = off, 30..350 = degrees). Only
+    # then may a reported value be written back to restore the previous angle;
+    # for the fixed-code models the device is not assumed to report the value
+    # that has to be written to switch oscillation on.
+    oscillation_is_angle: bool = False
+    create_fan: bool = True
+    # Special behavior flags
+    requires_mode_cycling: bool = False  # AC1214 needs mode cycling
+    # Some newer firmwares (e.g. CX7550 "AWS_Philips_AIR_Combo") never answer a
+    # status read and only push the status resource when a real state change
+    # occurs. For those devices we open an observation and send this sequence of
+    # (key, value) control writes on the *same* CoAP client to elicit the first
+    # push — these firmwares serve only one client, so a second connection would
+    # evict the observer and the push would never arrive. Each write must be a
+    # genuine change; the sequence should end on a benign, well-defined value.
+    # None = device serves status normally (the default for all other models).
+    status_nudge: list[tuple[str, Any]] | None = None
+    # Default missed-packet threshold for the watchdog for this model; a
+    # per-device override or the global fallback can still override it.
+    missed_package_count: int = DEFAULT_MISSED_PACKAGE_COUNT
+
+    @property
+    def power_key(self) -> str:
+        """Return the power key for this API generation."""
+        if self.api_generation == ApiGeneration.GEN2:
+            return "D03-02"
+        if self.api_generation == ApiGeneration.GEN3:
+            return "D03102"
+        return "pwr"
+
+    @property
+    def power_on(self) -> str | int:
+        """Return the power-on value for this API generation."""
+        if self.api_generation == ApiGeneration.GEN2:
+            return "ON"
+        if self.api_generation == ApiGeneration.GEN3:
+            return 1
+        return "1"
+
+    @property
+    def power_off(self) -> str | int:
+        """Return the power-off value for this API generation."""
+        if self.api_generation == ApiGeneration.GEN2:
+            return "OFF"
+        if self.api_generation == ApiGeneration.GEN3:
+            return 0
+        return "0"

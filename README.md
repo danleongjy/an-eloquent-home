@@ -33,8 +33,8 @@ Domain | Quantity
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 14
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 2
-[`event`](https://www.home-assistant.io/components/event) | 1
-[`fan`](https://www.home-assistant.io/components/fan) | 8
+[`event`](https://www.home-assistant.io/components/event) | 2
+[`fan`](https://www.home-assistant.io/components/fan) | 9
 [`image`](https://www.home-assistant.io/components/image) | 4
 [`infrared`](https://www.home-assistant.io/components/infrared) | 4
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 9
@@ -43,27 +43,27 @@ Domain | Quantity
 [`input_number`](https://www.home-assistant.io/components/input_number) | 20
 [`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 20
-[`light`](https://www.home-assistant.io/components/light) | 74
+[`light`](https://www.home-assistant.io/components/light) | 75
 [`lock`](https://www.home-assistant.io/components/lock) | 1
 [`media_player`](https://www.home-assistant.io/components/media_player) | 7
 [`notify`](https://www.home-assistant.io/components/notify) | 6
-[`number`](https://www.home-assistant.io/components/number) | 94
+[`number`](https://www.home-assistant.io/components/number) | 95
 [`person`](https://www.home-assistant.io/components/person) | 2
 [`radio_frequency`](https://www.home-assistant.io/components/radio_frequency) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 14
-[`select`](https://www.home-assistant.io/components/select) | 70
-[`sensor`](https://www.home-assistant.io/components/sensor) | 739
+[`select`](https://www.home-assistant.io/components/select) | 72
+[`sensor`](https://www.home-assistant.io/components/sensor) | 749
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 78
+[`switch`](https://www.home-assistant.io/components/switch) | 82
 [`text`](https://www.home-assistant.io/components/text) | 33
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 112
+[`update`](https://www.home-assistant.io/components/update) | 113
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1930
+Total | 1951
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -107,6 +107,7 @@ Total | 1930
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
 - [Mqtt Vacuum Camera](https://github.com/sca075/mqtt_vacuum_camera)
+- [Philips Airpurifier](https://github.com/tinkerologie/ha-philips-airpurifier)
 - [Philips Shaver](https://github.com/mtheli/philips_shaver)
 - [Pyscript](https://github.com/custom-components/pyscript)
 - [SSH](https://github.com/zhbjsh/homeassistant-ssh)

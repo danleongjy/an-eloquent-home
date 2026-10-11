@@ -1,0 +1,496 @@
+"""Repairs support for Philips Air Purifier integration."""
+
+from __future__ import annotations
+
+import logging
+from typing import TYPE_CHECKING, Any
+
+from philips_airctrl import CoAPClient
+
+from homeassistant.components.repairs import ConfirmRepairFlow, RepairsFlow
+from homeassistant.const import CONF_HOST
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers import device_registry as dr, entity_registry as er, issue_registry as ir
+
+from .client import async_fetch_status
+from .const import CONF_STATUS, DOMAIN, OPT_FILTER_WARNING_ACK
+
+if TYPE_CHECKING:
+    from .coordinator import PhilipsAirPurifierCoordinator
+
+_LOGGER = logging.getLogger(__name__)
+
+
+def _entity_registry_identity(entity: Any) -> tuple[str, str, str] | None:
+    """Return the identity Home Assistant uses for an entity registry entry."""
+    if not entity.unique_id:
+        return None
+
+    # Home Assistant scopes unique IDs by entity domain and integration platform.
+    # The fallbacks keep compatibility with the lightweight test doubles used in
+    # this integration's test suite while real RegistryEntry objects provide both.
+    domain = getattr(entity, "domain", entity.entity_id.partition(".")[0])
+    platform = getattr(entity, "platform", DOMAIN)
+    return domain, platform, entity.unique_id
+
+
+async def async_create_fix_flow(
+    hass: HomeAssistant,
+    issue_id: str,
+    data: dict[str, str | int | float | None] | None,
+) -> RepairsFlow:
+    """Create flow to fix an issue."""
+    if issue_id == "connectivity_issue":
+        return ConnectivityRepairFlow()
+    if issue_id == "entity_registry_cleanup":
+        return EntityRegistryCleanupFlow()
+    if issue_id == "filter_replacement_warning":
+        return FilterReplacementWarningFlow(data)
+    if issue_id == "configuration_migration":
+        return ConfigurationMigrationFlow()
+    if issue_id == "duplicate_entities":
+        return DuplicateEntitiesFlow()
+
+    return ConfirmRepairFlow()
+
+
+class ConnectivityRepairFlow(RepairsFlow):
+    """Handler for connectivity issues."""
+
+    async def async_step_init(self, user_input: dict[str, str] | None = None) -> FlowResult:
+        """Handle the initial step."""
+        if user_input is not None:
+            # Attempt to fix connectivity
+            return await self.async_step_fix_connectivity()
+
+        return self.async_show_form(
+            step_id="init",
+            description_placeholders={
+                "issue_description": (
+                    "The air purifier device is not responding to network requests. "
+                    "This may be due to network connectivity issues, device power "
+                    "state, or IP address changes."
+                )
+            },
+        )
+
+    async def async_step_fix_connectivity(self) -> FlowResult:  # pragma: no cover
+        """Attempt to fix connectivity issues."""
+        try:
+            # Get the config entry for this repair
+            config_entries = self.hass.config_entries.async_entries(DOMAIN)
+            if not config_entries:
+                return self.async_create_entry(
+                    title="Connectivity Check",
+                    data={"result": "no_config_entries_found"},
+                )
+
+            for entry in config_entries:
+                host = entry.data.get(CONF_HOST)
+                if not host:
+                    continue
+
+                # Test connectivity
+                try:
+                    await async_fetch_status(
+                        host,
+                        connect_timeout=10,
+                        status_timeout=10,
+                        create_client=CoAPClient.create,
+                    )
+
+                    # If we get here, connectivity is working
+                    return self.async_create_entry(
+                        title="Connectivity Restored",
+                        data={"result": "connectivity_restored", "host": host},
+                    )
+
+                except Exception as ex:
+                    _LOGGER.debug("Connectivity test failed for %s: %s", host, ex)
+                    continue
+
+            return self.async_create_entry(
+                title="Connectivity Issue Persists",
+                data={"result": "connectivity_failed"},
+            )
+
+        except Exception as ex:
+            _LOGGER.exception("Error during connectivity repair: %s", ex)
+            return self.async_create_entry(title="Repair Failed", data={"result": "repair_error", "error": str(ex)})
+
+
+class EntityRegistryCleanupFlow(RepairsFlow):
+    """Handler for entity registry cleanup."""
+
+    async def async_step_init(self, user_input: dict[str, str] | None = None) -> FlowResult:
+        """Handle the initial step."""
+        if user_input is not None:
+            return await self.async_step_cleanup_entities()
+
+        return self.async_show_form(
+            step_id="init",
+            description_placeholders={
+                "issue_description": (
+                    "Orphaned or duplicate entities have been detected in the entity "
+                    "registry. This can happen after device reconfigurations or "
+                    "integration updates."
+                )
+            },
+        )
+
+    async def async_step_cleanup_entities(self) -> FlowResult:  # pragma: no cover
+        """Clean up entity registry."""
+        try:
+            entity_registry = er.async_get(self.hass)
+            device_registry = dr.async_get(self.hass)
+
+            cleaned_entities: list[str] = []
+            removed_entity_ids: set[str] = set()
+
+            # Find entities for this integration
+            for entry in self.hass.config_entries.async_entries(DOMAIN):
+                entities = er.async_entries_for_config_entry(entity_registry, entry.entry_id)
+
+                for entity in entities:
+                    if entity.entity_id in removed_entity_ids:
+                        continue
+
+                    # Check if entity's device still exists
+                    if entity.device_id:
+                        device = device_registry.async_get(entity.device_id)
+                        if not device:
+                            # Orphaned entity - device no longer exists
+                            entity_registry.async_remove(entity.entity_id)
+                            cleaned_entities.append(entity.entity_id)
+                            removed_entity_ids.add(entity.entity_id)
+                            continue
+
+                    # Check for duplicate entities using Home Assistant's registry
+                    # identity: entity domain + integration platform + unique ID.
+                    identity = _entity_registry_identity(entity)
+                    if identity is not None:
+                        duplicates = [
+                            e
+                            for e in entities
+                            if _entity_registry_identity(e) == identity
+                            and e.entity_id != entity.entity_id
+                            and e.entity_id not in removed_entity_ids
+                        ]
+                        if duplicates:
+                            # Remove duplicates, keeping the current entity
+                            for duplicate in duplicates:
+                                entity_registry.async_remove(duplicate.entity_id)
+                                cleaned_entities.append(duplicate.entity_id)
+                                removed_entity_ids.add(duplicate.entity_id)
+
+            async_delete_issue(self.hass, "entity_registry_cleanup")
+            return self.async_create_entry(
+                title="Entity Cleanup Complete",
+                data={
+                    "result": "cleanup_complete",
+                    "cleaned_entities": cleaned_entities,
+                },
+            )
+
+        except Exception as ex:
+            _LOGGER.exception("Error during entity cleanup: %s", ex)
+            return self.async_create_entry(
+                title="Cleanup Failed",
+                data={"result": "cleanup_error", "error": str(ex)},
+            )
+
+
+class FilterReplacementWarningFlow(RepairsFlow):
+    """Handler for filter replacement warnings."""
+
+    def __init__(self, data: dict[str, str | int | float | None] | None = None) -> None:
+        """Store the issue data so we can locate the config entry."""
+        self._data = data or {}
+
+    async def async_step_init(self, user_input: dict[str, str] | None = None) -> FlowResult:
+        """Handle the initial step."""
+        if user_input is not None:
+            return await self.async_step_acknowledge_warning()
+
+        return self.async_show_form(
+            step_id="init",
+            description_placeholders={
+                "issue_description": (
+                    "One or more filters in your air purifier need attention. Check "
+                    "the filter status sensors for replacement or cleaning "
+                    "requirements."
+                )
+            },
+        )
+
+    async def async_step_acknowledge_warning(self) -> FlowResult:
+        """Acknowledge the filter warning and stop it from reappearing.
+
+        The acknowledgment is persisted in the config entry options so the
+        periodic health check does not recreate the issue on the next
+        coordinator update. It is reset automatically once a filter reads as
+        freshly replaced (see ``async_check_integration_health``).
+        """
+        entry_id = self._data.get("entry_id")
+        if entry_id:
+            entry = self.hass.config_entries.async_get_entry(str(entry_id))
+            if entry is not None:
+                self.hass.config_entries.async_update_entry(
+                    entry,
+                    options={**entry.options, OPT_FILTER_WARNING_ACK: True},
+                )
+
+        async_delete_issue(self.hass, "filter_replacement_warning")
+        return self.async_create_entry(title="Filter Warning Acknowledged", data={"result": "warning_acknowledged"})
+
+
+class ConfigurationMigrationFlow(RepairsFlow):
+    """Handler for configuration migration issues."""
+
+    async def async_step_init(self, user_input: dict[str, str] | None = None) -> FlowResult:
+        """Handle the initial step."""
+        if user_input is not None:
+            return await self.async_step_migrate_config()
+
+        return self.async_show_form(
+            step_id="init",
+            description_placeholders={
+                "issue_description": (
+                    "Your integration configuration needs to be updated to support "
+                    "new features. This migration will update your configuration "
+                    "automatically."
+                )
+            },
+        )
+
+    async def async_step_migrate_config(self) -> FlowResult:  # pragma: no cover
+        """Migrate configuration."""
+        try:
+            migrated_entries: list[str] = []
+
+            for entry in self.hass.config_entries.async_entries(DOMAIN):
+                # Check if status data is missing (old configuration)
+                if CONF_STATUS not in entry.data:
+                    try:
+                        # Try to fetch status data
+                        host = entry.data.get(CONF_HOST)
+                        if host:
+                            status = await async_fetch_status(
+                                host,
+                                connect_timeout=30,
+                                status_timeout=30,
+                                create_client=CoAPClient.create,
+                            )
+
+                            # Update entry with status data
+                            new_data = {**entry.data}
+                            new_data[CONF_STATUS] = status
+                            self.hass.config_entries.async_update_entry(entry, data=new_data)
+                            migrated_entries.append(entry.entry_id)
+
+                    except Exception as ex:
+                        _LOGGER.warning("Failed to migrate config for %s: %s", entry.title, ex)
+
+            return self.async_create_entry(
+                title="Configuration Migration Complete",
+                data={
+                    "result": "migration_complete",
+                    "migrated_entries": migrated_entries,
+                },
+            )
+
+        except Exception as ex:
+            _LOGGER.exception("Error during configuration migration: %s", ex)
+            return self.async_create_entry(
+                title="Migration Failed",
+                data={"result": "migration_error", "error": str(ex)},
+            )
+
+
+class DuplicateEntitiesFlow(RepairsFlow):
+    """Handler for duplicate entity issues."""
+
+    async def async_step_init(self, user_input: dict[str, str] | None = None) -> FlowResult:
+        """Handle the initial step."""
+        if user_input is not None:
+            return await self.async_step_remove_duplicates()
+
+        return self.async_show_form(
+            step_id="init",
+            description_placeholders={
+                "issue_description": (
+                    "Duplicate entities have been detected. This typically happens "
+                    "when entity unique IDs conflict. The repair will remove "
+                    "duplicate entities automatically."
+                )
+            },
+        )
+
+    async def async_step_remove_duplicates(self) -> FlowResult:  # pragma: no cover
+        """Remove duplicate entities."""
+        try:
+            entity_registry = er.async_get(self.hass)
+            removed_entities: list[str] = []
+
+            for entry in self.hass.config_entries.async_entries(DOMAIN):
+                entities = er.async_entries_for_config_entry(entity_registry, entry.entry_id)
+
+                # Group entities by Home Assistant's entity registry identity.
+                identity_groups: dict[tuple[str, str, str], list[Any]] = {}
+                for entity in entities:
+                    identity = _entity_registry_identity(entity)
+                    if identity is not None:
+                        identity_groups.setdefault(identity, []).append(entity)
+
+                # Remove duplicates
+                for entity_group in identity_groups.values():
+                    if len(entity_group) > 1:
+                        # Keep the first entity, remove the rest
+                        for entity in entity_group[1:]:
+                            entity_registry.async_remove(entity.entity_id)
+                            removed_entities.append(entity.entity_id)
+
+            return self.async_create_entry(
+                title="Duplicate Entities Removed",
+                data={
+                    "result": "duplicates_removed",
+                    "removed_entities": removed_entities,
+                },
+            )
+
+        except Exception as ex:
+            _LOGGER.exception("Error during duplicate removal: %s", ex)
+            return self.async_create_entry(
+                title="Duplicate Removal Failed",
+                data={"result": "removal_error", "error": str(ex)},
+            )
+
+
+@callback
+def async_create_issue(
+    hass: HomeAssistant,
+    issue_id: str,
+    translation_key: str,
+    severity: ir.IssueSeverity = ir.IssueSeverity.WARNING,
+    **kwargs: Any,
+) -> None:
+    """Create a repair issue."""
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        issue_id,
+        is_fixable=True,
+        severity=severity,
+        translation_key=translation_key,
+        **kwargs,
+    )
+
+
+@callback
+def async_delete_issue(hass: HomeAssistant, issue_id: str) -> None:
+    """Delete a repair issue."""
+    ir.async_delete_issue(hass, DOMAIN, issue_id)
+
+
+async def async_check_integration_health(
+    hass: HomeAssistant, coordinator: PhilipsAirPurifierCoordinator
+) -> None:  # pragma: no cover
+    """Check integration health and create repair issues if needed."""
+    # Check connectivity
+    if not coordinator.client:
+        async_create_issue(
+            hass,
+            "connectivity_issue",
+            "connectivity_issue",
+            severity=ir.IssueSeverity.ERROR,
+        )
+    else:
+        async_delete_issue(hass, "connectivity_issue")
+
+    # Check for filter replacement needs
+    status = coordinator.data or {}
+    filter_warning_needed = False
+
+    # Check various filter types
+    filter_keys = [
+        ("fltsts0", "flttotal0"),  # Pre-filter
+        ("fltsts1", "flttotal1"),  # HEPA filter
+        ("fltsts2", "flttotal2"),  # Active carbon filter
+        ("D05-14", "D05-08"),  # NanoProtect filter
+    ]
+
+    for status_key, total_key in filter_keys:
+        if status_key in status and total_key in status:
+            remaining = status[status_key]
+            total = status[total_key]
+            if total > 0:
+                percentage = (remaining / total) * 100
+                if percentage <= 15:  # Less than 15% remaining
+                    filter_warning_needed = True
+                    break
+
+    # Locate the config entry for this coordinator so the warning can be
+    # acknowledged persistently and reset once a filter is replaced (issue #29).
+    entry = next(
+        (e for e in hass.config_entries.async_entries(DOMAIN) if e.data.get(CONF_HOST) == coordinator.host),
+        None,
+    )
+    acknowledged = bool(entry and entry.options.get(OPT_FILTER_WARNING_ACK, False))
+
+    if filter_warning_needed:
+        # Only (re)create the issue if the user has not already acknowledged it,
+        # otherwise it would reappear on the next coordinator update.
+        if not acknowledged:
+            async_create_issue(
+                hass,
+                "filter_replacement_warning",
+                "filter_replacement_warning",
+                severity=ir.IssueSeverity.WARNING,
+                data={"entry_id": entry.entry_id} if entry else None,
+            )
+    else:
+        async_delete_issue(hass, "filter_replacement_warning")
+        # Filters are healthy again (e.g. replaced): clear the acknowledgment so
+        # a future low-filter condition surfaces a fresh warning.
+        if acknowledged and entry is not None:
+            options = {k: v for k, v in entry.options.items() if k != OPT_FILTER_WARNING_ACK}
+            hass.config_entries.async_update_entry(entry, options=options)
+
+    # Check for entity registry issues
+    entity_registry = er.async_get(hass)
+    device_registry = dr.async_get(hass)
+
+    orphaned_entities: list[str] = []
+    duplicate_entities: list[str] = []
+
+    for entry in hass.config_entries.async_entries(DOMAIN):
+        entities = er.async_entries_for_config_entry(entity_registry, entry.entry_id)
+
+        # Check for orphaned entities
+        for entity in entities:
+            if entity.device_id:
+                device = device_registry.async_get(entity.device_id)
+                if not device:
+                    orphaned_entities.append(entity.entity_id)
+
+        # Check for duplicates using the same identity tuple as Home Assistant.
+        seen_identities: set[tuple[str, str, str]] = set()
+        for entity in entities:
+            identity = _entity_registry_identity(entity)
+            if identity is None:
+                continue
+            if identity in seen_identities:
+                duplicate_entities.append(entity.entity_id)
+            else:
+                seen_identities.add(identity)
+
+    if orphaned_entities or duplicate_entities:
+        async_create_issue(
+            hass,
+            "entity_registry_cleanup",
+            "entity_registry_cleanup",
+            severity=ir.IssueSeverity.WARNING,
+        )
+    else:
+        async_delete_issue(hass, "entity_registry_cleanup")
