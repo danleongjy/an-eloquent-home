@@ -3197,17 +3197,8 @@
       then:
       - data:
           bedroom: parents_room
-          ringtone: Take On Me
+          ringtone: Jesus Christ Superstar
         action: script.alarm_lights
-      - data:
-          option: Jesus Christ Superstar
-        target:
-          entity_id: select.parents_room_core_ringtone
-        action: select.select_option
-      - data: {}
-        target:
-          entity_id: button.parents_room_core_play_ringtone
-        action: button.press
     - action: input_boolean.turn_on
       target:
         entity_id: input_boolean.parents_room_next_alarm_armed
@@ -8535,4 +8526,152 @@
           minutes: 5
           seconds: 0
           milliseconds: 0
+  mode: single
+- id: '1791800438475'
+  alias: Air Purifier Auto Control
+  description: Set Air Purifier power based on PM2.5 and occupancy
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.dining_room_radar_zone_1_occupancy
+    - binary_sensor.living_room_radar_occupancy
+    - binary_sensor.kitchen_radar_occupancy
+    - binary_sensor.playroom_radar_occupancy
+    - binary_sensor.study_room_radar_occupancy
+    to:
+    - 'on'
+  - trigger: state
+    entity_id:
+    - binary_sensor.dining_room_radar_zone_1_occupancy
+    - binary_sensor.living_room_radar_occupancy
+    - binary_sensor.kitchen_radar_occupancy
+    - binary_sensor.playroom_radar_occupancy
+    - binary_sensor.study_room_radar_occupancy
+    to:
+    - 'off'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  - trigger: state
+    entity_id: input_select.home_mode
+  - trigger: numeric_state
+    entity_id:
+    - sensor.living_room_pm2_5
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    above: 50
+  - trigger: numeric_state
+    entity_id:
+    - sensor.living_room_pm2_5
+    above: 15
+    below: 50
+  - trigger: numeric_state
+    entity_id:
+    - sensor.living_room_pm2_5
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    below: 15
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: occupancy.is_detected
+        target:
+          entity_id:
+          - binary_sensor.dining_room_radar_zone_1_occupancy
+          - binary_sensor.living_room_radar_occupancy
+          - binary_sensor.kitchen_radar_occupancy
+          - binary_sensor.playroom_radar_occupancy
+          - binary_sensor.study_room_radar_occupancy
+        options:
+          for: 00:00:00
+          behavior: any
+      - condition: numeric_state
+        entity_id: sensor.living_room_pm2_5
+        above: 15
+        below: 50
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: input_select.home_mode
+          state:
+          - Away Mode
+      sequence:
+      - condition: template
+        value_template: '{{ not (is_state_attr(''fan.air_purifier'', ''percentage'',
+          50) and is_state(''number.air_purifier_oscillation'', ''180.0'')) }}'
+      - action: fan.turn_on
+        metadata: {}
+        target:
+          entity_id: fan.air_purifier
+        data:
+          percentage: 50
+      - action: number.set_value
+        metadata: {}
+        target:
+          entity_id: number.air_purifier_oscillation
+        data:
+          value: '180'
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.living_room_pm2_5
+        above: 50
+      sequence:
+      - condition: template
+        value_template: '{{ not (is_state_attr(''fan.air_purifier'', ''percentage'',
+          100) and is_state(''number.air_purifier_oscillation'', ''180.0'')) }}'
+      - action: fan.turn_on
+        metadata: {}
+        target:
+          entity_id: fan.air_purifier
+        data:
+          percentage: 100
+      - action: number.set_value
+        metadata: {}
+        target:
+          entity_id: number.air_purifier_oscillation
+        data:
+          value: '180'
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.living_room_pm2_5
+          below: 15
+        - condition: and
+          conditions:
+          - condition: numeric_state
+            entity_id: sensor.living_room_pm2_5
+            below: 50
+          - condition: or
+            conditions:
+            - condition: state
+              entity_id: input_select.home_mode
+              state:
+              - Away Mode
+            - condition: occupancy.is_not_detected
+              target:
+                entity_id:
+                - binary_sensor.dining_room_radar_zone_1_occupancy
+                - binary_sensor.living_room_radar_occupancy
+                - binary_sensor.kitchen_radar_occupancy
+                - binary_sensor.playroom_radar_occupancy
+                - binary_sensor.study_room_radar_occupancy
+              options:
+                behavior: all
+      sequence:
+      - condition: state
+        state:
+        - 'on'
+        entity_id: fan.air_purifier
+      - action: fan.turn_off
+        metadata: {}
+        target:
+          entity_id: fan.air_purifier
+        data: {}
   mode: single

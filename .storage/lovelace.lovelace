@@ -676,7 +676,10 @@
             "device_slider"
           ],
           "entity": "fan.air_purifier",
-          "icon_hold_action": {
+          "variables": {
+            "aqi_color": "[[[ \n  if (parseInt(states['sensor.living_room_pm2_5'].state) >= 75) {\n    return '#9e110d'\n  } else if (parseInt(states['sensor.living_room_pm2_5'].state) >= 35) {\n    return '#f2900f'\n  } else {\n    return '#b4fab4'\n  }\n]]]\n"
+          },
+          "icon_tap_action": {
             "action": "navigate",
             "navigation_path": "/lovelace/air-quality"
           },
@@ -699,7 +702,7 @@
             },
             "card": [
               {
-                "background": "[[[ \n  return \"linear-gradient(0deg, #f2900f 0%, #f2900f \" +\n  states['sensor.living_room_pm2_5'].state + \"%, #1c1c1c \" +\n  states['sensor.living_room_pm2_5'].state + \"%, #1c1c1c 100%)\"\n]]] \n"
+                "background": "[[[ \n  return \"linear-gradient(0deg, \" + variables.aqi_color + \" 0%, \" + variables.aqi_color + \" \" +\n  states['sensor.living_room_pm2_5'].state + \"%, #1c1c1c \" +\n  states['sensor.living_room_pm2_5'].state + \"%, #1c1c1c 100%)\"\n]]] \n"
               }
             ]
           }
@@ -4768,13 +4771,6 @@
                           {
                             "type": "custom:button-card",
                             "template": [
-                              "top_row",
-                              "alarms_imminent"
-                            ]
-                          },
-                          {
-                            "type": "custom:button-card",
-                            "template": [
                               "air_quality_more_info",
                               "top_row"
                             ]
@@ -4903,6 +4899,13 @@
                                 }
                               }
                             }
+                          },
+                          {
+                            "type": "custom:button-card",
+                            "template": [
+                              "top_row",
+                              "alarms_imminent"
+                            ]
                           },
                           {
                             "type": "custom:button-card",
@@ -17613,7 +17616,7 @@
                     },
                     {
                       "entity": "sensor.one_hour_no2",
-                      "name": "NO2",
+                      "name": "1h NO2",
                       "unit": " ",
                       "color": "yellow",
                       "show": {
@@ -17622,7 +17625,7 @@
                     },
                     {
                       "entity": "sensor.one_hour_co",
-                      "name": "CO",
+                      "name": "1h CO",
                       "unit": " ",
                       "color": "pink",
                       "show": {
@@ -17631,7 +17634,7 @@
                     },
                     {
                       "entity": "sensor.one_hour_so2",
-                      "name": "SO2",
+                      "name": "1h SO2",
                       "unit": " ",
                       "color": "violet",
                       "show": {
@@ -17640,7 +17643,7 @@
                     },
                     {
                       "entity": "sensor.one_hour_o3",
-                      "name": "O3",
+                      "name": "1h O3",
                       "unit": " ",
                       "color": "purple",
                       "show": {
@@ -17649,9 +17652,6 @@
                     }
                   ],
                   "apex_config": {
-                    "chart": {
-                      "height": "200px"
-                    },
                     "xaxis": {
                       "labels": {
                         "datetimeFormatter": {
@@ -17684,7 +17684,7 @@
                   "entity": "fan.air_purifier",
                   "template": "tile_slider",
                   "name": "Power",
-                  "state_display": "[[[ \n  if (entity.state == 'on') {\n    if (states['select.air_purifier_fan_mode'].state == 'sleep') {\n      return 'Silent'\n    } else {\n      return entity.attributes.percentage + '%'\n    }\n  } else {\n    return helpers.localize(entity)\n  }\n]]]\n",
+                  "state_display": "[[[ \n  if (entity.state == 'on') {\n    if (entity.attributes.percentage == null) {\n      return helpers.localize(states['select.air_purifier_fan_mode'])\n    } else {\n      return entity.attributes.percentage + '%'\n    }\n  } else {\n    return helpers.localize(entity)\n  }\n]]]\n",
                   "variables": {
                     "state_color": "[[[\n  if (entity.state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else if (entity.state == 'off') {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-unavailable-color)'\n  }\n]]]\n"
                   },
@@ -17751,8 +17751,8 @@
                   "variables": {
                     "numerator": "[[[ return variables.denominator - entity.state ]]]",
                     "denominator": 100,
-                    "cap_medium": 0.7,
-                    "cap_low": 0.5
+                    "cap_medium": 0.65,
+                    "cap_low": 0.25
                   },
                   "state_display": null,
                   "name": "PM2.5",
@@ -17797,6 +17797,13 @@
                   "grid_options": {
                     "rows": 1
                   }
+                }
+              ],
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "sensor.living_room_pm2_5",
+                  "state_not": "unavailable"
                 }
               ]
             }
