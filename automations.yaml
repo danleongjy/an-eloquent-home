@@ -8531,24 +8531,19 @@
   alias: Air Purifier Auto Control
   description: Set Air Purifier power based on PM2.5 and occupancy
   triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.dining_room_radar_zone_1_occupancy
-    - binary_sensor.living_room_radar_occupancy
-    - binary_sensor.kitchen_radar_occupancy
-    - binary_sensor.playroom_radar_occupancy
-    - binary_sensor.study_room_radar_occupancy
-    to:
-    - 'on'
-  - trigger: state
-    entity_id:
-    - binary_sensor.dining_room_radar_zone_1_occupancy
-    - binary_sensor.living_room_radar_occupancy
-    - binary_sensor.kitchen_radar_occupancy
-    - binary_sensor.playroom_radar_occupancy
-    - binary_sensor.study_room_radar_occupancy
-    to:
-    - 'off'
+  - trigger: template
+    value_template: '{{ ''on'' in [states(''binary_sensor.dining_room_radar_zone_1_occupancy''),
+      states(''binary_sensor.living_room_radar_occupancy''), states(''binary_sensor.kitchen_radar_occupancy''),
+      states(''binary_sensor.study_room_radar_occupancy''), states(''binary_sensor.playroom_radar_occupancy'')]
+      }}'
+    alias: When occupancy is detected in Dining, Living, Study Rooms, Kitchen or Playroom
+  - trigger: template
+    value_template: '{{ not ''on'' in [states(''binary_sensor.dining_room_radar_zone_1_occupancy''),
+      states(''binary_sensor.living_room_radar_occupancy''), states(''binary_sensor.kitchen_radar_occupancy''),
+      states(''binary_sensor.study_room_radar_occupancy''), states(''binary_sensor.playroom_radar_occupancy'')]
+      }}'
+    alias: When no occupancy is detected in Dining, Living, Study Rooms, Kitchen and
+      Playroom for 5min
     for:
       hours: 0
       minutes: 5
