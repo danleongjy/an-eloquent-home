@@ -646,7 +646,7 @@ function $d8078e452c66bdbe$export$625550452a3fa3ec(hass, key) {
 
 
 // Written by the release sync script (philips_shaver scripts/sync_card.sh).
-const $8ee5ce714273e53b$export$d5e7ce6d07daf10f = "0.28.1";
+const $8ee5ce714273e53b$export$d5e7ce6d07daf10f = "0.29.1";
 const $8ee5ce714273e53b$export$9b657414b7dffe40 = "bundled";
 
 
@@ -1155,7 +1155,8 @@ class $8b62e546fdd14731$export$4778d74453ecc150 extends (0, $528e4332d1e3099e$ex
         const tm = Math.floor(elapsed / 60);
         const ts = elapsed % 60;
         const timerStr = String(tm).padStart(2, "0") + ":" + String(ts).padStart(2, "0");
-        const needleFrac = Math.min(pressure / max, 0.99);
+        // The pressure reading can dip below zero; keep the needle on the dial.
+        const needleFrac = Math.max(0, Math.min(pressure / max, 0.99));
         const nc = $8b62e546fdd14731$var$PRESSURE_COLORS[pState] || $8b62e546fdd14731$var$PRESSURE_COLORS.no_contact;
         const { ZONE_BASE: base, ZONE_LOW: low, ZONE_HIGH: high } = $8b62e546fdd14731$var$GAUGE;
         const separators = [

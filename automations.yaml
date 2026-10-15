@@ -1656,9 +1656,6 @@
             target:
               entity_id: '{{ repeat.item }}'
             continue_on_error: true
-          - delay: '{{ (states(''input_number.blinds_command_deconflict'' ) | int(2))
-              * 2 }}'
-            enabled: false
     - conditions:
       - condition: numeric_state
         entity_id: sensor.dining_room_radar_lux
@@ -1678,9 +1675,6 @@
             target:
               entity_id: '{{ repeat.item }}'
             continue_on_error: true
-          - delay: '{{ (states(''input_number.blinds_command_deconflict'' ) | int(2))
-              * 2 }}'
-            enabled: false
   mode: single
 - id: '1672898689403'
   alias: Lights for Wind Down
@@ -8531,23 +8525,31 @@
   alias: Air Purifier Auto Control
   description: Set Air Purifier power based on PM2.5 and occupancy
   triggers:
-  - trigger: template
-    value_template: '{{ ''on'' in [states(''binary_sensor.dining_room_radar_zone_1_occupancy''),
-      states(''binary_sensor.living_room_radar_occupancy''), states(''binary_sensor.kitchen_radar_occupancy''),
-      states(''binary_sensor.study_room_radar_occupancy''), states(''binary_sensor.playroom_radar_occupancy'')]
-      }}'
-    alias: When occupancy is detected in Dining, Living, Study Rooms, Kitchen or Playroom
-  - trigger: template
-    value_template: '{{ not ''on'' in [states(''binary_sensor.dining_room_radar_zone_1_occupancy''),
-      states(''binary_sensor.living_room_radar_occupancy''), states(''binary_sensor.kitchen_radar_occupancy''),
-      states(''binary_sensor.study_room_radar_occupancy''), states(''binary_sensor.playroom_radar_occupancy'')]
-      }}'
-    alias: When no occupancy is detected in Dining, Living, Study Rooms, Kitchen and
-      Playroom for 5min
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
+  - trigger: occupancy.detected
+    target:
+      entity_id:
+      - binary_sensor.dining_room_radar_zone_1_occupancy
+      - binary_sensor.living_room_radar_occupancy
+      - binary_sensor.study_room_radar_occupancy
+      - binary_sensor.kitchen_radar_occupancy
+      - binary_sensor.playroom_radar_occupancy
+    options:
+      behavior: first
+      for: 00:00:00
+  - trigger: occupancy.cleared
+    target:
+      entity_id:
+      - binary_sensor.dining_room_radar_zone_1_occupancy
+      - binary_sensor.living_room_radar_occupancy
+      - binary_sensor.study_room_radar_occupancy
+      - binary_sensor.kitchen_radar_occupancy
+      - binary_sensor.playroom_radar_occupancy
+    options:
+      behavior: all
+      for:
+        hours: 0
+        minutes: 10
+        seconds: 0
   - trigger: state
     entity_id: input_select.home_mode
   - trigger: numeric_state
@@ -8563,6 +8565,10 @@
     - sensor.living_room_pm2_5
     above: 15
     below: 50
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
   - trigger: numeric_state
     entity_id:
     - sensor.living_room_pm2_5
@@ -8573,6 +8579,10 @@
     below: 15
   conditions: []
   actions:
+  - condition: template
+    value_template: '{{ now() - states.fan.air_purifier.last_updated > timedelta(minutes
+      = 10) }}'
+    alias: Debounce fan settings by 10min
   - choose:
     - conditions:
       - condition: occupancy.is_detected

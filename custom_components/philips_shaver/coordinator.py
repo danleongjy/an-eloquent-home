@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 import logging
 from typing import Any
 
+from bleak.exc import BleakCharacteristicNotFoundError
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr, issue_registry as ir
 from homeassistant.helpers.storage import Store
@@ -27,6 +28,7 @@ try:
 except ImportError:
     HAS_DBUS_FAST = False
 
+from . import const as _const
 from .transport import BleakTransport, EspBridgeTransport, ShaverTransport
 from .exceptions import TransportError
 from .const import (
@@ -156,6 +158,20 @@ def _storage_key(entry_id: str) -> str:
 async def async_remove_stored_data(hass: HomeAssistant, entry_id: str) -> None:
     """Delete the persisted device data of a removed config entry."""
     await Store(hass, STORAGE_VERSION, _storage_key(entry_id)).async_remove()
+
+_CHAR_NAMES = {
+    value: name.removeprefix("CHAR_").lower().replace("_", " ")
+    for name, value in vars(_const).items()
+    if name.startswith("CHAR_") and isinstance(value, str)
+}
+
+
+def _describe_char(char_uuid: str) -> str:
+    """Readable name plus the 16-bit short id, e.g. 'head remaining (0117)'."""
+    short = char_uuid[4:8].upper()
+    name = _CHAR_NAMES.get(char_uuid)
+    return f"{name} ({short})" if name else short
+
 
 # Characteristics to subscribe for live notifications.
 # Ordered by priority: real-time data first (subscribed before device sleeps).
@@ -641,9 +657,10 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         if raw := results.get(CHAR_CUSTOM_SHAVING_MODE_SETTINGS):
             new_data["custom_shaving_settings"] = parse_shaving_settings_to_dict(raw)
 
-        # Pressure
+        # Pressure is a signed int16; read unsigned, a value below zero
+        # turned into ~65 000 and showed as far too high.
         if raw := results.get(CHAR_PRESSURE):
-            pressure_value = int.from_bytes(raw, "little")
+            pressure_value = int.from_bytes(raw[:2], "little", signed=True)
             new_data["pressure"] = pressure_value
 
         # Total Age
@@ -938,6 +955,15 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     except Exception:
                         pass
 
+                    # A failed connect can leave no client/callback to
+                    # restore the activity state. Avoid a second update if
+                    # disconnect() already cleared the connecting flag.
+                    if not self._is_esp_bridge and self.data and self.data.pop(
+                        "_connecting", None
+                    ):
+                        self.data["device_state"] = "off"
+                        self.async_set_updated_data(self.data)
+
                     if not self._is_esp_bridge:
                         # Direct BLE: quick retries, then wait for ADV
                         for attempt in range(MAX_QUICK_RETRIES):
@@ -1033,13 +1059,32 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         cb = self._make_live_callback()
         count = 0
+        missing: list[str] = []
         for char_uuid in self._notify_chars:
             try:
                 await self.transport.subscribe(char_uuid, cb)
                 count += 1
                 _LOGGER.debug("%s: subscribed to %s", self.address, char_uuid)
+            except BleakCharacteristicNotFoundError:
+                missing.append(char_uuid)
             except Exception as e:
                 _LOGGER.warning("Failed to subscribe %s: %s", char_uuid, e)
+
+        if missing:
+            # The service exists but this model leaves the characteristic
+            # out. Drop it so reconnects don't retry, and report it once in
+            # one line: it is harmless, but it is how unknown models show up.
+            self._notify_chars = [c for c in self._notify_chars if c not in missing]
+            data = self.data or {}
+            _LOGGER.warning(
+                "Philips shaver %s (firmware %s) does not provide: %s. "
+                "Entities for these stay empty. If this model should "
+                "support them, please report it at "
+                "https://github.com/mtheli/philips_shaver/issues",
+                data.get("model_number") or "unknown model",
+                data.get("firmware") or "unknown",
+                ", ".join(_describe_char(c) for c in missing),
+            )
         return count
 
     async def _stop_all_notifications(self) -> None:

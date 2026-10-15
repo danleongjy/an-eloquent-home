@@ -56,14 +56,14 @@ Domain | Quantity
 [`sensor`](https://www.home-assistant.io/components/sensor) | 757
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 82
+[`switch`](https://www.home-assistant.io/components/switch) | 80
 [`text`](https://www.home-assistant.io/components/text) | 33
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 113
+[`update`](https://www.home-assistant.io/components/update) | 114
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1960
+Total | 1959
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -99,6 +99,7 @@ Total | 1960
 - Mosquitto broker
 - Music Assistant
 - Piper
+- Rethink
 - Samba share
 - Whisper
 

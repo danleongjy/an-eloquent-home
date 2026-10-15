@@ -912,9 +912,6 @@
             "icon": [
               {
                 "height": "24px"
-              },
-              {
-                "color": "var(--state-inactive-color)"
               }
             ],
             "name": [
@@ -1191,6 +1188,11 @@
             "action": "more-info"
           },
           "styles": {
+            "icon": [
+              {
+                "color": "var(--state-inactive-color)"
+              }
+            ],
             "grid": [
               {
                 "grid-template-columns": "56px auto 0px"
@@ -10032,7 +10034,7 @@
                           "variables": {
                             "client": "air_purifier"
                           },
-                          "icon": "mdi:air-filter",
+                          "icon": "mdi:air-purifier",
                           "template": "wifi_device_connectivity"
                         },
                         {
@@ -12636,9 +12638,8 @@
               "cards": [
                 {
                   "type": "heading",
-                  "heading": "Docker",
                   "heading_style": "title",
-                  "icon": "mdi:docker",
+                  "icon": "mdi:camera-iris",
                   "badges": [
                     {
                       "type": "entity",
@@ -12665,72 +12666,8 @@
                         "action": "more-info"
                       }
                     }
-                  ]
-                },
-                {
-                  "type": "tile",
-                  "visibility": [
-                    {
-                      "condition": "state",
-                      "entity": "switch.docker_container_rethink",
-                      "state": "on"
-                    }
                   ],
-                  "entity": "sensor.docker_container_status_rethink",
-                  "name": "Rethink",
-                  "icon": "mdi:toggle-switch-variant",
-                  "color": "amber",
-                  "vertical": false,
-                  "tap_action": {
-                    "action": "more-info"
-                  },
-                  "icon_tap_action": {
-                    "action": "perform-action",
-                    "perform_action": "switch.toggle",
-                    "confirmation": {
-                      "text": "Confirm to toggle container?"
-                    },
-                    "target": {
-                      "entity_id": "switch.docker_container_rethink"
-                    },
-                    "data": {}
-                  },
-                  "features_position": "bottom"
-                },
-                {
-                  "type": "tile",
-                  "visibility": [
-                    {
-                      "condition": "state",
-                      "entity": "switch.docker_container_rethink",
-                      "state_not": "on"
-                    }
-                  ],
-                  "entity": "sensor.docker_container_status_rethink",
-                  "name": "Rethink",
-                  "icon": "mdi:toggle-switch-variant-off",
-                  "vertical": false,
-                  "tap_action": {
-                    "action": "more-info"
-                  },
-                  "icon_tap_action": {
-                    "action": "perform-action",
-                    "perform_action": "switch.toggle",
-                    "confirmation": {
-                      "text": "Confirm to toggle container?"
-                    },
-                    "target": {
-                      "entity_id": "switch.docker_container_rethink"
-                    },
-                    "data": {}
-                  },
-                  "features_position": "bottom"
-                },
-                {
-                  "type": "heading",
-                  "icon": "mdi:camera-iris",
-                  "heading": "Immich",
-                  "heading_style": "subtitle"
+                  "heading": "Immich"
                 },
                 {
                   "type": "tile",
@@ -13444,11 +13381,6 @@
                   "condition": "state",
                   "entity": "sensor.lg_washer_status",
                   "state_not": "unknown"
-                },
-                {
-                  "condition": "state",
-                  "entity": "sensor.lg_washer_status",
-                  "state_not": "Ready"
                 }
               ]
             },
@@ -13490,11 +13422,6 @@
                       "condition": "state",
                       "entity": "sensor.lg_washer_status",
                       "state": "Off"
-                    },
-                    {
-                      "condition": "state",
-                      "entity": "sensor.lg_washer_status",
-                      "state": "Ready"
                     },
                     {
                       "condition": "state",
@@ -17725,6 +17652,7 @@
                   "entity": "select.air_purifier_function",
                   "template": "tile_select_button",
                   "name": "Function",
+                  "icon": "[[[\n  if (entity.state == 'fan') {\n    return 'mdi:fan'\n  }\n]]]\n",
                   "section_mode": true,
                   "grid_options": {
                     "rows": null

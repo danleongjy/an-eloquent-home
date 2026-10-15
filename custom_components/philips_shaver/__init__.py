@@ -6,6 +6,7 @@ from typing import Any
 
 import voluptuous as vol
 
+from homeassistant.components.bluetooth import async_rediscover_address
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
@@ -586,6 +587,7 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     starts clean — the D-Bus pre-check then routes straight to the
     pairing step instead of burning ~85 s of connect attempts against a
     bond the shaver may no longer honour (Sonicare parity).
+    Afterwards the shaver is offered for Bluetooth discovery again.
     """
     await async_remove_stored_data(hass, entry.entry_id)
 
@@ -599,6 +601,20 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     if not remaining:
         await async_remove_card_resource(hass)
 
+    try:
+        await _async_release_bond(hass, entry)
+    finally:
+        # HA only re-offers a removed entry's device when the entry carries a
+        # Bluetooth discovery key, which a shaver added by hand and removed in
+        # the same run never gets. Runs after the bond cleanup, once the
+        # entry is already gone, so the next advertisement opens a fresh
+        # discovery instead of aborting as already configured.
+        if entry.unique_id:
+            async_rediscover_address(hass, entry.unique_id)
+
+
+async def _async_release_bond(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Drop the transport's BLE bond for a removed entry (best effort)."""
     if entry.data.get(CONF_TRANSPORT_TYPE) != TRANSPORT_ESP_BRIDGE:
         # Direct BLE — release the host-side BlueZ bond.
         address = entry.data.get(CONF_ADDRESS)
