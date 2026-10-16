@@ -16345,7 +16345,7 @@
                       "template": "button_card_tile",
                       "entity": "switch.main_door_display_screen",
                       "name": "Screen",
-                      "state_display": "[[[ \n  const view = String(states['sensor.main_door_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('-',' ').replace('_',' ')\n  }\n]]]",
+                      "state_display": "[[[ \n  const view = String(states['sensor.main_door_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else if (view.includes('music')) {\n    return 'Music Assistant'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('-',' ').replace('_',' ')\n  }\n]]]",
                       "double_tap_action": {
                         "action": "call-service",
                         "service": "button.press",
@@ -16689,7 +16689,7 @@
                       "template": "button_card_tile",
                       "entity": "switch.study_table_display_screen",
                       "name": "Screen",
-                      "state_display": "[[[ \n  const view = String(states['sensor.study_table_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('-',' ').replace('_',' ')\n  }\n]]]",
+                      "state_display": "[[[ \n  const view = String(states['sensor.study_table_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else if (view.includes('music')) {\n    return 'Music Assistant'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('-',' ').replace('_',' ')\n  }\n]]]",
                       "double_tap_action": {
                         "action": "call-service",
                         "service": "button.press",
@@ -17015,10 +17015,11 @@
                         }
                       ],
                       "card": {
-                        "type": "custom:button-card",
-                        "template": "button_card_tile",
+                        "type": "tile",
                         "entity": "sensor.philips_shaver_activity",
-                        "name": "Status"
+                        "name": "Status",
+                        "vertical": false,
+                        "features_position": "bottom"
                       }
                     },
                     {
@@ -17037,7 +17038,14 @@
                         "template": "button_card_tile",
                         "entity": "sensor.philips_shaver_days_since_last_use",
                         "name": "Last Used",
-                        "state_display": "[[[ \n  if (entity.state == '1') {\n    return '1 day ago'\n  } else {\n    return entity.state + ' days ago'\n  }\n]]]\n"
+                        "state_display": "[[[ \n  if (entity.state == '1') {\n    return '1 day ago'\n  } else {\n    return entity.state + ' days ago'\n  }\n]]]\n",
+                        "styles": {
+                          "icon": [
+                            {
+                              "color": "var(--state-inactive-color)"
+                            }
+                          ]
+                        }
                       }
                     },
                     {
@@ -17563,6 +17571,9 @@
                     }
                   ],
                   "apex_config": {
+                    "yaxis": {
+                      "max": 250
+                    },
                     "xaxis": {
                       "labels": {
                         "datetimeFormatter": {
