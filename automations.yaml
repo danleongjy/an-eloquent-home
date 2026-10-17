@@ -8609,7 +8609,8 @@
       sequence:
       - condition: template
         value_template: '{{ not (is_state_attr(''fan.air_purifier'', ''percentage'',
-          50) and is_state(''number.air_purifier_oscillation'', ''180.0'')) }}'
+          50) and is_state(''number.air_purifier_oscillation'', ''180.0'') and is_state(''select.air_purifier_function'',
+          ''fan'')) }}'
       - action: fan.turn_on
         metadata: {}
         target:
@@ -8622,6 +8623,12 @@
           entity_id: number.air_purifier_oscillation
         data:
           value: '180'
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: fan
+        target:
+          entity_id: select.air_purifier_function
     - conditions:
       - condition: numeric_state
         entity_id: sensor.living_room_pm2_5
@@ -8629,7 +8636,8 @@
       sequence:
       - condition: template
         value_template: '{{ not (is_state_attr(''fan.air_purifier'', ''percentage'',
-          100) and is_state(''number.air_purifier_oscillation'', ''180.0'')) }}'
+          100) and is_state(''number.air_purifier_oscillation'', ''350.0'')and is_state(''select.air_purifier_function'',
+          ''circulation'')) }}'
       - action: fan.turn_on
         metadata: {}
         target:
@@ -8641,7 +8649,13 @@
         target:
           entity_id: number.air_purifier_oscillation
         data:
-          value: '180'
+          value: '350'
+      - action: select.select_option
+        metadata: {}
+        target:
+          entity_id: select.air_purifier_function
+        data:
+          option: circulation
     - conditions:
       - condition: or
         conditions:
