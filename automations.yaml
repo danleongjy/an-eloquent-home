@@ -8577,12 +8577,12 @@
       minutes: 10
       seconds: 0
     below: 15
-  conditions: []
-  actions:
+  conditions:
   - condition: template
     value_template: '{{ now() - states.fan.air_purifier.last_updated > timedelta(minutes
       = 10) }}'
-    alias: Debounce fan settings by 10min
+    alias: Debounce state changes to air purifier by 10min
+  actions:
   - choose:
     - conditions:
       - condition: occupancy.is_detected
