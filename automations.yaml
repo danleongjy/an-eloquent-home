@@ -8606,6 +8606,10 @@
           entity_id: input_select.home_mode
           state:
           - Away Mode
+      - condition: template
+        value_template: '{{ not ''on'' in states.binary_sensor | selectattr(''entity_id'',
+          ''contains'', ''window'') | map(attribute = ''state'') | list }}'
+        alias: If all windows are closed
       sequence:
       - condition: template
         value_template: '{{ not (is_state_attr(''fan.air_purifier'', ''percentage'',
@@ -8633,6 +8637,10 @@
       - condition: numeric_state
         entity_id: sensor.living_room_pm2_5
         above: 50
+      - condition: template
+        value_template: '{{ not ''on'' in states.binary_sensor | selectattr(''entity_id'',
+          ''contains'', ''window'') | map(attribute = ''state'') | list }}'
+        alias: If all windows are closed
       sequence:
       - condition: template
         value_template: '{{ not (is_state_attr(''fan.air_purifier'', ''percentage'',
@@ -8683,6 +8691,10 @@
                 - binary_sensor.study_room_radar_occupancy
               options:
                 behavior: all
+        - condition: template
+          value_template: '{{ ''on'' in states.binary_sensor | selectattr(''entity_id'',
+            ''contains'', ''window'') | map(attribute = ''state'') | list }}'
+          alias: If windows are open
       sequence:
       - condition: state
         state:
