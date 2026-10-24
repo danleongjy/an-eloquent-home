@@ -652,6 +652,16 @@ _CONFIG_AC385X51 = DeviceModelConfig(
     selects=[PhilipsApi.GAS_PREFERRED_INDEX],
 )
 
+# AC3854/25 config (TH/Asia: five /50 modes without Allergy Sleep, and /51 child lock)
+_CONFIG_AC385X25 = DeviceModelConfig(
+    api_generation=ApiGeneration.GEN1,
+    preset_modes=_AC385X50_PRESET_MODES,
+    speeds=_AC385X50_SPEEDS,
+    switches=[PhilipsApi.CHILD_LOCK],
+    lights=[PhilipsApi.DISPLAY_BACKLIGHT, PhilipsApi.LIGHT_BRIGHTNESS],
+    selects=[PhilipsApi.GAS_PREFERRED_INDEX],
+)
+
 # AC4220/AC4221 config (same as AC32xx but with explicit selects)
 _CONFIG_AC4220 = DeviceModelConfig(
     api_generation=ApiGeneration.GEN3,
@@ -852,9 +862,10 @@ DEVICE_MODELS: dict[str, DeviceModelConfig] = {
         selects=[PhilipsApi.NEW_PREFERRED_INDEX],
     ),
     # =========================================================================
-    # AC2210/AC2221 family (PureProtect Quiet 2200 series, e.g. AC2210/10, AC2221/13)
+    # AC2210/AC2220/AC2221 family (PureProtect Quiet 2200 series)
     # =========================================================================
     FanModel.AC2210: _CONFIG_AC2221,
+    FanModel.AC2220: _CONFIG_AC2221,
     FanModel.AC2221: _CONFIG_AC2221,
     # =========================================================================
     # AC2729
@@ -1265,6 +1276,7 @@ DEVICE_MODELS: dict[str, DeviceModelConfig] = {
     # =========================================================================
     # AC385x/50 family
     # =========================================================================
+    FanModel.AC3854_25: _CONFIG_AC385X25,
     FanModel.AC3854_50: _CONFIG_AC385X50,
     FanModel.AC3858_50: _CONFIG_AC385X50,
     # =========================================================================
@@ -1401,6 +1413,16 @@ DEVICE_MODELS: dict[str, DeviceModelConfig] = {
             PhilipsApi.NEW2_OSCILLATION: PhilipsApi.OSCILLATION_MAP5,
         },
         oscillation_is_angle=True,
+        # AWS_Philips_AIR_Combo@86 firmware never answers a status read; it only
+        # pushes status to observers on a real state change (same as CX7550).
+        # Changing the display backlight (D0312D, 0 = off, 100 = on) forces a
+        # full status push; writing the value it already has does not. The two
+        # values are a (transient, resting) pair: the coordinator ends on the
+        # user's last-known backlight value. See coordinator._build_status_nudge.
+        status_nudge=[
+            (PhilipsApi.NEW2_DISPLAY_BACKLIGHT, 0),
+            (PhilipsApi.NEW2_DISPLAY_BACKLIGHT, 100),
+        ],
     ),
     # =========================================================================
     # CX3120

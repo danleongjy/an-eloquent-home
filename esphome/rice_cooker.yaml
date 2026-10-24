@@ -77,9 +77,9 @@ binary_sensor:
                 option: Standby
   - platform: template
     id: turn_off
-    lambda: "return id(power_sensor).state < 0.4;"
+    lambda: "return id(power_sensor).state < 0.4 || id(lid).state;"
     filters:
-      - delayed_on: 15min
+      - delayed_on: 5min
     on_state:
       then:
         - if:

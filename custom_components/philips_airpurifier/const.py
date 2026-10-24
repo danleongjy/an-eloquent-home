@@ -47,6 +47,7 @@ DEFAULT_NAME = "Philips AirPurifier"
 CONF_MODEL = "model"
 CONF_DEVICE_ID = "device_id"
 CONF_STATUS = "status"
+CONF_LAST_NUDGE_VALUES = "last_nudge_values"
 # MAC address captured during DHCP discovery. Stored so the device is registered
 # with a network-MAC connection, which lets the `registered_devices` DHCP matcher
 # re-discover the device and update its IP after a DHCP lease change. See issue #8.
@@ -96,6 +97,7 @@ class FanModel(StrEnum):
     AC1214 = "AC1214"
     AC1715 = "AC1715"
     AC2210 = "AC2210"
+    AC2220 = "AC2220"
     AC2221 = "AC2221"
     AC2729 = "AC2729"
     AC2889 = "AC2889"
@@ -117,6 +119,7 @@ class FanModel(StrEnum):
     AC3737 = "AC3737"
     AC3829 = "AC3829"
     AC3836 = "AC3836"
+    AC3854_25 = "AC3854/25"
     AC3854_50 = "AC3854/50"
     AC3854_51 = "AC3854/51"
     AC3858_50 = "AC3858/50"

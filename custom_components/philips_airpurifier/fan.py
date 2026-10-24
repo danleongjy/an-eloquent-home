@@ -1,5 +1,9 @@
 """Philips Air Purifier fan platform."""
 
+# Home Assistant re-exports these platform names from the component package
+# without __all__; importing them from there is the public API.
+# pyright: reportPrivateImportUsage=false
+
 from __future__ import annotations
 
 import logging

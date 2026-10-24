@@ -47,11 +47,8 @@ async def async_get_config_entry_diagnostics(
     device_registry = dr.async_get(hass)
     entity_registry = er.async_get(hass)
 
-    device_entry = None
-    for device in device_registry.devices.values():  # pragma: no branch
-        if entry.entry_id in device.config_entries:
-            device_entry = device
-            break
+    device_entries = dr.async_entries_for_config_entry(device_registry, entry.entry_id)
+    device_entry = device_entries[0] if device_entries else None
 
     entities = er.async_entries_for_config_entry(entity_registry, entry.entry_id)
 
