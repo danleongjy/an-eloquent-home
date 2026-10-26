@@ -25,24 +25,24 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 145
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 178
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 177
 [`button`](https://www.home-assistant.io/components/button) | 221
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
-[`camera`](https://www.home-assistant.io/components/camera) | 8
+[`camera`](https://www.home-assistant.io/components/camera) | 5
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 14
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 2
 [`event`](https://www.home-assistant.io/components/event) | 2
 [`fan`](https://www.home-assistant.io/components/fan) | 9
-[`image`](https://www.home-assistant.io/components/image) | 4
+[`image`](https://www.home-assistant.io/components/image) | 7
 [`infrared`](https://www.home-assistant.io/components/infrared) | 4
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 9
 [`input_button`](https://www.home-assistant.io/components/input_button) | 1
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
-[`input_number`](https://www.home-assistant.io/components/input_number) | 20
+[`input_number`](https://www.home-assistant.io/components/input_number) | 21
 [`input_select`](https://www.home-assistant.io/components/input_select) | 9
-[`input_text`](https://www.home-assistant.io/components/input_text) | 20
+[`input_text`](https://www.home-assistant.io/components/input_text) | 19
 [`light`](https://www.home-assistant.io/components/light) | 75
 [`lock`](https://www.home-assistant.io/components/lock) | 1
 [`media_player`](https://www.home-assistant.io/components/media_player) | 11
@@ -53,7 +53,7 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 14
 [`select`](https://www.home-assistant.io/components/select) | 72
-[`sensor`](https://www.home-assistant.io/components/sensor) | 776
+[`sensor`](https://www.home-assistant.io/components/sensor) | 778
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 80
@@ -63,11 +63,12 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1987
+Total | 1988
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
 - [Broadlink](https://home-assistant.io/integrations/broadlink)
+- [Collection Image](https://home-assistant.io/integrations/collection_image)
 - [Conversation](https://home-assistant.io/integrations/conversation)
 - [Downloader](https://home-assistant.io/integrations/downloader)
 - [ESPHome](https://home-assistant.io/integrations/esphome)
@@ -78,7 +79,6 @@ Total | 1987
 - [Google Drive](https://home-assistant.io/integrations/google_drive)
 - [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)
 - [Local Calendar](https://home-assistant.io/integrations/local_calendar)
-- [Local File Camera](https://home-assistant.io/integrations/local_file)
 - [MQTT](https://home-assistant.io/integrations/mqtt)
 - [Music Assistant](https://home-assistant.io/integrations/music_assistant)
 - [Proxmox VE](https://home-assistant.io/integrations/proxmoxve)

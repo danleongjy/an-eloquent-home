@@ -2611,17 +2611,24 @@
                         "elements": [
                           {
                             "type": "image",
-                            "camera_image": "camera.recent_main_door_snapshot_1",
+                            "entity": "image.main_door_camera_recent_snapshot_3",
                             "style": {
                               "top": "27.5%",
                               "left": "75%",
                               "height": "14.5%",
                               "width": "9.5%"
+                            },
+                            "tap_action": {
+                              "action": "perform-action",
+                              "perform_action": "input_number.decrement",
+                              "target": {
+                                "entity_id": "input_number.main_door_camera_recent_snapshot_scrubber"
+                              }
                             }
                           },
                           {
                             "type": "image",
-                            "camera_image": "camera.recent_main_door_snapshot_2",
+                            "entity": "image.main_door_camera_recent_snapshot_2",
                             "style": {
                               "top": "27.5%",
                               "left": "85%",
@@ -2631,12 +2638,19 @@
                           },
                           {
                             "type": "image",
-                            "camera_image": "camera.recent_main_door_snapshot_3",
+                            "entity": "image.main_door_camera_recent_snapshot_1",
                             "style": {
                               "top": "27.5%",
                               "left": "95%",
                               "height": "14.5%",
                               "width": "9.5%"
+                            },
+                            "tap_action": {
+                              "action": "perform-action",
+                              "perform_action": "input_number.increment",
+                              "target": {
+                                "entity_id": "input_number.main_door_camera_recent_snapshot_scrubber"
+                              }
                             }
                           },
                           {
@@ -6106,48 +6120,49 @@
                   }
                 },
                 {
-                  "show_state": false,
-                  "show_name": false,
-                  "camera_view": "auto",
-                  "fit_mode": "cover",
-                  "type": "picture-entity",
-                  "entity": "camera.recent_main_door_snapshot_1",
-                  "image": {
-                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
+                  "type": "picture",
+                  "image_entity": "image.main_door_camera_recent_snapshot_3",
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": "auto"
                   },
+                  "hold_action": {
+                    "action": "more-info"
+                  },
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "input_number.decrement",
+                    "target": {
+                      "entity_id": "input_number.main_door_camera_recent_snapshot_scrubber"
+                    },
+                    "data": {}
+                  }
+                },
+                {
+                  "type": "picture",
+                  "image_entity": "image.main_door_camera_recent_snapshot_2",
                   "grid_options": {
                     "columns": 4,
                     "rows": "auto"
                   }
                 },
                 {
-                  "show_state": false,
-                  "show_name": false,
-                  "camera_view": "auto",
-                  "fit_mode": "cover",
-                  "type": "picture-entity",
-                  "entity": "camera.recent_main_door_snapshot_2",
-                  "image": {
-                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
-                  },
+                  "type": "picture",
+                  "image_entity": "image.main_door_camera_recent_snapshot_1",
                   "grid_options": {
                     "columns": 4,
                     "rows": "auto"
-                  }
-                },
-                {
-                  "show_state": false,
-                  "show_name": false,
-                  "camera_view": "auto",
-                  "fit_mode": "cover",
-                  "type": "picture-entity",
-                  "entity": "camera.recent_main_door_snapshot_3",
-                  "image": {
-                    "media_content_id": "https://demo.home-assistant.io/stub_config/bedroom.png"
                   },
-                  "grid_options": {
-                    "columns": 4,
-                    "rows": "auto"
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "input_number.increment",
+                    "target": {
+                      "entity_id": "input_number.main_door_camera_recent_snapshot_scrubber"
+                    },
+                    "data": {}
+                  },
+                  "hold_action": {
+                    "action": "more-info"
                   }
                 }
               ],
@@ -18422,6 +18437,169 @@
               "cards": [
                 {
                   "type": "heading",
+                  "heading": "Recent Snapshots",
+                  "heading_style": "title",
+                  "icon": "mdi:film"
+                },
+                {
+                  "type": "picture",
+                  "image_entity": "image.main_door_camera_recent_snapshot_3",
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "picture",
+                  "image_entity": "image.main_door_camera_recent_snapshot_2",
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "picture",
+                  "image_entity": "image.main_door_camera_recent_snapshot_1",
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "markdown",
+                      "content": "<ha-icon icon='mdi:numeric-3-circle'></ha-icon> {{ (state_attr('sensor.main_door_camera', 'file_list') | sort)[states('input_number.main_door_camera_recent_snapshot_scrubber') | int - 103].split('/')[-1][-10:-6] }}"
+                    },
+                    {
+                      "type": "markdown",
+                      "content": "<ha-icon icon='mdi:numeric-2-circle'></ha-icon> {{ (state_attr('sensor.main_door_camera', 'file_list') | sort)[states('input_number.main_door_camera_recent_snapshot_scrubber') | int - 102].split('/')[-1][-10:-6] }}"
+                    },
+                    {
+                      "type": "markdown",
+                      "content": "<ha-icon icon='mdi:numeric-1-circle'></ha-icon> {{ (state_attr('sensor.main_door_camera', 'file_list') | sort)[states('input_number.main_door_camera_recent_snapshot_scrubber') | int - 101].split('/')[-1][-10:-6] }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:page-first",
+                  "styles": {
+                    "icon": [
+                      {
+                        "width": "100%"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "input_number.set_value",
+                    "target": {
+                      "entity_id": "input_number.main_door_camera_recent_snapshot_scrubber"
+                    },
+                    "data": {
+                      "value": 0
+                    }
+                  },
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 1
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:chevron-left",
+                  "styles": {
+                    "icon": [
+                      {
+                        "width": "100%"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "input_number.decrement",
+                    "target": {
+                      "entity_id": "input_number.main_door_camera_recent_snapshot_scrubber"
+                    }
+                  },
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 1
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "input_number.main_door_camera_recent_snapshot_scrubber",
+                  "template": "tile_slider",
+                  "name": " ",
+                  "variables": {
+                    "state_color": "[[[\n  if (entity.state != '0') {\n    return 'var(--state-binary-sensor-color)'\n  } else if (entity.state == '0') {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-unavailable-color)'\n  }\n]]]\n"
+                  },
+                  "state_display": "[[[\n  const scrubber_date = states['sensor.main_door_camera'].attributes.file_list.sort()[states['sensor.main_door_camera'].attributes.number_of_files - (100 - parseInt(entity.state) + 1)].split('_')[3] \n  const date_obj = new Date(scrubber_date.slice(0,4), parseInt(scrubber_date.slice(4,6)) - 1, scrubber_date.slice(6,8))\n  return date_obj.toLocaleDateString('default', {weekday: 'long'}) + ' ' + date_obj.getDate() + ' ' + date_obj.toLocaleString('default', {month: 'long'}) + ' ' + date_obj.getFullYear()\n]]]\n",
+                  "icon_tap_action": {
+                    "action": "more-info"
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 8
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:chevron-right",
+                  "styles": {
+                    "icon": [
+                      {
+                        "width": "100%"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "input_number.increment",
+                    "target": {
+                      "entity_id": "input_number.main_door_camera_recent_snapshot_scrubber"
+                    }
+                  },
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 1
+                  }
+                },
+                {
+                  "type": "custom:button-card",
+                  "icon": "mdi:page-last",
+                  "styles": {
+                    "icon": [
+                      {
+                        "width": "100%"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "input_number.set_value",
+                    "target": {
+                      "entity_id": "input_number.main_door_camera_recent_snapshot_scrubber"
+                    },
+                    "data": {
+                      "value": 100
+                    }
+                  },
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 1
+                  }
+                },
+                {
+                  "type": "heading",
                   "heading": "Main Door Lock",
                   "heading_style": "title",
                   "icon": "mdi:door-closed-lock",
@@ -18475,61 +18653,6 @@
                     "rows": 1,
                     "columns": 6
                   }
-                },
-                {
-                  "type": "heading",
-                  "heading": "Recent Snapshots",
-                  "heading_style": "title",
-                  "icon": "mdi:film"
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "show_state": false,
-                      "show_name": false,
-                      "camera_view": "auto",
-                      "type": "picture-entity",
-                      "entity": "camera.recent_main_door_snapshot_1",
-                      "camera_image": "camera.recent_main_door_snapshot_1",
-                      "aspect_ratio": "4:3"
-                    },
-                    {
-                      "show_state": false,
-                      "show_name": false,
-                      "camera_view": "auto",
-                      "type": "picture-entity",
-                      "entity": "camera.recent_main_door_snapshot_2",
-                      "camera_image": "camera.recent_main_door_snapshot_2",
-                      "aspect_ratio": "4:3"
-                    },
-                    {
-                      "show_state": false,
-                      "show_name": false,
-                      "camera_view": "auto",
-                      "type": "picture-entity",
-                      "entity": "camera.recent_main_door_snapshot_3",
-                      "camera_image": "camera.recent_main_door_snapshot_3",
-                      "aspect_ratio": "4:3"
-                    }
-                  ]
-                },
-                {
-                  "type": "horizontal-stack",
-                  "cards": [
-                    {
-                      "type": "markdown",
-                      "content": "<ha-icon icon='mdi:numeric-1-circle'></ha-icon> {{ state_attr('camera.recent_main_door_snapshot_1','file_path')[-10:-8] }}:{{ state_attr('camera.recent_main_door_snapshot_1','file_path')[-8:-6] }}"
-                    },
-                    {
-                      "type": "markdown",
-                      "content": "<ha-icon icon='mdi:numeric-2-circle'></ha-icon> {{ state_attr('camera.recent_main_door_snapshot_2','file_path')[-10:-8] }}:{{ state_attr('camera.recent_main_door_snapshot_2','file_path')[-8:-6] }}"
-                    },
-                    {
-                      "type": "markdown",
-                      "content": "<ha-icon icon='mdi:numeric-3-circle'></ha-icon> {{ state_attr('camera.recent_main_door_snapshot_3','file_path')[-10:-8] }}:{{ state_attr('camera.recent_main_door_snapshot_3','file_path')[-8:-6] }}"
-                    }
-                  ]
                 }
               ]
             }
