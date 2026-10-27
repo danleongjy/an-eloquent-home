@@ -13448,7 +13448,49 @@
                   "entity": "sensor.lg_washer_status",
                   "name": " ",
                   "vertical": false,
-                  "features_position": "bottom"
+                  "features_position": "bottom",
+                  "visibility": [
+                    {
+                      "condition": "not",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity_id": "sensor.lg_washer_status",
+                          "state": [
+                            "unavailable"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:button-card",
+                  "entity": "sensor.lg_washer_status",
+                  "template": "button_card_tile",
+                  "name": " ",
+                  "state_display": "Off (Offline)",
+                  "styles": {
+                    "icon": [
+                      {
+                        "color": "var(--state-inactive-color)"
+                      }
+                    ]
+                  },
+                  "section_mode": true,
+                  "grid_options": {
+                    "rows": 1,
+                    "columns": 6
+                  },
+                  "visibility": [
+                    {
+                      "condition": "state",
+                      "entity_id": "sensor.lg_washer_status",
+                      "state": [
+                        "unavailable"
+                      ]
+                    }
+                  ]
                 },
                 {
                   "type": "tile",
@@ -13533,18 +13575,6 @@
                     {
                       "entity": "input_boolean.washer_load_clean",
                       "state": "on"
-                    }
-                  ]
-                },
-                {
-                  "type": "markdown",
-                  "content": "<ha-alert alert-type=\"info\">Washer is offline. Awaiting reconnection...</ha-alert>",
-                  "text_only": true,
-                  "visibility": [
-                    {
-                      "condition": "state",
-                      "entity": "sensor.lg_washer_status",
-                      "state": "unavailable"
                     }
                   ]
                 }

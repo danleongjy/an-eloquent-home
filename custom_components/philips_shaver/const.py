@@ -147,6 +147,10 @@ CHAR_TRAVEL_LOCK = "8d56010c-3cb9-4387-a7e8-b79d826a7025"
 	UUID: 0x2902
 """
 CHAR_CLEANING_PROGRESS = "8d56011a-3cb9-4387-a7e8-b79d826a7025"
+# Same value (uint8 percent, NOTIFY/READ) in the control service. The
+# i9000 Prestige line (XP) only has 0x011A; models without 0x011A are
+# expected to report it here. The coordinator merges both.
+CHAR_CLEANING_PROGRESS_CONTROL = "8d560318-3cb9-4387-a7e8-b79d826a7025"
 """
 	Unknown Characteristic
 	UUID: 8d56031a-3cb9-4387-a7e8-b79d826a7025
@@ -497,7 +501,8 @@ POLL_READ_CHARS = [
     CHAR_SHAVING_TIME,
     CHAR_DEVICE_STATE,
     CHAR_TRAVEL_LOCK,
-    # CHAR_CLEANING_PROGRESS,
+    CHAR_CLEANING_PROGRESS,
+    CHAR_CLEANING_PROGRESS_CONTROL,
     CHAR_CLEANING_CYCLES,
     # CHAR_MOTOR_CURRENT,
     CHAR_MOTOR_CURRENT_MAX,
@@ -554,6 +559,17 @@ CONF_ESP_DEVICE_ID_LEGACY = "esp_device_id"
 # requires the new ble_pair_mode/ble_unpair/ble_scan/ble_pair_mac services
 # and the pair_capable / identity_source fields in the heartbeat payload.
 MIN_BRIDGE_VERSION = "1.8.0"
+
+# ESP-IDF releases whose Bluetooth stack forgets a bond after the first
+# reconnect (espressif/esp-idf#19286): re-encrypting with the stored key clears
+# the key in memory, and the disconnect then deletes the device record. Only a
+# reboot of the ESP reloads it from flash. ESP-IDF 5.5.6 is the default of
+# ESPHome 2026.10.0. Bridges built with one of these raise a Repairs warning.
+IDF_BOND_LOSS_VERSIONS = ("5.5.6",)
+IDF_BOND_LOSS_ISSUE_URL = (
+    "https://github.com/mtheli/philips_shaver/blob/main/esphome/KNOWN_ISSUES.md"
+    "#esp-bridge-loses-pairings-with-esp-idf-556"
+)
 
 # Bridges from this version serialise overlapping GATT reads through their
 # pending-calls queue, so the transport may fire its poll cycle concurrently
@@ -638,6 +654,7 @@ CHAR_SERVICE_MAP: dict[str, str] = {
     CHAR_LIGHTRING_COLOR_HIGH: SVC_CONTROL,
     CHAR_LIGHTRING_COLOR_MOTION: SVC_CONTROL,
     CHAR_LIGHTRING_COLOR_BRIGHTNESS: SVC_CONTROL,
+    CHAR_CLEANING_PROGRESS_CONTROL: SVC_CONTROL,
     CHAR_CLEANING_CYCLES: SVC_CONTROL,
     CHAR_HANDLE_LOAD_TYPE: SVC_CONTROL,
     CHAR_SHAVING_MODE: SVC_CONTROL,

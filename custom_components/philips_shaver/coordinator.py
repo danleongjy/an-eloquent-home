@@ -34,6 +34,8 @@ from .exceptions import TransportError
 from .const import (
     DOMAIN,
     MIN_BRIDGE_VERSION,
+    IDF_BOND_LOSS_VERSIONS,
+    IDF_BOND_LOSS_ISSUE_URL,
     CHAR_AMOUNT_OF_CHARGES,
     CHAR_AMOUNT_OF_OPERATIONAL_TURNS,
     CHAR_APP_HANDLE_SETTINGS,
@@ -42,6 +44,7 @@ from .const import (
     CHAR_BATTERY_LEVEL,
     CHAR_CLEANING_CYCLES,
     CHAR_CLEANING_PROGRESS,
+    CHAR_CLEANING_PROGRESS_CONTROL,
     CHAR_DAYS_SINCE_LAST_USED,
     CHAR_DEVICE_STATE,
     CHAR_FIRMWARE_REVISION,
@@ -166,6 +169,14 @@ _CHAR_NAMES = {
 }
 
 
+# Characteristics that carry the same value on different models. A model
+# missing one of them is only reported when it lacks the other as well.
+_ALTERNATIVE_CHARS = {
+    CHAR_CLEANING_PROGRESS: CHAR_CLEANING_PROGRESS_CONTROL,
+    CHAR_CLEANING_PROGRESS_CONTROL: CHAR_CLEANING_PROGRESS,
+}
+
+
 def _describe_char(char_uuid: str) -> str:
     """Readable name plus the 16-bit short id, e.g. 'head remaining (0117)'."""
     short = char_uuid[4:8].upper()
@@ -193,6 +204,7 @@ NOTIFICATION_CHARS = [
     CHAR_AMOUNT_OF_CHARGES,
     CHAR_AMOUNT_OF_OPERATIONAL_TURNS,
     CHAR_CLEANING_PROGRESS,
+    CHAR_CLEANING_PROGRESS_CONTROL,
     CHAR_CLEANING_CYCLES,
     CHAR_HEAD_REMAINING,
     CHAR_HEAD_REMAINING_MINUTES,
@@ -239,6 +251,8 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             self._notify_chars = list(NOTIFICATION_CHARS)
 
         self._is_esp_bridge = isinstance(transport, EspBridgeTransport)
+        if self._is_esp_bridge:
+            transport.set_build_info_callback(self._on_bridge_build_changed)
         # Sticky cache for adapter_type — backend object can become None on
         # disconnect, but the diagnostic sensor should keep showing the last
         # known classification rather than flickering to "unknown" every time
@@ -265,6 +279,8 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         # set event as "device is awake".
         self._adv_wake = False
         self._unsub_advertisement = None
+        # Last value per cleaning-progress source (0x011A, 0x0318).
+        self._cleaning_sources: dict[str, int] = {}
 
         _LOGGER.debug(
             "Initializing coordinator for %s (transport: %s)",
@@ -291,7 +307,10 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "shaving_time": None,
             "device_state": "off",
             "travel_lock": None,
-            "cleaning_progress": 100,
+            # Unknown until a cleaning-progress characteristic reports; see
+            # async_load_stored_data for the value after a restart.
+            "cleaning_progress": None,
+            "cleaning_progress_reported": False,
             "cleaning_cycles": None,
             "motor_rpm": 0,
             "motor_current_ma": 0,
@@ -354,6 +373,11 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         for key in _COLOR_KEYS:
             if isinstance(restored.get(key), list):
                 restored[key] = tuple(restored[key])
+        # The progress itself is not persisted (a stored mid-cleaning value
+        # would fake a running cleaning). A model that has reported one
+        # before starts at its idle value instead of "unknown".
+        if restored.get("cleaning_progress_reported"):
+            restored["cleaning_progress"] = 100
         self.data = {**(self.data or {}), **restored}
         _LOGGER.debug(
             "Restored %d stored values for %s", len(restored), self.address
@@ -592,8 +616,16 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         if raw := results.get(CHAR_TRAVEL_LOCK):
             new_data["travel_lock"] = raw[0] == 1
 
-        if raw := results.get(CHAR_CLEANING_PROGRESS):
-            new_data["cleaning_progress"] = raw[0]
+        for char in (CHAR_CLEANING_PROGRESS, CHAR_CLEANING_PROGRESS_CONTROL):
+            if raw := results.get(char):
+                self._cleaning_sources[char] = raw[0]
+        if self._cleaning_sources:
+            # A running cleaning (1–99) wins; otherwise the highest value.
+            # 100 is the idle value, 0 means no cleaning is running.
+            values = self._cleaning_sources.values()
+            running = [v for v in values if 0 < v < 100]
+            new_data["cleaning_progress"] = running[0] if running else max(values)
+            new_data["cleaning_progress_reported"] = True
 
         if raw := results.get(CHAR_CLEANING_CYCLES):
             new_data["cleaning_cycles"] = int.from_bytes(raw, "little")
@@ -844,6 +876,12 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     _LOGGER.info("Establishing live connection to %s...", self.address)
                     await self.transport.connect()
 
+                    # The bridge reports its build environment while the
+                    # transport waits for it, before the shaver is connected —
+                    # check here so the warning shows even if it never is.
+                    if self._is_esp_bridge:
+                        self._check_bridge_idf()
+
                     # ESP bridge: wait for BLE device to actually connect
                     if self._is_esp_bridge and not self.transport.is_connected:
                         _LOGGER.debug(
@@ -931,6 +969,7 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
                     if self._is_esp_bridge:
                         self._check_bridge_version()
+                        self._check_bridge_idf()
                         if self.transport.needs_resubscribe:
                             self.transport.acknowledge_resubscribe()
 
@@ -1075,6 +1114,11 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             # out. Drop it so reconnects don't retry, and report it once in
             # one line: it is harmless, but it is how unknown models show up.
             self._notify_chars = [c for c in self._notify_chars if c not in missing]
+            missing = [
+                c for c in missing
+                if c not in _ALTERNATIVE_CHARS or _ALTERNATIVE_CHARS[c] in missing
+            ]
+        if missing:
             data = self.data or {}
             _LOGGER.warning(
                 "Philips shaver %s (firmware %s) does not provide: %s. "
@@ -1228,6 +1272,54 @@ class PhilipsShaverCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         else:
             return self._last_adapter_type or "unknown"
         return self._last_adapter_type
+
+    @callback
+    def _on_bridge_build_changed(self) -> None:
+        """Re-run the build-dependent check and refresh the build sensors.
+
+        The bridge reports its build fields in info events, which after a
+        reflash often arrive only after the live setup already ran its
+        check — without this the repair issue and the ESP Build/Chip
+        sensors would keep the previous firmware's values.
+        """
+        self._check_bridge_idf()
+        self.async_update_listeners()
+
+    def _check_bridge_idf(self) -> None:
+        """Create or clear a repair issue if the bridge runs an ESP-IDF that loses bonds."""
+        assert isinstance(self.transport, EspBridgeTransport)
+        idf = self.transport.idf_version
+        if not idf:
+            return
+        esp_name = self.entry.data.get(CONF_ESP_DEVICE_NAME) or self.address
+        # One issue per ESP device: every slot on it is affected the same way.
+        issue_id = f"esp_bridge_idf_bond_loss_{esp_name.lower()}"
+        # esp_get_idf_version() reports e.g. "v5.5.6" or "v5.5.6-dirty".
+        release = idf.lstrip("v").split("-")[0]
+        if release in IDF_BOND_LOSS_VERSIONS:
+            ir.async_create_issue(
+                self.hass,
+                DOMAIN,
+                issue_id,
+                is_fixable=False,
+                severity=ir.IssueSeverity.ERROR,
+                learn_more_url=IDF_BOND_LOSS_ISSUE_URL,
+                translation_key="esp_bridge_idf_bond_loss",
+                translation_placeholders={
+                    "esp_device": esp_name,
+                    "idf_version": idf,
+                },
+            )
+            _LOGGER.warning(
+                "%s: ESP bridge %s is built with ESP-IDF %s, which loses "
+                "bonds after the first reconnect (esp-idf#19286) — rebuild "
+                "with `esp32: framework: version: 5.5.5`",
+                self.address,
+                esp_name,
+                idf,
+            )
+        else:
+            ir.async_delete_issue(self.hass, DOMAIN, issue_id)
 
     def _check_bridge_version(self) -> None:
         """Create or clear a HA repair issue if the ESP bridge firmware is outdated."""
