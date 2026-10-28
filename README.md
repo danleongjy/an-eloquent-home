@@ -15,7 +15,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
-* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [18.3](https://github.com/home-assistant/operating-system/releases/tag/18.3) running in a [Proxmox VM](https://www.proxmox.com/)
+* [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [18.3](https://github.com/home-assistant/operating-system/releases/tag/18.4) running in a [Proxmox VM](https://www.proxmox.com/)
 * [Home Assistant Core 2026.10.4](https://github.com/home-assistant/core/releases/tag/2026.10.4)
 * 4 cores, 6GB RAM, 32GB storage
 
@@ -25,7 +25,7 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 145
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 177
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 178
 [`button`](https://www.home-assistant.io/components/button) | 221
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 5
@@ -63,7 +63,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1989
+Total | 1990
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
