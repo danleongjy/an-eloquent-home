@@ -2730,7 +2730,7 @@
           state: cool
         - condition: numeric_state
           entity_id: sensor.one_hour_pollutant_standards_index
-          above: 80
+          above: input_number.air_quality_threshold
       - condition: not
         conditions:
         - condition: state
@@ -2765,7 +2765,7 @@
           | int(0)) }}'
       - condition: numeric_state
         entity_id: sensor.one_hour_pollutant_standards_index
-        below: 80
+        below: input_number.air_quality_threshold
       - condition: not
         conditions:
         - condition: state
@@ -2822,7 +2822,7 @@
             state_attr('sun.sun', 'azimuth') <= 105 }}"
       - condition: numeric_state
         entity_id: sensor.one_hour_pollutant_standards_index
-        below: 80
+        below: input_number.air_quality_threshold
     - condition: template
       value_template: '{{ now() - states[''cover.kitchen_blind''].last_changed > timedelta(minutes
         = states(''input_number.blinds_auto_control_debounce'') | int(0)) }}'
@@ -8712,4 +8712,59 @@
         target:
           entity_id: fan.air_purifier
         data: {}
+  mode: single
+- id: '1793350885473'
+  alias: Notify When Poor Air Quality With Windows Open
+  description: Send a persistent notification when windows are open with poor air
+    quality, and clear notification when no windows are open with poor air quality
+  triggers:
+  - entity_id:
+    - binary_sensor.poor_air_quality_with_windows_open
+    id: notify
+    from:
+    - 'off'
+    to:
+    - 'on'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    trigger: state
+  - entity_id:
+    - binary_sensor.poor_air_quality_with_windows_open
+    id: clear
+    from:
+    - 'on'
+    to:
+    - 'off'
+    trigger: state
+  conditions: []
+  actions:
+  - if:
+    - condition: trigger
+      id: notify
+    then:
+    - data:
+        message: Poor air quality with windows open
+        title: Please close the windows
+        data:
+          tag: windows_open
+      action: notify.mobile_app_aurora
+    - data:
+        message: Poor air quality with windows open
+        title: Please close the windows
+        data:
+          tag: windows_open
+      action: notify.mobile_app_grace_iphone_14
+    else:
+    - data:
+        message: clear_notification
+        data:
+          tag: windows_open
+      action: notify.mobile_app_aurora
+    - data:
+        message: clear_notification
+        data:
+          tag: windows_open
+      action: notify.mobile_app_grace_iphone_14
   mode: single
