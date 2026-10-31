@@ -6910,9 +6910,9 @@
           {{ time_since(as_datetime(states('sensor.washer_last_wash_completed')))
           }} ago.\n  {{ 'Please unload the laundry.' if is_state('input_boolean.washer_load_clean',
           'on') }}\n{% else %}\n  {% set countdown = namespace(hours = ((states('sensor.lg_washer_remaining_time')
-          | float(0)) *60 // 60) | int(0),\n                               minutes
-          = ((states('sensor.lg_washer_remaining_time') | float(0)) * 60 % 60) | int)
-          %}\n  The current run started {{ time_since(as_datetime(states('sensor.washer_last_wash_started')))
+          | float(0)) *60 // 60) | int(0) + max(0, (states('sensor.lg_washer_reserve_time')
+          | int(0)) - 1),\n                               minutes = ((states('sensor.lg_washer_remaining_time')
+          | float(0)) * 60 % 60) | int) %}\n  The current run started {{ time_since(as_datetime(states('sensor.washer_last_wash_started')))
           }} ago.\n  {% if countdown.hours > 0 or countdown.minutes > 0 %}\n  The
           remaining {{ 100 - states('sensor.washer_wash_progress') | int(0) }}% of
           the run will complete in {{ countdown.hours if countdown.hours > 0 }}{{
@@ -6920,7 +6920,7 @@
           ' and ' if countdown.hours > 0 and countdown.minutes > 0 }}{{ countdown.minutes
           if countdown.minutes > 0 }}{{ ' minutes' if countdown.minutes > 1 else '
           minute' if countdown.minutes == 1 }} at {{ (now() + timedelta(hours = countdown.hours,
-          minutes = countdown.minutes)).strftime('%I:%M%p') }}\n  {% endif %}\n{%
+          minutes = countdown.minutes)).strftime('%I:%M%p') }}.\n  {% endif %}\n{%
           endif %}"
     - conditions:
       - alias: If it is one of the Dishwasher triggers

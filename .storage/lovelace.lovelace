@@ -2063,7 +2063,7 @@
                 "type": "custom:button-card",
                 "entity": "switch.lg_washer",
                 "template": "washer_more_info",
-                "label": "[[[ return states['sensor.lg_washer_reserve_time'].state + 'h' ]]]"
+                "label": "[[[ return (states['sensor.lg_washer_reserve_time'].state).toString() + 'h' ]]]"
               },
               "Washing": {
                 "type": "custom:button-card",
@@ -13412,14 +13412,25 @@
                   "features_position": "bottom"
                 },
                 {
+                  "type": "custom:button-card",
+                  "entity": "sensor.lg_washer_soil_level",
+                  "section_mode": true,
                   "show_name": false,
-                  "show_icon": true,
-                  "type": "button",
+                  "state": [
+                    {
+                      "operator": "!=",
+                      "value": "Intensive",
+                      "color": "var(--state-inactive-color)"
+                    },
+                    {
+                      "value": "Intensive",
+                      "color": "var(--state-binary-sensor-color)"
+                    }
+                  ],
                   "grid_options": {
-                    "columns": 2,
-                    "rows": 1
-                  },
-                  "entity": "binary_sensor.lg_washer_turbowash"
+                    "rows": 1,
+                    "columns": 2
+                  }
                 },
                 {
                   "show_name": false,
