@@ -139,30 +139,12 @@
       button_down_long_loop: true
       button_up_long_loop: true
       action_button_up_double:
-      - if:
-        - condition: state
-          entity_id:
-          - automation.playroom_motion_lights
-          - automation.yard_motion_light
-          state: 'on'
-        then:
-        - action: script.lights_controller
-          metadata: {}
-          data:
-            lights:
-            - light.yard_light_entity
-            - light.playroom_lights
-            - light.playroom_fan_light
-            command: lights_manual_control
-        else:
-        - action: script.lights_controller
-          metadata: {}
-          data:
-            lights:
-            - light.yard_light_entity
-            - light.playroom_lights
-            - light.playroom_fan_light
-            command: lights_auto_control
+      - action: script.set_recommended_scene
+        metadata: {}
+        data:
+          room:
+          - playroom
+          - yard
       button_up_double_press: true
       action_button_down_double:
       - action: script.lights_controller
@@ -173,6 +155,7 @@
           - light.yard_light_entity
           - light.playroom_fan_light
           command: turn_off_room
+      button_down_double_press: true
 - id: '1643644178195'
   alias: Powder Room Lights Controller
   description: Control the Powder Room Lights
@@ -764,6 +747,11 @@
           data:
             cover: cover.kitchen_blind
             command: cover_auto_control
+      - action: script.set_recommended_scene
+        metadata: {}
+        data:
+          room:
+          - kitchen
       action_button_down_double:
       - action: script.lights_controller
         metadata: {}
