@@ -25,7 +25,7 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 2
 [`automation`](https://www.home-assistant.io/components/automation) | 146
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 178
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 179
 [`button`](https://www.home-assistant.io/components/button) | 221
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 5
@@ -53,17 +53,17 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 14
 [`select`](https://www.home-assistant.io/components/select) | 72
-[`sensor`](https://www.home-assistant.io/components/sensor) | 781
+[`sensor`](https://www.home-assistant.io/components/sensor) | 785
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 80
 [`text`](https://www.home-assistant.io/components/text) | 33
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 115
+[`update`](https://www.home-assistant.io/components/update) | 116
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 1994
+Total | 2000
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -95,6 +95,7 @@ Total | 1994
 
 ### Add-ons
 - ESPHome Device Builder
+- Everything Presence Zone Configurator
 - File editor
 - Mosquitto broker
 - Music Assistant
