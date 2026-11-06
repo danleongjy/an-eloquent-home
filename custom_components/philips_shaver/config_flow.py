@@ -99,6 +99,7 @@ from .transport import (
     UNPAIR_OK,
     UNPAIR_UNAVAILABLE,
     EspBridgeTransport,
+    _cleanup_disconnected_client,
     async_unpair_bridge_slot,
     describe_available_paths,
     describe_connection_path,
@@ -884,8 +885,14 @@ class PhilipsShaverConfigFlow(ConfigFlow, domain=DOMAIN):
             _LOGGER.error("Connection error during capabilities fetch: %s", err)
             raise CannotConnectException from err
         finally:
-            if client and client.is_connected:
-                await client.disconnect()
+            # Not gated on is_connected: a client the shaver already
+            # disconnected still needs disconnect() called to close
+            # bleak's own D-Bus connection. Reuses the shared helper
+            # instead of a duplicated inline try/except — it already
+            # swallows disconnect()'s own exceptions, so it can't mask
+            # the real error being raised from this block.
+            if client:
+                await _cleanup_disconnected_client(client)
 
         return capabilities
 

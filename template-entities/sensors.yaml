@@ -300,10 +300,13 @@
 - trigger:
   - platform: state
     entity_id: sensor.philips_shaver_last_session_duration
-    from: '0'
+    not_from:
+      - unavailable
+      - unknown
     not_to:
       - unavailable
       - unknown
+      - '0.0'
     for:
       minutes: 1
     id: shaving_completed
