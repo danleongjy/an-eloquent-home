@@ -5550,7 +5550,20 @@
                     {
                       "type": "custom:button-card",
                       "template": "top_row",
-                      "entity": "switch.study_table_display_vs_mute"
+                      "entity": "switch.study_table_display_vs_mute",
+                      "state": [
+                        {
+                          "operator": "!=",
+                          "value": "off",
+                          "icon": "mdi:microphone-off",
+                          "color": "var(--state-inactive-color)"
+                        },
+                        {
+                          "value": "off",
+                          "icon": "mdi:microphone-message",
+                          "color": "var(--state-binary-sensor-color)"
+                        }
+                      ]
                     },
                     {
                       "type": "custom:state-switch",
@@ -16497,7 +16510,15 @@
                   "type": "heading",
                   "icon": "mdi:tablet",
                   "heading_style": "title",
-                  "heading": "Main Door Display"
+                  "heading": "Main Door Display",
+                  "badges": [
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.main_door_display_cpu_usage"
+                    }
+                  ]
                 },
                 {
                   "square": false,
@@ -16506,18 +16527,18 @@
                   "cards": [
                     {
                       "type": "custom:button-card",
-                      "template": "button_card_tile",
+                      "template": "tile_slider",
                       "entity": "light.main_door_display_screen",
                       "name": "Screen",
                       "state_display": "[[[ \n  const view = String(states['sensor.main_door_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else if (view.includes('music')) {\n    return 'Music Assistant'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('-',' ').replace('_',' ')\n  }\n]]]",
+                      "variables": {
+                        "state_color": "[[[\n  if (entity.state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else if (entity.state == 'off') {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-unavailable-color)'\n  }\n]]]\n"
+                      },
                       "double_tap_action": {
                         "action": "call-service",
-                        "service": "select.select_option",
+                        "service": "button.press",
                         "target": {
-                          "entity_id": "select.main_door_display_dashboard_view"
-                        },
-                        "data": {
-                          "option": "lovelace/0"
+                          "entity_id": "button.main_door_display_go_to_dashboard"
                         }
                       },
                       "hold_action": {
@@ -16590,6 +16611,36 @@
                       "grid_options": {
                         "columns": 6,
                         "rows": "auto"
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "button_card_tile",
+                      "entity": "switch.main_door_display_vs_mute",
+                      "name": "Voice Assist",
+                      "state": [
+                        {
+                          "operator": "!=",
+                          "value": "off",
+                          "icon": "mdi:microphone-off",
+                          "color": "var(--state-inactive-color)",
+                          "state_display": "Not listening"
+                        },
+                        {
+                          "value": "off",
+                          "icon": "mdi:microphone-message",
+                          "color": "var(--state-binary-sensor-color)",
+                          "state_display": "[[[ return helpers.localize(states['assist_satellite.main_door_display_assist_satellite']) ]]]"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "tile_status_bar",
+                      "entity": "sensor.main_door_display_ram_available",
+                      "name": "RAM Free",
+                      "variables": {
+                        "denominator": "[[[ return states['sensor.main_door_display_ram_total'].state ]]]"
                       }
                     }
                   ]
@@ -16880,7 +16931,15 @@
                   "type": "heading",
                   "icon": "mdi:cellphone",
                   "heading_style": "title",
-                  "heading": "Study Table Display"
+                  "heading": "Study Table Display",
+                  "badges": [
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.study_table_display_cpu_usage"
+                    }
+                  ]
                 },
                 {
                   "square": false,
@@ -16889,18 +16948,18 @@
                   "cards": [
                     {
                       "type": "custom:button-card",
-                      "template": "button_card_tile",
+                      "template": "tile_slider",
                       "entity": "light.study_table_display_screen",
                       "name": "Screen",
                       "state_display": "[[[ \n  const view = String(states['sensor.study_table_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else if (view.includes('music')) {\n    return 'Music Assistant'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('-',' ').replace('_',' ')\n  }\n]]]",
+                      "variables": {
+                        "state_color": "[[[\n  if (entity.state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else if (entity.state == 'off') {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-unavailable-color)'\n  }\n]]]\n"
+                      },
                       "double_tap_action": {
                         "action": "call-service",
-                        "service": "select.select_option",
+                        "service": "button.press",
                         "target": {
-                          "entity_id": "select.study_table_display_dashboard_view"
-                        },
-                        "data": {
-                          "option": "lovelace/study-table"
+                          "entity_id": "button.study_table_display_go_to_dashboard"
                         }
                       },
                       "hold_action": {
@@ -16973,6 +17032,36 @@
                       "grid_options": {
                         "columns": 6,
                         "rows": "auto"
+                      }
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "button_card_tile",
+                      "entity": "switch.study_table_display_vs_mute",
+                      "name": "Voice Assist",
+                      "state": [
+                        {
+                          "operator": "!=",
+                          "value": "off",
+                          "icon": "mdi:microphone-off",
+                          "color": "var(--state-inactive-color)",
+                          "state_display": "Not listening"
+                        },
+                        {
+                          "value": "off",
+                          "icon": "mdi:microphone-message",
+                          "color": "var(--state-binary-sensor-color)",
+                          "state_display": "[[[ return helpers.localize(states['assist_satellite.study_table_display_assist_satellite']) ]]]"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "custom:button-card",
+                      "template": "tile_status_bar",
+                      "entity": "sensor.study_table_display_ram_available",
+                      "name": "RAM Free",
+                      "variables": {
+                        "denominator": "[[[ return states['sensor.study_table_display_ram_total'].state ]]]"
                       }
                     }
                   ]
