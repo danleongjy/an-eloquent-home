@@ -23,19 +23,19 @@ The network topology demonstrates some principles we employ in setting up our sy
 
 Domain | Quantity
 -- | --
-[`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 3
-[`automation`](https://www.home-assistant.io/components/automation) | 146
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 180
-[`button`](https://www.home-assistant.io/components/button) | 229
+[`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 4
+[`automation`](https://www.home-assistant.io/components/automation) | 148
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 182
+[`button`](https://www.home-assistant.io/components/button) | 236
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
-[`camera`](https://www.home-assistant.io/components/camera) | 6
+[`camera`](https://www.home-assistant.io/components/camera) | 7
 [`climate`](https://www.home-assistant.io/components/climate) | 6
 [`conversation`](https://www.home-assistant.io/components/conversation) | 1
 [`cover`](https://www.home-assistant.io/components/cover) | 14
 [`device_tracker`](https://www.home-assistant.io/components/device_tracker) | 2
 [`event`](https://www.home-assistant.io/components/event) | 2
 [`fan`](https://www.home-assistant.io/components/fan) | 9
-[`image`](https://www.home-assistant.io/components/image) | 6
+[`image`](https://www.home-assistant.io/components/image) | 5
 [`infrared`](https://www.home-assistant.io/components/infrared) | 4
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 9
 [`input_button`](https://www.home-assistant.io/components/input_button) | 1
@@ -43,27 +43,27 @@ Domain | Quantity
 [`input_number`](https://www.home-assistant.io/components/input_number) | 22
 [`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 19
-[`light`](https://www.home-assistant.io/components/light) | 76
+[`light`](https://www.home-assistant.io/components/light) | 77
 [`lock`](https://www.home-assistant.io/components/lock) | 1
-[`media_player`](https://www.home-assistant.io/components/media_player) | 10
-[`notify`](https://www.home-assistant.io/components/notify) | 4
-[`number`](https://www.home-assistant.io/components/number) | 101
+[`media_player`](https://www.home-assistant.io/components/media_player) | 6
+[`notify`](https://www.home-assistant.io/components/notify) | 2
+[`number`](https://www.home-assistant.io/components/number) | 108
 [`person`](https://www.home-assistant.io/components/person) | 2
 [`radio_frequency`](https://www.home-assistant.io/components/radio_frequency) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 14
-[`select`](https://www.home-assistant.io/components/select) | 86
-[`sensor`](https://www.home-assistant.io/components/sensor) | 811
+[`select`](https://www.home-assistant.io/components/select) | 100
+[`sensor`](https://www.home-assistant.io/components/sensor) | 836
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 99
-[`text`](https://www.home-assistant.io/components/text) | 34
+[`switch`](https://www.home-assistant.io/components/switch) | 117
+[`text`](https://www.home-assistant.io/components/text) | 35
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 117
+[`update`](https://www.home-assistant.io/components/update) | 118
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 2075
+Total | 2148
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
@@ -73,7 +73,6 @@ Total | 2075
 - [Downloader](https://home-assistant.io/integrations/downloader)
 - [ESPHome](https://home-assistant.io/integrations/esphome)
 - [Folder Sensor](https://home-assistant.io/integrations/folder)
-- [Fully Kiosk](https://home-assistant.io/integrations/fully_kiosk)
 - [Generic Camera](https://home-assistant.io/integrations/generic)
 - [Google Assistant](https://home-assistant.io/integrations/google_assistant)
 - [Google Drive](https://home-assistant.io/integrations/google_drive)
@@ -88,7 +87,6 @@ Total | 2075
 - [Shell Command](https://home-assistant.io/integrations/shell_command)
 - [Switchbot Bluetooth](https://home-assistant.io/integrations/switchbot)
 - [Template](https://home-assistant.io/integrations/template)
-- [Time & Date](https://home-assistant.io/integrations/time_date)
 - [Wyoming Protocol](https://home-assistant.io/integrations/wyoming)
 - [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
 ## Extensions

@@ -1103,6 +1103,9 @@
           - automation.study_room_motion_ac
           - automation.study_room_motion_fan
           - automation.study_room_motion_lights
+          - automation.dining_room_voice_assistant_listening_for_wake_word
+          - automation.playroom_voice_assistant_listening_for_wake_word
+          - automation.dining_room_voice_assistant_listening_for_wake_word
           - automation.study_room_voice_assistant_listening_for_wake_word
           - automation.kitchen_voice_assistant_listening_for_wake_word
           - automation.elenas_room_curtains_auto_control
@@ -1148,9 +1151,16 @@
         data: {}
         target:
           entity_id:
-          - switch.study_room_voice_assistant_use_wake_word
           - switch.kitchen_core_use_wake_word
+          - switch.playroom_voice_assistant_use_wake_word
         action: switch.turn_off
+      - action: switch.turn_on
+        metadata: {}
+        target:
+          entity_id:
+          - switch.study_table_display_vs_mute
+          - switch.main_door_display_vs_mute
+        data: {}
     - conditions:
       - condition: template
         value_template: '{{ trigger.from_state.state == ''Party Mode'' }}'
@@ -1234,6 +1244,7 @@
           - automation.study_room_motion_ac
           - automation.study_room_motion_fan
           - automation.study_room_motion_lights
+          - automation.dining_room_voice_assistant_listening_for_wake_word
           - automation.study_room_voice_assistant_listening_for_wake_word
           - automation.kitchen_voice_assistant_listening_for_wake_word
           - automation.elenas_room_curtains_auto_control
@@ -1360,6 +1371,8 @@
           - automation.study_room_motion_fan
           - automation.study_room_motion_lights
           - automation.doorbell
+          - automation.dining_room_voice_assistant_listening_for_wake_word
+          - automation.playroom_voice_assistant_listening_for_wake_word
           - automation.study_room_voice_assistant_listening_for_wake_word
           - automation.kitchen_voice_assistant_listening_for_wake_word
           - automation.elenas_room_curtains_auto_control
@@ -1400,6 +1413,18 @@
           volume_level: 0.5
       - if:
         - condition: state
+          entity_id: binary_sensor.dining_room_radar_zone_2_occupancy
+          state:
+          - 'on'
+        then:
+        - action: switch.turn_off
+          metadata: {}
+          target:
+            entity_id:
+            - switch.main_door_display_vs_mute
+          data: {}
+      - if:
+        - condition: state
           entity_id: binary_sensor.kitchen_radar_occupancy
           state: 'on'
         then:
@@ -1410,6 +1435,17 @@
             entity_id: switch.kitchen_core_use_wake_word
       - if:
         - condition: state
+          entity_id: binary_sensor.playroom_radar_occupancy
+          state:
+          - 'on'
+        then:
+        - action: switch.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id: switch.playroom_voice_assistant_use_wake_word
+      - if:
+        - condition: state
           entity_id: binary_sensor.study_room_radar_occupancy
           state: 'on'
         - condition: state
@@ -1417,11 +1453,12 @@
           state:
           - 'off'
         then:
-        - action: switch.turn_on
+        - action: switch.turn_off
           metadata: {}
-          data: {}
           target:
-            entity_id: switch.study_room_voice_assistant_use_wake_word
+            entity_id:
+            - switch.study_table_display_vs_mute
+          data: {}
     - conditions:
       - alias: If Party Mode is activated
         condition: template
@@ -1466,8 +1503,17 @@
           entity_id:
           - automation.kitchen_voice_assistant_listening_for_wake_word
           - automation.study_room_voice_assistant_listening_for_wake_word
+          - automation.playroom_voice_assistant_listening_for_wake_word
+          - automation.dining_room_voice_assistant_listening_for_wake_word
           - switch.kitchen_core_use_wake_word
-          - switch.study_room_voice_assistant_use_wake_word
+          - switch.playroom_voice_assistant_use_wake_word
+      - action: switch.turn_on
+        metadata: {}
+        target:
+          entity_id:
+          - switch.main_door_display_vs_mute
+          - switch.study_table_display_vs_mute
+        data: {}
   mode: queued
   max: 2
 - id: '1670838907474'
@@ -4019,22 +4065,12 @@
       entity_id: binary_sensor.study_room_motion
       state: 'on'
     then:
-    - metadata: {}
-      data: {}
-      target:
-        entity_id: switch.study_room_voice_assistant_use_wake_word
-      action: switch.turn_on
     - action: switch.turn_off
       metadata: {}
       target:
         entity_id: switch.study_table_display_vs_mute
       data: {}
     else:
-    - metadata: {}
-      data: {}
-      target:
-        entity_id: switch.study_room_voice_assistant_use_wake_word
-      action: switch.turn_off
     - action: switch.turn_on
       metadata: {}
       target:
@@ -6910,43 +6946,42 @@
         value_template: '{{ trigger.id.split(''_'')[0] == ''Washer'' }}'
       sequence:
       - set_conversation_response: "The washer is {{ state_translated('sensor.lg_washer_status')
-          | lower }}.\n{% if states('sensor.lg_washer_status') in ['Off', 'Ready']
-          %}\n  {% set wash_time = namespace(hours = states('sensor.washer_last_wash_duration').split(':')[0],\n
+          | lower }}.\n{%- if states('sensor.lg_washer_status') in ['Off', 'Ready']
+          -%}\n  {%- set wash_time = namespace(hours = states('sensor.washer_last_wash_duration').split(':')[0],\n
           \                              minutes = states('sensor.washer_last_wash_duration').split(':')[1])
-          %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours
-          | int(0) > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
+          -%}\nIts last run took {{ wash_time.hours + ' hour' if wash_time.hours |
+          int(0) > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
           + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
           {{ time_since(as_datetime(states('sensor.washer_last_wash_completed')))
-          }} ago.\n  {{ 'Please unload the laundry.' if is_state('input_boolean.washer_load_clean',
-          'on') }}\n{% else %}\n  {% set countdown = namespace(hours = ((states('sensor.lg_washer_remaining_time')
+          }} ago.\n{{- 'Please unload the laundry.' if is_state('input_boolean.washer_load_clean',
+          'on') -}}\n{%- else -%}\n  {%- set countdown = namespace(hours = ((states('sensor.lg_washer_remaining_time')
           | float(0)) *60 // 60) | int(0) + max(0, (states('sensor.lg_washer_reserve_time')
           | int(0)) - 1),\n                               minutes = ((states('sensor.lg_washer_remaining_time')
-          | float(0)) * 60 % 60) | int) %}\n  The current run started {{ time_since(as_datetime(states('sensor.washer_last_wash_started')))
-          }} ago.\n  {% if countdown.hours > 0 or countdown.minutes > 0 %}\n  The
-          remaining {{ 100 - states('sensor.washer_wash_progress') | int(0) }}% of
-          the run will complete in {{ countdown.hours if countdown.hours > 0 }}{{
-          ' hours' if countdown.hours > 1 else ' hour' if countdown.hours == 1 }}{{
-          ' and ' if countdown.hours > 0 and countdown.minutes > 0 }}{{ countdown.minutes
-          if countdown.minutes > 0 }}{{ ' minutes' if countdown.minutes > 1 else '
-          minute' if countdown.minutes == 1 }} at {{ (now() + timedelta(hours = countdown.hours,
-          minutes = countdown.minutes)).strftime('%I:%M%p') }}.\n  {% endif %}\n{%
-          endif %}"
+          | float(0)) * 60 % 60) | int) %}\nThe current run started {{ time_since(as_datetime(states('sensor.washer_last_wash_started')))
+          }} ago.\n  {%- if countdown.hours > 0 or countdown.minutes > 0 %}\nThe remaining
+          {{ 100 - states('sensor.washer_wash_progress') | int(0) }}% of the run will
+          complete in {{ countdown.hours if countdown.hours > 0 }}{{ ' hours' if countdown.hours
+          > 1 else ' hour' if countdown.hours == 1 }}{{ ' and ' if countdown.hours
+          > 0 and countdown.minutes > 0 }}{{ countdown.minutes if countdown.minutes
+          > 0 }}{{ ' minutes' if countdown.minutes > 1 else ' minute' if countdown.minutes
+          == 1 }} at {{ (now() + timedelta(hours = countdown.hours, minutes = countdown.minutes)).strftime('%I:%M%p')
+          }}.\n  {%- endif -%}\n{%- endif -%}"
     - conditions:
       - alias: If it is one of the Dishwasher triggers
         condition: template
         value_template: '{{ trigger.id.split(''_'')[0] == ''Dishwasher'' }}'
       sequence:
       - set_conversation_response: "The dishwasher is {{ states('select.dishwasher_status')
-          | lower }}.\n{% if states('select.dishwasher_status') == 'Off' %}\n  {%
+          | lower }}.\n{%- if states('select.dishwasher_status') == 'Off' %}\n  {%-
           set wash_time = namespace(hours = states('sensor.dishwasher_latest_run_duration').split(':')[0],\n
           \                              minutes = states('sensor.dishwasher_latest_run_duration').split(':')[1])
-          %}\n  Its last run took {{ wash_time.hours + ' hour' if wash_time.hours
-          | int(0) > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
+          %}\nIts last run took {{ wash_time.hours + ' hour' if wash_time.hours |
+          int(0) > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
           + ' minute' }}{{ 's' if wash_time.minutes | int(0) > 1 }} and was completed
           {{ time_since(as_datetime(states('sensor.dishwasher_latest_run_ended')))
-          }} ago.\n  {{ 'Please open the dishwasher door.' if is_state('switch.dishwasher_load_clean',
-          'on') }}\n{% else %}\n  The current run started {{ time_since(as_datetime(states('sensor.dishwasher_latest_run_started')))
-          }} ago.\n{% endif %}"
+          }} ago.\n{{- 'Please open the dishwasher door.' if is_state('switch.dishwasher_load_clean',
+          'on') }}\n{%- else %}\nThe current run started {{ time_since(as_datetime(states('sensor.dishwasher_latest_run_started')))
+          }} ago.\n{%- endif %}"
       alias: If it is one of the Dishwasher triggers
     - conditions:
       - alias: If it is one of the Vacuum triggers
@@ -7000,24 +7035,24 @@
             }}. \nIts {{ 'current' if states('vacuum.valetudo_hestia') in ['cleaning',
             'returning', 'paused'] or is_state('sensor.valetudo_hestia_dock_status',
             'cleaning') else 'last' }} run started {{ time_since(as_datetime(states('sensor.vacuum_last_run_started')))
-            }} ago.\n{% if states('sensor.valetudo_hestia_current_statistics_area')
-            | int(0) > 0 %}\n  It cleaned {{ states('sensor.valetudo_hestia_current_statistics_area')
+            }} ago.\n{%- if states('sensor.valetudo_hestia_current_statistics_area')
+            | int(0) > 0 %}\nIt cleaned {{ states('sensor.valetudo_hestia_current_statistics_area')
             | int(0) }} square meters over {{ clean_time.hours | int(0) if clean_time.hours
             > 0 }} {{ 'hour' if clean_time.hours > 0 }}{{ 's' if clean_time.hours
             > 1 }}{{ ' and ' if clean_time.hours > 0 and clean_time.minutes > 0 }}{{
             clean_time.minutes | int(0) if clean_time.minutes > 0 }}{{ ' minute' if
-            clean_time.minutes > 0}}{{ 's' if clean_time.minutes > 1 }}.\n{% endif
-            %}\n{% if states('sensor.vacuum_current_run_cleaning_progress') | int(0)
-            > 0 %}\n  It will finish cleaning the remaining {{ 100 - states('sensor.vacuum_current_run_cleaning_progress')
+            clean_time.minutes > 0}}{{ 's' if clean_time.minutes > 1 }}.\n{%- endif
+            %}\n{%- if states('sensor.vacuum_current_run_cleaning_progress') | int(0)
+            > 0 %}\nIt will finish cleaning the remaining {{ 100 - states('sensor.vacuum_current_run_cleaning_progress')
             | int(0) }}% of the house in{{ remaining.hours | int(0) if remaining.hours
             > 0 }} {{ 'hour' if remaining.hours > 0 }}{{ 's' if remaining.hours >
             1 }}{{ ' and ' if remaining.hours > 0 and remaining.minutes > 0 }}{{ remaining.minutes
             | int(0) if remaining.minutes > 0 }}{{ ' minute' if remaining.minutes
             > 0}}{{ 's' if remaining.minutes > 1 }} at {{ (now() + timedelta(hours
-            = remaining.hours, minutes = remaining.minutes)).strftime('%I:%M%p') }}.\n{%
-            endif %}\n{% if is_state('sensor.valetudo_hestia_dock_status', 'drying')
-            %}\n  Its mops will finish drying at {{ as_local(as_datetime(states('sensor.vacuum_mop_drying_started'))
-            + timedelta(hours = 3)).strftime('%I:%M%p') }}.\n{% endif %}\n"
+            = remaining.hours, minutes = remaining.minutes)).strftime('%I:%M%p') }}.\n{%-
+            endif %}\n{%- if is_state('sensor.valetudo_hestia_dock_status', 'drying')
+            %}\nIts mops will finish drying at {{ as_local(as_datetime(states('sensor.vacuum_mop_drying_started'))
+            + timedelta(hours = 3)).strftime('%I:%M%p') }}.\n{%- endif %}"
   mode: single
 - id: '1744446876391'
   alias: Main Door Display
@@ -7053,8 +7088,8 @@
     - 'on'
   - alias: When the screen is on with no motion in the Dining Room for 5min
     trigger: template
-    value_template: '{{ is_state(''switch.main_door_display_screen'', ''on'') and
-      is_state(''binary_sensor.dining_room_radar_zone_1_occupancy'', ''off'') }}'
+    value_template: '{{ is_state(''light.main_door_display_screen'', ''on'') and is_state(''binary_sensor.dining_room_radar_zone_1_occupancy'',
+      ''off'') }}'
     for:
       hours: 0
       minutes: 5
@@ -7087,10 +7122,9 @@
   - alias: When screen is on the homepage and the floorplan panel view has not changed
       for 1min
     trigger: template
-    value_template: '{{ is_state(''switch.main_door_display_screen'', ''on'') and
-      is_state(''sensor.main_door_display_current_page'', ''http://192.168.18.101:8123/lovelace/0'')
-      and now() - states.input_select.floorplan_panel_view.last_updated > timedelta(minutes
-      = 1) }}'
+    value_template: '{{ is_state(''light.main_door_display_screen'', ''on'') and ''/lovelace/0''
+      in states(''sensor.main_door_display_current_page'') and now() - states.input_select.floorplan_panel_view.last_updated
+      > timedelta(minutes = 1) }}'
     id: change_view
   conditions: []
   actions:
@@ -7124,45 +7158,27 @@
         value_template: '{{ states(''input_select.home_mode'') in [''Normal Mode'',
           ''Party Mode''] }}'
         alias: Test if Home Mode is Normal Mode or Party Mode
-      - action: switch.turn_on
+      - action: light.turn_on
         metadata: {}
         data: {}
         target:
-          entity_id: switch.main_door_display_screen
-      - if:
-        - condition: time
-          after: input_datetime.dim_hours_start
-          before: input_datetime.dim_hours_end
-        then:
-        - action: number.set_value
-          metadata: {}
-          data:
-            value: '60'
-          target:
-            entity_id: number.main_door_display_screen_brightness
-        else:
-        - action: number.set_value
-          metadata: {}
-          data:
-            value: '255'
-          target:
-            entity_id: number.main_door_display_screen_brightness
+          entity_id: light.main_door_display_screen
     - conditions:
       - condition: trigger
         id:
         - no_motion
       sequence:
-      - action: switch.turn_off
+      - action: light.turn_off
         metadata: {}
         data: {}
         target:
-          entity_id: switch.main_door_display_screen
-      - action: fully_kiosk.load_url
+          entity_id: light.main_door_display_screen
+      - action: select.select_option
         metadata: {}
+        target:
+          entity_id: select.main_door_display_dashboard_view
         data:
-          device_id: a5d73504748daf7290dcf724d4c02a5a
-          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
-            CustomEvent("location-changed"));
+          option: lovelace/0
     - conditions:
       - condition: trigger
         id:
@@ -7177,19 +7193,17 @@
         - Party Mode
         entity_id: input_select.home_mode
       - if:
-        - condition: not
-          conditions:
-          - condition: state
-            entity_id: sensor.main_door_display_current_page
-            state:
-            - http://192.168.18.101:8123/lovelace/0
+        - condition: template
+          value_template: '{{ not ''/lovelace/0'' in states(''sensor.main_door_display_current_page'')
+            }}'
+          alias: If the screen is not on the homepage
         then:
-        - action: fully_kiosk.load_url
+        - action: select.select_option
           metadata: {}
+          target:
+            entity_id: select.main_door_display_dashboard_view
           data:
-            device_id: a5d73504748daf7290dcf724d4c02a5a
-            url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
-              CustomEvent("location-changed"));
+            option: lovelace/0
       - action: input_select.select_option
         metadata: {}
         data:
@@ -7204,21 +7218,21 @@
       - condition: template
         value_template: '{{ ''music_assistant'' not in states(''sensor.main_door_display_current_page'')
           }}'
-      - action: fully_kiosk.load_url
+      - action: select.select_option
         metadata: {}
+        target:
+          entity_id: select.main_door_display_dashboard_view
         data:
-          device_id: a5d73504748daf7290dcf724d4c02a5a
-          url: javascript:history.pushState(null,"","/lovelace/0");window.dispatchEvent(new
-            CustomEvent("location-changed"));
+          option: lovelace/0
     - conditions:
       - condition: trigger
         id:
         - leaving
       sequence:
-      - action: switch.turn_on
+      - action: light.turn_on
         metadata: {}
         target:
-          entity_id: switch.main_door_display_screen
+          entity_id: light.main_door_display_screen
         data: {}
       - condition: not
         conditions:
@@ -7234,16 +7248,16 @@
         - condition: not
           conditions:
           - condition: state
-            entity_id: sensor.main_door_display_current_page
+            entity_id: select.main_door_display_dashboard_view
             state:
-            - http://192.168.18.101:8123/lovelace/transit
+            - lovelace/transit
         then:
-        - action: fully_kiosk.load_url
+        - action: select.select_option
           metadata: {}
+          target:
+            entity_id: select.main_door_display_dashboard_view
           data:
-            device_id: a5d73504748daf7290dcf724d4c02a5a
-            url: javascript:history.pushState(null,"","/lovelace/transit");window.dispatchEvent(new
-              CustomEvent("location-changed"));
+            option: lovelace/transit
     - conditions:
       - condition: trigger
         id:
@@ -8053,11 +8067,12 @@
         state:
         - Party Mode
         - Normal Mode
-      - action: button.press
+      - action: select.select_option
         metadata: {}
         target:
-          entity_id: button.study_table_display_go_to_dashboard
-        data: {}
+          entity_id: select.study_table_display_dashboard_view
+        data:
+          option: lovelace/study-table
       - action: light.turn_on
         metadata: {}
         data: {}
@@ -8073,11 +8088,12 @@
         data: {}
         target:
           entity_id: light.study_table_display_screen
-      - action: button.press
+      - action: select.select_option
         metadata: {}
         target:
-          entity_id: button.study_table_display_go_to_dashboard
-        data: {}
+          entity_id: select.study_table_display_dashboard_view
+        data:
+          option: lovelace/study-table
     - conditions:
       - condition: trigger
         id:
@@ -8097,11 +8113,12 @@
             }}'
           alias: If the Study Table view isn't displayed
         then:
-        - action: button.press
+        - action: select.select_option
           metadata: {}
           target:
-            entity_id: button.study_table_display_go_to_dashboard
-          data: {}
+            entity_id: select.study_table_display_dashboard_view
+          data:
+            option: lovelace/study-table
       - action: input_select.select_option
         metadata: {}
         target:
@@ -8733,4 +8750,71 @@
         data:
           tag: windows_open
       action: notify.mobile_app_grace_iphone_14
+  mode: single
+- id: '1794205071103'
+  alias: Dining Room Voice Assistant Listening for Wake Word
+  description: Turn on wake word listening on Dining Room Voice Assistant when presence
+    detected near main door
+  triggers:
+  - entity_id:
+    - binary_sensor.dining_room_radar_zone_2_occupancy
+    trigger: state
+  - entity_id:
+    - input_select.home_mode
+    trigger: state
+  conditions: []
+  actions:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.dining_room_radar_zone_2_occupancy
+      state:
+      - 'on'
+    - condition: state
+      entity_id: input_select.home_mode
+      state:
+      - Normal Mode
+      - Party Mode
+    then:
+    - data: {}
+      target:
+        entity_id:
+        - switch.main_door_display_vs_mute
+      action: switch.turn_off
+    else:
+    - data: {}
+      target:
+        entity_id:
+        - switch.main_door_display_vs_mute
+      action: switch.turn_on
+  mode: single
+  max_exceeded: silent
+- id: '1794216186585'
+  alias: Playroom Voice Assistant Listening for Wake Word
+  description: Turn on wake word listening on Playroom Voice Assistant when presence
+    detected in Playroom
+  triggers:
+  - entity_id:
+    - binary_sensor.playroom_radar_occupancy
+    trigger: state
+  conditions: []
+  actions:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.playroom_radar_occupancy
+      state:
+      - 'on'
+    then:
+    - metadata: {}
+      data: {}
+      target:
+        entity_id: switch.playroom_voice_assistant_use_wake_word
+      action: switch.turn_on
+      enabled: true
+    else:
+    - metadata: {}
+      data: {}
+      target:
+        entity_id: switch.playroom_voice_assistant_use_wake_word
+      action: switch.turn_off
+      enabled: true
   mode: single
