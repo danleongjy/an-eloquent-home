@@ -73,7 +73,6 @@ Total | 2148
 - [Downloader](https://home-assistant.io/integrations/downloader)
 - [ESPHome](https://home-assistant.io/integrations/esphome)
 - [Folder Sensor](https://home-assistant.io/integrations/folder)
-- [Generic Camera](https://home-assistant.io/integrations/generic)
 - [Google Assistant](https://home-assistant.io/integrations/google_assistant)
 - [Google Drive](https://home-assistant.io/integrations/google_drive)
 - [Home Assistant Companion](https://home-assistant.io/integrations/mobile_app)

@@ -3613,8 +3613,6 @@
   triggers:
   - entity_id:
     - binary_sensor.kitchen_radar_occupancy
-    trigger: state
-  - entity_id:
     - input_select.home_mode
     trigger: state
   conditions: []
@@ -3627,7 +3625,6 @@
       entity_id: input_select.home_mode
       state:
       - Normal Mode
-      - Party Mode
     then:
     - data: {}
       target:
@@ -4053,7 +4050,8 @@
   triggers:
   - entity_id:
     - binary_sensor.study_room_ethernet_connection
-    - binary_sensor.study_room_motion
+    - input_select.home_mode
+    - binary_sensor.study_room_radar_occupancy
     trigger: state
   conditions: []
   actions:
@@ -4062,8 +4060,13 @@
       entity_id: binary_sensor.study_room_ethernet_connection
       state: 'off'
     - condition: state
-      entity_id: binary_sensor.study_room_motion
-      state: 'on'
+      entity_id: binary_sensor.study_room_radar_occupancy
+      state:
+      - 'on'
+    - condition: state
+      entity_id: input_select.home_mode
+      state:
+      - Normal Mode
     then:
     - action: switch.turn_off
       metadata: {}
@@ -8758,8 +8761,6 @@
   triggers:
   - entity_id:
     - binary_sensor.dining_room_radar_zone_2_occupancy
-    trigger: state
-  - entity_id:
     - input_select.home_mode
     trigger: state
   conditions: []
@@ -8773,7 +8774,6 @@
       entity_id: input_select.home_mode
       state:
       - Normal Mode
-      - Party Mode
     then:
     - data: {}
       target:
@@ -8795,6 +8795,7 @@
   triggers:
   - entity_id:
     - binary_sensor.playroom_radar_occupancy
+    - input_select.home_mode
     trigger: state
   conditions: []
   actions:
@@ -8803,6 +8804,10 @@
       entity_id: binary_sensor.playroom_radar_occupancy
       state:
       - 'on'
+    - condition: state
+      entity_id: input_select.home_mode
+      state:
+      - Normal Mode
     then:
     - metadata: {}
       data: {}
