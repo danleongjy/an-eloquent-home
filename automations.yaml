@@ -1502,18 +1502,9 @@
         target:
           entity_id:
           - automation.kitchen_voice_assistant_listening_for_wake_word
-          - automation.study_room_voice_assistant_listening_for_wake_word
           - automation.playroom_voice_assistant_listening_for_wake_word
-          - automation.dining_room_voice_assistant_listening_for_wake_word
           - switch.kitchen_core_use_wake_word
           - switch.playroom_voice_assistant_use_wake_word
-      - action: switch.turn_on
-        metadata: {}
-        target:
-          entity_id:
-          - switch.main_door_display_vs_mute
-          - switch.study_table_display_vs_mute
-        data: {}
   mode: queued
   max: 2
 - id: '1670838907474'
@@ -2032,7 +2023,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.parents_room_radar_zone_1_occupancy
+      motion_sensor: input_boolean.parents_room_occupancy
       number_of_minutes_door_closed: input_number.motion_timeout_bedrooms
       door: binary_sensor.parents_room_doors
       turnoff_entities_list:
@@ -2142,7 +2133,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.elenas_room_radar_zone_1_occupancy
+      motion_sensor: input_boolean.elenas_room_occupancy
       number_of_minutes_door_closed: input_number.motion_timeout_bedrooms
       door: binary_sensor.elenas_room_door
       turnoff_entities_list:
@@ -2203,7 +2194,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
+      motion_sensor: input_boolean.elis_room_occupancy
       number_of_minutes_door_closed: input_number.motion_timeout_bedrooms
       door: binary_sensor.elis_room_door
       turnoff_entities_list:
@@ -2681,42 +2672,6 @@
           tag: appliances_on
   mode: single
   max_exceeded: silent
-- id: '1659256881015'
-  alias: Kitchen Blind Controller
-  description: Control the Kitchen Blind
-  use_blueprint:
-    path: EPMatt/ikea_e1766.yaml
-    input:
-      integration: ZHA
-      controller_device: 63ca2b52933039d3f01175d8c06dd220
-      helper_last_controller_event: input_text.zz_kitchen_blind_controller_last_event
-      action_button_up_short:
-      - action: script.cover_controller
-        metadata: {}
-        data:
-          cover: cover.kitchen_blind
-          command: cover_open
-      action_button_down_short:
-      - action: script.cover_controller
-        metadata: {}
-        data:
-          cover: cover.kitchen_blind
-          command: cover_close
-      action_button_up_double:
-      - action: script.cover_controller
-        metadata: {}
-        data:
-          cover: cover.kitchen_blind
-          command: cover_auto_control
-      action_button_down_double:
-      - action: script.cover_controller
-        metadata: {}
-        data:
-          cover: cover.kitchen_blind
-          command: cover_manual_control
-      button_up_double_press: true
-      button_down_double_press: true
-      helper_double_press_delay: 500
 - id: '1659777667257'
   alias: Kitchen Blind Auto Control
   description: Close the Kitchen Blind if raining, in the mornings or AC is on
@@ -3517,7 +3472,7 @@
   use_blueprint:
     path: danleongjy/motion_lights.yaml
     input:
-      motion_sensor: binary_sensor.junior_bathroom_occupancy
+      motion_sensor: binary_sensor.junior_bathroom_motion_sensors
       lux_sensor: sensor.junior_shower_lux
       lights_list:
       - light.junior_bathroom_lights
@@ -3528,7 +3483,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.junior_bathroom_occupancy
+      motion_sensor: input_boolean.junior_bathroom_occupancy
       turnoff_entities_list:
       - light.junior_bathroom_lights
 - id: '1699177618893'
@@ -3540,7 +3495,7 @@
     input:
       lights_list:
       - light.powder_room_pendant_light_entity
-      motion_sensor: binary_sensor.powder_room_occupancy
+      motion_sensor: binary_sensor.powder_room_motion
       lux_sensor: sensor.powder_room_lux
 - id: '1699177686268'
   alias: Powder Room Motion Timeout
@@ -3549,7 +3504,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.powder_room_occupancy
+      motion_sensor: input_boolean.powder_room_occupancy
       turnoff_entities_list:
       - light.powder_room_pendant_light_entity
 - id: '1699233038725'
@@ -3581,7 +3536,7 @@
   use_blueprint:
     path: danleongjy/motion_timeout.yaml
     input:
-      motion_sensor: binary_sensor.master_bathroom_occupancy
+      motion_sensor: input_boolean.master_bathroom_occupancy
       turnoff_entities_list:
       - light.master_bathroom_lights
 - id: '1702255296989'
@@ -4067,6 +4022,7 @@
       entity_id: input_select.home_mode
       state:
       - Normal Mode
+      - Party Mode
     then:
     - action: switch.turn_off
       metadata: {}
@@ -6949,8 +6905,8 @@
         value_template: '{{ trigger.id.split(''_'')[0] == ''Washer'' }}'
       sequence:
       - set_conversation_response: "The washer is {{ state_translated('sensor.lg_washer_status')
-          | lower }}.\n{%- if states('sensor.lg_washer_status') in ['Off', 'Ready']
-          -%}\n  {%- set wash_time = namespace(hours = states('sensor.washer_last_wash_duration').split(':')[0],\n
+          | lower }}.\n{%- if states('sensor.lg_washer_status') in ['Off', 'Ready',
+          'unavailable'] -%}\n  {%- set wash_time = namespace(hours = states('sensor.washer_last_wash_duration').split(':')[0],\n
           \                              minutes = states('sensor.washer_last_wash_duration').split(':')[1])
           %}\nIts last run took {{ wash_time.hours + ' hour' if wash_time.hours |
           int(0) > 0 }}{{ 's' if wash_time.hours | int(0) > 1 }}{{ ' and ' + wash_time.minutes
@@ -7104,12 +7060,6 @@
     from: 'off'
     to: 'on'
     id: visitor
-  - trigger: template
-    value_template: '{{ not ''/lovelace/0'' in states(''sensor.main_door_display_current_page'')
-      and now() - states.sensor.main_door_display_current_page.last_updated > timedelta(minutes
-      = 5) }}'
-    id: reset_view
-    alias: When the view has been left not on the homepage for 5min
   - trigger: state
     entity_id:
     - binary_sensor.main_door
@@ -7166,6 +7116,7 @@
         data: {}
         target:
           entity_id: light.main_door_display_screen
+        enabled: true
     - conditions:
       - condition: trigger
         id:
@@ -7182,6 +7133,7 @@
           entity_id: select.main_door_display_dashboard_view
         data:
           option: lovelace/0
+        enabled: false
     - conditions:
       - condition: trigger
         id:
@@ -7218,9 +7170,6 @@
         id:
         - reset_view
       sequence:
-      - condition: template
-        value_template: '{{ ''music_assistant'' not in states(''sensor.main_door_display_current_page'')
-          }}'
       - action: select.select_option
         metadata: {}
         target:
@@ -7847,7 +7796,7 @@
     input:
       room:
       - junior_bathroom
-      motion_sensor: binary_sensor.junior_bathroom_occupancy
+      motion_sensor: binary_sensor.junior_bathroom_motion_sensors
       entities_list:
       - light.junior_bathroom_lights
       doors_list:
@@ -7860,7 +7809,7 @@
     input:
       room:
       - powder_room
-      motion_sensor: binary_sensor.powder_room_occupancy
+      motion_sensor: binary_sensor.powder_room_motion
       entities_list:
       - light.powder_room_pendant_light_entity
       doors_list:
@@ -7873,7 +7822,7 @@
     input:
       room:
       - master_bathroom
-      motion_sensor: binary_sensor.master_bathroom_occupancy
+      motion_sensor: binary_sensor.master_bathroom_motion_sensors
       entities_list:
       - light.master_bathroom_lights
       doors_list:
@@ -8076,6 +8025,7 @@
           entity_id: select.study_table_display_dashboard_view
         data:
           option: lovelace/study-table
+        enabled: false
       - action: light.turn_on
         metadata: {}
         data: {}
@@ -8097,6 +8047,7 @@
           entity_id: select.study_table_display_dashboard_view
         data:
           option: lovelace/study-table
+        enabled: false
     - conditions:
       - condition: trigger
         id:
@@ -8774,6 +8725,7 @@
       entity_id: input_select.home_mode
       state:
       - Normal Mode
+      - Party Mode
     then:
     - data: {}
       target:
@@ -8823,3 +8775,33 @@
       action: switch.turn_off
       enabled: true
   mode: single
+- id: '1794389347355'
+  alias: Elena's Room Occupancy
+  description: Track occupancy in the Elena's Room based on Wasp in a Box logic
+  use_blueprint:
+    path: AlexanderBabel/occupancy.yaml
+    input:
+      door_sensor: binary_sensor.elenas_room_door
+      motion_sensor: binary_sensor.elenas_room_radar_zone_1_occupancy
+      occupancy_helper: input_boolean.elenas_room_occupancy
+      last_motion_helper: input_datetime.elenas_room_last_motion_detected
+- id: '1794389530555'
+  alias: Eli's Room Occupancy
+  description: Track occupancy in the Eli's Room based on Wasp in a Box logic
+  use_blueprint:
+    path: AlexanderBabel/occupancy.yaml
+    input:
+      door_sensor: binary_sensor.elis_room_door
+      motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
+      occupancy_helper: input_boolean.elis_room_occupancy
+      last_motion_helper: input_datetime.elis_room_last_motion_detected
+- id: '1794389601916'
+  alias: Parents' Room Occupancy
+  description: Track occupancy in the Parents' Room based on Wasp in a Box logic
+  use_blueprint:
+    path: AlexanderBabel/occupancy.yaml
+    input:
+      door_sensor: binary_sensor.parents_room_doors
+      motion_sensor: binary_sensor.parents_room_radar_zone_1_occupancy
+      occupancy_helper: input_boolean.parents_room_occupancy
+      last_motion_helper: input_datetime.parents_room_last_motion_detected

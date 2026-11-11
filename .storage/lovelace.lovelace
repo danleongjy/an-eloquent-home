@@ -6420,12 +6420,12 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.elenas_room_radar_zone_1_occupancy",
+                          "entity": "input_boolean.elenas_room_occupancy",
                           "template": "sensor_motion"
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.elis_room_radar_zone_1_occupancy",
+                          "entity": "input_boolean.elis_room_occupancy",
                           "template": "sensor_motion"
                         },
                         {
@@ -6450,7 +6450,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.parents_room_radar_zone_1_occupancy",
+                          "entity": "input_boolean.parents_room_occupancy",
                           "template": "sensor_motion"
                         },
                         {
@@ -7040,7 +7040,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.elenas_room_radar_zone_1_occupancy",
+                          "entity": "input_boolean.elenas_room_occupancy",
                           "template": "sensor_motion"
                         },
                         {
@@ -7085,7 +7085,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.elis_room_radar_zone_1_occupancy",
+                          "entity": "input_boolean.elis_room_occupancy",
                           "template": "sensor_motion"
                         },
                         {
@@ -7298,7 +7298,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "binary_sensor.parents_room_radar_zone_1_occupancy",
+                          "entity": "input_boolean.parents_room_occupancy",
                           "template": "sensor_motion"
                         },
                         {
@@ -8476,11 +8476,6 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.kitchen_blind_controller_lqi",
-                          "template": "zigbee_endpoint"
-                        },
-                        {
-                          "type": "custom:button-card",
                           "entity": "sensor.rice_cooker_lid_lqi",
                           "template": "zigbee_endpoint"
                         },
@@ -8488,6 +8483,10 @@
                           "type": "custom:button-card",
                           "entity": "sensor.dishwasher_door_lqi",
                           "template": "zigbee_endpoint"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
                         },
                         {
                           "type": "custom:button-card",
@@ -9416,14 +9415,6 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "entity": "sensor.kitchen_blind_controller_lqi",
-                          "template": [
-                            "zigbee_endpoint",
-                            "square_cell"
-                          ]
-                        },
-                        {
-                          "type": "custom:button-card",
                           "entity": "sensor.rice_cooker_lid_lqi",
                           "template": [
                             "zigbee_endpoint",
@@ -9938,7 +9929,11 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "color_type": "blank-card"
+                          "variables": {
+                            "client": "playroom_voice_assistant"
+                          },
+                          "icon": "mdi:microphone",
+                          "template": "wifi_device_connectivity"
                         },
                         {
                           "type": "custom:button-card",
@@ -10181,18 +10176,14 @@
                         {
                           "type": "custom:button-card",
                           "variables": {
-                            "client": "study_room_voice_assistant"
-                          },
-                          "icon": "mdi:microphone",
-                          "template": "wifi_device_connectivity"
-                        },
-                        {
-                          "type": "custom:button-card",
-                          "variables": {
                             "client": "study_table_display"
                           },
                           "icon": "mdi:cellphone",
                           "template": "wifi_device_connectivity"
+                        },
+                        {
+                          "type": "custom:button-card",
+                          "color_type": "blank-card"
                         },
                         {
                           "type": "custom:button-card",
@@ -16530,7 +16521,7 @@
                       "template": "tile_slider",
                       "entity": "light.main_door_display_screen",
                       "name": "Screen",
-                      "state_display": "[[[ \n  const view = String(states['sensor.main_door_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else if (view.includes('music')) {\n    return 'Music Assistant'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('-',' ').replace('_',' ')\n  }\n]]]",
+                      "state_display": "[[[ \n  const view = String(states['sensor.main_door_display_current_page'].state.split('/').slice(-1))\n  if (states['switch.main_door_display_screensaver'].state == 'on') {\n    return 'Screensaver'\n  } else if (view == '0') {\n    return 'Home'\n  } else if (view.includes('music')) {\n    return 'Music Assistant'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('-',' ').replace('_',' ')\n  }\n]]]",
                       "variables": {
                         "state_color": "[[[\n  if (entity.state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else if (entity.state == 'off') {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-unavailable-color)'\n  }\n]]]\n"
                       },
@@ -16961,7 +16952,7 @@
                       "template": "tile_slider",
                       "entity": "light.study_table_display_screen",
                       "name": "Screen",
-                      "state_display": "[[[ \n  const view = String(states['sensor.study_table_display_current_page'].state.split('/').slice(-1))\n  if (view == '0') {\n    return 'Home'\n  } else if (view.includes('music')) {\n    return 'Music Assistant'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('-',' ').replace('_',' ')\n  }\n]]]",
+                      "state_display": "[[[ \n  const view = String(states['sensor.study_table_display_current_page'].state.split('/').slice(-1))\n  if (states['switch.study_table_display_screensaver'].state == 'on') {\n    return 'Screensaver'\n  } else if (view == '0') {\n    return 'Home'\n  } else if (view.includes('music')) {\n    return 'Music Assistant'\n  } else {\n    return (view.charAt(0).toUpperCase() + view.slice(1)).replace('-',' ').replace('_',' ')\n  }\n]]]",
                       "variables": {
                         "state_color": "[[[\n  if (entity.state == 'on') {\n    return 'var(--state-binary-sensor-color)'\n  } else if (entity.state == 'off') {\n    return 'var(--state-inactive-color)'\n  } else {\n    return 'var(--state-unavailable-color)'\n  }\n]]]\n"
                       },

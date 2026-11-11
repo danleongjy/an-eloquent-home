@@ -24,9 +24,9 @@ The network topology demonstrates some principles we employ in setting up our sy
 Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 4
-[`automation`](https://www.home-assistant.io/components/automation) | 148
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 182
-[`button`](https://www.home-assistant.io/components/button) | 236
+[`automation`](https://www.home-assistant.io/components/automation) | 150
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 179
+[`button`](https://www.home-assistant.io/components/button) | 235
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 7
 [`climate`](https://www.home-assistant.io/components/climate) | 6
@@ -37,9 +37,9 @@ Domain | Quantity
 [`fan`](https://www.home-assistant.io/components/fan) | 9
 [`image`](https://www.home-assistant.io/components/image) | 5
 [`infrared`](https://www.home-assistant.io/components/infrared) | 4
-[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 9
+[`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 12
 [`input_button`](https://www.home-assistant.io/components/input_button) | 1
-[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 17
+[`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 20
 [`input_number`](https://www.home-assistant.io/components/input_number) | 22
 [`input_select`](https://www.home-assistant.io/components/input_select) | 9
 [`input_text`](https://www.home-assistant.io/components/input_text) | 19
@@ -53,17 +53,17 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 14
 [`select`](https://www.home-assistant.io/components/select) | 100
-[`sensor`](https://www.home-assistant.io/components/sensor) | 836
+[`sensor`](https://www.home-assistant.io/components/sensor) | 834
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 117
 [`text`](https://www.home-assistant.io/components/text) | 35
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 118
+[`update`](https://www.home-assistant.io/components/update) | 117
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 2148
+Total | 2149
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
