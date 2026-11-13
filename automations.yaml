@@ -2024,7 +2024,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: input_boolean.parents_room_occupancy
-      number_of_minutes_door_closed: input_number.motion_timeout_presence
+      number_of_minutes_door_closed: input_number.motion_timeout_bedrooms
       door: binary_sensor.parents_room_doors
       turnoff_entities_list:
       - light.parents_room_lights
@@ -2041,7 +2041,7 @@
       fan: fan.parents_room_fan
       entities_list:
       - light.parents_room_lights
-      - fan.parents_room_fan
+      - light.parents_room_bedside_lamp
       - climate.parents_room_ac
       doors_list:
       - binary_sensor.parents_room_door
@@ -2058,7 +2058,7 @@
       entities_list:
       - light.parents_room_lights
       - fan.parents_room_fan
-      - climate.parents_room_ac
+      - light.parents_room_bedside_lamp
 - id: '1677905626060'
   alias: Parents' Room Motion Lights
   description: Set the Parents' Room Lights when motion is detected, at least one
@@ -2071,10 +2071,9 @@
       motion_sensor: binary_sensor.parents_room_radar_zone_1_occupancy
       lux_sensor: sensor.parents_room_radar_lux
       entities_list:
-      - light.parents_room_lights
+      - light.parents_room_bedside_lamp
       - fan.parents_room_fan
       - climate.parents_room_ac
-      - light.parents_room_core_led_strips
       doors_list:
       - binary_sensor.parents_room_door
       - binary_sensor.master_bathroom_door
@@ -2091,8 +2090,9 @@
       ac: climate.elenas_room_ac
       entities_list:
       - light.elenas_room_lights
+      - light.elenas_room_bedside_lamp
       - fan.elenas_room_fan
-      - climate.elenas_room_ac
+      respect_closed_doors: false
 - id: '1677909480401'
   alias: Elena's Room Motion Fan
   description: Turn on Elena's Room Fan depending on whether the doors are open
@@ -2103,10 +2103,10 @@
       fan: fan.elenas_room_fan
       entities_list:
       - light.elenas_room_lights
-      - fan.elenas_room_fan
+      - light.elenas_room_bedside_lamp
       - climate.elenas_room_ac
-      doors_list:
-      - binary_sensor.elenas_room_door
+      doors_list: []
+      respect_closed_doors: false
 - id: '1677909588511'
   alias: Elena's Room Motion Lights
   description: Set Elena's Room Lights when motion is detected, at least one door
@@ -2119,7 +2119,7 @@
       motion_sensor: binary_sensor.elenas_room_radar_zone_1_occupancy
       lux_sensor: sensor.elenas_room_radar_lux
       entities_list:
-      - light.elenas_room_lights
+      - light.elenas_room_bedside_lamp
       - fan.elenas_room_fan
       - climate.elenas_room_ac
       doors_list:
@@ -2134,7 +2134,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: input_boolean.elenas_room_occupancy
-      number_of_minutes_door_closed: input_number.motion_timeout_presence
+      number_of_minutes_door_closed: input_number.motion_timeout_bedrooms
       door: binary_sensor.elenas_room_door
       turnoff_entities_list:
       - light.elenas_room_lights
@@ -2153,7 +2153,8 @@
       entities_list:
       - light.elis_room_lights
       - fan.elis_room_fan
-      - climate.elis_room_ac
+      - light.elis_room_floor_lamp
+      respect_closed_doors: false
 - id: '1677909930165'
   alias: Eli's Room Motion Fan
   description: Turn on Eli's Room Fan depending on whether the doors are open
@@ -2164,10 +2165,10 @@
       fan: fan.elis_room_fan
       entities_list:
       - light.elis_room_lights
-      - fan.elis_room_fan
+      - light.elis_room_floor_lamp
       - climate.elis_room_ac
-      doors_list:
-      - binary_sensor.elis_room_door
+      doors_list: []
+      respect_closed_doors: false
 - id: '1677910041263'
   alias: Eli's Room Motion Lights
   description: Set Eli's Room Lights when motion is detected, at least one door is
@@ -2180,7 +2181,7 @@
       motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
       lux_sensor: sensor.elis_room_radar_lux
       entities_list:
-      - light.elis_room_lights
+      - light.elis_room_floor_lamp
       - fan.elis_room_fan
       - climate.elis_room_ac
       doors_list:
@@ -2195,7 +2196,7 @@
     path: danleongjy/motion_timeout.yaml
     input:
       motion_sensor: input_boolean.elis_room_occupancy
-      number_of_minutes_door_closed: input_number.motion_timeout_presence
+      number_of_minutes_door_closed: input_number.motion_timeout_bedrooms
       door: binary_sensor.elis_room_door
       turnoff_entities_list:
       - light.elis_room_lights
@@ -4850,10 +4851,9 @@
       motion_sensor: binary_sensor.elenas_room_radar_zone_1_occupancy
       lux_sensor: sensor.elenas_room_radar_lux
       entities_list:
-      - light.elenas_room_lights
-      - fan.elenas_room_fan
       - climate.elenas_room_ac
-      - light.elenas_room_bedside_lamp
+      - fan.elenas_room_fan
+      - light.elenas_room_lights
       doors_list:
       - binary_sensor.elenas_room_door
       blackout_hours_start: input_datetime.sleep_hours_start
@@ -7237,7 +7237,6 @@
       - light.parents_room_lights
       - fan.parents_room_fan
       - climate.parents_room_ac
-      - light.parents_room_bedside_lamp
       doors_list:
       - binary_sensor.parents_room_door
       - binary_sensor.master_bathroom_door

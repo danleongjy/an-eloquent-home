@@ -56,14 +56,14 @@ Domain | Quantity
 [`sensor`](https://www.home-assistant.io/components/sensor) | 834
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 117
+[`switch`](https://www.home-assistant.io/components/switch) | 118
 [`text`](https://www.home-assistant.io/components/text) | 35
 [`tts`](https://www.home-assistant.io/components/tts) | 1
 [`update`](https://www.home-assistant.io/components/update) | 117
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 2149
+Total | 2150
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
