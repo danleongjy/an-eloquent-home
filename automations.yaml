@@ -1143,25 +1143,6 @@
           - automation.elis_room_curtains_auto_control
           - automation.elenas_room_curtains_auto_control
     - conditions:
-      - alias: If Normal Mode is deactivated
-        condition: template
-        value_template: '{{ trigger.from_state.state == ''Normal Mode'' }}'
-      sequence:
-      - metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - switch.kitchen_core_use_wake_word
-          - switch.playroom_voice_assistant_use_wake_word
-        action: switch.turn_off
-      - action: switch.turn_on
-        metadata: {}
-        target:
-          entity_id:
-          - switch.study_table_display_vs_mute
-          - switch.main_door_display_vs_mute
-        data: {}
-    - conditions:
       - condition: template
         value_template: '{{ trigger.from_state.state == ''Party Mode'' }}'
         alias: If Party Mode is deactivated
@@ -1181,7 +1162,6 @@
         target:
           entity_id: input_datetime.sleep_hours_end
         action: input_datetime.set_datetime
-      - delay: 1
   - alias: Settings based on which mode was activated
     choose:
     - conditions:
@@ -1411,54 +1391,6 @@
           - media_player.dining_room_speaker
         data:
           volume_level: 0.5
-      - if:
-        - condition: state
-          entity_id: binary_sensor.dining_room_radar_zone_2_occupancy
-          state:
-          - 'on'
-        then:
-        - action: switch.turn_off
-          metadata: {}
-          target:
-            entity_id:
-            - switch.main_door_display_vs_mute
-          data: {}
-      - if:
-        - condition: state
-          entity_id: binary_sensor.kitchen_radar_occupancy
-          state: 'on'
-        then:
-        - action: switch.turn_on
-          metadata: {}
-          data: {}
-          target:
-            entity_id: switch.kitchen_core_use_wake_word
-      - if:
-        - condition: state
-          entity_id: binary_sensor.playroom_radar_occupancy
-          state:
-          - 'on'
-        then:
-        - action: switch.turn_on
-          metadata: {}
-          data: {}
-          target:
-            entity_id: switch.playroom_voice_assistant_use_wake_word
-      - if:
-        - condition: state
-          entity_id: binary_sensor.study_room_radar_occupancy
-          state: 'on'
-        - condition: state
-          entity_id: binary_sensor.study_room_ethernet_connection
-          state:
-          - 'off'
-        then:
-        - action: switch.turn_off
-          metadata: {}
-          target:
-            entity_id:
-            - switch.study_table_display_vs_mute
-          data: {}
     - conditions:
       - alias: If Party Mode is activated
         condition: template
@@ -1496,15 +1428,6 @@
               room: '{{ [repeat.item] }}'
             action: script.set_recommended_scene
           - delay: 1
-      - action: homeassistant.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id:
-          - automation.kitchen_voice_assistant_listening_for_wake_word
-          - automation.playroom_voice_assistant_listening_for_wake_word
-          - switch.kitchen_core_use_wake_word
-          - switch.playroom_voice_assistant_use_wake_word
   mode: queued
   max: 2
 - id: '1670838907474'
@@ -1934,6 +1857,7 @@
       last_motion_helper: input_datetime.junior_bathroom_last_motion_detected
       turn_off_delay: 5
       door_sensor: binary_sensor.junior_bathroom_door
+      motion_sensor_delay: 70
 - id: '1675045768564'
   alias: Powder Room Occupancy
   description: Track occupancy in the Powder Room based on Wasp in a Box logic
@@ -1944,6 +1868,7 @@
       motion_sensor: binary_sensor.powder_room_motion
       occupancy_helper: input_boolean.powder_room_occupancy
       last_motion_helper: input_datetime.powder_room_last_motion_detected
+      motion_sensor_delay: 70
 - id: '1675045803046'
   alias: Master Bathroom Occupancy
   description: Track occupancy in the Master Bathroom based on Wasp in a Box logic
@@ -1955,6 +1880,7 @@
       occupancy_helper: input_boolean.master_bathroom_occupancy
       last_motion_helper: input_datetime.master_bathroom_last_motion_detected
       turn_off_delay: 5
+      motion_sensor_delay: 70
 - id: '1676814581353'
   alias: Notify When Holiday Upcoming
   description: Send notifications to apps when school or public holidays are upcoming
@@ -8784,6 +8710,7 @@
       motion_sensor: binary_sensor.elenas_room_radar_zone_1_occupancy
       occupancy_helper: input_boolean.elenas_room_occupancy
       last_motion_helper: input_datetime.elenas_room_last_motion_detected
+      motion_sensor_delay: 17
 - id: '1794389530555'
   alias: Eli's Room Occupancy
   description: Track occupancy in the Eli's Room based on Wasp in a Box logic
@@ -8794,6 +8721,7 @@
       motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
       occupancy_helper: input_boolean.elis_room_occupancy
       last_motion_helper: input_datetime.elis_room_last_motion_detected
+      motion_sensor_delay: 17
 - id: '1794389601916'
   alias: Parents' Room Occupancy
   description: Track occupancy in the Parents' Room based on Wasp in a Box logic
@@ -8804,3 +8732,4 @@
       motion_sensor: binary_sensor.parents_room_radar_zone_1_occupancy
       occupancy_helper: input_boolean.parents_room_occupancy
       last_motion_helper: input_datetime.parents_room_last_motion_detected
+      motion_sensor_delay: 17
