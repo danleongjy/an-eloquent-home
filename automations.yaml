@@ -1927,7 +1927,7 @@
   use_blueprint:
     path: danleongjy/motion_ac.yaml
     input:
-      motion_sensor: binary_sensor.elis_room_radar_zone_1_occupancy
+      motion_sensor: binary_sensor.elenas_room_radar_zone_1_occupancy
       ac: climate.elenas_room_ac
       entities_list:
       - light.elenas_room_lights
@@ -6922,6 +6922,12 @@
       in states(''sensor.main_door_display_current_page'') and now() - states.input_select.floorplan_panel_view.last_updated
       > timedelta(minutes = 1) }}'
     id: change_view
+  - trigger: time
+    at: input_datetime.sleep_hours_start
+    id: sleep_hours_start
+  - trigger: time
+    at: input_datetime.sleep_hours_end
+    id: sleep_hours_end
   conditions: []
   actions:
   - choose:
@@ -7064,6 +7070,26 @@
           cycle: true
         target:
           entity_id: input_select.floorplan_panel_view
+    - conditions:
+      - condition: trigger
+        id:
+        - sleep_hours_start
+      sequence:
+      - action: switch.turn_off
+        metadata: {}
+        target:
+          entity_id: switch.main_door_display_screensaver_motion_detection
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - sleep_hours_end
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        target:
+          entity_id: switch.main_door_display_screensaver_motion_detection
+        data: {}
   mode: restart
 - id: '1753576863029'
   alias: Parents' Room Motion Bedside Lamp
