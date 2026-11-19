@@ -25,8 +25,8 @@ Domain | Quantity
 -- | --
 [`assist_satellite`](https://www.home-assistant.io/components/assist_satellite) | 4
 [`automation`](https://www.home-assistant.io/components/automation) | 150
-[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 179
-[`button`](https://www.home-assistant.io/components/button) | 235
+[`binary_sensor`](https://www.home-assistant.io/components/binary_sensor) | 178
+[`button`](https://www.home-assistant.io/components/button) | 233
 [`calendar`](https://www.home-assistant.io/components/calendar) | 7
 [`camera`](https://www.home-assistant.io/components/camera) | 7
 [`climate`](https://www.home-assistant.io/components/climate) | 6
@@ -52,11 +52,11 @@ Domain | Quantity
 [`radio_frequency`](https://www.home-assistant.io/components/radio_frequency) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 14
-[`select`](https://www.home-assistant.io/components/select) | 100
-[`sensor`](https://www.home-assistant.io/components/sensor) | 835
+[`select`](https://www.home-assistant.io/components/select) | 101
+[`sensor`](https://www.home-assistant.io/components/sensor) | 836
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
-[`switch`](https://www.home-assistant.io/components/switch) | 119
+[`switch`](https://www.home-assistant.io/components/switch) | 120
 [`text`](https://www.home-assistant.io/components/text) | 35
 [`tts`](https://www.home-assistant.io/components/tts) | 1
 [`update`](https://www.home-assistant.io/components/update) | 117
