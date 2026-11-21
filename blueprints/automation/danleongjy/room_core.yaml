@@ -143,7 +143,7 @@ action:
               - button_pressed
         sequence:
           - if:
-              - "{{ states('sensor.' + room + '_lux') | int(0) < states('input_number.minimum_lux') | int }}"
+              - "{{ states('sensor.' + room + '_radar_lux') | int(0) < states('input_number.minimum_lux') | int }}"
               - "{{ states.light | selectattr('entity_id', 'in', lights[room] + lamp[room]) | map(attribute = 'state') | unique | list == ['off'] }}"
             then:
               - action: light.turn_on
