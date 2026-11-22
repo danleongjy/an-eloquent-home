@@ -40,8 +40,8 @@ Domain | Quantity
 [`input_boolean`](https://www.home-assistant.io/components/input_boolean) | 12
 [`input_button`](https://www.home-assistant.io/components/input_button) | 1
 [`input_datetime`](https://www.home-assistant.io/components/input_datetime) | 20
-[`input_number`](https://www.home-assistant.io/components/input_number) | 22
-[`input_select`](https://www.home-assistant.io/components/input_select) | 9
+[`input_number`](https://www.home-assistant.io/components/input_number) | 23
+[`input_select`](https://www.home-assistant.io/components/input_select) | 10
 [`input_text`](https://www.home-assistant.io/components/input_text) | 19
 [`light`](https://www.home-assistant.io/components/light) | 77
 [`lock`](https://www.home-assistant.io/components/lock) | 1
@@ -52,7 +52,7 @@ Domain | Quantity
 [`radio_frequency`](https://www.home-assistant.io/components/radio_frequency) | 3
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 14
-[`select`](https://www.home-assistant.io/components/select) | 101
+[`select`](https://www.home-assistant.io/components/select) | 100
 [`sensor`](https://www.home-assistant.io/components/sensor) | 840
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
@@ -63,7 +63,7 @@ Domain | Quantity
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
-Total | 2158
+Total | 2159
 
 ## Core Integrations
 - [AdGuard](https://home-assistant.io/integrations/adguard)
