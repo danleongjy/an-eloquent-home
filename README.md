@@ -16,7 +16,7 @@ The network topology demonstrates some principles we employ in setting up our sy
 ## Hub
 * Refurbished [Lenovo Thinkcentre M93p Tiny](https://psref.lenovo.com/syspool/Sys/PDF/ThinkCentre/ThinkCentre_M93_M93p_Tiny/ThinkCentre_M93_M93p_Tiny_Spec.PDF)
 * [Home Assistant Operating System](https://www.home-assistant.io/installation/alternative) [18.4](https://github.com/home-assistant/operating-system/releases/tag/18.4) running in a [Proxmox VM](https://www.proxmox.com/)
-* [Home Assistant Core 2026.10.4](https://github.com/home-assistant/core/releases/tag/2026.10.4)
+* [Home Assistant Core 2026.11.2](https://github.com/home-assistant/core/releases/tag/2026.11.2)
 * 4 cores, 6GB RAM, 32GB storage
 
 ## Entities
@@ -53,13 +53,13 @@ Domain | Quantity
 [`remote`](https://www.home-assistant.io/components/remote) | 4
 [`script`](https://www.home-assistant.io/components/script) | 14
 [`select`](https://www.home-assistant.io/components/select) | 100
-[`sensor`](https://www.home-assistant.io/components/sensor) | 840
+[`sensor`](https://www.home-assistant.io/components/sensor) | 841
 [`stt`](https://www.home-assistant.io/components/stt) | 1
 [`sun`](https://www.home-assistant.io/components/sun) | 1
 [`switch`](https://www.home-assistant.io/components/switch) | 122
 [`text`](https://www.home-assistant.io/components/text) | 35
 [`tts`](https://www.home-assistant.io/components/tts) | 1
-[`update`](https://www.home-assistant.io/components/update) | 117
+[`update`](https://www.home-assistant.io/components/update) | 116
 [`vacuum`](https://www.home-assistant.io/components/vacuum) | 1
 [`weather`](https://www.home-assistant.io/components/weather) | 1
 [`zone`](https://www.home-assistant.io/components/zone) | 16
@@ -86,6 +86,7 @@ Total | 2159
 - [Shell Command](https://home-assistant.io/integrations/shell_command)
 - [Switchbot Bluetooth](https://home-assistant.io/integrations/switchbot)
 - [Template](https://home-assistant.io/integrations/template)
+- [Time and Date](https://home-assistant.io/integrations/time_date)
 - [Wyoming Protocol](https://home-assistant.io/integrations/wyoming)
 - [ZigBee Home Automation](https://home-assistant.io/integrations/zha)
 ## Extensions
@@ -102,24 +103,8 @@ Total | 2159
 - Whisper
 
 ### Custom integrations
-- [Chime Tts](https://github.com/nimroddolev/chime_tts)
-- [Generate Readme](https://github.com/custom-components/readme)
-- [HACS](https://github.com/hacs/integration)
-- [Mqtt Vacuum Camera](https://github.com/sca075/mqtt_vacuum_camera)
-- [Philips Airpurifier](https://github.com/tinkerologie/ha-philips-airpurifier)
-- [Philips Shaver](https://github.com/mtheli/philips_shaver)
-- [Pyscript](https://github.com/custom-components/pyscript)
-- [SSH](https://github.com/zhbjsh/homeassistant-ssh)
-- [Tuya Local](https://github.com/danleongjy/tuya-local)
-- [Valetudo](https://github.com/Hypfer/hass-valetudo)
-- [Watchman](https://github.com/dummylabs/thewatchman)
 
 ### Custom dashboard cards
-- [Apexcharts Card](https://github.com/RomRider/apexcharts-card)
-- [Button Card](https://github.com/custom-cards/button-card)
-- [Decluttering Card](https://github.com/custom-cards/decluttering-card)
-- [Slider Button Card](https://github.com/custom-cards/slider-button-card)
-- [State Switch](https://github.com/thomasloven/lovelace-state-switch)
 
 ## Dashboards
 In addition to providing direct control and visual feedback on the state of each controllable device in our house, our dashboards are also designed to be _infographics_ that provide insights into the usage trends of multiple devices of the same type, across different rooms and throughout the whole house.  They are maps in the spirit of the Tube maps - providing a stripped-down view of the components with just enough information to appreciate how the parts relate to the whole.  And the entire graphic fits on one screen on a mobile device, so all information is available at a glance.  The design principles are:
