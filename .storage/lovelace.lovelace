@@ -675,7 +675,7 @@
           ],
           "entity": "fan.air_purifier",
           "variables": {
-            "aqi_color": "[[[ \n  if (parseInt(states['sensor.living_room_pm2_5'].state) >= 75) {\n    return '#9e110d'\n  } else if (parseInt(states['sensor.living_room_pm2_5'].state) >= 35) {\n    return '#f2900f'\n  } else {\n    return '#b4fab4'\n  }\n]]]\n"
+            "aqi_color": "[[[ \n  if (parseInt(states['sensor.indoor_pm2_5'].state) >= 75) {\n    return '#9e110d'\n  } else if (parseInt(states['sensor.indoor_pm2_5'].state) >= 35) {\n    return '#f2900f'\n  } else {\n    return '#b4fab4'\n  }\n]]]\n"
           },
           "icon_tap_action": {
             "action": "navigate",
@@ -700,7 +700,7 @@
             },
             "card": [
               {
-                "background": "[[[ \n  return \"linear-gradient(0deg, \" + variables.aqi_color + \" 0%, \" + variables.aqi_color + \" \" +\n  states['sensor.living_room_pm2_5'].state + \"%, #1c1c1c \" +\n  states['sensor.living_room_pm2_5'].state + \"%, #1c1c1c 100%)\"\n]]] \n"
+                "background": "[[[ \n  return \"linear-gradient(0deg, \" + variables.aqi_color + \" 0%, \" + variables.aqi_color + \" \" +\n  states['sensor.indoor_pm2_5'].state + \"%, #1c1c1c \" +\n  states['sensor.indoor_pm2_5'].state + \"%, #1c1c1c 100%)\"\n]]] \n"
               }
             ]
           }
@@ -10044,11 +10044,7 @@
                         },
                         {
                           "type": "custom:button-card",
-                          "variables": {
-                            "client": "air_purifier"
-                          },
-                          "icon": "mdi:air-purifier",
-                          "template": "wifi_device_connectivity"
+                          "color_type": "blank-card"
                         },
                         {
                           "type": "custom:button-card",
@@ -10177,14 +10173,18 @@
                         {
                           "type": "custom:button-card",
                           "variables": {
-                            "client": "study_table_display"
+                            "client": "air_purifier"
                           },
-                          "icon": "mdi:cellphone",
+                          "icon": "mdi:air-purifier",
                           "template": "wifi_device_connectivity"
                         },
                         {
                           "type": "custom:button-card",
-                          "color_type": "blank-card"
+                          "variables": {
+                            "client": "study_table_display"
+                          },
+                          "icon": "mdi:cellphone",
+                          "template": "wifi_device_connectivity"
                         },
                         {
                           "type": "custom:button-card",
@@ -15649,13 +15649,20 @@
                 },
                 {
                   "type": "markdown",
-                  "content": "<ha-alert alert-type=\"error\">{{ states(\"sensor.stove_error_code\") }}.</ha-alert>",
+                  "content": "<ha-alert alert-type=\"error\">{{ state_attr(\"binary_sensor.stove_problem\", 'description') }}.</ha-alert>",
                   "text_only": true,
                   "visibility": [
                     {
-                      "condition": "state",
-                      "entity": "sensor.stove_error_code",
-                      "state_not": "No error"
+                      "condition": "not",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity_id": "binary_sensor.stove_problem",
+                          "state": [
+                            "off"
+                          ]
+                        }
+                      ]
                     }
                   ]
                 }
@@ -15706,13 +15713,20 @@
                 },
                 {
                   "type": "markdown",
-                  "content": "<ha-alert alert-type=\"error\">{{ states(\"sensor.stove_error_code\") }}.</ha-alert>",
+                  "content": "<ha-alert alert-type=\"error\">{{ state_attr(\"binary_sensor.stove_problem\", \"description\") }}.</ha-alert>",
                   "text_only": true,
                   "visibility": [
                     {
-                      "condition": "state",
-                      "entity": "sensor.stove_error_code",
-                      "state_not": "No error"
+                      "condition": "not",
+                      "conditions": [
+                        {
+                          "condition": "state",
+                          "entity_id": "binary_sensor.stove_problem",
+                          "state": [
+                            "off"
+                          ]
+                        }
+                      ]
                     }
                   ]
                 }
@@ -17911,7 +17925,7 @@
                       "color": "brown"
                     },
                     {
-                      "entity": "sensor.living_room_pm2_5",
+                      "entity": "sensor.indoor_pm2_5",
                       "name": "Indoor PM2.5",
                       "unit": " ",
                       "color": "orange",
@@ -18092,7 +18106,7 @@
                 {
                   "type": "custom:button-card",
                   "template": "tile_status_bar",
-                  "entity": "sensor.living_room_pm2_5",
+                  "entity": "sensor.indoor_pm2_5",
                   "variables": {
                     "numerator": "[[[ return variables.denominator - entity.state ]]]",
                     "denominator": 100,
@@ -18108,7 +18122,7 @@
                 {
                   "type": "custom:button-card",
                   "template": "tile_status_bar",
-                  "entity": "sensor.living_room_indoor_allergen_index",
+                  "entity": "sensor.indoor_allergen_index",
                   "variables": {
                     "numerator": "[[[ return variables.denominator - entity.state ]]]",
                     "denominator": 12
@@ -18146,9 +18160,16 @@
               ],
               "visibility": [
                 {
-                  "condition": "state",
-                  "entity": "sensor.living_room_pm2_5",
-                  "state_not": "unavailable"
+                  "condition": "not",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity_id": "sensor.indoor_pm2_5",
+                      "state": [
+                        "unavailable"
+                      ]
+                    }
+                  ]
                 }
               ]
             }

@@ -3,10 +3,9 @@ import logging
 from collections import OrderedDict
 from typing import Any
 
+import probatio as vol
 import tinytuya
-import voluptuous as vol
 from homeassistant.config_entries import (
-    CONN_CLASS_LOCAL_PUSH,
     ConfigEntry,
     ConfigFlow,
     OptionsFlow,
@@ -53,8 +52,7 @@ DEVICE_DETAILS_URL = (
 
 class ConfigFlowHandler(ConfigFlow, domain=DOMAIN):
     VERSION = 13
-    MINOR_VERSION = 24
-    CONNECTION_CLASS = CONN_CLASS_LOCAL_PUSH
+    MINOR_VERSION = 25
     device = None
     data = {}
 
