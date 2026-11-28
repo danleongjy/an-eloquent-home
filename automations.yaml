@@ -8342,7 +8342,6 @@
       entity_id:
       - binary_sensor.dining_room_radar_zone_1_occupancy
       - binary_sensor.living_room_radar_occupancy
-      - binary_sensor.study_room_radar_occupancy
       - binary_sensor.kitchen_radar_occupancy
       - binary_sensor.playroom_radar_occupancy
     options:
@@ -8353,7 +8352,6 @@
       entity_id:
       - binary_sensor.dining_room_radar_zone_1_occupancy
       - binary_sensor.living_room_radar_occupancy
-      - binary_sensor.study_room_radar_occupancy
       - binary_sensor.kitchen_radar_occupancy
       - binary_sensor.playroom_radar_occupancy
     options:
@@ -8389,11 +8387,14 @@
       minutes: 10
       seconds: 0
     below: 15
+  - trigger: state
+    entity_id: binary_sensor.study_room_radar_occupancy
   conditions:
   - condition: template
-    value_template: '{{ now() - states.fan.air_purifier.last_updated > timedelta(minutes
-      = 10) }}'
-    alias: Debounce state changes to air purifier by 10min
+    value_template: '{{ now() - state_attr(''automation.air_purifier_auto_control'',
+      ''last_triggered'') > timedelta(minutes = 2) }}'
+    alias: Debounce automation triggering by 2min
+    enabled: true
   actions:
   - choose:
     - conditions:
@@ -8500,13 +8501,18 @@
                 - binary_sensor.living_room_radar_occupancy
                 - binary_sensor.kitchen_radar_occupancy
                 - binary_sensor.playroom_radar_occupancy
-                - binary_sensor.study_room_radar_occupancy
               options:
                 behavior: all
         - condition: template
           value_template: '{{ ''on'' in states.binary_sensor | selectattr(''entity_id'',
             ''contains'', ''window'') | map(attribute = ''state'') | list }}'
           alias: If windows are open
+      - condition: occupancy.is_not_detected
+        target:
+          entity_id: binary_sensor.study_room_radar_occupancy
+        options:
+          behavior: any
+          for: 00:00:00
       sequence:
       - condition: state
         state:
@@ -8517,6 +8523,33 @@
         target:
           entity_id: fan.air_purifier
         data: {}
+    - conditions:
+      - condition: occupancy.is_detected
+        target:
+          entity_id: binary_sensor.study_room_radar_occupancy
+        options:
+          behavior: any
+          for: 00:00:00
+      sequence:
+      - action: fan.turn_on
+        metadata: {}
+        target:
+          entity_id: fan.air_purifier
+        data:
+          percentage: 50
+      - action: number.set_value
+        metadata: {}
+        target:
+          entity_id: number.air_purifier_oscillation
+        data:
+          value: '0'
+      - action: select.select_option
+        metadata: {}
+        data:
+          option: fan
+        target:
+          entity_id: select.air_purifier_function
+      alias: Occupancy is detected in the Study Room
   mode: single
 - id: '1793350885473'
   alias: Notify When Poor Air Quality With Windows Open
